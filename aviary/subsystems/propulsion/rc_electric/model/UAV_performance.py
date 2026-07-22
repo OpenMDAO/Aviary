@@ -56,8 +56,6 @@ class Battery(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Battery.VOLTAGE, units = "V")
         add_aviary_input(self, Aircraft.Battery.RESISTANCE, units='ohm')
         add_aviary_input(self, Dynamic.Vehicle.Propulsion.CURRENT, shape=(nn,), units='A')
-        add_aviary_input(self, Aircraft.Battery.MASS,  units= 'kg')
-        # self.add_input('current', val=np.zeros(nn), units='A')
 
         self.add_output('voltage_out', val=np.zeros(nn), units='V')
         self.add_output('power', val=np.zeros(nn), units='W')
@@ -168,7 +166,7 @@ class Motor(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Aircraft.Engine.Motor.MASS, units= 'kg')
+        
         add_aviary_input(self, Aircraft.Engine.Motor.IDLE_CURRENT,  units='A')
         
         add_aviary_input(self, Aircraft.Engine.Motor.RESISTANCE, units='ohm')

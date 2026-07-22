@@ -79,7 +79,7 @@ class RCPropMission(om.Group):
             'motor',
             Motor(num_nodes=nn, load_factor=motor_load_factor),
             promotes_inputs=[
-                Aircraft.Engine.Motor.MASS,
+                
                 Aircraft.Engine.Motor.IDLE_CURRENT, 
                 Aircraft.Engine.Motor.RESISTANCE, 
                 Aircraft.Engine.Motor.KV,

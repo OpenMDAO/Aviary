@@ -17,6 +17,9 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 from aviary.variable_info.variables import Mission, Settings
 from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft as Mass_Aircraft
+from aviary.subsystems.mass.UAV_mass.variable_info.mass_variable_metadata import (
+    ExtendedMetaData,
+)
 
 
 #This is where you set the power balance mode for the RCPropMission. Options are 'feedforward' or 'solver'.
@@ -28,7 +31,7 @@ rc_prop = RCBuilder()  # or 'solver' for the solver-based power balance mode
 
 
 def CruiseExample():
-    prob = av.AviaryProblem(verbosity=2)
+    prob = av.AviaryProblem(verbosity=2, meta_data=ExtendedMetaData)
     prob.options['group_by_pre_opt_post'] = True
         #just selecting cruise
     cruise_phase_info = {

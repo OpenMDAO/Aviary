@@ -95,7 +95,7 @@ class TestPropeller(unittest.TestCase):
         prob.model.add_subsystem('propeller', Propeller(num_nodes=nn), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 20, units='inch')
+        prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 19, units='inch')
         prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.full(nn, 1000))
         prob.set_val(Dynamic.Atmosphere.DENSITY, 1.225, units='kg/m**3')
         prob.set_val('ct', np.full(nn, 0.1))
