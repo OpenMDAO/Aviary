@@ -14,7 +14,8 @@ from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
 from aviary.subsystems.propulsion.UAV.model.UAV_mission import UAVPropMission
 from aviary.subsystems.propulsion.UAV.model.UAV_premission import UAVPropPreMission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.dbf_variables import Aircraft, Dynamic
+from aviary.variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
 from aviary.variable_info.variables import Mission, Settings
 from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft as Mass_Aircraft
 from aviary.subsystems.mass.UAV_mass.variable_info.mass_variable_metadata import (
