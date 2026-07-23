@@ -434,6 +434,7 @@ class PropulsionMissionTest(unittest.TestCase):
             val=True,
             units='unitless',
         )
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
 
         # turboprop using turboshaft engine deck and hamilton standard propeller model

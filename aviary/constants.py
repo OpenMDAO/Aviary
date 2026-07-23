@@ -40,10 +40,9 @@ RADIUS_VENUS = (
 # Venus Global Reference Atmospheric Model (Venus-GRAM): User Guide, NASA/TM-20210022168, avg of equatorial and polar radius
 
 GRAV_ENGLISH_LBM = 1.0  # lbf/lbm
-# See issue 1169 for the value of RHO_SEA_LEVEL_ENGLISH
-RHO_SEA_LEVEL_ENGLISH = 0.0023769  # slug/ft^3
-RHO_SEA_LEVEL_METRIC = 1.225  # kg/m^3
+
 # sea level standard pressure in psf
 PSLS_PSF = 2116.22
+
 # sea level standard temperature in deg R
 TSLS_DEGR = 518.67

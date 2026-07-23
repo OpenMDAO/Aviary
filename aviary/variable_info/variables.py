@@ -685,6 +685,7 @@ class Mission:
     RESERVE_FUEL_MARGIN = 'mission:reserve_fuel_margin'
     RESERVE_FUEL_MASS = 'mission:reserve_fuel_mass'
     RESERVE_FUEL_MASS_ADDITIONAL = 'mission:reserve_fuel_mass_additional'
+    SEA_LEVEL_DENSITY = 'mission:sea_level_density'
     TOTAL_FUEL_MASS = 'mission:total_fuel_mass'
     TOTAL_RESERVE_FUEL_MASS = 'mission:total_reserve_fuel_mass'
     ZERO_FUEL_MASS = 'mission:zero_fuel_mass'

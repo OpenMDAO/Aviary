@@ -1,8 +1,8 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_METRIC
+from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -87,6 +87,9 @@ class FinalTakeoffConditions(om.ExplicitComponent):
     final mass, and final altitude.
     """
 
+    def initialize(self):
+        add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='kg/m**3')
+
     def setup(self):
         self.add_input(
             'v_stall',
@@ -151,7 +154,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        rho_SL = RHO_SEA_LEVEL_METRIC
+        rho_SL = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
         v_stall = inputs['v_stall']
         gross_mass = inputs['mass']
@@ -195,7 +198,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         outputs[Mission.Takeoff.FINAL_ALTITUDE] = 35
 
     def compute_partials(self, inputs, J):
-        rho_SL = RHO_SEA_LEVEL_METRIC
+        rho_SL = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
         ramp_weight = inputs['mass'] * GRAV_ENGLISH_LBM
         rho = inputs[Dynamic.Atmosphere.DENSITY]

@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
+from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.gasp_based.control import ControlMassGroup
 from aviary.subsystems.mass.gasp_based.engine import EngineMassGroup
 from aviary.subsystems.mass.gasp_based.landing import LandingGearMassGroup
@@ -1306,6 +1306,7 @@ class HighLiftMass(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.FLAP_TYPE)
         add_aviary_option(self, Aircraft.Wing.NUM_FLAP_SEGMENTS)
+        add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='slug/ft**3')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT, units='unitless')
@@ -1321,12 +1322,6 @@ class HighLiftMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Wing.CENTER_CHORD, units='ft')
         add_aviary_input(self, Mission.Landing.LIFT_COEFFICIENT_MAX, units='unitless')
-        self.add_input(
-            'density',
-            val=RHO_SEA_LEVEL_ENGLISH,  # see issue #1191
-            units='slug/ft**3',
-            desc='RHO: Density of air',
-        )
 
         add_aviary_output(self, Aircraft.Wing.HIGH_LIFT_MASS, units='lbm')
         self.add_output('flap_mass', units='lbm', desc='WFLAP: mass of trailing edge devices')
@@ -1360,7 +1355,6 @@ class HighLiftMass(om.ExplicitComponent):
                 Aircraft.Wing.TAPER_RATIO,
                 Aircraft.Wing.FLAP_SPAN_RATIO,
                 Aircraft.Design.WING_LOADING,
-                'density',
                 Mission.Landing.LIFT_COEFFICIENT_MAX,
             ],
         )
@@ -1380,7 +1374,6 @@ class HighLiftMass(om.ExplicitComponent):
                 Aircraft.Wing.FLAP_SPAN_RATIO,
                 Aircraft.Wing.SLAT_SPAN_RATIO,
                 Aircraft.Design.WING_LOADING,
-                'density',
                 Mission.Landing.LIFT_COEFFICIENT_MAX,
             ],
         )
@@ -1401,7 +1394,7 @@ class HighLiftMass(om.ExplicitComponent):
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         center_chord = inputs[Aircraft.Wing.CENTER_CHORD]
         CL_max_flaps_landing = inputs[Mission.Landing.LIFT_COEFFICIENT_MAX]
-        RHO = inputs['density']
+        RHO = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
         body_to_span_ratio = (
             2.0
@@ -1491,7 +1484,7 @@ class HighLiftMass(om.ExplicitComponent):
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         center_chord = inputs[Aircraft.Wing.CENTER_CHORD]
         CL_max_flaps_landing = inputs[Mission.Landing.LIFT_COEFFICIENT_MAX]
-        RHO = inputs['density']
+        RHO = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
         u1 = tc_ratio_root * center_chord * (cabin_width - (tc_ratio_root * center_chord))
         body_to_span_ratio = (2 * np.sqrt(u1) + 0.4) / wingspan
@@ -1638,14 +1631,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * num_flaps ** (-0.5)
                 / GRAV_ENGLISH_LBM
             )
-            J['flap_mass', 'density'] = (
-                c_mass_trend_high_lift
-                * (2 * VFLAP / 100**2)
-                * dVFLAP_drho
-                * SFLAP
-                * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
-            )
             J['flap_mass', Mission.Landing.LIFT_COEFFICIENT_MAX] = (
                 c_mass_trend_high_lift
                 * (2 * VFLAP / 100**2)
@@ -1726,13 +1711,6 @@ class HighLiftMass(om.ExplicitComponent):
                     c_mass_trend_high_lift
                     * SFLAP
                     * (2.195 * VFLAP**1.195 * dVFLAP_dWL)
-                    / 45180.0
-                    / GRAV_ENGLISH_LBM
-                )
-                J['flap_mass', 'density'] = (
-                    c_mass_trend_high_lift
-                    * SFLAP
-                    * (2.195 * VFLAP**1.195 * dVFLAP_drho)
                     / 45180.0
                     / GRAV_ENGLISH_LBM
                 )
@@ -1823,13 +1801,6 @@ class HighLiftMass(om.ExplicitComponent):
                     * (0.2733 * VFLAP ** (-0.7267) * dVFLAP_dWL)
                     / GRAV_ENGLISH_LBM
                 )
-                J['flap_mass', 'density'] = (
-                    c_mass_trend_high_lift
-                    * SFLAP
-                    * 0.369
-                    * (0.2733 * VFLAP ** (-0.7267) * dVFLAP_drho)
-                    / GRAV_ENGLISH_LBM
-                )
 
                 J['flap_mass', Mission.Landing.LIFT_COEFFICIENT_MAX] = (
                     c_mass_trend_high_lift
@@ -1902,14 +1873,6 @@ class HighLiftMass(om.ExplicitComponent):
                 c_mass_trend_high_lift
                 * (2 * VFLAP / 100**2)
                 * dVFLAP_dWL
-                * SFLAP
-                * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
-            )
-            J['flap_mass', 'density'] = (
-                c_mass_trend_high_lift
-                * (2 * VFLAP / 100**2)
-                * dVFLAP_drho
                 * SFLAP
                 * num_flaps**0.5
                 / GRAV_ENGLISH_LBM
@@ -1993,14 +1956,6 @@ class HighLiftMass(om.ExplicitComponent):
                 c_mass_trend_high_lift
                 * (2.38 * VFLAP**1.38 / 100.0**2.38)
                 * dVFLAP_dWL
-                * SFLAP**1.19
-                / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
-            )
-            J['flap_mass', 'density'] = (
-                c_mass_trend_high_lift
-                * (2.38 * VFLAP**1.38 / 100.0**2.38)
-                * dVFLAP_drho
                 * SFLAP**1.19
                 / (num_flaps**0.595)
                 / GRAV_ENGLISH_LBM
@@ -2091,8 +2046,6 @@ class HighLiftMass(om.ExplicitComponent):
         J[Aircraft.Wing.HIGH_LIFT_MASS, Aircraft.Design.WING_LOADING] = J[
             'flap_mass', Aircraft.Design.WING_LOADING
         ]
-        J[Aircraft.Wing.HIGH_LIFT_MASS, 'density'] = J['flap_mass', 'density']
-
         J[Aircraft.Wing.HIGH_LIFT_MASS, Mission.Landing.LIFT_COEFFICIENT_MAX] = J[
             'flap_mass', Mission.Landing.LIFT_COEFFICIENT_MAX
         ]

@@ -57,8 +57,6 @@ from aviary.utils.options import list_options
 from aviary.constants import (
     GRAV_ENGLISH_LBM,
     PSLS_PSF,
-    RHO_SEA_LEVEL_ENGLISH,
-    RHO_SEA_LEVEL_METRIC,
     TSLS_DEGR,
 )
 from aviary.subsystems.test.subsystem_tester import (

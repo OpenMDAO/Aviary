@@ -165,6 +165,7 @@ class TurbopropMissionTest(unittest.TestCase):
         prop_group = ExamplePropModel('custom_prop_model')
 
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
 
         self.prepare_model(options, test_points, prop_model=prop_group)
 
@@ -231,6 +232,7 @@ class TurbopropMissionTest(unittest.TestCase):
             1455.13090827,
             units='rpm',
         )
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         self.prepare_model(options, test_points)
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
@@ -295,6 +297,7 @@ class TurbopropMissionTest(unittest.TestCase):
             1455.13090827,
             units='rpm',
         )
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         self.prepare_model(options, test_points)
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
@@ -338,6 +341,7 @@ class TurbopropMissionTest(unittest.TestCase):
             1455.13090827,
             units='rpm',
         )
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
 
         self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True)
 
@@ -385,6 +389,7 @@ class TurbopropMissionTest(unittest.TestCase):
         shp_file = get_path('electric_motor_1800Nm_6000rpm.csv')
         options.set_val(Aircraft.Engine.Motor.DATA_FILE, shp_file)
         options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         options.delete(Aircraft.Engine.FIXED_RPM)
 
         self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True)
@@ -435,6 +440,7 @@ class TurbopropMissionTest(unittest.TestCase):
 
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         options.delete(Aircraft.Engine.FIXED_RPM)
 
         self.prepare_model(options, test_points)

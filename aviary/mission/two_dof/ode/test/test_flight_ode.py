@@ -68,15 +68,15 @@ class FlightODEClimbTestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: 5.0569239,
-            Dynamic.Vehicle.LIFT_COEFFICIENT: 0.58762109,
-            Dynamic.Vehicle.DRAG_COEFFICIENT: 0.02867741,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: 5.05694381,
+            Dynamic.Vehicle.LIFT_COEFFICIENT: 0.58762286,
+            Dynamic.Vehicle.DRAG_COEFFICIENT: 0.0286775,
             Dynamic.Mission.ALTITUDE_RATE: 58.3497354,  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 *
             # cos(0.13331060446181708)
-            Dynamic.Mission.DISTANCE_RATE: 424.19921863,  # ft/s
+            Dynamic.Mission.DISTANCE_RATE: 424.19853539,  # ft/s
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: -13447.98081484,  # lbm/h
-            'theta': 0.22495483,  # rad (12.8021 deg)
+            'theta': 0.22495528,  # rad (12.8021 deg)
             # rad (7.638135 deg)
             Dynamic.Mission.FLIGHT_PATH_ANGLE: 0.13669486,
         }
@@ -116,9 +116,9 @@ class FlightODEClimbTestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: [3.99983969, 4.04381706],
-            Dynamic.Vehicle.LIFT_COEFFICIENT: [0.50719248, 0.613207],
-            Dynamic.Vehicle.DRAG_COEFFICIENT: [0.02520388, 0.03125595],
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: [3.99985756, 4.04381706],
+            Dynamic.Vehicle.LIFT_COEFFICIENT: [0.50719407, 0.613207],
+            Dynamic.Vehicle.DRAG_COEFFICIENT: [0.02520395, 0.03125595],
             Dynamic.Mission.ALTITUDE_RATE: [52.68288688, 9.32639661],  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
             # ft/s
@@ -127,9 +127,9 @@ class FlightODEClimbTestCase(unittest.TestCase):
                 -11418.00064615,
                 -6042.88107957,
             ],
-            'theta': [0.16776764, 0.08262176],  # rad ([9.47740, 4.59730] deg),
+            'theta': [0.16776805, 0.08262176],  # rad ([9.47740, 4.59730] deg),
             # rad, gamma
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: [0.09795727, 0.01204389],
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [0.09795737, 0.01204389],
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL: [25555.79617743, 10773.48189764],
         }
         check_prob_outputs(self.prob, testvals, 1e-6)
@@ -182,21 +182,21 @@ class FlightODEDescenTestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: np.array([3.21977893, 1.20407788]),
-            Dynamic.Vehicle.LIFT_COEFFICIENT: np.array([0.51684476, 0.25916936]),
-            Dynamic.Vehicle.DRAG_COEFFICIENT: np.array([0.02633452, 0.01729237]),
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: np.array([3.21977893, 1.20408787]),
+            Dynamic.Vehicle.LIFT_COEFFICIENT: np.array([0.51684476, 0.25917019]),
+            Dynamic.Vehicle.DRAG_COEFFICIENT: np.array([0.02633452, 0.01729238]),
             # ft/s
-            Dynamic.Mission.ALTITUDE_RATE: np.array([-37.03297068, -44.19020778]),
+            Dynamic.Mission.ALTITUDE_RATE: np.array([-37.03297068, -44.19004268]),
             # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
-            Dynamic.Mission.DISTANCE_RATE: [773.50001989, 737.22403068],  # ft/s
+            Dynamic.Mission.DISTANCE_RATE: [773.50001989, 737.22285971],  # ft/s
             # lbm/h
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: np.array(
                 [-452.29666667, -997.48350936]
             ),
-            'EAS': [418.57044883, 590.73344999],  # ft/s ([247.95894, 349.99997] kts)
-            Dynamic.Atmosphere.MACH: [0.8, 0.69721946],
+            'EAS': [418.57111688, 590.73344999],  # ft/s ([247.95894, 349.99997] kts)
+            Dynamic.Atmosphere.MACH: [0.8, 0.69721835],
             # gamma, rad ([-2.908332, -3.723388] deg)
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.04784061, -0.05986972],
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.04784061, -0.05986959],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -228,12 +228,12 @@ class FlightODEDescenTestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: 4.2001692,
-            Dynamic.Vehicle.LIFT_COEFFICIENT: 0.50764259,
-            Dynamic.Vehicle.DRAG_COEFFICIENT: 0.02532094,
-            Dynamic.Mission.ALTITUDE_RATE: -17.6942839,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: 4.20018479,
+            Dynamic.Vehicle.LIFT_COEFFICIENT: 0.50764397,
+            Dynamic.Vehicle.DRAG_COEFFICIENT: 0.025321,
+            Dynamic.Mission.ALTITUDE_RATE: -17.6942447,
             # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
-            Dynamic.Mission.DISTANCE_RATE: 431.0014619,
+            Dynamic.Mission.DISTANCE_RATE: 431.00057153,
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: -1295.1511839,
             # rad (-2.52149 deg)
             Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.04103086,

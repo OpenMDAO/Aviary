@@ -1,8 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -33,6 +33,7 @@ class GlideConditionComponent(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
+        add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='slug/ft**3')
 
     def setup(self):
         add_aviary_input(self, Dynamic.Atmosphere.DENSITY, units='slug/ft**3')
@@ -218,11 +219,13 @@ class GlideConditionComponent(om.ExplicitComponent):
         tr_distance = ((RZ * theta) / 2.0) * ((1.0 - gamma_touchdown / theta) ** 2)
         delay_distance = TAS_touchdown * time_delay
 
+        rho_sea_level = self.options[Mission.SEA_LEVEL_DENSITY][0]
+
         outputs['flare_alt'] = flare_alt
         outputs[Mission.Landing.INITIAL_VELOCITY] = TAS_glide
         outputs[Mission.Landing.STALL_VELOCITY] = TAS_stall
         outputs['TAS_touchdown'] = TAS_touchdown
-        outputs['density_ratio'] = rho_app / RHO_SEA_LEVEL_ENGLISH
+        outputs['density_ratio'] = rho_app / rho_sea_level
         outputs['wing_loading_land'] = wing_loading_land
         outputs['glide_distance'] = glide_distance
         outputs['tr_distance'] = tr_distance
@@ -303,7 +306,8 @@ class GlideConditionComponent(om.ExplicitComponent):
             touchdown_velocity_ratio * dTasStall_dRhoApp
         )
 
-        J['density_ratio', Dynamic.Atmosphere.DENSITY] = 1 / RHO_SEA_LEVEL_ENGLISH
+        rho_sea_level = self.options[Mission.SEA_LEVEL_DENSITY][0]
+        J['density_ratio', Dynamic.Atmosphere.DENSITY] = 1 / rho_sea_level
 
         J['wing_loading_land', Dynamic.Vehicle.MASS] = GRAV_ENGLISH_LBM / wing_area
         J['wing_loading_land', Aircraft.Wing.AREA] = -weight / wing_area**2
