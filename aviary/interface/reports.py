@@ -719,6 +719,7 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
     else:
         f.write('No external subsystem overrides found.\n')
 
+
 def _list_options_report(prob: AviaryProblem, **kwargs):
     """
     Writes a report with the output of the Problem.list_options method.

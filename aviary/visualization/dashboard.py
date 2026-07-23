@@ -1146,7 +1146,6 @@ def dashboard(script_name, port=0, run_in_background=False):
         reports_dir / 'options.txt',
     )
 
-
     ####### Optimization Tab #######
     optimization_tabs_list = []
 
