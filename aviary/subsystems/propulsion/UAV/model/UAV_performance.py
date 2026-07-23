@@ -245,7 +245,7 @@ class Motor(om.ExplicitComponent):
 
 
 #TODO: reading in of data should be changed later:
-from aviary.subsystems.propulsion.rc_electric.Parsing.PropDataReader import PropDataReader
+from aviary.subsystems.propulsion.UAV.Parsing.PropDataReader import PropDataReader
 xt, ct, cp = PropDataReader()
 ct = ct.flatten()
 cp = cp.flatten()
