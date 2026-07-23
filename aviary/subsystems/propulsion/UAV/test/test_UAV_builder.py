@@ -6,7 +6,7 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 from packaging import version
 
-from aviary.subsystems.propulsion.rc_electric.UAV_Builder import RCBuilder
+from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission, PropulsionSum
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
@@ -20,8 +20,8 @@ from aviary.variable_info.variables import Mission, Settings
 
 
 
-class TestRCBuilder(unittest.TestCase):
-    """Integrates RCBuilder into a full PropulsionMission over a 0->1 throttle sweep.
+class TestUAVBuilder(unittest.TestCase):
+    """Integrates UAVBuilder into a full PropulsionMission over a 0->1 throttle sweep.
     """
 
     @use_tempdirs
@@ -36,7 +36,7 @@ class TestRCBuilder(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
 
-        engine = RCBuilder(options=options, power_balance_mode='feedforward') #change between solver/feedforward to test both modes
+        engine = UAVBuilder(options=options, power_balance_mode='feedforward') #change between solver/feedforward to test both modes
         preprocess_propulsion(options, engine_models=[engine])
 
     

@@ -1,11 +1,11 @@
 import unittest
 import aviary.api as av
-from aviary.subsystems.propulsion.rc_electric.UAV_Builder import RCBuilder
+from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
-from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import (
+from aviary.subsystems.propulsion.UAV.model.UAV_performance import (
     Battery, Motor, Propeller, ElectronicSpeedController, Vectorization, PropCoefficients
 )
 
@@ -95,7 +95,7 @@ class TestPropeller(unittest.TestCase):
         prob.model.add_subsystem('propeller', Propeller(num_nodes=nn), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 19, units='inch')
+        prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 20, units='inch')
         prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.full(nn, 1000))
         prob.set_val(Dynamic.Atmosphere.DENSITY, 1.225, units='kg/m**3')
         prob.set_val('ct', np.full(nn, 0.1))

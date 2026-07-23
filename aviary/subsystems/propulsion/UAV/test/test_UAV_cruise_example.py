@@ -10,9 +10,9 @@ from pathlib import Path
 from aviary.subsystems.aerodynamics.UAV_Aero.custom_aero_builder import CustomAeroBuilder
 from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import phase_info
-from aviary.subsystems.propulsion.rc_electric.UAV_Builder import RCBuilder
-from aviary.subsystems.propulsion.rc_electric.model.UAV_mission import RCPropMission
-from aviary.subsystems.propulsion.rc_electric.model.UAV_premission import RCPropPreMission
+from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
+from aviary.subsystems.propulsion.UAV.model.UAV_mission import UAVPropMission
+from aviary.subsystems.propulsion.UAV.model.UAV_premission import UAVPropPreMission
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 from aviary.variable_info.variables import Mission, Settings
@@ -22,9 +22,9 @@ from aviary.subsystems.mass.UAV_mass.variable_info.mass_variable_metadata import
 )
 
 
-#This is where you set the power balance mode for the RCPropMission. Options are 'feedforward' or 'solver'.
+#This is where you set the power balance mode for the UAVPropMission. Options are 'feedforward' or 'solver'.
 #Example for solver, RCBBuilder(power_balance_mode='solver')
-rc_prop = RCBuilder()  # or 'solver' for the solver-based power balance mode
+UAV_Prop = UAVBuilder()  # or 'solver' for the solver-based power balance mode
 
 
 
@@ -48,7 +48,7 @@ def CruiseExample():
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units = 'm**2');
     print('Wetted Area:', number)
     
-    prob.load_external_subsystems(external_subsystems=[rc_prop, CustomAeroBuilder(), DBFMassBuilder()])
+    prob.load_external_subsystems(external_subsystems=[UAV_Prop, CustomAeroBuilder(), DBFMassBuilder()])
     
 
     prob.check_and_preprocess_inputs()
@@ -137,10 +137,7 @@ class TestUAVCruiseExample(unittest.TestCase):
         # distance_resid = abs(distance_resid)
         # self.assertTrue(np.isfinite(distance_resid))
         # self.assertLess(distance_resid, 0.25, 'Cruise distance residual is unexpectedly large.')
-        reports_dir = Path(__file__).resolve().parent / 'reports'
-        reports_dir.mkdir(parents=True, exist_ok=True)
-        with open(reports_dir / 'output_list.txt', 'w') as outfile:
-            prob.model.list_outputs(out_stream=outfile, units=True, print_arrays=True, hierarchical=True)
+        
         # # Print only driver-level constraints in a list_vars-like table.
         # prob.list_driver_vars(
         #     print_arrays=True,

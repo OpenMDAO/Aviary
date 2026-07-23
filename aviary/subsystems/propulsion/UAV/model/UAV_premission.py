@@ -13,7 +13,7 @@ add_aviary_input  = partial(_add_aviary_input,  meta_data=ExtendedMetaData)
 add_aviary_output = partial(_add_aviary_output, meta_data=ExtendedMetaData)
 add_aviary_option = partial(_add_aviary_option, meta_data=ExtendedMetaData)
 
-class RCPropPreMission(om.Group):
+class UAVPropPreMission(om.Group):
     """Calculate RC electric propulsion premission motor and battery properties."""
 
     def initialize(self):

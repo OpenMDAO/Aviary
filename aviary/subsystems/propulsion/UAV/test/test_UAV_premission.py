@@ -4,12 +4,12 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.propulsion.rc_electric.model.UAV_premission import RCPropPreMission
+from aviary.subsystems.propulsion.UAV.model.UAV_premission import UAVPropPreMission
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.dbf_variables import Aircraft, Dynamic 
 
 
-class TestRCPropPre(unittest.TestCase):
+class TestUAVPreMission(unittest.TestCase):
     @use_tempdirs
     def test_premission_calcs(self):
         prob = om.Problem()
@@ -20,7 +20,7 @@ class TestRCPropPre(unittest.TestCase):
         
         prob.model.add_subsystem(
             'rc_calcs',
-            RCPropPreMission(aviary_options=options),
+            UAVPropPreMission(aviary_options=options),
             promotes=['*']
         )
 

@@ -5,13 +5,13 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.propulsion.rc_electric.model.UAV_mission import RCPropMission
+from aviary.subsystems.propulsion.UAV.model.UAV_mission import UAVPropMission
 from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 
 
 
-class TestRCPropMission(unittest.TestCase):
+class TestUAVMission(unittest.TestCase):
     @use_tempdirs
     def test_residual(self):
         nn = 3
@@ -20,7 +20,7 @@ class TestRCPropMission(unittest.TestCase):
         options = AviaryValues()
         options.set_val(Aircraft.Engine.NUM_ENGINES, 1)
         options.set_val(Aircraft.Engine.Motor.MAX_CONT_CURRENT, 100, units='A')
-        prob.model.add_subsystem('rc_prop_group', RCPropMission(num_nodes=nn, aviary_options= options, power_balance_mode='feedforward'), promotes=['*'])
+        prob.model.add_subsystem('rc_prop_group', UAVPropMission(num_nodes=nn, aviary_options= options, power_balance_mode='feedforward'), promotes=['*'])
 
 
         

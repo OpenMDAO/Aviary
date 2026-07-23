@@ -1,5 +1,5 @@
-from aviary.subsystems.propulsion.rc_electric.model.UAV_premission import RCPropPreMission
-from aviary.subsystems.propulsion.rc_electric.model.UAV_mission import RCPropMission
+from aviary.subsystems.propulsion.UAV.model.UAV_premission import UAVPropPreMission
+from aviary.subsystems.propulsion.UAV.model.UAV_mission import UAVPropMission
 from aviary.utils.aviary_values import AviaryValues
 from aviary.subsystems.propulsion.engine_model import EngineModel
 
@@ -8,8 +8,8 @@ from aviary.variable_info.variables import Mission
 
 """ Builder for the UAV Propulsion Subsystem (RC Electric) """
 
-class RCBuilder(EngineModel):
-    # RCPropMission computes its own max-power chain (battery_max ... prop_max),
+class UAVBuilder(EngineModel):
+    # UAVPropMission computes its own max-power chain (battery_max ... prop_max),
     # so tell Aviary NOT to build a duplicate full-throttle copy of the engine.
     # The duplicate re-declared every constraint and broke the optimizer (TOO_FEW_DOF).
     compute_max_values =True
@@ -22,13 +22,13 @@ class RCBuilder(EngineModel):
         self.power_balance_mode = power_balance_mode
     def build_pre_mission(self, aviary_inputs, **kwargs):  # m, b,
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
-        return RCPropPreMission(aviary_options=self.options)
+        return UAVPropPreMission(aviary_options=self.options)
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
 
 
-        return RCPropMission(num_nodes=num_nodes, aviary_options=self.options, power_balance_mode=self.power_balance_mode)
+        return UAVPropMission(num_nodes=num_nodes, aviary_options=self.options, power_balance_mode=self.power_balance_mode)
    
 
     def get_design_vars(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
@@ -166,7 +166,7 @@ class RCBuilder(EngineModel):
         },
         }
 
-        # Solver mode computes current/current_max internally in RCPropMission.
+        # Solver mode computes current/current_max internally in UAVPropMission.
         # Declaring them as Dymos controls creates duplicate connections.
         return controls
         

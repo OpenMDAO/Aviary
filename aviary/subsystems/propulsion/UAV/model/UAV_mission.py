@@ -1,13 +1,13 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import \
+from aviary.subsystems.propulsion.UAV.model.UAV_performance import \
     Throttle, Battery, ElectronicSpeedController, Motor, PropCoefficients, Propeller, Vectorization
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 
 
-class RCPropMission(om.Group):
+class UAVPropMission(om.Group):
     """Calculates the mission performance (ODE) of a single electric RCMotor."""
 
     def initialize(self):

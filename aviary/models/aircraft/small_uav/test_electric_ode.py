@@ -17,7 +17,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.dbf_variables import Aircraft, Dynamic
-from aviary.subsystems.propulsion.rc_electric.UAV_Builder import RCBuilder
+from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
 from aviary.variable_info.enums import LegacyCode
 
 # class ElectricODETest(unittest.TestCase):
@@ -51,7 +51,7 @@ prob = om.Problem()
 nn = 2
 aviary_options = inputs
 
-engines = [RCBuilder()]
+engines = [UAVBuilder()]
 
 preprocess_options(aviary_options, engine_models=engines)
 
