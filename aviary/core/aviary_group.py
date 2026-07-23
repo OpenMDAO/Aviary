@@ -1537,6 +1537,23 @@ class AviaryGroup(om.Group):
                     ref=1,
                 )
 
+                # self.add_subsystem(
+                #                     'gtow_constraint',
+                #                     om.ExecComp(
+                #                         'gtow_resid = design_mass - actual_mass',
+                #                         design_mass={'val': 10, 'units': 'kg'},
+                #                         actual_mass={'val': 0, 'units': 'kg'},
+                #                         gtow_resid={'val': 30, 'units': 'kg'},
+                #                     ),
+                #                     promotes_inputs=[
+                #                         ('design_mass', Aircraft.Design.GROSS_MASS),
+                #                         ('actual_mass', Mission.GROSS_MASS),
+                #                     ],
+                #                     promotes_outputs=['gtow_resid'],
+                
+                #                 )
+                
+                # self.add_constraint('gtow_constraint.gtow_resid', lower=0.004, upper=0.004, ref=100, units='kg')
                 self.add_subsystem(
                     'gtow_constraint',
                     om.EQConstraintComp(
@@ -1544,7 +1561,7 @@ class AviaryGroup(om.Group):
                         eq_units='lbm',
                         normalize=True,
                         add_constraint=True,
-                        ref = 1
+                        ref = 1e5
                     ),
                     promotes_inputs=[
                         ('lhs:GTOW', Aircraft.Design.GROSS_MASS),

@@ -23,7 +23,7 @@ aircraft:crew_and_payload:wing_cargo,0.0,lbm
 aircraft:design:base_area,0.0,ft**2
 aircraft:design:cruise_mach,0.04,unitless
 aircraft:design:empty_mass_margin_scaler,0.0,unitless
-aircraft:design:gross_mass, 7.0,kg
+aircraft:design:gross_mass, 7.0,lbm
 aircraft:design:lift_dependent_drag_coeff_factor,0.909839381134961,unitless
 mission:reserve_fuel_mass_additional,0.0,lbm
 mission:reserve_fuel_margin,0.0,unitless
@@ -143,7 +143,7 @@ aircraft:wing:type,medium,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
-aircraft:wing:wetted_area,0.85,km**2
+aircraft:wing:wetted_area,0.85,m**2
 mission:constraints:max_mach,0.04,unitless
 mission:design:cruise_altitude,200,ft
 mission:design:gross_mass, 7, kg

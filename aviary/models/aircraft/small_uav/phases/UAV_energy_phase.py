@@ -53,14 +53,17 @@ phase_info = {
             # 'alt_ref': (100, 'ft'),
             # 'mach_final': (0.05, 'unitless'),
             
-            'altitude_polynomial_order': 1,
-            'altitude_optimize': False,
+            
+            'altitude_optimize': True,
             'altitude_initial': (200.0, 'ft'),
+            'altitude_bounds': ((100.0, 300.0), 'ft'),
             'altitude_final': (200.0, 'ft'),
             'distance_initial': (0.0, 'm'),
+            
             'distance_ref': (1000.0, 'm'),
             'target_distance': (1000.0, 'm'),
             'throttle_enforcement': 'control',
+            
             # 'throttle_polynomial_order': 1,
             
             #Time 

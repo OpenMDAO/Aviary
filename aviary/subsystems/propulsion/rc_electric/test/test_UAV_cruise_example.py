@@ -44,6 +44,9 @@ def CruiseExample():
         'validation_cases/validation_data/test_models/small_scale_uav.csv',
         cruise_phase_info
     )
+
+    number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units = 'm**2');
+    print('Wetted Area:', number)
     
     prob.load_external_subsystems(external_subsystems=[rc_prop, CustomAeroBuilder(), DBFMassBuilder()])
     
@@ -84,6 +87,9 @@ def CruiseExample():
 
     prob.set_val('traj.cruise.controls:rpm_slack', 4000.0, units='rpm')
     prob.set_val('traj.cruise.controls:throttle', 0.3)
+
+    number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units = 'm**2');
+    print('Wetted Area:', number)
     
     prob.run_aviary_problem(run_driver=True)
 
@@ -134,7 +140,7 @@ class TestUAVCruiseExample(unittest.TestCase):
         reports_dir = Path(__file__).resolve().parent / 'reports'
         reports_dir.mkdir(parents=True, exist_ok=True)
         with open(reports_dir / 'output_list.txt', 'w') as outfile:
-            prob.model.list_outputs(out_stream=outfile)
+            prob.model.list_outputs(out_stream=outfile, units=True, print_arrays=True, hierarchical=True)
         # # Print only driver-level constraints in a list_vars-like table.
         # prob.list_driver_vars(
         #     print_arrays=True,

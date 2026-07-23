@@ -196,8 +196,9 @@ class RCPropMission(om.Group):
 
         """Constraints"""
               # Force commanded cruise RPM to match motor-computed RPM.
-        self.add_constraint('rpm_balance.rpm_defect', upper=0.004, lower=-0.004, ref = 100, units='rev/s')
+        self.add_constraint('rpm_balance.rpm_defect', upper=0.004, lower=0.0, ref = 1000, units='rev/s')
         self.add_constraint('energy_constraint', lower=0.0, indices=[-1], units='W*h')
+        
         
 
         self.options['auto_order'] = True
