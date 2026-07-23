@@ -45,6 +45,8 @@ from aviary.utils.csv_data_file import read_data_file
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
+from aviary.variable_info.enums import AtmosphereModel
 
 MACH = EngineModelVariables.MACH
 ALTITUDE = EngineModelVariables.ALTITUDE
@@ -310,7 +312,12 @@ class EngineDeck(EngineModel):
 
         # convert geopotential altitude to geometric if required
         if self.get_val(Aircraft.Engine.GEOPOTENTIAL_ALT):
-            self.data[ALTITUDE] = convert_geopotential_altitude(self.data[ALTITUDE])
+            # check which planet we are on
+            _, planet, _, _, _ = get_atmosphere_data(self.options.get_val(Settings.ATMOSPHERE_MODEL))
+            if planet == 'Earth':
+                self.data[ALTITUDE] = convert_geopotential_altitude(self.data[ALTITUDE])
+            else:
+                warnings.warn('convert_geopotential_altitude() is not calibrated to work for non-earth planets.')
 
         # sort and organize data
         self._pack_data()
