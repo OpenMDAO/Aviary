@@ -17,7 +17,7 @@ class RCPropPreMission(om.Group):
     """Calculate RC electric propulsion premission motor and battery properties."""
 
     def initialize(self):
-        
+        add_aviary_option(self, Aircraft.Engine.Motor.MAX_CONT_CURRENT, units='A', val=100.0)  # max continuous current
         add_aviary_option(self, Aircraft.Engine.Motor.KV_EQ_SLOPE)    # m = KV_EQ_SLOPE
         add_aviary_option(self, Aircraft.Engine.Motor.KV_EQ_INT)      # b = KV_EQ_INT
       
@@ -35,12 +35,13 @@ class RCPropPreMission(om.Group):
         # idle current
         # max continuous current
         # motor mass
+
+        max_cont_current = self.options[Aircraft.Engine.Motor.MAX_CONT_CURRENT][0]
         
-        #TODO: CITE!
+        
         self.add_subsystem(
             'energy_calc',
             om.ExecComp(
-                #TODO: may add options here
                 'energy = voltage_in * (battery_mass * 7.3 - 0.246)',
                 energy={'val': 0.0, 'units': 'W*h'},
                 voltage_in={'val': 0.0, 'units': 'V'},
@@ -68,13 +69,13 @@ class RCPropPreMission(om.Group):
                 'kv = m * max_current / (motor_mass * 1000.0) + b', # The KV empirical fit appears to use motor mass in grams. Aviary provides motor_mass here in kg, so convert kg -> g. or else the number becomes unrealistically high.
 
                 kv={'val': 0.0, 'units': 'rpm/V'},
-                max_current={'val': 0.0, 'units': 'A'},
+                max_current={'val': max_cont_current, 'units': 'A'},
                 motor_mass={'val': 0.0, 'units': 'kg'},
                 m=self.options[Aircraft.Engine.Motor.KV_EQ_SLOPE],
                 b=self.options[Aircraft.Engine.Motor.KV_EQ_INT],
             ),
             promotes_inputs=[
-                ('max_current', Aircraft.Engine.Motor.MAX_CONT_CURRENT),
+                
                 ('motor_mass', Aircraft.Engine.Motor.MASS),
             ],
             promotes_outputs=[('kv', Aircraft.Engine.Motor.KV)]
@@ -92,3 +93,8 @@ class RCPropPreMission(om.Group):
         #     promotes_inputs=[('batt_mass', Aircraft.Battery.MASS), ('motor_mass', Aircraft.Engine.Motor.MASS)],
         #     promotes_outputs=[('engine_mass', Aircraft.Engine.MASS)]
         # )
+
+
+        self.set_input_defaults(Aircraft.Battery.VOLTAGE, val=22.2, units='V')
+        
+        self.set_input_defaults(Aircraft.Engine.Motor.IDLE_CURRENT, val=2.2, units='A')

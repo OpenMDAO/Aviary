@@ -2,7 +2,7 @@ import numpy as np
 import os
 from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft
 from aviary.subsystems.mass.UAV_mass.utils.materials_database import materials
-
+from aviary.utils.functions import get_path
 '''
 These are the functions currently needed to load the airfoil 
 CSV into the UAV mass wing and tail components
@@ -39,7 +39,8 @@ def load_airfoil_if_needed(comp, Part):
         return
 
     path = comp.options[Part.AIRFOIL_PATH]
-
+    
+    path = get_path(path)
     
 
     x, y = load_airfoil_csv(path, header=True)

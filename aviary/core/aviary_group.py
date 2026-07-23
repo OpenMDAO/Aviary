@@ -965,13 +965,13 @@ class AviaryGroup(om.Group):
             self.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL,
                 lower=0.0,
-                ref=1e7,
+                ref=10,
             )
         else:
             self.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL,
                 equals=0.0,
-                ref=1e7,
+                ref=10,
             )
 
         # If a target distance (or time) has been specified for this phase distance (or time) is
@@ -1005,7 +1005,7 @@ class AviaryGroup(om.Group):
                 self.add_constraint(
                     f'{phase_name}_distance_constraint.distance_resid',
                     equals=0.0,
-                    ref=1e-3,
+                    ref=1,
                 )
 
             # this is only used for analytic phases with a target duration
@@ -1037,7 +1037,7 @@ class AviaryGroup(om.Group):
                 self.add_constraint(
                     f'{phase_name}_duration_constraint.duration_resid',
                     equals=0.0,
-                    ref=1e2,
+                    ref=10,
                 )
 
         ecomp = om.ExecComp(
@@ -1524,19 +1524,36 @@ class AviaryGroup(om.Group):
             if problem_type is ProblemType.SIZING:
                 self.add_design_var(
                     Aircraft.Design.GROSS_MASS,
-                    lower=10,
-                    upper=900.0e3,
+                    lower=2,
+                    upper=50,
                     units='lbm',
-                    ref=175.0e2,
+                    ref=10,
                 )
                 self.add_design_var(
                     Mission.GROSS_MASS,
-                    lower=10,
-                    upper=900.0e3,
+                    lower=2,
+                    upper=50,
                     units='lbm',
-                    ref=175.0e2,
+                    ref=1,
                 )
 
+                # self.add_subsystem(
+                #                     'gtow_constraint',
+                #                     om.ExecComp(
+                #                         'gtow_resid = design_mass - actual_mass',
+                #                         design_mass={'val': 10, 'units': 'kg'},
+                #                         actual_mass={'val': 0, 'units': 'kg'},
+                #                         gtow_resid={'val': 30, 'units': 'kg'},
+                #                     ),
+                #                     promotes_inputs=[
+                #                         ('design_mass', Aircraft.Design.GROSS_MASS),
+                #                         ('actual_mass', Mission.GROSS_MASS),
+                #                     ],
+                #                     promotes_outputs=['gtow_resid'],
+                
+                #                 )
+                
+                # self.add_constraint('gtow_constraint.gtow_resid', lower=0.004, upper=0.004, ref=100, units='kg')
                 self.add_subsystem(
                     'gtow_constraint',
                     om.EQConstraintComp(
@@ -1544,6 +1561,7 @@ class AviaryGroup(om.Group):
                         eq_units='lbm',
                         normalize=True,
                         add_constraint=True,
+                        ref = 1e5
                     ),
                     promotes_inputs=[
                         ('lhs:GTOW', Aircraft.Design.GROSS_MASS),
@@ -1552,7 +1570,7 @@ class AviaryGroup(om.Group):
                 )
 
                 if self.require_range_residual:
-                    self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
+                    self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1)
 
             elif problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
                 # target range problem
@@ -1567,7 +1585,7 @@ class AviaryGroup(om.Group):
                     ref=MTOW,
                 )
 
-                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
+                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1)
 
             elif problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
                 # fixed vehicle gross mass aviary finds optimal trajectory and maximum range
@@ -1588,7 +1606,7 @@ class AviaryGroup(om.Group):
                 # TODO: RANGE_RESIDUAL constraint should be added based on what the
                 # user sets as the objective. if Objective is not range or Mission.RANGE,
                 # the range constriant should be added to make target rage = summary range
-                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
+                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1)
 
                 # We must ensure that design.gross_mass is greater than  Mission.GROSS_MASS
                 # and this must hold true for each of the different missions that is flown the

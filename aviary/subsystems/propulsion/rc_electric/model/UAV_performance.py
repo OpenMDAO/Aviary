@@ -14,6 +14,37 @@ add_aviary_input = partial(_add_aviary_input, meta_data=ExtendedMetaData)
 add_aviary_output = partial(_add_aviary_output, meta_data=ExtendedMetaData)
 add_aviary_option = partial(_add_aviary_option, meta_data=ExtendedMetaData)
 
+
+#This only works if we already know how many batteries we have. 
+class Throttle(om.ExplicitComponent):
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Engine.Motor.MAX_CONT_CURRENT, val=100.0, units='A')
+        self.options.declare('num_nodes', default=1, types=int)
+    def setup(self):
+        nn = self.options['num_nodes']
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THROTTLE, shape=(nn), units='unitless')
+
+        self.add_output(Dynamic.Vehicle.Propulsion.CURRENT, shape=(nn), units='A')
+
+    def setup_partials(self):
+        nn = self.options['num_nodes']
+        max_current = self.options[Aircraft.Engine.Motor.MAX_CONT_CURRENT][0]
+        self.declare_partials(Dynamic.Vehicle.Propulsion.CURRENT, Dynamic.Vehicle.Propulsion.THROTTLE, val=max_current, rows=np.arange(nn), cols=np.arange(nn))
+
+
+    def compute(self, inputs, outputs):
+        throttle = inputs[Dynamic.Vehicle.Propulsion.THROTTLE]
+        max_current = self.options[Aircraft.Engine.Motor.MAX_CONT_CURRENT][0]
+        outputs[Dynamic.Vehicle.Propulsion.CURRENT] = throttle * max_current
+
+
+
+    
+    
+
+    
+
+
 class Battery(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -25,8 +56,6 @@ class Battery(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Battery.VOLTAGE, units = "V")
         add_aviary_input(self, Aircraft.Battery.RESISTANCE, units='ohm')
         add_aviary_input(self, Dynamic.Vehicle.Propulsion.CURRENT, shape=(nn,), units='A')
-        add_aviary_input(self, Aircraft.Battery.MASS,  units= 'kg')
-        # self.add_input('current', val=np.zeros(nn), units='A')
 
         self.add_output('voltage_out', val=np.zeros(nn), units='V')
         self.add_output('power', val=np.zeros(nn), units='W')
@@ -137,9 +166,9 @@ class Motor(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Aircraft.Engine.Motor.MASS, units= 'kg')
+        
         add_aviary_input(self, Aircraft.Engine.Motor.IDLE_CURRENT,  units='A')
-        add_aviary_input(self, Aircraft.Engine.Motor.MAX_CONT_CURRENT, units='A')
+        
         add_aviary_input(self, Aircraft.Engine.Motor.RESISTANCE, units='ohm')
         add_aviary_input(self, Aircraft.Engine.Motor.KV, units='rpm/V')
         self.add_input('voltage_in', val=np.zeros(nn), units = 'V')
@@ -152,8 +181,7 @@ class Motor(om.ExplicitComponent):
         # (no bound here: RPM is derated via load_factor instead; an output upper= is inert on an explicit comp anyway)
         ################ TODO Alex #####################
         self.add_output('power', val=np.zeros(nn), units='W')
-        self.add_output('current_constraint', val=np.zeros(nn), units='A', desc='Ensure that you are not going over max amperage/NEGATIVE IS GOOD')
-
+        
         ar=np.arange(nn)
 
         self.declare_partials(
@@ -179,18 +207,9 @@ class Motor(om.ExplicitComponent):
             [Aircraft.Engine.Motor.RESISTANCE, Aircraft.Engine.Motor.IDLE_CURRENT]
         )
 
-        self.declare_partials(
-            'current_constraint',
-            # 'current',
-            Dynamic.Vehicle.Propulsion.CURRENT,
-            rows=ar, cols=ar
-        )
+       
 
-        self.declare_partials(
-            'current_constraint', 
-            Aircraft.Engine.Motor.MAX_CONT_CURRENT,
-            rows=ar, cols=np.zeros(nn, dtype=int)
-        )
+       
 
     def compute(self, inputs, outputs):
         R = inputs[Aircraft.Engine.Motor.RESISTANCE]
@@ -199,7 +218,7 @@ class Motor(om.ExplicitComponent):
         voltage_prop = inputs['voltage_in'] - inputs['current'] * R
         outputs[Dynamic.Vehicle.Propulsion.RPM] = lf * kv * voltage_prop
         outputs['power'] = -inputs['current']**2 * R - inputs[Aircraft.Engine.Motor.IDLE_CURRENT] * voltage_prop
-        outputs['current_constraint'] = inputs[Dynamic.Vehicle.Propulsion.CURRENT] - inputs[Aircraft.Engine.Motor.MAX_CONT_CURRENT] 
+        
 
     def compute_partials(self, inputs, partials):
         nn = self.options['num_nodes']
@@ -221,8 +240,8 @@ class Motor(om.ExplicitComponent):
         partials['power', Aircraft.Engine.Motor.RESISTANCE] = -inputs['current']**2 - inputs[Aircraft.Engine.Motor.IDLE_CURRENT] * dvoltage_prop_dresistance
         partials['power', Aircraft.Engine.Motor.IDLE_CURRENT] = -voltage_prop
         
-        partials['current_constraint', Aircraft.Engine.Motor.MAX_CONT_CURRENT] = -np.ones(nn)
-        partials['current_constraint', Dynamic.Vehicle.Propulsion.CURRENT] = np.ones(nn)
+        
+        
 
 
 #TODO: reading in of data should be changed later:
@@ -363,53 +382,6 @@ class Propeller(om.ExplicitComponent):
 
         partials['rpm_constraint', Dynamic.Vehicle.Propulsion.RPM] = np.ones(len(n))
         partials['rpm_constraint', Aircraft.Engine.Propeller.DIAMETER] = 63.5 / D**2
-
-
-class PowerResiduals(om.ExplicitComponent):
-    def initialize(self):
-        self.options.declare('num_nodes', default=1, types=int)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-        self.add_input('power_batt', val=np.zeros(nn), units='W')
-        self.add_input('power_esc', val=np.zeros(nn), units='W')
-        self.add_input('power_motor', val=np.zeros(nn), units='W')
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.PROP_POWER, shape=(nn,), units='W')
-
-        self.add_output('power_net', val=np.ones(nn), ref=1e3, units='W')
-
-        self.declare_partials('*', '*', method='cs')
-
-    def compute(self, inputs, outputs):
-        outputs['power_net'] = inputs['power_batt'] + inputs['power_esc'] + inputs['power_motor'] - inputs[Dynamic.Vehicle.Propulsion.PROP_POWER]
-
-
-class PowerImplicit(om.ImplicitComponent):
-    def initialize(self):
-        self.options.declare('num_nodes', default=1, types=int)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-        self.add_input('power_batt', val=np.zeros(nn), units='W')
-        self.add_input('power_esc', val=np.zeros(nn), units='W')
-        self.add_input('power_motor', val=np.zeros(nn), units='W')
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.PROP_POWER, shape=(nn,), units='W')
-
-        self.add_output(Dynamic.Vehicle.Propulsion.CURRENT, lower=np.zeros(nn), val=np.ones(nn)*30, units='A')
-
-        # Residual depends only on the input powers, not on its own CURRENT state
-        # (that coupling is resolved at the group level), so declaring '*','*' would
-        # flag the zero (CURRENT, CURRENT) self-derivative. List the inputs explicitly.
-        self.declare_partials(
-            Dynamic.Vehicle.Propulsion.CURRENT,
-            ['power_batt', 'power_esc', 'power_motor', Dynamic.Vehicle.Propulsion.PROP_POWER],
-            method='cs',
-        )
-
-    def apply_nonlinear(self, inputs, outputs, residuals):
-        power_in = inputs['power_batt'] + inputs['power_esc'] + inputs['power_motor']
-        residuals[Dynamic.Vehicle.Propulsion.CURRENT] = power_in - inputs[Dynamic.Vehicle.Propulsion.PROP_POWER]
-
 
 
 

@@ -5,14 +5,10 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
-from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import Battery
-from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import Motor
-from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import Propeller
-from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import ElectronicSpeedController
-from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import Vectorization
-from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import PropCoefficients
-from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import PowerResiduals
-from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import PowerImplicit
+from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import (
+    Battery, Motor, Propeller, ElectronicSpeedController, Vectorization, PropCoefficients
+)
+
 from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 
 class TestBattery(unittest.TestCase):
@@ -56,7 +52,6 @@ class TestMotor(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Aircraft.Engine.Motor.IDLE_CURRENT, 0.91, units='A')
-        prob.set_val(Aircraft.Engine.Motor.MAX_CONT_CURRENT, 120, units='A')
         prob.set_val(Aircraft.Engine.Motor.RESISTANCE, 0.032, units='ohm')
         prob.set_val(Aircraft.Engine.Motor.KV, 420, units='rpm/V')
         prob.set_val('voltage_in', 22.2, units='V')
@@ -74,19 +69,13 @@ class TestMotor(unittest.TestCase):
         
         rpm = prob.get_val(Dynamic.Vehicle.Propulsion.RPM, units='rpm')
         power = prob.get_val('power', units='W')
-        current_constraint = prob.get_val('current_constraint', units='A')
+        
 
-        #power = -I**2 * R - idle * voltage_prop = -10**2 * 0.032 - 0.91 * 21.88 = -32 - 19.9 = -51.9 W
-
-        # current_constraint = Dynamic.Vehicle.Propulsion.CURRENT - Aircraft.Engine.Motor.MAX_CONT_CURRENT = 10 - 120 = -110 A
-
-
-        # prob.model.list_inputs(units=True, prom_name=True)
-        # prob.model.list_outputs(units=True, prom_name=True, residuals=True)
+        
 
         assert_near_equal(rpm, np.full(nn, 9189.6), tolerance=1e-5)
         assert_near_equal(power, np.full(nn, -23.1108), tolerance=1e-5)
-        assert_near_equal(current_constraint, np.full(nn, -110.0), tolerance=1e-8)
+        
        
         partial_data = prob.check_partials(
             out_stream=None,
@@ -106,7 +95,7 @@ class TestPropeller(unittest.TestCase):
         prob.model.add_subsystem('propeller', Propeller(num_nodes=nn), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 20, units='inch')
+        prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 19, units='inch')
         prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.full(nn, 1000))
         prob.set_val(Dynamic.Atmosphere.DENSITY, 1.225, units='kg/m**3')
         prob.set_val('ct', np.full(nn, 0.1))
@@ -176,78 +165,8 @@ class TestESC(unittest.TestCase):
         assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
 
         
-class TestPowerResiduals(unittest.TestCase):
-    @use_tempdirs
-    def test_power_residuals(self):
-        nn = 3
-
-        prob = om.Problem()
-        prob.model.add_subsystem('power_residuals', PowerResiduals(num_nodes=nn), promotes=['*'])
-        prob.setup(force_alloc_complex=True)
-
-        prob.set_val('power_batt', np.full(nn, 222.0), units='W')
-        prob.set_val('power_esc', np.full(nn, 222.0), units='W')
-        prob.set_val('power_motor', np.full(nn, 222.0), units='W')
-        prob.set_val(Dynamic.Vehicle.Propulsion.PROP_POWER, np.full(nn, 666.0), units='W')
-
-        prob.run_model()
-        prob.model.list_inputs(units=True, prom_name=True)
-        prob.model.list_outputs(units=True, prom_name=True, residuals=True)
-        residual = prob.get_val('power_net', units='W') #expected 0
-        expected_residual = np.full(nn, 0.0)
-        assert_near_equal(residual, expected_residual, tolerance=1e-5)
-
-        partial_data = prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-            )
-        
-        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
 
         
-class TestPowerImplicit(unittest.TestCase):
-    @use_tempdirs
-    def test_power_implicit(self):
-        nn = 3
-        comp = PowerImplicit(num_nodes=nn)
-        prob = om.Problem()
-        prob.model.add_subsystem('power_implicit', PowerImplicit(num_nodes=nn), promotes=['*'])
-        prob.setup(force_alloc_complex=True)
-        prob.set_val('power_batt', np.full(nn, 222.0), units='W')
-        prob.set_val('power_esc', np.full(nn, 222.0), units='W')
-        prob.set_val('power_motor', np.full(nn, 222.0), units='W')
-        prob.set_val(Dynamic.Vehicle.Propulsion.PROP_POWER, np.full(nn, 666.0), units='W')
-
-        inputs = {
-            'power_batt': np.full(nn, 222.0),
-            'power_esc': np.full(nn, 222.0),
-            'power_motor': np.full(nn, 222.0),
-            Dynamic.Vehicle.Propulsion.PROP_POWER: np.full(nn, 666.0),
-        }
-        
-        prob.run_model()
-        prob.model.list_inputs(units=True, prom_name=True)
-        prob.model.list_outputs(units=True, prom_name=True, residuals=True)
-        current_flow = prob.get_val(Dynamic.Vehicle.Propulsion.CURRENT, units='A')
-        residuals = {Dynamic.Vehicle.Propulsion.CURRENT: np.zeros(nn)}
-        comp.apply_nonlinear(inputs,{}, residuals)
-
-        expected_residual = np.full(nn, 0.0)
-        assert_near_equal(current_flow, np.full(nn, 30.0), tolerance=1e-8)
-        assert_near_equal(residuals[Dynamic.Vehicle.Propulsion.CURRENT], np.zeros(nn), 1e-5)
-
-        partial_data = prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-        )
-
-        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
 
 
 class TestVectorization(unittest.TestCase):
