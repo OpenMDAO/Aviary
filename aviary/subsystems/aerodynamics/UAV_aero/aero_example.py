@@ -18,6 +18,7 @@ THE ERROR:
 
 import openmdao.api as om
 import numpy as np
+np.seterr(divide='raise', invalid='raise')
 import matplotlib.pyplot as plt
 
 import aviary.api as av
@@ -33,6 +34,7 @@ aero_builder = AeroBuilder(name='uav_aero')
 phase_info = {
     'pre_mission': {
         'include_takeoff': False,
+        'external_subsystems': [],
         'optimize_mass': True,
     },
 
@@ -81,7 +83,7 @@ optimizer = 'IPOPT'
 
 prob = av.AviaryProblem(verbosity=1)
 
-prob.load_inputs('aviary/validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv', phase_info=phase_info)
+prob.load_inputs('aviary/validation_cases/validation_data/test_models/small_scale_uav.csv', phase_info=phase_info)
 print("Builder name:", aero_builder.name)
 prob.load_external_subsystems([aero_builder])
 
@@ -144,10 +146,24 @@ prob.build_model()
 #})
 
 prob.setup()
+prob.set_initial_guesses()
+# Generate an N2 diagram of the entire Aviary/OpenMDAO model.
+om.n2(
+    prob,
+    outfile='uav_aero_full_n2.html',
+    show_browser=True,
+    title='UAV Aero Aviary Full Model',
+)
+prob.run_model() 
+print('\nALPHA COMPONENT INPUTS:')
 
-prob.run_model()
-#prob.set_initial_guesses()
-
+prob.model.list_inputs(
+    includes=['*alpha_comp*'],
+    val=True,
+    units=True,
+    prom_name=True,
+    print_arrays=True,
+)
 #prob.run_aviary_problem()
 
 #with open("variables.txt", "w") as f:
@@ -156,7 +172,7 @@ prob.run_model()
 #Commented out get_val's are not recognized at the moment and I don't know why
 print('Lift:', prob.get_val('traj.cruise.rhs_all.lift', units='lbf')) 
 print('Drag:', prob.get_val('traj.cruise.rhs_all.drag', units='lbf'))
-print('CL:', prob.get_val('traj.cruise.rhs_all.lifting_surface_CL'))
+print('CL:',prob.get_val('traj.cruise.rhs_all.lift_coefficient'),)
 print('CD:', prob.get_val('traj.cruise.rhs_all.drag_coefficient'))
 
 print('CD_fus:', prob.get_val('traj.cruise.rhs_all.CD_fus'))

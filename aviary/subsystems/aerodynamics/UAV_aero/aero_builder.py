@@ -49,7 +49,7 @@ class AeroBuilder(SubsystemBuilder):
             Dynamic.Vehicle.DRAG,
             Dynamic.Vehicle.DRAG_COEFFICIENT,
             'alpha',
-            'lifting_surface_CL',
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
             'lifting_surface_CD',
             'CD_fus',
             'CD_vtail',
@@ -74,6 +74,10 @@ class AeroBuilder(SubsystemBuilder):
         params[Aircraft.Wing.INCIDENCE] = {
             'units': 'deg',
             'static_target': True
+        }
+        params[Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR] = {
+        'units': 'unitless',
+        'static_target': True,
         }
         params[Aircraft.HorizontalTail.SPAN] = {
             'units': 'm',
@@ -116,4 +120,4 @@ class AeroBuilder(SubsystemBuilder):
         )
     
     def needs_mission_solver(self, aviary_inputs=None, subsystem_options=None, **kwargs):
-        return True      #changed from false to true
+        return False      #changed from false to true
