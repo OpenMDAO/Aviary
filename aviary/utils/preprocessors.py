@@ -92,6 +92,21 @@ def preprocess_options(
         ):
             aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
 
+    # preprocess atmosphere / GRAV??
+    # Set the gravity model based on the atmosphere model to enable calculation of weight from mass
+    from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
+
+    if Settings.ATMOSPHERE_MODEL not in aviary_options:
+        aviary_options.set_val(
+            Settings.ATMOSPHERE_MODEL, meta_data[Settings.ATMOSPHERE_MODEL]['default_value']
+        )
+    _, _, _, planet_gravity = get_atmosphere_data(aviary_options.get_val(Settings.ATMOSPHERE_MODEL))
+    if Mission.GRAVITY not in aviary_options:  # Check to see if the user has set a gravity profile.
+        # No gravity profile is set, set it now.
+        aviary_options.set_val(
+            Mission.GRAVITY, val=planet_gravity[0], units=planet_gravity[1]
+        )  # contains both value and units as a tuple.
+
 
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
     """

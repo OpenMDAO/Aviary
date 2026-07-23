@@ -1,23 +1,10 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Cold import atm_data as cold_210A
-from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Hot import atm_data as hot_210A
-from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Polar import atm_data as polar_210A
-from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Tropical import atm_data as tropical_210A
-from aviary.subsystems.atmosphere.data.StandardAtm1976 import atm_data as USatm1976
-from aviary.subsystems.atmosphere.data.MarsReference2024 import atm_data as MarsReference2024
-from aviary.subsystems.atmosphere.data.MarsHellasHot import atm_data as MarsHellasHot
-from aviary.subsystems.atmosphere.data.MarsHellasCold import atm_data as MarsHellasCold
-from aviary.subsystems.atmosphere.data.MarsEquatorHot import atm_data as MarsEquatorHot
-from aviary.subsystems.atmosphere.data.MarsEquatorCold import atm_data as MarsEquatorCold
-from aviary.subsystems.atmosphere.data.MarsPolarHot import atm_data as MarsPolarHot
-from aviary.subsystems.atmosphere.data.MarsPolarCold import atm_data as MarsPolarCold
-from aviary.subsystems.atmosphere.data.VenusReference2021 import atm_data as VenusReference2021
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import AtmosphereModel, SpeedType
-from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Dynamic, Settings
+from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
 
 
 class Atmosphere(om.Group):
@@ -117,52 +104,19 @@ class AtmosphereComp(om.ExplicitComponent):
 
         self._dt = self.options['delta_T_Celcius']
 
-        self._R0 = 0  # instantiate and add correct value later
+        self.source_data, self.planet, planet_radius, _ = get_atmosphere_data(
+            self.options[Settings.ATMOSPHERE_MODEL]
+        )
+
+        self._R0 = planet_radius[0]  # in meters
+
         self._geometric = self.options['h_def'] == 'geometric'
         # From the U.S. Standard Atmosphere 1976 publication located here
         # https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
 
         Rs = 8314.32  # J/(kmol*K), Ideal Gas constant
-
-        if self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.STANDARD:
-            self.source_data = USatm1976
-            self.planet = 'Earth'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.TROPICAL:
-            self.source_data = tropical_210A
-            self.planet = 'Earth'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.POLAR:
-            self.source_data = polar_210A
-            self.planet = 'Earth'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.HOT:
-            self.source_data = hot_210A
-            self.planet = 'Earth'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.COLD:
-            self.source_data = cold_210A
-            self.planet = 'Earth'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_REFERENCE:
-            self.source_data = MarsReference2024
-            self.planet = 'Mars'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_HELLAS_HOT:
-            self.source_data = MarsHellasHot
-            self.planet = 'Mars'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_HELLAS_COLD:
-            self.source_data = MarsHellasCold
-            self.planet = 'Mars'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_EQUATOR_HOT:
-            self.source_data = MarsEquatorHot
-            self.planet = 'Mars'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_EQUATOR_COLD:
-            self.source_data = MarsEquatorCold
-            self.planet = 'Mars'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_POLAR_HOT:
-            self.source_data = MarsPolarHot
-            self.planet = 'Mars'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_POLAR_COLD:
-            self.source_data = MarsPolarCold
-            self.planet = 'Mars'
-        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.VENUS_REFERENCE:
-            self.source_data = VenusReference2021
-            self.planet = 'Venus'
+        M_air = 0  #
+        gamma = 0  #
 
         # The constants below are used as a simplification to enable calculation of properties not given by by source data tables
         if self.planet == 'Earth':
@@ -170,7 +124,6 @@ class AtmosphereComp(om.ExplicitComponent):
             gamma = 1.4  # Ratio of specific heats
             self._S = 110.4  # (K) Southerlands constant for Earth air
             self._beta = 1.458e-6  # (s*m*K**(1/2)) viscosity scaling coefficient
-            self._R0 = 6_356_766  # (meters) The effective Earth Radius
         elif self.planet == 'Mars':
             M_air = 43.34  # (kg/kmol), mean molar mass of Mars atmosphere https://descanso.jpl.nasa.gov/propagation/mars/MarsPub_sec4.pdf
             gamma = 1.36  # Ratio of specific heats, Based on averaging values from Hellas_summar, Hellas_winter, Equatorial_summar,
@@ -180,7 +133,6 @@ class AtmosphereComp(om.ExplicitComponent):
             self._beta = 1.503e-6  # (s*m*K**(1/2)) viscosity scaling coefficient calculated from other constants listed for C02
             # https://doc.comsol.com/5.6/doc/com.comsol.help.cfd/cfd_ug_fluidflow_high_mach.08.27.html
             # Calculated via the equation: self_beta = 1.370**10-5 * (273+self._S)/273**(3/2)
-            self._R0 = 3_396_200  # (meters) Mean Equatorial Radius of Mars
         elif self.planet == 'Venus':
             # 96% CO2 atmosphere
             M_air = 43.45  # (kg/kmol) Venus, 12 Apr 2024, by Cedric Gillmann et al. https://arxiv.org/html/2404.07669v2
@@ -189,7 +141,6 @@ class AtmosphereComp(om.ExplicitComponent):
             self._S = 222  # (K) we use the constant for CO2 which is simillar to Mars because this atmosphere is primarily driven by CO2 interaction.
             self._beta = 1.503e-6  # (s*m*K**(1/2)) viscosity scaling coefficient calculated from other constants listed for C02, the same way as was done for Mars
             # the only input the the equation os self._S so this result is the same as Mars
-            self._R0 = 6_051_800  # (meters) Mean Equatorial Radius
 
         self._R_air = Rs / M_air  # (J/ (kg * K)), gas constant for atmosphere
         self._K = gamma * Rs / M_air  # (J/(kg * K))

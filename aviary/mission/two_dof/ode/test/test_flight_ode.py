@@ -116,9 +116,9 @@ class FlightODEClimbTestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: [3.99983993, 4.04378041],
-            Dynamic.Vehicle.LIFT_COEFFICIENT: [0.50719248, 0.61320271],
-            Dynamic.Vehicle.DRAG_COEFFICIENT: [0.02520388, 0.0312557],
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: [3.99983969, 4.04381706],
+            Dynamic.Vehicle.LIFT_COEFFICIENT: [0.50719248, 0.613207],
+            Dynamic.Vehicle.DRAG_COEFFICIENT: [0.02520388, 0.03125595],
             Dynamic.Mission.ALTITUDE_RATE: [52.68288688, 9.32639661],  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
             # ft/s
@@ -127,7 +127,7 @@ class FlightODEClimbTestCase(unittest.TestCase):
                 -11418.00064615,
                 -6042.88107957,
             ],
-            'theta': [0.16776765, 0.08262117],  # rad ([9.47740, 4.59730] deg),
+            'theta': [0.16776764, 0.08262176],  # rad ([9.47740, 4.59730] deg),
             # rad, gamma
             Dynamic.Mission.FLIGHT_PATH_ANGLE: [0.09795727, 0.01204389],
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL: [25555.79617743, 10773.48189764],
@@ -182,9 +182,9 @@ class FlightODEDescenTestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: np.array([3.21974886, 1.20407839]),
-            Dynamic.Vehicle.LIFT_COEFFICIENT: np.array([0.51684124, 0.25916936]),
-            Dynamic.Vehicle.DRAG_COEFFICIENT: np.array([0.02633437, 0.01729238]),
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: np.array([3.21977893, 1.20407788]),
+            Dynamic.Vehicle.LIFT_COEFFICIENT: np.array([0.51684476, 0.25916936]),
+            Dynamic.Vehicle.DRAG_COEFFICIENT: np.array([0.02633452, 0.01729237]),
             # ft/s
             Dynamic.Mission.ALTITUDE_RATE: np.array([-37.03297068, -44.19020778]),
             # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
@@ -193,7 +193,7 @@ class FlightODEDescenTestCase(unittest.TestCase):
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: np.array(
                 [-452.29666667, -997.48350936]
             ),
-            'EAS': [418.57187298, 590.73344999],  # ft/s ([247.95894, 349.99997] kts)
+            'EAS': [418.57044883, 590.73344999],  # ft/s ([247.95894, 349.99997] kts)
             Dynamic.Atmosphere.MACH: [0.8, 0.69721946],
             # gamma, rad ([-2.908332, -3.723388] deg)
             Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.04784061, -0.05986972],
