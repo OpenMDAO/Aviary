@@ -17,15 +17,14 @@ class ExternalSubsystemGroup(om.Group):
     def configure(self):
         promote_aircraft_and_mission_vars(self)
 
-        # Turn on for all ODE systems.
-        self.options['auto_order'] = True
-
 
 class BaseODE(om.Group):
     """The base class for all ODE components."""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        # Turn on for all ODE systems.
         self.options['auto_order'] = True
 
     def initialize(self):
