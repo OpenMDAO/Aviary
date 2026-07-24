@@ -38,10 +38,6 @@ class TaxiTestCase(unittest.TestCase):
             0.0,
         )
 
-    @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse('3.26'),
-        'Skipping due to OpenMDAO version being too low (<3.26)',
-    )
     def test_taxi(self):
         self.prob.setup(check=False, force_alloc_complex=True)
 
