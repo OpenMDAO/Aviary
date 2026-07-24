@@ -7,10 +7,10 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from pathlib import Path
-from aviary.subsystems.aerodynamics.UAV_Aero.custom_aero_builder import CustomAeroBuilder
 from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import phase_info
 from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
+from aviary.subsystems.aerodynamics.UAV_Aero.aero_builder import AeroBuilder
 from aviary.subsystems.propulsion.UAV.model.UAV_mission import UAVPropMission
 from aviary.subsystems.propulsion.UAV.model.UAV_premission import UAVPropPreMission
 from aviary.utils.aviary_values import AviaryValues
@@ -49,7 +49,7 @@ def CruiseExample():
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units = 'm**2');
     print('Wetted Area:', number)
     
-    prob.load_external_subsystems(external_subsystems=[UAV_Prop, CustomAeroBuilder(), DBFMassBuilder()])
+    prob.load_external_subsystems(external_subsystems=[UAV_Prop, AeroBuilder(), DBFMassBuilder()])
     
 
     prob.check_and_preprocess_inputs()
@@ -60,7 +60,7 @@ def CruiseExample():
 
     
 
-    prob.add_driver('IPOPT', use_coloring=False, max_iter=200)
+    prob.add_driver('IPOPT', use_coloring=False, max_iter=15)
    
     prob.driver.opt_settings['print_level'] = 5
     prob.driver.opt_settings['mu_strategy'] = 'adaptive'

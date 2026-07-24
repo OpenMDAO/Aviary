@@ -21,7 +21,7 @@ QUESTIONS:
 import openmdao.api as om
 
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
-from aviary.subsystems.aerodynamics.UAV_aero.aero_model import TotalAircraftAero
+from aviary.subsystems.aerodynamics.UAV_Aero.aero_model import TotalAircraftAero
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 

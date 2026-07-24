@@ -140,6 +140,8 @@ aircraft:wing:sweep,0,deg
 aircraft:wing:taper_ratio,1,unitless
 aircraft:wing:thickness_to_chord_dist,0.145,0.115,0.104,unitless
 aircraft:wing:thickness_to_chord,0.13,unitless
+aircraft:wing:max_thickness_location,0.30,unitless
+aircraft:wing:center_distance,0.50,unitless
 aircraft:wing:type,medium,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless

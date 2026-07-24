@@ -22,8 +22,8 @@ np.seterr(divide='raise', invalid='raise')
 import matplotlib.pyplot as plt
 
 import aviary.api as av
-from aviary.subsystems.aerodynamics.UAV_aero.aero_builder import AeroBuilder
-from aviary.subsystems.aerodynamics.UAV_aero.aero_model import TotalAircraftAero
+from aviary.subsystems.aerodynamics.UAV_Aero.aero_builder import AeroBuilder
+from aviary.subsystems.aerodynamics.UAV_Aero.aero_model import TotalAircraftAero
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.aviary_values import AviaryValues
 

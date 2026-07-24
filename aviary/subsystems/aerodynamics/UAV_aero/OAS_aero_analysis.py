@@ -69,7 +69,7 @@ class AeroConditions(om.ExplicitComponent):
 
         for i in range(nn):
             atm = Atmosphere(h[i])
-            print(i, atm.temperature)
+            # print(i, atm.temperature)
             T[i] = atm.temperature[0]
             rho[i] = atm.density[0]
             mu[i] = atm.dynamic_viscosity[0]
