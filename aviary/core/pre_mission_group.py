@@ -14,6 +14,7 @@ class PreMissionGroup(om.Group):
         Override output aviary variables.
         """
         external_outputs = promote_aircraft_and_mission_vars(self)
+        self.options['auto_order'] = True
 
         pre_mission = self.core_subsystems
         override_aviary_vars(

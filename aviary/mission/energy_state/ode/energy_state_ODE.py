@@ -84,7 +84,7 @@ class EnergyStateODE(_BaseODE):
         # THROTTLE Section
         # TODO: Split this out into a function that can be used by the other ODEs.
         # TODO: Need a thrust residual ref in the phase_info.
-        thrust_res_ref = 1.0e6
+        thrust_res_ref = 1e3
         if num_engine_type > 1:
             # Multi Engine
 
