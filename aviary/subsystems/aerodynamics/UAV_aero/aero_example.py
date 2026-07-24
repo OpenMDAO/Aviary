@@ -29,7 +29,7 @@ from aviary.utils.aviary_values import AviaryValues
 
 from aviary.variable_info.variables import Aircraft, Dynamic
 
-aero_builder = AeroBuilder(name='uav_aero')
+aero_builder = AeroBuilder(name='UAV_aero')
 
 phase_info = {
     'pre_mission': {
