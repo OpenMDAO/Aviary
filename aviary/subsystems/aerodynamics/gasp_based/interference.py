@@ -1,9 +1,12 @@
 import numpy as np
 import openmdao.api as om
 from openmdao.utils import cs_safe as cs
+import warnings
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
+from aviary.variable_info.enums import AtmosphereModel
 
 FCFWC = 1  # Excrescence drag factor
 FCFWT = 1  # Aero technology factors for wing
@@ -335,6 +338,19 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
         self.options.declare('num_nodes', default=1, types=int)
 
         add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
+        add_aviary_option(self, Settings.ATMOSPHERE_MODEL)
+
+        (
+            _,
+            planet,
+            _,
+            _,
+            _,
+        ) = get_atmosphere_data(self.options[Settings.ATMOSPHERE_MODEL])
+        if planet != 'Earth':
+            warnings.warn(
+                'WingFuselageInterferenceMission() is not valid for planets other than earth.'
+            )
 
     def setup(self):
         nn = self.options['num_nodes']

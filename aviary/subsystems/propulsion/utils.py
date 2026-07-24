@@ -106,8 +106,8 @@ def convert_geopotential_altitude(altitude):
             'constants.RADIUS_EARTH is specified in meters,'
             'constants.GRAV_EARTH is specified in m/s**2.'
         )
-    CM1 = 0.99850  # Center of mass (Earth)? Unknown
-    OC2 = 26.76566e-10  # Unknown
+    CM1 = 0.99850  # Oblateness/Gravity exponent (accounts for earth not being perfect sphere)
+    OC2 = 26.76566e-10  # Accounts for centrifugal acceleration due to Earth's rotation
     GNS = 9.8236930  # grav_accel_at_surface_earth? This may or may not account for the rotation rate of the earth as well.
 
     for i, alt in enumerate(altitude):
