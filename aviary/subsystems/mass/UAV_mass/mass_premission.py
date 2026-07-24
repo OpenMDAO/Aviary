@@ -43,3 +43,20 @@ class MassPremission(om.Group):
             promotes_inputs=['*'], 
             promotes_outputs=['*']
         )
+
+        self.add_subsystem(
+            'wing_area_ratios',
+            om.ExecComp(
+                [
+                    'ht_area_ratio = horizontal_tail_area / wing_area',
+                    'vt_area_ratio = vertical_tail_area / wing_area',
+                ],
+                wing_area={'val': 0.0, 'units': 'm**2'},
+                horizontal_tail_area={'val': 0.0, 'units': 'm**2'},
+                vertical_tail_area={'val': 0.0, 'units': 'm**2'},
+                ht_area_ratio={'val': 0.0, 'units': 'unitless'},
+                vt_area_ratio={'val': 0.0, 'units': 'unitless'},
+            ),
+            promotes_inputs=['*'],
+            promotes_outputs=['ht_area_ratio', 'vt_area_ratio'],
+        )

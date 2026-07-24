@@ -112,6 +112,8 @@ class AeroBuilder(SubsystemBuilder):
             'static_target': True
         }
         return params
+
+    
     
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         return TotalAircraftAero(

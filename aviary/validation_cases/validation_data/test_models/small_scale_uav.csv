@@ -70,7 +70,7 @@ aircraft:fuel:ignore_fuel_capacity_constraint,True,unitless
 aircraft:fuel:unusable_fuel_mass_scaler,0.0,unitless
 aircraft:furnishings:mass_scaler,0.0,unitless
 aircraft:fuselage:length,1.1,m
-aircraft:fuselage:mass_scaler,0.0,unitless
+aircraft:fuselage:mass_scaler,1.0,unitless
 aircraft:fuselage:max_height,0.15,m
 aircraft:fuselage:max_width,0.15,m
 aircraft:fuselage:average_height,0.15,m
@@ -83,7 +83,7 @@ aircraft:fuselage:wetted_area_scaler,1.0,unitless
 aircraft:fuselage:wetted_area,0.583,m**2
 aircraft:horizontal_tail:area,0.15642,m**2
 aircraft:horizontal_tail:aspect_ratio,3.0,unitless
-aircraft:horizontal_tail:mass_scaler,0.0,unitless
+aircraft:horizontal_tail:mass_scaler,1.0,unitless
 aircraft:horizontal_tail:taper_ratio,1,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.12,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
@@ -105,7 +105,7 @@ aircraft:propulsion:engine_oil_mass_scaler,0.0,unitless
 aircraft:propulsion:misc_mass_scaler,0.0,unitless
 aircraft:vertical_tail:area,0.063,m**2
 aircraft:vertical_tail:aspect_ratio,3,unitless
-aircraft:vertical_tail:mass_scaler,0.0,unitless
+aircraft:vertical_tail:mass_scaler,1.0,unitless
 aircraft:vertical_tail:num_tails,1,unitless
 aircraft:vertical_tail:taper_ratio,0.33,unitless
 aircraft:vertical_tail:thickness_to_chord,0.12,unitless
@@ -127,7 +127,7 @@ aircraft:wing:input_station_dist,0.,0.2759,0.9367,unitless
 aircraft:wing:load_distribution_control,2.0,unitless
 aircraft:wing:load_fraction,1.0,unitless
 aircraft:wing:load_path_sweep_dist,0.,22.,deg
-aircraft:wing:mass_scaler,0.0,unitless
+aircraft:wing:mass_scaler,1.0,unitless
 aircraft:wing:max_camber_at_70_semispan,0.0,unitless
 aircraft:wing:misc_mass_scaler,0.0,unitless
 aircraft:wing:num_integration_stations,0,unitless
