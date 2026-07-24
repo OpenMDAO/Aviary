@@ -9,6 +9,7 @@ class StaticGroup(om.Group):
 
     This class is used for top pre_mission and post_mission groups.
     """
+
     def setup(self, **kwargs):
         self.options['auto_order'] = True
 
