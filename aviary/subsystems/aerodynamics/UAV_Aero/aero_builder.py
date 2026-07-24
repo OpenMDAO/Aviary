@@ -26,7 +26,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 
 class AeroBuilder(SubsystemBuilder):
-    def __init__(self, name='UAV_aero'):
+    def __init__(self, name='UAV_Aero'):
         super().__init__(name)
 #changed any def get input/output to mission inputs and outputs
     def mission_inputs(self, aviary_inputs=None, user_options=None, subsystem_options=None,

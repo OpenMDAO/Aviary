@@ -29,7 +29,7 @@ from aviary.utils.aviary_values import AviaryValues
 
 from aviary.variable_info.variables import Aircraft, Dynamic
 
-aero_builder = AeroBuilder(name='uav_aero')
+aero_builder = AeroBuilder(name='UAV_Aero')
 
 phase_info = {
     'pre_mission': {
@@ -150,7 +150,7 @@ prob.set_initial_guesses()
 # Generate an N2 diagram of the entire Aviary/OpenMDAO model.
 om.n2(
     prob,
-    outfile='uav_aero_full_n2.html',
+    outfile='UAV_Aero_full_n2.html',
     show_browser=True,
     title='UAV Aero Aviary Full Model',
 )
