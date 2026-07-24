@@ -79,15 +79,16 @@ def CruiseExample():
 
     prob.setup()
 
-
-
+    
     prob.set_solver_print(level=0)
     prob.set_initial_guesses()
     
     # prob.set_val('traj.cruise.states:mass', 4.1, units='kg')
-
-    prob.set_val('traj.cruise.controls:rpm_slack', 4000.0, units='rpm')
-    prob.set_val('traj.cruise.controls:throttle', 0.3)
+    n_state = prob.get_val('traj.cruise.states:energy_used').shape[0]
+    energy_guess = np.linspace(0.0, 16.0, n_state).reshape(-1, 1)
+    prob.set_val('traj.cruise.states:energy_used', energy_guess, units='W*h')
+    prob.set_val('traj.cruise.controls:rpm_slack', 24, units='rev/s')
+    prob.set_val('traj.cruise.controls:throttle', 0.35)
 
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units = 'm**2');
     print('Wetted Area:', number)

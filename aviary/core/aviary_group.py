@@ -965,13 +965,13 @@ class AviaryGroup(om.Group):
             self.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL,
                 lower=0.0,
-                ref=10,
+                ref=1,
             )
         else:
             self.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL,
                 equals=0.0,
-                ref=10,
+                ref=1,
             )
 
         # If a target distance (or time) has been specified for this phase distance (or time) is
@@ -1527,7 +1527,7 @@ class AviaryGroup(om.Group):
                     lower=2,
                     upper=50,
                     units='lbm',
-                    ref=10,
+                    ref=1,
                 )
                 self.add_design_var(
                     Mission.GROSS_MASS,
