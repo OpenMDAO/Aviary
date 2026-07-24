@@ -1000,9 +1000,8 @@ class AviaryProblem(om.Problem):
         # weighted_str looks like:  'model1_fuelburn*0.67*0.5 + model1_gross_mass*0.33*0.5 + model2_fuelburn*0.67*0.5 + model2_gross_mass*0.33*0.5'
 
         kwargs = {}
-        if version.parse(openmdao.__version__) >= version.parse('3.40'):
-            # We can get the correct unit from the source. This prevents a warning.
-            kwargs = {k: {'units_by_conn': True} for k in obj_inputs}
+        # We can get the correct unit from the source. This prevents a warning.
+        kwargs = {k: {'units_by_conn': True} for k in obj_inputs}
 
         # adding composite execComp to super problem
         self.model.add_subsystem(
