@@ -224,10 +224,10 @@ class PayloadGroup(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
-        add_aviary_option(self, Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, units='lbm')
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
+        add_aviary_input(self, Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.Design.CARGO_MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.Design.MAX_CARGO_MASS, units='lbm')
@@ -244,20 +244,44 @@ class PayloadGroup(om.ExplicitComponent):
         )
 
     def setup_partials(self):
+        pax = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        pax_des = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+
+        self.declare_partials(
+            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS,
+            val=pax,
+        )
+
         self.declare_partials(
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
             [Aircraft.CrewPayload.CARGO_MASS],
             val=1.0,
         )
+        self.declare_partials(
+            Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS,
+            val=pax,
+        )
         self.declare_partials('payload_mass_des', [Aircraft.CrewPayload.Design.CARGO_MASS], val=1.0)
+        self.declare_partials(
+            'payload_mass_des',
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS,
+            val=pax_des,
+        )
         self.declare_partials(
             'payload_mass_max', [Aircraft.CrewPayload.Design.MAX_CARGO_MASS], val=1.0
         )
+        self.declare_partials(
+            'payload_mass_max',
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS,
+            val=pax_des,
+        )
 
     def compute(self, inputs, outputs):
-        pax_mass, _ = self.options[Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS]
         pax = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
         pax_des = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+        pax_mass = inputs[Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS]
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
         cargo_mass_des = inputs[Aircraft.CrewPayload.Design.CARGO_MASS]
         cargo_mass_max = inputs[Aircraft.CrewPayload.Design.MAX_CARGO_MASS]
