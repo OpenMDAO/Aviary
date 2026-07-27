@@ -51,6 +51,8 @@ class AeroBuilder(SubsystemBuilder):
             'alpha',
             Dynamic.Vehicle.LIFT_COEFFICIENT,
             'lifting_surface_CD',
+            'ht_area_ratio',
+            'vt_area_ratio',
             'CD_fus',
             'CD_vtail',
             'CD_gear',

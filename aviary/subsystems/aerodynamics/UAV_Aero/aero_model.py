@@ -33,6 +33,28 @@ from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.aerodynamics.UAV_Aero.OAS_aero_analysis import OASAero
 
+
+class WingTailAreaRatios(om.ExplicitComponent):
+    def initialize(self):
+        self.options.declare('num_nodes', types=int)
+
+    def setup(self):
+        nn = self.options['num_nodes']
+        self.add_input(Aircraft.Wing.AREA, val=0.0, units='m**2')
+        self.add_input(Aircraft.HorizontalTail.AREA, val=0.0, units='m**2')
+        self.add_input(Aircraft.VerticalTail.AREA, val=0.0, units='m**2')
+        self.add_output('ht_area_ratio', val=np.zeros(nn), shape=nn, units='unitless')
+        self.add_output('vt_area_ratio', val=np.zeros(nn), shape=nn, units='unitless')
+        self.declare_partials(of='*', wrt='*', method='fd')
+
+    def compute(self, inputs, outputs):
+        nn = self.options['num_nodes']
+        wing_area = inputs[Aircraft.Wing.AREA]
+        ht_ratio = inputs[Aircraft.HorizontalTail.AREA] / wing_area
+        vt_ratio = inputs[Aircraft.VerticalTail.AREA] / wing_area
+        outputs['ht_area_ratio'] = np.full(nn, ht_ratio)
+        outputs['vt_area_ratio'] = np.full(nn, vt_ratio)
+
 class FuselageDrag(om.ExplicitComponent):
     # based on Roskam VI chapter 4
     # assuming rectangular cross section rather than elliptical (hence max height and width rather than diameter)
@@ -277,6 +299,13 @@ class TotalAircraftAero(om.Group):
             LandingGearDrag(num_nodes=nn),
             promotes_inputs=['*'],
             promotes_outputs=['CD_gear', 'D_gear']
+        )
+
+        self.add_subsystem(
+            'wing_tail_area_ratios',
+            WingTailAreaRatios(num_nodes=nn),
+            promotes_inputs=[Aircraft.Wing.AREA, Aircraft.HorizontalTail.AREA, Aircraft.VerticalTail.AREA],
+            promotes_outputs=['ht_area_ratio', 'vt_area_ratio'],
         )
 
         self.add_subsystem(

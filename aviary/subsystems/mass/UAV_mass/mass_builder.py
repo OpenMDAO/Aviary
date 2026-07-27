@@ -136,4 +136,21 @@ class MassBuilder(SubsystemBuilder):
 
         ]
 
+    
+    def get_constraints(self, aviary_inputs=None, **kwargs):
+        return {
+            'ht_area_ratio': {
+                'type': 'boundary',
+                'loc': 'final',
+                'lower': 0.05,
+                'upper': 0.3,
+            },
+            'vt_area_ratio': {
+                'type': 'boundary',
+                'loc': 'final',
+                'lower': 0.03,
+                'upper': 0.2,
+            },
+        }
+
    
