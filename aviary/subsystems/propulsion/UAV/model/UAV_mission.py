@@ -4,7 +4,7 @@ import openmdao.api as om
 from aviary.subsystems.propulsion.UAV.model.UAV_performance import \
     Throttle, Battery, ElectronicSpeedController, Motor, PropCoefficients, Propeller, Vectorization
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.dbf_variables import Aircraft, Dynamic
+from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 
 
 class UAVPropMission(om.Group):
@@ -26,23 +26,17 @@ class UAVPropMission(om.Group):
     def setup(self):
         nn = self.options['num_nodes']
 
-        user_feedforward = self.options['power_balance_mode'] == 'feedforward'
+        
 
 
         # constraint ties the motor to the prop load; in solver mode the solver does.
         motor_load_factor = 1.0
 
-        #in feedforward mode the prop table reads rpm_slack (a bounded
-        # optimizer control) instead of the motor RPM, so the lookup can never
-        # leave the training data. The rpm_balance comps below force the motor
-        # RPM to match it at the optimum.
-        if user_feedforward:
-            rpm_in = [(Dynamic.Vehicle.Propulsion.RPM, 'rpm_slack')]
-            self.set_input_defaults('rpm_slack', val=np.ones(nn) * 60.0, units='rev/s')
-        else:
-            rpm_in = []  # solver mode: motor RPM is connected straight in below
-
-
+     
+       
+        rpm_in = [(Dynamic.Vehicle.Propulsion.RPM, 'rpm_slack')]
+        self.set_input_defaults('rpm_slack', val=np.ones(nn) * 60.0, units='rev/s')
+    
         self.add_subsystem(
             'throttle',
             Throttle(num_nodes=nn),
@@ -196,7 +190,7 @@ class UAVPropMission(om.Group):
 
         """Constraints"""
               # Force commanded cruise RPM to match motor-computed RPM.
-        self.add_constraint('rpm_balance.rpm_defect', upper=0.004, lower=0.0, ref = 1000, units='rev/s')
+        self.add_constraint('rpm_balance.rpm_defect', upper=0.004, lower=-0.004, ref = 10000, units='rev/s')
         self.add_constraint('energy_constraint', lower=0.0, indices=[-1], units='W*h')
         
         

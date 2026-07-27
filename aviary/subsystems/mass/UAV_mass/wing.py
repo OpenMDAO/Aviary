@@ -52,6 +52,38 @@ class WingMass(om.JaxExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.WETTED_AREA, units='m**2', meta_data=ExtendedMetaData, primal_name='wetted_area')
 
         add_aviary_output(self, Aircraft.Wing.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='mass')
+
+
+    def get_self_statics(self):
+        
+
+        return (
+                    self.options[Aircraft.Wing.TYPE],
+
+                    # Simple wing options
+                    self.options[Aircraft.Wing.FOAM_DENSITY],
+                    self.options[Aircraft.Wing.ROD_DENSITY],
+                    self.options[Aircraft.Wing.ROD_RADIUS],
+                    self.options[Aircraft.Wing.ROD_THICKNESS],
+
+                    # Medium wing options
+                    self.options[Aircraft.Wing.NUM_SPARS],
+                    self.options[Aircraft.Wing.RIB_LIGHTENING_FACTOR],
+                    self.options[Aircraft.Wing.RIB_THICKNESS],
+                    self.options[Aircraft.Wing.AREAL_SKIN_DENSITY],
+                    self.options[Aircraft.Wing.SPAR_OUTER_DIAMETER],
+                    self.options[Aircraft.Wing.SPAR_DENSITY],
+                    self.options[Aircraft.Wing.SPAR_WALL_THICKNESS],
+                    self.options[Aircraft.Wing.GLUE_FACTOR],
+                    self.options[Aircraft.Wing.STRINGER_THICKNESS],
+                    self.options[Aircraft.Wing.STRINGER_DENSITY],
+                    self.options[Aircraft.Wing.SHEETING_THICKNESS],
+                    self.options[Aircraft.Wing.SHEETING_COVERAGE],
+                    self.options[Aircraft.Wing.SHEETING_DENSITY],
+                    self.options[Aircraft.Wing.SHEETING_LIGHTENING_FACTOR],
+                    self.options[Aircraft.Wing.NUM_STRINGERS],
+                    self.options[Aircraft.Wing.MISC_MASS],
+                    )               
     
     def compute_primal(self, span, root_chord, wetted_area):
         load_airfoil_if_needed(self, Aircraft.Wing)

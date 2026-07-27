@@ -16,7 +16,7 @@ from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.dbf_variables import Aircraft, Dynamic
+from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
 from aviary.variable_info.enums import LegacyCode
 

@@ -14,12 +14,12 @@ from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
 from aviary.subsystems.propulsion.UAV.model.UAV_mission import UAVPropMission
 from aviary.subsystems.propulsion.UAV.model.UAV_premission import UAVPropPreMission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.dbf_variables import Aircraft, Dynamic
+from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.variable_info.variables import Mission, Settings
 from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft as Mass_Aircraft
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variable_metadata import (
-    ExtendedMetaData,
-)
+
+from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
+
 
 
 #This is where you set the power balance mode for the UAVPropMission. Options are 'feedforward' or 'solver'.
@@ -63,10 +63,10 @@ def CruiseExample():
    
     prob.driver.opt_settings['print_level'] = 5
     prob.driver.opt_settings['mu_strategy'] = 'adaptive'
-    prob.driver.opt_settings['tol'] = 1e-6
-    prob.driver.opt_settings['acceptable_tol'] = 5e-6
-    prob.driver.opt_settings['constr_viol_tol'] = 1e-6
-    prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-6
+    prob.driver.opt_settings['tol'] = 1e-5
+    prob.driver.opt_settings['acceptable_tol'] = 5e-5
+    prob.driver.opt_settings['constr_viol_tol'] = 1e-5
+    prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-5
     # prob.driver.options['debug_print'] = ['desvars', 'objs', 'nl_cons', 'ln_cons']
 
     prob.add_design_variables()
