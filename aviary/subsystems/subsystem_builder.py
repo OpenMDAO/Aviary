@@ -39,7 +39,9 @@ class SubsystemBuilder(ABC):
             meta_data = self._default_metadata
         self.meta_data = meta_data
 
-    def needs_mission_solver(self, aviary_inputs: AviaryValues, subsystem_options: dict) -> bool:
+    def needs_mission_solver(
+        self, aviary_inputs: AviaryValues, user_options: dict, subsystem_options: dict
+    ) -> bool:
         """
         Return True if the mission subsystem needs to be in the solver loop in mission, otherwise
         return False. Aviary will only place it in the solver loop when True. The default is
@@ -49,6 +51,8 @@ class SubsystemBuilder(ABC):
         ----------
         aviary_inputs : AviaryValues
             AviaryValues object containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
         subsystem_options : dict
             Dictionary of optional arguments for this subsystem in this phase.
 

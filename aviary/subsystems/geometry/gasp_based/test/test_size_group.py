@@ -23,7 +23,6 @@ class SizeGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
-        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.0003097, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -32,6 +31,9 @@ class SizeGroupTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.0003097, units='unitless'
+        )
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=25, units='deg')
@@ -145,7 +147,6 @@ class SizeGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
-        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -154,6 +155,9 @@ class SizeGroupTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless'
+        )
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
         self.prob.model.set_input_defaults(
@@ -281,7 +285,6 @@ class SizeGroupTestCase3(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
-        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -290,6 +293,9 @@ class SizeGroupTestCase3(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless'
+        )
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=25, units='deg')
@@ -413,7 +419,6 @@ class SizeGroupTestCase4(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
-        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -422,6 +427,9 @@ class SizeGroupTestCase4(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless'
+        )
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=25, units='deg')

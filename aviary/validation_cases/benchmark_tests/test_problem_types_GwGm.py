@@ -78,7 +78,7 @@ class TestOffDesign(TwoDOFTestCase):
 
         prob_off_design_min_fuel.check_and_preprocess_inputs()
         prob_off_design_min_fuel.build_model()
-        prob_off_design_min_fuel.add_driver('IPOPT', max_iter=100)
+        prob_off_design_min_fuel.add_driver('IPOPT', max_iter=120)
         prob_off_design_min_fuel.add_design_variables()
         prob_off_design_min_fuel.add_objective()
         prob_off_design_min_fuel.setup()

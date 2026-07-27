@@ -4,7 +4,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary import constants
 from aviary.mission.energy_state.phases.simplified_landing import LandingCalc, LandingGroup
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -21,20 +20,12 @@ class LandingCalcTest(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(
-            Mission.FINAL_MASS, val=152800.0, units='lbm'
-        )  # check (this is the design landing mass)
-        self.prob.model.set_input_defaults(
-            Dynamic.Atmosphere.DENSITY,
-            val=constants.RHO_SEA_LEVEL_METRIC,
-            units='kg/m**3',
-        )  # not exact value but should be close enough
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.AREA, val=1370.0, units='ft**2'
-        )  # check (this is the reference wing area)
+        self.prob.model.set_input_defaults(Mission.FINAL_MASS, val=152800.0, units='lbm')
+        self.prob.model.set_input_defaults(Dynamic.Atmosphere.DENSITY, val=1.225, units='kg/m**3')
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.0, units='ft**2')
         self.prob.model.set_input_defaults(
             Mission.Landing.LIFT_COEFFICIENT_MAX, val=3, units='unitless'
-        )  # check
+        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -43,11 +34,10 @@ class LandingCalcTest(unittest.TestCase):
 
         tol = 1e-5
 
+        assert_near_equal(self.prob[Mission.Landing.GROUND_DISTANCE], 6403.64963504, tol)
         assert_near_equal(
-            self.prob[Mission.Landing.GROUND_DISTANCE], 6403.64963504, tol
-        )  # not actual value
-        # not actual value
-        assert_near_equal(self.prob[Mission.Landing.INITIAL_VELOCITY], 136.22914933, tol)
+            self.prob.get_val(Mission.Landing.INITIAL_VELOCITY, units='kn'), 136.22914933, tol
+        )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -65,18 +55,12 @@ class LandingGroupTest(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(
-            Mission.FINAL_MASS, val=152800.0, units='lbm'
-        )  # check (this is the design landing mass)
-        self.prob.model.set_input_defaults(
-            Mission.Landing.INITIAL_ALTITUDE, val=35, units='ft'
-        )  # confirm initial altitude should be 35 ft.
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.AREA, val=1370.0, units='ft**2'
-        )  # check (this is the reference wing area)
+        self.prob.model.set_input_defaults(Mission.FINAL_MASS, val=152800.0, units='lbm')
+        self.prob.model.set_input_defaults(Mission.Landing.INITIAL_ALTITUDE, val=35, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.0, units='ft**2')
         self.prob.model.set_input_defaults(
             Mission.Landing.LIFT_COEFFICIENT_MAX, val=3, units='unitless'
-        )  # check
+        )
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -85,11 +69,10 @@ class LandingGroupTest(unittest.TestCase):
 
         tol = 1e-5
 
+        assert_near_equal(self.prob[Mission.Landing.GROUND_DISTANCE], 6407.65299289, tol)
         assert_near_equal(
-            self.prob[Mission.Landing.GROUND_DISTANCE], 6407.65299289, tol
-        )  # not actual value
-        # not actual value
-        assert_near_equal(self.prob[Mission.Landing.INITIAL_VELOCITY], 136.22914933, tol)
+            self.prob.get_val(Mission.Landing.INITIAL_VELOCITY, units='kn'), 136.29923391, tol
+        )
 
         partial_data = self.prob.check_partials(
             out_stream=None, excludes=['*.standard_atmosphere'], method='cs'

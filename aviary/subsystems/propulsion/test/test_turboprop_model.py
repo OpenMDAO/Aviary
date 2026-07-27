@@ -130,7 +130,6 @@ class TurbopropMissionTest(unittest.TestCase):
                 37.7,
                 610.28630998,
                 647.98630998,
-                # 4183.87495338,
                 -195.8,
             ),
             (
@@ -138,15 +137,13 @@ class TurbopropMissionTest(unittest.TestCase):
                 136.3,
                 4047.57495338,
                 4183.87495338,
-                # 4183.87495338,
                 -644.0,
             ),
             (
-                778.21130479,
+                778.20881977,
                 21.3,
-                558.33650216,
-                579.63650216,
-                # 579.63650216,
+                558.33473407,
+                579.63473407,
                 -839.7,
             ),
         ]
@@ -168,6 +165,7 @@ class TurbopropMissionTest(unittest.TestCase):
         prop_group = ExamplePropModel('custom_prop_model')
 
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
 
         self.prepare_model(options, test_points, prop_model=prop_group)
 
@@ -209,7 +207,6 @@ class TurbopropMissionTest(unittest.TestCase):
                 37.507376,
                 610.67122085,
                 648.17859685,
-                # 4174.43077943,
                 -195.78762,
             ),
             (
@@ -217,15 +214,13 @@ class TurbopropMissionTest(unittest.TestCase):
                 136.3,
                 4047.57495338,
                 4183.87495338,
-                # 4183.87495338,
                 -644.0,
             ),
             (
-                778.21130479,
+                778.20881977,
                 21.3,
-                558.33650216,
-                579.63650216,
-                # 579.63650216,
+                558.33473407,
+                579.63473407,
                 -839.7,
             ),
         ]
@@ -237,6 +232,7 @@ class TurbopropMissionTest(unittest.TestCase):
             1455.13090827,
             units='rpm',
         )
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         self.prepare_model(options, test_points)
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
@@ -276,7 +272,6 @@ class TurbopropMissionTest(unittest.TestCase):
                 0.0,
                 610.28630998,
                 610.28630998,
-                # 4047.57495338,
                 -195.8,
             ),
             (
@@ -284,15 +279,13 @@ class TurbopropMissionTest(unittest.TestCase):
                 0.0,
                 4047.57495338,
                 4047.57495338,
-                # 4047.57495338,
                 -644.0,
             ),
             (
-                778.21130479,
+                778.20881977,
                 0.0,
-                558.33650216,
-                558.33650216,
-                # 558.33650216,
+                558.33473407,
+                558.33473407,
                 -839.7,
             ),
         ]
@@ -304,6 +297,7 @@ class TurbopropMissionTest(unittest.TestCase):
             1455.13090827,
             units='rpm',
         )
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         self.prepare_model(options, test_points)
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
@@ -347,6 +341,7 @@ class TurbopropMissionTest(unittest.TestCase):
             1455.13090827,
             units='rpm',
         )
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
 
         self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True)
 
@@ -364,7 +359,7 @@ class TurbopropMissionTest(unittest.TestCase):
         prop_thrust_expected = total_thrust_expected = [
             610.28631174,
             2083.18866404,
-            184.42047241,
+            184.42091722,
         ]
         electric_power_expected = [0.0, 303.31014553, 303.31014553]
 
@@ -394,6 +389,7 @@ class TurbopropMissionTest(unittest.TestCase):
         shp_file = get_path('electric_motor_1800Nm_6000rpm.csv')
         options.set_val(Aircraft.Engine.Motor.DATA_FILE, shp_file)
         options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         options.delete(Aircraft.Engine.FIXED_RPM)
 
         self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True)
@@ -439,11 +435,12 @@ class TurbopropMissionTest(unittest.TestCase):
         truth_vals = [
             (111.99507922, 37.507376, 910.70245568, 948.20983168, -195.78762),
             (1119.99609612, 136.3, 2752.73508087, 2889.03508087, -644),
-            (778.21130479, 21.3, 558.33650216, 579.63650216, -839.7),
+            (778.20881977, 21.3, 558.33473407, 579.63473407, -839.7),
         ]
 
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         options.delete(Aircraft.Engine.FIXED_RPM)
 
         self.prepare_model(options, test_points)

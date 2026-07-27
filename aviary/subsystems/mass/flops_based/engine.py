@@ -43,10 +43,8 @@ class EngineMass(om.ExplicitComponent):
         scaled_sls_thrust = np.array(inputs[Aircraft.Engine.SCALED_SLS_THRUST])
         scaling_parameter = np.array(inputs[Aircraft.Engine.MASS_SCALER])
 
-        scale_idx = np.where(scale_mass)
-        # indices where scaling is applied and scaling equation is used
-        param_idx = np.where(scaling_parameter[scale_idx] >= 0.3)
-
+        is_power = scale_mass & (scaling_parameter >= 0.3)
+        is_linear = scale_mass & (scaling_parameter < 0.3)
         # default mass is reference mass
         # use dtype to make complex safe
         calc_mass = np.array(ref_engine_mass, dtype=scaled_sls_thrust.dtype)
@@ -54,14 +52,14 @@ class EngineMass(om.ExplicitComponent):
         # scale engine mass using equation chosen by value of user-provided mass scaler
         thrust_ratio = scaled_sls_thrust / ref_sls_thrust
 
-        calc_mass[scale_idx] = (
-            ref_engine_mass[scale_idx]
-            + (scaled_sls_thrust[scale_idx] - ref_sls_thrust[scale_idx])
-            * scaling_parameter[scale_idx]
+        calc_mass[is_linear] = (
+            ref_engine_mass[is_linear]
+            + (scaled_sls_thrust[is_linear] - ref_sls_thrust[is_linear])
+            * scaling_parameter[is_linear]
         )
 
-        calc_mass[param_idx] = (
-            ref_engine_mass[param_idx] * thrust_ratio[param_idx] ** scaling_parameter[param_idx]
+        calc_mass[is_power] = (
+            ref_engine_mass[is_power] * thrust_ratio[is_power] ** scaling_parameter[is_power]
         )
 
         addtl_mass = addtl_mass_fraction * calc_mass
@@ -90,6 +88,8 @@ class EngineMass(om.ExplicitComponent):
 
         scaled_sls_thrust = np.array(inputs[Aircraft.Engine.SCALED_SLS_THRUST])
         scaling_parameter = np.array(inputs[Aircraft.Engine.MASS_SCALER])
+        is_power = scale_mass & (scaling_parameter >= 0.3)
+        is_linear = scale_mass & (scaling_parameter < 0.3)
 
         thrust_ratio = scaled_sls_thrust / ref_sls_thrust
 
@@ -97,27 +97,17 @@ class EngineMass(om.ExplicitComponent):
         thrust_deriv = np.zeros(num_engine_type, dtype=scaled_sls_thrust.dtype)
         scale_deriv = np.zeros(num_engine_type, dtype=scaled_sls_thrust.dtype)
 
-        # engine mass derivatives
-        # indices where scaling is applied
-        scale_idx = np.where(scale_mass)
-        # indices where scaling is applied and scaling equation is used
-        param_idx = np.where(scaling_parameter[scale_idx] >= 0.3)
-
-        thrust_deriv[scale_idx] = scaling_parameter[scale_idx]
+        thrust_deriv[is_linear] = scaling_parameter[is_linear]
         scaled_mass = (
-            ref_engine_mass[param_idx] * thrust_ratio[param_idx] ** scaling_parameter[param_idx]
+            ref_engine_mass[is_power] * thrust_ratio[is_power] ** scaling_parameter[is_power]
         )
-        thrust_deriv[param_idx] = (scaling_parameter[param_idx] * scaled_mass) / scaled_sls_thrust[
-            param_idx
+        thrust_deriv[is_power] = (scaling_parameter[is_power] * scaled_mass) / scaled_sls_thrust[
+            is_power
         ]
 
-        scale_deriv[scale_idx] = scaled_sls_thrust[scale_idx] - ref_sls_thrust[scale_idx]
+        scale_deriv[is_linear] = scaled_sls_thrust[is_linear] - ref_sls_thrust[is_linear]
 
-        scale_deriv[param_idx] = (
-            ref_engine_mass[param_idx] * thrust_ratio[param_idx] ** scaling_parameter[param_idx]
-        )
-        if len(param_idx) > 0:
-            scale_deriv[param_idx] = scaled_mass * np.log(thrust_ratio[param_idx])
+        scale_deriv[is_power] = scaled_mass * np.log(thrust_ratio[is_power])
 
         J[Aircraft.Engine.MASS, Aircraft.Engine.SCALED_SLS_THRUST] = thrust_deriv
 

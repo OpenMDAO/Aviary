@@ -29,9 +29,7 @@ class FlareODE(_BaseODE):
     """Define the ODE for the flare phase of landing."""
 
     def setup(self):
-        options = self.options
-
-        nn = options['num_nodes']
+        nn = self.options['num_nodes']
         self.add_subsystem(name='atmosphere', subsys=Atmosphere(num_nodes=nn), promotes=['*'])
 
         # NOTE: the following are potentially significant differences in implementation
@@ -55,11 +53,9 @@ class FlareODE(_BaseODE):
 
         self.add_subsystems()
 
-        kwargs = {'num_nodes': nn, 'aviary_options': options['aviary_options']}
-
         self.add_subsystem(
             'landing_eom',
-            FlareEOM(**kwargs),
+            FlareEOM(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.VELOCITY,

@@ -351,11 +351,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             )
 
         if aviary_group.post_mission_info['include_landing']:
-            if 'aircraft:wing:area' in aviary_group.aviary_inputs:
-                self._add_landing_systems(aviary_group)
-            else:
-                print('Aircraft.Wing.AREA is not given. Set include_landing = False')
-                aviary_group.post_mission_info['include_landing'] = False
+            self._add_landing_systems(aviary_group)
 
         aviary_group.add_subsystem(
             'range_constraint',
@@ -431,14 +427,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             )
 
     def _add_landing_systems(self, aviary_group):
-        landing_options = Landing(
-            ref_wing_area=aviary_group.aviary_inputs.get_val(Aircraft.Wing.AREA, units='ft**2'),
-            Cl_max_ldg=aviary_group.aviary_inputs.get_val(
-                Mission.Landing.LIFT_COEFFICIENT_MAX
-            ),  # no units
-        )
+        landing_options = Landing()
 
-        landing = landing_options.build_phase(False)
+        landing = landing_options.build_phase(use_detailed=False)
 
         aviary_group.add_subsystem(
             'landing',

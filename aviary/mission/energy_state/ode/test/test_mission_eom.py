@@ -8,7 +8,9 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.ode.mission_EOM import MissionEOM
 from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.functions import setup_model_options
+from aviary.utils.aviary_values import AviaryValues
 
 
 @use_tempdirs
@@ -48,6 +50,13 @@ class MissionEOMTest(unittest.TestCase):
             np.array([40799.6009633346, 11500.32, 42308.2709683461]),
             units='lbf',
         )
+
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+        }
+
+        setup_model_options(prob, AviaryValues(options))
+
         prob.setup(check=False, force_alloc_complex=True)
 
     def test_case(self):
