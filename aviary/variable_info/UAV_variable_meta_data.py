@@ -4,7 +4,7 @@
 from copy import deepcopy
 
 import aviary.api as av
-from aviary.variable_info.dbf_variables import Aircraft, Dynamic
+from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 
 
 ExtendedMetaData = deepcopy(av.CoreMetaData)

@@ -2,8 +2,8 @@ import openmdao.api as om
 from functools import partial
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.dbf_variables import Aircraft, Dynamic
-from aviary.variable_info.dbf_variable_meta_data import ExtendedMetaData
+from aviary.variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
 from aviary.variable_info.functions import add_aviary_input as _add_aviary_input
 from aviary.variable_info.functions import add_aviary_option as _add_aviary_option
 from aviary.variable_info.functions import add_aviary_output as _add_aviary_output

@@ -141,6 +141,8 @@ aircraft:wing:sweep,0,deg
 aircraft:wing:taper_ratio,1,unitless
 aircraft:wing:thickness_to_chord_dist,0.145,0.115,0.104,unitless
 aircraft:wing:thickness_to_chord,0.13,unitless
+aircraft:wing:max_thickness_location,0.30,unitless
+aircraft:wing:center_distance,0.50,unitless
 aircraft:wing:type,medium,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
@@ -155,10 +157,8 @@ mission:landing:lift_coefficient_max,1.4,unitless
 mission:summary:cruise_mach,0.0314,unitless
 mission:summary:fuel_flow_scaler,1.0,unitless
 mission:takeoff:fuel_simple,0,lbm
-
 mission:takeoff:lift_coefficient_max,1.4,unitless
 mission:takeoff:lift_over_drag,8,unitless
-
 settings:equations_of_motion,ENERGY_STATE
 settings:aerodynamics_method,FLOPS
 settings:mass_method,FLOPS

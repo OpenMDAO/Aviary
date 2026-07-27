@@ -6,7 +6,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.propulsion.UAV.model.UAV_premission import UAVPropPreMission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.dbf_variables import Aircraft, Dynamic 
+from aviary.variable_info.UAV_variables import Aircraft, Dynamic 
 
 
 class TestUAVPreMission(unittest.TestCase):

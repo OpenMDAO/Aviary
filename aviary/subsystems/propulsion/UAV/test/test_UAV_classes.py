@@ -9,7 +9,7 @@ from aviary.subsystems.propulsion.UAV.model.UAV_performance import (
     Battery, Motor, Propeller, ElectronicSpeedController, Vectorization, PropCoefficients
 )
 
-from aviary.variable_info.dbf_variables import Aircraft, Dynamic
+from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 
 class TestBattery(unittest.TestCase):
     @use_tempdirs

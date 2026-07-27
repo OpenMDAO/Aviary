@@ -5,7 +5,7 @@ import openmdao.api as om
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.rc_electric.model.UAV_mission import UAVPropMission
-from aviary.variable_info.dbf_variables import Aircraft, Dynamic
+from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 
 
 prob = om.Problem()
