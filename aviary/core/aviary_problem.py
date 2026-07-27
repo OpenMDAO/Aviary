@@ -1237,14 +1237,15 @@ class AviaryProblem(om.Problem):
 
         self.set_initial_guesses(verbosity=None)
 
+        # TODO this breaks if using shape_by_conn (test_shape_by_conn.py fails)
         # generate post-setup N2 - useful if run_aviary_problem() fails
-        outdir = Path(self.get_reports_dir(force=True))
-        outfile = os.path.join(outdir, 'n2.html')
-        om.n2(
-            self,
-            outfile=outfile,
-            show_browser=False,
-        )
+        # outdir = Path(self.get_reports_dir(force=True))
+        # outfile = os.path.join(outdir, 'n2.html')
+        # om.n2(
+        #     self,
+        #     outfile=outfile,
+        #     show_browser=False,
+        # )
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """

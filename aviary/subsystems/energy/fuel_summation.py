@@ -22,10 +22,6 @@ class FuelSummationGroup(om.Group):
 
         add_aviary_option(self, Settings.VERBOSITY)
 
-        # self.options.declare(
-        #     'meta_data', types=dict, desc='Variable meta data used for AviaryProblem'
-        # )
-
         self.options.declare(
             'mission_info', types=dict, desc='Mission info dictionary', default=None
         )
@@ -62,12 +58,6 @@ class FuelSummationGroup(om.Group):
             promotes_outputs=[('fuel_burned', Mission.FUEL_MASS)],
         )
 
-        # self.connect(
-        #     f'traj.{main_phases[-1]}.timeseries.mass',
-        #     'fuel_burned.mass_final',
-        #     src_indices=[-1],
-        # )
-
         # Fuel burn in reserve phases
         if reserve_phases:
             ecomp = om.ExecComp(
@@ -82,19 +72,6 @@ class FuelSummationGroup(om.Group):
                 ecomp,
                 promotes=[('reserve_fuel_burned', Mission.RESERVE_FUEL_MASS)],
             )
-
-            # timeseries has to be used because Breguet cruise phases don't have
-            # states
-            # self.connect(
-            #     f'traj.{reserve_phases[0]}.timeseries.mass',
-            #     'reserve_fuel_burned.mass_initial',
-            #     src_indices=[0],
-            # )
-            # self.connect(
-            #     f'traj.{reserve_phases[-1]}.timeseries.mass',
-            #     'reserve_fuel_burned.mass_final',
-            #     src_indices=[-1],
-            # )
 
         reserve_fuel_margin = self.options[Mission.RESERVE_FUEL_MARGIN]
         if reserve_fuel_margin != 0:
@@ -119,12 +96,6 @@ class FuelSummationGroup(om.Group):
                 ],
                 promotes_outputs=['reserve_fuel_margin_mass'],
             )
-            # connect final mass
-            # self.connect(
-            #     f'traj.{main_phases[-1]}.timeseries.mass',
-            #     'reserve_fuel_frac.final_mass',
-            #     src_indices=[-1],
-            # )
 
         reserve_fuel_mass_additional, units = self.options[Mission.RESERVE_FUEL_MASS_ADDITIONAL]
         reserve_fuel_mass = om.ExecComp(
@@ -187,20 +158,6 @@ class FuelSummationGroup(om.Group):
         )
 
         # determine if the user wants the excess_fuel_capacity constraint active and if so add it to the problem
-        # if Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT in aviary_inputs:
-        #     ignore_capacity_constraint = aviary_inputs.get_val(
-        #         Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, units='unitless'
-        #     )
-        # else:
-        #     ignore_capacity_constraint = meta_data[Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT][
-        #         'default_value'
-        #     ]
-        #     aviary_inputs.set_val(
-        #         Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
-        #         val=ignore_capacity_constraint,
-        #         units='unitless',
-        #     )
-
         if not self.options[Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT]:
             self.add_constraint(
                 Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY, lower=0, ref=1.0e5, units='lbm'

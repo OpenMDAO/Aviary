@@ -90,7 +90,9 @@ class TestFuelSummation(unittest.TestCase):
             except IndexError:
                 pass
             else:
-                raise UserWarning(f'Unexpected onstraints are active in the problem: {constraints}')
+                raise UserWarning(
+                    f'Unexpected constraints are active in the problem: {constraints}'
+                )
 
 
 if __name__ == '__main__':
