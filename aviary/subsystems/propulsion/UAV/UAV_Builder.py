@@ -14,12 +14,12 @@ class UAVBuilder(EngineModel):
     # The duplicate re-declared every constraint and broke the optimizer (TOO_FEW_DOF).
     compute_max_values =True
 
-    def __init__(self, options: AviaryValues = None, name='rc_electric', power_balance_mode='feedforward'):
+    def __init__(self, options: AviaryValues = None, name='rc_electric'):
         """Initializes the PropellerBuilder object with a given name."""
         # aviary_inputs = AviaryValues()
         super().__init__(name, options)
 
-        self.power_balance_mode = power_balance_mode
+        
     def build_pre_mission(self, aviary_inputs, **kwargs):  # m, b,
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
         return UAVPropPreMission(aviary_options=self.options)
@@ -28,7 +28,7 @@ class UAVBuilder(EngineModel):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
 
 
-        return UAVPropMission(num_nodes=num_nodes, aviary_options=self.options, power_balance_mode=self.power_balance_mode)
+        return UAVPropMission(num_nodes=num_nodes, aviary_options=self.options)
    
 
     def get_design_vars(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):

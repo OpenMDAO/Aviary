@@ -19,8 +19,7 @@ from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData as UAVE
 from aviary.variable_info.variables import Mission, Settings
 
 
-#This is where you set the power balance mode for the UAVPropMission. Options are 'feedforward' or 'solver'.
-#Example for solver, RCBBuilder(power_balance_mode='solver')
+
 UAV_Prop = UAVBuilder()  # or 'solver' for the solver-based power balance mode
 
 

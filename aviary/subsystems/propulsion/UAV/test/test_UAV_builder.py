@@ -36,7 +36,7 @@ class TestUAVBuilder(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
 
-        engine = UAVBuilder(options=options, power_balance_mode='feedforward') #change between solver/feedforward to test both modes
+        engine = UAVBuilder(options=options) #change between solver/feedforward to test both modes
         preprocess_propulsion(options, engine_models=[engine])
 
     
