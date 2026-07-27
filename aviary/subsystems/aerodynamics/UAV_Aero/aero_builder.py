@@ -81,6 +81,10 @@ class AeroBuilder(SubsystemBuilder):
         'units': 'unitless',
         'static_target': True,
         }
+        params[Aircraft.Wing.WETTED_AREA] = {
+            'units': 'm**2',
+            'static_target': True,
+        }
         params[Aircraft.HorizontalTail.SPAN] = {
             'units': 'm',
             'static_target': True
@@ -91,6 +95,10 @@ class AeroBuilder(SubsystemBuilder):
         }
         params[Aircraft.HorizontalTail.SWEEP] = {
             'units': 'deg',
+            'static_target': True
+        }
+        params[Aircraft.HorizontalTail.WETTED_AREA] = {
+            'units': 'm**2',
             'static_target': True
         }
         params[Aircraft.Fuselage.MAX_HEIGHT] = {
@@ -111,6 +119,10 @@ class AeroBuilder(SubsystemBuilder):
         }
         params[Aircraft.VerticalTail.ROOT_CHORD] = {
             'units': 'm',
+            'static_target': True
+        }
+        params[Aircraft.VerticalTail.WETTED_AREA] = {
+            'units': 'm**2',
             'static_target': True
         }
         return params

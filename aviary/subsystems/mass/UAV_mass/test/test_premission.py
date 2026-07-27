@@ -4,7 +4,7 @@ import openmdao.api as om
 import os 
 
 from aviary.subsystems.mass.UAV_mass.mass_premission import MassPremission
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft
+from aviary.variable_info.UAV_variables import Aircraft
 from aviary.subsystems.mass.UAV_mass.variable_info.enums import WingType
 class TestMassPremission(unittest.TestCase):
     def set_defaults(self, comp, Aircraft):

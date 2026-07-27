@@ -1,8 +1,8 @@
 import openmdao.api as om
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variable_metadata import (
+from aviary.variable_info.UAV_variables import Aircraft
+from aviary.variable_info.UAV_variable_meta_data import (
     ExtendedMetaData,
 )
 

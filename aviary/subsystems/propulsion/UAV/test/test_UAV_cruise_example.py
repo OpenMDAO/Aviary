@@ -15,12 +15,8 @@ from aviary.subsystems.propulsion.UAV.model.UAV_mission import UAVPropMission
 from aviary.subsystems.propulsion.UAV.model.UAV_premission import UAVPropPreMission
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.UAV_variables import Aircraft, Dynamic
-from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
+from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData as UAVExtendedMetaData
 from aviary.variable_info.variables import Mission, Settings
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft as Mass_Aircraft
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variable_metadata import (
-    ExtendedMetaData,
-)
 
 
 #This is where you set the power balance mode for the UAVPropMission. Options are 'feedforward' or 'solver'.
@@ -32,7 +28,7 @@ UAV_Prop = UAVBuilder()  # or 'solver' for the solver-based power balance mode
 
 
 def CruiseExample():
-    prob = av.AviaryProblem(verbosity=2, meta_data=ExtendedMetaData)
+    prob = av.AviaryProblem(verbosity=2, meta_data=UAVExtendedMetaData)
     prob.options['group_by_pre_opt_post'] = True
         #just selecting cruise
     cruise_phase_info = {

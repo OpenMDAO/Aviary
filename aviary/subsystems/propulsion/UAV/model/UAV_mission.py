@@ -18,15 +18,11 @@ class UAVPropMission(om.Group):
             desc='collection of Aircraft/Mission specific options',
             default=None,
         )
-        self.options.declare(
-            'power_balance_mode', default = 'feedforward', values = ['feedforward', 'solver'], desc = 'Choose between feedforward or solver power balance')
         
-        self.name = 'rcpropulsion_mission'
 
     def setup(self):
         nn = self.options['num_nodes']
 
-        user_feedforward = self.options['power_balance_mode'] == 'feedforward'
 
 
         # constraint ties the motor to the prop load; in solver mode the solver does.
@@ -36,11 +32,10 @@ class UAVPropMission(om.Group):
         # optimizer control) instead of the motor RPM, so the lookup can never
         # leave the training data. The rpm_balance comps below force the motor
         # RPM to match it at the optimum.
-        if user_feedforward:
-            rpm_in = [(Dynamic.Vehicle.Propulsion.RPM, 'rpm_slack')]
-            self.set_input_defaults('rpm_slack', val=np.ones(nn) * 60.0, units='rev/s')
-        else:
-            rpm_in = []  # solver mode: motor RPM is connected straight in below
+        
+        rpm_in = [(Dynamic.Vehicle.Propulsion.RPM, 'rpm_slack')]
+        self.set_input_defaults('rpm_slack', val=np.ones(nn) * 60.0, units='rev/s')
+    
 
 
         self.add_subsystem(

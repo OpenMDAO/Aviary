@@ -40,18 +40,18 @@ class WingTailAreaRatios(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        self.add_input(Aircraft.Wing.AREA, val=0.0, units='m**2')
-        self.add_input(Aircraft.HorizontalTail.AREA, val=0.0, units='m**2')
-        self.add_input(Aircraft.VerticalTail.AREA, val=0.0, units='m**2')
+        self.add_input(Aircraft.Wing.WETTED_AREA, val=0.0, units='m**2')
+        self.add_input(Aircraft.HorizontalTail.WETTED_AREA, val=0.0, units='m**2')
+        self.add_input(Aircraft.VerticalTail.WETTED_AREA, val=0.0, units='m**2')
         self.add_output('ht_area_ratio', val=np.zeros(nn), shape=nn, units='unitless')
         self.add_output('vt_area_ratio', val=np.zeros(nn), shape=nn, units='unitless')
         self.declare_partials(of='*', wrt='*', method='fd')
 
     def compute(self, inputs, outputs):
         nn = self.options['num_nodes']
-        wing_area = inputs[Aircraft.Wing.AREA]
-        ht_ratio = inputs[Aircraft.HorizontalTail.AREA] / wing_area
-        vt_ratio = inputs[Aircraft.VerticalTail.AREA] / wing_area
+        wing_wetted_area = inputs[Aircraft.Wing.WETTED_AREA]
+        ht_ratio = inputs[Aircraft.HorizontalTail.WETTED_AREA] / wing_wetted_area
+        vt_ratio = inputs[Aircraft.VerticalTail.WETTED_AREA] / wing_wetted_area
         outputs['ht_area_ratio'] = np.full(nn, ht_ratio)
         outputs['vt_area_ratio'] = np.full(nn, vt_ratio)
 
@@ -304,7 +304,11 @@ class TotalAircraftAero(om.Group):
         self.add_subsystem(
             'wing_tail_area_ratios',
             WingTailAreaRatios(num_nodes=nn),
-            promotes_inputs=[Aircraft.Wing.AREA, Aircraft.HorizontalTail.AREA, Aircraft.VerticalTail.AREA],
+            promotes_inputs=[
+                Aircraft.Wing.WETTED_AREA,
+                Aircraft.HorizontalTail.WETTED_AREA,
+                Aircraft.VerticalTail.WETTED_AREA,
+            ],
             promotes_outputs=['ht_area_ratio', 'vt_area_ratio'],
         )
 

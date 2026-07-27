@@ -1,7 +1,7 @@
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft
+from aviary.variable_info.UAV_variables import Aircraft
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.subsystems.mass.UAV_mass.mass_premission import MassPremission
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variable_metadata import ExtendedMetaData
+from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
 
 
 class MassBuilder(SubsystemBuilder):
@@ -31,7 +31,7 @@ class MassBuilder(SubsystemBuilder):
             },
             Aircraft.Wing.SPAN: {
                 'units': 'm',
-                'lower': 0.1,
+                'lower': 1.0,
                 'upper': 5.0,
                 'val': 2.0,  
             },
@@ -68,7 +68,7 @@ class MassBuilder(SubsystemBuilder):
             Aircraft.HorizontalTail.SPAN: {
                 'units': 'm',
                 'lower': 0.1,
-                'upper': 5.0,
+                'upper': 2.0,
                 'val': 2.0,  
             },
             Aircraft.HorizontalTail.ROOT_CHORD: {
@@ -86,7 +86,7 @@ class MassBuilder(SubsystemBuilder):
             Aircraft.VerticalTail.SPAN: {
                 'units': 'm',
                 'lower': 0.1,
-                'upper': 5.0,
+                'upper': 2.0,
                 'val': 1.0,  
             },
             Aircraft.VerticalTail.ROOT_CHORD: {

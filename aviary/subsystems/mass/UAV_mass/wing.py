@@ -10,8 +10,8 @@ from aviary.subsystems.mass.UAV_mass.utils.materials_database import materials
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.subsystems.mass.UAV_mass.utils.load_airfoil import load_airfoil_if_needed
 
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variable_metadata import (
+from aviary.variable_info.UAV_variables import Aircraft
+from aviary.variable_info.UAV_variable_meta_data import (
     ExtendedMetaData,
 )
 

@@ -28,13 +28,13 @@ class Throttle(om.ExplicitComponent):
 
     def setup_partials(self):
         nn = self.options['num_nodes']
-        max_current = self.options[Aircraft.Engine.Motor.MAX_CONT_CURRENT][0]
+        max_current = float(np.ravel(np.asarray(self.options[Aircraft.Engine.Motor.MAX_CONT_CURRENT]))[0])
         self.declare_partials(Dynamic.Vehicle.Propulsion.CURRENT, Dynamic.Vehicle.Propulsion.THROTTLE, val=max_current, rows=np.arange(nn), cols=np.arange(nn))
 
 
     def compute(self, inputs, outputs):
         throttle = inputs[Dynamic.Vehicle.Propulsion.THROTTLE]
-        max_current = self.options[Aircraft.Engine.Motor.MAX_CONT_CURRENT][0]
+        max_current = float(np.ravel(np.asarray(self.options[Aircraft.Engine.Motor.MAX_CONT_CURRENT]))[0])
         outputs[Dynamic.Vehicle.Propulsion.CURRENT] = throttle * max_current
 
 

@@ -5,7 +5,7 @@ from aviary.subsystems.mass.UAV_mass.fuselage import FuselageMass
 from aviary.subsystems.mass.UAV_mass.horizontaltail import HorizontalTailMass
 from aviary.subsystems.mass.UAV_mass.verticaltail import VerticalTailMass
 from aviary.subsystems.mass.UAV_mass.mass_summation import MassSummation
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft
+from aviary.variable_info.UAV_variables import Aircraft
 
 class MassPremission(om.Group):
     def initialize(self):

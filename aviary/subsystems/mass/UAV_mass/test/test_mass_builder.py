@@ -1,7 +1,7 @@
 import unittest
 import aviary.api as av
 from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft
+from aviary.variable_info.UAV_variables import Aircraft
 
 class TestMassBuilder(av.TestSubsystemBuilder):
     def setUp(self):
