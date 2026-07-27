@@ -643,7 +643,6 @@ add_meta_data(
     },
     units='lbm',
     desc='baggage mass per passenger',
-    option=True,
     default_value=0.0,
 )
 
@@ -757,7 +756,6 @@ add_meta_data(
     },
     units='lbm',
     desc='mass per passenger',
-    option=True,
     default_value=165.0,
 )
 
@@ -767,7 +765,6 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.UWPAX', 'FLOPS': None},
     units='lbm',
     desc='total mass of one passenger and their bags',
-    option=True,
     default_value=200,
 )
 
