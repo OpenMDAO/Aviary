@@ -35,7 +35,7 @@ class UAVPropMission(om.Group):
      
        
         rpm_in = [(Dynamic.Vehicle.Propulsion.RPM, 'rpm_slack')]
-        self.set_input_defaults('rpm_slack', val=np.ones(nn) * 60.0, units='rev/s')
+        # self.set_input_defaults('rpm_slack', val=np.ones(nn) * 60.0, units='rev/s')
     
         self.add_subsystem(
             'throttle',
@@ -190,8 +190,8 @@ class UAVPropMission(om.Group):
 
         """Constraints"""
               # Force commanded cruise RPM to match motor-computed RPM.
-        self.add_constraint('rpm_balance.rpm_defect', upper=0.004, lower=-0.004, ref = 10000, units='rev/s')
-        self.add_constraint('energy_constraint', lower=0.0, indices=[-1], units='W*h')
+        self.add_constraint('rpm_balance.rpm_defect', upper=0.004, lower=-0.004, ref = 4000, units='rpm')
+        self.add_constraint('energy_constraint', lower=0.0, indices=[-1], ref = 100, units='W*h')
         
         
 
