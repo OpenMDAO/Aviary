@@ -2353,7 +2353,6 @@ add_meta_data(
     'EngineDecks, reference thrust will be found from performance data if not provided '
     'by user. User-provided values override SLS point found in performance data.',
     default_value=0.0,
-    option=True,
     multivalue=True,
 )
 
