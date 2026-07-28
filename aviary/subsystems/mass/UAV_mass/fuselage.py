@@ -40,6 +40,31 @@ class FuselageMass(om.JaxExplicitComponent):
 
         add_aviary_output(self, Aircraft.Fuselage.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='mass')
 
+    def get_self_statics(self):
+        return (
+            self.options[Aircraft.Fuselage.FLOOR_DENSITY],
+            self.options[Aircraft.Fuselage.NUM_SPARS],
+            self.options[Aircraft.Fuselage.SPAR_OUTER_DIAMETER],
+            self.options[Aircraft.Fuselage.SPAR_DENSITY],
+            self.options[Aircraft.Fuselage.SPAR_WALL_THICKNESS],
+            self.options[Aircraft.Fuselage.BULKHEAD_THICKNESS],
+            self.options[Aircraft.Fuselage.BULKHEAD_LIGHTENING_FACTOR],
+            self.options[Aircraft.Fuselage.AREAL_SKIN_DENSITY],
+            self.options[Aircraft.Fuselage.FLOOR_THICKNESS],
+            self.options[Aircraft.Fuselage.FLOOR_LENGTH],
+            self.options[Aircraft.Fuselage.GLUE_FACTOR],
+            self.options[Aircraft.Fuselage.STRINGER_THICKNESS],
+            self.options[Aircraft.Fuselage.STRINGER_DENSITY],
+            self.options[Aircraft.Fuselage.SHEETING_THICKNESS],
+            self.options[Aircraft.Fuselage.SHEETING_COVERAGE],
+            self.options[Aircraft.Fuselage.SHEETING_DENSITY],
+            self.options[Aircraft.Fuselage.SHEETING_LIGHTENING_FACTOR],
+            self.options[Aircraft.Fuselage.BULKHEAD_MATERIALS],
+            self.options[Aircraft.Fuselage.MISC_MASS],
+
+
+        )
+
     def compute_primal(self, length, avg_height, wetted_area, avg_width):
         rho_floor, units = self.options[Aircraft.Fuselage.FLOOR_DENSITY]
         num_spars = self.options[Aircraft.Fuselage.NUM_SPARS]
@@ -68,7 +93,7 @@ class FuselageMass(om.JaxExplicitComponent):
         rib_mass = jnp.sum(rib_volumes * rho_rib)
 
         # Spar volume
-        spar_volume = (num_spars * length * jnp.pi 
+        spar_volume = (num_spars * length * jnp.pi
                     * (spar_outer_diameter * spar_wall_thickness - spar_wall_thickness**2))
 
         # Other volumes

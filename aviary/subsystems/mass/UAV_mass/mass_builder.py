@@ -83,12 +83,12 @@ class MassBuilder(SubsystemBuilder):
             #     'upper': 5.0,
             #     'val': 2.0,  
             # },
-            # Aircraft.VerticalTail.SPAN: {
-            #     'units': 'm',
-            #     'lower': 0.1,
-            #     'upper': 5.0,
-            #     'val': 1.0,  
-            # },
+            Aircraft.VerticalTail.SPAN: {
+                'units': 'm',
+                'lower': 0.1,
+                'upper': 5.0,
+                'val': 1.0,  
+            },
             # Aircraft.VerticalTail.ROOT_CHORD: {
             #     'units': 'm',
             #     'lower': 0.1,

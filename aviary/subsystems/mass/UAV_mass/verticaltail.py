@@ -12,35 +12,136 @@ from aviary.subsystems.mass.UAV_mass.variable_info.mass_variable_metadata import
     ExtendedMetaData,
 )
 
+
 class VerticalTailMass(om.JaxExplicitComponent):
     def initialize(self):
-        add_aviary_option(self, Aircraft.VerticalTail.AIRFOIL_PATH, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.RIB_MATERIALS, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.NUM_SPARS, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.SPAR_OUTER_DIAMETER, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.SPAR_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.SPAR_WALL_THICKNESS, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.RIB_THICKNESS, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.RIB_LIGHTENING_FACTOR, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.AREAL_SKIN_DENSITY, units='kg/m**2', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.GLUE_FACTOR, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.STRINGER_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.STRINGER_THICKNESS, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.SHEETING_THICKNESS, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.SHEETING_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.SHEETING_COVERAGE, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.SHEETING_LIGHTENING_FACTOR, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.NUM_STRINGERS, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.VerticalTail.MISC_MASS, units='kg', meta_data=ExtendedMetaData)
-      
+        add_aviary_option(
+            self, Aircraft.VerticalTail.AIRFOIL_PATH, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.VerticalTail.RIB_MATERIALS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.VerticalTail.NUM_SPARS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.VerticalTail.SPAR_OUTER_DIAMETER, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.VerticalTail.SPAR_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.VerticalTail.SPAR_WALL_THICKNESS, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.VerticalTail.RIB_THICKNESS, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self,
+            Aircraft.VerticalTail.RIB_LIGHTENING_FACTOR,
+            units='unitless',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_option(
+            self,
+            Aircraft.VerticalTail.AREAL_SKIN_DENSITY,
+            units='kg/m**2',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_option(
+            self, Aircraft.VerticalTail.GLUE_FACTOR, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self,
+            Aircraft.VerticalTail.STRINGER_DENSITY,
+            units='kg/m**3',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_option(
+            self, Aircraft.VerticalTail.STRINGER_THICKNESS, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.VerticalTail.SHEETING_THICKNESS, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self,
+            Aircraft.VerticalTail.SHEETING_DENSITY,
+            units='kg/m**3',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_option(
+            self,
+            Aircraft.VerticalTail.SHEETING_COVERAGE,
+            units='unitless',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_option(
+            self,
+            Aircraft.VerticalTail.SHEETING_LIGHTENING_FACTOR,
+            units='unitless',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_option(
+            self, Aircraft.VerticalTail.NUM_STRINGERS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.VerticalTail.MISC_MASS, units='kg', meta_data=ExtendedMetaData
+        )
+
         self._airfoil_loaded = False
 
     def setup(self):
-        add_aviary_input(self, Aircraft.VerticalTail.SPAN, units='m', meta_data=ExtendedMetaData, primal_name='span')
-        add_aviary_input(self, Aircraft.VerticalTail.ROOT_CHORD, units='m', meta_data=ExtendedMetaData, primal_name='root_chord')
-        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, units='m**2', meta_data=ExtendedMetaData, primal_name='wetted_area')
+        add_aviary_input(
+            self,
+            Aircraft.VerticalTail.SPAN,
+            units='m',
+            meta_data=ExtendedMetaData,
+            primal_name='span',
+        )
+        add_aviary_input(
+            self,
+            Aircraft.VerticalTail.ROOT_CHORD,
+            units='m',
+            meta_data=ExtendedMetaData,
+            primal_name='root_chord',
+        )
+        add_aviary_input(
+            self,
+            Aircraft.VerticalTail.WETTED_AREA,
+            units='m**2',
+            meta_data=ExtendedMetaData,
+            primal_name='wetted_area',
+        )
 
-        add_aviary_output(self, Aircraft.VerticalTail.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='mass')
+        add_aviary_output(
+            self,
+            Aircraft.VerticalTail.MASS,
+            units='kg',
+            meta_data=ExtendedMetaData,
+            primal_name='mass',
+        )
+
+    def get_self_statics(self):
+        return (
+
+            self.options[Aircraft.VerticalTail.NUM_SPARS],
+            self.options[Aircraft.VerticalTail.RIB_LIGHTENING_FACTOR],
+            self.options[Aircraft.VerticalTail.RIB_THICKNESS],
+            self.options[Aircraft.VerticalTail.AREAL_SKIN_DENSITY],
+            self.options[Aircraft.VerticalTail.SPAR_OUTER_DIAMETER],
+            self.options[Aircraft.VerticalTail.SPAR_DENSITY],
+            self.options[Aircraft.VerticalTail.SPAR_WALL_THICKNESS],
+            self.options[Aircraft.VerticalTail.GLUE_FACTOR],
+            self.options[Aircraft.VerticalTail.STRINGER_THICKNESS],
+            self.options[Aircraft.VerticalTail.STRINGER_DENSITY],
+            self.options[Aircraft.VerticalTail.SHEETING_THICKNESS],
+            self.options[Aircraft.VerticalTail.SHEETING_DENSITY],
+            self.options[Aircraft.VerticalTail.SHEETING_COVERAGE],
+            self.options[Aircraft.VerticalTail.SHEETING_LIGHTENING_FACTOR],
+            self.options[Aircraft.VerticalTail.NUM_STRINGERS],
+            self.options[Aircraft.VerticalTail.RIB_MATERIALS],
+            self.options[Aircraft.VerticalTail.MISC_MASS],
+        )
 
     def compute_primal(self, span, root_chord, wetted_area):
         num_spars = self.options[Aircraft.VerticalTail.NUM_SPARS]
