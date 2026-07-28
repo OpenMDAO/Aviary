@@ -17,10 +17,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData as UAVExtendedMetaData
 from aviary.variable_info.variables import Mission, Settings
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft as Mass_Aircraft
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variable_metadata import (
-    ExtendedMetaData,
-)
+
 
 
 UAV_Prop = UAVBuilder()  # or 'solver' for the solver-based power balance mode
