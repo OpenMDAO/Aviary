@@ -65,42 +65,42 @@ class MassBuilder(SubsystemBuilder):
                 'upper': 2.0,
                 'val': 0.5,
             },
-        #     Aircraft.HorizontalTail.SPAN: {
-        #         'units': 'm',
-        #         'lower': 0.1,
-        #         'upper': 5.0,
-        #         'val': 2.0,
-        #     },
-        #     Aircraft.HorizontalTail.ROOT_CHORD: {
-        #         'units': 'm',
-        #         'lower': 0.1,
-        #         'upper': 5.0,
-        #         'val': 1.0,
-        #     },
-        #     Aircraft.HorizontalTail.WETTED_AREA: {
-        #         'units': 'm**2',
-        #         'lower': 0.1,
-        #         'upper': 5.0,
-        #         'val': 2.0,
-        #     },
-        #     Aircraft.VerticalTail.SPAN: {
-        #         'units': 'm',
-        #         'lower': 0.1,
-        #         'upper': 5.0,
-        #         'val': 1.0,
-        #     },
-        #     Aircraft.VerticalTail.ROOT_CHORD: {
-        #         'units': 'm',
-        #         'lower': 0.1,
-        #         'upper': 1.0,
-        #         'val': 0.5,
-        #     },
-        #     Aircraft.VerticalTail.WETTED_AREA: {
-        #         'units': 'm**2',
-        #         'lower': 0.1,
-        #         'upper': 5.0,
-        #         'val': 2.0,
-        #     },
+            Aircraft.HorizontalTail.SPAN: {
+                'units': 'm',
+                'lower': 0.1,
+                'upper': 5.0,
+                'val': 2.0,
+            },
+            Aircraft.HorizontalTail.ROOT_CHORD: {
+                'units': 'm',
+                'lower': 0.1,
+                'upper': 5.0,
+                'val': 1.0,
+            },
+            Aircraft.HorizontalTail.WETTED_AREA: {
+                'units': 'm**2',
+                'lower': 0.1,
+                'upper': 5.0,
+                'val': 2.0,
+            },
+            Aircraft.VerticalTail.SPAN: {
+                'units': 'm',
+                'lower': 0.1,
+                'upper': 5.0,
+                'val': 1.0,
+            },
+            Aircraft.VerticalTail.ROOT_CHORD: {
+                'units': 'm',
+                'lower': 0.1,
+                'upper': 1.0,
+                'val': 0.5,
+            },
+            Aircraft.VerticalTail.WETTED_AREA: {
+                'units': 'm**2',
+                'lower': 0.1,
+                'upper': 5.0,
+                'val': 2.0,
+            },
         }
         return DVs
 
