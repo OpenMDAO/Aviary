@@ -87,8 +87,15 @@ class BWBSimpleCabinLayoutTest(unittest.TestCase):
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+
+        kwargs = {
+            Aircraft.BWB.MAX_BAY_WIDTH: (12.0, 'ft'),
+        }
         prob.model.add_subsystem(
-            'layout', BWBSimpleCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
+            'layout',
+            BWBSimpleCabinLayout(**kwargs),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=137.5, units='ft')
@@ -99,7 +106,7 @@ class BWBSimpleCabinLayoutTest(unittest.TestCase):
         prob.run_model()
 
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
-        assert_near_equal(num_bays, [5], tolerance=1e-9)
+        assert_near_equal(num_bays, [6], tolerance=1e-9)
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
         assert_near_equal(pax_compart_length, 96.25, tolerance=1e-9)
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)

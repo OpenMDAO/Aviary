@@ -563,10 +563,10 @@ class BWBWingWettedArea(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         self.add_input(
-            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations + 2, units='unitless'
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations + 1, units='unitless'
         )
         self.add_input(
-            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_inp_stations + 2, units='unitless'
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_inp_stations + 1, units='unitless'
         )
 
         add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
@@ -582,10 +582,10 @@ class BWBWingWettedArea(om.ExplicitComponent):
 
         # This part is repeated in BWBWingPrelim()
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
-        num_bwb_stations = num_inp_stations + 2
+        num_bwb_stations = num_inp_stations + 1
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
         bwb_input_station_dist = np.zeros(num_bwb_stations, dtype=width.dtype)
-        bwb_input_station_dist[2:] = input_station_dist
+        bwb_input_station_dist[1:] = input_station_dist
 
         bwb_input_station_dist = np.where(
             bwb_input_station_dist <= 1.0,
@@ -593,7 +593,11 @@ class BWBWingWettedArea(om.ExplicitComponent):
             bwb_input_station_dist + width / 2.0,  # else
         )
         bwb_input_station_dist[0] = 0.0
-        bwb_input_station_dist[1] = width / 2.0
+
+        # TODO: FLOPS had capability to choose starting point for wing via NESOB
+        # We have generally been starting the wing at the secn point.
+        # These weren't called in this case.
+        # bwb_input_station_dist[1] = width / 2.0
 
         ssmw = 0.0
         bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']

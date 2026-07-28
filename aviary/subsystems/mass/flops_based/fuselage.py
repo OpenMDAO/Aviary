@@ -160,6 +160,7 @@ class BWBFuselageMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER, units='unitless')
 
         add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm')
 
@@ -170,20 +171,27 @@ class BWBFuselageMass(om.ExplicitComponent):
         verbosity = self.options[Settings.VERBOSITY]
         gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
+        mass_scaler = inputs[Aircraft.Fuselage.MASS_SCALER]
+
         if gross_weight <= 0.0:
             if verbosity > Verbosity.BRIEF:
                 raise om.AnalysisError('Aircraft.Design.GROSS_MASS must be positive.')
 
-        outputs[Aircraft.Fuselage.MASS] = 1.8 * gross_weight**0.167 * cabin_area**1.06
+        outputs[Aircraft.Fuselage.MASS] = mass_scaler * 1.8 * gross_weight**0.167 * cabin_area**1.06
 
     def compute_partials(self, inputs, J):
         gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
+        mass_scaler = inputs[Aircraft.Fuselage.MASS_SCALER]
+
         J[Aircraft.Fuselage.MASS, Aircraft.Design.GROSS_MASS] = (
-            0.167 * 1.8 * gross_weight**-0.833 * cabin_area**1.06
+            mass_scaler * 0.167 * 1.8 * gross_weight**-0.833 * cabin_area**1.06
         ) * GRAV_ENGLISH_LBM
         J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.CABIN_AREA] = (
-            1.06 * 1.8 * gross_weight**0.167 * cabin_area**0.06
+            mass_scaler * 1.06 * 1.8 * gross_weight**0.167 * cabin_area**0.06
+        )
+        J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.MASS_SCALER] = (
+            1.8 * gross_weight**0.167 * cabin_area**1.06
         )
 
 

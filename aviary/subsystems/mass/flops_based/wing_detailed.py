@@ -319,13 +319,13 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         self.add_input(
-            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=num_input_stations + 1, units='deg'
+            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=num_input_stations, units='deg'
         )
         self.add_input(
-            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_input_stations + 2, units='unitless'
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_input_stations + 1, units='unitless'
         )
         self.add_input(
-            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_input_stations + 2, units='unitless'
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_input_stations + 1, units='unitless'
         )
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
@@ -364,8 +364,8 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         rate_span = (wingspan - width) / wingspan
 
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
-        bwb_input_station_dist = np.zeros(len(input_station_dist) + 2, dtype=width.dtype)
-        bwb_input_station_dist[2:] = input_station_dist
+        bwb_input_station_dist = np.zeros(len(input_station_dist) + 1, dtype=width.dtype)
+        bwb_input_station_dist[1:] = input_station_dist
 
         if self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
             bwb_input_station_dist = np.where(
@@ -374,7 +374,11 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
                 bwb_input_station_dist + width / 2.0,  # else
             )
         bwb_input_station_dist[0] = 0.0
-        bwb_input_station_dist[1] = width / 2.0
+
+        # TODO: FLOPS had capability to choose starting point for wing via NESOB
+        # We have generally been starting the wing at the secn point.
+        # These weren't called in this case.
+        # bwb_input_station_dist[1] = width / 2.0
 
         inp_stations_mod = []
         for x in bwb_input_station_dist:

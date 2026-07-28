@@ -380,6 +380,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
         add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
+        add_aviary_option(self, Aircraft.BWB.MAX_BAY_WIDTH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
@@ -439,7 +440,8 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         height_to_width = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD]
-        bay_width_nom = 12.0  # ft
+
+        bay_width_nom = self.options[Aircraft.BWB.MAX_BAY_WIDTH][0]
 
         if length <= 0.0:
             raise ValueError(
@@ -460,9 +462,16 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         # Enforce maximum number of bays
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
-        num_bays = int(0.5 + max_width / bay_width_nom)
+
+        # The original fortran code enforced the maximum number of bays with an additional check
+        # that is equivalent to "rounding up" because we are using max width here.
+        # TODO: Much of this will need a re-write if we add the FLOPS capability that lets you
+        # pick the inputs you want, and it calculates the others. This will involve sorting out
+        # when "WF" means max width, and when it means computed width.
+        num_bays = np.ceil(0.5 + max_width / bay_width_nom)
         if num_bays.real > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
+
         outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
 
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length

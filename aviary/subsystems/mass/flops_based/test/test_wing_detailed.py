@@ -540,7 +540,7 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
         aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, [0], units='unitless')
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
         aviary_options.set_val(
-            Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [1.0], units='unitless'
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [0.5, 1.0], units='unitless'
         )
         aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
         aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50, units='unitless')
@@ -611,7 +611,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
         aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            [0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
         aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
@@ -731,7 +731,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
         aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [0.2075, 0.415, 0.6927, 0.928, 1.0],
+            [0.0,0.2075, 0.415, 0.6927, 0.928, 1.0],
             units='unitless',
         )
         aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
