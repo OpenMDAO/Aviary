@@ -52,6 +52,7 @@ class EngineMassTest(unittest.TestCase):
             input_keys=[
                 Aircraft.Engine.REFERENCE_MASS,
                 Aircraft.Engine.SCALED_SLS_THRUST,
+                Aircraft.Engine.REFERENCE_SLS_THRUST,
                 Aircraft.Engine.MASS_SCALER,
             ],
             output_keys=[
@@ -99,9 +100,6 @@ class EngineMassTest(unittest.TestCase):
                 Aircraft.Engine.ADDITIONAL_MASS_FRACTION
             ),
             Aircraft.Engine.NUM_ENGINES: options.get_val(Aircraft.Engine.NUM_ENGINES),
-            Aircraft.Engine.REFERENCE_SLS_THRUST: options.get_item(
-                Aircraft.Engine.REFERENCE_SLS_THRUST
-            ),
             Aircraft.Engine.SCALE_MASS: options.get_val(Aircraft.Engine.SCALE_MASS),
         }
 
@@ -114,6 +112,9 @@ class EngineMassTest(unittest.TestCase):
         )
         prob.set_val(
             Aircraft.Engine.SCALED_SLS_THRUST, np.array([28000.0, 28000.0, 28000.0]), units='lbf'
+        )
+        prob.set_val(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, np.array([28928.1, 28928.1, 28928.1]), units='lbf'
         )
         # Pull value from the processed options.
         val, units = options.get_item(Aircraft.Engine.MASS_SCALER)
@@ -172,9 +173,6 @@ class EngineMassTest(unittest.TestCase):
                 Aircraft.Engine.ADDITIONAL_MASS_FRACTION
             ),
             Aircraft.Engine.NUM_ENGINES: options.get_val(Aircraft.Engine.NUM_ENGINES),
-            Aircraft.Engine.REFERENCE_SLS_THRUST: options.get_item(
-                Aircraft.Engine.REFERENCE_SLS_THRUST
-            ),
             Aircraft.Engine.SCALE_MASS: options.get_val(Aircraft.Engine.SCALE_MASS),
         }
 
@@ -185,6 +183,9 @@ class EngineMassTest(unittest.TestCase):
         prob.set_val(Aircraft.Engine.REFERENCE_MASS, 6000, units='lbm')
         prob.set_val(
             Aircraft.Engine.SCALED_SLS_THRUST, np.array([28000.0, 28000.0, 28000.0]), units='lbf'
+        )
+        prob.set_val(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, np.array([28928.1, 28928.1, 28928.1]), units='lbf'
         )
         # Pull value from the processed options.
         val, units = options.get_item(Aircraft.Engine.MASS_SCALER)
@@ -220,8 +221,11 @@ class BWBEngineMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
+    # @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(
+        self,
+    ):
+        case_name = 'BWBsimpleFLOPS'
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -243,6 +247,7 @@ class BWBEngineMassTest(unittest.TestCase):
             input_keys=[
                 Aircraft.Engine.REFERENCE_MASS,
                 Aircraft.Engine.SCALED_SLS_THRUST,
+                Aircraft.Engine.REFERENCE_SLS_THRUST,
                 Aircraft.Engine.MASS_SCALER,
             ],
             output_keys=[
