@@ -21,8 +21,7 @@ from aviary.variable_info.variables import Mission, Settings
 
 
 class TestUAVBuilder(unittest.TestCase):
-    """Integrates UAVBuilder into a full PropulsionMission over a 0->1 throttle sweep.
-    """
+
 
     @use_tempdirs
     def test_propulsion_mission_power_balance(self):
@@ -33,13 +32,13 @@ class TestUAVBuilder(unittest.TestCase):
         options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 0)
 
-        options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
-        options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
+        options.set_val(Aircraft.Engine.NUM_ENGINES, 1)
 
-        engine = UAVBuilder(options=options) #change between solver/feedforward to test both modes
+
+        engine = UAVBuilder(options=options)
         preprocess_propulsion(options, engine_models=[engine])
 
-    
+
 
         prob.model = PropulsionMission(
             num_nodes=nn, aviary_options=options, engine_models=[engine]
@@ -54,17 +53,17 @@ class TestUAVBuilder(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Battery.VOLTAGE, val=22.2, units='V')
         prob.model.set_input_defaults(Aircraft.Engine.Motor.IDLE_CURRENT, val=0.91, units='A')
-        
+
 
 
         setup_model_options(prob, options)
-        prob.setup(force_alloc_complex=True)
+        prob.setup()
 
         prob.set_val(Aircraft.Engine.Motor.MASS, 0.5, units='kg')
         prob.set_val(Aircraft.Battery.MASS, 0.5, units='kg')
         prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, np.linspace(0, 1, nn))
         prob.set_val(Aircraft.Engine.Motor.IDLE_CURRENT, 0.91, units='A')
-    
+
         prob.set_val(Dynamic.Atmosphere.DENSITY, 1.225, units='kg/m**3')
         prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 20, units='inch')
         prob.set_val(Aircraft.Engine.Propeller.PITCH, 10, units='inch')
@@ -79,7 +78,7 @@ class TestUAVBuilder(unittest.TestCase):
         prop_power = prob.get_val('rc_electric.prop_power', units='W')
         power_residual = battery_power + esc_power + motor_power - prop_power
 
-       
+
         self.assertFalse(
             np.isnan(power_residual).any(), 'powertrain produced NaN over the throttle sweep'
         )

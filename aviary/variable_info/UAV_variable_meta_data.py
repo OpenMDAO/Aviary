@@ -920,7 +920,7 @@ av.add_meta_data(
 )
 
 av.add_meta_data(
-    Aircraft.Engine.Motor.MAX_CONT_CURRENT, 
+    Aircraft.Engine.Motor.MAX_CONT_CURRENT,
     option=True,
     meta_data=ExtendedMetaData,
     units='A',

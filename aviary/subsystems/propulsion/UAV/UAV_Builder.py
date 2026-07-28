@@ -19,7 +19,7 @@ class UAVBuilder(EngineModel):
         # aviary_inputs = AviaryValues()
         super().__init__(name, options)
 
-        
+
     def build_pre_mission(self, aviary_inputs, **kwargs):  # m, b,
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
         return UAVPropPreMission(aviary_options=self.options)
@@ -29,7 +29,7 @@ class UAVBuilder(EngineModel):
 
 
         return UAVPropMission(num_nodes=num_nodes, aviary_options=self.options)
-   
+
 
     def get_design_vars(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
         """
@@ -51,23 +51,23 @@ class UAVBuilder(EngineModel):
                 'units': 'kg',
                 'lower': 0.1,
                 'upper': 1.0,
-                # 'val': 100,  
+                # 'val': 100,
             },
             Aircraft.Engine.Motor.IDLE_CURRENT: {
                 'units': 'A',
                 'lower': 0.91,
                 'upper': 3.6, #TODO: this placeholder can be varied
-                # 'val': 2.2,  
+                # 'val': 2.2,
             },
-           
-                    
+
+
             Aircraft.Engine.Motor.MASS: {
-               
+
                 'units': 'lbm',
                 'lower': 1.0362,   # 0.47 kg -> KV low enough to keep rpm_max in the prop grid
                 'upper': 1.4330,   # 0.65 kg
             },
-           
+
 
         }
         return DVs
@@ -87,8 +87,8 @@ class UAVBuilder(EngineModel):
         A dict of names for the propeller subsystem.
         """
 
-       
-       
+
+
 
         parameters = {
             Aircraft.Battery.ENERGY_CAPACITY: {
@@ -96,27 +96,27 @@ class UAVBuilder(EngineModel):
                 'units': 'W*h',
             },
             Aircraft.Battery.VOLTAGE: {
-                'val': 22.2, 
+                'val': 22.2,
                 'units': 'V',
             },
             Aircraft.Battery.RESISTANCE: {
-                'val': 0.05, 
+                'val': 0.05,
                 'units': 'ohm',
             },
             Aircraft.Engine.Motor.RESISTANCE: {
-                'val': 0.05,  
+                'val': 0.05,
                 'units': 'ohm',
             },
             Aircraft.Engine.Motor.KV: {
-                'val': 400,  
+                'val': 400,
                 'units': 'rpm/V',
             },
             Aircraft.Engine.Motor.IDLE_CURRENT: {
-                'val': 2.2,  
+                'val': 2.2,
                 'units': 'A',
             },
 
-            
+
 
 
             Aircraft.Engine.Propeller.DIAMETER: {
@@ -141,52 +141,52 @@ class UAVBuilder(EngineModel):
                 'fix_initial': True,
                 'lower': 0.0,
                 'ref': 100.0,
-                
+
             },
         }
-            
+
         return states
 
-    
+
 
     def get_controls(self, aviary_inputs = None, user_options = None, subsystem_options = None, phase_name=None):
 
-        
+
         controls = {
 
 
         #Rpm slack variable the optimizer chooses to keep the propeller RPM within the bounds of the training data. The motor RPM is forced to match this value at the optimum.
         'rpm_slack': {
             'targets': 'rpm_slack',
-            'units': 'rev/s',
+            'units': 'rpm',
             'opt': True,
-            'lower': 20.0,
-            'upper': 180.0,
-            'ref': 180.0,
+            'lower': 1800,
+            'upper': 10800,
+            'ref': 10800,
         },
         }
 
         # Solver mode computes current/current_max internally in UAVPropMission.
         # Declaring them as Dymos controls creates duplicate connections.
         return controls
-        
+
     def needs_mission_solver(self, aviary_inputs, subsystem_options):
         return True
 
 
     def get_mass_names(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
 
-        
+
         return [Aircraft.Battery.MASS, Aircraft.Engine.Motor.MASS]#, Aircraft.Engine.MASS]
-    
-
-   
 
 
 
 
-    
+
+
+
+
     #TODO add new outputs
     def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
-       
+
         return ['*']
