@@ -48,7 +48,7 @@ class AeroBuilder(SubsystemBuilder):
             Dynamic.Vehicle.LIFT,
             Dynamic.Vehicle.DRAG,
             Dynamic.Vehicle.DRAG_COEFFICIENT,
-            'alpha',
+            'lift_balance_residual',
             Dynamic.Vehicle.LIFT_COEFFICIENT,
             'lifting_surface_CD',
             'ht_area_ratio',
@@ -136,4 +136,4 @@ class AeroBuilder(SubsystemBuilder):
         )
     
     def needs_mission_solver(self, aviary_inputs=None, subsystem_options=None, **kwargs):
-        return False      #changed from false to true
+        return False

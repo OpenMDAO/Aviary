@@ -271,13 +271,17 @@ class TotalAircraftAero(om.Group):
             promotes_outputs=[      #added outputs to be promoted
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                'alpha',
+                'lift_balance_residual',
                 'lifting_surface_drag',
-                ('lifting_surface_CL',
-                Dynamic.Vehicle.LIFT_COEFFICIENT,
-                ),
+                ('lifting_surface_CL', Dynamic.Vehicle.LIFT_COEFFICIENT),
                 'lifting_surface_CD',
             ]
+        )
+        self.set_input_defaults(
+            'alpha',
+            val=np.full(nn, 3.0),
+            units='deg',
+            src_shape=(nn,),
         )
 
         self.add_subsystem(

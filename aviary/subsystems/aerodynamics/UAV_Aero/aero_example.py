@@ -23,20 +23,42 @@ import matplotlib.pyplot as plt
 
 import aviary.api as av
 from aviary.subsystems.aerodynamics.UAV_Aero.aero_builder import AeroBuilder
-from aviary.subsystems.aerodynamics.UAV_Aero.aero_model import TotalAircraftAero
-from aviary.utils.functions import set_aviary_initial_values
-from aviary.utils.aviary_values import AviaryValues
+# from aviary.subsystems.aerodynamics.UAV_aero.aero_model import TotalAircraftAero #they are not used so commented out
+# from aviary.utils.functions import set_aviary_initial_values
+# from aviary.utils.aviary_values import AviaryValues
 
-from aviary.variable_info.variables import Aircraft, Dynamic
 
-aero_builder = AeroBuilder(name='UAV_Aero')
+# Set True while debugging the integrated model.
+# Set False for a normal cruise run.
+DEBUG_MODEL = True
+#import the UAV builders for mass and propulsion
+from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder
+from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
+
+from aviary.variable_info.UAV_variables import Aircraft, Dynamic
+
+aero_builder = AeroBuilder(name='UAV_aero')
+
+mass_builder = MassBuilder()
 
 phase_info = {
     'pre_mission': {
-        'include_takeoff': False,
-        'external_subsystems': [],
-        'optimize_mass': True,
+    'include_takeoff': False,
+    'external_subsystems': [],
+    'optimize_mass': False,
+
+    'subsystem_options': {
+        'mass': {
+            'method': 'external',
+        },
+        'aerodynamics': {
+            'method': 'external',
+        },
+        'geometry': {
+            'method': 'external',
+        },  
     },
+},
 
     'cruise': {
         'subsystem_options': {
@@ -80,12 +102,51 @@ phase_info = {
 
 max_iter = 50
 optimizer = 'IPOPT' 
+prob.add_driver(
+    optimizer,
+    max_iter=max_iter,
+)
+prob.add_design_variables()
 
+prob.model.add_design_var('aircraft:wing:span', lower=0.1, upper=2.0)
+prob.model.add_design_var('aircraft:wing:root_chord', lower=0.1, upper=1.0)
+prob.model.add_design_var('aircraft:wing:incidence', lower=-5.0, upper=10.0)
+prob.model.add_design_var('aircraft:wing:thickness_to_chord', lower=0.05, upper=0.20)
+prob.model.add_design_var('aircraft:horizontal_tail:incidence', lower=-5.0, upper=10.0)
+
+prob.model.add_constraint('traj.phases.cruise.rhs_all.lifting_surface_CL', lower=0.01, upper=0.2)
+prob.model.add_objective('traj.cruise.t_duration', index=-1)
+
+prob.driver.recording_options['record_desvars'] = False
+prob.driver.recording_options['record_responses'] = False
+prob.driver.recording_options['record_objectives'] = False
+prob.driver.recording_options['record_constraints'] = False
+
+prob.driver.opt_settings.update({
+   'tol': 5e-4,
+   'constr_viol_tol': 1e-6,
+   'acceptable_tol': 1e-5,
+   'acceptable_constr_viol_tol': 5e-3,
+   'line_search_method': 'filter',
+   'alpha_for_y': 'primal'
+})
+
+
+
+prob.model.add_objective(
+    'traj.phases.cruise.t_duration',
+    ref=60.0,
+)
 prob = av.AviaryProblem(verbosity=1)
 
 prob.load_inputs('aviary/validation_cases/validation_data/test_models/small_scale_uav.csv', phase_info=phase_info)
-print("Builder name:", aero_builder.name)
-prob.load_external_subsystems([aero_builder])
+propulsion_builder = UAVBuilder( options=prob.aviary_inputs, name='rc_electric',power_balance_mode='feedforward',)
+
+print('Aero builder:', aero_builder.name)
+print('Propulsion builder:', propulsion_builder.name)
+print('Mass builder:', mass_builder.name)
+
+prob.load_external_subsystems([ mass_builder, aero_builder,  propulsion_builder,])
 
 prob.aviary_inputs.set_val(Dynamic.Mission.ALTITUDE, 520, units='m') 
 prob.aviary_inputs.set_val(Dynamic.Mission.VELOCITY, 36, units='m/s')
@@ -113,61 +174,188 @@ prob.aviary_inputs.set_val(Aircraft.VerticalTail.TAPER_RATIO, 1, units='unitless
 prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 0.172, units='m')
 prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 0.114, units='m')
 prob.aviary_inputs.set_val(Aircraft.Fuselage.LENGTH, 1.190244, units='m')
-
 prob.aviary_inputs.set_val(Dynamic.Vehicle.MASS, 3.787, units='kg')
 
 prob.check_and_preprocess_inputs()
 prob.build_model()
-#prob.add_driver(optimizer=optimizer, max_iter=max_iter)
-
-#prob.add_design_variables()
-
-#prob.model.add_design_var('aircraft:wing:span', lower=0.1, upper=2.0)
-#prob.model.add_design_var('aircraft:wing:root_chord', lower=0.1, upper=1.0)
-#prob.model.add_design_var('aircraft:wing:incidence', lower=-5.0, upper=10.0)
-#prob.model.add_design_var('aircraft:wing:thickness_to_chord', lower=0.05, upper=0.20)
-#prob.model.add_design_var('aircraft:horizontal_tail:incidence', lower=-5.0, upper=10.0)
-
-#prob.model.add_constraint('traj.phases.cruise.rhs_all.lifting_surface_CL', lower=0.01, upper=0.2)
-#prob.model.add_objective('traj.cruise.t_duration', index=-1)
-
-#prob.driver.recording_options['record_desvars'] = False
-#prob.driver.recording_options['record_responses'] = False
-#prob.driver.recording_options['record_objectives'] = False
-#prob.driver.recording_options['record_constraints'] = False
-
-#prob.driver.opt_settings.update({
-#    'tol': 5e-4,
-#    'constr_viol_tol': 1e-6,
-#    'acceptable_tol': 1e-5,
-#    'acceptable_constr_viol_tol': 5e-3,
-#    'line_search_method': 'filter',
-#    'alpha_for_y': 'primal'
-#})
 
 prob.setup()
 prob.set_initial_guesses()
-# Generate an N2 diagram of the entire Aviary/OpenMDAO model.
+prob.final_setup()
 om.n2(
-    prob,
-    outfile='UAV_Aero_full_n2.html',
-    show_browser=True,
-    title='UAV Aero Aviary Full Model',
+prob,
+outfile='uav_aero_full_n2.html',
+show_browser=True,
+title='UAV Mass-Aero-Propulsion Full Model',
 )
-prob.run_model() 
-print('\nALPHA COMPONENT INPUTS:')
 
-prob.model.list_inputs(
-    includes=['*alpha_comp*'],
-    val=True,
-    units=True,
-    prom_name=True,
-    print_arrays=True,
+# =========================================================
+# DEBUGGING BEFORE RUNNING THE MODEL
+# =========================================================
+
+if DEBUG_MODEL:
+    print('\nASSEMBLED UAV-RELATED SYSTEMS:\n')
+
+    # This is a normal Python list created for debugging.
+    assembled_systems = []
+
+    for system in prob.model.system_iter(
+        recurse=True,
+        include_self=False,
+    ):
+        pathname = system.pathname
+        module_name = system.__class__.__module__
+        class_name = system.__class__.__name__
+
+        system_description = (
+            f'{pathname} | '
+            f'{module_name}.{class_name}'
+        )
+
+        # Save a lowercase version for easier searching.
+        assembled_systems.append(
+            system_description.lower()
+        )
+
+        # Print only systems relevant to this integration.
+        if any(
+            keyword in system_description.lower()
+            for keyword in (
+                'uav_mass',
+                'uav_aero',
+                'propulsion.uav',
+                'rc_electric',
+                'battery',
+                'esc',
+                'motor',
+                'propeller',
+                'gasp_based',
+                'flops_based',
+                'turbofan',
+                'engine_deck',
+            )
+        ):
+            print(system_description)
+
+
+    # -----------------------------------------------------
+    # Check that the custom systems are present
+    # -----------------------------------------------------
+
+    has_uav_mass = any(
+        'subsystems.mass.uav_mass' in system
+        for system in assembled_systems
+    )
+
+    has_uav_aero = any(
+        'subsystems.aerodynamics.uav_aero' in system
+        for system in assembled_systems
+    )
+
+    has_uav_propulsion = any(
+        'subsystems.propulsion.uav' in system
+        for system in assembled_systems
+    )
+
+    print('\nCUSTOM SUBSYSTEM CHECKS:\n')
+
+    print('Custom UAV mass present:', has_uav_mass)
+    print('Custom UAV aero present:', has_uav_aero)
+    print('Custom UAV propulsion present:', has_uav_propulsion)
+
+    assert has_uav_mass, (
+        'The custom UAV mass subsystem was not built.'
+    )
+
+    assert has_uav_aero, (
+        'The custom UAV aerodynamic subsystem was not built.'
+    )
+
+    assert has_uav_propulsion, (
+        'The custom UAV electric propulsion subsystem was not built.'
+    )
+
+
+    # -----------------------------------------------------
+    # Check that unwanted large-aircraft systems are absent
+    # -----------------------------------------------------
+
+    has_large_aircraft_mass = any(
+        (
+            'subsystems.mass.gasp_based' in system
+            or 'subsystems.mass.flops_based' in system
+        )
+        for system in assembled_systems
+    )
+    has_builtin_geometry = any(
+    (
+        'subsystems.geometry.gasp_based' in system
+        or 'subsystems.geometry.flops_based' in system
+    )
+    for system in assembled_systems
 )
-#prob.run_aviary_problem()
 
-#with open("variables.txt", "w") as f:
-#    prob.model.list_vars(out_stream=f, print_arrays=True, units=True)
+    has_conventional_engine = any(
+        (
+            'turbofan' in system
+            or 'engine_deck' in system
+        )
+        for system in assembled_systems
+    )
+
+    print('\nUNWANTED SUBSYSTEM CHECKS:\n')
+
+    print(
+        'Built-in GASP/FLOPS mass present:',
+        has_large_aircraft_mass,
+    )
+    print(
+        'Built-in GASP/FLOPS geometry present:',
+        has_builtin_geometry,
+    )
+    print(
+        'Turbofan or EngineDeck present:',
+        has_conventional_engine,
+    )
+
+    assert not has_large_aircraft_mass, (
+        'A built-in GASP/FLOPS large-aircraft mass '
+        'subsystem is present.'
+    )
+
+    assert not has_conventional_engine, (
+        'A conventional turbofan or EngineDeck '
+        'propulsion model is present.'
+    )
+
+# =========================================================
+# NORMAL MODEL EXECUTION
+# This must remain outside the DEBUG_MODEL block.
+# =========================================================
+
+print('\nRUNNING THE INTEGRATED MODEL...\n')
+
+prob.run_model()
+
+print('\nMODEL RUN COMPLETED.\n')
+
+
+# =========================================================
+# DEBUGGING AFTER THE MODEL RUNS
+# =========================================================
+
+if DEBUG_MODEL:
+    print('\nALPHA COMPONENT INPUTS:\n')
+
+    prob.model.list_inputs(
+        includes=['*alpha_comp*'],
+        val=True,
+        units=True,
+        prom_name=True,
+        print_arrays=True,
+    )
+
+
 
 #Commented out get_val's are not recognized at the moment and I don't know why
 print('Lift:', prob.get_val('traj.cruise.rhs_all.lift', units='lbf')) 
