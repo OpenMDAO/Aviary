@@ -22,7 +22,7 @@ from openaerostruct.meshing.mesh_generator import generate_mesh
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
-
+#Remove this and add the mars atmoshpere from the aviary subsystems atmosphere input not make anew subsystem but import one...?
 class AeroConditions(om.ExplicitComponent):
     # compute atmospheric conditions, Reynolds number, dynamic pressure
     def initialize(self):
@@ -187,41 +187,42 @@ class BroadcastHTailChord(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
         nn = 10
         partials['broadcast_htail_chord', Aircraft.HorizontalTail.ROOT_CHORD] = np.ones(nn)
-
-class AlphaComp(om.ImplicitComponent):
+#change the alpha comp from a implicit componenet to a slack variable 
+class AlphaComp(om.ExplicitComponent):
     # compute AoA using aircraft mass, assuming lift = weight * cos(alpha)
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 
     def setup(self):
         nn = self.options['num_nodes']
-
+        rows_cols = np.arange(nn)
         add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
         add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
-        self.add_output('alpha', shape=nn, units='deg')
+        self.add_input( 'alpha', val=np.full(nn, 3.0), units='deg', )
 
-        rows_cols = np.arange(nn)
-        self.declare_partials('alpha', Dynamic.Vehicle.LIFT, rows=rows_cols, cols=rows_cols)
-        self.declare_partials('alpha', Dynamic.Vehicle.MASS, rows=rows_cols, cols=rows_cols)
-        self.declare_partials('alpha', 'alpha', rows=rows_cols, cols=rows_cols)
+        # This output will be constrained to zero.
+        self.add_output( 'lift_balance_residual', val=np.zeros(nn),  units='N', desc='Lift equilibrium residual', )
+        self.declare_partials('lift_balance_residual', Dynamic.Vehicle.LIFT, rows=rows_cols, cols=rows_cols)
+        self.declare_partials('lift_balance_residual', Dynamic.Vehicle.MASS, rows=rows_cols, cols=rows_cols)
+        self.declare_partials('lift_balance_residual', 'alpha', rows=rows_cols, cols=rows_cols)
 
-    def apply_nonlinear(self, inputs, outputs, residuals):
+    def compute(self, inputs, outputs):
         L = inputs[Dynamic.Vehicle.LIFT]
         m = inputs[Dynamic.Vehicle.MASS]
-        g = 9.8 # m/s
-        a = np.radians(outputs['alpha'])
-        residuals['alpha'] = L - (m * g * np.cos(a))
+        g = 9.8 # m/s**2
+        a = np.radians(inputs['alpha'])
+        outputs['lift_balance_residual'] = L - (m * g * np.cos(a))
 
-    def linearize(self, inputs, outputs, partials):
+    def compute_partials(self, inputs, partials):
         nn = self.options['num_nodes']
         L = inputs[Dynamic.Vehicle.LIFT]
         m = inputs[Dynamic.Vehicle.MASS]
         g = 9.8 # m/s
-        a = np.radians(outputs['alpha'])
+        a = np.radians(inputs['alpha'])
 
-        partials['alpha', Dynamic.Vehicle.LIFT] = np.ones(nn)
-        partials['alpha', Dynamic.Vehicle.MASS] = -g * np.cos(a)
-        partials['alpha', 'alpha'] = (m * g * np.sin(a) * np.pi / 180.0)
+        partials['lift_balance_residual', Dynamic.Vehicle.LIFT] = np.ones(nn)
+        partials['lift_balance_residual', Dynamic.Vehicle.MASS] = -g * np.cos(a)
+        partials['lift_balance_residual', 'alpha'] = (m * g * np.sin(a) * np.pi / 180.0)
 
 
 class OASAero(om.Group):
@@ -342,9 +343,15 @@ class OASAero(om.Group):
         self.add_subsystem(
             'alpha_comp',
             AlphaComp(num_nodes=nn),
-            promotes_inputs=[Dynamic.Vehicle.LIFT, Dynamic.Vehicle.MASS],
-            promotes_outputs=['alpha']
-        )
+            promotes_inputs=[
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.MASS,
+                'alpha',
+            ],
+            promotes_outputs=[
+                'lift_balance_residual',
+            ],
+         )
 
         for surface in surfaces: 
             geom_group = Geometry(surface=surface)
@@ -355,7 +362,7 @@ class OASAero(om.Group):
             self.add_subsystem(point_name, AeroPoint(surfaces=surfaces))
 
             self.promotes(point_name, inputs=[('v', Dynamic.Mission.VELOCITY)], src_indices=[i])
-            self.connect('alpha', f'{point_name}.alpha', src_indices=[i])
+            self.promotes( point_name, inputs=['alpha'], src_indices=[i], flat_src_indices=True,)
             self.connect('re', f'{point_name}.re', src_indices=[i])
             self.connect('prob_vars.cg', f'{point_name}.cg')
             self.connect(Dynamic.Atmosphere.DENSITY, f'{point_name}.rho', src_indices=[i])
