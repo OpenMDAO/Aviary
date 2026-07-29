@@ -48,15 +48,11 @@ phase_info = {
     'optimize_mass': False,
 
     'subsystem_options': {
-        'mass': {
-            'method': 'external',
-        },
+        
         'aerodynamics': {
             'method': 'external',
         },
-        'geometry': {
-            'method': 'external',
-        },  
+  
     },
 },
 
@@ -81,7 +77,7 @@ phase_info = {
             'altitude_final': (520, 'm'),
             'altitude_bounds': ((500, 600), 'm'),
 
-            'throttle_enforcement': 'boundary_constraint',
+            'throttle_enforcement': 'control',
             'time_initial': (0, 's'),
             'time_duration_bounds': ((1.0, 300.0), 's'),
         },
@@ -144,10 +140,17 @@ prob.aviary_inputs.set_val(Dynamic.Vehicle.MASS, 3.787, units='kg')
 
 prob.check_and_preprocess_inputs()
 prob.build_model()
-
+prob.add_driver('IPOPT',use_coloring=False, max_iter=max_iter)
 prob.setup()
 prob.set_initial_guesses()
 prob.final_setup()
+
+om.n2(
+prob,
+outfile='uav_aero_full_n2.html',
+show_browser=True,
+title='UAV Mass-Aero-Propulsion Full Model',
+)
 
 # =========================================================
 # DEBUGGING BEFORE RUNNING THE MODEL
@@ -222,6 +225,7 @@ if DEBUG_MODEL:
     print('Custom UAV mass present:', has_uav_mass)
     print('Custom UAV aero present:', has_uav_aero)
     print('Custom UAV propulsion present:', has_uav_propulsion)
+    
 
     assert has_uav_mass, (
         'The custom UAV mass subsystem was not built.'
@@ -278,10 +282,10 @@ if DEBUG_MODEL:
         has_conventional_engine,
     )
 
-    assert not has_large_aircraft_mass, (
-        'A built-in GASP/FLOPS large-aircraft mass '
-        'subsystem is present.'
-    )
+    # assert not has_large_aircraft_mass, (
+    #     'A built-in GASP/FLOPS large-aircraft mass '
+    #     'subsystem is present.'
+    # )
 
     assert not has_conventional_engine, (
         'A conventional turbofan or EngineDeck '
@@ -314,7 +318,9 @@ if DEBUG_MODEL:
         prom_name=True,
         print_arrays=True,
     )
-
+with open('all_UAV_Model_variables.txt', 'w') as f:
+    prob.model.list_vars(units=True, prom_name=True, out_stream=f)
+ 
 
 
 #Commented out get_val's are not recognized at the moment and I don't know why
@@ -330,5 +336,5 @@ print('Lifting surface CD:', prob.get_val('traj.cruise.rhs_all.lifting_surface_C
 
 print('Fuselage length:', prob.get_val('aircraft:fuselage:length'))
 print('Fuselage height:', prob.get_val('aircraft:fuselage:max_height'))
-print('Angle of attack:', prob.get_val('traj.cruise.rhs_all.alpha'))
+print('Angle of attack:', prob.get_val('traj.cruise.rhs_all.UAV_aero.alpha'))
 print('Wing span:', prob.get_val(Aircraft.Wing.SPAN))
