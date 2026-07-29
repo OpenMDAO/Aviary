@@ -21,7 +21,7 @@ class MassParameters(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Engine.NUM_WING_ENGINES)
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
         add_aviary_option(self, Settings.VERBOSITY)
 
@@ -94,7 +94,7 @@ class MassParameters(om.ExplicitComponent):
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         wingspan = inputs[Aircraft.Wing.SPAN]
-        num_wing_engines = self.options[Aircraft.Engine.NUM_WING_ENGINES]
+        num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         if num_wing_engines > 4:
             if verbosity > Verbosity.BRIEF:
                 warnings.warn(
@@ -171,7 +171,7 @@ class MassParameters(om.ExplicitComponent):
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         wingspan = inputs[Aircraft.Wing.SPAN]
-        num_wing_engines = self.options[Aircraft.Engine.NUM_WING_ENGINES]
+        num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         max_mach = inputs['max_mach']
         strut_x = inputs[Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS]
         loc_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
