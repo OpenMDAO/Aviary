@@ -50,9 +50,6 @@ def CruiseExample():
 
 
 
-
-
-
     prob.add_driver('IPOPT', use_coloring=False, max_iter=15)
 
     prob.driver.opt_settings['print_level'] = 5
