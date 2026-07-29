@@ -3045,7 +3045,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.04373, units='unitless')
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2, units='unitless')
-        options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 0, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
         options.set_val(Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, 0.0667, units='lbm')
 
         prob = self.prob = om.Problem()
