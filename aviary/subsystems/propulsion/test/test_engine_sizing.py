@@ -15,7 +15,11 @@ class EngineSizingTest1(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def test_case_multiengine(self):
+    def test_case_1(self):
+        """
+        The SizeEngine component is a single engine type.
+        In the multi-engine test each EngineModel there has it's own SizeEngine component.
+        """
         filename = 'models/engines/turbofan_28k.csv'
         filename = get_path(filename)
 
@@ -29,18 +33,13 @@ class EngineSizingTest1(unittest.TestCase):
         options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
 
         engine = EngineDeck(name='engine', options=options)
-        # engine2 = EngineDeck(name='engine2', options=options)
-        # preprocess_propulsion(options, [engine, engine2])
 
-        ref_thrust = engine.get_item(Aircraft.Engine.REFERENCE_SLS_THRUST)
-        options = {
-            Aircraft.Engine.REFERENCE_SLS_THRUST: ref_thrust,
-        }
-
-        self.prob.model.add_subsystem('engine', SizeEngine(**options), promotes=['*'])
+        self.prob.model.add_subsystem('engine', SizeEngine(), promotes=['*'])
 
         self.prob.setup(force_alloc_complex=True)
 
+        ref_thrust, _ = engine.get_item(Aircraft.Engine.REFERENCE_SLS_THRUST)
+        self.prob.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, np.array([ref_thrust]))
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, np.array([0.52716908]))
 
         self.prob.run_model()
