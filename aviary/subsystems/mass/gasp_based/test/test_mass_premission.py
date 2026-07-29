@@ -49,6 +49,7 @@ class MassPremissionTestCase1(unittest.TestCase):
         input_options.delete(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS)
         input_options.delete(Aircraft.Furnishings.MASS)
         input_options.delete(Aircraft.Engine.SCALE_FACTOR)
+        input_options.delete(Aircraft.Engine.REFERENCE_SLS_THRUST)
 
         for key, (val, units) in input_options.items():
             if not CoreMetaData[key]['option']:
@@ -3487,4 +3488,7 @@ class BWBStructMassTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = MassPremissionTestCase1()
+    test.setUp()
+    test.test_case1()
