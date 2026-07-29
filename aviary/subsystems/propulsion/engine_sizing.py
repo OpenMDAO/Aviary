@@ -13,13 +13,11 @@ class SizeEngine(om.ExplicitComponent):
     single instance of an engine model.
     """
 
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
-
     def setup(self):
+        add_aviary_input(self, Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
         add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR)
 
-        add_aviary_output(self, Aircraft.Engine.SCALED_SLS_THRUST)
+        add_aviary_output(self, Aircraft.Engine.SCALED_SLS_THRUST, units='lbf')
 
         # variables that also may require scaling
         # TODO - inlet_weight <input>
@@ -30,7 +28,7 @@ class SizeEngine(om.ExplicitComponent):
         # TODO - nacelle_wetted_area: if length, diam get scaled - this should be covered by geom
 
     def compute(self, inputs, outputs):
-        reference_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
+        reference_sls_thrust = inputs[Aircraft.Engine.REFERENCE_SLS_THRUST]
 
         engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
 
@@ -41,8 +39,15 @@ class SizeEngine(om.ExplicitComponent):
 
     def setup_partials(self):
         self.declare_partials(Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR)
+        self.declare_partials(
+            Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.REFERENCE_SLS_THRUST
+        )
 
     def compute_partials(self, inputs, J):
-        reference_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
+        engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
+        reference_sls_thrust = inputs[Aircraft.Engine.REFERENCE_SLS_THRUST]
 
         J[Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.SCALE_FACTOR] = reference_sls_thrust
+        J[Aircraft.Engine.SCALED_SLS_THRUST, Aircraft.Engine.REFERENCE_SLS_THRUST] = (
+            engine_scale_factor
+        )
