@@ -43,30 +43,30 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'mach_optimize': True,
-            
+
             'mach_initial': (0.0538, 'unitless'),
-           
+
             'mach_bounds': ((0.05, 0.3), 'unitless'),
             # 'mach_ref': (0.05, 'unitless'),
             'mass_ref': (4.0, 'kg'),
-         
+
             # 'alt_ref': (100, 'ft'),
             # 'mach_final': (0.05, 'unitless'),
-            
-            
+
+
             'altitude_optimize': True,
             'altitude_initial': (200.0, 'ft'),
             'altitude_bounds': ((100.0, 300.0), 'ft'),
             'altitude_final': (200.0, 'ft'),
             'distance_initial': (0.0, 'm'),
-            
+
             'distance_ref': (1000.0, 'm'),
             'target_distance': (1000.0, 'm'),
             'throttle_enforcement': 'control',
-            
+
             # 'throttle_polynomial_order': 1,
-            
-            #Time 
+
+            #Time
             'time_initial': (0.0, 's'),
             'time_duration_bounds': ((0,180.0), 's'),
         },
@@ -100,5 +100,3 @@ phase_info = {
         # 'constraint_range':True,
     },
 }
-
-

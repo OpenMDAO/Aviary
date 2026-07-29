@@ -1,35 +1,69 @@
-import unittest
+
 from copy import deepcopy
-from pathlib import Path
+
 
 import aviary.api as av
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from pathlib import Path
+
 from aviary.subsystems.aerodynamics.UAV_Aero.custom_aero_builder import CustomAeroBuilder
 from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import phase_info
 from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
-from aviary.subsystems.propulsion.UAV.model.UAV_mission import UAVPropMission
-from aviary.subsystems.propulsion.UAV.model.UAV_premission import UAVPropPreMission
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.UAV_variables import Aircraft, Dynamic
-from aviary.variable_info.variables import Mission, Settings
+from aviary.variable_info.UAV_variables import Aircraft
+from aviary.variable_info.variables import  Settings
+from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft as Mass_Aircraft
 
 from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
 
 
-UAV_Prop = UAVBuilder()  # or 'solver' for the solver-based power balance mode
+UAV_Prop = UAVBuilder()
 
 
 def CruiseExample():
-    prob = av.AviaryProblem(verbosity=2, meta_data=ExtendedMetaData)
+    prob = av.AviaryProblem(name='min_energy_cruise',verbosity=2, meta_data=ExtendedMetaData)
     prob.options['group_by_pre_opt_post'] = True
     # just selecting cruise
     cruise_phase_info = {
         'pre_mission': deepcopy(phase_info['pre_mission']),
-        'cruise': deepcopy(phase_info['cruise']),
+        'cruise': {
+        'subsystem_options': {'aerodynamics': {'method': 'external'}},
+        'user_options': {
+            'num_segments': 5,
+            'order': 3,
+            'mach_optimize': True,
+
+            'mach_initial': (0.0538, 'unitless'),
+
+            'mach_bounds': ((0.05, 0.3), 'unitless'),
+            # 'mach_ref': (0.05, 'unitless'),
+            'mass_ref': (4.0, 'kg'),
+
+            # 'alt_ref': (100, 'ft'),
+            # 'mach_final': (0.05, 'unitless'),
+
+
+            'altitude_optimize': True,
+            'altitude_initial': (200.0, 'ft'),
+            'altitude_bounds': ((50,400), 'ft'),
+            # 'altitude_final': (200.0, 'ft'),
+            'distance_initial': (0.0, 'm'),
+
+            'distance_ref': (1000.0, 'm'),
+            'target_distance': (1000.0, 'm'),
+            'throttle_enforcement': 'control',
+
+            # 'throttle_polynomial_order': 1,
+
+            #Time
+            'time_initial': (0.0, 's'),
+            'time_duration_bounds': ((0,180), 's'),
+        },
+        'initial_guesses': {
+            'distance': ([0, 2000], 'm'),
+            'time': ([0, 60], 's'),
+        },
+    },
         'post_mission': deepcopy(phase_info['post_mission']),
     }
 
@@ -48,7 +82,9 @@ def CruiseExample():
 
     prob.build_model()
 
-
+    """Objective: Minimize energy consumption during cruise flight. This is done by adding an objective to the cruise phase that minimizes the energy constraint at the final time step. The energy constraint is defined as the integral of the power required to maintain level flight over the duration of the cruise phase. By minimizing this objective, we can find the optimal flight profile that minimizes energy consumption while still meeting all other constraints and requirements."""
+    cruise_phase = prob.model.traj.phases.cruise
+    cruise_phase.add_objective('rc_electric.energy_constraint', loc='final', ref = -100, units='W*hr')
 
     prob.add_driver('IPOPT', use_coloring=False, max_iter=1000)
 
@@ -64,7 +100,7 @@ def CruiseExample():
 
     prob.add_design_variables()
 
-    prob.add_objective(objective_type='time')
+
 
     prob.setup()
 
@@ -103,28 +139,8 @@ def CruiseExample():
     return prob
 
 
-# NOTE: no @use_tempdirs here. DBFMassBuilder reads its airfoil CSV via a repo-root-
-# relative path (like the dbf_based_mass unit tests), so this must run from the repo root.
-class TestUAVCruiseExample(unittest.TestCase):
-    def test_subsystems_in_cruise_attempt(self):
-        prob = CruiseExample()
 
-        # TODO: turn these back into assert_near_equal checks once the example values are confirmed.
-        # self.assertTrue(np.isfinite(endurance) and endurance > 0.0)
-        # self.assertTrue(np.isfinite(gross_mass) and 2.0 <= gross_mass <= 20.0)
-        # self.assertTrue(0.25 < motor_mass < 0.65, f'Motor mass {motor_mass} kg is outside expected bounds.')
-        # self.assertFalse(np.isnan(current_flow).any(), 'Current control contains NaN values.')
-        # distance_resid = abs(distance_resid)
-        # self.assertTrue(np.isfinite(distance_resid))
-        # self.assertLess(distance_resid, 0.25, 'Cruise distance residual is unexpectedly large.')
-
-        # # Print only driver-level constraints in a list_vars-like table.
-        # prob.list_driver_vars(
-        #     print_arrays=True,
-        #     desvar_opts=[],
-        #     objs_opts=[],
-        # )
 
 
 if __name__ == '__main__':
-    unittest.main()
+    CruiseExample()
