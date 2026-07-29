@@ -18,7 +18,7 @@ THE ERROR:
 
 import openmdao.api as om
 import numpy as np
-np.seterr(divide='raise', invalid='raise')
+# np.seterr(divide='raise', invalid='raise')
 import matplotlib.pyplot as plt
 
 import aviary.api as av
@@ -319,7 +319,7 @@ if DEBUG_MODEL:
         print_arrays=True,
     )
 with open('all_UAV_Model_variables.txt', 'w') as f:
-    prob.model.list_vars(units=True, prom_name=True, out_stream=f)
+    prob.model.list_vars(units=True, prom_name=True,print_arrays=True, out_stream=f)
  
 
 
