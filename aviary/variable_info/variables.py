@@ -217,7 +217,6 @@ class Aircraft:
         NUM_WING_ENGINES = 'aircraft:engine:num_wing_engines'
         POD_MASS = 'aircraft:engine:pod_mass'
         POD_MASS_SCALER = 'aircraft:engine:pod_mass_scaler'
-        POSITION_FACTOR = 'aircraft:engine:position_factor'
         PYLON_FACTOR = 'aircraft:engine:pylon_factor'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
         REFERENCE_SLS_THRUST = 'aircraft:engine:reference_sls_thrust'
@@ -429,6 +428,7 @@ class Aircraft:
     class Propulsion:
         ENERGY_SYSTEM_MASS = 'aircraft:propulsion:energy_system_mass'
         ENGINE_OIL_MASS_SCALER = 'aircraft:propulsion:engine_oil_mass_scaler'
+        ENGINE_POSITION_FACTOR = 'aircraft:propulsion:engine_position_factor'
         MASS = 'aircraft:propulsion:mass'
         MISC_MASS_SCALER = 'aircraft:propulsion:misc_mass_scaler'
         TOTAL_ENGINE_CONTROLS_MASS = 'aircraft:propulsion:total_engine_controls_mass'

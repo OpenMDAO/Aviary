@@ -54,7 +54,7 @@ class MassParameters(om.ExplicitComponent):
         )
         add_aviary_output(
             self,
-            Aircraft.Engine.POSITION_FACTOR,
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR,
             units='unitless',
         )
         self.add_output('half_sweep', units='rad', desc='SWC2: wing chord half sweep angle')
@@ -69,7 +69,7 @@ class MassParameters(om.ExplicitComponent):
                 Aircraft.Wing.ASPECT_RATIO,
             ],
         )
-        self.declare_partials(Aircraft.Engine.POSITION_FACTOR, ['max_mach'])
+        self.declare_partials(Aircraft.Propulsion.ENGINE_POSITION_FACTOR, ['max_mach'])
         self.declare_partials(
             'half_sweep',
             [
@@ -99,7 +99,7 @@ class MassParameters(om.ExplicitComponent):
             if verbosity > Verbosity.BRIEF:
                 warnings.warn(
                     f'The case num_wing_engines = {num_wing_engines} is not currently '
-                    'supported in Aviary. Will set Aircraft.Engine.POSITION_FACTOR using default.'
+                    'supported in Aviary. Will set Aircraft.Propulsion.ENGINE_POSITION_FACTOR using default.'
                 )
         max_mach = inputs['max_mach']
         strut_x = inputs[Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS]
@@ -162,7 +162,7 @@ class MassParameters(om.ExplicitComponent):
         outputs[Aircraft.Wing.MATERIAL_FACTOR] = c_material
         outputs['c_strut_braced'] = c_strut_braced
         outputs['c_gear_loc'] = c_gear_loc
-        outputs[Aircraft.Engine.POSITION_FACTOR] = c_eng_pos
+        outputs[Aircraft.Propulsion.ENGINE_POSITION_FACTOR] = c_eng_pos
         outputs['half_sweep'] = half_sweep
 
     def compute_partials(self, inputs, J):
@@ -219,19 +219,19 @@ class MassParameters(om.ExplicitComponent):
         )
 
         if smooth:
-            J[Aircraft.Engine.POSITION_FACTOR, 'max_mach'] = -dSigmoidXdx(
+            J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, 'max_mach'] = -dSigmoidXdx(
                 max_mach, 0.75, 1 / 320.0
             ) + 1.05 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
             if num_wing_engines == 2 or num_wing_engines == 3:
-                J[Aircraft.Engine.POSITION_FACTOR, 'max_mach'] = -0.98 * dSigmoidXdx(
+                J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, 'max_mach'] = -0.98 * dSigmoidXdx(
                     max_mach, 0.75, 1 / 320.0
                 ) + 0.95 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
             if num_wing_engines == 4:
-                J[Aircraft.Engine.POSITION_FACTOR, 'max_mach'] = -0.95 * dSigmoidXdx(
+                J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, 'max_mach'] = -0.95 * dSigmoidXdx(
                     max_mach, 0.75, 1 / 320.0
                 ) + 0.9 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
         else:
-            J[Aircraft.Engine.POSITION_FACTOR, 'max_mach'] = 0.0
+            J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, 'max_mach'] = 0.0
 
         J['half_sweep', Aircraft.Wing.SWEEP] = 1 / (tan_half_sweep**2 + 1) * dTanHS_dSC4
         J['half_sweep', Aircraft.Wing.TAPER_RATIO] = 1 / (tan_half_sweep**2 + 1) * dTanHS_TR

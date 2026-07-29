@@ -65,7 +65,7 @@ class MassParametersTestCase1(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR: 1.2203729275531838,  # bug fixed value
             'c_strut_braced': 1,  # bug fixed value
             'c_gear_loc': 1,  # bug fixed value
-            Aircraft.Engine.POSITION_FACTOR: 0.95,  # bug fixed value
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR: 0.95,  # bug fixed value
             'half_sweep': 0.3947081519145335,  # bug fixed value
         }
 
@@ -113,7 +113,7 @@ class MassParametersTestCase2(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR: 1.2213063198183813,  # not actual bug fixed value
             'c_strut_braced': 1,
             'c_gear_loc': 0.95,  # not actual bug fixed value
-            Aircraft.Engine.POSITION_FACTOR: 1,  # not actual bug fixed value
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR: 1,  # not actual bug fixed value
             'half_sweep': 0.3947081519145335,
         }
 
@@ -161,7 +161,7 @@ class MassParametersTestCase3(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR: 1.2213063198183813,  # not actual bug fixed value
             'c_strut_braced': 1,
             'c_gear_loc': 0.95,  # not actual bug fixed value
-            Aircraft.Engine.POSITION_FACTOR: 0.98,  # not actual bug fixed value
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR: 0.98,  # not actual bug fixed value
             'half_sweep': 0.3947081519145335,
         }
 
@@ -209,7 +209,7 @@ class MassParametersTestCase4(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR: 1.2213063198183813,  # not actual bug fixed value
             'c_strut_braced': 1,
             'c_gear_loc': 0.95,  # not actual bug fixed value
-            Aircraft.Engine.POSITION_FACTOR: 0.95,  # not actual bug fixed value
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR: 0.95,  # not actual bug fixed value
             'half_sweep': 0.3947081519145335,
         }
 
@@ -257,7 +257,7 @@ class MassParametersTestCase5(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR: 1.2213063198183813,  # not actual bug fixed value
             'c_strut_braced': 1,
             'c_gear_loc': 0.95,  # not actual bug fixed value
-            Aircraft.Engine.POSITION_FACTOR: 0.9,  # not actual bug fixed value
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR: 0.9,  # not actual bug fixed value
             'half_sweep': 0.3947081519145335,
         }
 
@@ -915,7 +915,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR: 1.2203729275531838,
             'c_strut_braced': 1,
             'c_gear_loc': 1,
-            Aircraft.Engine.POSITION_FACTOR: 0.95,
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR: 0.95,
             'half_sweep': 0.3947081519145335,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS: 36000,
             'payload_mass_des': 36000,
@@ -1199,7 +1199,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR: 1.2213063198183813,
             'c_strut_braced': 0.9928,
             'c_gear_loc': 1,
-            Aircraft.Engine.POSITION_FACTOR: 1,
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR: 1,
             'half_sweep': 0.3947081519145335,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS: 36000,
             'payload_mass_des': 36000,
@@ -1424,7 +1424,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR: 1.19461189,
             'c_strut_braced': 1,
             'c_gear_loc': 0.95,
-            Aircraft.Engine.POSITION_FACTOR: 1.05,
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR: 1.05,
             'half_sweep': 0.47984874,
         }
         tol = 1e-7
@@ -1447,7 +1447,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR: 1.19461189,
             'c_strut_braced': 1,
             'c_gear_loc': 0.95,
-            Aircraft.Engine.POSITION_FACTOR: 1.05,
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR: 1.05,
             'half_sweep': 0.47984874,
         }
         tol = 1e-7
@@ -1796,7 +1796,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR: 1.19461189,
             'c_strut_braced': 1,
             'c_gear_loc': 0.95,
-            Aircraft.Engine.POSITION_FACTOR: 0.95,
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR: 0.95,
             'half_sweep': 0.47984874,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS: 33750.0,
             'payload_mass_des': 33750,
