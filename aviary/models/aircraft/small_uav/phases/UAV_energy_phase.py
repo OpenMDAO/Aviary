@@ -44,11 +44,12 @@ phase_info = {
             'order': 3,
             'mach_optimize': True,
 
-            'mach_initial': (0.08, 'unitless'),
+            'mach_initial': (0.0538, 'unitless'),
 
             'mach_bounds': ((0.05, 0.3), 'unitless'),
             # 'mach_ref': (0.05, 'unitless'),
             'mass_ref': (4.0, 'kg'),
+
 
             # 'alt_ref': (100, 'ft'),
             # 'mach_final': (0.05, 'unitless'),
