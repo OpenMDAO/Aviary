@@ -1,25 +1,25 @@
 '''
-This model firstly introduces explicit components for fuselage drag, vtail drag, and 
+This model firstly introduces explicit components for fuselage drag, vtail drag, and
 landing gear drag.
 
 Then, an explicit component is created to compute the time averages of total coefficient of drag,
-fuselage coefficient of drag*, and total coefficient of lift. 
+fuselage coefficient of drag*, and total coefficient of lift.
 
 Next, the total aircraft aero group is created, with the fuse drag, vtail drag, and landing
-gear drag components as subsystems. 
+gear drag components as subsystems.
 
-Also in this group are execcomps that sum the individual CD's from each of the subsystems 
-and output total CD. 
+Also in this group are execcomps that sum the individual CD's from each of the subsystems
+and output total CD.
 
-Lastly within total aircraft aero there is an OASAero subsystem that comes from 
+Lastly within total aircraft aero there is an OASAero subsystem that comes from
 OAS_aero_analysis and computes wing/htail lift and drag, as well as angle of attack.
 
-Questions: 
-    Is everything wired correctly? 
+Questions:
+    Is everything wired correctly?
 
     Are all necessary inputs/outputs being considered?
 
-    Why do we have the time average of fuselage CD but not other individual components' CD? 
+    Why do we have the time average of fuselage CD but not other individual components' CD?
 
     Is OASAero being used correctly/Is there a better way to use it?
 '''
@@ -72,7 +72,7 @@ class FuselageDrag(om.ExplicitComponent):
         self.add_input('CD_L_fus', 0.001, units='unitless') # assume little lift induced drag from fuselage
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='m')
-        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='m') 
+        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='m')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='m')
         add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
         add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
@@ -85,8 +85,8 @@ class FuselageDrag(om.ExplicitComponent):
                                         Aircraft.Fuselage.MAX_WIDTH,
                                         Aircraft.Wing.AREA],
                                         method='cs')
-        
-    def compute(self, inputs, outputs): 
+
+    def compute(self, inputs, outputs):
         R_wf = inputs[Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR]
         Cf_fus = inputs['Cf_fus']
         CD_L_fus = inputs['CD_L_fus']
@@ -102,9 +102,9 @@ class FuselageDrag(om.ExplicitComponent):
         S_fus = wf * df # fuselage maximum frontal area
         S_wet = 2 * ((lf * df) + (lf * wf)) # very basic stuff. just the sides
 
-        CD0_fus_base = R_wf * Cf_fus * (1 + 60 / ((lf/df)**3) + 
+        CD0_fus_base = R_wf * Cf_fus * (1 + 60 / ((lf/df)**3) +
                                         0.0025 * (lf/df)) * S_wet / S_ref # zero lift drag coeff exculsive of base
-        CDb_fus = ((0.029 * ((db/df)**3) / 
+        CDb_fus = ((0.029 * ((db/df)**3) /
                     (CD0_fus_base * np.sqrt(S_ref/S_fus)))) * (S_fus/S_ref) # fuselage base drag coeff
 
         CD0_fus = CD0_fus_base + CDb_fus # total fuselage zero-lift drag coeff
@@ -117,7 +117,7 @@ class FuselageDrag(om.ExplicitComponent):
 class VTailDrag(om.ExplicitComponent):
     # based on Roskam VI chapter 4
     # assuming fuselage Reynolds number of about 1mil at a very low Mach number
-    
+
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 
@@ -135,7 +135,7 @@ class VTailDrag(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AREA)
         add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn)
         add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD)
-        
+
         self.add_output(name='D_vtail', shape=(nn,), units='N') # vtail drag
         self.add_output(name='CD_vtail', shape=(nn,), units='unitless') # vtail CD0
 
@@ -143,7 +143,7 @@ class VTailDrag(om.ExplicitComponent):
                                           Aircraft.VerticalTail.TAPER_RATIO,
                                           Aircraft.VerticalTail.SPAN,
                                           Aircraft.Wing.AREA])
-        
+
     def compute(self, inputs, outputs):
         R_LS = inputs['R_LS']
         Cf_vtail = inputs['Cf_vtail']
@@ -347,9 +347,11 @@ class TotalAircraftAero(om.Group):
             promotes_inputs=[('CD', Dynamic.Vehicle.DRAG_COEFFICIENT), 'CD_fus', 'lifting_surface_CL'],
             promotes_outputs=['avg_CD', 'avg_CD_fus', 'avg_CL']
         )
-        
+
         self.connect('OAS_aero.aero_point_0.wing.S_ref', 'aircraft:wing:area')
         #self.connect('aircraft:wing:root_chord', 'OAS_aero.aero_point_0.wing.c_root') #removed this connection because the wing root chord is already changing the mesh through:
-        #  broadcast_wing_chord connect to wing.mesh.scale_x.chord      
- 
+        #  broadcast_wing_chord connect to wing.mesh.scale_x.chord
+        #
+        #
+        self.add_constraint('lift_balance_residual', equals=0.0, units='N', ref=40) # this is the lift balance constraint
         self.options['auto_order'] = True

@@ -1,5 +1,5 @@
 '''
-The builder for aero external subsystem. 
+The builder for aero external subsystem.
 
 inputs: altitude and velocity
 
@@ -14,7 +14,7 @@ QUESTIONS:
 
     Is everything being called/used in a way that is up to date with 2026 Aviary?
 
-    Where are the returned outputs being used as opposed to all of the other outputs 
+    Where are the returned outputs being used as opposed to all of the other outputs
     that warrants them being outputs and not the others?
 '''
 
@@ -36,8 +36,9 @@ class AeroBuilder(SubsystemBuilder):
             Dynamic.Mission.VELOCITY,
             Dynamic.Vehicle.MASS,
             'aircraft:*',
+            'alpha',
         ]
-    
+
     def mission_outputs(
     self,
     aviary_inputs=None,
@@ -57,7 +58,7 @@ class AeroBuilder(SubsystemBuilder):
             'CD_vtail',
             'CD_gear',
         ]
-    
+
     def get_parameters(self, aviary_inputs=None, **kwargs):
         params = {}
 
@@ -127,13 +128,31 @@ class AeroBuilder(SubsystemBuilder):
         }
         return params
 
-    
-    
+
+    def get_controls(self, aviary_inputs=None, **kwargs):
+        controls = {
+
+            'alpha': {
+                'units': 'deg',
+                'targets': 'alpha',
+                'opt': True,
+                'val': 0.0,
+                'lower': -10.0,
+                'upper': 10.0,
+                'ref': 5.0,
+            },
+
+
+
+        }
+
+        return controls
+
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         return TotalAircraftAero(
             aviary_inputs=aviary_inputs,
             num_nodes=num_nodes
         )
-    
+
     def needs_mission_solver(self, aviary_inputs=None, subsystem_options=None, **kwargs):
         return False

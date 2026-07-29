@@ -111,6 +111,7 @@ def CruiseExample():
 
     prob.set_val('traj.cruise.controls:rpm_slack', 4000.0, units='rpm')
     prob.set_val('traj.cruise.controls:throttle', 0.3)
+    prob.set_val('traj.cruise.controls:alpha', 3.0, units='deg')
 
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units='m**2')
     print('Wetted Area:', number)
