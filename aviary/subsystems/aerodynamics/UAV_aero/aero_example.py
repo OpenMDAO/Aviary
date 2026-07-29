@@ -102,45 +102,11 @@ phase_info = {
 
 max_iter = 50
 optimizer = 'IPOPT' 
-prob.add_driver(
-    optimizer,
-    max_iter=max_iter,
-)
-prob.add_design_variables()
 
-prob.model.add_design_var('aircraft:wing:span', lower=0.1, upper=2.0)
-prob.model.add_design_var('aircraft:wing:root_chord', lower=0.1, upper=1.0)
-prob.model.add_design_var('aircraft:wing:incidence', lower=-5.0, upper=10.0)
-prob.model.add_design_var('aircraft:wing:thickness_to_chord', lower=0.05, upper=0.20)
-prob.model.add_design_var('aircraft:horizontal_tail:incidence', lower=-5.0, upper=10.0)
-
-prob.model.add_constraint('traj.phases.cruise.rhs_all.lifting_surface_CL', lower=0.01, upper=0.2)
-prob.model.add_objective('traj.cruise.t_duration', index=-1)
-
-prob.driver.recording_options['record_desvars'] = False
-prob.driver.recording_options['record_responses'] = False
-prob.driver.recording_options['record_objectives'] = False
-prob.driver.recording_options['record_constraints'] = False
-
-prob.driver.opt_settings.update({
-   'tol': 5e-4,
-   'constr_viol_tol': 1e-6,
-   'acceptable_tol': 1e-5,
-   'acceptable_constr_viol_tol': 5e-3,
-   'line_search_method': 'filter',
-   'alpha_for_y': 'primal'
-})
-
-
-
-prob.model.add_objective(
-    'traj.phases.cruise.t_duration',
-    ref=60.0,
-)
 prob = av.AviaryProblem(verbosity=1)
 
 prob.load_inputs('aviary/validation_cases/validation_data/test_models/small_scale_uav.csv', phase_info=phase_info)
-propulsion_builder = UAVBuilder( options=prob.aviary_inputs, name='rc_electric',power_balance_mode='feedforward',)
+propulsion_builder = UAVBuilder( options=prob.aviary_inputs, name='rc_electric',)
 
 print('Aero builder:', aero_builder.name)
 print('Propulsion builder:', propulsion_builder.name)
@@ -182,12 +148,6 @@ prob.build_model()
 prob.setup()
 prob.set_initial_guesses()
 prob.final_setup()
-om.n2(
-prob,
-outfile='uav_aero_full_n2.html',
-show_browser=True,
-title='UAV Mass-Aero-Propulsion Full Model',
-)
 
 # =========================================================
 # DEBUGGING BEFORE RUNNING THE MODEL
