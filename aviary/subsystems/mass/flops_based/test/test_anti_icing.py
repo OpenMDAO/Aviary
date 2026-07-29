@@ -107,9 +107,6 @@ class AntiIcingMassTest(unittest.TestCase):
         )
 
         prob.model_options['*'] = options
-        prob.model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = np.array(
-            [28928.1, 28928.1, 28928.1]
-        )
 
         prob.setup(check=False, force_alloc_complex=True)
 
