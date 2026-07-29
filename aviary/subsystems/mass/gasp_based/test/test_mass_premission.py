@@ -3488,7 +3488,4 @@ class BWBStructMassTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = MassPremissionTestCase1()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
