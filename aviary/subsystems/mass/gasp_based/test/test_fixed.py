@@ -280,13 +280,13 @@ class PayloadGroupTestCase(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(
-            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
-        )  # bug fixed value and original value
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem('payload', PayloadGroup(), promotes=['*'])
         self.prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, val=0, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units='lbm'
         )
@@ -728,9 +728,6 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(
-            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
-        )  # bug fixed value and original value
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
 
@@ -741,6 +738,9 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN, val=118.8, units='ft'
         )  # bug fixed value
@@ -958,9 +958,6 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, val=2, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless')
-        options.set_val(
-            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
-        )  # bug fixed value and original value
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
@@ -971,6 +968,9 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN, val=117.8, units='ft'
         )  # original GASP value
@@ -1449,10 +1449,12 @@ class BWBPayloadGroupTestCase(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
-        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=225, units='lbm')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem('payload', PayloadGroup(), promotes=['*'])
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=225, units='lbm'
+        )
         self.prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, 0.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 15000.0, units='lbm'
@@ -1648,7 +1650,6 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
-        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=225, units='lbm')
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.04373)
         options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
@@ -1660,6 +1661,9 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=225, units='lbm'
+        )
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501094, units='ft')
         prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults('min_dive_vel', 420, units='kn')
