@@ -6,13 +6,13 @@ import aviary.api as av
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.aerodynamics.UAV_Aero.custom_aero_builder import CustomAeroBuilder
+from aviary.subsystems.aerodynamics.UAV_Aero.aero_builder import AeroBuilder
 from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import phase_info
 from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
 from aviary.variable_info.UAV_variables import Aircraft
 from aviary.variable_info.variables import  Settings
-from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraft as Mass_Aircraft
+
 
 from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
 
@@ -75,7 +75,7 @@ def CruiseExample():
     print('Wetted Area:', number)
 
     prob.load_external_subsystems(
-        external_subsystems=[UAV_Prop, CustomAeroBuilder(), DBFMassBuilder()]
+        external_subsystems=[UAV_Prop, AeroBuilder(), DBFMassBuilder()]
     )
 
     prob.check_and_preprocess_inputs()
@@ -86,7 +86,7 @@ def CruiseExample():
     cruise_phase = prob.model.traj.phases.cruise
     cruise_phase.add_objective('rc_electric.energy_constraint', loc='final', ref = -100, units='W*hr')
 
-    prob.add_driver('IPOPT', use_coloring=False, max_iter=1000)
+    prob.add_driver('IPOPT', use_coloring=False, max_iter=15)
 
     prob.driver.opt_settings['print_level'] = 5
     prob.driver.opt_settings['mu_strategy'] = 'monotone'
