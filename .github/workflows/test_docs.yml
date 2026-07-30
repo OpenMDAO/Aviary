@@ -3,9 +3,12 @@
 name: Test Docs
 
 on:
-  # Trigger on push or pull request events for the main branch
+  # Trigger on push or pull request events for the main branch.
+  # IA966-versioned-doc is temporarily included so the fork can iterate on
+  # versioned-docs publishing without merging to main. REMOVE that branch
+  # before opening the upstream PR.
   push:
-    branches: [ main ]
+    branches: [ main, IA966-versioned-doc ]
   pull_request:
     branches: [ main ]
   merge_group:
@@ -82,11 +85,13 @@ jobs:
 
       - name: Publish dev docs to gh-pages
         # Gated on the fork during development of the versioned-docs feature.
-        # Before merging upstream, change to:
+        # IA966-versioned-doc is temporarily allowed so pushes to that branch
+        # publish to hschilling.github.io/Aviary. Before merging upstream,
+        # change to:
         #   github.event_name == 'push' && github.ref == 'refs/heads/main'
         if: |
           github.event_name == 'push'
-          && github.ref == 'refs/heads/main'
+          && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/IA966-versioned-doc')
           && github.repository == 'hschilli/Aviary'
         shell: bash -l {0}
         run: |
