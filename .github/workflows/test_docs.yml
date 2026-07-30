@@ -88,7 +88,7 @@ jobs:
           echo "event_name = ${{ github.event_name }}"
           echo "ref        = ${{ github.ref }}"
           echo "repository = ${{ github.repository }}"
-          echo "gate_test  = ${{ github.repository == 'hschilli/Aviary' && contains(fromJSON('[\"refs/heads/main\", \"refs/heads/IA966-versioned-doc\"]'), github.ref) }}"
+          echo "gate_test  = ${{ github.repository == 'hschilling/Aviary' && contains(fromJSON('[\"refs/heads/main\", \"refs/heads/IA966-versioned-doc\"]'), github.ref) }}"
 
       - name: Publish dev docs to gh-pages
         # Gated on the fork during development of the versioned-docs feature.
@@ -96,7 +96,7 @@ jobs:
         # publish to hschilling.github.io/Aviary. Before merging upstream,
         # revert this `if:` to just:
         #   github.event_name == 'push' && github.ref == 'refs/heads/main'
-        if: ${{ github.repository == 'hschilli/Aviary' && contains(fromJSON('["refs/heads/main", "refs/heads/IA966-versioned-doc"]'), github.ref) }}
+        if: ${{ github.repository == 'hschilling/Aviary' && contains(fromJSON('["refs/heads/main", "refs/heads/IA966-versioned-doc"]'), github.ref) }}
         shell: bash -l {0}
         run: |
           eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"

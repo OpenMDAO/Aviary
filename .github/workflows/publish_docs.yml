@@ -6,10 +6,10 @@
 #   - workflow_dispatch with a tag input -> same thing, but for backfilling old tags
 #
 # Publish target follows github.repository:
-#   - hschilli/Aviary  -> hschilling.github.io/Aviary   (dev / testing)
+#   - hschilling/Aviary  -> hschilling.github.io/Aviary   (dev / testing)
 #   - OpenMDAO/Aviary  -> openmdao.github.io/Aviary     (production)
 #
-# The publish step is gated on `github.repository == 'hschilli/Aviary'` for the
+# The publish step is gated on `github.repository == 'hschilling/Aviary'` for the
 # duration of this branch's development. Remove that condition (or change it to
 # the OpenMDAO org) before merging upstream.
 
@@ -99,7 +99,7 @@ jobs:
           -exec cat {} \;
 
       - name: Publish docs to gh-pages
-        if: github.repository == 'hschilli/Aviary'
+        if: github.repository == 'hschilling/Aviary'
         shell: bash -l {0}
         run: |
           eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
