@@ -99,7 +99,6 @@ class PrepGeomTest(unittest.TestCase):
             Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
             Aircraft.Engine.NUM_ENGINES,
             Aircraft.Propulsion.TOTAL_NUM_ENGINES,
-            Aircraft.Engine.REFERENCE_SLS_THRUST,
             Aircraft.Engine.NUM_WING_ENGINES,
         ]
 
@@ -107,10 +106,6 @@ class PrepGeomTest(unittest.TestCase):
         model_options = {}
         for key in keys:
             model_options[key] = options.get_item(key)[0]
-
-        model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = options.get_item(
-            Aircraft.Engine.REFERENCE_SLS_THRUST
-        )
 
         prob = self.prob
 
@@ -188,6 +183,7 @@ class PrepGeomTest(unittest.TestCase):
                 Aircraft.Wing.THICKNESS_TO_CHORD,
                 Aircraft.Wing.WETTED_AREA_SCALER,
                 Aircraft.Engine.SCALED_SLS_THRUST,
+                Aircraft.Engine.REFERENCE_SLS_THRUST,
             ],
             output_keys=output_keys,
             aviary_option_keys=[
@@ -562,9 +558,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             'vertical_tail_char_lengths', VerticalTailCharacteristicLength(), promotes=['*']
         )
 
-        # options[Aircraft.Engine.REFERENCE_SLS_THRUST] = (np.array([28928.1]), 'lbf')
         keys = [
-            Aircraft.Engine.REFERENCE_SLS_THRUST,
             Aircraft.Engine.NUM_ENGINES,
         ]
         flops_inputs = get_flops_inputs(case_name, keys=keys)
@@ -572,10 +566,6 @@ class CharacteristicLengthsTest(unittest.TestCase):
         model_options = {}
         for key in keys:
             model_options[key] = options.get_item(key)[0]
-
-        model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = options.get_item(
-            Aircraft.Engine.REFERENCE_SLS_THRUST
-        )
 
         prob.model.add_subsystem(
             'nacelle_characteristic_lengths',
@@ -611,6 +601,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
                 Aircraft.Wing.GLOVE_AND_BAT,
                 Aircraft.Wing.TAPER_RATIO,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
+                Aircraft.Engine.REFERENCE_SLS_THRUST,
             ],
             output_keys=[
                 Aircraft.Canard.CHARACTERISTIC_LENGTH,
@@ -817,7 +808,6 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
-        options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, units='lbf')
         options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, False, units='unitless')
 
         prob = self.prob = om.Problem()
@@ -827,6 +817,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
+        prob.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, units='lbf')
         # BWBSimpleCabinLayout
         prob.set_val(Aircraft.Fuselage.LENGTH, 137.5, units='ft')
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 64.58, units='ft')
@@ -1069,7 +1060,6 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         )
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
-        options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, units='lbf')
         options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
 
         prob = self.prob = om.Problem()
@@ -1079,6 +1069,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
+        prob.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, units='lbf')
         # BWBDetailedCabinLayout
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=45.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
