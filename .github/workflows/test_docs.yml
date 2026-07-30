@@ -80,18 +80,29 @@ jobs:
           -exec echo "#################################################################" \; \
           -exec cat {} \;
 
-      - name: Publish docs to github.io
+      - name: Publish dev docs to gh-pages
+        # Gated on the fork during development of the versioned-docs feature.
+        # Before merging upstream, change to:
+        #   github.event_name == 'push' && github.ref == 'refs/heads/main'
         if: |
-          github.event_name == 'push' && github.ref == 'refs/heads/main'
+          github.event_name == 'push'
+          && github.ref == 'refs/heads/main'
+          && github.repository == 'hschilli/Aviary'
         shell: bash -l {0}
         run: |
           eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
+          pip install packaging
           echo "============================================================="
-          echo "Publishing Docs to github.io"
+          echo "Publishing dev docs to gh-pages"
           echo "============================================================="
-          pip install ghp-import
-          cd $HOME/work/Aviary/Aviary/aviary
-          ghp-import -n -p -f docs/_build/html
+          cd $HOME/work/Aviary/Aviary
+          # Ensure release tags are visible so versions.json enumerates them.
+          git fetch --tags --force origin || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python aviary/docs/publish_docs.py \
+            --kind dev \
+            --html-dir aviary/docs/_build/html
 
       - name: Scan for security issues
         shell: bash -l {0}

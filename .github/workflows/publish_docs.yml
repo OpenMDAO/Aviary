@@ -1,0 +1,115 @@
+# Build and publish versioned docs for a release tag.
+#
+# Triggers:
+#   - push of a tag matching v*.*.*      -> publishes /<tag>/ (and /latest/ if
+#                                            the tag is the highest stable release)
+#   - workflow_dispatch with a tag input -> same thing, but for backfilling old tags
+#
+# Publish target follows github.repository:
+#   - hschilli/Aviary  -> hschilling.github.io/Aviary   (dev / testing)
+#   - OpenMDAO/Aviary  -> openmdao.github.io/Aviary     (production)
+#
+# The publish step is gated on `github.repository == 'hschilli/Aviary'` for the
+# duration of this branch's development. Remove that condition (or change it to
+# the OpenMDAO org) before merging upstream.
+
+name: Publish Versioned Docs
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build (e.g. v1.0.1). Must already exist.'
+        required: true
+
+concurrency:
+  group: publish-docs-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: write   # needed to push to gh-pages
+
+    steps:
+      - name: Resolve target tag
+        id: target
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout repository at target tag
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.target.outputs.tag }}
+          fetch-depth: 0    # need full tag history for versions.json
+
+      - name: Checkout actions
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+
+      - name: prepare_docs_environment
+        uses: ./actions/.github/actions/prepare_environment
+        with:
+          NAME: 'release-${{ steps.target.outputs.tag }}'
+          OPENMDAO_PIXI_ENVIRONMENT: 'py313'
+          OPENMDAO_INSTALL_FROM: 'pypi'
+          OPENMDAO: ''
+          SNOPT: '7.7'
+          DYMOS: 'latest'
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
+
+      - name: Build docs
+        id: build_docs
+        shell: bash -l {0}
+        run: |
+          eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
+          pip install -U "jupyter-book<2"
+          cd aviary/docs
+          echo "============================================================="
+          echo "Build the docs for ${{ steps.target.outputs.tag }}"
+          echo "============================================================="
+          bash build_book.sh
+
+      - name: Display doc build reports
+        continue-on-error: True
+        shell: bash -l {0}
+        if: failure() && steps.build_docs.outcome == 'failure'
+        run: |
+          eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
+          cd $HOME/work/Aviary/Aviary/aviary/docs
+          find _build/html/reports/ -type f -name '*.log' \
+          -exec echo "#################################################################" \; \
+          -exec echo {} \; \
+          -exec echo "#################################################################" \; \
+          -exec cat {} \;
+
+      - name: Publish docs to gh-pages
+        if: github.repository == 'hschilli/Aviary'
+        shell: bash -l {0}
+        run: |
+          eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
+          pip install packaging
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          echo "============================================================="
+          echo "Publishing docs for tag ${{ steps.target.outputs.tag }}"
+          echo "============================================================="
+          python aviary/docs/publish_docs.py \
+            --kind tag \
+            --tag "${{ steps.target.outputs.tag }}" \
+            --html-dir aviary/docs/_build/html
