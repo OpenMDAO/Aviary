@@ -83,14 +83,21 @@ jobs:
           -exec echo "#################################################################" \; \
           -exec cat {} \;
 
+      - name: Show publish-gate context (debug)
+        run: |
+          echo "event_name = ${{ github.event_name }}"
+          echo "ref        = ${{ github.ref }}"
+          echo "repository = ${{ github.repository }}"
+
       - name: Publish dev docs to gh-pages
         # Gated on the fork during development of the versioned-docs feature.
         # IA966-versioned-doc is temporarily allowed so pushes to that branch
         # publish to hschilling.github.io/Aviary. Before merging upstream,
-        # change to:
+        # revert this `if:` to:
         #   github.event_name == 'push' && github.ref == 'refs/heads/main'
-        if: |
-          github.event_name == 'push'
+        # and drop the workflow_dispatch clause.
+        if: >-
+          (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
           && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/IA966-versioned-doc')
           && github.repository == 'hschilli/Aviary'
         shell: bash -l {0}
