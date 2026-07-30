@@ -1,19 +1,5 @@
 '''
-This example tries to run an optimization on t_duration based on the aero_model but 
-doesn't work right now because of the multiple promoted outputs error - suggests issues with
-wiring or loading of external subsystems. 
 
-THE ERROR: 
-    output traj.cruise.rhs_all.drag refers to multiple outputs: traj.phases.cruise.rhs_all.
-    core_aerodynamics.total_aircraft_drag.drag and traj.phases.cruise.rhs_all.solver_sub.aerodynamics.
-    Drag.drag.simple_drag.drag... similar error also has come up for lift, etc. 
-
-    This implies that the external subsystem is not replacing core aviary aero, but rather that they 
-    are both being looked at simultaneously. 
-
-    My suspicions of this error lie primarily in the use of OAS_aero_analysis in aero_example and in 
-    the possibility of the external subsystem being loaded incorrecty in phase_info/phase_info being 
-    loaded incorrectly in general
 '''
 
 import openmdao.api as om
@@ -144,6 +130,24 @@ prob.add_driver('IPOPT',use_coloring=False, max_iter=max_iter)
 prob.setup()
 prob.set_initial_guesses()
 prob.final_setup()
+
+################
+# Check what supplies mass to AlphaComp
+mass_inputs = prob.model.list_inputs(
+    includes=['*alpha_comp*mass*'],
+    val=True,
+    units=True,
+    prom_name=True,
+    out_stream=None,
+)
+
+for name, meta in mass_inputs:
+    source = prob.model._conn_global_abs_in2out.get(name, 'UNCONNECTED')
+
+    print('\nAlphaComp mass check:')
+    print('  Input: ', name)
+    print('  Source:', source)
+    print('  Value: ', meta['val'], meta['units'])
 
 om.n2(
 prob,
@@ -300,7 +304,22 @@ if DEBUG_MODEL:
 print('\nRUNNING THE INTEGRATED MODEL...\n')
 
 prob.run_model()
+###################
+print(
+    'Structure mass:',
+    prob.get_val(
+        Aircraft.Design.STRUCTURE_MASS,
+        units='kg',
+    ),
+)
 
+print(
+    'Cruise mass:',
+    prob.get_val(
+        'traj.phases.cruise.indep_states.states:mass',
+        units='kg',
+    ),
+)
 print('\nMODEL RUN COMPLETED.\n')
 
 

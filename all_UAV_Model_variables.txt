@@ -110,7 +110,7 @@ pre_mission
           aircraft:horizontal_tail:wetted_area_scaler              [1.]                      input   unitless    aircraft:horizontal_tail:wetted_area_scaler                                           
           aircraft:vertical_tail:area                              [0.67812636]              input   ft**2       aircraft:vertical_tail:area                                                           
           aircraft:vertical_tail:wetted_area_scaler                [1.]                      input   unitless    aircraft:vertical_tail:wetted_area_scaler                                             
-          aircraft:horizontal_tail:wetted_area                     [2.81876235]              output  ft**2       pre_mission.AIRCRAFT_DATA_OVERRIDE:aircraft:horizontal_tail:wetted_area               
+          aircraft:horizontal_tail:wetted_area                     [2.60087029]              output  ft**2       pre_mission.AIRCRAFT_DATA_OVERRIDE:aircraft:horizontal_tail:wetted_area               
           aircraft:vertical_tail:wetted_area                       [1.3929936]               output  ft**2       pre_mission.AIRCRAFT_DATA_OVERRIDE:aircraft:vertical_tail:wetted_area                 
         fus_swet
           prep_geom:_Names:CROOTB                                  [1.40014794]              input   unitless    pre_mission.fus_swet.prep_geom:_Names:CROOTB                                          
@@ -264,7 +264,7 @@ pre_mission
         aircraft:engine:mass_scaler                                [1.]                      input   unitless    aircraft:engine:mass_scaler                                                           
         aircraft:engine:mass                                       [1.]                      output  lbm         aircraft:engine:mass                                                                  
         aircraft:engine:additional_mass                            [0.]                      output  lbm         aircraft:engine:additional_mass                                                       
-        aircraft:propulsion:total_engine_mass                      [2.]                      output  lbm         aircraft:propulsion:total_engine_mass                                                 
+        aircraft:propulsion:total_engine_mass                      [1.]                      output  lbm         aircraft:propulsion:total_engine_mass                                                 
       fuel_system
         aircraft:fuel:fuel_system_mass_scaler                      [0.]                      input   unitless    aircraft:fuel:fuel_system_mass_scaler                                                 
         aircraft:fuel:total_capacity                               [0.]                      input   lbm         aircraft:fuel:total_capacity                                                          
@@ -336,7 +336,7 @@ pre_mission
       starter
         aircraft:nacelle:avg_diameter                              [0.16404199]              input   ft          aircraft:nacelle:avg_diameter                                                         
         aircraft:engine:scale_factor                               [1.]                      input   unitless    aircraft:engine:scale_factor                                                          
-        aircraft:propulsion:total_starter_mass                     [0.43552185]              output  lbm         aircraft:propulsion:total_starter_mass                                                
+        aircraft:propulsion:total_starter_mass                     [0.21776092]              output  lbm         aircraft:propulsion:total_starter_mass                                                
       anti_icing
         aircraft:anti_icing:mass_scaler                            [0.]                      input   unitless    aircraft:anti_icing:mass_scaler                                                       
         aircraft:fuselage:max_width                                [0.37401575]              input   ft          aircraft:fuselage:max_width                                                           
@@ -363,7 +363,7 @@ pre_mission
         aircraft:engine:additional_mass                            [0.]                      input   lbm         aircraft:engine:additional_mass                                                       
         aircraft:propulsion:misc_mass_scaler                       [0.]                      input   unitless    aircraft:propulsion:misc_mass_scaler                                                  
         aircraft:propulsion:total_engine_controls_mass             [0.]                      input   lbm         aircraft:propulsion:total_engine_controls_mass                                        
-        aircraft:propulsion:total_starter_mass                     [0.43552185]              input   lbm         aircraft:propulsion:total_starter_mass                                                
+        aircraft:propulsion:total_starter_mass                     [0.21776092]              input   lbm         aircraft:propulsion:total_starter_mass                                                
         aircraft:propulsion:total_misc_mass                        [0.]                      output  lbm         aircraft:propulsion:total_misc_mass                                                   
       nacelle
         aircraft:nacelle:avg_diameter                              [0.16404199]              input   ft          aircraft:nacelle:avg_diameter                                                         
@@ -425,7 +425,7 @@ pre_mission
           aircraft:nacelle:mass                                    [0.]                      input   lbm         aircraft:nacelle:mass                                                                 
           aircraft:propulsion:total_engine_controls_mass           [0.]                      input   lbm         aircraft:propulsion:total_engine_controls_mass                                        
           aircraft:engine:mass                                     [1.]                      input   lbm         aircraft:engine:mass                                                                  
-          aircraft:propulsion:total_starter_mass                   [0.43552185]              input   lbm         aircraft:propulsion:total_starter_mass                                                
+          aircraft:propulsion:total_starter_mass                   [0.21776092]              input   lbm         aircraft:propulsion:total_starter_mass                                                
           aircraft:engine:thrust_reversers_mass                    [0.]                      input   lbm         aircraft:engine:thrust_reversers_mass                                                 
           aircraft:engine:scaled_sls_thrust                        [0.]                      input   lbf         aircraft:engine:scaled_sls_thrust                                                     
           aircraft:propulsion:total_scaled_sls_thrust              [0.]                      input   lbf         aircraft:propulsion:total_scaled_sls_thrust                                           
@@ -440,7 +440,7 @@ pre_mission
           aircraft:wing:aspect_ratio                               [5.14]                    input   unitless    aircraft:wing:aspect_ratio                                                            
           aircraft:wing:sweep                                      [0.]                      input   deg         aircraft:wing:sweep                                                                   
           aircraft:wing:bending_material_factor                    [8.21520332]              output  unitless    aircraft:wing:bending_material_factor                                                 
-          aircraft:wing:eng_pod_inertia_factor                     [0.94]                    output  unitless    aircraft:wing:eng_pod_inertia_factor                                                  
+          aircraft:wing:eng_pod_inertia_factor                     [1.]                      output  unitless    aircraft:wing:eng_pod_inertia_factor                                                  
         wing_misc
           aircraft:wing:composite_fraction                         [0.2]                     input   unitless    aircraft:wing:composite_fraction                                                      
           aircraft:wing:area                                       [7.0007397]               input   ft**2       aircraft:wing:area                                                                    
@@ -458,7 +458,7 @@ pre_mission
           aircraft:wing:bending_material_factor                    [8.21520332]              input   unitless    aircraft:wing:bending_material_factor                                                 
           aircraft:wing:bending_material_mass_scaler               [0.]                      input   unitless    aircraft:wing:bending_material_mass_scaler                                            
           aircraft:wing:composite_fraction                         [0.2]                     input   unitless    aircraft:wing:composite_fraction                                                      
-          aircraft:wing:eng_pod_inertia_factor                     [0.94]                    input   unitless    aircraft:wing:eng_pod_inertia_factor                                                  
+          aircraft:wing:eng_pod_inertia_factor                     [1.]                      input   unitless    aircraft:wing:eng_pod_inertia_factor                                                  
           aircraft:wing:load_fraction                              [1.]                      input   unitless    aircraft:wing:load_fraction                                                           
           aircraft:wing:misc_mass                                  [0.]                      input   lbm         aircraft:wing:misc_mass                                                               
           aircraft:wing:misc_mass_scaler                           [0.]                      input   unitless    aircraft:wing:misc_mass_scaler                                                        
@@ -495,9 +495,9 @@ pre_mission
           aircraft:fuel:fuel_system_mass                           [0.]                      input   lbm         aircraft:fuel:fuel_system_mass                                                        
           aircraft:propulsion:total_misc_mass                      [0.]                      input   lbm         aircraft:propulsion:total_misc_mass                                                   
           aircraft:propulsion:total_thrust_reversers_mass          [0.]                      input   lbm         aircraft:propulsion:total_thrust_reversers_mass                                       
-          aircraft:propulsion:total_engine_mass                    [2.]                      input   lbm         aircraft:propulsion:total_engine_mass                                                 
+          aircraft:propulsion:total_engine_mass                    [1.]                      input   lbm         aircraft:propulsion:total_engine_mass                                                 
           aircraft:battery:mass                                    [1.55866819]              input   lbm         aircraft:battery:mass                                                                 
-          aircraft:propulsion:mass                                 [3.55866819]              output  lbm         aircraft:propulsion:mass                                                              
+          aircraft:propulsion:mass                                 [2.55866819]              output  lbm         aircraft:propulsion:mass                                                              
         controls_mass
           aircraft:wing:surface_control_mass                       [0.39980533]              input   lbm         aircraft:wing:surface_control_mass                                                    
           aircraft:controls:mass                                   [0.39980533]              output  lbm         aircraft:controls:mass                                                                
@@ -514,7 +514,7 @@ pre_mission
           aircraft:design:systems_and_equipment_mass               [0.39980533]              output  lbm         aircraft:design:systems_and_equipment_mass                                            
         empty_mass_group
           empty_mass_margin
-            aircraft:propulsion:mass                               [3.55866819]              input   lbm         aircraft:propulsion:mass                                                              
+            aircraft:propulsion:mass                               [2.55866819]              input   lbm         aircraft:propulsion:mass                                                              
             aircraft:design:structure_mass                         [4.09334932]              input   lbm         aircraft:design:structure_mass                                                        
             aircraft:design:systems_and_equipment_mass             [0.39980533]              input   lbm         aircraft:design:systems_and_equipment_mass                                            
             aircraft:design:empty_mass_margin_scaler               [0.]                      input   unitless    aircraft:design:empty_mass_margin_scaler                                              
@@ -522,10 +522,10 @@ pre_mission
           empty_mass
             aircraft:design:empty_mass_margin                      [0.]                      input   lbm         aircraft:design:empty_mass_margin                                                     
             aircraft:design:structure_mass                         [4.09334932]              input   lbm         aircraft:design:structure_mass                                                        
-            aircraft:propulsion:mass                               [3.55866819]              input   lbm         aircraft:propulsion:mass                                                              
+            aircraft:propulsion:mass                               [2.55866819]              input   lbm         aircraft:propulsion:mass                                                              
             aircraft:design:systems_and_equipment_mass             [0.39980533]              input   lbm         aircraft:design:systems_and_equipment_mass                                            
             aircraft:design:external_subsystems_mass               [0.]                      input   lbm         aircraft:design:external_subsystems_mass                                              
-            aircraft:design:empty_mass                             [8.05182284]              output  lbm         aircraft:design:empty_mass                                                            
+            aircraft:design:empty_mass                             [7.05182284]              output  lbm         aircraft:design:empty_mass                                                            
         operating_items_mass
           aircraft:crew_and_payload:cargo_container_mass           [0.]                      input   lbm         aircraft:crew_and_payload:cargo_container_mass                                        
           aircraft:crew_and_payload:cabin_crew_mass                [0.]                      input   lbm         aircraft:crew_and_payload:cabin_crew_mass                                             
@@ -536,17 +536,17 @@ pre_mission
           mission:operating_items_mass_additional                  [0.]                      input   lbm         mission:operating_items_mass_additional                                               
           mission:operating_items_mass                             [0.]                      output  lbm         mission:operating_items_mass                                                          
         operating_mass
-          aircraft:design:empty_mass                               [8.05182284]              input   lbm         aircraft:design:empty_mass                                                            
+          aircraft:design:empty_mass                               [7.05182284]              input   lbm         aircraft:design:empty_mass                                                            
           mission:operating_items_mass                             [0.]                      input   lbm         mission:operating_items_mass                                                          
-          mission:operating_mass                                   [8.05182284]              output  lbm         mission:operating_mass                                                                
+          mission:operating_mass                                   [7.05182284]              output  lbm         mission:operating_mass                                                                
         zero_fuel_mass
           aircraft:crew_and_payload:total_payload_mass             [0.]                      input   lbm         aircraft:crew_and_payload:total_payload_mass                                          
-          mission:operating_mass                                   [8.05182284]              input   lbm         mission:operating_mass                                                                
-          mission:zero_fuel_mass                                   [8.05182284]              output  lbm         mission:zero_fuel_mass                                                                
+          mission:operating_mass                                   [7.05182284]              input   lbm         mission:operating_mass                                                                
+          mission:zero_fuel_mass                                   [7.05182284]              output  lbm         mission:zero_fuel_mass                                                                
         useful_load_mass
           aircraft:design:gross_mass                               [15.43235835]             input   lbm         aircraft:design:gross_mass                                                            
-          aircraft:design:empty_mass                               [8.05182284]              input   lbm         aircraft:design:empty_mass                                                            
-          aircraft:design:useful_load_mass                         [7.38053551]              output  lbm         aircraft:design:useful_load_mass                                                      
+          aircraft:design:empty_mass                               [7.05182284]              input   lbm         aircraft:design:empty_mass                                                            
+          aircraft:design:useful_load_mass                         [8.38053551]              output  lbm         aircraft:design:useful_load_mass                                                      
     performance
       aircraft:propulsion:total_scaled_sls_thrust                  [0.]                      input   lbf         aircraft:propulsion:total_scaled_sls_thrust                                           
       aircraft:design:gross_mass                                   [15.43235835]             input   lbm         aircraft:design:gross_mass                                                            
@@ -555,8 +555,8 @@ pre_mission
       aircraft:design:wing_loading                                 [2.20438968]              output  lbf/ft**2   aircraft:design:wing_loading                                                          
   total_fuel_mass_comp
     gross_mass                                                     [15.43235835]             input   lbm         mission:gross_mass                                                                    
-    zero_fuel_mass                                                 [8.05182284]              input   lbm         mission:zero_fuel_mass                                                                
-    total_fuel_mass                                                [7.38053551]              output  lbm         mission:total_fuel_mass                                                               
+    zero_fuel_mass                                                 [7.05182284]              input   lbm         mission:zero_fuel_mass                                                                
+    total_fuel_mass                                                [8.38053551]              output  lbm         mission:total_fuel_mass                                                               
 traj
   param_comp
     parameters:aircraft:battery:energy_capacity                    [109.11522]               input   W*h         aircraft:battery:energy_capacity                                                      
@@ -41575,13 +41575,13 @@ post_mission
   total_fuel_mass_con
     mission_fuel_burned                                            [0.]                      input   lbm         mission:fuel_mass                                                                     
     reserve_fuel_mass                                              [0.]                      input   lbm         mission:total_reserve_fuel_mass                                                       
-    total_fuel_mass                                                [7.38053551]              input   lbm         mission:total_fuel_mass                                                               
-    total_fuel_mass_constraint                                     [7.38053551]              output  lbm         mission:constraints:mass_residual                                                     
+    total_fuel_mass                                                [8.38053551]              input   lbm         mission:total_fuel_mass                                                               
+    total_fuel_mass_constraint                                     [8.38053551]              output  lbm         mission:constraints:mass_residual                                                     
   excess_fuel_constraint
-    overall_fuel                                                   [7.38053551]              input   lbm         mission:total_fuel_mass                                                               
+    overall_fuel                                                   [8.38053551]              input   lbm         mission:total_fuel_mass                                                               
     total_fuel_capacity                                            [0.]                      input   lbm         aircraft:fuel:total_capacity                                                          
     unusable_fuel                                                  [0.]                      input   lbm         aircraft:fuel:unusable_fuel_mass                                                      
-    excess_fuel_capacity                                           [-7.38053551]             output  lbm         mission:constraints:excess_fuel_mass_capacity                                         
+    excess_fuel_capacity                                           [-8.38053551]             output  lbm         mission:constraints:excess_fuel_mass_capacity                                         
   block_fuel_comp
     fuel_burned_taxi_in                                            [0.]                      input   lbm         mission:taxi:fuel_mass_taxi_in                                                        
     mission_fuel_burned                                            [0.]                      input   lbm         mission:fuel_mass                                                                     

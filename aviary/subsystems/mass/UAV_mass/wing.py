@@ -70,7 +70,7 @@ class WingMass(om.JaxExplicitComponent):
             foam_volume = airfoil_area * span
             foam_mass_prelim = foam_volume * foam_density
             cross_section_rod_area = jnp.pi * radius**2 - jnp.pi * (radius - rod_thickness)**2
-            
+            #check here to see if the calc for the rods in the wing design are correct or no since we multiply by 2 for the rod but we mutiply by 2 again in the other equations
             #Assumes fixed number of 2 rods in the simple wing design:
             rod_volume = (2.0 * span * cross_section_rod_area)
 
