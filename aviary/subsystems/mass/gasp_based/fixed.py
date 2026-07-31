@@ -98,8 +98,9 @@ class MassParameters(om.ExplicitComponent):
         if num_wing_engines > 4:
             if verbosity > Verbosity.BRIEF:
                 warnings.warn(
-                    f'The case num_wing_engines = {num_wing_engines} is not currently '
-                    'supported in Aviary. Will set Aircraft.Propulsion.ENGINE_POSITION_FACTOR using default.'
+                    f'GASP mass equations do not support more than 4 total engines on the wings. '
+                    'Aircraft.Propulsion.ENGINE_POSITION_FACTOR will use the default equation, '
+                    'which is not scaled by number of wing-mounted engines.'
                 )
         max_mach = inputs['max_mach']
         strut_x = inputs[Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS]
