@@ -21,6 +21,12 @@ class ExternalSubsystemGroup(om.Group):
 class BaseODE(om.Group):
     """The base class for all ODE components."""
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Turn on for all ODE systems.
+        self.options['auto_order'] = True
+
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
         self.options.declare(

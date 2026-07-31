@@ -122,6 +122,7 @@ class UnsteadySolvedODE(TwoDOFODE):
         throttle_balance_group = self.add_subsystem(
             'throttle_balance_group', om.Group(), promotes=['*']
         )
+        throttle_balance_group.options['auto_order'] = True
 
         throttle_balance_comp = om.BalanceComp()
         throttle_balance_comp.add_balance(
