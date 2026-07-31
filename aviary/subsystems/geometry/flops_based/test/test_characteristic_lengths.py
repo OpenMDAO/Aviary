@@ -75,7 +75,6 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
         aviary_options_nacelle = {
             Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
-            Aircraft.Engine.REFERENCE_SLS_THRUST: (np.array([28928.1]), 'lbf'),
         }
 
         prob.model.add_subsystem(
@@ -105,6 +104,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             (Aircraft.Wing.GLOVE_AND_BAT, 'ft**2'),
             (Aircraft.Wing.TAPER_RATIO, 'unitless'),
             (Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless'),
+            (Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf'),
         ]
         for var, units in input_list:
             prob.set_val(var, aviary_inputs.get_val(var, units))
@@ -115,6 +115,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([6, 4.25, 9.6]))
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([8.4, 5.75, 10]))
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([28928.1, 28928.1, 28928.1]))
+        prob.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, val=np.array([28928.1]))
 
         prob.run_model()
 
@@ -178,19 +179,18 @@ class BWBNacelleCharacteristicLengthTest(unittest.TestCase):
 
         options = {
             Aircraft.Engine.NUM_ENGINES: np.array([3]),
-            Aircraft.Engine.REFERENCE_SLS_THRUST: (np.array([86459.2]), 'lbf'),
         }
 
         prob.model.add_subsystem(
             'cl', NacelleCharacteristicLength(), promotes_outputs=['*'], promotes_inputs=['*']
         )
         prob.model_options['*'] = options
-        # prob.model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = np.array([86459.2])
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([12.608]))
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([17.433]))
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]))
+        prob.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, val=np.array([86459.2]))
         prob.run_model()
 
         out1 = prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH)
