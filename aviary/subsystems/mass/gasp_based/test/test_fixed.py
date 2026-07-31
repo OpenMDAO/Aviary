@@ -51,7 +51,9 @@ class MassParametersTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN, val=118.8, units='ft'
         )  # bug fixed value
-        self.prob.model.set_input_defaults('max_mach', val=0.9, units='unitless')  # bug fixed value
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.MAX_MACH, val=0.9, units='unitless'
+        )  # bug fixed value
         self.prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15)
 
         setup_model_options(self.prob, options)
@@ -98,7 +100,7 @@ class MassParametersTestCase2(unittest.TestCase):
             Aircraft.Wing.SPAN, val=117.8, units='ft'
         )  # not actual bug fixed value
         self.prob.model.set_input_defaults(
-            'max_mach', val=0.72, units='unitless'
+            Aircraft.Design.MAX_MACH, val=0.72, units='unitless'
         )  # not actual bug fixed value
         self.prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0)
 
@@ -147,7 +149,7 @@ class MassParametersTestCase3(unittest.TestCase):
             Aircraft.Wing.SPAN, val=117.8, units='ft'
         )  # not actual bug fixed value
         self.prob.model.set_input_defaults(
-            'max_mach', val=0.72, units='unitless'
+            Aircraft.Design.MAX_MACH, val=0.72, units='unitless'
         )  # not actual bug fixed value
         self.prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0)
 
@@ -196,7 +198,7 @@ class MassParametersTestCase4(unittest.TestCase):
             Aircraft.Wing.SPAN, val=117.8, units='ft'
         )  # not actual bug fixed value
         self.prob.model.set_input_defaults(
-            'max_mach', val=0.72, units='unitless'
+            Aircraft.Design.MAX_MACH, val=0.72, units='unitless'
         )  # not actual bug fixed value
         self.prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0)
 
@@ -245,7 +247,7 @@ class MassParametersTestCase5(unittest.TestCase):
             Aircraft.Wing.SPAN, val=117.8, units='ft'
         )  # not actual bug fixed value
         self.prob.model.set_input_defaults(
-            'max_mach', val=0.9, units='unitless'
+            Aircraft.Design.MAX_MACH, val=0.9, units='unitless'
         )  # not actual bug fixed value
         self.prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0)
 
@@ -764,7 +766,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            'max_mach', val=0.9, units='unitless'
+            Aircraft.Design.MAX_MACH, val=0.9, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CARGO_MASS, val=0, units='lbm'
@@ -996,7 +998,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            'max_mach', val=0.72, units='unitless'
+            Aircraft.Design.MAX_MACH, val=0.72, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, val=10 / 117.8, units='unitless'
@@ -1298,7 +1300,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                 Aircraft.Wing.TAPER_RATIO: (0.25, 'unitless'),
                 Aircraft.Wing.ASPECT_RATIO: (11.0, 'unitless'),
                 Aircraft.Wing.SPAN: (100.0, 'ft'),
-                'max_mach': (0.9, 'unitless'),
+                Aircraft.Design.MAX_MACH: (0.9, 'unitless'),
                 Aircraft.Strut.ATTACHMENT_LOCATION: (10.0, 'ft'),
                 Aircraft.LandingGear.MAIN_GEAR_LOCATION: (0.2, 'unitless'),
                 Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS: (200.0, 'lbm'),
@@ -1415,7 +1417,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501094, units='ft')
-        prob.model.set_input_defaults('max_mach', 0.9, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Design.MAX_MACH, 0.9, units='unitless')
         prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0, units='unitless')
 
         setup_model_options(self.prob, options)
@@ -1672,7 +1674,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 30, units='deg')
         prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')
-        prob.model.set_input_defaults('max_mach', 0.9, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Design.MAX_MACH, 0.9, units='unitless')
         prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, 0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 15000.0, units='lbm'

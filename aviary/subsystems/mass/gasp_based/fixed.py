@@ -34,7 +34,7 @@ class MassParameters(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
 
         self.add_input(
-            'max_mach',
+            Aircraft.Design.MAX_MACH,
             units='unitless',
             desc='EMM0: maximum operating Mach number',
         )
@@ -72,7 +72,7 @@ class MassParameters(om.ExplicitComponent):
                 Aircraft.Wing.ASPECT_RATIO,
             ],
         )
-        self.declare_partials(Aircraft.Engine.POSITION_FACTOR, ['max_mach'])
+        self.declare_partials(Aircraft.Engine.POSITION_FACTOR, Aircraft.Design.MAX_MACH)
         self.declare_partials(
             'half_sweep',
             [
@@ -95,7 +95,7 @@ class MassParameters(om.ExplicitComponent):
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         wingspan = inputs[Aircraft.Wing.SPAN]
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
-        max_mach = inputs['max_mach']
+        max_mach = inputs[Aircraft.Design.MAX_MACH]
         strut_x = inputs[Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS]
         loc_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
 
@@ -147,7 +147,7 @@ class MassParameters(om.ExplicitComponent):
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         wingspan = inputs[Aircraft.Wing.SPAN]
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
-        max_mach = inputs['max_mach']
+        max_mach = inputs[Aircraft.Design.MAX_MACH]
         strut_x = inputs[Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS]
         loc_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
 
@@ -195,15 +195,15 @@ class MassParameters(om.ExplicitComponent):
             * dTanHS_dAR
         )
 
-        J[Aircraft.Engine.POSITION_FACTOR, 'max_mach'] = -dSigmoidXdx(
+        J[Aircraft.Engine.POSITION_FACTOR, Aircraft.Design.MAX_MACH] = -dSigmoidXdx(
             max_mach, 0.75, 1 / 320.0
         ) + 1.05 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
         if not_fuselage_mounted and num_engines == 2 or num_engines == 3:
-            J[Aircraft.Engine.POSITION_FACTOR, 'max_mach'] = -0.98 * dSigmoidXdx(
+            J[Aircraft.Engine.POSITION_FACTOR, Aircraft.Design.MAX_MACH] = -0.98 * dSigmoidXdx(
                 max_mach, 0.75, 1 / 320.0
             ) + 0.95 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
         if not_fuselage_mounted and num_engines == 4:
-            J[Aircraft.Engine.POSITION_FACTOR, 'max_mach'] = -0.95 * dSigmoidXdx(
+            J[Aircraft.Engine.POSITION_FACTOR, Aircraft.Design.MAX_MACH] = -0.95 * dSigmoidXdx(
                 max_mach, 0.75, 1 / 320.0
             ) + 0.9 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
 

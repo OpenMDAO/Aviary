@@ -355,7 +355,7 @@ class LoadParameters(om.ExplicitComponent):
         )
 
         self.add_output(
-            'max_mach',
+            Aircraft.Design.MAX_MACH,
             units='unitless',
             desc='EMM0: maximum operating Mach number',
         )
@@ -370,7 +370,7 @@ class LoadParameters(om.ExplicitComponent):
             desc='V9: intermediate value. Typically it is maximum flight speed.',
         )
 
-        self.declare_partials('max_mach', 'max_airspeed')
+        self.declare_partials(Aircraft.Design.MAX_MACH, 'max_airspeed')
         self.declare_partials('density_ratio', 'max_airspeed')
         self.declare_partials('V9', '*')
 
@@ -435,7 +435,7 @@ class LoadParameters(om.ExplicitComponent):
             if CATD < 3.0 and density_ratio <= 0.6820:  # note: this creates a discontinuity
                 density_ratio = 0.6820
 
-        outputs['max_mach'] = max_mach
+        outputs[Aircraft.Design.MAX_MACH] = max_mach
         outputs['density_ratio'] = density_ratio
         outputs['V9'] = V9
 
@@ -579,7 +579,7 @@ class LoadParameters(om.ExplicitComponent):
                 density_ratio = 0.6820
                 ddensity_ratio_dmax_airspeed = 0.0
 
-        partials['max_mach', 'max_airspeed'] = dmax_mach_dmax_airspeed
+        partials[Aircraft.Design.MAX_MACH, 'max_airspeed'] = dmax_mach_dmax_airspeed
         partials['density_ratio', 'max_airspeed'] = ddensity_ratio_dmax_airspeed
         partials['V9', 'max_airspeed'] = dV9_dmax_airspeed
         partials['V9', 'vel_c'] = dV9_dvel_c
@@ -1145,7 +1145,7 @@ class DesignLoadGroup(om.Group):
                 'max_airspeed',
                 'vel_c',
             ],
-            promotes_outputs=['density_ratio', 'V9', 'max_mach'],
+            promotes_outputs=['density_ratio', 'V9', Aircraft.Design.MAX_MACH],
         )
 
         self.add_subsystem(
@@ -2195,7 +2195,7 @@ class BWBDesignLoadGroup(om.Group):
             'params',
             LoadParameters(),
             promotes_inputs=['max_airspeed', 'vel_c'],
-            promotes_outputs=['density_ratio', 'V9', 'max_mach'],
+            promotes_outputs=['density_ratio', 'V9', Aircraft.Design.MAX_MACH],
         )
 
         self.add_subsystem(
