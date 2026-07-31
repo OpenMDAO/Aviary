@@ -160,7 +160,7 @@ class Aircraft:
         LIFT_POLAR = 'aircraft:design:lift_polar'
         MACH = 'aircraft:design:mach'
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'
-        MAX_MACH = 'mission:design:max_mach'
+        MAX_MACH = 'aircraft:design:max_mach'
         MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
         PERCENT_EXCRESCENCE_DRAG = 'aircraft:design:percent_excrescence_drag'
