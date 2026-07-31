@@ -156,10 +156,6 @@ class FlightODEDescenTestCase(unittest.TestCase):
 
         setup_model_options(self.prob, aviary_options)
 
-    @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse('3.26'),
-        'Skipping due to OpenMDAO version being too low (<3.26)',
-    )
     def test_high_alt(self):
         # Test descent above 10k ft with Mach under and over the EAS limit
         self.sys.options['num_nodes'] = 2
