@@ -32,10 +32,6 @@ class DLandTestCase(unittest.TestCase):
         setup_model_options(self.prob, options)
         self.prob.model.set_input_defaults(Mission.Landing.AIRPORT_ALTITUDE, 0, units='ft')
 
-    @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse('3.26'),
-        'Skipping due to OpenMDAO version being too low (<3.26)',
-    )
     def test_dland(self):
         self.prob.setup(check=False, force_alloc_complex=True)
 
