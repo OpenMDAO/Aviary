@@ -18,7 +18,7 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
-        add_aviary_option(self, Mission.Constraints.MAX_MACH)
+        add_aviary_option(self, Aircraft.Design.MAX_MACH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
@@ -43,7 +43,7 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Hydraulics.MASS_SCALER]
         area = inputs[Aircraft.Wing.AREA]
         var_sweep = inputs[Aircraft.Wing.VAR_SWEEP_MASS_PENALTY]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
 
         outputs[Aircraft.Hydraulics.MASS] = (
             0.57
@@ -67,7 +67,7 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Hydraulics.MASS_SCALER]
         area = inputs[Aircraft.Wing.AREA]
         var_sweep = inputs[Aircraft.Wing.VAR_SWEEP_MASS_PENALTY]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
 
         term1 = planform + 0.27 * area
         term2 = 1.0 + 0.03 * num_wing_eng_fact + 0.05 * num_fuse_eng_fact
