@@ -6,8 +6,6 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import override_aviary_vars
 from aviary.variable_info.variable_meta_data import CoreMetaData
 
-use_new_openmdao_syntax = version.parse(openmdao.__version__) >= version.parse('3.28')
-
 
 class CorePreMission(om.Group):
     """
@@ -38,9 +36,8 @@ class CorePreMission(om.Group):
         )
 
     def setup(self, **kwargs):
-        if use_new_openmdao_syntax:
-            # rely on openMDAO's auto-ordering for this group
-            self.options['auto_order'] = True
+        # rely on openMDAO's auto-ordering for this group
+        self.options['auto_order'] = True
 
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
