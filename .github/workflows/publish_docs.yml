@@ -51,7 +51,10 @@ jobs:
         uses: actions/checkout@v6
         with:
           ref: ${{ steps.target.outputs.tag }}
-          fetch-depth: 0    # need full tag history for versions.json
+          fetch-depth: 0    # full history so all commits are visible
+          fetch-tags: true  # NEEDED: tags are a separate refspec; without this
+                            # `git tag -l` on the runner returns nothing and
+                            # versions.json ends up empty.
 
       - name: Checkout actions
         uses: actions/checkout@v6

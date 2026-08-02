@@ -61,13 +61,18 @@ def _run(cmd, cwd=None, check=True, capture=False):
     return None
 
 
-def get_release_tags(repo_root):
+def get_release_tags(repo_root, extra_tags=()):
     """
     Return release tags sorted newest-first, filtered to those parseable as
     PEP 440 versions.
+
+    `extra_tags` are additional tag names to include even if `git tag -l` did
+    not surface them (e.g. the `--tag` argument the user just asked us to
+    publish, which is always relevant regardless of what git thinks).
     """
     out = _run(['git', 'tag', '-l', 'v*.*.*'], cwd=repo_root, capture=True)
-    raw = [t for t in out.split() if t]
+    raw = {t for t in out.split() if t} | set(extra_tags)
+    print(f"  discovered {len(raw)} candidate tag(s): {sorted(raw)}")
 
     parsed = []
     for t in raw:
@@ -393,7 +398,11 @@ def main(argv=None):
         subdir = args.tag
     _validate_subdir(subdir)
 
-    parsed_tags = get_release_tags(repo_root)
+    # If this run is publishing a specific tag, always consider that tag a
+    # candidate — even if `git tag -l` on the runner didn't surface it (e.g.
+    # tags weren't fetched into the checkout).
+    extra = [args.tag] if args.kind == 'tag' else []
+    parsed_tags = get_release_tags(repo_root, extra_tags=extra)
 
     # After this publish, what will /latest/ point at?
     #   - dev builds: whatever it already was (recomputed from tag list).
