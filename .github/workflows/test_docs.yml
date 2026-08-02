@@ -83,13 +83,6 @@ jobs:
           -exec echo "#################################################################" \; \
           -exec cat {} \;
 
-      - name: Show publish-gate context (debug)
-        run: |
-          echo "event_name = ${{ github.event_name }}"
-          echo "ref        = ${{ github.ref }}"
-          echo "repository = ${{ github.repository }}"
-          echo "gate_test  = ${{ github.repository == 'hschilling/Aviary' && contains(fromJSON('[\"refs/heads/main\", \"refs/heads/IA966-versioned-doc\"]'), github.ref) }}"
-
       - name: Publish dev docs to gh-pages
         # Gated on the fork during development of the versioned-docs feature.
         # IA966-versioned-doc is temporarily allowed so pushes to that branch
