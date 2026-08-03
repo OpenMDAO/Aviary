@@ -54,6 +54,9 @@ class UAVPropMission(om.Group):
                 Aircraft.Battery.VOLTAGE,
                 Aircraft.Battery.RESISTANCE,
                 Dynamic.Vehicle.Propulsion.CURRENT,
+            ],
+            promotes_outputs=[
+                ('dt_denergy_used', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL),
             ]
         )
 
@@ -137,27 +140,6 @@ class UAVPropMission(om.Group):
 
 
 
-        """This is dt_soc"""
-        self.add_subsystem(
-            'electric_power',
-            om.ExecComp(
-                [
-                    'p_elec = v_batt * current',
-
-                ],
-                p_elec={'val': np.zeros(nn), 'units': 'W'},
-                v_batt={'val': np.zeros(nn), 'units': 'V'},
-                current={'val': np.zeros(nn), 'units': 'A'},
-                has_diag_partials=True,
-            ),
-            promotes_inputs=[
-                ('current', Dynamic.Vehicle.Propulsion.CURRENT),
-            ],
-            promotes_outputs=[
-                ('p_elec', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN),
-
-            ],
-        )
 
 
         self.add_subsystem(
@@ -180,8 +162,7 @@ class UAVPropMission(om.Group):
         )
 
 
-        self.connect('battery.voltage_out', 'electric_power.v_batt')
-        self.connect('battery.voltage_out', 'esc.voltage_in')
+        
         self.connect('esc.voltage_out', 'motor.voltage_in')
         self.connect('esc.current_out', 'motor.current')
 

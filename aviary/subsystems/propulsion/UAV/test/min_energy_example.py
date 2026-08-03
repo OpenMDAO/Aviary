@@ -10,7 +10,7 @@ from aviary.subsystems.aerodynamics.UAV_Aero.aero_builder import AeroBuilder
 from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import phase_info
 from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
-from aviary.variable_info.UAV_variables import Aircraft
+from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.variable_info.variables import  Settings
 
 
@@ -86,7 +86,7 @@ def CruiseExample():
     cruise_phase = prob.model.traj.phases.cruise
     cruise_phase.add_objective('rc_electric.energy_constraint', loc='final', ref = -100, units='W*hr')
 
-    prob.add_driver('IPOPT', use_coloring=False, max_iter=15)
+    prob.add_driver('IPOPT', use_coloring=False, max_iter=0)
 
     prob.driver.opt_settings['print_level'] = 5
     prob.driver.opt_settings['mu_strategy'] = 'monotone'
@@ -110,14 +110,21 @@ def CruiseExample():
     # prob.set_val('traj.cruise.states:mass', 4.1, units='kg')
 
     prob.set_val('traj.cruise.controls:rpm_slack', 4000.0, units='rpm')
-    prob.set_val('traj.cruise.controls:throttle', 0.3)
+    prob.set_val('traj.cruise.controls:throttle', 1.0)
     prob.set_val('traj.cruise.controls:alpha', 3.0, units='deg')
+    prob.set_val(Dynamic.Vehicle.Propulsion.THRUST_MAX, 9.69, units='lbf')
 
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units='m**2')
     print('Wetted Area:', number)
 
     prob.run_aviary_problem(run_driver=True)
 
+    print('throttle:', prob.get_val('traj.cruise.controls:throttle', units='unitless'))
+    print('battery voltage:', prob.get_val('traj.cruise.rhs_all.rc_electric.battery.voltage_out', units='V'))
+    print('esc voltage out:', prob.get_val('traj.cruise.rhs_all.rc_electric.esc.voltage_out', units='V'))
+    print('motor power:', prob.get_val('traj.cruise.rhs_all.rc_electric.motor.power', units='W'))
+    print('prop power:', prob.get_val('traj.cruise.rhs_all.rc_electric.prop_power', units='W'))
+    print('electric power in:', prob.get_val('traj.cruise.rhs_all.rc_electric.electric_power_in', units='W'))
     print(prob.get_val('traj.cruise.rhs_all.thrust_required', units='lbf'))
     print(prob.get_val('traj.cruise.rhs_all.thrust_residual', units='lbf'))
     print(prob.get_val('traj.cruise.rhs_all.drag', units='lbf'))

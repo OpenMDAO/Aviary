@@ -59,6 +59,7 @@ class Battery(om.ExplicitComponent):
 
         self.add_output('voltage_out', val=np.zeros(nn), units='V')
         self.add_output('power', val=np.zeros(nn), units='W')
+        self.add_output('dt_denergy_used', val=np.zeros(nn), units='W')
         ar = np.arange(nn)
 
         self.declare_partials(
@@ -78,6 +79,8 @@ class Battery(om.ExplicitComponent):
         R = inputs[Aircraft.Battery.RESISTANCE]
 
         outputs['power'] = V * I - I**2 * R
+        
+        outputs['dt_denergy_used'] = V * I
         outputs['voltage_out'] = V - I * R
 
     def compute_partials(self, inputs, partials):
