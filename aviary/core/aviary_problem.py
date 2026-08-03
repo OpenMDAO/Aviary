@@ -122,6 +122,28 @@ class AviaryProblem(om.Problem):
         #      problems don't have a consistent variable path to check the inputs later on
         self.generate_payload_range = False
 
+    def _override_verbosity(self, verbosity):
+        """
+        Overrides verbosity setting for this method.
+
+        Parameters
+        ----------
+        verbosity : int, Verbosity (optional)
+            Verbosity level requested for this method.
+
+        Returns
+        -------
+        Verbosity
+            New verbosity for this method.
+        """
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
+        return verbosity
+
     def load_inputs(
         self,
         aircraft_data,
@@ -167,11 +189,7 @@ class AviaryProblem(om.Problem):
         # We haven't read the input data yet, we don't know what desired run verbosity is
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # usually None
+        verbosity = self._override_verbosity(verbosity)
 
         if meta_data is not None:
             # Support for custom meta_data set.
@@ -216,13 +234,7 @@ class AviaryProblem(om.Problem):
             Controls the level of terminal output for this method. If None, uses the problem-level
             verbosity.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
@@ -278,13 +290,7 @@ class AviaryProblem(om.Problem):
         ValueError
             If ``problem_type`` is not ``ProblemType.MULTI_MISSION``.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if self.problem_type is not ProblemType.MULTI_MISSION:
             ValueError(
@@ -331,13 +337,7 @@ class AviaryProblem(om.Problem):
             Controls the level of terminal output for this method. If None, uses the problem-level
             verbosity.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
@@ -369,13 +369,7 @@ class AviaryProblem(om.Problem):
             Controls the level of terminal output for this method. If None, uses the problem-level
             verbosity.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
@@ -408,13 +402,7 @@ class AviaryProblem(om.Problem):
         dm.Trajectory
             The Dymos Trajectory object containing the added mission phases.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
@@ -462,13 +450,7 @@ class AviaryProblem(om.Problem):
             Controls the level of terminal output for this method. If None,
             uses the problem-level verbosity.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
@@ -500,13 +482,7 @@ class AviaryProblem(om.Problem):
             Controls the level of terminal output for this method. If None, uses the problem-level
             verbosity.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
@@ -538,13 +514,7 @@ class AviaryProblem(om.Problem):
             Controls the level of terminal output for this method. If None, uses the problem-level
             verbosity.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         # Set defaults for optimizer, use_coloring and max_iter
         if optimizer is None:
@@ -683,13 +653,7 @@ class AviaryProblem(om.Problem):
         In all cases, a design variable is added for the final cruise mass of the aircraft, with no
         upper bound, and a residual mass constraint is added to ensure that the mass balances.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
@@ -726,13 +690,7 @@ class AviaryProblem(om.Problem):
         ValueError
             If an invalid ``objective_type`` or ``problem_type`` is provided.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         # This isn't really a fuel objective, it's a hybrid or compound objective
         self.model.add_subsystem(
@@ -1043,9 +1001,8 @@ class AviaryProblem(om.Problem):
         # weighted_str looks like:  'model1_fuelburn*0.67*0.5 + model1_gross_mass*0.33*0.5 + model2_fuelburn*0.67*0.5 + model2_gross_mass*0.33*0.5'
 
         kwargs = {}
-        if version.parse(openmdao.__version__) >= version.parse('3.40'):
-            # We can get the correct unit from the source. This prevents a warning.
-            kwargs = {k: {'units_by_conn': True} for k in obj_inputs}
+        # We can get the correct unit from the source. This prevents a warning.
+        kwargs = {k: {'units_by_conn': True} for k in obj_inputs}
 
         # adding composite execComp to super problem
         self.model.add_subsystem(
@@ -1149,13 +1106,7 @@ class AviaryProblem(om.Problem):
             Controls the level of terminal output for this method. If None, uses the problem-level
             verbosity.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
@@ -1268,13 +1219,7 @@ class AviaryProblem(om.Problem):
             Controls the level of terminal output for this method. If None, uses the problem-level
             verbosity.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
@@ -1327,13 +1272,7 @@ class AviaryProblem(om.Problem):
         real_time_plotting : bool, optional
             If True, enables real-time plotting of the optimization progress.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if (
             verbosity >= Verbosity.VERBOSE or real_time_plotting
@@ -1503,12 +1442,7 @@ class AviaryProblem(om.Problem):
         UserWarning
             If ``problem_type`` is ``SIZING``, or if both ``fill_cargo`` and ``fill_fuel`` are True.
         """
-        # For off-design missions, provided verbosity will be used for all L2 method calls
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         # accept str for problem type
         problem_type = ProblemType(problem_type)
@@ -1746,12 +1680,7 @@ class AviaryProblem(om.Problem):
         Currently only supported for the energy state equations of motion. Reserve fuel is not yet
         accounted for in the analysis.
         """
-        # For off-design missions, provided verbosity will be used for all L2 method calls
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if not self.result.success and verbosity > Verbosity.QUIET:
             warnings.warn(
