@@ -60,6 +60,10 @@ jobs:
             .github/actions
           path: actions
 
+      # Check out the full repo at the target tag into ./src/, NOT the workspace
+      # root. Owning the root causes actions/checkout to wipe sibling
+      # directories (including the ./actions/ checkout above) when switching
+      # refs, which breaks the composite-action path resolution below.
       - name: Checkout repository at target tag
         uses: actions/checkout@v6
         with:
@@ -68,7 +72,7 @@ jobs:
           fetch-tags: true  # NEEDED: tags are a separate refspec; without this
                             # `git tag -l` on the runner returns nothing and
                             # versions.json ends up empty.
-          clean: false      # don't wipe the sibling ./actions/ checkout above
+          path: src
 
       - name: prepare_docs_environment
         uses: ./actions/.github/actions/prepare_environment
@@ -86,6 +90,7 @@ jobs:
       - name: Build docs
         id: build_docs
         shell: bash -l {0}
+        working-directory: src
         run: |
           eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
           pip install -U "jupyter-book<2"
@@ -99,9 +104,10 @@ jobs:
         continue-on-error: True
         shell: bash -l {0}
         if: failure() && steps.build_docs.outcome == 'failure'
+        working-directory: src
         run: |
           eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
-          cd $HOME/work/Aviary/Aviary/aviary/docs
+          cd aviary/docs
           find _build/html/reports/ -type f -name '*.log' \
           -exec echo "#################################################################" \; \
           -exec echo {} \; \
@@ -111,6 +117,7 @@ jobs:
       - name: Publish docs to gh-pages
         if: github.repository == 'hschilling/Aviary'
         shell: bash -l {0}
+        working-directory: src
         run: |
           eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
           pip install packaging
