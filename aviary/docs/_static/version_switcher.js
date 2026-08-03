@@ -66,29 +66,16 @@
 
   // ---- Sidebar dropdown -------------------------------------------------
   function renderSwitcher(loc, data) {
-    // Jupyter Book's PyData-Sphinx theme names the sidebar
-    // .pst-primary-sidebar (older builds also expose .bd-sidebar-primary).
-    // We insert the switcher AFTER the logo/header block so it sits between
-    // the logo and the TOC, not above the logo.
-    const sidebar =
-      document.querySelector('.pst-primary-sidebar') ||
-      document.querySelector('.bd-sidebar-primary') ||
-      document.querySelector('.bd-sidebar') ||
-      document.querySelector('aside.bd-sidebar-primary');
-    if (!sidebar) return;
-
-    // Find the logo element inside the sidebar so we can insert AFTER it
-    // (order becomes: logo -> switcher -> TOC).
-    // In this theme the logo is <a class="navbar-brand logo">.
-    const header =
-      sidebar.querySelector('.navbar-brand') ||
-      sidebar.querySelector('.sidebar-header-items') ||
-      null;
+    // Insert the switcher right after the logo inside .sidebar-primary-item.
+    // Final order in the sidebar: logo -> switcher -> TOC.
+    const logo = document.querySelector('.sidebar-primary-item .navbar-brand');
+    if (!logo) return;
 
     const wrap = document.createElement('div');
     wrap.className = 'aviary-version-switcher';
 
     const label = document.createElement('label');
+    // The for attribute binds the label to the form control whose id matches the value.
     label.setAttribute('for', 'aviary-version-select');
     label.textContent = 'Version';
     wrap.appendChild(label);
@@ -125,16 +112,7 @@
     });
 
     wrap.appendChild(select);
-
-    // Insert AFTER the logo so the order is: logo -> switcher -> TOC.
-    // insertAdjacentElement handles nesting depth and null-nextSibling
-    // cases cleanly.
-    if (header) {
-      header.insertAdjacentElement('afterend', wrap);
-      return;
-    }
-    // Fallback: put it at the top of the sidebar.
-    sidebar.insertBefore(wrap, sidebar.firstChild);
+    logo.insertAdjacentElement('afterend', wrap);
   }
 
   // ---- Yellow banner on non-latest pages --------------------------------
@@ -153,16 +131,13 @@
                 anchor(loc, data.latest, data.latest) + '.';
     }
 
+    const main = document.querySelector('.bd-main');
+    if (!main) return;
+
     const banner = document.createElement('div');
     banner.className = 'aviary-version-banner';
     banner.innerHTML = message;
-
-    // Insert above the main content area. PyData-Sphinx theme uses
-    // .bd-main; fall back to <main> or <body>.
-    const target = document.querySelector('.bd-main') ||
-                   document.querySelector('main') ||
-                   document.body;
-    target.insertBefore(banner, target.firstChild);
+    main.prepend(banner);
   }
 
   // Build an <a> string that jumps to `targetVersion` at the same page path,
