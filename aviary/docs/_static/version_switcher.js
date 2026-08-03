@@ -126,17 +126,12 @@
 
     wrap.appendChild(select);
 
-    // Insert AFTER the logo/header (climb to the direct child of `sidebar`
-    // so insertBefore works even if we matched a nested element).
+    // Insert AFTER the logo so the order is: logo -> switcher -> TOC.
+    // insertAdjacentElement handles nesting depth and null-nextSibling
+    // cases cleanly.
     if (header) {
-      let anchor = header;
-      while (anchor.parentNode && anchor.parentNode !== sidebar) {
-        anchor = anchor.parentNode;
-      }
-      if (anchor.parentNode === sidebar) {
-        sidebar.insertBefore(wrap, anchor.nextSibling);
-        return;
-      }
+      header.insertAdjacentElement('afterend', wrap);
+      return;
     }
     // Fallback: put it at the top of the sidebar.
     sidebar.insertBefore(wrap, sidebar.firstChild);
