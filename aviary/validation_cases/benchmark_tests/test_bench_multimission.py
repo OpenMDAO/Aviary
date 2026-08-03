@@ -168,6 +168,7 @@ class MultiMissionTestcase(unittest.TestCase):
 
         for var_name, (expected, actual) in expected_values.items():
             with self.subTest(var=var_name):
+                print(f'{var_name}: expected {expected}, actual is {actual}')
                 assert_near_equal(expected, actual, tolerance=1e-3)
 
 
