@@ -2324,16 +2324,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.POSITION_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
-    units='unitless',
-    desc='engine position factor',
-    default_value=0,
-    multivalue=True,
-)
-
-add_meta_data(
     Aircraft.Engine.PYLON_FACTOR,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FPYL', 'FLOPS': None},
@@ -4548,6 +4538,15 @@ add_meta_data(
     units='unitless',
     desc='Scaler for engine oil mass',
     default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.Propulsion.ENGINE_POSITION_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
+    units='unitless',
+    desc='engine position factor',
+    default_value=0,
 )
 
 add_meta_data(
