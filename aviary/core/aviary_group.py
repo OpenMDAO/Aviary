@@ -793,14 +793,6 @@ class AviaryGroup(om.Group):
         """
         verbosity = self._override_verbosity(verbosity)
 
-        post_mission = self.post_mission
-        self.add_subsystem(
-            'post_mission',
-            post_mission,
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
         # Make dymos state outputs easy to access later
         self.add_subsystem(
             'state_output',
