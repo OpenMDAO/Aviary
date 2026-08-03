@@ -1585,7 +1585,7 @@ add_meta_data(
     desc='aircraft cruise Mach number',
     # TODO: derived default value: Aircraft.Design.CRUISE_MACH ???
     default_value=0.0,
-    option=True,
+    # option=True,
 )
 
 add_meta_data(
