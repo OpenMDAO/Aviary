@@ -66,15 +66,26 @@
 
   // ---- Sidebar dropdown -------------------------------------------------
   function renderSwitcher(loc, data) {
-    // Jupyter Book's PyData-Sphinx theme puts the TOC inside
-    // .bd-sidebar-primary. Insert our widget at the very top of that panel
-    // so it sits above the TOC. Fall back to a couple of other selectors
-    // so a theme bump doesn't silently kill the switcher.
+    // Jupyter Book's PyData-Sphinx theme names the sidebar
+    // .pst-primary-sidebar (older builds also expose .bd-sidebar-primary).
+    // We insert the switcher AFTER the logo/header block so it sits between
+    // the logo and the TOC, not above the logo.
     const sidebar =
+      document.querySelector('.pst-primary-sidebar') ||
       document.querySelector('.bd-sidebar-primary') ||
       document.querySelector('.bd-sidebar') ||
       document.querySelector('aside.bd-sidebar-primary');
     if (!sidebar) return;
+
+    // Find the logo/header block inside the sidebar. PyData-Sphinx wraps
+    // the logo in .sidebar-header-items (or, in newer builds, keeps it
+    // inside a .bd-sidebar-primary-item that contains a .navbar-brand).
+    // We insert AFTER whichever we find; if none, we fall back to the top.
+    const header =
+      sidebar.querySelector('.sidebar-header-items') ||
+      sidebar.querySelector('.navbar-brand') ||
+      sidebar.querySelector('.sidebar-primary-item:has(.navbar-brand)') ||
+      null;
 
     const wrap = document.createElement('div');
     wrap.className = 'aviary-version-switcher';
@@ -116,6 +127,20 @@
     });
 
     wrap.appendChild(select);
+
+    // Insert AFTER the logo/header (climb to the direct child of `sidebar`
+    // so insertBefore works even if we matched a nested element).
+    if (header) {
+      let anchor = header;
+      while (anchor.parentNode && anchor.parentNode !== sidebar) {
+        anchor = anchor.parentNode;
+      }
+      if (anchor.parentNode === sidebar) {
+        sidebar.insertBefore(wrap, anchor.nextSibling);
+        return;
+      }
+    }
+    // Fallback: put it at the top of the sidebar.
     sidebar.insertBefore(wrap, sidebar.firstChild);
   }
 
