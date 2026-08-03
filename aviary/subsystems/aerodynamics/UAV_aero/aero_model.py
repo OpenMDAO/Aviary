@@ -235,7 +235,7 @@ class TotalAircraftAero(om.Group):
         )
         self.set_input_defaults(
             'alpha',
-            val=np.full(nn, -0.0792), #Experimented with different values for alpha to try to get alpha residual to be zero. 
+            val=np.full(nn, -0.0792), #Experimented with different values for alpha to try to get alpha residual to be zero. Varied numbers from 0.08 to -0.0792 and found that -0.0792 would give the best results. when i tried -0.08  would get -ve residuals.
             units='deg',
             src_shape=(nn,),
         )
