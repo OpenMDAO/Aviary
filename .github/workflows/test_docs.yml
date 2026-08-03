@@ -4,11 +4,8 @@ name: Test Docs
 
 on:
   # Trigger on push or pull request events for the main branch.
-  # IA966-versioned-doc is temporarily included so the fork can iterate on
-  # versioned-docs publishing without merging to main. REMOVE that branch
-  # before opening the upstream PR.
   push:
-    branches: [ main, IA966-versioned-doc ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
   merge_group:
@@ -84,12 +81,7 @@ jobs:
           -exec cat {} \;
 
       - name: Publish dev docs to gh-pages
-        # Gated on the fork during development of the versioned-docs feature.
-        # IA966-versioned-doc is temporarily allowed so pushes to that branch
-        # publish to hschilling.github.io/Aviary. Before merging upstream,
-        # revert this `if:` to just:
-        #   github.event_name == 'push' && github.ref == 'refs/heads/main'
-        if: ${{ github.repository == 'hschilling/Aviary' && contains(fromJSON('["refs/heads/main", "refs/heads/IA966-versioned-doc"]'), github.ref) }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         shell: bash -l {0}
         run: |
           eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"

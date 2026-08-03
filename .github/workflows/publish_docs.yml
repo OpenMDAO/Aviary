@@ -5,13 +5,7 @@
 #                                            the tag is the highest stable release)
 #   - workflow_dispatch with a tag input -> same thing, but for backfilling old tags
 #
-# Publish target follows github.repository:
-#   - hschilling/Aviary  -> hschilling.github.io/Aviary   (dev / testing)
-#   - OpenMDAO/Aviary  -> openmdao.github.io/Aviary     (production)
-#
-# The publish step is gated on `github.repository == 'hschilling/Aviary'` for the
-# duration of this branch's development. Remove that condition (or change it to
-# the OpenMDAO org) before merging upstream.
+# Publishes to openmdao.github.io/Aviary via the gh-pages branch.
 
 name: Publish Versioned Docs
 
@@ -115,7 +109,6 @@ jobs:
           -exec cat {} \;
 
       - name: Publish docs to gh-pages
-        if: github.repository == 'hschilling/Aviary'
         shell: bash -l {0}
         working-directory: src
         run: |
