@@ -354,7 +354,8 @@ class LoadParameters(om.ExplicitComponent):
             desc='VM0: maximum operating equivalent airspeed',
         )
 
-        self.add_output(
+        add_aviary_output(
+            self,
             Aircraft.Design.MAX_MACH,
             units='unitless',
             desc='EMM0: maximum operating Mach number',
