@@ -86,7 +86,7 @@ def CruiseExample():
     cruise_phase = prob.model.traj.phases.cruise
     cruise_phase.add_objective('rc_electric.energy_constraint', loc='final', ref = -100, units='W*hr')
 
-    prob.add_driver('IPOPT', use_coloring=False, max_iter=0)
+    prob.add_driver('IPOPT', use_coloring=False, max_iter=1000)
 
     prob.driver.opt_settings['print_level'] = 5
     prob.driver.opt_settings['mu_strategy'] = 'monotone'
@@ -110,9 +110,9 @@ def CruiseExample():
     # prob.set_val('traj.cruise.states:mass', 4.1, units='kg')
 
     prob.set_val('traj.cruise.controls:rpm_slack', 4000.0, units='rpm')
-    prob.set_val('traj.cruise.controls:throttle', 1.0)
+    prob.set_val('traj.cruise.controls:throttle', 0.3)
     prob.set_val('traj.cruise.controls:alpha', 3.0, units='deg')
-    prob.set_val(Dynamic.Vehicle.Propulsion.THRUST_MAX, 9.69, units='lbf')
+    prob.set_val('traj.cruise.rhs_all.thrust_net_max_total', 9.69, units='lbf')
 
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units='m**2')
     print('Wetted Area:', number)

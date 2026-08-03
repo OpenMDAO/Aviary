@@ -162,7 +162,8 @@ class UAVPropMission(om.Group):
         )
 
 
-        
+
+        self.connect('battery.voltage_out', 'esc.voltage_in')
         self.connect('esc.voltage_out', 'motor.voltage_in')
         self.connect('esc.current_out', 'motor.current')
 
