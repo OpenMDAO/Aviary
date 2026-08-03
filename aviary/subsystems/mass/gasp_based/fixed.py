@@ -70,8 +70,7 @@ class MassParameters(om.ExplicitComponent):
                 Aircraft.Wing.ASPECT_RATIO,
             ],
         )
-        self.declare_partials(Aircraft.Engine.POSITION_FACTOR, Aircraft.Design.MAX_MACH)
-        self.declare_partials(Aircraft.Propulsion.ENGINE_POSITION_FACTOR, ['max_mach'])
+        self.declare_partials(Aircraft.Propulsion.ENGINE_POSITION_FACTOR, Aircraft.Design.MAX_MACH)
         self.declare_partials(
             'half_sweep',
             [
@@ -226,13 +225,15 @@ class MassParameters(om.ExplicitComponent):
                 max_mach, 0.75, 1 / 320.0
             ) + 1.05 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
             if num_wing_engines == 2 or num_wing_engines == 3:
-                J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, Aircraft.Design.MAX_MACH] = -0.98 * dSigmoidXdx(
-                    max_mach, 0.75, 1 / 320.0
-                ) + 0.95 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
+                J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, Aircraft.Design.MAX_MACH] = (
+                    -0.98 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
+                    + 0.95 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
+                )
             if num_wing_engines == 4:
-                J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, Aircraft.Design.MAX_MACH] = -0.95 * dSigmoidXdx(
-                    max_mach, 0.75, 1 / 320.0
-                ) + 0.9 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
+                J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, Aircraft.Design.MAX_MACH] = (
+                    -0.95 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
+                    + 0.9 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
+                )
         else:
             J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, Aircraft.Design.MAX_MACH] = 0.0
 
