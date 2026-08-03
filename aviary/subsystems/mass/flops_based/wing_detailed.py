@@ -367,12 +367,12 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         bwb_input_station_dist = np.zeros(len(input_station_dist) + 1, dtype=width.dtype)
         bwb_input_station_dist[1:] = input_station_dist
 
-        if self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
-            bwb_input_station_dist = np.where(
-                bwb_input_station_dist <= 1.0,
-                bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
-                bwb_input_station_dist + width / 2.0,  # else
-            )
+        #if self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
+            #bwb_input_station_dist = np.where(
+                #bwb_input_station_dist <= 1.0,
+                #bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
+                #bwb_input_station_dist + width / 2.0,  # else
+            #)
         bwb_input_station_dist[0] = 0.0
 
         # TODO: FLOPS had capability to choose starting point for wing via NESOB

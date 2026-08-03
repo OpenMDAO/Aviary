@@ -40,7 +40,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.OUTBOARD_SEMISPAN, units='ft')
-        add_aviary_input(self, Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, units='unitless')
 
         self.add_output(Aircraft.Wing.SPAN, units='ft')
         self.add_output(
@@ -81,7 +81,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         row_col = np.array([0])
         self.declare_partials(
             'BWB_THICKNESS_TO_CHORD_DISTRIBUTION',
-            Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD,
+            Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
             rows=row_col,
             cols=row_col,
             val=1.0,
@@ -115,7 +115,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
 
         rate_span = (wingspan - width) / wingspan
         length = inputs[Aircraft.Fuselage.LENGTH][0]
-        side_tc = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD][0]
+        cl_tc = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO][0]
 
         outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][1:] = inputs[
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION
@@ -124,10 +124,9 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         # Note: this code nondimensionalizes by element, which implies that the user might mix
         # dimensional and nondimensionalized elements, which seems unlikely.
         idx = np.where(outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'] < 5.0)
-        outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][idx] *= rate_span
         outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][0] = length
 
-        outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][0] = side_tc
+        outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][0] = cl_tc
         outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][1:] = inputs[
             Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION
         ]
@@ -141,6 +140,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         # We have generally been starting the wing at the secn point.
         # These weren't called in this case.
         #outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][1] = root_chord
+        #outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][idx] *= rate_span
         #outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][1] = side_tc
 
 
@@ -379,12 +379,12 @@ class BWBWingPrelim(om.ExplicitComponent):
         bwb_input_station_dist = np.zeros(num_bwb_stations, dtype=width.dtype)
         bwb_input_station_dist[1:] = input_station_dist
 
-        bwb_input_station_dist = np.where(
-            bwb_input_station_dist <= 1.0,
-            bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
-            bwb_input_station_dist + width / 2.0,  # else
-        )
-        bwb_input_station_dist[0] = 0.0
+        #bwb_input_station_dist = np.where(
+            #bwb_input_station_dist <= 1.0,
+            #bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
+            #bwb_input_station_dist + width / 2.0,  # else
+        #)
+        #bwb_input_station_dist[0] = 0.0
 
         # TODO: FLOPS had capability to choose starting point for wing via NESOB
         # We have generally been starting the wing at the secn point.
