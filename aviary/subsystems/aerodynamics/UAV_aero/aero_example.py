@@ -54,7 +54,7 @@ phase_info = {
             'mach_optimize': False,
             'mach_polynomial_order': 1,
             'mach_initial': (0.08, 'unitless'),
-            'mach_final': (0.09, 'unitless'),
+            'mach_final': (0.08, 'unitless'),
             'mach_bounds': ((0.07, 0.11), 'unitless'),
 
             'altitude_optimize': False,
@@ -82,8 +82,8 @@ phase_info = {
 }
 
 
-max_iter = 50
-optimizer = 'IPOPT' 
+# max_iter = 50
+# optimizer = 'IPOPT' 
 
 prob = av.AviaryProblem(verbosity=1)
 
@@ -126,7 +126,7 @@ prob.aviary_inputs.set_val(Dynamic.Vehicle.MASS, 3.787, units='kg')
 
 prob.check_and_preprocess_inputs()
 prob.build_model()
-prob.add_driver('IPOPT',use_coloring=False, max_iter=max_iter)
+# prob.add_driver('IPOPT',use_coloring=False, max_iter=max_iter)
 prob.setup()
 prob.set_initial_guesses()
 prob.final_setup()
@@ -347,7 +347,8 @@ print('Lift:', prob.get_val('traj.cruise.rhs_all.lift', units='lbf'))
 print('Drag:', prob.get_val('traj.cruise.rhs_all.drag', units='lbf'))
 print('CL:',prob.get_val('traj.cruise.rhs_all.lift_coefficient'),)
 print('CD:', prob.get_val('traj.cruise.rhs_all.drag_coefficient'))
-
+print('Lift balance residual:', prob.get_val( 'traj.phases.cruise.rhs_all.UAV_aero.lift_balance_residual', units='N') #printing the residual to ensure that the lift is equal to the weight of the UAV
+)
 print('CD_fus:', prob.get_val('traj.cruise.rhs_all.CD_fus'))
 print('CD_vtail:', prob.get_val('traj.cruise.rhs_all.CD_vtail'))
 print('CD_gear:', prob.get_val('traj.cruise.rhs_all.CD_gear'))
@@ -357,3 +358,20 @@ print('Fuselage length:', prob.get_val('aircraft:fuselage:length'))
 print('Fuselage height:', prob.get_val('aircraft:fuselage:max_height'))
 print('Angle of attack:', prob.get_val('traj.cruise.rhs_all.UAV_aero.alpha'))
 print('Wing span:', prob.get_val(Aircraft.Wing.SPAN))
+
+# these prints are to determine the mass of the UAV and its components to adjust the initial mission
+#  gross mass since no optimization is being done 
+print('Gross mass:',
+      prob.get_val('mission:gross_mass', units='kg'))
+
+print('Zero-fuel mass:',
+      prob.get_val('mission:zero_fuel_mass', units='kg'))
+
+print('Total fuel mass:',
+      prob.get_val('mission:total_fuel_mass', units='kg'))
+
+print('Engine mass:',
+      prob.get_val('aircraft:engine:mass', units='kg'))
+
+print('Total engine mass:',
+      prob.get_val('aircraft:propulsion:total_engine_mass', units='kg'))

@@ -191,7 +191,7 @@ class AlphaComp(om.ExplicitComponent):
         rows_cols = np.arange(nn)
         add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
         add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
-        self.add_input( 'alpha', val=np.full(nn, 3.0), units='deg', )
+        self.add_input( 'alpha', val=np.full(nn, 3), units='deg', )
 
         # This output will be constrained to zero.
         self.add_output( 'lift_balance_residual', val=np.zeros(nn),  units='N', desc='Lift equilibrium residual', )
@@ -204,7 +204,7 @@ class AlphaComp(om.ExplicitComponent):
         m = inputs[Dynamic.Vehicle.MASS]
         g = 9.8 # m/s**2
         a = np.radians(inputs['alpha'])
-        outputs['lift_balance_residual'] = L - (m * g * np.cos(a))
+        outputs['lift_balance_residual'] = L - (m * g) #chnaged the lift equation to be equal to weight instead of weight * cos(alpha)
 
     def compute_partials(self, inputs, partials):
         nn = self.options['num_nodes']
