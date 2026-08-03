@@ -3047,6 +3047,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.04373, units='unitless')
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
         options.set_val(Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, 0.0667, units='lbm')
 
         prob = self.prob = om.Problem()
@@ -3303,7 +3304,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         Aircraft.Propulsion.TOTAL_ENGINE_MASS -- WEP = 7005.
         Aircraft.Nacelle.MASS -- WNAC = 514.9
         Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS -- WPES = 2153
-        Aircraft.Engine.POSITION_FACTOR -- SKEPOS = 1.05
+        Aircraft.Propulsion.ENGINE_POSITION_FACTOR -- SKEPOS = 1.05
         Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS -- WPL = 33750
         Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS - WFE = 20876.
         Mission.OPERATING_ITEMS_MASS -- WFUL = 5775.
@@ -3370,7 +3371,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.MATERIAL_FACTOR], 1.19461189, tol)
         assert_near_equal(prob['c_strut_braced'], 1, tol)
         assert_near_equal(prob['c_gear_loc'], 0.95, tol)
-        assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
+        assert_near_equal(prob[Aircraft.Propulsion.ENGINE_POSITION_FACTOR], 1.05, tol)
         assert_near_equal(prob['half_sweep'], 0.47984874, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 33750.0, tol)
         assert_near_equal(prob['payload_mass_des'], 33750.0, tol)
@@ -3383,7 +3384,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Nacelle.MASS], 303.61439936, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 1686.626, tol)
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
-        assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
+        assert_near_equal(prob[Aircraft.Propulsion.ENGINE_POSITION_FACTOR], 1.05, tol)
         assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21885.38086961, tol)
         assert_near_equal(prob[Mission.OPERATING_ITEMS_MASS], 5961.79463002, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.25111783, tol)
