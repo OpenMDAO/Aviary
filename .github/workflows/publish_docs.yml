@@ -47,6 +47,19 @@ jobs:
             echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
           fi
 
+      # Sparse-checkout the composite action FIRST, into ./actions/.
+      # We must do this before the main repo checkout because the tag we're
+      # publishing may predate the prepare_environment action and its post-
+      # cleanup phase re-resolves the path — if ./actions/ isn't already in
+      # place, that resolution fails and marks the whole run red even though
+      # the publish succeeded.
+      - name: Checkout actions
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+
       - name: Checkout repository at target tag
         uses: actions/checkout@v6
         with:
@@ -55,13 +68,7 @@ jobs:
           fetch-tags: true  # NEEDED: tags are a separate refspec; without this
                             # `git tag -l` on the runner returns nothing and
                             # versions.json ends up empty.
-
-      - name: Checkout actions
-        uses: actions/checkout@v6
-        with:
-          sparse-checkout: |
-            .github/actions
-          path: actions
+          clean: false      # don't wipe the sibling ./actions/ checkout above
 
       - name: prepare_docs_environment
         uses: ./actions/.github/actions/prepare_environment
