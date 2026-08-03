@@ -77,14 +77,12 @@
       document.querySelector('aside.bd-sidebar-primary');
     if (!sidebar) return;
 
-    // Find the logo/header block inside the sidebar. PyData-Sphinx wraps
-    // the logo in .sidebar-header-items (or, in newer builds, keeps it
-    // inside a .bd-sidebar-primary-item that contains a .navbar-brand).
-    // We insert AFTER whichever we find; if none, we fall back to the top.
+    // Find the logo element inside the sidebar so we can insert AFTER it
+    // (order becomes: logo -> switcher -> TOC).
+    // In this theme the logo is <a class="navbar-brand logo">.
     const header =
-      sidebar.querySelector('.sidebar-header-items') ||
       sidebar.querySelector('.navbar-brand') ||
-      sidebar.querySelector('.sidebar-primary-item:has(.navbar-brand)') ||
+      sidebar.querySelector('.sidebar-header-items') ||
       null;
 
     const wrap = document.createElement('div');
