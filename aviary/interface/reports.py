@@ -87,20 +87,13 @@ def register_custom_reports():
         method='final_setup',
         pre_or_post='post',
     )
+
     register_report(
         name='list_options',
         func=_list_options_report,
         desc='Generates a report on the Problem options',
         class_name='AviaryProblem',
         method='run_driver',
-        pre_or_post='post',
-    )
-    register_report(
-        name='list_options',
-        func=_list_options_report,
-        desc='Generates a report on the Problem options',
-        class_name='AviaryProblem',
-        method='run_model',
         pre_or_post='post',
     )
 
