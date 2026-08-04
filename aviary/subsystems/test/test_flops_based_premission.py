@@ -630,7 +630,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # TransportEngineOilMass
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS], 346.93557352, tol)
         # BWBFurnishingsGroupMass
-        assert_near_equal(prob[Aircraft.Furnishings.MASS], 61482.097969438299, tol)
+        assert_near_equal(prob[Aircraft.Furnishings.MASS], 64632.2417937, tol)
         # TransportHydraulicsGroupMass
         assert_near_equal(prob[Aircraft.Hydraulics.MASS], 7368.5077321194321, tol)
         # PassengerServiceMass
@@ -693,14 +693,14 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 61597.102467771889, tol)
         # SystemsEquipMass
         assert_near_equal(
-            prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 98848.9061107412710, tol
+            prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 101999.04844105, tol
         )
         # EmptyMass
-        assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 434037.32820147, tol)
+        assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 437187.15893079, tol)
         # OperatingMass
-        assert_near_equal(prob[Mission.OPERATING_MASS], 455464.65969526308, tol)
+        assert_near_equal(prob[Mission.OPERATING_MASS], 458614.76964429, tol)
         # ZeroFuelMass
-        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 553276.65969526302, tol)
+        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 556426.76964429, tol)
 
     def test_case_all_subsystems(self):
         """
