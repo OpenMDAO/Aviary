@@ -553,20 +553,25 @@ class BWBWingWettedArea(om.ExplicitComponent):
     """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
+        add_aviary_option(self, Aircraft.BWB.WING_ROOT_INDEX)
         add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
+        root = self.options[Aircraft.BWB.WING_ROOT_INDEX]
+        if root < 1:
+            # Automatically add the centerline.
+            num_inp_stations += 1
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         self.add_input(
-            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations + 1, units='unitless'
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations, units='unitless'
         )
         self.add_input(
-            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_inp_stations + 1, units='unitless'
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_inp_stations, units='unitless'
         )
 
         add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
@@ -574,6 +579,8 @@ class BWBWingWettedArea(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
+        root = self.options[Aircraft.BWB.WING_ROOT_INDEX]
+
         width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         wingspan = inputs[Aircraft.Wing.SPAN][0]
         if wingspan <= 0.0:
@@ -582,22 +589,27 @@ class BWBWingWettedArea(om.ExplicitComponent):
 
         # This part is repeated in BWBWingPrelim()
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
-        num_bwb_stations = num_inp_stations + 1
+        if root < 1:
+            # Automatically add the centerline.
+            num_inp_stations += 1
+
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
-        bwb_input_station_dist = np.zeros(num_bwb_stations, dtype=width.dtype)
-        bwb_input_station_dist[1:] = input_station_dist
+        bwb_input_station_dist = np.zeros(num_inp_stations, dtype=width.dtype)
+
+        if root < 1:
+            bwb_input_station_dist[1:] = input_station_dist
+        else:
+            bwb_input_station_dist[:] = input_station_dist
 
         bwb_input_station_dist = np.where(
             bwb_input_station_dist <= 1.0,
             bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
             bwb_input_station_dist + width / 2.0,  # else
         )
-        bwb_input_station_dist[0] = 0.0
 
-        # TODO: FLOPS had capability to choose starting point for wing via NESOB
-        # We have generally been starting the wing at the secn point.
-        # These weren't called in this case.
-        # bwb_input_station_dist[1] = width / 2.0
+        if root < 1:
+            bwb_input_station_dist[0] = 0.0
+            bwb_input_station_dist[1] = width / 2.0
 
         ssmw = 0.0
         bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
@@ -611,7 +623,7 @@ class BWBWingWettedArea(om.ExplicitComponent):
             Y1 = bwb_input_station_dist[0] * wingspan / 2.0
         else:
             Y1 = bwb_input_station_dist[0]
-        for n in range(1, num_bwb_stations):
+        for n in range(1, num_inp_stations):
             avg_toc = (bwb_thickness_to_chord_dist[n - 1] + bwb_thickness_to_chord_dist[n]) / 2.0
             ckt = 2.0 + 0.387 * avg_toc
             if bwb_chord_per_semispan_dist[n] <= 5.0:

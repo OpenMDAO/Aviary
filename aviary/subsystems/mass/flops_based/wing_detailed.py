@@ -303,6 +303,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
     # Basically, Engine.WING_LOCATIONS is ignored if there are one or fewer wing engines
 
     def initialize(self):
+        add_aviary_option(self, Aircraft.BWB.WING_ROOT_INDEX)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Engine.NUM_WING_ENGINES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
@@ -315,17 +316,21 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
     def setup(self):
         input_station_distribution = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
         num_input_stations = len(input_station_distribution)
+        root = self.options[Aircraft.BWB.WING_ROOT_INDEX]
+        if root < 1:
+            num_input_stations += 1
+
         total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         self.add_input(
-            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=num_input_stations, units='deg'
+            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=num_input_stations - 1, units='deg'
         )
         self.add_input(
-            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_input_stations + 1, units='unitless'
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_input_stations, units='unitless'
         )
         self.add_input(
-            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_input_stations + 1, units='unitless'
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_input_stations, units='unitless'
         )
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
@@ -359,6 +364,8 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         num_integration_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
+        root = self.options[Aircraft.BWB.WING_ROOT_INDEX]
+
         width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         wingspan = inputs[Aircraft.Wing.SPAN][0]
         rate_span = (wingspan - width) / wingspan
@@ -367,18 +374,17 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         bwb_input_station_dist = np.zeros(len(input_station_dist) + 1, dtype=width.dtype)
         bwb_input_station_dist[1:] = input_station_dist
 
-        #if self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
-            #bwb_input_station_dist = np.where(
-                #bwb_input_station_dist <= 1.0,
-                #bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
-                #bwb_input_station_dist + width / 2.0,  # else
-            #)
-        bwb_input_station_dist[0] = 0.0
-
-        # TODO: FLOPS had capability to choose starting point for wing via NESOB
-        # We have generally been starting the wing at the secn point.
-        # These weren't called in this case.
-        # bwb_input_station_dist[1] = width / 2.0
+        if root < 1:
+            if not self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
+                bwb_input_station_dist[1] = width / 2.0
+            else:
+                bwb_input_station_dist = np.where(
+                    bwb_input_station_dist <= 1.0,
+                    bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
+                    bwb_input_station_dist + width / 2.0,  # else
+                )
+                bwb_input_station_dist[0] = 0.0
+                bwb_input_station_dist[1] = width / 2.0
 
         inp_stations_mod = []
         for x in bwb_input_station_dist:
@@ -387,6 +393,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             else:
                 inp_stations_mod.append(x)
         inp_stations_mod = np.array(inp_stations_mod)
+
         # For BWB, always start from inp_stations_mod[1], not inp_stations_mod[0]
         inp_stations_mod = inp_stations_mod[1:]
 

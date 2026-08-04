@@ -49,6 +49,9 @@ class Aircraft:
         REAR_SPAR_PERCENT_CHORD_ROOT = (
             'aircraft:blended_wing_body_design:rear_spar_percent_chord_root'
         )
+        WING_ROOT_INDEX = (
+            'aircraft:blended_wing_body_design:wing_root_index'
+        )
 
     class Canard:
         AREA = 'aircraft:canard:area'

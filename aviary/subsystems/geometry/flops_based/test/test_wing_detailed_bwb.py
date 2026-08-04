@@ -77,13 +77,14 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         )
         prob.set_val(
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
-            val=[0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
+            val=[0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
         )
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=80.220756073526772)
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=112.3001936860821)
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 55.0)
+        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, .335)
         prob.run_model()
 
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
@@ -108,7 +109,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
 
         out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DISTRIBUTION')
         exp2 = [
-            0.11,
+            0.335,
             0.11,
             0.1132,
             0.0928,
@@ -130,8 +131,8 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
-        # partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        # assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
+        partial_data = self.prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
+        assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
     def test_case2(self):
         """bwb300_baseline"""
@@ -165,6 +166,8 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.LENGTH, val=116.57609631)
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.1792)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 55.0)
+        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, .335)
+
         prob.run_model()
 
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
@@ -172,11 +175,11 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         assert_near_equal(out1, exp1, tolerance=1e-8)
 
         out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DISTRIBUTION')
-        exp2 = [0.1792, 0.1792, 0.125, 0.076, 0.076, 0.076, 0.06]
+        exp2 = [0.335, 0.1792, 0.125, 0.076, 0.076, 0.076, 0.06]
         assert_near_equal(out2, exp2, tolerance=1e-10)
 
         out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DISTRIBUTION')
-        exp3 = [0.0, 0.0, 0.0, 17.0, 17.0, 17.0]
+        exp3 = [0.0, 0.0, 10.0, 17.0, 17.0, 17.0]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
         # partial_data = self.prob.check_partials(out_stream=None, method='cs')

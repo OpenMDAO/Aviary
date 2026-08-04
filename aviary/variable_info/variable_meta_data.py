@@ -404,6 +404,19 @@ add_meta_data(
     default_value=0.7,
 )
 
+add_meta_data(
+    Aircraft.BWB.WING_ROOT_INDEX,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NESOB'},
+    desc='When using the detailed wing definition, the index where that defines the location of '
+    'the wing root. When this is 0, the wing definition starts at the root. When it is greater '
+    'than 0, the wing definition should start at the centerline, and the root chord is defined at '
+    'this index. NOTE: index started at 1 in FLOPS, but starts at 0 in Aviary.',
+    option=True,
+    types=int,
+    default_value=0,
+)
+
 #   _____                                      _
 #  / ____|                                    | |
 # | |        __ _   _ __     __ _   _ __    __| |
