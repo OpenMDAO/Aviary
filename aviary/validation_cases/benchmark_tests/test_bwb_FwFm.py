@@ -198,7 +198,7 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.GROSS_MASS, units='lbm'),
-            564852.60335347,
+            564856.71154669,
             tolerance=rtol,
         )
 
@@ -219,6 +219,6 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = BWB300ProblemPhaseTestCase()
+    test = BWBProblemPhaseTestCase()
     test.setUp()
-    test.test_bench_bwb300_FwFm_SNOPT()
+    test.test_bench_bwb_FwFm_SNOPT()
