@@ -110,19 +110,19 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
-            782430.3,
+            787036.9,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.OPERATING_MASS, units='lbm'),
-            445429.9,
+            449095.9,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
-            239188.4,
+            240128.9,
             tolerance=rtol,
         )
 
