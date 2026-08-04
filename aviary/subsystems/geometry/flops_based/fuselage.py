@@ -468,7 +468,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         # TODO: Much of this will need a re-write if we add the FLOPS capability that lets you
         # pick the inputs you want, and it calculates the others. This will involve sorting out
         # when "WF" means max width, and when it means computed width.
-        num_bays = np.ceil(0.5 + max_width / bay_width_nom)
+        num_bays = np.ceil(0.5 + max_width.real / bay_width_nom)
         if num_bays.real > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
 

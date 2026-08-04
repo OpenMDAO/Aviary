@@ -45,13 +45,13 @@ class NacelleMass(om.ExplicitComponent):
         shape = np.arange(num_engine_type)
 
         self.declare_partials(
-            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_DIAMETER, rows=shape, cols=shape, val=1.0
+            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_DIAMETER, rows=shape, cols=shape,
         )
         self.declare_partials(
-            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_LENGTH, rows=shape, cols=shape, val=1.0
+            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_LENGTH, rows=shape, cols=shape,
         )
         self.declare_partials(
-            Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER, rows=shape, cols=shape, val=1.0
+            Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER, rows=shape, cols=shape,
         )
         self.declare_partials(
             Aircraft.Nacelle.MASS,
@@ -87,7 +87,11 @@ class NacelleMass(om.ExplicitComponent):
         avg_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
         scaler = inputs[Aircraft.Nacelle.MASS_SCALER]
 
-        count_factor = nacelle_count_factor(num_eng) / num_eng
+        if self.options[Aircraft.Design.TYPE] == AircraftTypes.BLENDED_WING_BODY:
+            count_factor = self.options[Aircraft.Engine.NUM_WING_ENGINES]
+        else:
+            count_factor = nacelle_count_factor(num_eng) / num_eng
+
         # This should be distributed thrust factor, see issue #1096.
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
