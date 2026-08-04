@@ -1,5 +1,4 @@
 from copy import deepcopy
-from aviary.subsystems.aerodynamics.UAV_Aero.aero_builder import AeroBuilder
 
 
 phase_info = {

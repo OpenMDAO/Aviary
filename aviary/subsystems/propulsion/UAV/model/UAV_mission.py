@@ -56,7 +56,7 @@ class UAVPropMission(om.Group):
                 Dynamic.Vehicle.Propulsion.CURRENT,
             ],
             promotes_outputs=[
-                ('dt_denergy_used', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL),
+                ('dt_denergy_used', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN),
             ]
         )
 
@@ -171,10 +171,10 @@ class UAVPropMission(om.Group):
         """Constraints"""
         # ref 400: d(defect)/d(rpm_slack)=1 rpm/rpm with rpm_slack ref 10800 made
         # this row ~270 in the scaled jacobian at ref=40
-        self.add_constraint('rpm_balance.rpm_defect', lower=-4.0, upper=4.0, ref=400, units='rpm')
+        self.add_constraint('rpm_balance.rpm_defect', lower=-40.0, upper=40.0, ref=4000, units='rpm')
 
 
-        self.add_constraint('energy_constraint', lower=-500.0, indices=[-1], ref=100, units='W*h')
+        self.add_constraint('energy_constraint', lower=0.0, indices=[-1], ref=100, units='W*h')
 
 
 

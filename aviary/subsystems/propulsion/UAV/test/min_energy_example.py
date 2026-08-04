@@ -6,7 +6,7 @@ import aviary.api as av
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.aerodynamics.UAV_Aero.aero_builder import AeroBuilder
+from aviary.subsystems.aerodynamics.UAV_Aero.custom_aero_builder import CustomAeroBuilder
 from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import phase_info
 from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
@@ -33,7 +33,7 @@ def CruiseExample():
             'order': 3,
             'mach_optimize': True,
 
-            'mach_initial': (0.0538, 'unitless'),
+            'mach_initial': (0.07, 'unitless'),
 
             'mach_bounds': ((0.05, 0.3), 'unitless'),
             # 'mach_ref': (0.05, 'unitless'),
@@ -46,7 +46,7 @@ def CruiseExample():
             'altitude_optimize': True,
             'altitude_initial': (200.0, 'ft'),
             'altitude_bounds': ((50,400), 'ft'),
-            # 'altitude_final': (200.0, 'ft'),
+            'altitude_final': (200.0, 'ft'),
             'distance_initial': (0.0, 'm'),
 
             'distance_ref': (1000.0, 'm'),
@@ -75,7 +75,7 @@ def CruiseExample():
     print('Wetted Area:', number)
 
     prob.load_external_subsystems(
-        external_subsystems=[UAV_Prop, AeroBuilder(), DBFMassBuilder()]
+        external_subsystems=[UAV_Prop, CustomAeroBuilder(), DBFMassBuilder()]
     )
 
     prob.check_and_preprocess_inputs()
@@ -102,7 +102,7 @@ def CruiseExample():
     prob.driver.opt_settings['recalc_y'] = 'yes'
     prob.driver.opt_settings['recalc_y_feas_tol'] = 1e-2
 
-    prob.driver.opt_settings['acceptable_iter'] = 5
+    prob.driver.opt_settings['acceptable_iter'] = 0
     # prob.driver.options['debug_print'] = ['desvars', 'objs', 'nl_cons', 'ln_cons']
 
     prob.add_design_variables()
@@ -119,7 +119,6 @@ def CruiseExample():
 
     prob.set_val('traj.cruise.controls:rpm_slack', 2877.0, units='rpm')
     prob.set_val('traj.cruise.controls:throttle', 0.561)
-    prob.set_val('traj.cruise.controls:alpha', 3.0, units='deg')
     prob.set_val('traj.cruise.controls:mach', 0.0538)
     prob.set_val('traj.cruise.rhs_all.thrust_net_max_total', 9.69, units='lbf')
 
@@ -133,7 +132,7 @@ def CruiseExample():
     print('esc voltage out:', prob.get_val('traj.cruise.rhs_all.rc_electric.esc.voltage_out', units='V'))
     print('motor power:', prob.get_val('traj.cruise.rhs_all.rc_electric.motor.power', units='W'))
     print('prop power:', prob.get_val('traj.cruise.rhs_all.rc_electric.prop_power', units='W'))
-    print('electric power in:', prob.get_val('traj.cruise.rhs_all.rc_electric.electric_power_in_total', units='W'))
+    print('electric power in:', prob.get_val('traj.cruise.rhs_all.electric_power_in_total', units='W'))
     print(prob.get_val('traj.cruise.rhs_all.thrust_required', units='lbf'))
     print(prob.get_val('traj.cruise.rhs_all.thrust_residual', units='lbf'))
     print(prob.get_val('traj.cruise.rhs_all.drag', units='lbf'))
