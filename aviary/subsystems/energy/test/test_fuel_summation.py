@@ -1,3 +1,4 @@
+from copy import deepcopy
 import unittest
 
 import numpy as np
@@ -14,10 +15,12 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 class TestFuelSummation(unittest.TestCase):
     def test_fuel_group(self):
-        phase_info['descent']['user_options']['reserve'] = True
+        local_phase_info = deepcopy(phase_info)
+
+        local_phase_info['descent']['user_options']['reserve'] = True
         prob = om.Problem()
         prob.model.add_subsystem(
-            'fuel_group', FuelSummationGroup(mission_info=phase_info), promotes=['*']
+            'fuel_group', FuelSummationGroup(mission_info=local_phase_info), promotes=['*']
         )
 
         setup_model_options(
@@ -64,10 +67,12 @@ class TestFuelSummation(unittest.TestCase):
 
     def test_no_constraint(self):
         """Test the component again, this time not adding the excess fuel capacity constraint."""
-        phase_info['descent']['user_options']['reserve'] = True
+        local_phase_info = deepcopy(phase_info)
+
+        local_phase_info['descent']['user_options']['reserve'] = True
         prob = om.Problem()
         prob.model.add_subsystem(
-            'fuel_group', FuelSummationGroup(mission_info=phase_info), promotes=['*']
+            'fuel_group', FuelSummationGroup(mission_info=local_phase_info), promotes=['*']
         )
 
         setup_model_options(
