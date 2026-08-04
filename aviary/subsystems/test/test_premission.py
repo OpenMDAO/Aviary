@@ -57,6 +57,7 @@ class PreMissionTestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         input_options = setup_options(GASP_input, FLOPS_input)
+        # Note: if a parameter is not a GASP option but a FLOPS option, it is not loaded in.
 
         # delete the options that would override values
         input_options.delete(Aircraft.Wing.AREA)
@@ -136,6 +137,7 @@ class PreMissionTestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units='unitless')
 
     def test_GASP_mass_FLOPS_everything_else(self):
+        # Note: in geomtry subsystem, both GASP and FLOPS based subsystems are used
         self.prob.run_model()
 
         # Check the outputs from GASP mass and geometry (FLOPS outputs are not tested)
