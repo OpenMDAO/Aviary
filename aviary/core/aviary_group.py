@@ -1561,7 +1561,9 @@ class AviaryGroup(om.Group):
                         eq_units='lbm',
                         normalize=True,
                         add_constraint=True,
-                        ref = 1e5
+                        # normalize=True already makes the residual O(1); ref=1e5
+                        # shrank the scaled jacobian row to 1e-6 (invisible to IPOPT)
+                        ref=1.0,
                     ),
                     promotes_inputs=[
                         ('lhs:GTOW', Aircraft.Design.GROSS_MASS),

@@ -140,6 +140,10 @@ class AeroBuilder(SubsystemBuilder):
                 'lower': -10.0,
                 'upper': 10.0,
                 'ref': 5.0,
+                # external-subsystem controls bypass Aviary's add_control, so
+                # continuity defects otherwise default to ref=1 (row was 1.4e2)
+                'continuity_ref': 5.0,
+                'rate_continuity_ref': 5.0,
             },
 
 

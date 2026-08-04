@@ -8,7 +8,7 @@ from aviary.variable_info.UAV_variable_meta_data import (
 
 class MassSummation(om.Group):
     """
-    This group will be expanded greatly as more subsystems are created. 
+    This group will be expanded greatly as more subsystems are created.
     """
     def setup(self):
         self.add_subsystem(
@@ -21,7 +21,7 @@ class MassSummation(om.Group):
                 Aircraft.VerticalTail.MASS,
             ],
             promotes_outputs=[Aircraft.Design.STRUCTURE_MASS])
-        
+
 class StructureMass(om.JaxExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='wmass')
@@ -30,6 +30,9 @@ class StructureMass(om.JaxExplicitComponent):
         add_aviary_input(self, Aircraft.VerticalTail.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='vmass')
         # More masses can be added, i.e., tail, spars, flaps, etc. as needed
         add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS, units='kg', meta_data=ExtendedMetaData, primal_name='total_mass')
+
+
+        self.declare_partials(Aircraft.Design.STRUCTURE_MASS, '*')
 
     def compute_primal(self, wmass, fmass, hmass, vmass):
         total_mass = wmass + fmass + hmass + vmass

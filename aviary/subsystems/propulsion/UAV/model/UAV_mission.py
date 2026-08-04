@@ -94,6 +94,7 @@ class UAVPropMission(om.Group):
 
         self.add_subsystem(
             'propco',
+            # akima would be smoother but needs >=5 points/dim; this table has 3.
             PropCoefficients(method='lagrange2', extrapolate=True, training_data_gradients=True, vec_size=nn),
             promotes_inputs=[
                 Dynamic.Mission.VELOCITY,
@@ -168,11 +169,12 @@ class UAVPropMission(om.Group):
         self.connect('esc.current_out', 'motor.current')
 
         """Constraints"""
-              # Force commanded cruise RPM to match motor-computed RPM.
-        self.add_constraint('rpm_balance.rpm_defect', upper=0.004, lower=-0.004, ref = 4000, units='rpm')
+        # ref 400: d(defect)/d(rpm_slack)=1 rpm/rpm with rpm_slack ref 10800 made
+        # this row ~270 in the scaled jacobian at ref=40
+        self.add_constraint('rpm_balance.rpm_defect', lower=-4.0, upper=4.0, ref=400, units='rpm')
 
-        """for min_energy_example this should be commented out, but for cruise example it should be active"""
-        # self.add_constraint('energy_constraint', lower=0.0, indices=[-1], ref=100, units='W*h')
+
+        self.add_constraint('energy_constraint', lower=-500.0, indices=[-1], ref=100, units='W*h')
 
 
 

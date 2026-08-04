@@ -73,13 +73,20 @@ class Battery(om.ExplicitComponent):
             rows=ar, cols=ar
         )
 
+        # dt_denergy_used is the energy_used state rate; missing these partials
+        # made the mission energy objective's gradient silently zero.
+        self.declare_partials('dt_denergy_used', Aircraft.Battery.VOLTAGE)
+        self.declare_partials(
+            'dt_denergy_used', Dynamic.Vehicle.Propulsion.CURRENT, rows=ar, cols=ar
+        )
+
     def compute(self, inputs, outputs):
         V = inputs[Aircraft.Battery.VOLTAGE]
         I = inputs[Dynamic.Vehicle.Propulsion.CURRENT]
         R = inputs[Aircraft.Battery.RESISTANCE]
 
         outputs['power'] = V * I - I**2 * R
-        
+
         outputs['dt_denergy_used'] = V * I
         outputs['voltage_out'] = V - I * R
 
@@ -95,6 +102,9 @@ class Battery(om.ExplicitComponent):
         partials['power', Aircraft.Battery.VOLTAGE] = I
         partials['power', Dynamic.Vehicle.Propulsion.CURRENT] = V - 2 * I * R
         partials['power', Aircraft.Battery.RESISTANCE] = -I**2
+
+        partials['dt_denergy_used', Aircraft.Battery.VOLTAGE] = I
+        partials['dt_denergy_used', Dynamic.Vehicle.Propulsion.CURRENT] = V * np.ones(len(I))
 
 
 

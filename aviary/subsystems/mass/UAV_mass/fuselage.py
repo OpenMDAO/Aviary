@@ -3,6 +3,7 @@ import openmdao.api as om
 import jax.numpy as jnp
 
 from aviary.subsystems.mass.UAV_mass.utils.materials_database import materials
+from aviary.subsystems.mass.UAV_mass.utils.hashable_statics import hashable
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 
 from aviary.variable_info.UAV_variables import Aircraft
@@ -40,8 +41,11 @@ class FuselageMass(om.JaxExplicitComponent):
 
         add_aviary_output(self, Aircraft.Fuselage.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='mass')
 
+        # primal_name mismatch breaks jax dependency inference; declare explicitly
+        self.declare_partials(Aircraft.Fuselage.MASS, '*')
+
     def get_self_statics(self):
-        return (
+        return hashable((
             self.options[Aircraft.Fuselage.FLOOR_DENSITY],
             self.options[Aircraft.Fuselage.NUM_SPARS],
             self.options[Aircraft.Fuselage.SPAR_OUTER_DIAMETER],
@@ -63,7 +67,7 @@ class FuselageMass(om.JaxExplicitComponent):
             self.options[Aircraft.Fuselage.MISC_MASS],
 
 
-        )
+        ))
 
     def compute_primal(self, length, avg_height, wetted_area, avg_width):
         rho_floor, units = self.options[Aircraft.Fuselage.FLOOR_DENSITY]

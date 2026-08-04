@@ -60,8 +60,8 @@ def CruiseExample():
             'time_duration_bounds': ((0,180), 's'),
         },
         'initial_guesses': {
-            'distance': ([0, 2000], 'm'),
-            'time': ([0, 60], 's'),
+            'distance': ([0, 1000], 'm'),
+            'time': ([0, 55], 's'),
         },
     },
         'post_mission': deepcopy(phase_info['post_mission']),
@@ -84,7 +84,7 @@ def CruiseExample():
 
     """Objective: Minimize energy consumption during cruise flight. This is done by adding an objective to the cruise phase that minimizes the energy constraint at the final time step. The energy constraint is defined as the integral of the power required to maintain level flight over the duration of the cruise phase. By minimizing this objective, we can find the optimal flight profile that minimizes energy consumption while still meeting all other constraints and requirements."""
     cruise_phase = prob.model.traj.phases.cruise
-    cruise_phase.add_objective('rc_electric.energy_constraint', loc='final', ref = -100, units='W*hr')
+    cruise_phase.add_objective('energy_used', loc='final', ref=100, units='W*hr')
 
     prob.add_driver('IPOPT', use_coloring=False, max_iter=1000)
 
@@ -96,6 +96,13 @@ def CruiseExample():
     prob.driver.opt_settings['acceptable_tol'] = 5e-5
     prob.driver.opt_settings['constr_viol_tol'] = 1e-5
     prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-5
+    # Report exactly which Jacobian entries go NaN/Inf instead of a bare EXIT message.
+    prob.driver.opt_settings['check_derivatives_for_naninf'] = 'yes'
+
+    prob.driver.opt_settings['recalc_y'] = 'yes'
+    prob.driver.opt_settings['recalc_y_feas_tol'] = 1e-2
+
+    prob.driver.opt_settings['acceptable_iter'] = 5
     # prob.driver.options['debug_print'] = ['desvars', 'objs', 'nl_cons', 'ln_cons']
 
     prob.add_design_variables()
@@ -109,9 +116,11 @@ def CruiseExample():
 
     # prob.set_val('traj.cruise.states:mass', 4.1, units='kg')
 
-    prob.set_val('traj.cruise.controls:rpm_slack', 4000.0, units='rpm')
-    prob.set_val('traj.cruise.controls:throttle', 0.3)
+
+    prob.set_val('traj.cruise.controls:rpm_slack', 2877.0, units='rpm')
+    prob.set_val('traj.cruise.controls:throttle', 0.561)
     prob.set_val('traj.cruise.controls:alpha', 3.0, units='deg')
+    prob.set_val('traj.cruise.controls:mach', 0.0538)
     prob.set_val('traj.cruise.rhs_all.thrust_net_max_total', 9.69, units='lbf')
 
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units='m**2')
@@ -124,7 +133,7 @@ def CruiseExample():
     print('esc voltage out:', prob.get_val('traj.cruise.rhs_all.rc_electric.esc.voltage_out', units='V'))
     print('motor power:', prob.get_val('traj.cruise.rhs_all.rc_electric.motor.power', units='W'))
     print('prop power:', prob.get_val('traj.cruise.rhs_all.rc_electric.prop_power', units='W'))
-    print('electric power in:', prob.get_val('traj.cruise.rhs_all.rc_electric.electric_power_in', units='W'))
+    print('electric power in:', prob.get_val('traj.cruise.rhs_all.rc_electric.electric_power_in_total', units='W'))
     print(prob.get_val('traj.cruise.rhs_all.thrust_required', units='lbf'))
     print(prob.get_val('traj.cruise.rhs_all.thrust_residual', units='lbf'))
     print(prob.get_val('traj.cruise.rhs_all.drag', units='lbf'))

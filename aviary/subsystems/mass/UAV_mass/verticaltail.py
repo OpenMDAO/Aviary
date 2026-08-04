@@ -6,6 +6,7 @@ import openmdao.api as om
 from aviary.subsystems.mass.UAV_mass.utils.materials_database import materials
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.subsystems.mass.UAV_mass.utils.load_airfoil import load_airfoil_if_needed
+from aviary.subsystems.mass.UAV_mass.utils.hashable_statics import hashable
 
 from aviary.variable_info.UAV_variables import Aircraft
 from aviary.variable_info.UAV_variable_meta_data import (
@@ -121,8 +122,11 @@ class VerticalTailMass(om.JaxExplicitComponent):
             primal_name='mass',
         )
 
+        # primal_name mismatch breaks jax dependency inference; declare explicitly
+        self.declare_partials(Aircraft.VerticalTail.MASS, '*')
+
     def get_self_statics(self):
-        return (
+        return hashable((
 
             self.options[Aircraft.VerticalTail.NUM_SPARS],
             self.options[Aircraft.VerticalTail.RIB_LIGHTENING_FACTOR],
@@ -141,7 +145,7 @@ class VerticalTailMass(om.JaxExplicitComponent):
             self.options[Aircraft.VerticalTail.NUM_STRINGERS],
             self.options[Aircraft.VerticalTail.RIB_MATERIALS],
             self.options[Aircraft.VerticalTail.MISC_MASS],
-        )
+        ))
 
     def compute_primal(self, span, root_chord, wetted_area):
         num_spars = self.options[Aircraft.VerticalTail.NUM_SPARS]

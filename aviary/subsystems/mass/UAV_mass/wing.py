@@ -9,6 +9,7 @@ from aviary.subsystems.mass.UAV_mass.variable_info.enums import WingType
 from aviary.subsystems.mass.UAV_mass.utils.materials_database import materials
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.subsystems.mass.UAV_mass.utils.load_airfoil import load_airfoil_if_needed
+from aviary.subsystems.mass.UAV_mass.utils.hashable_statics import hashable
 
 from aviary.variable_info.UAV_variables import Aircraft
 from aviary.variable_info.UAV_variable_meta_data import (
@@ -53,11 +54,13 @@ class WingMass(om.JaxExplicitComponent):
 
         add_aviary_output(self, Aircraft.Wing.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='mass')
 
+        # primal_name mismatch breaks jax dependency inference; declare explicitly
+        self.declare_partials(Aircraft.Wing.MASS, '*')
 
     def get_self_statics(self):
-        
 
-        return (
+
+        return hashable((
                     self.options[Aircraft.Wing.TYPE],
 
                     # Simple wing options
@@ -83,8 +86,8 @@ class WingMass(om.JaxExplicitComponent):
                     self.options[Aircraft.Wing.SHEETING_LIGHTENING_FACTOR],
                     self.options[Aircraft.Wing.NUM_STRINGERS],
                     self.options[Aircraft.Wing.MISC_MASS],
-                    )               
-    
+                    ))
+
     def compute_primal(self, span, root_chord, wetted_area):
         load_airfoil_if_needed(self, Aircraft.Wing)
         chord = root_chord
@@ -98,11 +101,11 @@ class WingMass(om.JaxExplicitComponent):
             radius, units = self.options[Aircraft.Wing.ROD_RADIUS]
             rod_density, units = self.options[Aircraft.Wing.ROD_DENSITY]
 
-            airfoil_area = self.n_area * chord**2            
+            airfoil_area = self.n_area * chord**2
             foam_volume = airfoil_area * span
             foam_mass_prelim = foam_volume * foam_density
             cross_section_rod_area = jnp.pi * radius**2 - jnp.pi * (radius - rod_thickness)**2
-            
+
             #Assumes fixed number of 2 rods in the simple wing design:
             rod_volume = (2.0 * span * cross_section_rod_area)
 
@@ -112,7 +115,7 @@ class WingMass(om.JaxExplicitComponent):
             total_mass = foam_mass_final + rod_mass
 
             return total_mass
-        
+
         if type == WingType.MEDIUM:
 
             #medium wing design mass calculation

@@ -300,7 +300,14 @@ class OASAero(om.Group):
         fuselage_length = aviary_inputs.get_val(Aircraft.Fuselage.LENGTH, units='m')
         wing_location = wing_dist * fuselage_length
         htail_dist = fuselage_length - wing_location
-        
+
+        # Vertical separation between wing and htail planes (high wing, tail on
+        # fuselage). A coplanar tail sits exactly in the wing's trailing vortex
+        # sheet, which is singular in a VLM: lift then oscillates at mm scale in
+        # chord/span with occasional blowups (CL ~ -90), feeding the optimizer
+        # derivatives of noise ~4000x the physical trend.
+        htail_z_offset = 0.10  # m, ~2/3 fuselage max height
+
         mesh_dict = {
             'num_y': 19,
             'num_x': 6,
@@ -312,7 +319,7 @@ class OASAero(om.Group):
             'sweep': 1,
             'span_cos_spacing': 1,
             'chord_cos_spacing': 1,
-            'offset': np.array([htail_dist, 0, 0]), # offset from wing in x-direction
+            'offset': np.array([htail_dist, 0, htail_z_offset]), # offset from wing, x-aft and z-up
         }
 
         htail_mesh = generate_mesh(mesh_dict)

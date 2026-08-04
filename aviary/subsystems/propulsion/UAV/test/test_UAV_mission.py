@@ -21,7 +21,6 @@ class TestUAVMission(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_ENGINES, 1)
         options.set_val(Aircraft.Engine.Motor.MAX_CONT_CURRENT, 100, units='A')
         prob.model.add_subsystem('rc_prop_group', UAVPropMission(num_nodes=nn, aviary_options= options), promotes=['*'])
-        prob.model.add_subsystem('rc_prop_group', UAVPropMission(num_nodes=nn, aviary_options= options), promotes=['*'])
 
 
 
