@@ -7,7 +7,7 @@ aircraft:anti_icing:mass_scaler,1.0,unitless
 aircraft:apu:mass_scaler,1.0,unitless
 aircraft:avionics:mass_scaler,1.0,unitless
 aircraft:blended_wing_body_design:detailed_wing_provided,False,unitless
-aircraft:blended_wing_body_design:max_bay_width,12,ft
+aircraft:blended_wing_body_design:max_bay_width,12.0,ft
 aircraft:blended_wing_body_design:passenger_leading_edge_sweep,45,deg
 aircraft:canard:area,0.0,ft**2
 aircraft:canard:aspect_ratio,0.0,unitless
