@@ -120,10 +120,7 @@ def do_validation_test(
             desired, units = output_validation_data.get_item(key)
             actual = prob.get_val(key, units)
             with test.subTest(key):
-                try:
-                    assert_near_equal(actual, desired, tol)
-                except:
-                    pass
+                assert_near_equal(actual, desired, tol)
 
     if check_partials:
         partial_data = prob.check_partials(
