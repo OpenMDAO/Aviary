@@ -17,7 +17,7 @@ from aviary.validation_cases.validation_tests import (
     print_case,
     Version,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 @use_tempdirs
@@ -107,7 +107,6 @@ class TransportFuelSystemTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_ENGINES
             ),
-            Aircraft.Design.MAX_MACH: inputs.get_val(Aircraft.Design.MAX_MACH),
         }
 
         prob.model.add_subsystem(
@@ -123,7 +122,11 @@ class TransportFuelSystemTest(unittest.TestCase):
             self,
             prob,
             case_name,
-            input_keys=[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],
+            input_keys=[
+                Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER,
+                Aircraft.Fuel.TOTAL_CAPACITY,
+                Aircraft.Design.MAX_MACH,
+            ],
             output_keys=Aircraft.Fuel.FUEL_SYSTEM_MASS,
             version=Version.TRANSPORT_and_BWB,
             tol=8.0e-4,
@@ -155,7 +158,7 @@ class TransportFuelSystemTest2(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_ENGINES
             ),
-            Aircraft.Design.MAX_MACH: inputs.get_val(Aircraft.Design.MAX_MACH),
+            # Aircraft.Design.MAX_MACH: inputs.get_val(Aircraft.Design.MAX_MACH),
         }
 
         prob.model.add_subsystem(
@@ -166,6 +169,7 @@ class TransportFuelSystemTest2(unittest.TestCase):
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 100.0, 'lbm')
+        prob.set_val(Aircraft.Design.MAX_MACH, 0.9, 'unitless')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
