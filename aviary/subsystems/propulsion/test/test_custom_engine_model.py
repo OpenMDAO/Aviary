@@ -1,3 +1,4 @@
+from copy import deepcopy
 import unittest
 
 import dymos as dm
@@ -7,6 +8,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
+from aviary.models.external_subsystems.simple_aero.simple_aero_builder import SimpleAeroBuilder
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
@@ -141,40 +143,46 @@ class SimpleTestEngine(EngineModel):
         return initial_guesses_dict
 
 
+class NoSolverengine(SimpleTestEngine):
+    def needs_mission_solver(self, aviary_inputs, user_options, subsystem_options):
+        return False
+
+
+phase_info = {
+    'pre_mission': {
+        'include_takeoff': False,
+        'optimize_mass': True,
+    },
+    'cruise': {
+        'subsystem_options': {'aerodynamics': {'method': 'computed'}},
+        'user_options': {
+            'num_segments': 2,
+            'order': 3,
+            'mach_optimize': False,
+            'mach_polynomial_order': 1,
+            'mach_initial': (0.72, 'unitless'),
+            'mach_final': (0.72, 'unitless'),
+            'mach_bounds': ((0.7, 0.74), 'unitless'),
+            'altitude_optimize': False,
+            'altitude_polynomial_order': 1,
+            'altitude_initial': (35000.0, 'ft'),
+            'altitude_final': (35000.0, 'ft'),
+            'altitude_bounds': ((23000.0, 38000.0), 'ft'),
+            'throttle_enforcement': 'boundary_constraint',
+            'time_initial': (0.0, 'min'),
+            'time_duration_bounds': ((10.0, 30.0), 'min'),
+        },
+        'initial_guesses': {'time': ([0, 30], 'min')},
+    },
+    'post_mission': {
+        'include_landing': False,
+    },
+}
+
+
 @use_tempdirs
 class CustomEngineTest(unittest.TestCase):
     def test_custom_engine(self):
-        phase_info = {
-            'pre_mission': {
-                'include_takeoff': False,
-                'optimize_mass': True,
-            },
-            'cruise': {
-                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
-                'user_options': {
-                    'num_segments': 2,
-                    'order': 3,
-                    'mach_optimize': False,
-                    'mach_polynomial_order': 1,
-                    'mach_initial': (0.72, 'unitless'),
-                    'mach_final': (0.72, 'unitless'),
-                    'mach_bounds': ((0.7, 0.74), 'unitless'),
-                    'altitude_optimize': False,
-                    'altitude_polynomial_order': 1,
-                    'altitude_initial': (35000.0, 'ft'),
-                    'altitude_final': (35000.0, 'ft'),
-                    'altitude_bounds': ((23000.0, 38000.0), 'ft'),
-                    'throttle_enforcement': 'boundary_constraint',
-                    'time_initial': (0.0, 'min'),
-                    'time_duration_bounds': ((10.0, 30.0), 'min'),
-                },
-                'initial_guesses': {'time': ([0, 30], 'min')},
-            },
-            'post_mission': {
-                'include_landing': False,
-            },
-        }
-
         prob = AviaryProblem(reports=False)
 
         # Load aircraft and options data from user
@@ -210,6 +218,35 @@ class CustomEngineTest(unittest.TestCase):
         tol = 1.0e-4
 
         assert_near_equal(prob.get_val('traj.cruise.rhs_all.y'), 4.0, tol)
+
+    def test_no_solver_loop(self):
+        local_phase_info = deepcopy(phase_info)
+        local_phase_info['cruise']['user_options']['throttle_enforcement'] = 'control'
+        local_phase_info['cruise']['subsystem_options']['aerodynamics'] = {
+            'method': 'external',
+        }
+        prob = AviaryProblem(reports=False)
+
+        prob.load_inputs(
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
+            local_phase_info,
+        )
+
+        # Replace both engine and aero with external builders that don't requires solvers.
+        prob.load_external_subsystems([NoSolverengine(), SimpleAeroBuilder()])
+
+        prob.check_and_preprocess_inputs()
+        prob.build_model()
+        prob.add_driver('SLSQP', verbosity=0)
+        prob.add_design_variables()
+        prob.add_objective('fuel_burned')
+
+        prob.setup()
+
+        prob.final_setup()
+
+        subsolver = prob.model.traj.phases.cruise.rhs_all.solver_sub.nonlinear_solver
+        self.assertTrue(isinstance(subsolver, om.NonlinearRunOnce))
 
 
 if __name__ == '__main__':

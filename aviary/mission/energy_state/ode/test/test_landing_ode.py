@@ -29,6 +29,7 @@ class FlareODETest(unittest.TestCase):
         time, _ = detailed_landing_flare.get_item('time')
         nn = len(time)
         aviary_options = inputs
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [2])
 
         engines = [build_engine_deck(aviary_options)]
 
@@ -50,7 +51,7 @@ class FlareODETest(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
 
-        setup_model_options(prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+        setup_model_options(prob, AviaryValues(aviary_options))
 
         prob.setup(check=False, force_alloc_complex=True)
 

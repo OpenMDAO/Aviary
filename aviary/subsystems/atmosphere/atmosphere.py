@@ -104,7 +104,7 @@ class AtmosphereComp(om.ExplicitComponent):
 
         self._dt = self.options['delta_T_Celcius']
 
-        self.source_data, self.planet, planet_radius, _ = get_atmosphere_data(
+        self.source_data, self.planet, planet_radius, _, _ = get_atmosphere_data(
             self.options[Settings.ATMOSPHERE_MODEL]
         )
 

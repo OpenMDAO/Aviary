@@ -982,7 +982,7 @@
     ],
     [
         "aircraft:design:gross_mass",
-        175400.0,
+        175399.99999999997,
         "lbm",
         "<class 'float'>"
     ],
@@ -1137,8 +1137,14 @@
         "<class 'float'>"
     ],
     [
+        "mission:sea_level_density",
+        0.0023769,
+        "slug/ft**3",
+        "<class 'float'>"
+    ],
+    [
         "mission:gross_mass",
-        175400.0,
+        175399.99999999997,
         "lbm",
         "<class 'float'>"
     ],

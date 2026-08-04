@@ -5,6 +5,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.phases.build_takeoff import Takeoff
+from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -27,7 +29,12 @@ class TakeoffPhaseTest(unittest.TestCase):
         )
         prob.setup(force_alloc_complex=True)
         prob.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 2)
+
+        options = get_option_defaults()
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
+        setup_model_options(prob, options)
         prob.run_model()
+
         partial_data = prob.check_partials(
             out_stream=None, method='cs', compact_print=False, excludes=['*atmosphere*']
         )

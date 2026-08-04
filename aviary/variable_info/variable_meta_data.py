@@ -17,6 +17,7 @@ from aviary.variable_info.enums import (
     AtmosphereModel,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+import aviary.constants as Constants
 
 # ---------------------------
 # Meta data associated with variables in the aircraft data hierarchy.
@@ -646,7 +647,6 @@ add_meta_data(
     },
     units='lbm',
     desc='baggage mass per passenger',
-    option=True,
     default_value=0.0,
 )
 
@@ -760,7 +760,6 @@ add_meta_data(
     },
     units='lbm',
     desc='mass per passenger',
-    option=True,
     default_value=165.0,
 )
 
@@ -770,7 +769,6 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.UWPAX', 'FLOPS': None},
     units='lbm',
     desc='total mass of one passenger and their bags',
-    option=True,
     default_value=200,
 )
 
@@ -2153,10 +2151,9 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.INLET_AREA_COEFFICIENT,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': None, 'FLOPS': None},
     units='unitless',
-    option=True,
-    default_value=0.0002,  # default in GASP
+    default_value=0.0002,  # default in GASP (AE = .3 * WG/1500./ENP = 0.0002*WG/ENP)
     types=float,
     desc='engine inlet area coefficient. Suggested values: 0.000375 for modern engines.',
     multivalue=True,
@@ -2308,16 +2305,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.POSITION_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
-    units='unitless',
-    desc='engine position factor',
-    default_value=0,
-    multivalue=True,
-)
-
-add_meta_data(
     Aircraft.Engine.PYLON_FACTOR,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FPYL', 'FLOPS': None},
@@ -2341,7 +2328,6 @@ add_meta_data(
     desc='Unscaled mass of a single engine. See Aircraft.Engine.MASS for breakdown of what is '
     'included in engine mass.',
     default_value=0.0,
-    option=True,
     multivalue=True,
 )
 
@@ -2357,7 +2343,6 @@ add_meta_data(
     'EngineDecks, reference thrust will be found from performance data if not provided '
     'by user. User-provided values override SLS point found in performance data.',
     default_value=0.0,
-    option=True,
     multivalue=True,
 )
 
@@ -4534,6 +4519,15 @@ add_meta_data(
     units='unitless',
     desc='Scaler for engine oil mass',
     default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.Propulsion.ENGINE_POSITION_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
+    units='unitless',
+    desc='engine position factor',
+    default_value=0,
 )
 
 add_meta_data(
@@ -6896,11 +6890,14 @@ add_meta_data(
     Mission.GRAVITY,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
-    desc='Gravitational acceleration of the planet.',
+    desc='Gravitational acceleration of the planet. This model is updated'
+    'in preprocess_options() based on which atmosphere is selected.'
+    'This ensures the gravity model matches the planet.',
     types=float,
     option=True,
-    # The default gravity model is set based on Settings.ATMOSPHERE_MODEL
-    units='m/s**2',
+    #
+    units=Constants.GRAV_EARTH[1],
+    default_value=Constants.GRAV_EARTH[0],
 )
 
 add_meta_data(
@@ -6982,6 +6979,18 @@ add_meta_data(
     units='lbm',
     desc='required fuel reserves: directly in lbm',
     default_value=0,
+)
+
+add_meta_data(
+    Mission.SEA_LEVEL_DENSITY,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    desc='Atmospheric density at seal level for this planet.',
+    types=float,
+    option=True,
+    # The default density model is set based on Settings.ATMOSPHERE_MODEL
+    units='kg/m**3',
+    default_value=1.225,
 )
 
 add_meta_data(

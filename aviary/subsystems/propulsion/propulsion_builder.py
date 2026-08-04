@@ -90,6 +90,19 @@ class CorePropulsionBuilder(PropulsionBuilder):
 
         self.engine_models = engine_models
 
+    def needs_mission_solver(self, aviary_inputs, user_options, subsystem_options):
+        """Call needs_mission_solver() on all engine models and return combined result."""
+        needs_solver = False
+        for engine in self.engine_models:
+            engine_needs_solver = engine.needs_mission_solver(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            needs_solver = needs_solver or engine_needs_solver
+
+        return needs_solver
+
     def build_pre_mission(self, aviary_inputs, subsystem_options):
         return PropulsionPreMission(
             aviary_options=aviary_inputs,

@@ -24,6 +24,8 @@ from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_dat
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.preprocessors import preprocess_options
 
 inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
@@ -90,20 +92,23 @@ class TakeoffEOMTest(unittest.TestCase):
 
         time, _ = detailed_takeoff_climbing.get_item('time')
         nn = len(time)
-        aviary_options = inputs
         inputs.set_val(Aircraft.Engine.NUM_ENGINES, [2])
+
+        preprocess_options(inputs)
 
         prob.model.add_subsystem(
             'takeoff_eom',
             TakeoffEOM(
                 num_nodes=nn,
-                aviary_options=aviary_options,
                 climbing=climbing,
                 friction_key=Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
+                aviary_options=inputs,
             ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(prob, AviaryValues(inputs))
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -133,7 +138,12 @@ class TakeoffEOMTest(unittest.TestCase):
     def test_StallSpeed(self):
         tol = 1e-6
         prob = om.Problem()
-        prob.model.add_subsystem('stall_speed', StallSpeed(num_nodes=2), promotes=['*'])
+
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+        }
+
+        prob.model.add_subsystem('stall_speed', StallSpeed(num_nodes=2, **options), promotes=['*'])
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, np.ones(2), units='kg')
         prob.model.set_input_defaults(Dynamic.Atmosphere.DENSITY, np.array([1, 2]), units='kg/m**3')
         prob.model.set_input_defaults('area', 10, units='m**2')
@@ -256,10 +266,14 @@ class TakeoffEOMTest(unittest.TestCase):
         """Climbing = True."""
         tol = 1e-6
         prob = om.Problem()
-        aviary_options = inputs
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+            Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY: (0, 'rad'),
+            Mission.Takeoff.THRUST_INCIDENCE: (0, 'rad'),
+        }
         prob.model.add_subsystem(
             'sum1',
-            SumForces(num_nodes=2, climbing=True, aviary_options=aviary_options),
+            SumForces(num_nodes=2, climbing=True, **options),
             promotes=['*'],
         )
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, np.array([106292, 106292]), units='lbm')
@@ -288,10 +302,14 @@ class TakeoffEOMTest(unittest.TestCase):
         """Climbing = False."""
         tol = 1e-6
         prob = om.Problem()
-        aviary_options = inputs
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+            Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY: (0, 'rad'),
+            Mission.Takeoff.THRUST_INCIDENCE: (0, 'rad'),
+        }
         prob.model.add_subsystem(
             'sum2',
-            SumForces(num_nodes=2, climbing=False, aviary_options=aviary_options),
+            SumForces(num_nodes=2, climbing=False, **options),
             promotes=['*'],
         )
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, np.array([106292, 106292]), units='lbm')
@@ -320,10 +338,14 @@ class TakeoffEOMTest(unittest.TestCase):
         """Climbing = False."""
         tol = 1e-6
         prob = om.Problem()
-        aviary_options = inputs
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+            Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY: (0, 'rad'),
+            Mission.Takeoff.THRUST_INCIDENCE: (0, 'rad'),
+        }
         prob.model.add_subsystem(
             'climb_grad',
-            ClimbGradientForces(num_nodes=2, aviary_options=aviary_options),
+            ClimbGradientForces(num_nodes=2, **options),
             promotes=['*'],
         )
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, np.array([106292, 106292]), units='lbm')

@@ -95,10 +95,11 @@ class TurbopropModel(EngineModel):
         if propeller_model is None:
             self.propeller_model = PropellerBuilder(name='propeller')
 
-    def needs_mission_solver(self, aviary_inputs=None, subsystem_options=None):
+    def needs_mission_solver(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         if self.shaft_power_model is not None:
             shp_solver = self.shaft_power_model.needs_mission_solver(
                 aviary_inputs=aviary_inputs,
+                user_options=user_options,
                 subsystem_options=subsystem_options,
             )
         else:
@@ -106,6 +107,7 @@ class TurbopropModel(EngineModel):
         if self.gearbox_model is not None:
             gearbox_solver = self.gearbox_model.needs_mission_solver(
                 aviary_inputs=aviary_inputs,
+                user_options=user_options,
                 subsystem_options=subsystem_options,
             )
         else:
@@ -113,6 +115,7 @@ class TurbopropModel(EngineModel):
         if self.propeller_model is not None:
             prop_solver = self.propeller_model.needs_mission_solver(
                 aviary_inputs=aviary_inputs,
+                user_options=user_options,
                 subsystem_options=subsystem_options,
             )
         else:

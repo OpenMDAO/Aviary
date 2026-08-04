@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.two_dof.ode.landing_ode import LandingSegment
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase
@@ -147,36 +146,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             'taxi',
             TaxiSegment(**(aviary_group.ode_args)),
             promotes_inputs=['aircraft:*', 'mission:*'],
-        )
-
-        # Calculate speed at which to initiate rotation
-        aviary_group.add_subsystem(
-            'vrot',
-            om.ExecComp(
-                'Vrot = ((2 * mass * g) / (rho * wing_area * CLmax))**0.5 + dV1 + dVR',
-                Vrot={'units': 'ft/s'},
-                mass={'units': 'lbm'},
-                CLmax={'units': 'unitless'},
-                g={'units': 'lbf/lbm', 'val': GRAV_ENGLISH_LBM},
-                rho={'units': 'slug/ft**3', 'val': RHO_SEA_LEVEL_ENGLISH},
-                wing_area={'units': 'ft**2'},
-                dV1={
-                    'units': 'ft/s',
-                    'desc': 'Increment of engine failure decision speed above stall',
-                },
-                dVR={
-                    'units': 'ft/s',
-                    'desc': 'Increment of takeoff rotation speed above engine failure '
-                    'decision speed',
-                },
-            ),
-            promotes_inputs=[
-                ('wing_area', Aircraft.Wing.AREA),
-                ('dV1', Mission.Takeoff.DECISION_SPEED_INCREMENT),
-                ('dVR', Mission.Takeoff.ROTATION_SPEED_INCREMENT),
-                ('CLmax', Mission.Takeoff.LIFT_COEFFICIENT_MAX),
-            ],
-            promotes_outputs=[('Vrot', Mission.Takeoff.ROTATION_VELOCITY)],
         )
 
     def get_phase_builder(self, aviary_group, phase_name, phase_options):
@@ -396,41 +365,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         aviary_group.connect('traj.ascent.timeseries.time', 'h_fit.time_cp')
         aviary_group.connect('traj.ascent.timeseries.altitude', 'h_fit.h_cp')
-        aviary_group.connect('taxi.mass', 'vrot.mass')
-
-        if len(phases) > 1:
-            self._add_groundroll_eq_constraint(aviary_group, phases)
-
-    def _add_groundroll_eq_constraint(self, aviary_group, phases):
-        """
-        Add an equality constraint to the problem to ensure that the TAS at the end of the
-        groundroll phase is equal to the rotation velocity at the start of the rotation phase.
-        """
-        phase1 = phases[0]
-        info1 = aviary_group.mission_info[phase1]['user_options']
-        groundroll = info1.get('ground_roll')
-
-        if not groundroll:
-            # Ground roll should be the first phase. If it isn't, then the aircraft is starting
-            # in flight.
-            return
-
-        aviary_group.add_subsystem(
-            'groundroll_boundary',
-            om.EQConstraintComp(
-                'velocity',
-                eq_units='ft/s',
-                normalize=True,
-                add_constraint=True,
-            ),
-        )
-        aviary_group.connect(Mission.Takeoff.ROTATION_VELOCITY, 'groundroll_boundary.rhs:velocity')
-        aviary_group.connect(
-            f'traj.{phase1}.states:velocity',
-            'groundroll_boundary.lhs:velocity',
-            src_indices=[-1],
-            flat_src_indices=True,
-        )
 
     def add_post_mission_systems(self, aviary_group):
         """

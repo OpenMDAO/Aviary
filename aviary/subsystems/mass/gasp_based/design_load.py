@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.utils.math import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
@@ -656,6 +655,7 @@ class LoadFactors(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
         add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
+        add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='slug/ft**3')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.WING_LOADING, units='lbf/ft**2')
@@ -695,11 +695,10 @@ class LoadFactors(om.ExplicitComponent):
 
         ULF_from_maneuver = self.options[Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+        rho_sea_level = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
         mass_ratio = (
-            2.0
-            * wing_loading
-            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+            2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
         )
         k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
         cruise_load_factor = 1.0 + ((k_load_factor * 50.0 * V9 * Cl_alpha) / (498.0 * wing_loading))
@@ -745,11 +744,10 @@ class LoadFactors(om.ExplicitComponent):
 
         ULF_from_maneuver = self.options[Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+        rho_sea_level = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
         mass_ratio = (
-            2.0
-            * wing_loading
-            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+            2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
         )
         k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
         cruise_load_factor = 1.0 + ((k_load_factor * 50.0 * V9 * Cl_alpha) / (498.0 * wing_loading))
@@ -759,22 +757,16 @@ class LoadFactors(om.ExplicitComponent):
         gust_load_factor = dive_load_factor
 
         dmass_ratio_dwing_loading = 2.0 / (
-            density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2
+            density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2
         )
         dmass_ratio_ddensity_ratio = (
-            -2.0
-            * wing_loading
-            / (density_ratio**2 * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+            -2.0 * wing_loading / (density_ratio**2 * rho_sea_level * avg_chord * Cl_alpha * 32.2)
         )
         dmass_ratio_davg_chord = (
-            -2.0
-            * wing_loading
-            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord**2 * Cl_alpha * 32.2)
+            -2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord**2 * Cl_alpha * 32.2)
         )
         dmass_ratio_dCl_alpha = (
-            -2.0
-            * wing_loading
-            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha**2 * 32.2)
+            -2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord * Cl_alpha**2 * 32.2)
         )
 
         dk_load_factor_dwing_loading = dquotient(
@@ -1583,6 +1575,7 @@ class BWBLoadFactors(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
         add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
         add_aviary_option(self, Settings.VERBOSITY)
+        add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='slug/ft**3')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
@@ -1635,11 +1628,10 @@ class BWBLoadFactors(om.ExplicitComponent):
             Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
 
             smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+            rho_sea_level = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
             mass_ratio = (
-                2.0
-                * wing_loading
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+                2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
             )
             k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
             cruise_load_factor = 1.0 + (
@@ -1703,11 +1695,10 @@ class BWBLoadFactors(om.ExplicitComponent):
             Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
 
             smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+            rho_sea_level = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
             mass_ratio = (
-                2.0
-                * wing_loading
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+                2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
             )
             k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
             cruise_load_factor = 1.0 + (
@@ -1720,27 +1711,27 @@ class BWBLoadFactors(om.ExplicitComponent):
             dmass_ratio_dgross_mass = (
                 2.0
                 * dwing_loading_dgross_mass
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+                / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
             )
             dmass_ratio_dexp_wing_area = (
                 2.0
                 * dwing_loading_dexp_wing_area
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+                / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
             )
             dmass_ratio_ddensity_ratio = (
                 -2.0
                 * wing_loading
-                / (density_ratio**2 * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+                / (density_ratio**2 * rho_sea_level * avg_chord * Cl_alpha * 32.2)
             )
             dmass_ratio_davg_chord = (
                 -2.0
                 * wing_loading
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord**2 * Cl_alpha * 32.2)
+                / (density_ratio * rho_sea_level * avg_chord**2 * Cl_alpha * 32.2)
             )
             dmass_ratio_dCl_alpha = (
                 -2.0
                 * wing_loading
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha**2 * 32.2)
+                / (density_ratio * rho_sea_level * avg_chord * Cl_alpha**2 * 32.2)
             )
 
             dk_load_factor_dgross_mass = dquotient(
