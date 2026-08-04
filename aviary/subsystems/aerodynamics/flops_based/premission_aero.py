@@ -27,7 +27,6 @@ class Design(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.AIRFOIL_TECHNOLOGY)
-        add_aviary_option(self, Aircraft.Design.MAX_MACH)
 
     def setup(self):
         # Aircraft design inputs
@@ -35,6 +34,7 @@ class Design(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
+        add_aviary_input(self, Aircraft.Design.MAX_MACH)
 
         # Declare outputs
         add_aviary_output(self, Aircraft.Design.MACH, units='unitless')
@@ -45,9 +45,8 @@ class Design(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         AITEK = self.options[Aircraft.Wing.AIRFOIL_TECHNOLOGY]
-        VMAX = self.options[Aircraft.Design.MAX_MACH]
 
-        AR, CAM, SW25, TC = inputs.values()
+        AR, CAM, SW25, TC, VMAX = inputs.values()
 
         # design lift coefficient equation is selected based on thickness/chord ratio
         if TC.real > 0.065:
@@ -87,9 +86,8 @@ class Design(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials):
         AITEK = self.options[Aircraft.Wing.AIRFOIL_TECHNOLOGY]
-        VMAX = self.options[Aircraft.Design.MAX_MACH]
 
-        AR, CAM, SW25, TC = inputs.values()
+        AR, CAM, SW25, TC, VMAX = inputs.values()
 
         if TC.real > 0.065:  # subsonic
             a, b, c, d = self.sub_sonic_coeff
@@ -203,6 +201,7 @@ class Design(om.ExplicitComponent):
         partials[Aircraft.Design.MACH, Aircraft.Wing.THICKNESS_TO_CHORD] = dDESM_dTC
         partials[Aircraft.Design.MACH, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = dDESM_dCAM
         partials[Aircraft.Design.MACH, Aircraft.Wing.SWEEP] = dDESM_dSW25
+        partials[Aircraft.Design.MACH, Aircraft.Design.MAX_MACH] = 0.0
 
 
 AMDES = np.array(
