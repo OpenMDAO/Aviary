@@ -7,7 +7,7 @@ from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_data.test_data.full_mission_test_data import data
 from aviary.validation_cases.validation_tests import do_validation_test
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 @use_tempdirs
@@ -17,9 +17,13 @@ class SpecificEnergyRateTest(unittest.TestCase):
 
         time, _ = data.get_item('time')
 
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+        }
+
         prob.model.add_subsystem(
             'specific_energy_rate',
-            SpecificEnergyRate(num_nodes=len(time)),
+            SpecificEnergyRate(num_nodes=len(time), **options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

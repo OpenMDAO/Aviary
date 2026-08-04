@@ -5,7 +5,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.constants import RHO_SEA_LEVEL_METRIC
 from aviary.mission.solved_two_dof.ode.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
 )
@@ -68,7 +67,7 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
         tas = p.get_val(Dynamic.Mission.VELOCITY, units='m/s')
         sos = p.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s')
         rho = p.get_val(Dynamic.Atmosphere.DENSITY, units='kg/m**3')
-        rho_sl = RHO_SEA_LEVEL_METRIC
+        rho_sl = 1.225  # kg/m**3
         dTAS_dt_approx = p.get_val('dTAS_dt_approx')
 
         assert_near_equal(mach, tas / sos)

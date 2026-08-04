@@ -2,10 +2,8 @@ import numpy as np
 import openmdao.api as om
 
 import aviary.constants as constants
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Dynamic
-
-grav_metric = constants.GRAV_METRIC_FLOPS
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class SimpleLift(om.ExplicitComponent):
@@ -64,6 +62,7 @@ class LiftEqualsWeight(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -81,6 +80,7 @@ class LiftEqualsWeight(om.ExplicitComponent):
     def setup_partials(self):
         nn = self.options['num_nodes']
         row_col = np.arange(nn)
+        grav_metric = self.options[Mission.GRAVITY][0]
 
         self.declare_partials(
             Dynamic.Vehicle.LIFT, Dynamic.Vehicle.MASS, rows=row_col, cols=row_col, val=grav_metric
@@ -102,6 +102,8 @@ class LiftEqualsWeight(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        grav_metric = self.options[Mission.GRAVITY][0]
+
         S = inputs[Aircraft.Wing.AREA]
         q = inputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE]
         weight = grav_metric * inputs[Dynamic.Vehicle.MASS]
@@ -111,6 +113,8 @@ class LiftEqualsWeight(om.ExplicitComponent):
         outputs[Dynamic.Vehicle.LIFT] = weight
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
+        grav_metric = self.options[Mission.GRAVITY][0]
+
         S = inputs[Aircraft.Wing.AREA]
         q = inputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE]
         weight = grav_metric * inputs[Dynamic.Vehicle.MASS]

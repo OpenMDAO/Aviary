@@ -100,12 +100,20 @@ def preprocess_options(
         aviary_options.set_val(
             Settings.ATMOSPHERE_MODEL, meta_data[Settings.ATMOSPHERE_MODEL]['default_value']
         )
-    _, _, _, planet_gravity = get_atmosphere_data(aviary_options.get_val(Settings.ATMOSPHERE_MODEL))
+    _, _, _, planet_gravity, sea_level_density = get_atmosphere_data(
+        aviary_options.get_val(Settings.ATMOSPHERE_MODEL)
+    )
+
     if Mission.GRAVITY not in aviary_options:  # Check to see if the user has set a gravity profile.
         # No gravity profile is set, set it now.
         aviary_options.set_val(
             Mission.GRAVITY, val=planet_gravity[0], units=planet_gravity[1]
         )  # contains both value and units as a tuple.
+
+    if Mission.SEA_LEVEL_DENSITY not in aviary_options:
+        aviary_options.set_val(
+            Mission.SEA_LEVEL_DENSITY, val=sea_level_density[0], units=sea_level_density[1]
+        )
 
 
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):

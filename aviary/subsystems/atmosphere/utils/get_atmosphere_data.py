@@ -1,3 +1,5 @@
+import numpy as np
+
 from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Cold import atm_data as cold_210A
 from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Hot import atm_data as hot_210A
 from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Polar import atm_data as polar_210A
@@ -22,7 +24,7 @@ from aviary.constants import (
 )
 
 
-def get_atmosphere_data(atmosphere_model):
+def get_atmosphere_data(atmosphere_model=AtmosphereModel.STANDARD):
     """
     Return the atmosphere source data, planet name, and gravitational constant
     associated with the requested atmosphere model.
@@ -35,7 +37,7 @@ def get_atmosphere_data(atmosphere_model):
     Returns
     -------
     tuple
-        (source_data, planet, gravity)
+        (source_data, planet, radius, gravity, sea_level_density)
     """
     atmosphere_lookup = {
         AtmosphereModel.STANDARD: (USatm1976, 'Earth', RADIUS_EARTH, GRAV_EARTH),
@@ -54,6 +56,14 @@ def get_atmosphere_data(atmosphere_model):
     }
 
     try:
-        return atmosphere_lookup[atmosphere_model]
+        data = atmosphere_lookup[atmosphere_model]
     except KeyError:
         raise ValueError(f'Could not find {atmosphere_model} in get_atmosphere_data().')
+
+    # Lookup sea level density in the atmosphere model.
+    source_data = data[0]
+    altitudes = source_data.alt
+    idx = np.argwhere(altitudes == 0.0)[0][0] + 1
+    sea_level_density = (float(source_data.akima_rho[idx][0]), 'kg/m**3')
+
+    return tuple([*data, sea_level_density])

@@ -38,7 +38,6 @@ class FlightPathODE(TwoDOFODE):
         )
 
     def setup(self):
-        self.options['auto_order'] = True
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
         alpha_mode = self.options['alpha_mode']

@@ -13,7 +13,6 @@ from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
-    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_options,
@@ -21,15 +20,13 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Settings
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS', 'BWB300FLOPS']
-
 
 @use_tempdirs
 class EngineMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -50,9 +47,10 @@ class EngineMassTest(unittest.TestCase):
             prob,
             case_name,
             input_keys=[
+                Aircraft.Engine.REFERENCE_MASS,
                 Aircraft.Engine.SCALED_SLS_THRUST,
-                Aircraft.Engine.MASS,
-                Aircraft.Engine.ADDITIONAL_MASS,
+                Aircraft.Engine.REFERENCE_SLS_THRUST,
+                Aircraft.Engine.MASS_SCALER,
             ],
             output_keys=[
                 Aircraft.Engine.MASS,
@@ -62,6 +60,7 @@ class EngineMassTest(unittest.TestCase):
             list_inputs=True,
             list_outputs=True,
             rtol=1e-10,
+            atol=1e-10,  # default tolerance 1e-12 is too tight for large numbers
         )
 
     def test_case_2(self):
@@ -71,7 +70,6 @@ class EngineMassTest(unittest.TestCase):
         options = AviaryValues()
 
         options.set_val(Settings.VERBOSITY, 0)
-        options.set_val(Aircraft.Engine.REFERENCE_MASS, 6000, units='lbm')
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.SCALE_MASS, True)
         options.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
@@ -99,10 +97,6 @@ class EngineMassTest(unittest.TestCase):
                 Aircraft.Engine.ADDITIONAL_MASS_FRACTION
             ),
             Aircraft.Engine.NUM_ENGINES: options.get_val(Aircraft.Engine.NUM_ENGINES),
-            Aircraft.Engine.REFERENCE_MASS: options.get_item(Aircraft.Engine.REFERENCE_MASS),
-            Aircraft.Engine.REFERENCE_SLS_THRUST: options.get_item(
-                Aircraft.Engine.REFERENCE_SLS_THRUST
-            ),
             Aircraft.Engine.SCALE_MASS: options.get_val(Aircraft.Engine.SCALE_MASS),
         }
 
@@ -111,7 +105,13 @@ class EngineMassTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(
+            Aircraft.Engine.REFERENCE_MASS, np.array([6000.0, 6000.0, 6000.0]), units='lbm'
+        )
+        prob.set_val(
             Aircraft.Engine.SCALED_SLS_THRUST, np.array([28000.0, 28000.0, 28000.0]), units='lbf'
+        )
+        prob.set_val(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, np.array([28928.1, 28928.1, 28928.1]), units='lbf'
         )
         # Pull value from the processed options.
         val, units = options.get_item(Aircraft.Engine.MASS_SCALER)
@@ -136,51 +136,79 @@ class EngineMassTest(unittest.TestCase):
         )
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
+    def test_case_3(self):
+        # arbitrary case to trigger both types of scaling equations, multiengine
+        prob = om.Problem()
+
+        options = AviaryValues()
+
+        options.set_val(Settings.VERBOSITY, 0)
+        options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        options.set_val(Aircraft.Engine.SCALE_MASS, True)
+        options.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
+        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.9)
+        options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
+        options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
+        options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
+        options.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, 0.0)
+        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
+        options.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
+
+        options.set_val(Aircraft.Engine.DATA_FILE, get_path('models/engines/turbofan_28k.csv'))
+        engine = EngineDeck(options=options)
+        options.set_val(Aircraft.Engine.SCALE_MASS, False)
+        engine2 = EngineDeck(name='engine2', options=options)
+        options.set_val(Aircraft.Engine.MASS_SCALER, 0.2)
+        options.set_val(Aircraft.Engine.SCALE_MASS, True)
+        engine3 = EngineDeck(name='engine3', options=options)
+        preprocess_propulsion(options, [engine2, engine, engine3])
+
+        prob.model.add_subsystem('engine_mass', EngineMass(), promotes=['*'])
+
+        opts = {
+            Aircraft.Engine.ADDITIONAL_MASS_FRACTION: options.get_val(
+                Aircraft.Engine.ADDITIONAL_MASS_FRACTION
+            ),
+            Aircraft.Engine.NUM_ENGINES: options.get_val(Aircraft.Engine.NUM_ENGINES),
+            Aircraft.Engine.SCALE_MASS: options.get_val(Aircraft.Engine.SCALE_MASS),
+        }
+
+        prob.model_options['*'] = opts
+
+        prob.setup(force_alloc_complex=True)
+
+        prob.set_val(Aircraft.Engine.REFERENCE_MASS, 6000, units='lbm')
+        prob.set_val(
+            Aircraft.Engine.SCALED_SLS_THRUST, np.array([28000.0, 28000.0, 28000.0]), units='lbf'
+        )
+        prob.set_val(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, np.array([28928.1, 28928.1, 28928.1]), units='lbf'
+        )
+        # Pull value from the processed options.
+        val, units = options.get_item(Aircraft.Engine.MASS_SCALER)
+        prob.set_val(Aircraft.Engine.MASS_SCALER, val, units=units)
+
+        prob.run_model()
+
+        mass = prob.get_val(Aircraft.Engine.MASS, 'lbm')
+        total_mass = prob.get_val(Aircraft.Propulsion.TOTAL_ENGINE_MASS, 'lbm')
+        additional_mass = prob.get_val(Aircraft.Engine.ADDITIONAL_MASS, 'lbm')
+
+        mass_expected = np.array([6000.0, 5779.16494294, 5814.38])
+        total_mass_expected = np.array([35187.08988589])
+        additional_mass_expected = np.array([5400.0, 5201.24844865, 5232.942])
+
+        assert_near_equal(mass, mass_expected, tolerance=1e-10)
+        assert_near_equal(total_mass, total_mass_expected, tolerance=1e-10)
+        assert_near_equal(additional_mass, additional_mass_expected, tolerance=1e-10)
+
+        partial_data = prob.check_partials(
+            out_stream=None, compact_print=True, show_only_incorrect=True, method='cs'
+        )
+        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+
     def test_IO(self):
         assert_match_varnames(self.prob.model)
-
-
-@use_tempdirs
-class BWBEngineMassTest(unittest.TestCase):
-    """Tests engine mass calculation for BWB."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
-        prob = self.prob
-
-        prob.model.add_subsystem(
-            'engine_mass',
-            EngineMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
-
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Engine.MASS_SCALER, val=np.ones(1))
-
-        flops_validation_test(
-            self,
-            prob,
-            case_name,
-            input_keys=[
-                Aircraft.Engine.SCALED_SLS_THRUST,
-                Aircraft.Engine.ADDITIONAL_MASS,
-            ],
-            output_keys=[
-                Aircraft.Engine.MASS,
-                Aircraft.Engine.ADDITIONAL_MASS,
-                Aircraft.Propulsion.TOTAL_ENGINE_MASS,
-            ],
-            list_inputs=True,
-            list_outputs=True,
-            version=Version.BWB,
-            rtol=1e-10,
-        )
 
 
 if __name__ == '__main__':
