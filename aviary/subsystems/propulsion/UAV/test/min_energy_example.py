@@ -36,10 +36,10 @@ def CruiseExample():
             'mach_initial': (0.07, 'unitless'),
 
             'mach_bounds': ((0.05, 0.3), 'unitless'),
-            # 'mach_ref': (0.05, 'unitless'),
+            'mach_ref': (0.1, 'unitless'),
             'mass_ref': (4.0, 'kg'),
 
-            # 'alt_ref': (100, 'ft'),
+            'altitude_ref': (200, 'ft'),
             # 'mach_final': (0.05, 'unitless'),
 
 
@@ -50,7 +50,12 @@ def CruiseExample():
             'distance_initial': (0.0, 'm'),
 
             'distance_ref': (1000.0, 'm'),
-            'target_distance': (1000.0, 'm'),
+            # target_distance adds an equality constraint (in aviary_group.py)
+            # pinning final distance to this value. Commented out for the
+            # max-range objective below, since distance needs to be free to
+            # grow until the battery constraint binds. Uncomment to go back
+            # to the fixed-distance min-energy formulation.
+            # 'target_distance': (1000.0, 'm'),
             'throttle_enforcement': 'control',
 
             # 'throttle_polynomial_order': 1,
@@ -84,7 +89,16 @@ def CruiseExample():
 
     """Objective: Minimize energy consumption during cruise flight. This is done by adding an objective to the cruise phase that minimizes the energy constraint at the final time step. The energy constraint is defined as the integral of the power required to maintain level flight over the duration of the cruise phase. By minimizing this objective, we can find the optimal flight profile that minimizes energy consumption while still meeting all other constraints and requirements."""
     cruise_phase = prob.model.traj.phases.cruise
-    cruise_phase.add_objective('energy_used', loc='final', ref=100, units='W*hr')
+    # Min-energy (fixed distance) objective. Uncomment this and re-comment the
+    # max-range objective below, along with the target_distance line above, to
+    # go back to this formulation.
+    # cruise_phase.add_objective('energy_used', loc='final', ref=100, units='W*hr')
+
+    # Max-range (fixed energy budget) objective: maximize final distance instead
+    # of minimizing energy used. A negative ref flips the minimizer into a
+    # maximizer. rc_electric.energy_constraint (energy_capacity - energy_used
+    # >= 0, declared in UAV_mission.py) is what now caps the answer.
+    cruise_phase.add_objective('distance', loc='final', ref=-1000.0, units='m')
 
     prob.add_driver('IPOPT', use_coloring=False, max_iter=1000)
 
