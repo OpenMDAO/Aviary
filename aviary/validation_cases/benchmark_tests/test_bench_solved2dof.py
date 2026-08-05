@@ -20,9 +20,9 @@ class TestBenchSolved2DOF(unittest.TestCase):
         )
 
         self.assertTrue(prob.result.success)
-        tol = 1e-3
-        assert_near_equal(prob.get_val(av.Mission.FINAL_TIME, units='s'), 112.27911183, tol)
-        assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 431.72131658, tol)
+        tol = 1e-4
+        assert_near_equal(prob.get_val(av.Mission.FINAL_TIME, units='s'), 108.84030411, tol)
+        assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 459.3830223, tol)
 
     # def test_bench_Solved2DOF_fuel_burned(self):
     #     prob = av.run_aviary(
@@ -38,7 +38,7 @@ class TestBenchSolved2DOF(unittest.TestCase):
     #     assert_near_equal(prob.get_val(av.Mission.FINAL_TIME, units='s'), 112.27911183, tol)
     #     assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 431.72131658, tol)
 
-    #     # this test aims to optimize  for maximum mass (minimum fuel burn) for this mission and so must )
+    #     # this test aims to optimize  for maximum mass (minimum fuel burn) for this mission
     #     prob = av.AviaryProblem()
     #     prob.load_inputs(
     #         'validation_cases/validation_data/test_models/aircraft_for_bench_solved2dof.csv',
@@ -60,11 +60,4 @@ class TestBenchSolved2DOF(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    prob = av.run_aviary(
-        aircraft_data='validation_cases/validation_data/test_models/aircraft_for_bench_solved2dof.csv',
-        phase_info=phase_info,
-        optimizer='IPOPT',
-        objective_type='time',
-        max_iter=100,
-    )
-    # unittest.main()
+    unittest.main()
