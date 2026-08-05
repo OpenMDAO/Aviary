@@ -90,6 +90,7 @@ phase_info = {
             'time_duration_ref': (100.0, 'kn'),
             'time_duration_bounds': ((100.0, 500.0), 'kn'),
             'time_initial': (0.0, 'kn'),
+            'mass_initial': (175.0e3, 'lbm'),
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
