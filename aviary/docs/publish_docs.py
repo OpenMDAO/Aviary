@@ -31,7 +31,6 @@ Design notes:
 
 import argparse
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -40,7 +39,6 @@ import tempfile
 from pathlib import Path
 
 from packaging.version import InvalidVersion, Version
-
 
 SAFE_SUBDIR_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 
@@ -54,8 +52,7 @@ def _run(cmd, cwd=None, check=True, capture=False):
     print(f"$ {' '.join(cmd)}" + (f"   (cwd={cwd})" if cwd else ""))
     if capture:
         result = subprocess.run(cmd, cwd=cwd, check=check,
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                text=True)
+                                capture_output=True, text=True)
         return result.stdout.strip()
     subprocess.run(cmd, cwd=cwd, check=check)
     return None
@@ -338,10 +335,15 @@ def publish_to_worktree(repo_root, html_dir, subdir, is_latest,
                 _run(['git', 'push', 'origin', 'gh-pages'], cwd=worktree)
         finally:
             # Always release the worktree so the temp dir can be cleaned.
+            # We swallow only expected filesystem/subprocess failures here so
+            # cleanup can't mask a real error from the try-block above.
+            # `check=False` already prevents non-zero git exits from raising;
+            # what's left is git-binary-missing (OSError) and defensive cover
+            # for CalledProcessError in case `check=False` is ever removed.
             try:
                 _run(['git', 'worktree', 'remove', '--force', str(worktree)],
                      cwd=repo_root, check=False)
-            except Exception as exc:
+            except (OSError, subprocess.CalledProcessError) as exc:
                 print(f"  (worktree cleanup warning: {exc})")
 
 
