@@ -37,15 +37,24 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             desc='The order of polynomials for interpolation in the transcription '
             'created in Dymos. The default value is 3.',
         )
-
-        defaults = {
+        # Note that the integration variable ('time') for this phase is velocity hence the units of 'time' being 'kn'
+        # Dymos calls the integration variable 'time' regardless of its real name, value or units.
+        velocity_defaults = {
             'time_initial_bounds': (0.0, 100.0),
             'time_duration_bounds': (0.0, 3600.0),
             'time_initial_ref': 100.0,
             'time_duration_ref': 100.0,
             'time_initial_direct_link': False,
         }
-        self.add_time_options(units='kn', defaults=defaults)
+        self.add_time_options(units='kn', defaults=velocity_defaults)
+
+        # Note that 'time' is a state for this phase
+        time_defaults = {
+            'time_state_bounds': (0, None),
+            'time_state_ref': 10,
+            'time_state_defect_ref': 10,
+        }
+        self.add_state_options('time_state', units='s', defaults=time_defaults)
 
         mass_defaults = {
             'mass_bounds': (1, None),
@@ -53,6 +62,13 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             'mass_defect_ref': 100.0e3,
         }
         self.add_state_options('mass', units='lbm', defaults=mass_defaults)
+
+        distance_defaults = {
+            'distance_ref': 1e3,
+            'distance_defect_ref': 1e3,
+            'distance_bounds': (0.0, None),
+        }
+        self.add_state_options('distance', units='ft', defaults=distance_defaults)
 
         # The options below have not yet been revamped.
 
@@ -128,41 +144,19 @@ class GroundrollPhase(PhaseBuilder):
             duration_ref=duration_ref,
         )
 
-        # self.add_state()
-        self.phase.set_state_options(
-            'time',
-            rate_source='dt_dv',
-            units='s',
-            fix_initial=True,
-            fix_final=False,
-            ref=1.0,
-            defect_ref=1.0,
-            solve_segments='forward',
-        )
-        self.add_state(name='mass', target=Dynamic.Vehicle.MASS, rate_source='dmass_dv')
-        # phase.set_state_options(
-        #     'mass',
-        #     rate_source='dmass_dv',
+        self.add_state(name='time_state', target='time', rate_source='dt_dv')
+        # self.phase.set_state_options(
+        #     'time',
+        #     rate_source='dt_dv',
+        #     units='s',
         #     fix_initial=True,
         #     fix_final=False,
-        #     lower=1,
-        #     upper=500.0e3,
-        #     ref=100.0e3,
-        #     defect_ref=100.0e3,
-        #     units='lbm',
+        #     ref=1.0,
+        #     defect_ref=1.0,
+        #     solve_segments='forward',
         # )
-
-        self.phase.set_state_options(
-            Dynamic.Mission.DISTANCE,
-            rate_source='over_a',
-            fix_initial=True,
-            fix_final=False,
-            lower=0,
-            upper=8000.0,
-            ref=1.0e2,
-            defect_ref=1.0e2,
-            units='ft',
-        )
+        self.add_state(name='mass', target=Dynamic.Vehicle.MASS, rate_source='dmass_dv')
+        self.add_state(name='distance', target=Dynamic.Mission.DISTANCE, rate_source='over_a')
 
         self.phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=32.3)
         self.phase.add_parameter('t_init_flaps', units='s', static_target=True, opt=False, val=44.0)
