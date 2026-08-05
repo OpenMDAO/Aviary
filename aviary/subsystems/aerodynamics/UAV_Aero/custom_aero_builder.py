@@ -84,11 +84,14 @@ class CustomAeroBuilder(SubsystemBuilderBase):
             - any additional keyword arguments required by OpenMDAO.
         """
         params = {}
-        params[Aircraft.Wing.AREA] = {
-            'shape': (1,),
-            'static_target': True,
-            'units': 'ft**2',
-        }
+        # AREA is no longer a fixed parameter: the cruise aero computes wing_area from
+        # SPAN * ROOT_CHORD inside SimpleAeroGroup (see simple_drag.py). SPAN and ROOT_CHORD
+        # already reach the phase as parameters because they are design variables.
+        # params[Aircraft.Wing.AREA] = {
+        #     'shape': (1,),
+        #     'static_target': True,
+        #     'units': 'ft**2',
+        # }
         return params
 
     def needs_mission_solver(self, aviary_inputs=None, subsystem_options=None, **kwargs):

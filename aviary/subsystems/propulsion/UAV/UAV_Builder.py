@@ -50,7 +50,7 @@ class UAVBuilder(EngineModel):
             Aircraft.Battery.MASS: {
                 'units': 'kg',
                 'lower': 0.1,
-                'upper': 1.0,
+                'upper': 5.0,
                 # 'val': 100,
             },
             Aircraft.Engine.Motor.IDLE_CURRENT: {
@@ -160,7 +160,7 @@ class UAVBuilder(EngineModel):
             'targets': 'rpm_slack',
             'units': 'rpm',
             'opt': True,
-            'lower': 1800,
+            'lower': 2800,
             'upper': 10800,
             'ref': 10800,
             # external-subsystem controls bypass Aviary's add_control, so the

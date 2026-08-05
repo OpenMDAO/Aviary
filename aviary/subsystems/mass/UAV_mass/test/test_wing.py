@@ -59,7 +59,6 @@ class TestWingMass(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 0.508, units='m')
         prob.set_val(Aircraft.Wing.SPAN, 1.4225, units='m')
-        prob.set_val(Aircraft.Wing.WETTED_AREA, 0.85, units='m**2')
 
         return prob
 

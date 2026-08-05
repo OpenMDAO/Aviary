@@ -50,7 +50,6 @@ class WingMass(om.JaxExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.SPAN, units='m', meta_data=ExtendedMetaData, primal_name='span')
         add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='m', meta_data=ExtendedMetaData, primal_name='root_chord')
-        add_aviary_input(self, Aircraft.Wing.WETTED_AREA, units='m**2', meta_data=ExtendedMetaData, primal_name='wetted_area')
 
         add_aviary_output(self, Aircraft.Wing.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='mass')
 
@@ -88,9 +87,12 @@ class WingMass(om.JaxExplicitComponent):
                     self.options[Aircraft.Wing.MISC_MASS],
                     ))
 
-    def compute_primal(self, span, root_chord, wetted_area):
+    def compute_primal(self, span, root_chord):
         load_airfoil_if_needed(self, Aircraft.Wing)
         chord = root_chord
+        # Wetted area is now derived from the same span x chord reference area the aero uses,
+        # so span/chord drive the skin & sheeting mass terms too (was a separate input/DV).
+        wetted_area = span * chord
         type = self.options[Aircraft.Wing.TYPE]
 
         if type == WingType.SIMPLE:

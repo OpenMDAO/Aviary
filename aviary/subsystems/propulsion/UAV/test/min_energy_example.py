@@ -3,6 +3,7 @@ from copy import deepcopy
 
 
 import aviary.api as av
+from aviary.mission.two_dof.ode import constraints
 import numpy as np
 import openmdao.api as om
 
@@ -35,7 +36,7 @@ def CruiseExample():
 
             'mach_initial': (0.07, 'unitless'),
 
-            'mach_bounds': ((0.05, 0.3), 'unitless'),
+            'mach_bounds': ((0.05, 0.15), 'unitless'),
             'mach_ref': (0.1, 'unitless'),
             'mass_ref': (4.0, 'kg'),
 
@@ -63,6 +64,15 @@ def CruiseExample():
             #Time
             'time_initial': (0.0, 's'),
             'time_duration_bounds': ((0,180), 's'),
+
+            'constraints': {Dynamic.Vehicle.LIFT_COEFFICIENT: {
+                    'upper': 1.2,
+                    'units': 'unitless',
+                    'type': 'path',
+
+                },
+            },
+
         },
         'initial_guesses': {
             'distance': ([0, 1000], 'm'),
@@ -89,15 +99,7 @@ def CruiseExample():
 
     """Objective: Minimize energy consumption during cruise flight. This is done by adding an objective to the cruise phase that minimizes the energy constraint at the final time step. The energy constraint is defined as the integral of the power required to maintain level flight over the duration of the cruise phase. By minimizing this objective, we can find the optimal flight profile that minimizes energy consumption while still meeting all other constraints and requirements."""
     cruise_phase = prob.model.traj.phases.cruise
-    # Min-energy (fixed distance) objective. Uncomment this and re-comment the
-    # max-range objective below, along with the target_distance line above, to
-    # go back to this formulation.
-    # cruise_phase.add_objective('energy_used', loc='final', ref=100, units='W*hr')
-
-    # Max-range (fixed energy budget) objective: maximize final distance instead
-    # of minimizing energy used. A negative ref flips the minimizer into a
-    # maximizer. rc_electric.energy_constraint (energy_capacity - energy_used
-    # >= 0, declared in UAV_mission.py) is what now caps the answer.
+    
     cruise_phase.add_objective('distance', loc='final', ref=-1000.0, units='m')
 
     prob.add_driver('IPOPT', use_coloring=False, max_iter=1000)
@@ -121,7 +123,25 @@ def CruiseExample():
 
     prob.add_design_variables()
 
-
+    
+    prob.model.add_subsystem(
+        'mass_closure',
+        om.ExecComp(
+            'gross_resid = structure_mass + battery_mass + motor_mass - design_gross_mass',
+            gross_resid={'units': 'kg', 'val': 0.0},
+            structure_mass={'units': 'kg', 'val': 0.0},
+            battery_mass={'units': 'kg', 'val': 0.0},
+            motor_mass={'units': 'kg', 'val': 0.0},
+            design_gross_mass={'units': 'kg', 'val': 1.0},
+        ),
+        promotes_inputs=[
+            ('structure_mass', Aircraft.Design.STRUCTURE_MASS),
+            ('battery_mass', Aircraft.Battery.MASS),
+            ('motor_mass', Aircraft.Engine.Motor.MASS),
+            ('design_gross_mass', Aircraft.Design.GROSS_MASS),
+        ],
+    )
+    prob.model.add_constraint('mass_closure.gross_resid', equals=0.0, ref=1.0)
 
     prob.setup()
 
