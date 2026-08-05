@@ -24,9 +24,9 @@
   // ---- Locate site root + current version from the URL ------------------
   //
   // A doc page URL looks like:
-  //   https://hschilling.github.io/Aviary/dev/getting_started.html
-  //                                 ^^^^^^^ ^^^ ^^^^^^^^^^^^^^^^^^^
-  //                                 base    ver page path
+  //   https://openmdao.github.io/Aviary/dev/getting_started.html
+  //                             ^^^^^^^ ^^^ ^^^^^^^^^^^^^^^^^^^
+  //                             base    ver page path
   //
   // The version segment is whatever immediately follows the site base. We
   // don't know the base statically (fork vs upstream), so we identify the
