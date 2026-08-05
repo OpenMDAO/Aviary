@@ -144,17 +144,16 @@ class GroundrollPhase(PhaseBuilder):
             duration_ref=duration_ref,
         )
 
-        self.add_state(name='time_state', target='time', rate_source='dt_dv')
-        # self.phase.set_state_options(
-        #     'time',
-        #     rate_source='dt_dv',
-        #     units='s',
-        #     fix_initial=True,
-        #     fix_final=False,
-        #     ref=1.0,
-        #     defect_ref=1.0,
-        #     solve_segments='forward',
-        # )
+        self.phase.set_state_options(
+            'time',
+            rate_source='dt_dv',
+            units='s',
+            fix_initial=True,
+            fix_final=False,
+            ref=1.0,
+            defect_ref=1.0,
+            solve_segments='forward',
+        )
         self.add_state(name='mass', target=Dynamic.Vehicle.MASS, rate_source='dmass_dv')
         self.add_state(name='distance', target=Dynamic.Mission.DISTANCE, rate_source='over_a')
 
