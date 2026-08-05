@@ -340,7 +340,7 @@ class LoadParameters(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.PART25_STRUCTURAL_CATEGORY)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
-        add_aviary_option(self, Aircraft.Design.CRUISE_ALTITUDE, units='ft')
+        add_aviary_option(self, Aircraft.Design.CRUISE_ALTITUDE, units='ft')  # In GASP, it is HNCRU
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
