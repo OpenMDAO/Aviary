@@ -49,12 +49,12 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
         self.add_time_options(units='kn', defaults=velocity_defaults)
 
         # Note that 'time' is a state for this phase
-        time_defaults = {
-            'time_state_bounds': (0, None),
-            'time_state_ref': 10,
-            'time_state_defect_ref': 10,
-        }
-        self.add_state_options('time_state', units='s', defaults=time_defaults)
+        # time_defaults = {
+        #     'time_state_bounds': (0, None),
+        #     'time_state_ref': 10,
+        #     'time_state_defect_ref': 10,
+        # }
+        # self.add_state_options('time_state', units='s', defaults=time_defaults)
 
         mass_defaults = {
             'mass_bounds': (1, None),
@@ -143,7 +143,7 @@ class GroundrollPhase(PhaseBuilder):
             duration_bounds=duration_bounds,
             duration_ref=duration_ref,
         )
-
+        # self.add_state(name='time_state', target='time, rate_source='dt_dv')
         self.phase.set_state_options(
             'time',
             rate_source='dt_dv',

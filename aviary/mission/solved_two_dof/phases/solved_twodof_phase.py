@@ -244,7 +244,6 @@ class SolvedTwoDOFPhase(FlightPhaseBase):
             **extra_options,
         )
 
-        # self.add_state() # better way of doing it
         phase.set_state_options(
             'time',
             rate_source='dt_dr',
