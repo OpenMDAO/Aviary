@@ -6,6 +6,12 @@
 #   - workflow_dispatch with a tag input -> same thing, but for backfilling old tags
 #
 # Publishes to openmdao.github.io/Aviary via the gh-pages branch.
+#
+# Note: docs linting and the bandit security scan are deliberately NOT run
+# here. Those live in test_docs.yml, which gates every PR into main before a
+# release tag is cut. Re-running them at publish time can't stop a bad
+# release (the tag already exists), and would spuriously fail backfill runs
+# of historical tags against newer lint/bandit rules.
 
 name: Publish Versioned Docs
 
