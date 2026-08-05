@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+import warnings
 
 from aviary.utils.math import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import Verbosity
@@ -340,6 +341,7 @@ class LoadParameters(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.PART25_STRUCTURAL_CATEGORY)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
         add_aviary_option(self, Aircraft.Design.CRUISE_ALTITUDE, units='ft')
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         self.add_input(
@@ -376,6 +378,7 @@ class LoadParameters(om.ExplicitComponent):
         self.declare_partials('V9', '*')
 
     def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
         vel_c = inputs['vel_c']
         max_airspeed = inputs['max_airspeed']
 
@@ -391,13 +394,23 @@ class LoadParameters(om.ExplicitComponent):
             max_mach = max_airspeed / 372.34
 
         if smooth:
+            if max_mach > 0.90:
+                if verbosity > Verbosity.BRIEF:
+                    warnings.warn(
+                        'Max Mach number must be less than 0.9 '
+                        'because GASP model is for subsonic flight only.'
+                    )
             max_mach = max_mach * sigmoidX(max_mach / 0.9, 1, -0.01) + 0.9 * sigmoidX(
                 max_mach / 0.9, 1, 0.01
             )
-
         else:
-            if max_mach > 0.90:  # note: this creates a discontinuity
+            if max_mach > 0.90:
                 max_mach = 0.90
+                if verbosity > Verbosity.BRIEF:
+                    warnings.warn(
+                        'Max Mach number must be less than 0.9 '
+                        'because GASP model is for subsonic flight only.'
+                    )
 
         density_ratio = (max_airspeed / (661.7 * max_mach)) ** 1.61949
 
@@ -610,9 +623,9 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
 
         if verbosity > Verbosity.BRIEF:
             if AR <= 0.0:
-                print('Aircraft.Wing.ASPECT_RATIO must be positive.')
+                warnings.warn('Aircraft.Wing.ASPECT_RATIO must be positive.')
             if DLMC4 == np.pi / 2.0:
-                print('Aircraft.Wing.SWEEP can not be 90 degrees.')
+                warnings.warn('Aircraft.Wing.SWEEP can not be 90 degrees.')
 
         outputs[Aircraft.Design.LIFT_CURVE_SLOPE] = (
             np.pi
@@ -1226,9 +1239,9 @@ class BWBLoadSpeeds(om.ExplicitComponent):
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             if verbosity > Verbosity.BRIEF:
                 if exp_wing_area <= 0.0:
-                    print('Aircraft.Wing.EXPOSED_AREA must be positive.')
+                    warnings.warn('Aircraft.Wing.EXPOSED_AREA must be positive.')
                 if gross_mass <= 0.0:
-                    print('Aircraft.Design.GROSS_MASS must be positive.')
+                    warnings.warn('Aircraft.Design.GROSS_MASS must be positive.')
             wing_loading = gross_mass / exp_wing_area
 
             VCMAX = 0.9 * max_struct_speed_kts
@@ -1617,9 +1630,9 @@ class BWBLoadFactors(om.ExplicitComponent):
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             if verbosity > Verbosity.BRIEF:
                 if exp_wing_area <= 0.0:
-                    print('Aircraft.Wing.EXPOSED_AREA must be positive.')
+                    warnings.warn('Aircraft.Wing.EXPOSED_AREA must be positive.')
                 if gross_mass <= 0.0:
-                    print('Aircraft.Design.GROSS_MASS must be positive.')
+                    warnings.warn('Aircraft.Design.GROSS_MASS must be positive.')
             wing_loading = gross_mass / exp_wing_area
 
             density_ratio = inputs['density_ratio']
