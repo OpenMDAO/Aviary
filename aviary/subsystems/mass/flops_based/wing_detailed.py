@@ -371,10 +371,10 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         rate_span = (wingspan - width) / wingspan
 
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
-        bwb_input_station_dist = np.zeros(len(input_station_dist) + 1, dtype=width.dtype)
-        bwb_input_station_dist[1:] = input_station_dist
 
         if root < 1:
+            bwb_input_station_dist = np.zeros(len(input_station_dist) + 1, dtype=width.dtype)
+            bwb_input_station_dist[1:] = input_station_dist
             if not self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
                 bwb_input_station_dist[1] = width / 2.0
             else:
@@ -385,6 +385,9 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
                 )
                 bwb_input_station_dist[0] = 0.0
                 bwb_input_station_dist[1] = width / 2.0
+
+        else:
+            bwb_input_station_dist = np.asarray(input_station_dist)
 
         inp_stations_mod = []
         for x in bwb_input_station_dist:

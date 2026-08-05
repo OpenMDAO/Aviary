@@ -165,7 +165,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         length = inputs[Aircraft.Fuselage.LENGTH][0]
         cl_tc = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO][0]
 
-        if root < 2:
+        if root < 1:
             # Adds the point at the centerline, pulling values from BWB geometry.
             # From lines 334-356, sfwate.f
 
