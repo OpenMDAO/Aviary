@@ -160,7 +160,7 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    use_SNOPT = False
+    use_SNOPT = True
 
     z = TestFLOPSDetailedTakeoff()
 
