@@ -40,4 +40,8 @@ flops_deprecated_vars = [
     'WTIN.FUSCLB',
     'WTIN.FSWREF',
     'WTIN.FUELRF',
+    'WTIN.FUSCLB',
+    'WTIN.FUSCLA',
+    'WTIN.FSWREF',
+    'WTIN.FUELRF',
 ]
