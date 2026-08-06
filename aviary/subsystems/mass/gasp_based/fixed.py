@@ -1,14 +1,15 @@
 import numpy as np
 import openmdao.api as om
+import warnings
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.gasp_based.control import ControlMassGroup
 from aviary.subsystems.mass.gasp_based.engine import EngineMassGroup
 from aviary.subsystems.mass.gasp_based.landing import LandingGearMassGroup
 from aviary.utils.math import dSigmoidXdx, sigmoidX
-from aviary.variable_info.enums import FlapType
+from aviary.variable_info.enums import FlapType, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class MassParameters(om.ExplicitComponent):
@@ -20,14 +21,11 @@ class MassParameters(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
-        add_aviary_option(self, Aircraft.Engine.NUM_FUSELAGE_ENGINES)
-        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='rad')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
@@ -56,8 +54,7 @@ class MassParameters(om.ExplicitComponent):
         )
         add_aviary_output(
             self,
-            Aircraft.Engine.POSITION_FACTOR,
-            shape=num_engine_type,
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR,
             units='unitless',
         )
         self.add_output('half_sweep', units='rad', desc='SWC2: wing chord half sweep angle')
@@ -72,7 +69,7 @@ class MassParameters(om.ExplicitComponent):
                 Aircraft.Wing.ASPECT_RATIO,
             ],
         )
-        self.declare_partials(Aircraft.Engine.POSITION_FACTOR, ['max_mach'])
+        self.declare_partials(Aircraft.Propulsion.ENGINE_POSITION_FACTOR, ['max_mach'])
         self.declare_partials(
             'half_sweep',
             [
@@ -90,11 +87,21 @@ class MassParameters(om.ExplicitComponent):
         self.declare_partials('c_gear_loc', Aircraft.LandingGear.MAIN_GEAR_LOCATION)
 
     def compute(self, inputs, outputs):
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+        verbosity = self.options[Settings.VERBOSITY]
+
         sweep_c4 = inputs[Aircraft.Wing.SWEEP]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         wingspan = inputs[Aircraft.Wing.SPAN]
-        num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
+        num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
+        if num_wing_engines > 4:
+            if verbosity > Verbosity.BRIEF:
+                warnings.warn(
+                    f'GASP mass equations do not support more than 4 total engines on the wings. '
+                    'Aircraft.Propulsion.ENGINE_POSITION_FACTOR will use the default equation, '
+                    'which is not scaled by number of wing-mounted engines.'
+                )
         max_mach = inputs['max_mach']
         strut_x = inputs[Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS]
         loc_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
@@ -107,12 +114,10 @@ class MassParameters(om.ExplicitComponent):
         c_material = 1.0 + 2.5 / (struct_span**0.5)
         c_strut_braced = 1.0 - strut_x**2
 
-        not_fuselage_mounted = self.options[Aircraft.Engine.NUM_FUSELAGE_ENGINES] == 0
-
         # note: c_gear_loc doesn't actually depend on any of the inputs... perhaps use a
         # set_input_defaults call to declare this at a higher level
         c_gear_loc = 1.0
-        if self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]:
+        if smooth:
             # smooth transition for c_gear_loc from 0.95 to 1 when gear_location varies
             # between 0 and 1% of span
             c_gear_loc = 0.95 * sigmoidX(loc_main_gear, 0.005, -0.01 / 320.0) + 1 * sigmoidX(
@@ -122,31 +127,52 @@ class MassParameters(om.ExplicitComponent):
             if loc_main_gear == 0:
                 c_gear_loc = 0.95
 
-        # why always use sigmoid function?
-        c_eng_pos = 1.0 * sigmoidX(max_mach, 0.75, -1.0 / 320.0) + 1.05 * sigmoidX(
-            max_mach, 0.75, 1.0 / 320.0
-        )
-        if not_fuselage_mounted and num_engines == 2 or num_engines == 3:
-            c_eng_pos = 0.98 * sigmoidX(max_mach, 0.75, -1.0 / 320.0) + 0.95 * sigmoidX(
+        if smooth:
+            c_eng_pos = 1.0 * sigmoidX(max_mach, 0.75, -1.0 / 320.0) + 1.05 * sigmoidX(
                 max_mach, 0.75, 1.0 / 320.0
             )
-        if not_fuselage_mounted and num_engines == 4:
-            c_eng_pos = 0.95 * sigmoidX(max_mach, 0.75, -1.0 / 320.0) + 0.9 * sigmoidX(
-                max_mach, 0.75, 1.0 / 320.0
-            )
+            # GASP code has an error. We changed to the following. If num_wing_engines = 3, then
+            # the configuration is one fuselage mounted engine, and two wing mounted engines
+            # (e.g. DC-10 or L1011). There are no 3 wing engine configurations in production today.
+            if num_wing_engines == 2 or num_wing_engines == 3:
+                c_eng_pos = 0.98 * sigmoidX(max_mach, 0.75, -1.0 / 320.0) + 0.95 * sigmoidX(
+                    max_mach, 0.75, 1.0 / 320.0
+                )
+            if num_wing_engines == 4:
+                c_eng_pos = 0.95 * sigmoidX(max_mach, 0.75, -1.0 / 320.0) + 0.9 * sigmoidX(
+                    max_mach, 0.75, 1.0 / 320.0
+                )
+        else:
+            # max_mach < 0.75, i.e. regional type carriers/bizjets
+            # max_mach > 0.75, i.e. transport A/C in general
+            if max_mach < 0.75:
+                c_eng_pos = 1.0
+            else:
+                c_eng_pos = 1.05
+            if num_wing_engines == 2 or num_wing_engines == 3:
+                if max_mach < 0.75:
+                    c_eng_pos = 0.98
+                else:
+                    c_eng_pos = 0.95
+            if num_wing_engines == 4:
+                if max_mach < 0.75:
+                    c_eng_pos = 0.95
+                else:
+                    c_eng_pos = 0.90
 
         outputs[Aircraft.Wing.MATERIAL_FACTOR] = c_material
         outputs['c_strut_braced'] = c_strut_braced
         outputs['c_gear_loc'] = c_gear_loc
-        outputs[Aircraft.Engine.POSITION_FACTOR] = c_eng_pos
+        outputs[Aircraft.Propulsion.ENGINE_POSITION_FACTOR] = c_eng_pos
         outputs['half_sweep'] = half_sweep
 
     def compute_partials(self, inputs, J):
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         sweep_c4 = inputs[Aircraft.Wing.SWEEP]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         wingspan = inputs[Aircraft.Wing.SPAN]
-        num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
+        num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         max_mach = inputs['max_mach']
         strut_x = inputs[Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS]
         loc_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
@@ -155,8 +181,6 @@ class MassParameters(om.ExplicitComponent):
         half_sweep = np.arctan(tan_half_sweep)
         cos_half_sweep = np.cos(half_sweep)
         struct_span = wingspan / cos_half_sweep
-
-        not_fuselage_mounted = self.options[Aircraft.Engine.NUM_FUSELAGE_ENGINES] == 0
 
         dTanHS_dSC4 = 1 / np.cos(sweep_c4) ** 2
         dTanHS_TR = (
@@ -195,17 +219,20 @@ class MassParameters(om.ExplicitComponent):
             * dTanHS_dAR
         )
 
-        J[Aircraft.Engine.POSITION_FACTOR, 'max_mach'] = -dSigmoidXdx(
-            max_mach, 0.75, 1 / 320.0
-        ) + 1.05 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
-        if not_fuselage_mounted and num_engines == 2 or num_engines == 3:
-            J[Aircraft.Engine.POSITION_FACTOR, 'max_mach'] = -0.98 * dSigmoidXdx(
+        if smooth:
+            J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, 'max_mach'] = -dSigmoidXdx(
                 max_mach, 0.75, 1 / 320.0
-            ) + 0.95 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
-        if not_fuselage_mounted and num_engines == 4:
-            J[Aircraft.Engine.POSITION_FACTOR, 'max_mach'] = -0.95 * dSigmoidXdx(
-                max_mach, 0.75, 1 / 320.0
-            ) + 0.9 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
+            ) + 1.05 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
+            if num_wing_engines == 2 or num_wing_engines == 3:
+                J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, 'max_mach'] = -0.98 * dSigmoidXdx(
+                    max_mach, 0.75, 1 / 320.0
+                ) + 0.95 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
+            if num_wing_engines == 4:
+                J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, 'max_mach'] = -0.95 * dSigmoidXdx(
+                    max_mach, 0.75, 1 / 320.0
+                ) + 0.9 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
+        else:
+            J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, 'max_mach'] = 0.0
 
         J['half_sweep', Aircraft.Wing.SWEEP] = 1 / (tan_half_sweep**2 + 1) * dTanHS_dSC4
         J['half_sweep', Aircraft.Wing.TAPER_RATIO] = 1 / (tan_half_sweep**2 + 1) * dTanHS_TR
@@ -213,10 +240,12 @@ class MassParameters(om.ExplicitComponent):
 
         J['c_strut_braced', Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS] = -2 * strut_x
 
-        if self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]:
+        if smooth:
             J['c_gear_loc', Aircraft.LandingGear.MAIN_GEAR_LOCATION] = 0.95 * (-100) * dSigmoidXdx(
                 loc_main_gear, 0.005, 0.01 / 320.0
             ) + 1 * (100) * dSigmoidXdx(loc_main_gear, 0.005, 0.01 / 320.0)
+        else:
+            J['c_gear_loc', Aircraft.LandingGear.MAIN_GEAR_LOCATION] = 0.0
 
 
 class PayloadGroup(om.ExplicitComponent):
@@ -224,10 +253,10 @@ class PayloadGroup(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
-        add_aviary_option(self, Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, units='lbm')
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
+        add_aviary_input(self, Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.Design.CARGO_MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.Design.MAX_CARGO_MASS, units='lbm')
@@ -244,20 +273,44 @@ class PayloadGroup(om.ExplicitComponent):
         )
 
     def setup_partials(self):
+        pax = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
+        pax_des = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+
+        self.declare_partials(
+            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS,
+            val=pax,
+        )
+
         self.declare_partials(
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
             [Aircraft.CrewPayload.CARGO_MASS],
             val=1.0,
         )
+        self.declare_partials(
+            Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS,
+            val=pax,
+        )
         self.declare_partials('payload_mass_des', [Aircraft.CrewPayload.Design.CARGO_MASS], val=1.0)
+        self.declare_partials(
+            'payload_mass_des',
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS,
+            val=pax_des,
+        )
         self.declare_partials(
             'payload_mass_max', [Aircraft.CrewPayload.Design.MAX_CARGO_MASS], val=1.0
         )
+        self.declare_partials(
+            'payload_mass_max',
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS,
+            val=pax_des,
+        )
 
     def compute(self, inputs, outputs):
-        pax_mass, _ = self.options[Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS]
         pax = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
         pax_des = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+        pax_mass = inputs[Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS]
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
         cargo_mass_des = inputs[Aircraft.CrewPayload.Design.CARGO_MASS]
         cargo_mass_max = inputs[Aircraft.CrewPayload.Design.MAX_CARGO_MASS]

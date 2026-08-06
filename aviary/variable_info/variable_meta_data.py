@@ -647,7 +647,6 @@ add_meta_data(
     },
     units='lbm',
     desc='baggage mass per passenger',
-    option=True,
     default_value=0.0,
 )
 
@@ -761,7 +760,6 @@ add_meta_data(
     },
     units='lbm',
     desc='mass per passenger',
-    option=True,
     default_value=165.0,
 )
 
@@ -771,7 +769,6 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.UWPAX', 'FLOPS': None},
     units='lbm',
     desc='total mass of one passenger and their bags',
-    option=True,
     default_value=200,
 )
 
@@ -2308,16 +2305,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.POSITION_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
-    units='unitless',
-    desc='engine position factor',
-    default_value=0,
-    multivalue=True,
-)
-
-add_meta_data(
     Aircraft.Engine.PYLON_FACTOR,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FPYL', 'FLOPS': None},
@@ -2341,7 +2328,6 @@ add_meta_data(
     desc='Unscaled mass of a single engine. See Aircraft.Engine.MASS for breakdown of what is '
     'included in engine mass.',
     default_value=0.0,
-    option=True,
     multivalue=True,
 )
 
@@ -2357,7 +2343,6 @@ add_meta_data(
     'EngineDecks, reference thrust will be found from performance data if not provided '
     'by user. User-provided values override SLS point found in performance data.',
     default_value=0.0,
-    option=True,
     multivalue=True,
 )
 
@@ -4534,6 +4519,15 @@ add_meta_data(
     units='unitless',
     desc='Scaler for engine oil mass',
     default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.Propulsion.ENGINE_POSITION_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
+    units='unitless',
+    desc='engine position factor',
+    default_value=0,
 )
 
 add_meta_data(

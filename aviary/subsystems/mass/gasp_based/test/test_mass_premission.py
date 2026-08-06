@@ -49,6 +49,7 @@ class MassPremissionTestCase1(unittest.TestCase):
         input_options.delete(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS)
         input_options.delete(Aircraft.Furnishings.MASS)
         input_options.delete(Aircraft.Engine.SCALE_FACTOR)
+        input_options.delete(Aircraft.Engine.REFERENCE_SLS_THRUST)
 
         for key, (val, units) in input_options.items():
             if not CoreMetaData[key]['option']:
@@ -143,7 +144,6 @@ class MassPremissionTestCase2(unittest.TestCase):
         )
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
@@ -166,6 +166,9 @@ class MassPremissionTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless'
         )
@@ -496,7 +499,6 @@ class MassPremissionTestCase3(unittest.TestCase):
         )
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
@@ -519,6 +521,9 @@ class MassPremissionTestCase3(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless'
         )
@@ -840,7 +845,6 @@ class MassPremissionTestCase4(unittest.TestCase):
         )
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
@@ -863,6 +867,9 @@ class MassPremissionTestCase4(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless'
         )
@@ -1192,7 +1199,6 @@ class MassSummationTestCase5(unittest.TestCase):
         )
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
@@ -1215,6 +1221,9 @@ class MassSummationTestCase5(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless'
         )
@@ -1539,7 +1548,6 @@ class MassSummationTestCase6(unittest.TestCase):
         )
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
@@ -1562,6 +1570,9 @@ class MassSummationTestCase6(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless'
         )
@@ -1887,7 +1898,6 @@ class MassSummationTestCase7(unittest.TestCase):
         )
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
@@ -1910,6 +1920,9 @@ class MassSummationTestCase7(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.0003482075, units='unitless'
         )
@@ -2260,7 +2273,6 @@ class MassSummationTestCase8(unittest.TestCase):
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
-        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
@@ -2283,6 +2295,9 @@ class MassSummationTestCase8(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.000474, units='unitless'
         )
@@ -2629,7 +2644,6 @@ class MassSummationTestCase9(unittest.TestCase):
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
-        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
@@ -2653,6 +2667,9 @@ class MassSummationTestCase9(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.000557, units='unitless'
         )
@@ -3027,9 +3044,9 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=41000, units='ft')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=225, units='lbm')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.04373, units='unitless')
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
         options.set_val(Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, 0.0667, units='lbm')
 
         prob = self.prob = om.Problem()
@@ -3098,6 +3115,9 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, 0.0, units='unitless'
         )
         # inputs from MassPremission
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=225, units='lbm'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ROOT_CHORD, val=0.03836448, units='ft'
         )
@@ -3283,7 +3303,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         Aircraft.Propulsion.TOTAL_ENGINE_MASS -- WEP = 7005.
         Aircraft.Nacelle.MASS -- WNAC = 514.9
         Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS -- WPES = 2153
-        Aircraft.Engine.POSITION_FACTOR -- SKEPOS = 1.05
+        Aircraft.Propulsion.ENGINE_POSITION_FACTOR -- SKEPOS = 1.05
         Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS -- WPL = 33750
         Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS - WFE = 20876.
         Mission.OPERATING_ITEMS_MASS -- WFUL = 5775.
@@ -3350,7 +3370,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.MATERIAL_FACTOR], 1.19461189, tol)
         assert_near_equal(prob['c_strut_braced'], 1, tol)
         assert_near_equal(prob['c_gear_loc'], 0.95, tol)
-        assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
+        assert_near_equal(prob[Aircraft.Propulsion.ENGINE_POSITION_FACTOR], 1.05, tol)
         assert_near_equal(prob['half_sweep'], 0.47984874, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 33750.0, tol)
         assert_near_equal(prob['payload_mass_des'], 33750.0, tol)
@@ -3363,7 +3383,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Nacelle.MASS], 303.61439936, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 1686.626, tol)
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
-        assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
+        assert_near_equal(prob[Aircraft.Propulsion.ENGINE_POSITION_FACTOR], 1.05, tol)
         assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21885.38086961, tol)
         assert_near_equal(prob[Mission.OPERATING_ITEMS_MASS], 5961.79463002, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.25111783, tol)
@@ -3461,7 +3481,7 @@ class BWBStructMassTestCase(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        tol = 1e-7
+        tol = 1e-8
         assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 45110.93189329, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
