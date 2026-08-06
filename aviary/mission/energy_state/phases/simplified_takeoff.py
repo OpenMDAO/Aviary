@@ -24,7 +24,9 @@ class StallSpeed(om.ExplicitComponent):
 
         self.add_output('v_stall', val=0.1, units='m/s', desc='stall velocity')
 
-        self.declare_partials('v_stall', '*')
+        self.declare_partials(
+            'v_stall', ['mass', Dynamic.Atmosphere.DENSITY, Aircraft.Wing.AREA, 'Cl_max']
+        )
 
     def compute(self, inputs, outputs):
         weight = inputs['mass'] * GRAV_ENGLISH_LBM
@@ -33,7 +35,7 @@ class StallSpeed(om.ExplicitComponent):
         # but the mission expects pounds mass instead of pounds force.
         weight = weight * 4.44822
         rho = inputs[Dynamic.Atmosphere.DENSITY]
-        S = inputs['planform_area']
+        S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs['Cl_max']
 
         v_stall = (2 * weight / (rho * S * Cl_max)) ** 0.5
@@ -43,7 +45,7 @@ class StallSpeed(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         weight = inputs['mass'] * GRAV_ENGLISH_LBM
         rho = inputs[Dynamic.Atmosphere.DENSITY]
-        S = inputs['planform_area']
+        S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs['Cl_max']
 
         rad = 2 * weight / (rho * S * Cl_max)
@@ -54,7 +56,7 @@ class StallSpeed(om.ExplicitComponent):
         J['v_stall', Dynamic.Atmosphere.DENSITY] = (
             0.5 * 4.44822**0.5 * rad ** (-0.5) * (-2 * weight) / (rho**2 * S * Cl_max)
         )
-        J['v_stall', 'planform_area'] = (
+        J['v_stall', Aircraft.Wing.AREA] = (
             0.5 * 4.44822**0.5 * rad ** (-0.5) * (-2 * weight) / (rho * S**2 * Cl_max)
         )
         J['v_stall', 'Cl_max'] = (

@@ -54,13 +54,13 @@ class StallSpeed(om.ExplicitComponent):
             cols=rows_cols,
         )
 
-        self.declare_partials('stall_speed', ['area', 'lift_coefficient_max'])
+        self.declare_partials('stall_speed', [Aircraft.Wing.AREA, 'lift_coefficient_max'])
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         grav_metric = self.options[Mission.GRAVITY][0]
         mass = inputs['mass']
         density = inputs[Dynamic.Atmosphere.DENSITY]
-        area = inputs['area']
+        area = inputs[Aircraft.Wing.AREA]
         lift_coefficient_max = inputs['lift_coefficient_max']
 
         weight = mass * grav_metric
@@ -72,7 +72,7 @@ class StallSpeed(om.ExplicitComponent):
         grav_metric = self.options[Mission.GRAVITY][0]
         mass = inputs['mass']
         density = inputs[Dynamic.Atmosphere.DENSITY]
-        area = inputs['area']
+        area = inputs[Aircraft.Wing.AREA]
         lift_coefficient_max = inputs['lift_coefficient_max']
 
         weight = mass * grav_metric
@@ -87,7 +87,7 @@ class StallSpeed(om.ExplicitComponent):
             stall_speed * density**2 * area * lift_coefficient_max
         )
 
-        J['stall_speed', 'area'] = -weight / (
+        J['stall_speed', Aircraft.Wing.AREA] = -weight / (
             stall_speed * density * area**2 * lift_coefficient_max
         )
 
