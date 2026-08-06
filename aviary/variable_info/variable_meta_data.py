@@ -1236,6 +1236,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.CRUISE_ALTITUDE,
     meta_data=_MetaData,
+    # In GASP, it is HNCRU, not CRALT
     historical_name={'GASP': 'INGASP.CRALT', 'FLOPS': None},
     units='ft',
     option=True,
