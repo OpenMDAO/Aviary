@@ -1125,6 +1125,12 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:fuselage:simple_layout",
+        true,
+        "unitless",
+        "<class 'bool'>"
+    ],
+    [
         "settings:atmosphere_model",
         "STANDARD",
         "unitless",

@@ -58,7 +58,7 @@ V3_bug_fixed_options.set_val(
     Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless'
 )
 V3_bug_fixed_options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145, units='unitless')
-V3_bug_fixed_options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+V3_bug_fixed_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.NUM_AISLES, 1, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
 V3_bug_fixed_options.set_val(
