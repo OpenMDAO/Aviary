@@ -132,7 +132,7 @@ class EnergyStateODE(_BaseODE):
                     ],
                     promotes_outputs=['*'],
                 )
-                self.add_constraint('thrust_residual', ref=thrust_res_ref, equals=0.0)
+                self.add_constraint('thrust_residual', ref=0.01, upper=0.01, lower=-0.01)
             else:
                 # Add a balance comp to compute throttle based on the required thrust.
                 sub1.add_subsystem(

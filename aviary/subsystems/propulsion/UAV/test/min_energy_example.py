@@ -99,7 +99,7 @@ def CruiseExample():
 
     """Objective: Minimize energy consumption during cruise flight. This is done by adding an objective to the cruise phase that minimizes the energy constraint at the final time step. The energy constraint is defined as the integral of the power required to maintain level flight over the duration of the cruise phase. By minimizing this objective, we can find the optimal flight profile that minimizes energy consumption while still meeting all other constraints and requirements."""
     cruise_phase = prob.model.traj.phases.cruise
-    
+
     cruise_phase.add_objective('distance', loc='final', ref=-1000.0, units='m')
 
     prob.add_driver('IPOPT', use_coloring=False, max_iter=1000)
@@ -123,25 +123,8 @@ def CruiseExample():
 
     prob.add_design_variables()
 
-    
-    prob.model.add_subsystem(
-        'mass_closure',
-        om.ExecComp(
-            'gross_resid = structure_mass + battery_mass + motor_mass - design_gross_mass',
-            gross_resid={'units': 'kg', 'val': 0.0},
-            structure_mass={'units': 'kg', 'val': 0.0},
-            battery_mass={'units': 'kg', 'val': 0.0},
-            motor_mass={'units': 'kg', 'val': 0.0},
-            design_gross_mass={'units': 'kg', 'val': 1.0},
-        ),
-        promotes_inputs=[
-            ('structure_mass', Aircraft.Design.STRUCTURE_MASS),
-            ('battery_mass', Aircraft.Battery.MASS),
-            ('motor_mass', Aircraft.Engine.Motor.MASS),
-            ('design_gross_mass', Aircraft.Design.GROSS_MASS),
-        ],
-    )
-    prob.model.add_constraint('mass_closure.gross_resid', equals=0.0, ref=1.0)
+
+
 
     prob.setup()
 
@@ -160,6 +143,12 @@ def CruiseExample():
     print('Wetted Area:', number)
 
     prob.run_aviary_problem(run_driver=True)
+
+
+
+
+
+
 
     print('throttle:', prob.get_val('traj.cruise.controls:throttle', units='unitless'))
     print('battery voltage:', prob.get_val('traj.cruise.rhs_all.rc_electric.battery.voltage_out', units='V'))
