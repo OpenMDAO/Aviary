@@ -175,7 +175,9 @@ class UAVBuilder(EngineModel):
         # Declaring them as Dymos controls creates duplicate connections.
         return controls
 
-    def needs_mission_solver(self, aviary_inputs, subsystem_options):
+    def needs_mission_solver(
+        self, aviary_inputs=None, user_options=None, subsystem_options=None, **kwargs
+    ):
         return False
 
 

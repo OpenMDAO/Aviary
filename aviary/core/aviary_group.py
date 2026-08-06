@@ -1478,7 +1478,6 @@ class AviaryGroup(om.Group):
         for subsystem in all_subsystems:
             dv_dict = subsystem.get_design_vars(aviary_inputs=self.aviary_inputs)
             for dv_name, dv_dict in dv_dict.items():
-                dv_dict = {key: value for key, value in dv_dict.items() if key != 'val'}
                 self.add_design_var(dv_name, **dv_dict)
 
         if self.mission_method is SOLVED_2DOF:  # TODO: to be removed soon
@@ -1515,23 +1514,6 @@ class AviaryGroup(om.Group):
                     ref=1,
                 )
 
-                # self.add_subsystem(
-                #                     'gtow_constraint',
-                #                     om.ExecComp(
-                #                         'gtow_resid = design_mass - actual_mass',
-                #                         design_mass={'val': 10, 'units': 'kg'},
-                #                         actual_mass={'val': 0, 'units': 'kg'},
-                #                         gtow_resid={'val': 30, 'units': 'kg'},
-                #                     ),
-                #                     promotes_inputs=[
-                #                         ('design_mass', Aircraft.Design.GROSS_MASS),
-                #                         ('actual_mass', Mission.GROSS_MASS),
-                #                     ],
-                #                     promotes_outputs=['gtow_resid'],
-                
-                #                 )
-                
-                # self.add_constraint('gtow_constraint.gtow_resid', lower=0.004, upper=0.004, ref=100, units='kg')
                 self.add_subsystem(
                     'gtow_constraint',
                     om.EQConstraintComp(
@@ -1539,9 +1521,8 @@ class AviaryGroup(om.Group):
                         eq_units='lbm',
                         normalize=True,
                         add_constraint=True,
-                        # normalize=True already makes the residual O(1); ref=1e5
-                        # shrank the scaled jacobian row to 1e-6 (invisible to IPOPT)
-                        ref=1.0,
+
+
                     ),
                     promotes_inputs=[
                         ('lhs:GTOW', Aircraft.Design.GROSS_MASS),

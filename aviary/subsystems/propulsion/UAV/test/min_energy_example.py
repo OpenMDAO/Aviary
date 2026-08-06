@@ -142,39 +142,34 @@ def CruiseExample():
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units='m**2')
     print('Wetted Area:', number)
 
-    prob.run_aviary_problem(run_driver=True)
+    prob.run_aviary_problem(run_driver=True, simulate=True)
 
+    """Debug Print"""
+    # print('throttle:', prob.get_val('traj.cruise.controls:throttle', units='unitless'))
+    # print('battery voltage:', prob.get_val('traj.cruise.rhs_all.rc_electric.battery.voltage_out', units='V'))
+    # print('esc voltage out:', prob.get_val('traj.cruise.rhs_all.rc_electric.esc.voltage_out', units='V'))
+    # print('motor power:', prob.get_val('traj.cruise.rhs_all.rc_electric.motor.power', units='W'))
+    # print('prop power:', prob.get_val('traj.cruise.rhs_all.rc_electric.prop_power', units='W'))
+    # print('electric power in:', prob.get_val('traj.cruise.rhs_all.electric_power_in_total', units='W'))
+    # print(prob.get_val('traj.cruise.rhs_all.thrust_required', units='lbf'))
+    # print(prob.get_val('traj.cruise.rhs_all.thrust_residual', units='lbf'))
+    # print(prob.get_val('traj.cruise.rhs_all.drag', units='lbf'))
+    # print(prob.get_val('traj.cruise.rhs_all.thrust_net_total', units='lbf'))
+    # gross_mass = prob.get_val('mission:gross_mass', units='lbm')
+    # zero_fuel_mass = prob.get_val('mission:zero_fuel_mass', units='lbm')
+    # taxi_out_fuel = prob.get_val('mission:taxi:fuel_mass_taxi_out', units='lbm')
+    # takeoff_fuel = prob.get_val('mission:takeoff:fuel_mass', units='lbm')
 
+    # print('gross_mass:', gross_mass)
+    # print('zero_fuel_mass:', zero_fuel_mass)
+    # print('gross_mass - zero_fuel_mass:', gross_mass - zero_fuel_mass)
+    # print('taxi_out_fuel:', taxi_out_fuel)
+    # print('takeoff_fuel:', takeoff_fuel)
+    # print('gross_mass - taxi_out_fuel - takeoff_fuel:', gross_mass - taxi_out_fuel - takeoff_fuel)
 
-
-
-
-
-    print('throttle:', prob.get_val('traj.cruise.controls:throttle', units='unitless'))
-    print('battery voltage:', prob.get_val('traj.cruise.rhs_all.rc_electric.battery.voltage_out', units='V'))
-    print('esc voltage out:', prob.get_val('traj.cruise.rhs_all.rc_electric.esc.voltage_out', units='V'))
-    print('motor power:', prob.get_val('traj.cruise.rhs_all.rc_electric.motor.power', units='W'))
-    print('prop power:', prob.get_val('traj.cruise.rhs_all.rc_electric.prop_power', units='W'))
-    print('electric power in:', prob.get_val('traj.cruise.rhs_all.electric_power_in_total', units='W'))
-    print(prob.get_val('traj.cruise.rhs_all.thrust_required', units='lbf'))
-    print(prob.get_val('traj.cruise.rhs_all.thrust_residual', units='lbf'))
-    print(prob.get_val('traj.cruise.rhs_all.drag', units='lbf'))
-    print(prob.get_val('traj.cruise.rhs_all.thrust_net_total', units='lbf'))
-    gross_mass = prob.get_val('mission:gross_mass', units='lbm')
-    zero_fuel_mass = prob.get_val('mission:zero_fuel_mass', units='lbm')
-    taxi_out_fuel = prob.get_val('mission:taxi:fuel_mass_taxi_out', units='lbm')
-    takeoff_fuel = prob.get_val('mission:takeoff:fuel_mass', units='lbm')
-
-    print('gross_mass:', gross_mass)
-    print('zero_fuel_mass:', zero_fuel_mass)
-    print('gross_mass - zero_fuel_mass:', gross_mass - zero_fuel_mass)
-    print('taxi_out_fuel:', taxi_out_fuel)
-    print('takeoff_fuel:', takeoff_fuel)
-    print('gross_mass - taxi_out_fuel - takeoff_fuel:', gross_mass - taxi_out_fuel - takeoff_fuel)
-
-    print('settings:problem_type:', prob.aviary_inputs.get_val(Settings.PROBLEM_TYPE))
-    print('settings:equations_of_motion:', prob.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION))
-    print('settings:mass_method:', prob.aviary_inputs.get_val(Settings.MASS_METHOD))
+    # print('settings:problem_type:', prob.aviary_inputs.get_val(Settings.PROBLEM_TYPE))
+    # print('settings:equations_of_motion:', prob.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION))
+    # print('settings:mass_method:', prob.aviary_inputs.get_val(Settings.MASS_METHOD))
     return prob
 
 
