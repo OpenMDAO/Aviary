@@ -377,7 +377,7 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
         char_len[num_idx] = adjusted_avg_length[num_idx]
         fineness[num_idx] = 1.0
 
-        calc_idx = np.intersect1d(np.where(avg_diam[num_idx] > 0), num_idx)
+        calc_idx = np.intersect1d(np.where(adjusted_avg_diam[num_idx] > 0), num_idx)
 
         fineness[calc_idx] = adjusted_avg_length[calc_idx] / adjusted_avg_diam[calc_idx]
 
