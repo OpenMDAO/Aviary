@@ -713,10 +713,19 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
     def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_timeseries() on all engine models and return combined result."""
-        timeseries_vars = [
-            Dynamic.Vehicle.DRAG_COEFFICIENT,
-            Dynamic.Vehicle.LIFT_COEFFICIENT,
-        ]
+        timeseries_vars = []
+
+        try:
+            method = subsystem_options['method']
+        except KeyError:
+            method = None
+
+        if method != 'external':
+            timeseries_vars = [
+                Dynamic.Vehicle.DRAG_COEFFICIENT,
+                Dynamic.Vehicle.LIFT_COEFFICIENT,
+            ]
+
         return timeseries_vars
 
     def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
