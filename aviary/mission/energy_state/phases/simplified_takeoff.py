@@ -14,34 +14,15 @@ class StallSpeed(om.ExplicitComponent):
 
     def setup(self):
         """Setup the inputs and output to calculate the stall speed of the aircraft."""
-        self.add_input(
-            'mass',
-            val=150_000,
-            units='lbm',
-            desc='mass of the aircraft',
-        )
+        self.add_input('mass', val=150_000, units='lbm', desc='current mass of the aircraft')
 
-        add_aviary_input(
-            self,
-            Dynamic.Atmosphere.DENSITY,
-            units='kg/m**3',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.DENSITY, units='kg/m**3')
 
-        self.add_input('planform_area', val=7, units='m**2', desc='area of the wings')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
-        self.add_input(
-            'Cl_max',
-            val=2,
-            units='unitless',
-            desc='maximum lift coefficient',
-        )
+        self.add_input('Cl_max', val=2, units='unitless', desc='maximum lift coefficient')
 
-        self.add_output(
-            'v_stall',
-            val=0.1,
-            units='m/s',
-            desc='stall velocity',
-        )
+        self.add_output('v_stall', val=0.1, units='m/s', desc='stall velocity')
 
         self.declare_partials('v_stall', '*')
 
@@ -331,7 +312,7 @@ class TakeoffGroup(om.Group):
             promotes_inputs=[
                 ('mass', 'end_of_taxi_mass'),
                 Dynamic.Atmosphere.DENSITY,
-                ('planform_area', Aircraft.Wing.AREA),
+                Aircraft.Wing.AREA,
                 ('Cl_max', Mission.Takeoff.LIFT_COEFFICIENT_MAX),
             ],
         )

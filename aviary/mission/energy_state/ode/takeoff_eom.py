@@ -4,8 +4,8 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class StallSpeed(om.ExplicitComponent):
@@ -30,7 +30,7 @@ class StallSpeed(om.ExplicitComponent):
             units='kg/m**3',
         )
 
-        self.add_input('area', val=1.0, units='m**2', desc='surface area contributing to lift')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
         self.add_input(
             'lift_coefficient_max', val=1.0, units='unitless', desc='maximum lift coefficient'
