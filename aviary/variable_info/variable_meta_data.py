@@ -1364,7 +1364,8 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.FEXCRT', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
-    desc='excrescence aero drag factor',
+    desc='Additional excrescence aero drag factor used on top of '
+    'Aircraft.Design.PERCENT_EXCRESCENCE_DRAG for GASP-based aerodynamics',
 )
 
 add_meta_data(
