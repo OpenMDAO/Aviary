@@ -387,8 +387,10 @@ class LoadParameters(om.ExplicitComponent):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         if cruise_alt <= 22500.0:
+            # 486.33 comes from the "average" altitude (roughly 16000 ft)
             max_mach = max_airspeed / 486.33
         if cruise_alt > 22500.0 and cruise_alt <= 36000.0:
+            # 424.73 comes from the "average" altitude (roughly 28000 ft)
             max_mach = max_airspeed / 424.73
         if cruise_alt > 36000.0:
             max_mach = max_airspeed / 372.34
