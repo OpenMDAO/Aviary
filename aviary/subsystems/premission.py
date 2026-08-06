@@ -6,8 +6,6 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import override_aviary_vars
 from aviary.variable_info.variable_meta_data import CoreMetaData
 
-use_new_openmdao_syntax = version.parse(openmdao.__version__) >= version.parse('3.28')
-
 
 class CorePreMission(om.Group):
     """

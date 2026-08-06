@@ -10,7 +10,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary import constants
 from aviary.mission.energy_state.phases.simplified_takeoff import (
     FinalTakeoffConditions,
     StallSpeed,
@@ -33,7 +32,7 @@ class StallSpeedTest(unittest.TestCase):
 
         self.prob.model.set_input_defaults('mass', val=181200.0, units='lbm')  # check
         self.prob.model.set_input_defaults(
-            Dynamic.Atmosphere.DENSITY, val=constants.RHO_SEA_LEVEL_METRIC, units='kg/m**3'
+            Dynamic.Atmosphere.DENSITY, val=1.225, units='kg/m**3'
         )  # check
         self.prob.model.set_input_defaults(
             'planform_area', val=1370.0, units='ft**2'
@@ -59,14 +58,21 @@ class FinalConditionsTest(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('comp', FinalTakeoffConditions(), promotes=['*'])
+        opts = {
+            Mission.SEA_LEVEL_DENSITY: (0.0023769, 'slug/ft**3'),
+        }
+        self.prob.model.add_subsystem(
+            'comp',
+            FinalTakeoffConditions(**opts),
+            promotes=['*'],
+        )
 
         self.prob.model.set_input_defaults('v_stall', val=100, units='m/s')  # not actual value
         self.prob.model.set_input_defaults('mass', val=181200.0, units='lbm')  # check
         self.prob.model.set_input_defaults(Mission.Takeoff.FUEL_MASS, val=577, units='lbm')  # check
         self.prob.model.set_input_defaults(
             Dynamic.Atmosphere.DENSITY,
-            val=constants.RHO_SEA_LEVEL_ENGLISH,
+            val=0.0023769,
             units='slug/ft**3',
         )  # check
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.0, units='ft**2')  # check
@@ -127,7 +133,7 @@ class FinalConditionsTest2(unittest.TestCase):
         prob.model.set_input_defaults(Mission.Takeoff.FUEL_MASS, val=577, units='lbm')  # check
         prob.model.set_input_defaults(
             Dynamic.Atmosphere.DENSITY,
-            val=constants.RHO_SEA_LEVEL_ENGLISH,
+            val=0.0023769,
             units='slug/ft**3',
         )  # check
         prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.0, units='ft**2')  # check

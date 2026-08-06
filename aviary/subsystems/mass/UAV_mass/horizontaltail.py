@@ -112,13 +112,6 @@ class HorizontalTailMass(om.JaxExplicitComponent):
             meta_data=ExtendedMetaData,
             primal_name='root_chord',
         )
-        add_aviary_input(
-            self,
-            Aircraft.HorizontalTail.WETTED_AREA,
-            units='m**2',
-            meta_data=ExtendedMetaData,
-            primal_name='wetted_area',
-        )
 
         add_aviary_output(
             self,
@@ -152,7 +145,7 @@ class HorizontalTailMass(om.JaxExplicitComponent):
             self.options[Aircraft.HorizontalTail.MISC_MASS],
         ))
 
-    def compute_primal(self, span, root_chord, wetted_area):
+    def compute_primal(self, span, root_chord):
         num_spars = self.options[Aircraft.HorizontalTail.NUM_SPARS]
         rib_lightening_factor = self.options[Aircraft.HorizontalTail.RIB_LIGHTENING_FACTOR]
         rib_thickness, units = self.options[Aircraft.HorizontalTail.RIB_THICKNESS]
@@ -176,6 +169,9 @@ class HorizontalTailMass(om.JaxExplicitComponent):
 
         load_airfoil_if_needed(self, Aircraft.HorizontalTail)
         chord = root_chord
+        # Wetted area derived from span x chord (was a separate input/DV), so span/chord
+        # drive the skin & sheeting mass terms too.
+        wetted_area = span * chord
 
         cs_area = self.n_area * (chord**2) * rib_lightening_factor
         rho_rib = jnp.array([(materials.get_item(m)[0]) for m in rib_materials])

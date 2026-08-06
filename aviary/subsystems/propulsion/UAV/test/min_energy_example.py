@@ -3,10 +3,11 @@ from copy import deepcopy
 
 
 import aviary.api as av
+from aviary.mission.two_dof.ode import constraints
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.aerodynamics.UAV_Aero.aero_builder import AeroBuilder
+from aviary.subsystems.aerodynamics.UAV_Aero.custom_aero_builder import CustomAeroBuilder
 from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import phase_info
 from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
@@ -33,24 +34,29 @@ def CruiseExample():
             'order': 3,
             'mach_optimize': True,
 
-            'mach_initial': (0.0538, 'unitless'),
+            'mach_initial': (0.07, 'unitless'),
 
-            'mach_bounds': ((0.05, 0.3), 'unitless'),
-            # 'mach_ref': (0.05, 'unitless'),
+            'mach_bounds': ((0.05, 0.15), 'unitless'),
+            'mach_ref': (0.1, 'unitless'),
             'mass_ref': (4.0, 'kg'),
 
-            # 'alt_ref': (100, 'ft'),
+            'altitude_ref': (200, 'ft'),
             # 'mach_final': (0.05, 'unitless'),
 
 
             'altitude_optimize': True,
             'altitude_initial': (200.0, 'ft'),
             'altitude_bounds': ((50,400), 'ft'),
-            # 'altitude_final': (200.0, 'ft'),
+            'altitude_final': (200.0, 'ft'),
             'distance_initial': (0.0, 'm'),
 
             'distance_ref': (1000.0, 'm'),
-            'target_distance': (1000.0, 'm'),
+            # target_distance adds an equality constraint (in aviary_group.py)
+            # pinning final distance to this value. Commented out for the
+            # max-range objective below, since distance needs to be free to
+            # grow until the battery constraint binds. Uncomment to go back
+            # to the fixed-distance min-energy formulation.
+            # 'target_distance': (1000.0, 'm'),
             'throttle_enforcement': 'control',
 
             # 'throttle_polynomial_order': 1,
@@ -58,6 +64,15 @@ def CruiseExample():
             #Time
             'time_initial': (0.0, 's'),
             'time_duration_bounds': ((0,180), 's'),
+
+            'constraints': {Dynamic.Vehicle.LIFT_COEFFICIENT: {
+                    'upper': 1.2,
+                    'units': 'unitless',
+                    'type': 'path',
+
+                },
+            },
+
         },
         'initial_guesses': {
             'distance': ([0, 1000], 'm'),
@@ -75,7 +90,7 @@ def CruiseExample():
     print('Wetted Area:', number)
 
     prob.load_external_subsystems(
-        external_subsystems=[UAV_Prop, AeroBuilder(), DBFMassBuilder()]
+        external_subsystems=[UAV_Prop, CustomAeroBuilder(), DBFMassBuilder()]
     )
 
     prob.check_and_preprocess_inputs()
@@ -84,7 +99,8 @@ def CruiseExample():
 
     """Objective: Minimize energy consumption during cruise flight. This is done by adding an objective to the cruise phase that minimizes the energy constraint at the final time step. The energy constraint is defined as the integral of the power required to maintain level flight over the duration of the cruise phase. By minimizing this objective, we can find the optimal flight profile that minimizes energy consumption while still meeting all other constraints and requirements."""
     cruise_phase = prob.model.traj.phases.cruise
-    cruise_phase.add_objective('energy_used', loc='final', ref=100, units='W*hr')
+
+    cruise_phase.add_objective('distance', loc='final', ref=-1000.0, units='m')
 
     prob.add_driver('IPOPT', use_coloring=False, max_iter=1000)
 
@@ -102,10 +118,11 @@ def CruiseExample():
     prob.driver.opt_settings['recalc_y'] = 'yes'
     prob.driver.opt_settings['recalc_y_feas_tol'] = 1e-2
 
-    prob.driver.opt_settings['acceptable_iter'] = 5
+    prob.driver.opt_settings['acceptable_iter'] = 0
     # prob.driver.options['debug_print'] = ['desvars', 'objs', 'nl_cons', 'ln_cons']
 
     prob.add_design_variables()
+
 
 
 
@@ -119,40 +136,40 @@ def CruiseExample():
 
     prob.set_val('traj.cruise.controls:rpm_slack', 2877.0, units='rpm')
     prob.set_val('traj.cruise.controls:throttle', 0.561)
-    prob.set_val('traj.cruise.controls:alpha', 3.0, units='deg')
     prob.set_val('traj.cruise.controls:mach', 0.0538)
     prob.set_val('traj.cruise.rhs_all.thrust_net_max_total', 9.69, units='lbf')
 
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units='m**2')
     print('Wetted Area:', number)
 
-    prob.run_aviary_problem(run_driver=True)
+    prob.run_aviary_problem(run_driver=True, simulate=True)
 
-    print('throttle:', prob.get_val('traj.cruise.controls:throttle', units='unitless'))
-    print('battery voltage:', prob.get_val('traj.cruise.rhs_all.rc_electric.battery.voltage_out', units='V'))
-    print('esc voltage out:', prob.get_val('traj.cruise.rhs_all.rc_electric.esc.voltage_out', units='V'))
-    print('motor power:', prob.get_val('traj.cruise.rhs_all.rc_electric.motor.power', units='W'))
-    print('prop power:', prob.get_val('traj.cruise.rhs_all.rc_electric.prop_power', units='W'))
-    print('electric power in:', prob.get_val('traj.cruise.rhs_all.rc_electric.electric_power_in_total', units='W'))
-    print(prob.get_val('traj.cruise.rhs_all.thrust_required', units='lbf'))
-    print(prob.get_val('traj.cruise.rhs_all.thrust_residual', units='lbf'))
-    print(prob.get_val('traj.cruise.rhs_all.drag', units='lbf'))
-    print(prob.get_val('traj.cruise.rhs_all.thrust_net_total', units='lbf'))
-    gross_mass = prob.get_val('mission:gross_mass', units='lbm')
-    zero_fuel_mass = prob.get_val('mission:zero_fuel_mass', units='lbm')
-    taxi_out_fuel = prob.get_val('mission:taxi:fuel_mass_taxi_out', units='lbm')
-    takeoff_fuel = prob.get_val('mission:takeoff:fuel_mass', units='lbm')
+    """Debug Print"""
+    # print('throttle:', prob.get_val('traj.cruise.controls:throttle', units='unitless'))
+    # print('battery voltage:', prob.get_val('traj.cruise.rhs_all.rc_electric.battery.voltage_out', units='V'))
+    # print('esc voltage out:', prob.get_val('traj.cruise.rhs_all.rc_electric.esc.voltage_out', units='V'))
+    # print('motor power:', prob.get_val('traj.cruise.rhs_all.rc_electric.motor.power', units='W'))
+    # print('prop power:', prob.get_val('traj.cruise.rhs_all.rc_electric.prop_power', units='W'))
+    # print('electric power in:', prob.get_val('traj.cruise.rhs_all.electric_power_in_total', units='W'))
+    # print(prob.get_val('traj.cruise.rhs_all.thrust_required', units='lbf'))
+    # print(prob.get_val('traj.cruise.rhs_all.thrust_residual', units='lbf'))
+    # print(prob.get_val('traj.cruise.rhs_all.drag', units='lbf'))
+    # print(prob.get_val('traj.cruise.rhs_all.thrust_net_total', units='lbf'))
+    # gross_mass = prob.get_val('mission:gross_mass', units='lbm')
+    # zero_fuel_mass = prob.get_val('mission:zero_fuel_mass', units='lbm')
+    # taxi_out_fuel = prob.get_val('mission:taxi:fuel_mass_taxi_out', units='lbm')
+    # takeoff_fuel = prob.get_val('mission:takeoff:fuel_mass', units='lbm')
 
-    print('gross_mass:', gross_mass)
-    print('zero_fuel_mass:', zero_fuel_mass)
-    print('gross_mass - zero_fuel_mass:', gross_mass - zero_fuel_mass)
-    print('taxi_out_fuel:', taxi_out_fuel)
-    print('takeoff_fuel:', takeoff_fuel)
-    print('gross_mass - taxi_out_fuel - takeoff_fuel:', gross_mass - taxi_out_fuel - takeoff_fuel)
+    # print('gross_mass:', gross_mass)
+    # print('zero_fuel_mass:', zero_fuel_mass)
+    # print('gross_mass - zero_fuel_mass:', gross_mass - zero_fuel_mass)
+    # print('taxi_out_fuel:', taxi_out_fuel)
+    # print('takeoff_fuel:', takeoff_fuel)
+    # print('gross_mass - taxi_out_fuel - takeoff_fuel:', gross_mass - taxi_out_fuel - takeoff_fuel)
 
-    print('settings:problem_type:', prob.aviary_inputs.get_val(Settings.PROBLEM_TYPE))
-    print('settings:equations_of_motion:', prob.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION))
-    print('settings:mass_method:', prob.aviary_inputs.get_val(Settings.MASS_METHOD))
+    # print('settings:problem_type:', prob.aviary_inputs.get_val(Settings.PROBLEM_TYPE))
+    # print('settings:equations_of_motion:', prob.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION))
+    # print('settings:mass_method:', prob.aviary_inputs.get_val(Settings.MASS_METHOD))
     return prob
 
 

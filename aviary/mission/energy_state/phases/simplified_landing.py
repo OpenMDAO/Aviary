@@ -1,13 +1,16 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
+from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingCalc(om.ExplicitComponent):
     """Calculate the distance covered over the ground and approach velocity during landing."""
+
+    def initialize(self):
+        add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='slug/ft**3')
 
     def setup(self):
         add_aviary_input(self, Mission.FINAL_MASS, units='lbm')
@@ -22,7 +25,8 @@ class LandingCalc(om.ExplicitComponent):
         self.declare_partials(Mission.Landing.GROUND_DISTANCE, '*')
 
     def compute(self, inputs, outputs):
-        rho_SL = RHO_SEA_LEVEL_ENGLISH
+        rho_SL = self.options[Mission.SEA_LEVEL_DENSITY][0]
+
         landing_weight = inputs[Mission.FINAL_MASS] * GRAV_ENGLISH_LBM
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         planform_area = inputs[Aircraft.Wing.AREA]
@@ -43,7 +47,7 @@ class LandingCalc(om.ExplicitComponent):
         outputs[Mission.Landing.INITIAL_VELOCITY] = V_app
 
     def compute_partials(self, inputs, J):
-        rho_SL = RHO_SEA_LEVEL_ENGLISH
+        rho_SL = self.options[Mission.SEA_LEVEL_DENSITY][0]
         landing_weight = inputs[Mission.FINAL_MASS] * GRAV_ENGLISH_LBM
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         planform_area = inputs[Aircraft.Wing.AREA]

@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.math import d_smooth_max, dSigmoidXdx, sigmoidX, smooth_max
-from aviary.variable_info.enums import AircraftTypes, Verbosity
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -486,6 +486,9 @@ class FuelComponents(om.ExplicitComponent):
     fuel weight).
     """
 
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
+
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
@@ -577,6 +580,8 @@ class FuelComponents(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+
         rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
 
         gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
@@ -595,10 +600,15 @@ class FuelComponents(om.ExplicitComponent):
         design_fuel_vol = (1.0 + fuel_margin / 100.0) * req_fuel_wt / rho_fuel
 
         volume_wingfuel_wt = geometric_fuel_vol * rho_fuel
-        # always smoothing
-        max_wingfuel_wt = OEM_wingfuel_wt * sigmoidX(
-            volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0
-        ) + volume_wingfuel_wt * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
+        if smooth:
+            max_wingfuel_wt = OEM_wingfuel_wt * sigmoidX(
+                volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0
+            ) + volume_wingfuel_wt * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
+        else:
+            if volume_wingfuel_wt > OEM_wingfuel_wt:
+                max_wingfuel_wt = OEM_wingfuel_wt
+            else:
+                max_wingfuel_wt = volume_wingfuel_wt
         payload_wt_max_fuel = gross_wt_initial - OEW - max_fuel_avail
         max_wingfuel_vol = max_wingfuel_wt / rho_fuel
 
@@ -611,6 +621,8 @@ class FuelComponents(om.ExplicitComponent):
         outputs[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX] = max_wingfuel_vol
 
     def compute_partials(self, inputs, J):
+        smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+
         rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
         gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         OEW = inputs[Mission.OPERATING_MASS] * GRAV_ENGLISH_LBM
@@ -620,9 +632,15 @@ class FuelComponents(om.ExplicitComponent):
 
         OEM_wingfuel_wt = gross_wt_initial - OEW
         volume_wingfuel_wt = geometric_fuel_vol * rho_fuel
-        max_wingfuel_wt = OEM_wingfuel_wt * sigmoidX(
-            volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0
-        ) + volume_wingfuel_wt * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
+        if smooth:
+            max_wingfuel_wt = OEM_wingfuel_wt * sigmoidX(
+                volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0
+            ) + volume_wingfuel_wt * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
+        else:
+            if volume_wingfuel_wt > OEM_wingfuel_wt:
+                max_wingfuel_wt = OEM_wingfuel_wt
+            else:
+                max_wingfuel_wt = volume_wingfuel_wt
 
         J['OEM_wingfuel_mass', Aircraft.Design.GROSS_MASS] = dOEMwingfuelWt_dGTOW = 1
         J['OEM_wingfuel_mass', Mission.OPERATING_MASS] = dOEMwingfuelWt_dOEW = -1
@@ -646,62 +664,117 @@ class FuelComponents(om.ExplicitComponent):
         )
         J['volume_wingfuel_mass', Aircraft.Fuel.DENSITY] = geometric_fuel_vol
 
-        dMaxWFWt_dGTOW = (
-            OEM_wingfuel_wt
-            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dGTOW
-            + dOEMwingfuelWt_dGTOW * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            + volume_wingfuel_wt
-            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dGTOW
-        )
-        dMaxWFWt_dOEW = (
-            OEM_wingfuel_wt
-            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dOEW
-            + dOEMwingfuelWt_dOEW * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            + volume_wingfuel_wt
-            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dOEW
-        )
-        dMaxWFWt_dGeomFuelVol = (
-            OEM_wingfuel_wt
-            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            * rho_fuel
-            + volume_wingfuel_wt
-            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-            * rho_fuel
-            + rho_fuel * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-        )
-        dMaxWFWt_dRhoFuel = (
-            OEM_wingfuel_wt
-            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            * geometric_fuel_vol
-            + volume_wingfuel_wt
-            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-            * geometric_fuel_vol
-            + geometric_fuel_vol * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-        )
+        if smooth:
+            dMaxWFWt_dGTOW = (
+                OEM_wingfuel_wt
+                * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
+                * dOEMwingfuelWt_dGTOW
+                + dOEMwingfuelWt_dGTOW * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
+                + volume_wingfuel_wt
+                * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
+                * dOEMwingfuelWt_dGTOW
+            )
+            dMaxWFWt_dOEW = (
+                OEM_wingfuel_wt
+                * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
+                * dOEMwingfuelWt_dOEW
+                + dOEMwingfuelWt_dOEW * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
+                + volume_wingfuel_wt
+                * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
+                * dOEMwingfuelWt_dOEW
+            )
+            dMaxWFWt_dGeomFuelVol = (
+                OEM_wingfuel_wt
+                * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
+                * rho_fuel
+                + volume_wingfuel_wt
+                * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
+                * rho_fuel
+                + rho_fuel * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
+            )
+            dMaxWFWt_dRhoFuel = (
+                OEM_wingfuel_wt
+                * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
+                * geometric_fuel_vol
+                + volume_wingfuel_wt
+                * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
+                * geometric_fuel_vol
+                + geometric_fuel_vol * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
+            )
 
-        J['max_wingfuel_mass', Aircraft.Design.GROSS_MASS] = dMaxWFWt_dGTOW
-        J['max_wingfuel_mass', Mission.OPERATING_MASS] = dMaxWFWt_dOEW
-        J['max_wingfuel_mass', Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = (
-            dMaxWFWt_dGeomFuelVol / GRAV_ENGLISH_LBM
-        )
-        J['max_wingfuel_mass', Aircraft.Fuel.DENSITY] = dMaxWFWt_dRhoFuel
+            J['max_wingfuel_mass', Aircraft.Design.GROSS_MASS] = dMaxWFWt_dGTOW
+            J['max_wingfuel_mass', Mission.OPERATING_MASS] = dMaxWFWt_dOEW
+            J['max_wingfuel_mass', Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = (
+                dMaxWFWt_dGeomFuelVol / GRAV_ENGLISH_LBM
+            )
+            J['max_wingfuel_mass', Aircraft.Fuel.DENSITY] = dMaxWFWt_dRhoFuel
+        else:
+            if volume_wingfuel_wt > OEM_wingfuel_wt:
+                J['max_wingfuel_mass', Aircraft.Design.GROSS_MASS] = J[
+                    'OEM_wingfuel_mass', Aircraft.Design.GROSS_MASS
+                ]
+                J['max_wingfuel_mass', Mission.OPERATING_MASS] = J[
+                    'OEM_wingfuel_mass', Mission.OPERATING_MASS
+                ]
+                J['max_wingfuel_mass', Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = 0.0
+                J['max_wingfuel_mass', Aircraft.Fuel.DENSITY] = 0.0
+            else:
+                J['max_wingfuel_mass', Aircraft.Design.GROSS_MASS] = 0.0
+                J['max_wingfuel_mass', Mission.OPERATING_MASS] = 0.0
+                J['max_wingfuel_mass', Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = J[
+                    'volume_wingfuel_mass', Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX
+                ]
+                J['max_wingfuel_mass', Aircraft.Fuel.DENSITY] = J[
+                    'volume_wingfuel_mass', Aircraft.Fuel.DENSITY
+                ]
 
-        J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Design.GROSS_MASS] = dMaxWFWt_dGTOW / (
-            rho_fuel
-        )
-        J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Mission.OPERATING_MASS] = dMaxWFWt_dOEW / (
-            rho_fuel
-        )
-        J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = (
-            dMaxWFWt_dGeomFuelVol / (rho_fuel)
-        )
-        J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Fuel.DENSITY] = dMaxWFWt_dRhoFuel / (
-            rho_fuel
-        ) - max_wingfuel_wt / (rho_fuel**2)
+        if smooth:
+            J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Design.GROSS_MASS] = (
+                dMaxWFWt_dGTOW / rho_fuel
+            )
+            J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Mission.OPERATING_MASS] = (
+                dMaxWFWt_dOEW / rho_fuel
+            )
+            J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = (
+                dMaxWFWt_dGeomFuelVol / rho_fuel
+            )
+            J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Fuel.DENSITY] = (
+                dMaxWFWt_dRhoFuel / rho_fuel - max_wingfuel_wt / rho_fuel**2
+            )
+        else:
+            if volume_wingfuel_wt > OEM_wingfuel_wt:
+                J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Design.GROSS_MASS] = (
+                    J['OEM_wingfuel_mass', Aircraft.Design.GROSS_MASS] / rho_fuel
+                )
+                J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Mission.OPERATING_MASS] = (
+                    J['OEM_wingfuel_mass', Mission.OPERATING_MASS] / rho_fuel
+                )
+                J[
+                    Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX,
+                    Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
+                ] = 0.0
+                J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Fuel.DENSITY] = (
+                    -max_wingfuel_wt / rho_fuel**2
+                )
+            else:
+                J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Design.GROSS_MASS] = (
+                    J['max_wingfuel_mass', Aircraft.Design.GROSS_MASS] / rho_fuel
+                )
+                J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Mission.OPERATING_MASS] = (
+                    J['max_wingfuel_mass', Mission.OPERATING_MASS] / rho_fuel
+                )
+                J[
+                    Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX,
+                    Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
+                ] = (
+                    (J['max_wingfuel_mass', Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX])
+                    / rho_fuel
+                    * GRAV_ENGLISH_LBM
+                )
+                J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Fuel.DENSITY] = (
+                    (J['max_wingfuel_mass', Aircraft.Fuel.DENSITY]) / rho_fuel
+                    - max_wingfuel_wt / rho_fuel**2
+                )
 
 
 class FuelSysAndFullFuselageMass(om.ExplicitComponent):

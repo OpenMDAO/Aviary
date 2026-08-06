@@ -23,83 +23,62 @@ class MassBuilder(SubsystemBuilder):
 
     def get_design_vars(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
         DVs = {
-            Aircraft.Wing.WETTED_AREA: {
-                'units': 'm**2',
-                'lower': 0.1,
-                'upper': 5.0,
-                'val': 2.0,
-            },
+            # WETTED_AREA is no longer a design variable for any surface: each mass component
+            # now computes its wetted area as span * root_chord (see wing.py / horizontaltail.py /
+            # verticaltail.py) -- the same reference area the aero uses (UAV_Aero/simple_drag.py) --
+            # so span & chord drive both lift/drag and the skin/sheeting mass.
+            # Starting values live in the aircraft CSV, not here: OpenMDAO's
+            # add_design_var() takes no 'val' argument, so anything set here would have to
+            # be stripped back out before the dict is passed through.
             Aircraft.Wing.SPAN: {
                 'units': 'm',
                 'lower': 1.0,
                 'upper': 5.0,
-                'val': 2.0,
             },
             Aircraft.Wing.ROOT_CHORD: {
                 'units': 'm',
                 'lower': 0.1,
                 'upper': 1.0,
-                'val': 0.5,
             },
             # Aircraft.Fuselage.WETTED_AREA: {
             #     'units': 'm**2',
             #     'lower': 0.1,
             #     'upper': 5.0,
-            #     'val': 2.0,
             # },
             # Aircraft.Fuselage.LENGTH: {
             #     'units': 'm',
             #     'lower': 0.1,
             #     'upper': 5.0,
-            #     'val': 1.0,
             # },
             # Aircraft.Fuselage.AVG_HEIGHT: {
             #     'units': 'm',
             #     'lower': 0.1,
             #     'upper': 2.0,
-            #     'val': 0.5,
             # },
             # Aircraft.Fuselage.AVG_WIDTH: {
             #     'units': 'm',
             #     'lower': 0.1,
             #     'upper': 2.0,
-            #     'val': 0.5,
             # },
             Aircraft.HorizontalTail.SPAN: {
                 'units': 'm',
                 'lower': 0.1,
                 'upper': 1.0,
-                'val': 0.4,
             },
             Aircraft.HorizontalTail.ROOT_CHORD: {
                 'units': 'm',
                 'lower': 0.1,
                 'upper': 2.0,
-                'val': 0.5,
-            },
-            Aircraft.HorizontalTail.WETTED_AREA: {
-                'units': 'm**2',
-                'lower': 0.1,
-                'upper': 2.0,
-                'val': 0.5,
             },
             Aircraft.VerticalTail.SPAN: {
                 'units': 'm',
                 'lower': 0.05,
                 'upper': 0.5,
-                'val': 0.4,
             },
             Aircraft.VerticalTail.ROOT_CHORD: {
                 'units': 'm',
                 'lower': 0.1,
                 'upper': 1.0,
-                'val': 0.5,
-            },
-            Aircraft.VerticalTail.WETTED_AREA: {
-                'units': 'm**2',
-                'lower': 0.1,
-                'upper': 5.0,
-                'val': 2.0,
             },
         }
         return DVs
@@ -110,17 +89,14 @@ class MassBuilder(SubsystemBuilder):
 
             Aircraft.Wing.SPAN,
             Aircraft.Wing.ROOT_CHORD,
-            Aircraft.Wing.WETTED_AREA,
             Aircraft.Fuselage.LENGTH,
             Aircraft.Fuselage.AVG_HEIGHT,
             Aircraft.Fuselage.AVG_WIDTH,
             Aircraft.Fuselage.WETTED_AREA,
             Aircraft.HorizontalTail.SPAN,
             Aircraft.HorizontalTail.ROOT_CHORD,
-            Aircraft.HorizontalTail.WETTED_AREA,
             Aircraft.VerticalTail.SPAN,
             Aircraft.VerticalTail.ROOT_CHORD,
-            Aircraft.VerticalTail.WETTED_AREA,
 
         ]
 
