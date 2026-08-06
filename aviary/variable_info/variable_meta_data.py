@@ -389,7 +389,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},  # RSPCHD internal to FLOPS
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.RSPCHD'},
     units='unitless',
     desc='BWB rear spar percent chord at the centerline. The cabin generally ends here.',
     default_value=0.7,
@@ -398,7 +398,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},  # RSPSOB internal to FLOPS
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.RSPSOB'},
     units='unitless',
     desc='BWB rear spar percent chord at the wing root. The cabin generally ends here.',
     default_value=0.7,
