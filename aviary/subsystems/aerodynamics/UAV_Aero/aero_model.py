@@ -35,25 +35,42 @@ from aviary.subsystems.aerodynamics.UAV_Aero.OAS_aero_analysis import OASAero
 
 
 class WingTailAreaRatios(om.ExplicitComponent):
+    """
+    Tail-to-wing area ratios, formed from span * root_chord.
+
+    That is the same expression each mass component uses for its wetted area (wing.py:95,
+    horizontaltail.py:174, verticaltail.py:167), so geometry stays defined in one place --
+    span and root chord -- instead of wetted area being carried as a separate variable that
+    can drift out of step. Because these are ratios, any factor common to all three
+    surfaces cancels, making this numerically identical to the wetted-area form.
+    """
+
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 
     def setup(self):
         nn = self.options['num_nodes']
-        self.add_input(Aircraft.Wing.WETTED_AREA, val=0.0, units='m**2')
-        self.add_input(Aircraft.HorizontalTail.WETTED_AREA, val=0.0, units='m**2')
-        self.add_input(Aircraft.VerticalTail.WETTED_AREA, val=0.0, units='m**2')
+        # val=1.0, not 0.0: wing area lands in a denominator, and a zero default gives 0/0
+        # on the first evaluation, before any real geometry has been set.
+        self.add_input(Aircraft.Wing.SPAN, val=1.0, units='m')
+        self.add_input(Aircraft.Wing.ROOT_CHORD, val=1.0, units='m')
+        self.add_input(Aircraft.HorizontalTail.SPAN, val=1.0, units='m')
+        self.add_input(Aircraft.HorizontalTail.ROOT_CHORD, val=1.0, units='m')
+        self.add_input(Aircraft.VerticalTail.SPAN, val=1.0, units='m')
+        self.add_input(Aircraft.VerticalTail.ROOT_CHORD, val=1.0, units='m')
         self.add_output('ht_area_ratio', val=np.zeros(nn), shape=nn, units='unitless')
         self.add_output('vt_area_ratio', val=np.zeros(nn), shape=nn, units='unitless')
         self.declare_partials(of='*', wrt='*', method='fd')
 
     def compute(self, inputs, outputs):
         nn = self.options['num_nodes']
-        wing_wetted_area = inputs[Aircraft.Wing.WETTED_AREA]
-        ht_ratio = inputs[Aircraft.HorizontalTail.WETTED_AREA] / wing_wetted_area
-        vt_ratio = inputs[Aircraft.VerticalTail.WETTED_AREA] / wing_wetted_area
-        outputs['ht_area_ratio'] = np.full(nn, ht_ratio)
-        outputs['vt_area_ratio'] = np.full(nn, vt_ratio)
+        wing_area = inputs[Aircraft.Wing.SPAN] * inputs[Aircraft.Wing.ROOT_CHORD]
+        ht_area = (
+            inputs[Aircraft.HorizontalTail.SPAN] * inputs[Aircraft.HorizontalTail.ROOT_CHORD]
+        )
+        vt_area = inputs[Aircraft.VerticalTail.SPAN] * inputs[Aircraft.VerticalTail.ROOT_CHORD]
+        outputs['ht_area_ratio'] = np.full(nn, ht_area / wing_area)
+        outputs['vt_area_ratio'] = np.full(nn, vt_area / wing_area)
 
 class FuselageDrag(om.ExplicitComponent):
     # based on Roskam VI chapter 4
@@ -309,9 +326,12 @@ class TotalAircraftAero(om.Group):
             'wing_tail_area_ratios',
             WingTailAreaRatios(num_nodes=nn),
             promotes_inputs=[
-                Aircraft.Wing.WETTED_AREA,
-                Aircraft.HorizontalTail.WETTED_AREA,
-                Aircraft.VerticalTail.WETTED_AREA,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.ROOT_CHORD,
+                Aircraft.HorizontalTail.SPAN,
+                Aircraft.HorizontalTail.ROOT_CHORD,
+                Aircraft.VerticalTail.SPAN,
+                Aircraft.VerticalTail.ROOT_CHORD,
             ],
             promotes_outputs=['ht_area_ratio', 'vt_area_ratio'],
         )

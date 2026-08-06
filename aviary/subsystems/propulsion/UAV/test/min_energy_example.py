@@ -7,7 +7,7 @@ from aviary.mission.two_dof.ode import constraints
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.aerodynamics.UAV_Aero.custom_aero_builder import CustomAeroBuilder
+from aviary.subsystems.aerodynamics.UAV_Aero.aero_builder import AeroBuilder
 from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import phase_info
 from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
@@ -90,7 +90,7 @@ def CruiseExample():
     print('Wetted Area:', number)
 
     prob.load_external_subsystems(
-        external_subsystems=[UAV_Prop, CustomAeroBuilder(), DBFMassBuilder()]
+        external_subsystems=[UAV_Prop, AeroBuilder(), DBFMassBuilder()]
     )
 
     prob.check_and_preprocess_inputs()

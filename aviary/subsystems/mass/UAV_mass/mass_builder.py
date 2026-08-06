@@ -25,8 +25,8 @@ class MassBuilder(SubsystemBuilder):
         DVs = {
             # WETTED_AREA is no longer a design variable for any surface: each mass component
             # now computes its wetted area as span * root_chord (see wing.py / horizontaltail.py /
-            # verticaltail.py) -- the same reference area the aero uses (UAV_Aero/simple_drag.py) --
-            # so span & chord drive both lift/drag and the skin/sheeting mass.
+            # verticaltail.py) -- the same areas the aero forms in UAV_Aero/aero_model.py
+            # (WingTailAreaRatios) -- so span & chord drive both lift/drag and skin/sheeting mass.
             # Starting values live in the aircraft CSV, not here: OpenMDAO's
             # add_design_var() takes no 'val' argument, so anything set here would have to
             # be stripped back out before the dict is passed through.
