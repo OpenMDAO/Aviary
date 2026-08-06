@@ -44,12 +44,12 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             shape=num_inp_stations - 1,
             units='deg',
         )
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.OUTBOARD_SEMISPAN, units='ft')
-        add_aviary_input(self, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, units='unitless')
 
         if root < 1:
+            add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+            add_aviary_input(self, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, units='unitless')
             add_aviary_input(self, Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, units='unitless')
             add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='ft')
 
@@ -132,7 +132,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             row_col = np.arange(nn)
             self.declare_partials(
                 'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION',
-                Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
                 rows=row_col,
                 cols=row_col,
                 val=1.0,
@@ -162,12 +162,12 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         wingspan = width + osspan * 2
         outputs[Aircraft.Wing.SPAN] = wingspan
 
-        length = inputs[Aircraft.Fuselage.LENGTH][0]
-        cl_tc = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO][0]
-
         if root < 1:
             # Adds the point at the centerline, pulling values from BWB geometry.
             # From lines 334-356, sfwate.f
+
+            length = inputs[Aircraft.Fuselage.LENGTH][0]
+            cl_tc = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO][0]
 
             rate_span = (wingspan - width) / wingspan
             side_tc = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD][0]
