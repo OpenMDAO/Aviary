@@ -401,6 +401,9 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
         # from gaspmain.f
         # reli = reynolds number per foot
         RELI = np.sqrt(1.4 * grav_english * 53.32) * EM * np.sqrt(T0) / XKV  # dynamic
+        # RELI calculation assumes earth atmosphere
+        # (1.4: The ratio of specific heats for air., 53.32: The specific gas constant for air in English units.)
+        # This calculation is not valid for other planets.
 
         # from aero.f
         # CFIN CALCULATION FROM SCHLICHTING PG. 635-665

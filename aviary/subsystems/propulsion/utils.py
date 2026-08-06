@@ -18,6 +18,7 @@ from aviary.utils.utils import isiterable
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 import warnings
+from openmdao.utils.units import convert_units
 
 
 class EngineModelVariables(Enum):
@@ -98,14 +99,10 @@ def convert_geopotential_altitude(altitude):
     except TypeError:
         altitude = [altitude]
 
-    g = constants.GRAV_EARTH1[0]
-    radius_earth = constants.RADIUS_EARTH[0]  # meters
-    if constants.RADIUS_EARTH[1] != 'm' or constants.GRAV_EARTH1[1] != 'm/s**2':
-        warnings.warn(
-            'convert_geopotential_altitude() only functions properly when'
-            'constants.RADIUS_EARTH is specified in meters,'
-            'constants.GRAV_EARTH is specified in m/s**2.'
-        )
+    # ensure gravity is in correct units
+    g_m_per_s2 = convert_units(constants.GRAV_EARTH[0], constants.GRAV_EARTH[1], 'm/s**2')
+    radius_earth_meters = convert_units(constants.RADIUS_EARTH[0], constants.RADIUS_EARTH[1], 'm')
+
     CM1 = 0.99850  # Oblateness/Gravity exponent (accounts for earth not being perfect sphere)
     OC2 = 26.76566e-10  # Accounts for centrifugal acceleration due to Earth's rotation
     GNS = 9.8236930  # grav_accel_at_surface_earth? This may or may not account for the rotation rate of the earth as well.
@@ -118,9 +115,11 @@ def convert_geopotential_altitude(altitude):
         DH = float('inf')
 
         while abs(DH) > 1.0:
-            R = radius_earth + Z
-            GN = GNS * (radius_earth / R) ** (CM1 + 1.0)
-            H = (R * GN * ((R / radius_earth) ** CM1 - 1.0) / CM1 - Z * (R - Z / 2.0) * OC2) / g
+            R = radius_earth_meters + Z
+            GN = GNS * (radius_earth_meters / R) ** (CM1 + 1.0)
+            H = (
+                R * GN * ((R / radius_earth_meters) ** CM1 - 1.0) / CM1 - Z * (R - Z / 2.0) * OC2
+            ) / g_m_per_s2
 
             DH = HO - H
             Z += DH

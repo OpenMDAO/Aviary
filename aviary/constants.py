@@ -7,7 +7,6 @@ GRAV_EARTH = (
     'm/s**2',
 )
 # NIST https://physics.nist.gov/cgi-bin/cuu/Value?gn|search_for=gravity
-# convert_geopotential_altitude() is a python utility function for engine decs that require GRAV_EARTH to be specified in m/s**2!
 
 GRAV_MARS = (
     3.712,
@@ -39,7 +38,7 @@ RADIUS_VENUS = (
 )
 # Venus Global Reference Atmospheric Model (Venus-GRAM): User Guide, NASA/TM-20210022168, avg of equatorial and polar radius
 
-GRAV_ENGLISH_LBM = 1.0  # lbf/lbm
+GRAV_ENGLISH_LBM = 1.0  # lbf/lbm, Only valid for earth sea level conversions!
 
 # sea level standard pressure in psf
 PSLS_PSF = 2116.22
