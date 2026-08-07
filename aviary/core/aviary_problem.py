@@ -1488,7 +1488,7 @@ class AviaryProblem(om.Problem):
         ):
             num_pax = sum(filter(None, [num_economy, num_business, num_first_class]))
 
-        # only FLOPS cares about seat class or specific cargo categories
+        # only FLOPS cares about seat class, specific cargo categories and cargo containers
         if mass_method == LegacyCode.FLOPS:
             if num_first_class is not None:
                 inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, num_first_class)
@@ -1501,6 +1501,14 @@ class AviaryProblem(om.Problem):
                 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, wing_cargo, 'lbm')
             if misc_cargo is not None:
                 inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, misc_cargo, 'lbm')
+            # fix cargo_container_mass so it doesn't change for off_design
+            cargo_container_mass = self.get_val(
+                Aircraft.CrewPayload.CARGO_CONTAINER_MASS, units='lbm'
+            )[0]
+            inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, cargo_container_mass, 'lbm')
+            warnings.warn(
+                f'Setting CARGO_CONTAINER_MASS for off design mission equal to design mission = {cargo_container_mass} lbm'
+            )
         else:
             warnings.warn(
                 'Off-design functionality is in beta for GASP-mass based aircraft. Please manually '
