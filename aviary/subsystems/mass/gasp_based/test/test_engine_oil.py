@@ -2,19 +2,21 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.engine_oil import EngineOilMass
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import GASPEngineType, Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Settings
 
 
+@use_tempdirs
 class ElectricalTestCase1(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(
             Aircraft.Engine.TYPE, val=[GASPEngineType.TURBOJET], units='unitless'
         )  # arbitrarily set
@@ -71,7 +73,7 @@ class ElectricalTestCase2(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(
             Aircraft.Engine.TYPE, val=[GASPEngineType.TURBOJET], units='unitless'
         )  # arbitrarily set
@@ -114,11 +116,12 @@ class ElectricalTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class ElectricalTestCase3(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(
             Aircraft.Engine.TYPE, val=[GASPEngineType.RECIP_CARB], units='unitless'
         )  # arbitrarily set

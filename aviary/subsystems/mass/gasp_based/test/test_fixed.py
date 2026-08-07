@@ -18,7 +18,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import extract_options, setup_model_options
-from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.options import AviaryValues
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
@@ -27,7 +27,7 @@ class MassParametersTestCase1(unittest.TestCase):
     """this is large single aisle 1 v3 bug fixed test case."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
 
@@ -80,7 +80,7 @@ class MassParametersTestCase1(unittest.TestCase):
 @use_tempdirs
 class MassParametersTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, val=0, units='unitless')
 
         self.prob = om.Problem()
@@ -128,7 +128,7 @@ class MassParametersTestCase2(unittest.TestCase):
 @use_tempdirs
 class MassParametersTestCase3(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, val=3, units='unitless')
 
         self.prob = om.Problem()
@@ -176,7 +176,7 @@ class MassParametersTestCase3(unittest.TestCase):
 @use_tempdirs
 class MassParametersTestCase4(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, val=4, units='unitless')
 
         self.prob = om.Problem()
@@ -224,7 +224,7 @@ class MassParametersTestCase4(unittest.TestCase):
 @use_tempdirs
 class MassParametersTestCase5(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, val=4, units='unitless')
 
         self.prob = om.Problem()
@@ -273,7 +273,7 @@ class MassParametersTestCase5(unittest.TestCase):
 @use_tempdirs
 class PayloadGroupTestCase(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
 
@@ -486,7 +486,7 @@ class HighLiftTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        aviary_options = get_option_defaults()
+        aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, val=2)
 
         self.prob.model.add_subsystem('HL', HighLiftMass(), promotes=['*'])
@@ -543,7 +543,7 @@ class HighLiftTestCase2(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        aviary_options = get_option_defaults()
+        aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, val=2)
 
         self.prob.model.add_subsystem('HL', HighLiftMass(), promotes=['*'])
@@ -635,7 +635,7 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
 @use_tempdirs
 class GearTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         self.prob = om.Problem()
         self.prob.model.add_subsystem('gear_mass', LandingGearMassGroup(), promotes=['*'])
 
@@ -676,7 +676,7 @@ class GearTestCase2(unittest.TestCase):
 @use_tempdirs
 class GearTestCaseMultiengine(unittest.TestCase):
     def test_case1(self):
-        options = get_option_defaults()
+        options = AviaryValues()
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
 
@@ -720,7 +720,7 @@ class GearTestCaseMultiengine(unittest.TestCase):
 @use_tempdirs
 class FixedMassGroupTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
@@ -948,7 +948,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
 @use_tempdirs
 class FixedMassGroupTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, val=0, units='unitless')
@@ -1396,7 +1396,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
     """GASP BWB model"""
 
     def setUp(self):
-        self.options = options = get_option_defaults()
+        self.options = options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
 
@@ -1464,7 +1464,7 @@ class BWBPayloadGroupTestCase(unittest.TestCase):
     "GASP BWB model"
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
 
@@ -1568,7 +1568,7 @@ class BWBHighLiftTestCase(unittest.TestCase):
     def setUp(self):
         prob = self.prob = om.Problem()
 
-        aviary_options = get_option_defaults()
+        aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Wing.FLAP_TYPE, val=4)
         aviary_options.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, val=2)
         aviary_options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
@@ -1663,7 +1663,7 @@ class BWBGearTestCase(unittest.TestCase):
 @use_tempdirs
 class BWBFixedMassGroupTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=150, units='unitless')
