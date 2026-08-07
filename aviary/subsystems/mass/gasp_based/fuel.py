@@ -58,7 +58,7 @@ class BodyTankCalculations(om.ExplicitComponent):
             desc='WFXTRAMX: mass of fuel that fits in extra_fuel_volume',
         )  # there is no WFXTRAMX in GASP
         self.add_output('wingfuel_mass_min', units='lbm', desc='WFWMIN: minimum wing fuel mass')
-        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm', desc='WFAMAX')
+        add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(

@@ -146,7 +146,7 @@ class TakeoffEOMTest(unittest.TestCase):
         prob.model.add_subsystem('stall_speed', StallSpeed(num_nodes=2, **options), promotes=['*'])
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, np.ones(2), units='kg')
         prob.model.set_input_defaults(Dynamic.Atmosphere.DENSITY, np.array([1, 2]), units='kg/m**3')
-        prob.model.set_input_defaults('area', 10, units='m**2')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, 10, units='m**2')
         prob.model.set_input_defaults('lift_coefficient_max', 5000, units='unitless')
 
         prob.setup(check=False, force_alloc_complex=True)

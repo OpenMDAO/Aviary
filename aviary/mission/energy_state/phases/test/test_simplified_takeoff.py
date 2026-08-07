@@ -35,7 +35,7 @@ class StallSpeedTest(unittest.TestCase):
             Dynamic.Atmosphere.DENSITY, val=1.225, units='kg/m**3'
         )  # check
         self.prob.model.set_input_defaults(
-            'planform_area', val=1370.0, units='ft**2'
+            Aircraft.Wing.AREA, val=1370.0, units='ft**2'
         )  # check (this is the reference wing area)
         self.prob.model.set_input_defaults('Cl_max', val=2.0000, units='unitless')  # check
 
