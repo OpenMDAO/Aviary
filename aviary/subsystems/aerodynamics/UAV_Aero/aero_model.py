@@ -373,5 +373,5 @@ class TotalAircraftAero(om.Group):
         #  broadcast_wing_chord connect to wing.mesh.scale_x.chord
         #
         #
-        self.add_constraint('lift_balance_residual', equals=0.0, units='N', ref=40) # this is the lift balance constraint
+        self.add_constraint('lift_balance_residual', upper=0.05, lower=-0.05, units='N', ref=0.05) # this is the lift balance constraint
         self.options['auto_order'] = True
