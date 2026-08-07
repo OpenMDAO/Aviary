@@ -4,98 +4,88 @@
 '''
 
 import numpy as np
-
 import openmdao.api as om
-
-from ambiance import Atmosphere
 
 from openaerostruct.aerodynamics.aero_groups import AeroPoint
 from openaerostruct.geometry.geometry_group import Geometry
 from openaerostruct.meshing.mesh_generator import generate_mesh
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Dynamic
-#Remove this and add the mars atmoshpere from the aviary subsystems atmosphere input not make anew subsystem but import one...?
+from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
+from aviary.variable_info.enums import AtmosphereModel
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
+
 class AeroConditions(om.ExplicitComponent):
-    # compute atmospheric conditions, Reynolds number, dynamic pressure
+    """
+    Compute aerodynamic flight-condition quantities needed by OAS
+    using atmospheric properties supplied by Aviary.
+    """
+
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Mission.ALTITUDE, shape=nn, units='m')
-        add_aviary_input(self, Dynamic.Mission.VELOCITY, shape=nn, units='m/s')
-        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='m')
+        add_aviary_input(
+            self,
+            Dynamic.Mission.VELOCITY,
+            shape=nn,
+            units='m/s'
+        )
 
-        add_aviary_output(self, Dynamic.Atmosphere.TEMPERATURE, shape=nn, units='K')
-        add_aviary_output(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, shape=nn, units='m**2/s')
-        add_aviary_output(self, Dynamic.Atmosphere.DENSITY, shape=nn, units='kg/m**3')
-        add_aviary_output(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
-        
-        self.add_output(name='dynamic_viscosity', shape=nn, units='kg/m/s')
-        self.add_output(name='re', shape=nn, units='1/m')
+        add_aviary_input(
+            self,
+            Dynamic.Atmosphere.DENSITY,
+            shape=nn,
+            units='kg/m**3'
+        )
 
-        rows_cols = np.arange(nn)
-        self.declare_partials('re', Dynamic.Mission.VELOCITY, rows=rows_cols, cols=rows_cols)
-        self.declare_partials('re', Aircraft.Wing.ROOT_CHORD)
-        self.declare_partials('re', Dynamic.Mission.ALTITUDE, method='fd')
+        add_aviary_input(
+            self,
+            Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+            shape=nn,
+            units='Pa*s'
+        )
 
-        self.declare_partials(Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Mission.VELOCITY, rows=rows_cols, cols=rows_cols)
+        add_aviary_output(
+            self,
+            Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
+            shape=nn,
+            units='m**2/s'
+        )
 
-        self.declare_partials(Dynamic.Atmosphere.TEMPERATURE, '*', method='fd')
-        self.declare_partials(Dynamic.Atmosphere.DENSITY, '*', method='fd')
-        self.declare_partials('dynamic_viscosity', '*', method='fd')
-        self.declare_partials(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, '*', method='fd')
+        add_aviary_output(
+            self,
+            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            shape=nn,
+            units='N/m**2'
+        )
+
+        self.add_output(
+            're',
+            shape=nn,
+            units='1/m'
+        )
+
+        self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
+
         V = inputs[Dynamic.Mission.VELOCITY]
-        h = inputs[Dynamic.Mission.ALTITUDE]
-        L = inputs[Aircraft.Wing.ROOT_CHORD]
+        rho = inputs[Dynamic.Atmosphere.DENSITY]
+        mu = inputs[Dynamic.Atmosphere.DYNAMIC_VISCOSITY]
 
-        nn = self.options['num_nodes']
-        T = np.zeros(nn)
-        rho = np.zeros(nn)
-        mu = np.zeros(nn)
-        nu = np.zeros(nn)
-        Re = np.zeros(nn)
+        nu = mu / rho
 
-        for i in range(nn):
-            atm = Atmosphere(h[i])
-            # print(i, atm.temperature)
-            T[i] = atm.temperature[0]
-            rho[i] = atm.density[0]
-            mu[i] = atm.dynamic_viscosity[0]
-            nu[i] = mu[i] / rho[i]
-            Re[i] = V[i] * L[0] / nu[i]
-
-        outputs[Dynamic.Atmosphere.TEMPERATURE] = T
-        outputs[Dynamic.Atmosphere.DENSITY] = rho
-        outputs['dynamic_viscosity'] = mu
         outputs[Dynamic.Atmosphere.KINEMATIC_VISCOSITY] = nu
-        outputs['re'] = Re
-        outputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE] = 0.5 * rho * V**2
 
-    def compute_partials(self, inputs, partials):
-        V = inputs[Dynamic.Mission.VELOCITY]
-        L = inputs[Aircraft.Wing.ROOT_CHORD]
-        #nu = inputs[Dynamic.Atmosphere.KINEMATIC_VISCOSITY]
-        h = inputs[Dynamic.Mission.ALTITUDE]
+        # Reynolds number per unit length for OpenAeroStruct
+        outputs['re'] = V / nu
 
-        nn = self.options['num_nodes']
-        rho = np.zeros(nn)
-        nu = np.zeros(nn)
-        for i in range(nn):
-            atm = Atmosphere(h[i])
-            rho[i] = atm.density[0]
-            nu[i] = atm.dynamic_viscosity[0] / rho[i]
-
-        partials['re', Dynamic.Mission.VELOCITY] = L / nu
-        partials['re', Aircraft.Wing.ROOT_CHORD] = V / nu
-        #partials['re', Dynamic.Atmosphere.KINEMATIC_VISCOSITY] = -V * L / nu**2
-        
-        partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Mission.VELOCITY] = rho * V
-        #partials[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY] = 0.5 * V**2
+        outputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE] = (
+            0.5 * rho * V**2
+        )
 
 class CollectLiftDrag(om.ExplicitComponent):
     def initialize(self):
@@ -206,17 +196,25 @@ class AlphaComp(om.ExplicitComponent):
         a = np.radians(inputs['alpha'])
         outputs['lift_balance_residual'] = L - (m * g) #chnaged the lift equation to be equal to weight instead of weight * cos(alpha)
 
-    def compute_partials(self, inputs, partials):
+    def compute_partials(self, inputs, partials): #changes the lift equation to be equal to weight instead of weight * cos(alpha)
         nn = self.options['num_nodes']
-        L = inputs[Dynamic.Vehicle.LIFT]
-        m = inputs[Dynamic.Vehicle.MASS]
-        g = 9.8 # m/s
-        a = np.radians(inputs['alpha'])
 
-        partials['lift_balance_residual', Dynamic.Vehicle.LIFT] = np.ones(nn)
-        partials['lift_balance_residual', Dynamic.Vehicle.MASS] = -g * np.cos(a)
-        partials['lift_balance_residual', 'alpha'] = (m * g * np.sin(a) * np.pi / 180.0)
+        g = 9.8
 
+        partials[
+            'lift_balance_residual',
+            Dynamic.Vehicle.LIFT
+        ] = np.ones(nn)
+
+        partials[
+            'lift_balance_residual',
+            Dynamic.Vehicle.MASS
+        ] = -g * np.ones(nn)
+
+        partials[
+            'lift_balance_residual',
+            'alpha'
+        ] = np.zeros(nn)
 
 class OASAero(om.Group):
 
@@ -231,11 +229,36 @@ class OASAero(om.Group):
         self.add_subsystem(
             'aero_conditions',
             AeroConditions(num_nodes=nn),
+
+            promotes_inputs=[
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Atmosphere.DENSITY,
+                Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+            ],
+
+            promotes_outputs=[
+                're',
+                Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
+                Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            ],
+        )
+        self.add_subsystem(
+            'aviary_atmosphere',
+            AtmosphereComp(
+                num_nodes=nn,
+                h_def='geometric',
+                **{
+                    Settings.ATMOSPHERE_MODEL:
+                    AtmosphereModel.MARS_REFERENCE
+                },
+            ),
             promotes_inputs=[
                 Dynamic.Mission.ALTITUDE,
-                Dynamic.Mission.VELOCITY,
-                Aircraft.Wing.ROOT_CHORD],
-            promotes_outputs=['re', Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY]
+            ],
+            promotes_outputs=[
+                Dynamic.Atmosphere.DENSITY,
+                Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+            ],
         )
 
         self.add_subsystem(

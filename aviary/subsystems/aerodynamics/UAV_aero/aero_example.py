@@ -322,7 +322,14 @@ print(
 )
 print('\nMODEL RUN COMPLETED.\n')
 
+print("\nMARS ATMOSPHERE CHECK:\n")
 
+prob.model.list_outputs(
+    includes=['*OAS_aero.aviary_atmosphere*'],
+    val=True,
+    units=True,
+    prom_name=True,
+)
 # =========================================================
 # DEBUGGING AFTER THE MODEL RUNS
 # =========================================================
