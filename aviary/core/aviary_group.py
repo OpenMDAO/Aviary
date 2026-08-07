@@ -2,6 +2,7 @@ import inspect
 import sys
 import warnings
 from importlib.util import module_from_spec, spec_from_file_location
+import numpy as np
 from pathlib import Path
 
 import dymos as dm
@@ -112,6 +113,7 @@ class AviaryGroup(om.Group):
         # aviary_group's setup is not complete until after configure.
         sbc_vars = set()
         non_sbc_vars = set()
+        shapes = {}
         for sub in self.system_iter(recurse=False, typ=om.Group):
             pr2abs = sub._resolver.prom2abs_iter('input')
             if sub.pathname == 'traj':
@@ -135,6 +137,11 @@ class AviaryGroup(om.Group):
                 else:
                     non_sbc_vars.add(prom_name)
 
+                    # Find shaped inputs as well.
+                    shape = meta.get('shape')
+                    if np.prod(shape) > 1:
+                        shapes[prom_name] = shape
+
         sbc_only_vars = sbc_vars - non_sbc_vars
 
         for key in aviary_metadata:
@@ -150,16 +157,28 @@ class AviaryGroup(om.Group):
 
             if key in aviary_options:
                 val, units = aviary_options.get_item(key)
+                val_in_csv_file = True
             else:
                 val = aviary_metadata[key]['default_value']
                 units = aviary_metadata[key]['units']
+                val_in_csv_file = False
 
                 if val is None:
                     # optional, but no default value
                     continue
 
             kwargs = {'units': units}
+
             if key not in sbc_only_vars:
+                # If var has been declared with a shape, and isn't in the aviary_inputs, then
+                # take the default val and broadcast it.
+
+                if not val_in_csv_file and aviary_metadata[key]['multivalue']:
+                    if key in shapes and np.isscalar(val):
+                        scalar_val = val
+                        val = np.empty(shapes[key])
+                        val[:] = scalar_val
+
                 # Default val if var doesn't use shape_by_conn.
                 kwargs['val'] = val
 
