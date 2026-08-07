@@ -76,15 +76,11 @@ subsystem_options = {
     }
 }
 
-num_segments = 3
-mach_optimize = True
-altitude_optimize = True
-
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
     'AB': {
         'user_options': {
-            'num_segments': num_segments,
+            'num_segments': 3,
             'order': 3,
             'ground_roll': True,
             'time_duration_ref': (100.0, 'kn'),
@@ -103,7 +99,7 @@ phase_info = {
     },
     'rotate': {
         'user_options': {
-            'num_segments': num_segments,
+            'num_segments': 3,
             'order': 3,
             'ground_roll': True,
             'clean': False,
@@ -114,7 +110,7 @@ phase_info = {
             'throttle_enforcement': 'boundary_constraint',
             'rotation': True,
             'mass_ref': (170000, 'lbm'),
-            'mach_optimize': mach_optimize,
+            'mach_optimize': True,
             'mach_polynomial_order': 1,
             'mach_bounds': ((0.18, 0.2), 'unitless'),
             'mach_ref': (1.0, 'unitless'),
@@ -143,18 +139,18 @@ phase_info = {
     },
     'BC': {
         'user_options': {
-            'num_segments': num_segments,
+            'num_segments': 3,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((1.0, 16.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((500.0, 1500.0), 'ft'),
-            'mach_optimize': mach_optimize,
+            'mach_optimize': True,
             'mach_polynomial_order': 1,
             'mach_bounds': ((0.2, 0.22), 'unitless'),
             'mach_ref': (1.0, 'unitless'),
-            'altitude_optimize': altitude_optimize,
+            'altitude_optimize': True,
             'altitude_polynomial_order': 1,
             'altitude_bounds': ((0.0, 150.0), 'ft'),
             'altitude_final': (50.0, 'ft'),
@@ -171,20 +167,20 @@ phase_info = {
             'mass': [(174.84e3, 174.82e3), 'lbm'],
         },
     },
-    'CD_to_P2': {
+    'Cto_P2': {
         'user_options': {
-            'num_segments': num_segments,
+            'num_segments': 3,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((1.0e3, 20.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((3.0e3, 20.0e3), 'ft'),
-            'mach_optimize': mach_optimize,
+            'mach_optimize': True,
             'mach_polynomial_order': 1,
             'mach_bounds': ((0.22, 0.3), 'unitless'),
             'mach_ref': (1.0, 'unitless'),
-            'altitude_optimize': altitude_optimize,
+            'altitude_optimize': True,
             'altitude_polynomial_order': 1,
             'altitude_initial': (50.0, 'ft'),
             'altitude_final': (985.0, 'ft'),
@@ -200,20 +196,20 @@ phase_info = {
             'mass': [(174.82e3, 174.8e3), 'lbm'],
         },
     },
-    'P2_to_DE': {
+    'P2_to_D': {
         'user_options': {
-            'num_segments': num_segments,
+            'num_segments': 3,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((1.0e3, 20.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((3.0e3, 20.0e3), 'ft'),
-            'mach_optimize': mach_optimize,
+            'mach_optimize': True,
             'mach_polynomial_order': 1,
             'mach_bounds': ((0.22, 0.3), 'unitless'),
             'mach_ref': (1.0, 'unitless'),
-            'altitude_optimize': altitude_optimize,
+            'altitude_optimize': True,
             'altitude_polynomial_order': 1,
             #'altitude_bounds': ((985.0, 1100.0), 'ft'),
             'altitude_bounds': ((985.0, 2000.0), 'ft'),
@@ -240,18 +236,18 @@ phase_info = {
     },
     'DE': {
         'user_options': {
-            'num_segments': num_segments,
+            'num_segments': 3,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((500.0, 30.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((1000, 5000.0), 'ft'),
-            'mach_optimize': mach_optimize,
+            'mach_optimize': True,
             'mach_polynomial_order': 2,
             'mach_bounds': ((0.24, 0.32), 'unitless'),
             'mach_ref': (1.0, 'unitless'),
-            'altitude_optimize': altitude_optimize,
+            'altitude_optimize': True,
             'altitude_polynomial_order': 2,
             'altitude_bounds': ((985.0, 2e3), 'ft'),
             'mass_ref': (170000, 'lbm'),
@@ -274,20 +270,20 @@ phase_info = {
             'time': [(80.0, 85.0), 's'],
         },
     },
-    'EF_to_P1': {
+    'E_to_P1': {
         'user_options': {
-            'num_segments': num_segments,
+            'num_segments': 3,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((500.0, 50.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((1.0e2, 20.0e3), 'ft'),
-            'mach_optimize': mach_optimize,
+            'mach_optimize': True,
             'mach_polynomial_order': 1,
             'mach_bounds': ((0.24, 0.32), 'unitless'),
             'mach_ref': (1.0, 'unitless'),
-            'altitude_optimize': altitude_optimize,
+            'altitude_optimize': True,
             'altitude_polynomial_order': 1,
             'altitude_bounds': ((1.0e3, 3.0e3), 'ft'),
             'mass_ref': (170000, 'lbm'),
@@ -317,20 +313,20 @@ phase_info = {
             'time': [(85.0, 90.0), 's'],
         },
     },
-    'EF_past_P1': {
+    'P1_to_F': {
         'user_options': {
-            'num_segments': num_segments,
+            'num_segments': 3,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
             'time_initial_bounds': ((20.0e3, 50.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((100.0, 50.0e3), 'ft'),
-            'mach_optimize': mach_optimize,
+            'mach_optimize': True,
             'mach_polynomial_order': 3,
             'mach_bounds': ((0.24, 0.32), 'unitless'),
             'mach_ref': (1.0, 'unitless'),
-            'altitude_optimize': altitude_optimize,
+            'altitude_optimize': True,
             'altitude_polynomial_order': 1,
             'altitude_bounds': ((1.0e3, 3.0e3), 'ft'),
             'mass_ref': (170000, 'lbm'),
