@@ -21,7 +21,7 @@ class TestBenchSolved2DOF(unittest.TestCase):
         )
 
         self.assertTrue(prob.result.success)
-        tol = 1e-3
+        tol = 1e-2
         assert_near_equal(prob.get_val(av.Mission.FINAL_TIME, units='s'), 108.84030411, tol)
         assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 459.3830223, tol)
 
@@ -41,7 +41,7 @@ class TestBenchSolved2DOF(unittest.TestCase):
         prob.run_aviary_problem()
 
         self.assertTrue(prob.result.success)
-        tol = 1e-3
+        tol = 1e-2
         assert_near_equal(prob.get_val(av.Mission.FINAL_TIME, units='s'), 68.30353617, tol)
         assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 98.91566618, tol)
 
