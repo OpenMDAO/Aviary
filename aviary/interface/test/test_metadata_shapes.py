@@ -20,6 +20,47 @@ from aviary.variable_info.variables import Aircraft
 
 @use_tempdirs
 class TestShapebyConn(unittest.TestCase):
+    def test_multivalue_inputs(self):
+        # Make sure openmdao doesn't try to create a scalar IVC for a shaped input.
+
+        class ShapedComp(om.ExplicitComponent):
+
+            def setup(self):
+                add_aviary_input(self, Aircraft.Design.DRAG_POLAR, shape=(3, 4, 5))
+                self.add_output('z', np.ones(3))
+
+            def compute(self, inputs, outputs):
+                outputs['z'] = inputs[Aircraft.Design.DRAG_POLAR][0]
+
+
+        class ShapedBuilder(SubsystemBuilder):
+
+            def build_pre_mission(self, aviary_inputs, subsystem_options):
+                return ShapedComp()
+
+
+        local_phase_info = deepcopy(energy_phase_info)
+
+        prob = AviaryProblem(verbosity=1)
+
+        prob.load_inputs(
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
+            local_phase_info,
+        )
+        prob.load_external_subsystems([ShapedBuilder()])
+
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+        prob.add_design_variables()
+        prob.add_objective()
+
+        prob.setup()
+        prob.final_setup()
+
+        polar = prob.get_val(Aircraft.Design.DRAG_POLAR)
+        self.assertEqual(polar.shape, (3, 4, 5))
+
     def test_shape_bug(self):
         # Verifies that shape_by_conn variables no longer raise an exception during
         # setup.
