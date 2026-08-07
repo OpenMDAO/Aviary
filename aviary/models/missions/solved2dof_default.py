@@ -1,81 +1,3 @@
-subsystem_options = {
-    'aerodynamics': {
-        'method': 'low_speed',
-        'ground_altitude': 0.0,  # units='ft'
-        'angles_of_attack': [
-            -5.0,
-            -4.0,
-            -3.0,
-            -2.0,
-            -1.0,
-            0.0,
-            1.0,
-            2.0,
-            3.0,
-            4.0,
-            5.0,
-            6.0,
-            7.0,
-            8.0,
-            9.0,
-            10.0,
-            11.0,
-            12.0,
-            13.0,
-            14.0,
-            15.0,
-        ],  # units='deg'
-        'lift_coefficients': [
-            0.01,
-            0.1,
-            0.2,
-            0.3,
-            0.4,
-            0.5178,
-            0.6,
-            0.75,
-            0.85,
-            0.95,
-            1.05,
-            1.15,
-            1.25,
-            1.35,
-            1.5,
-            1.6,
-            1.7,
-            1.8,
-            1.85,
-            1.9,
-            1.95,
-        ],
-        'drag_coefficients': [
-            0.04,
-            0.02,
-            0.01,
-            0.02,
-            0.04,
-            0.0674,
-            0.065,
-            0.065,
-            0.07,
-            0.072,
-            0.076,
-            0.084,
-            0.09,
-            0.10,
-            0.11,
-            0.12,
-            0.13,
-            0.15,
-            0.16,
-            0.18,
-            0.20,
-        ],
-        'lift_coefficient_factor': 1.0,
-        'drag_coefficient_factor': 1.0,
-    }
-}
-
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
     'AB': {
@@ -89,7 +11,6 @@ phase_info = {
             'mass_initial': (175.0e3, 'lbm'),
             'distance_initial': (0.0, 'ft'),
         },
-        'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(0.0, 2.0e3), 'ft'],
             'time': [(0.0, 20.0), 's'],
@@ -128,7 +49,6 @@ phase_info = {
                 },
             },
         },
-        'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(2.0e3, 1.0e3), 'ft'],
             'time': [(20.0, 25.0), 's'],
@@ -158,7 +78,6 @@ phase_info = {
             'throttle_enforcement': 'boundary_constraint',
             'rotation': False,
         },
-        'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(3.0e3, 1.0e3), 'ft'],
             'time': [(25.0, 35.0), 's'],
@@ -167,7 +86,7 @@ phase_info = {
             'mass': [(174.84e3, 174.82e3), 'lbm'],
         },
     },
-    'Cto_P2': {
+    'C_to_P2': {
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -188,7 +107,6 @@ phase_info = {
             'mass_ref': (170000, 'lbm'),
             'throttle_enforcement': 'boundary_constraint',
         },
-        'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(4.0e3, 10.0e3), 'ft'],
             'time': [(35.0, 60.0), 's'],
@@ -215,17 +133,7 @@ phase_info = {
             'altitude_bounds': ((985.0, 2000.0), 'ft'),
             'mass_ref': (170000, 'lbm'),
             'throttle_enforcement': 'path_constraint',
-            # 'constraints': {
-            #     'distance': {
-            #         'upper': 19.0e3,
-            #         'ref': 20.0e3,
-            #         'loc': 'final',
-            #         'units': 'ft',
-            #         'type': 'boundary',
-            #     },
-            # },
         },
-        'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(14.0e3, 4.0e3), 'ft'],
             'time': [(60.0, 80.0), 's'],
@@ -261,7 +169,6 @@ phase_info = {
                 },
             },
         },
-        'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(18.0e3, 2.0e3), 'ft'],
             'mass': [(174.5e3, 174.4e3), 'lbm'],
@@ -304,7 +211,6 @@ phase_info = {
                 },
             },
         },
-        'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(20.0e3, 1325.0), 'ft'],
             'mass': [(174.4e3, 174.3e3), 'lbm'],
@@ -347,7 +253,6 @@ phase_info = {
                 },
             },
         },
-        'subsystem_options': subsystem_options,
         'initial_guesses': {
             'distance': [(21325.0, 50.0e3), 'ft'],
             'mass': [(174.3e3, 174.2e3), 'lbm'],
