@@ -24,7 +24,6 @@ class TestShapebyConn(unittest.TestCase):
         # Make sure openmdao doesn't try to create a scalar IVC for a shaped input.
 
         class ShapedComp(om.ExplicitComponent):
-
             def setup(self):
                 add_aviary_input(self, Aircraft.Design.DRAG_POLAR, shape=(3, 4, 5))
                 self.add_output('z', np.ones(3))
@@ -34,10 +33,8 @@ class TestShapebyConn(unittest.TestCase):
 
 
         class ShapedBuilder(SubsystemBuilder):
-
             def build_pre_mission(self, aviary_inputs, subsystem_options):
                 return ShapedComp()
-
 
         local_phase_info = deepcopy(energy_phase_info)
 

@@ -170,9 +170,9 @@ class AviaryGroup(om.Group):
             kwargs = {'units': units}
 
             if key not in sbc_only_vars:
-
                 # If var has been declared with a shape, and isn't in the aviary_inputs, then
                 # take the default val and broadcast it.
+
                 if not val_in_csv_file and aviary_metadata[key]['multivalue']:
                     if key in shapes and np.isscalar(val):
                         scalar_val = val
