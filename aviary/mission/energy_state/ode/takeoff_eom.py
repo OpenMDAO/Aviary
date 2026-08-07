@@ -4,8 +4,8 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class StallSpeed(om.ExplicitComponent):
@@ -30,7 +30,7 @@ class StallSpeed(om.ExplicitComponent):
             units='kg/m**3',
         )
 
-        self.add_input('area', val=1.0, units='m**2', desc='surface area contributing to lift')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
         self.add_input(
             'lift_coefficient_max', val=1.0, units='unitless', desc='maximum lift coefficient'
@@ -54,13 +54,13 @@ class StallSpeed(om.ExplicitComponent):
             cols=rows_cols,
         )
 
-        self.declare_partials('stall_speed', ['area', 'lift_coefficient_max'])
+        self.declare_partials('stall_speed', [Aircraft.Wing.AREA, 'lift_coefficient_max'])
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         grav_metric = self.options[Mission.GRAVITY][0]
         mass = inputs['mass']
         density = inputs[Dynamic.Atmosphere.DENSITY]
-        area = inputs['area']
+        area = inputs[Aircraft.Wing.AREA]
         lift_coefficient_max = inputs['lift_coefficient_max']
 
         weight = mass * grav_metric
@@ -72,7 +72,7 @@ class StallSpeed(om.ExplicitComponent):
         grav_metric = self.options[Mission.GRAVITY][0]
         mass = inputs['mass']
         density = inputs[Dynamic.Atmosphere.DENSITY]
-        area = inputs['area']
+        area = inputs[Aircraft.Wing.AREA]
         lift_coefficient_max = inputs['lift_coefficient_max']
 
         weight = mass * grav_metric
@@ -87,7 +87,7 @@ class StallSpeed(om.ExplicitComponent):
             stall_speed * density**2 * area * lift_coefficient_max
         )
 
-        J['stall_speed', 'area'] = -weight / (
+        J['stall_speed', Aircraft.Wing.AREA] = -weight / (
             stall_speed * density * area**2 * lift_coefficient_max
         )
 
