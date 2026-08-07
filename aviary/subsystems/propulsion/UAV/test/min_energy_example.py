@@ -4,6 +4,7 @@ from copy import deepcopy
 
 import aviary.api as av
 from aviary.mission.two_dof.ode import constraints
+from aviary.variable_info.enums import AtmosphereModel
 import numpy as np
 import openmdao.api as om
 
@@ -45,9 +46,9 @@ def CruiseExample():
 
 
             'altitude_optimize': True,
-            'altitude_initial': (200.0, 'ft'),
-            'altitude_bounds': ((50,400), 'ft'),
-            'altitude_final': (200.0, 'ft'),
+            'altitude_initial': (-6900, 'm'),
+            'altitude_bounds': ((-6950,-6700), 'm'),
+            'altitude_final': (-6900, 'm'),
             'distance_initial': (0.0, 'm'),
 
             'distance_ref': (1000.0, 'm'),
@@ -93,6 +94,7 @@ def CruiseExample():
         external_subsystems=[UAV_Prop, AeroBuilder(), DBFMassBuilder()]
     )
 
+    prob.aviary_inputs.set_val(Settings.ATMOSPHERE_MODEL, AtmosphereModel.STANDARD, units='unitless')
     prob.check_and_preprocess_inputs()
 
     prob.build_model()
@@ -138,6 +140,7 @@ def CruiseExample():
     prob.set_val('traj.cruise.controls:throttle', 0.561)
     prob.set_val('traj.cruise.controls:mach', 0.0538)
     prob.set_val('traj.cruise.rhs_all.thrust_net_max_total', 9.69, units='lbf')
+
 
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units='m**2')
     print('Wetted Area:', number)

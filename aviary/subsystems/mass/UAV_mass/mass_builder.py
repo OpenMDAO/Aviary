@@ -33,12 +33,12 @@ class MassBuilder(SubsystemBuilder):
             Aircraft.Wing.SPAN: {
                 'units': 'm',
                 'lower': 1.0,
-                'upper': 5.0,
+                'upper': 10,
             },
             Aircraft.Wing.ROOT_CHORD: {
                 'units': 'm',
                 'lower': 0.1,
-                'upper': 1.0,
+                'upper': 2.0,
             },
             # Aircraft.Fuselage.WETTED_AREA: {
             #     'units': 'm**2',
@@ -63,12 +63,12 @@ class MassBuilder(SubsystemBuilder):
             Aircraft.HorizontalTail.SPAN: {
                 'units': 'm',
                 'lower': 0.1,
-                'upper': 1.0,
+                'upper': 2.0,
             },
             Aircraft.HorizontalTail.ROOT_CHORD: {
                 'units': 'm',
                 'lower': 0.1,
-                'upper': 2.0,
+                'upper': 1.0,
             },
             Aircraft.VerticalTail.SPAN: {
                 'units': 'm',

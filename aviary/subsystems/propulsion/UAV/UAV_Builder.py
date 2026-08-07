@@ -163,9 +163,6 @@ class UAVBuilder(EngineModel):
             'lower': 2800,
             'upper': 10800,
             'ref': 10800,
-            # external-subsystem controls bypass Aviary's add_control, so the
-            # continuity defects otherwise default to ref=1 at rpm scale
-            # (scaled jacobian rows 1.7e4 / 3.1e5)
             'continuity_ref': 10800,
             'rate_continuity_ref': 10800,
         },
