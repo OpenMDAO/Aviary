@@ -14,7 +14,7 @@ from aviary.variable_info.variables import Aircraft
 
 @use_tempdirs
 class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
-    """HAS_HYBRID_SYSTEM = False"""
+    """HAS_HYBRID_SYSTEM = False."""
 
     def setUp(self):
         options = AviaryValues()
@@ -88,7 +88,7 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
 
 @use_tempdirs
 class EngineTestCase2(unittest.TestCase):
-    """HAS_HYBRID_SYSTEM = True"""
+    """HAS_HYBRID_SYSTEM = True."""
 
     def setUp(self):
         options = AviaryValues()
@@ -168,7 +168,7 @@ class EngineTestCase2(unittest.TestCase):
 
 @use_tempdirs
 class EngineGroupTestCase1(unittest.TestCase):
-    """HAS_HYBRID_SYSTEM = False (large single aisle 1 V3)"""
+    """HAS_HYBRID_SYSTEM = False (large single aisle 1 V3)."""
 
     def setUp(self):
         options = AviaryValues()
@@ -243,7 +243,7 @@ class EngineGroupTestCase1(unittest.TestCase):
 class EngineGroupTestCase2(unittest.TestCase):
     """
     HAS_HYBRID_SYSTEM = False (large single aisle 1 V3).
-    Check between weight and mass conversion
+    Check between weight and mass conversion.
     """
 
     def setUp(self):
@@ -259,7 +259,7 @@ class EngineGroupTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
-        import aviary.subsystems.mass.gasp_based.engine as engine
+        from aviary.subsystems.mass.gasp_based import engine
 
         constants.GRAV_ENGLISH_LBM = 1.1
         engine.GRAV_ENGLISH_LBM = 1.1
@@ -303,7 +303,7 @@ class EngineGroupTestCase2(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.engine as engine
+        from aviary.subsystems.mass.gasp_based import engine
 
         constants.GRAV_ENGLISH_LBM = 1.0
         engine.GRAV_ENGLISH_LBM = 1.0
@@ -374,6 +374,9 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.POD_MASS_SCALER, val=[1, 1], units='unitless'
+        )
 
         self.prob.model_options['*'] = extract_options(options)
 
@@ -402,12 +405,10 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
 # arbitrary test case with multiple engine types
 @use_tempdirs
 class EngineTestCaseMultiEngine2(unittest.TestCase):
-    """
-    Check between weight and mass conversion
-    """
+    """Check between weight and mass conversion."""
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.engine as engine
+        from aviary.subsystems.mass.gasp_based import engine
 
         constants.GRAV_ENGLISH_LBM = 1.0
         engine.GRAV_ENGLISH_LBM = 1.0
@@ -427,7 +428,7 @@ class EngineTestCaseMultiEngine2(unittest.TestCase):
             promotes=['*'],
         )
 
-        import aviary.subsystems.mass.gasp_based.engine as engine
+        from aviary.subsystems.mass.gasp_based import engine
 
         constants.GRAV_ENGLISH_LBM = 1.1
         engine.GRAV_ENGLISH_LBM = 1.1
@@ -462,6 +463,9 @@ class EngineTestCaseMultiEngine2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.POD_MASS_SCALER, val=[1, 1], units='unitless'
+        )
 
         self.prob.model_options['*'] = extract_options(options)
 
@@ -489,7 +493,7 @@ class EngineTestCaseMultiEngine2(unittest.TestCase):
 
 @use_tempdirs
 class BWBEngineTestCase(unittest.TestCase):
-    "GASP BWB model"
+    """GASP BWB model."""
 
     def setUp(self):
         options = AviaryValues()
