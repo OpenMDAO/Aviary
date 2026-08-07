@@ -45,6 +45,11 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         var_sweep = inputs[Aircraft.Wing.VAR_SWEEP_MASS_PENALTY]
         max_mach = self.options[Mission.Constraints.MAX_MACH]
 
+        if sys_press <= 0:
+            # No hydraulic system (e.g. small electric UAVs): nothing to size.
+            outputs[Aircraft.Hydraulics.MASS] = 0.0
+            return
+
         outputs[Aircraft.Hydraulics.MASS] = (
             0.57
             * (planform + 0.27 * area)
