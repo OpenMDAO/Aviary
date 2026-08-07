@@ -31,7 +31,6 @@ class TestShapebyConn(unittest.TestCase):
             def compute(self, inputs, outputs):
                 outputs['z'] = inputs[Aircraft.Design.DRAG_POLAR][0]
 
-
         class ShapedBuilder(SubsystemBuilder):
             def build_pre_mission(self, aviary_inputs, subsystem_options):
                 return ShapedComp()
