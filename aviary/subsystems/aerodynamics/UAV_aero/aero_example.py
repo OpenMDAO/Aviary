@@ -12,7 +12,8 @@ from aviary.subsystems.aerodynamics.UAV_aero.aero_builder import AeroBuilder
 # from aviary.subsystems.aerodynamics.UAV_aero.aero_model import TotalAircraftAero #they are not used so commented out
 # from aviary.utils.functions import set_aviary_initial_values
 # from aviary.utils.aviary_values import AviaryValues
-
+from aviary.variable_info.enums import AtmosphereModel
+from aviary.variable_info.variables import Settings
 
 # Set True while debugging the integrated model.
 # Set False for a normal cruise run.
@@ -95,6 +96,11 @@ print('Propulsion builder:', propulsion_builder.name)
 print('Mass builder:', mass_builder.name)
 
 prob.load_external_subsystems([ mass_builder, aero_builder,  propulsion_builder,])
+
+prob.aviary_inputs.set_val(
+    Settings.ATMOSPHERE_MODEL,
+    AtmosphereModel.MARS_REFERENCE,
+)
 
 prob.aviary_inputs.set_val(Dynamic.Mission.ALTITUDE, 520, units='m') 
 prob.aviary_inputs.set_val(Dynamic.Mission.VELOCITY, 36, units='m/s')
@@ -272,7 +278,7 @@ if DEBUG_MODEL:
     )
 
     print('\nUNWANTED SUBSYSTEM CHECKS:\n')
-
+#they will print yes sometimes even if the subsystems are not present. and its because its present in inputs but they are set to 0 so they arent really used.
     print(
         'Built-in GASP/FLOPS mass present:',
         has_large_aircraft_mass,
@@ -322,7 +328,7 @@ print(
 )
 print('\nMODEL RUN COMPLETED.\n')
 
-print("\nMARS ATMOSPHERE CHECK:\n")
+print("\nAVIARY ATMOSPHERE CHECK:\n")
 
 prob.model.list_outputs(
     includes=['*OAS_aero.aviary_atmosphere*'],

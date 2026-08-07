@@ -172,7 +172,7 @@ class BroadcastHTailChord(om.ExplicitComponent):
         partials['broadcast_htail_chord', Aircraft.HorizontalTail.ROOT_CHORD] = np.ones(nn)
 #change the alpha comp from a implicit componenet to a slack variable 
 class AlphaComp(om.ExplicitComponent):
-    # compute AoA using aircraft mass, assuming lift = weight * cos(alpha)
+    
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 
@@ -193,7 +193,6 @@ class AlphaComp(om.ExplicitComponent):
         L = inputs[Dynamic.Vehicle.LIFT]
         m = inputs[Dynamic.Vehicle.MASS]
         g = 9.8 # m/s**2
-        a = np.radians(inputs['alpha'])
         outputs['lift_balance_residual'] = L - (m * g) #chnaged the lift equation to be equal to weight instead of weight * cos(alpha)
 
     def compute_partials(self, inputs, partials): #changes the lift equation to be equal to weight instead of weight * cos(alpha)
@@ -242,14 +241,17 @@ class OASAero(om.Group):
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
         )
+        atmosphere_model = aviary_inputs.get_val(
+            Settings.ATMOSPHERE_MODEL
+        )
+
         self.add_subsystem(
             'aviary_atmosphere',
             AtmosphereComp(
                 num_nodes=nn,
                 h_def='geometric',
                 **{
-                    Settings.ATMOSPHERE_MODEL:
-                    AtmosphereModel.MARS_REFERENCE
+                    Settings.ATMOSPHERE_MODEL: atmosphere_model
                 },
             ),
             promotes_inputs=[
