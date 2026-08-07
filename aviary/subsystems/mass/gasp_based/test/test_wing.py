@@ -17,6 +17,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class WingMassSolveTestCase(unittest.TestCase):
     """this is the large single aisle 1 V3 test case."""
 
