@@ -49,7 +49,7 @@ class TakeoffODE(_BaseODE):
             promotes_inputs=[
                 'mass',
                 Dynamic.Atmosphere.DENSITY,
-                ('area', Aircraft.Wing.AREA),
+                Aircraft.Wing.AREA,
                 ('lift_coefficient_max', self.stall_speed_lift_coefficient_name),
             ],
             promotes_outputs=[('stall_speed', 'v_stall')],

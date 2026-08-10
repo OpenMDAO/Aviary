@@ -184,7 +184,7 @@ class TotalEngineMass(om.ExplicitComponent):
         ) / GRAV_ENGLISH_LBM
 
 
-class EnginePODMass(om.ExplicitComponent):
+class EnginePodMass(om.ExplicitComponent):
     """Computation of engine pod mass and total engine pod mass."""
 
     def initialize(self):
@@ -193,7 +193,7 @@ class EnginePODMass(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Engine.POD_MASS_SCALER)
+        add_aviary_input(self, Aircraft.Engine.POD_MASS_SCALER, shape=num_engine_type)
         add_aviary_input(self, Aircraft.Nacelle.MASS, shape=num_engine_type, units='lbm')
         self.add_input(
             'pylon_mass',
@@ -236,10 +236,10 @@ class EnginePODMass(om.ExplicitComponent):
         pylon_wt = inputs['pylon_mass'] * GRAV_ENGLISH_LBM
         pod_wt = nacelle_wt + pylon_wt
         outputs[Aircraft.Engine.POD_MASS] = pod_wt / GRAV_ENGLISH_LBM
-        # NOTE TOTAL_ENGINE_POD_MASS by definition includes everything *in* the pod too! This component
+        # TODO TOTAL_ENGINE_POD_MASS by definition includes everything *in* the pod too! This component
         #      should probably use a new/different variable name (same for pod mass scaler)
-        pod_wt_sum = sum(pod_wt * num_engines)
-        outputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS] = CK14 * pod_wt_sum / GRAV_ENGLISH_LBM
+        pod_wt_sum = np.dot(CK14 * pod_wt, num_engines)
+        outputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS] = pod_wt_sum / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
@@ -258,7 +258,7 @@ class EnginePODMass(om.ExplicitComponent):
         J[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, 'pylon_mass'] = CK14 * num_engines
 
         J[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, Aircraft.Engine.POD_MASS_SCALER] = (
-            sum(pod_wt * num_engines) / GRAV_ENGLISH_LBM
+            pod_wt * num_engines / GRAV_ENGLISH_LBM
         )
 
 
@@ -587,7 +587,7 @@ class EngineMassGroup(om.Group):
         )
         self.add_subsystem(
             'engine_pod',
-            EnginePODMass(),
+            EnginePodMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
