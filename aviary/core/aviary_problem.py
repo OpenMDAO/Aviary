@@ -1506,9 +1506,10 @@ class AviaryProblem(om.Problem):
                 Aircraft.CrewPayload.CARGO_CONTAINER_MASS, units='lbm'
             )[0]
             inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, cargo_container_mass, 'lbm')
-            warnings.warn(
-                f'Setting CARGO_CONTAINER_MASS for off design mission equal to design mission = {cargo_container_mass} lbm'
-            )
+            if verbosity >= Verbosity.BRIEF:
+                warnings.warn(
+                    f'Setting CARGO_CONTAINER_MASS for off design mission equal to design mission = {cargo_container_mass} lbm'
+                )
         else:
             warnings.warn(
                 'Off-design functionality is in beta for GASP-mass based aircraft. Please manually '
