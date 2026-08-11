@@ -9,7 +9,6 @@ from aviary.mission.energy_state.ode.takeoff_eom import (
     FlightPathAngleRate,
     VelocityRate,
 )
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Dynamic, Mission
 
