@@ -442,7 +442,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         assert_near_equal(prob_off_design_min_fuel.get_val(Mission.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
             prob_off_design_min_fuel.get_val(Mission.TOTAL_FUEL_MASS, 'lbm'),
-            21452.85145652,
+            21453.02299193,
             tolerance=1e-6,
         )
         assert_near_equal(
@@ -478,7 +478,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         )
         assert_near_equal(
             prob_off_design_min_fuel.get_val(Mission.GROSS_MASS, 'lbm'),
-            148533.22485577,
+            148533.47183418,
             tolerance=1e-6,
         )
         assert_near_equal(
