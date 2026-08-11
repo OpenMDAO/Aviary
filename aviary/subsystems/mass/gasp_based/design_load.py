@@ -399,20 +399,20 @@ class LoadParameters(om.ExplicitComponent):
             if max_mach > 0.90:
                 if verbosity > Verbosity.BRIEF:
                     warnings.warn(
-                        'Max Mach number must be less than 0.9 '
-                        'because GASP model is for subsonic flight only.'
+                        f'Calculated Aircraft.Design.MAX_MACH = {max_mach}  '
+                        'GASP only models subsonic flight: Setting Aircraft.Design.MAX_MACH = 0.9.'
                     )
             max_mach = max_mach * sigmoidX(max_mach / 0.9, 1, -0.01) + 0.9 * sigmoidX(
                 max_mach / 0.9, 1, 0.01
             )
         else:
             if max_mach > 0.90:
-                max_mach = 0.90
                 if verbosity > Verbosity.BRIEF:
                     warnings.warn(
-                        'Max Mach number must be less than 0.9 '
-                        'because GASP model is for subsonic flight only.'
+                        f'Calculated Aircraft.Design.MAX_MACH = {max_mach}  '
+                        'GASP only models subsonic flight: Setting Aircraft.Design.MAX_MACH = 0.9.'
                     )
+                max_mach = 0.90
 
         density_ratio = (max_airspeed / (661.7 * max_mach)) ** 1.61949
 
