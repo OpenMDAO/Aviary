@@ -1,3 +1,4 @@
+from copy import deepcopy
 import unittest
 
 import openmdao.api as om
@@ -6,6 +7,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.core.aviary_problem import AviaryProblem
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values
@@ -487,6 +489,53 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             check_partials=True,
             excludes=['*detailed_wing.*'],  # does not work?
         )
+
+    def test_case_root_chord_idx_1(self):
+        # Test detailed wing where root chord starts at index 1.
+        # Truth values come from FLOPS case.
+        local_phase_info = deepcopy(phase_info)
+        prob = AviaryProblem()
+
+        prob.load_inputs(
+            'validation_cases/validation_data/test_models/bwb_root_chord1.csv',
+            local_phase_info,
+            verbosity=0,
+        )
+        prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, 156019.0, units='lbm')
+
+        prob.check_and_preprocess_inputs()
+        prob.build_model()
+
+        prob.add_design_variables()
+        prob.add_objective(objective_type='fuel_burned')
+
+        prob.setup()
+
+        prob.set_initial_guesses()
+
+        prob.final_setup()
+        prob.run_model()
+
+        rtol = 1e-3
+        val = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_MASS, units='lbm')
+        assert_near_equal(val, 2394.3, rtol)  #2406 FLOPS
+
+        val = prob.get_val(Aircraft.Wing.SHEAR_CONTROL_MASS, units='lbm')
+        assert_near_equal(val, 6017.4, rtol)
+
+        val = prob.get_val(Aircraft.Wing.MISC_MASS, units='lbm')
+        assert_near_equal(val, 2236.5, rtol)
+
+        val = prob.get_val(Aircraft.Wing.BWB_AFTBODY_MASS, units='lbm')
+        assert_near_equal(val, 2476.2, rtol)  # 2504 FLOPS
+
+        val = prob.get_val(Aircraft.Fuselage.MASS, units='lbm')
+        assert_near_equal(val, 26965.0, rtol)
+
+        val = prob.get_val(Aircraft.Design.EMPTY_MASS, units='lbm')
+        assert_near_equal(val, 91641.0, rtol) # 91688 FLOPS
+
+        print('done')
 
 
 @use_tempdirs

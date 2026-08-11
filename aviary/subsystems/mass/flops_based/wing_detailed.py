@@ -397,11 +397,15 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
                 inp_stations_mod.append(x)
         inp_stations_mod = np.array(inp_stations_mod)
 
-        # For BWB, always start from inp_stations_mod[1], not inp_stations_mod[0]
-        inp_stations_mod = inp_stations_mod[1:]
+        if root == 0:
+            # Remove prepended centerline for this calculation.
+            # Otherwise, wing starts where the user specified.
+            root = 1
+
+        inp_stations_mod = inp_stations_mod[root:]
 
         load_path_sweep = inputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION']
-        load_path_sweep_mod = np.array(load_path_sweep[1:])
+        load_path_sweep_mod = np.array(load_path_sweep[root:])
 
         ar = inputs[Aircraft.Wing.ASPECT_RATIO][0]
         arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE][0]
@@ -418,7 +422,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
                 chord_mod.append(2 * x / wingspan)
             else:
                 chord_mod.append(x * ar_scale_factor)
-        chord_mod = np.array(chord_mod)
+        chord_mod = np.array(chord_mod)[root:]
 
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
         faert = inputs[Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR]
@@ -426,7 +430,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         thickness_to_chord = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE]
-        thickness_to_chord_mod = thickness_to_chord[1:] * tc[0] / tcref[0]
+        thickness_to_chord_mod = thickness_to_chord[root:] * tc[0] / tcref[0]
 
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
         # odd numbers of wing mounted engines assume the "odd" engine out is not on the
@@ -462,7 +466,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         chord_interp = InterpND(
             method='slinear', points=(inp_stations_mod), x_interp=integration_stations
         )
-        chord_int_stations = chord_interp.evaluate_spline(chord_mod[1:], compute_derivative=False)
+        chord_int_stations = chord_interp.evaluate_spline(chord_mod, compute_derivative=False)
         # Scale
         chord_int_stations *= ar_scale_factor
 
