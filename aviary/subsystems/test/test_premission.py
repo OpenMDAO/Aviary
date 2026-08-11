@@ -57,7 +57,8 @@ class PreMissionTestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         input_options = setup_options(GASP_input, FLOPS_input)
-        # Note: if a parameter is not a GASP option but a FLOPS option, it is not loaded in.
+        # Note: if a parameter is not a GASP option but a FLOPS option, it is loaded in using default
+        # value in meta data (see V3_bug_fixed_options). So, its value in FLOPS option is never loaded in.
 
         # delete the options that would override values
         input_options.delete(Aircraft.Wing.AREA)
