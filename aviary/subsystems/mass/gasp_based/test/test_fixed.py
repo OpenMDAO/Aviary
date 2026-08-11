@@ -17,6 +17,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     VerticalTailMass,
 )
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import FlapType
 from aviary.variable_info.functions import extract_options, setup_model_options
 from aviary.variable_info.options import AviaryValues
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -29,7 +30,8 @@ class MassParametersTestCase1(unittest.TestCase):
     def setUp(self):
         options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 0)
-        options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -636,6 +638,7 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
 class GearTestCase2(unittest.TestCase):
     def setUp(self):
         options = AviaryValues()
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
         self.prob = om.Problem()
         self.prob.model.add_subsystem('gear_mass', LandingGearMassGroup(), promotes=['*'])
 
@@ -726,6 +729,14 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
+        options.set_val(Aircraft.Wing.FLAP_TYPE, FlapType.DOUBLE_SLOTTED, units='unitless')
+        options.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, 2, units='unitless')
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 1.225, units='kg/m**3')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -953,9 +964,15 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, val=0, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
-        options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
+        options.set_val(Aircraft.Wing.FLAP_TYPE, FlapType.DOUBLE_SLOTTED, units='unitless')
+        options.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, 2, units='unitless')
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 1.225, units='kg/m**3')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1671,6 +1688,13 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.04373)
         options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
+        options.set_val(Aircraft.Wing.FLAP_TYPE, FlapType.DOUBLE_SLOTTED, units='unitless')
+        options.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, 2, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
