@@ -34,7 +34,7 @@ class Design(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
-        add_aviary_input(self, Aircraft.Design.MAX_MACH)
+        add_aviary_input(self, Aircraft.Design.MAX_MACH, units='unitless')
 
         # Declare outputs
         add_aviary_output(self, Aircraft.Design.MACH, units='unitless')

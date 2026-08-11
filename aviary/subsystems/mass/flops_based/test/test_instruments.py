@@ -22,11 +22,8 @@ class TransportInstrumentsMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    # @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(
-        self,
-    ):
-        case_name = 'LargeSingleAisle1FLOPS'
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    def test_case(self, case_name):
         prob = self.prob
 
         inputs = get_flops_inputs(case_name, preprocess=True)
@@ -41,7 +38,6 @@ class TransportInstrumentsMassTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            # Aircraft.Design.MAX_MACH: inputs.get_val(Aircraft.Design.MAX_MACH),
         }
 
         prob.model.add_subsystem(
@@ -101,7 +97,6 @@ class TransportInstrumentsMassTest2(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            # Aircraft.Design.MAX_MACH: inputs.get_val(Aircraft.Design.MAX_MACH),
         }
 
         prob.model.add_subsystem(

@@ -158,7 +158,6 @@ class TransportFuelSystemTest2(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_ENGINES
             ),
-            # Aircraft.Design.MAX_MACH: inputs.get_val(Aircraft.Design.MAX_MACH),
         }
 
         prob.model.add_subsystem(

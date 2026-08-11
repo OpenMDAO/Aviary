@@ -53,9 +53,7 @@ class TransportUnusableFuelMassTest(unittest.TestCase):
                 Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
                 Aircraft.Wing.AREA,
             ],
-            output_keys=[  # Aircraft.Fuel.TOTAL_VOLUME,
-                Aircraft.Fuel.UNUSABLE_FUEL_MASS
-            ],
+            output_keys=[Aircraft.Fuel.UNUSABLE_FUEL_MASS],
             version=Version.TRANSPORT_and_BWB,
             tol=5e-4,
             excludes=['size_prop.*'],
@@ -121,9 +119,7 @@ class AltUnusableFuelMassTest(unittest.TestCase):
             prob,
             case_name,
             input_keys=[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],
-            output_keys=[  # Aircraft.Fuel.TOTAL_VOLUME,
-                Aircraft.Fuel.UNUSABLE_FUEL_MASS
-            ],
+            output_keys=[Aircraft.Fuel.UNUSABLE_FUEL_MASS],
             version=Version.ALTERNATE,
         )
 

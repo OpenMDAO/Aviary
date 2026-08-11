@@ -25,7 +25,7 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Hydraulics.MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.VAR_SWEEP_MASS_PENALTY, units='unitless')
-        add_aviary_input(self, Aircraft.Design.MAX_MACH)
+        add_aviary_input(self, Aircraft.Design.MAX_MACH, units='unitless')
 
         add_aviary_output(self, Aircraft.Hydraulics.MASS, units='lbm')
 

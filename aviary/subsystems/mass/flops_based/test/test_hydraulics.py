@@ -42,7 +42,6 @@ class TransportHydraulicsGroupMassTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            # Aircraft.Design.MAX_MACH: inputs.get_val(Aircraft.Design.MAX_MACH),
         }
 
         prob.model.add_subsystem(
@@ -100,7 +99,6 @@ class TransportHydraulicsGroupMassTest2(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            # Aircraft.Design.MAX_MACH: inputs.get_val(Aircraft.Design.MAX_MACH),
         }
 
         prob.model.add_subsystem(
@@ -203,7 +201,6 @@ class BWBTransportHydraulicsGroupMassTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            # Aircraft.Design.MAX_MACH: inputs.get_val(Aircraft.Design.MAX_MACH),
         }
 
         prob.model.add_subsystem(

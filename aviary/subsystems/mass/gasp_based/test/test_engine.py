@@ -68,7 +68,6 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
 
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             Aircraft.Engine.POD_MASS: 1892.24386333,
             Aircraft.Nacelle.MASS: 1018.74,
@@ -147,7 +146,6 @@ class EngineTestCase2(unittest.TestCase):
 
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             Aircraft.Engine.POD_MASS: 1892.24386333,
             'eng_comb_mass': 14370.8,
@@ -383,7 +381,6 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
         tol = 5e-4
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 23405.94,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
             Aircraft.Engine.ADDITIONAL_MASS: [882.4158, 513.0],
             Aircraft.Engine.POD_MASS: [1892.24386333, 1072.40259317],
             'eng_comb_mass': 26142.7716,
@@ -472,7 +469,6 @@ class EngineTestCaseMultiEngine2(unittest.TestCase):
         tol = 5e-4
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 23405.94,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
             Aircraft.Engine.ADDITIONAL_MASS: [882.4158, 513.0],
             Aircraft.Engine.POD_MASS: [1870.53906934, 1060.10196575],
             'eng_comb_mass': 26142.7716,
@@ -527,7 +523,6 @@ class BWBEngineTestCase(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 7005.15475443,
             Aircraft.Nacelle.MASS: 487.39296691,
             'pylon_mass': 558.757916785,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2092.30176475,
             Aircraft.Engine.ADDITIONAL_MASS: 153.16770871,
             Aircraft.Engine.POD_MASS: 1046.15088237,
             'eng_comb_mass': 7311.49017184,

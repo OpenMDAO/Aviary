@@ -29,7 +29,7 @@ class TransportStarterMass(om.ExplicitComponent):
         add_aviary_input(
             self, Aircraft.Engine.SCALE_FACTOR, shape=num_engine_type, units='unitless'
         )
-        add_aviary_input(self, Aircraft.Design.MAX_MACH)
+        add_aviary_input(self, Aircraft.Design.MAX_MACH, units='unitless')
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_STARTER_MASS, units='lbm')
 

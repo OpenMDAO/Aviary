@@ -16,7 +16,7 @@ class SurfaceControlMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.Design.MAX_MACH)
+        add_aviary_input(self, Aircraft.Design.MAX_MACH, units='unitless')
 
         add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS, units='lbm')
         add_aviary_output(self, Aircraft.Wing.CONTROL_SURFACE_AREA, units='ft**2')
