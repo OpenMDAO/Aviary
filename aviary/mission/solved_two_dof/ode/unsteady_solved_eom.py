@@ -2,8 +2,8 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
-from aviary.constants import GRAV_ENGLISH_LBM, GRAV_METRIC_GASP
-from aviary.variable_info.functions import add_aviary_input
+from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 LBF_TO_N = convert_units(1.0, 'lbf', 'N')
@@ -30,6 +30,8 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             'Removes altitude rate as an output and adjust '
             'the TAS rate equation.',
         )
+
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -214,6 +216,8 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             self.declare_partials(of=['dgam_dt_approx', 'dgam_dt'], wrt=[Aircraft.Wing.INCIDENCE])
 
     def compute(self, inputs, outputs):
+        grav_metric = self.options[Mission.GRAVITY][0]
+
         tas = inputs[Dynamic.Mission.VELOCITY]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         # convert to newtons  # TODO: change this to use the units conversion
@@ -224,7 +228,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
         i_wing = inputs[Aircraft.Wing.INCIDENCE]
 
-        g = GRAV_METRIC_GASP
+        g = grav_metric
         m = weight / g
 
         if self.options['ground_roll']:
@@ -269,6 +273,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             outputs['dgam_dt_approx'] = dgam_dr * dr_dt
 
     def compute_partials(self, inputs, partials):
+        grav_metric = self.options[Mission.GRAVITY][0]
         ground_roll = self.options['ground_roll']
 
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
@@ -291,7 +296,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
         alpha_i = alpha - i_wing
 
-        g = GRAV_METRIC_GASP
+        g = grav_metric
         m = weight / g
 
         mtas = m * tas
