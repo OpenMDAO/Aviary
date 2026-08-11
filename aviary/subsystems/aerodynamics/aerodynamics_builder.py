@@ -713,6 +713,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
     def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_timeseries() on all engine models and return combined result."""
+        if subsystem_options is None:
+            subsystem_options = {}
+
         timeseries_vars = []
 
         try:
