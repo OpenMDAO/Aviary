@@ -15,8 +15,8 @@ from aviary.subsystems.mass.gasp_based.mass_summation import (
     OperatingItemsMass,
 )
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import AircraftTypes, GASPEngineType
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
@@ -65,9 +65,16 @@ class EquipMassGroupTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -132,7 +139,7 @@ class OperatingItemsMassSumTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         # options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         # options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
 
@@ -183,9 +190,11 @@ class UsefulMassGroupTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Settings.VERBOSITY, val=0, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -238,9 +247,19 @@ class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Design.TYPE, val=AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, 0.0, units='lbm')
+        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 180, units='unitless')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -332,9 +351,19 @@ class BWBFixedEquipMassGroupTest(unittest.TestCase):
     """Created based on GASP BWB model."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Design.TYPE, val=AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, 0.0, units='lbm')
+        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 180, units='unitless')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -396,9 +425,18 @@ class BWBOperatingItemsMassSumTest(unittest.TestCase):
     """Created based on GASP BWB model."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Design.TYPE, val=AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, 0.0, units='lbm')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -446,10 +484,18 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, 0.0, units='lbm')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
