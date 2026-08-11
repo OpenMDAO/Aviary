@@ -812,7 +812,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=True, units='unitless')
         options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, val=False, units='unitless')
-        options.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [ 0.5, 1.0], units='unitless')
+        options.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [0.5, 1.0], units='unitless')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
         options.set_val(Aircraft.BWB.MAX_BAY_WIDTH, 12, units='ft')
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
@@ -1086,7 +1086,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
         prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE, 0.7, units='unitless')
         prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT, 0.7, units='unitless')
-        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, .11)
+        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.11)
         # BWBUpdateDetailedWingDist
         prob.set_val(
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,

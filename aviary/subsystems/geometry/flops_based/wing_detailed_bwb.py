@@ -201,7 +201,6 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][:] = inputs[
                 Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION
             ]
-
             outputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION'][:] = inputs[
                 Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION
             ]
@@ -360,9 +359,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         ]
 
         dtr_out_droot_chord = -wing_tip_chord / root_chord**2
-        dar_out_droot_chord = (
-            -2 * (wingspan - width) / (wing_tip_chord + root_chord) ** 2
-        )
+        dar_out_droot_chord = -2 * (wingspan - width) / (wing_tip_chord + root_chord) ** 2
         dswp_ld_path_droot_chord = (
             57.2958
             / (1 + angle**2)

@@ -112,9 +112,7 @@ class BWBFuselagePrelim(om.ExplicitComponent):
         partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.MAX_WIDTH] = (
             length + root_chord
         ) / 2.0
-        partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Wing.ROOT_CHORD] = (
-            max_width / 2.0
-        )
+        partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Wing.ROOT_CHORD] = max_width / 2.0
 
 
 class SimpleCabinLayout(om.ExplicitComponent):
@@ -496,7 +494,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         )
         J[
             Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH,
-            Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE
+            Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE,
         ] = length
 
         fact1 = (np.cos(sweep / 57.296)) ** 2
@@ -514,7 +512,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
             -tan_sweep / 2.0 / rear_spar_percent_chord_root
         )
         J[Aircraft.Wing.ROOT_CHORD, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT] = (
-            -sidewall / rear_spar_percent_chord_root ** 2
+            -sidewall / rear_spar_percent_chord_root**2
         )
 
         J[Aircraft.Fuselage.CABIN_AREA, Aircraft.Fuselage.LENGTH] = (

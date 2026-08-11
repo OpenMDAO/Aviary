@@ -45,13 +45,13 @@ class NacelleMass(om.ExplicitComponent):
         shape = np.arange(num_engine_type)
 
         self.declare_partials(
-            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_DIAMETER, rows=shape, cols=shape,
+            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_DIAMETER, rows=shape, cols=shape
         )
         self.declare_partials(
-            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_LENGTH, rows=shape, cols=shape,
+            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_LENGTH, rows=shape, cols=shape
         )
         self.declare_partials(
-            Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER, rows=shape, cols=shape,
+            Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER, rows=shape, cols=shape
         )
         self.declare_partials(
             Aircraft.Nacelle.MASS,

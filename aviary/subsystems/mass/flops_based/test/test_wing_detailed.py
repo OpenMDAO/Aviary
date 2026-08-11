@@ -731,7 +731,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
         aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [0.0,0.2075, 0.415, 0.6927, 0.928, 1.0],
+            [0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
             units='unitless',
         )
         aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')

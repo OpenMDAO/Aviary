@@ -328,7 +328,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
         J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.Fuselage.CABIN_AREA] = (
             J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Fuselage.CABIN_AREA] * fac
         )
-        daftbody_tr_droot_chord = ((1.0 - rear_spar_percent_chord)) / (
+        daftbody_tr_droot_chord = (1.0 - rear_spar_percent_chord) / (
             (1.0 - rear_spar_percent_chord_centerline) * length
         )
         J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Wing.ROOT_CHORD] = (
@@ -341,9 +341,9 @@ class BWBAftBodyMass(om.ExplicitComponent):
         J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.Wing.ROOT_CHORD] = (
             J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Wing.ROOT_CHORD] * fac
         )
-        daftbody_tr_dlength = -(
-            (1.0 - rear_spar_percent_chord) * root_chord
-        ) / ((1.0 - rear_spar_percent_chord_centerline) * length**2)
+        daftbody_tr_dlength = -((1.0 - rear_spar_percent_chord) * root_chord) / (
+            (1.0 - rear_spar_percent_chord_centerline) * length**2
+        )
         J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Fuselage.LENGTH] = (
             (1.0 + 0.05 * num_fuse_eng)
             * 0.53
@@ -355,9 +355,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
             J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Fuselage.LENGTH] * fac
         )
         daftbody_tr_drspc = (
-            -1.0
-            * root_chord
-            / ((1.0 - rear_spar_percent_chord_centerline) * length)
+            -1.0 * root_chord / ((1.0 - rear_spar_percent_chord_centerline) * length)
         )
         J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT] = (
             (1.0 + 0.05 * num_fuse_eng)
@@ -369,9 +367,9 @@ class BWBAftBodyMass(om.ExplicitComponent):
         J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT] = (
             J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT] * fac
         )
-        daftbody_tr_drspcc = (
-            (1.0 - rear_spar_percent_chord) * root_chord
-        ) / ((1.0 - rear_spar_percent_chord_centerline) ** 2 * length)
+        daftbody_tr_drspcc = ((1.0 - rear_spar_percent_chord) * root_chord) / (
+            (1.0 - rear_spar_percent_chord_centerline) ** 2 * length
+        )
         J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE] = (
             (1.0 + 0.05 * num_fuse_eng)
             * 0.53

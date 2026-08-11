@@ -518,7 +518,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
         rtol = 1e-3
         val = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_MASS, units='lbm')
-        assert_near_equal(val, 2394.3, rtol)  #2406 FLOPS
+        assert_near_equal(val, 2394.3, rtol)  # 2406 FLOPS
 
         val = prob.get_val(Aircraft.Wing.SHEAR_CONTROL_MASS, units='lbm')
         assert_near_equal(val, 6017.4, rtol)
@@ -533,7 +533,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         assert_near_equal(val, 26965.0, rtol)
 
         val = prob.get_val(Aircraft.Design.EMPTY_MASS, units='lbm')
-        assert_near_equal(val, 91641.0, rtol) # 91688 FLOPS
+        assert_near_equal(val, 91641.0, rtol)  # 91688 FLOPS
 
     def test_case_root_chord_idx_2(self):
         # Test detailed wing where root chord starts at index 1.
@@ -563,10 +563,10 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
         rtol = 1e-3
         val = prob.get_val(Aircraft.Wing.AREA, units='ft**2')
-        assert_near_equal(val, 3715.5, rtol)  #3715 FLOPS
+        assert_near_equal(val, 3715.5, rtol)  # 3715 FLOPS
 
         val = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_MASS, units='lbm')
-        assert_near_equal(val, 2394.8, rtol)  #2406 FLOPS
+        assert_near_equal(val, 2394.8, rtol)  # 2406 FLOPS
 
         val = prob.get_val(Aircraft.Wing.SHEAR_CONTROL_MASS, units='lbm')
         assert_near_equal(val, 5994.2, rtol)
@@ -581,7 +581,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         assert_near_equal(val, 26964.0, rtol)
 
         val = prob.get_val(Aircraft.Design.EMPTY_MASS, units='lbm')
-        assert_near_equal(val, 91585.2, rtol) # 91611 FLOPS
+        assert_near_equal(val, 91585.2, rtol)  # 91611 FLOPS
 
 
 @use_tempdirs
@@ -787,9 +787,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # PropulsionMass
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 61597.102467771889, tol)
         # SystemsEquipMass
-        assert_near_equal(
-            prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 101999.04844105, tol
-        )
+        assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 101999.04844105, tol)
         # EmptyMass
         assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 437187.15893079, tol)
         # OperatingMass
