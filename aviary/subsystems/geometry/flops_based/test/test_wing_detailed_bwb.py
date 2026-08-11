@@ -155,7 +155,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         )  # CHD
         prob.set_val(
             Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
-            val=[0.125,0.125, 0.076, 0.076, 0.076, 0.06],
+            val=[0.125, 0.125, 0.076, 0.076, 0.076, 0.06],
         )  # TOC
         prob.set_val(
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
