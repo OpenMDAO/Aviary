@@ -32,6 +32,12 @@ class PropulsionPreMissionTest(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
+        reference_sls_thrust = options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, reference_sls_thrust, units='lbf'
+        )
+        engine_scale_factor = options.get_val(Aircraft.Engine.SCALE_FACTOR, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, engine_scale_factor)
 
         setup_model_options(self.prob, options)
 
@@ -58,6 +64,13 @@ class PropulsionPreMissionTest(unittest.TestCase):
         engine2 = build_engine_deck(engine_2_inputs)
         engine_models = [engine1, engine2]
         preprocess_options(options, engine_models=engine_models)
+
+        reference_sls_thrust = options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, reference_sls_thrust, units='lbf'
+        )
+        engine_scale_factor = options.get_val(Aircraft.Engine.SCALE_FACTOR, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, engine_scale_factor)
 
         setup_model_options(self.prob, options, engine_models=engine_models)
 
@@ -125,13 +138,16 @@ class BWBPropulsionPreMissionTest(unittest.TestCase):
             aviary_options=options, engine_models=[build_engine_deck(options)]
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, [0.8096304384])
+        reference_sls_thrust = options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, reference_sls_thrust, units='lbf'
+        )
+        engine_scale_factor = options.get_val(Aircraft.Engine.SCALE_FACTOR, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, engine_scale_factor)
 
         setup_model_options(self.prob, options)
 
         self.prob.setup(force_alloc_complex=True)
-        # self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
-        #     Aircraft.Engine.SCALED_SLS_THRUST, units='lbf'))
 
         self.prob.run_model()
 

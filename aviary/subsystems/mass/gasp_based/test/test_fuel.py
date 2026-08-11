@@ -357,13 +357,17 @@ class FuelComponentsTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Fuel.TOTAL_CAPACITY, val=55725.1, units='lbm')
 
-        setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
-        )
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
     def test_case1(self):
+        """not to smooth mass discontinuties (OEM_wingfuel_wt > volume_wingfuel_wt)"""
+        setup_model_options(
+            self.prob,
+            AviaryValues(
+                {
+                    Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES: (False, 'unitless'),
+                }
+            ),
+        )
+        self.prob.setup(check=False, force_alloc_complex=True)
         self.prob.run_model()
 
         tol = 2e-4
@@ -371,7 +375,31 @@ class FuelComponentsTestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 857.480639944284, tol)
         assert_near_equal(self.prob['OEM_fuel_vol'], 1577.160566039489, tol)
         assert_near_equal(self.prob[Mission.OPERATING_MASS], 96508.0, tol)
+        assert_near_equal(self.prob['payload_mass_max_fuel'], 23166.9, tol)
+        assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
+        assert_near_equal(self.prob['max_wingfuel_mass'], 55725.1, tol)
 
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
+
+    def test_case2(self):
+        """smooth mass discontinuties"""
+        setup_model_options(
+            self.prob,
+            AviaryValues(
+                {
+                    Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES: (True, 'unitless'),
+                }
+            ),
+        )
+        self.prob.setup(check=False, force_alloc_complex=True)
+        self.prob.run_model()
+
+        tol = 2e-4
+        assert_near_equal(self.prob['OEM_wingfuel_mass'], 78894, tol)
+        assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 857.480639944284, tol)
+        assert_near_equal(self.prob['OEM_fuel_vol'], 1577.160566039489, tol)
+        assert_near_equal(self.prob[Mission.OPERATING_MASS], 96508.0, tol)
         assert_near_equal(self.prob['payload_mass_max_fuel'], 23166.9, tol)
         assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
         assert_near_equal(self.prob['max_wingfuel_mass'], 55725.1, tol)

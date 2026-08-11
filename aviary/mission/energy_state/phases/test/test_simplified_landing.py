@@ -4,7 +4,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary import constants
 from aviary.mission.energy_state.phases.simplified_landing import LandingCalc, LandingGroup
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -22,9 +21,7 @@ class LandingCalcTest(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(Mission.FINAL_MASS, val=152800.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            Dynamic.Atmosphere.DENSITY, val=constants.RHO_SEA_LEVEL_METRIC, units='kg/m**3'
-        )
+        self.prob.model.set_input_defaults(Dynamic.Atmosphere.DENSITY, val=1.225, units='kg/m**3')
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.0, units='ft**2')
         self.prob.model.set_input_defaults(
             Mission.Landing.LIFT_COEFFICIENT_MAX, val=3, units='unitless'

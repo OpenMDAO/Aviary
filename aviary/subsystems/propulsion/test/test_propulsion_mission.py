@@ -29,10 +29,6 @@ class PropulsionMissionTest(unittest.TestCase):
         self.options = AviaryValues()
         self.options.set_val(Settings.VERBOSITY, 0)
 
-    @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse('3.26'),
-        'Skipping due to OpenMDAO version being too low (<3.26)',
-    )
     def test_case_1(self):
         # 'clean' test using GASP-derived engine deck
         nn = 20
@@ -434,6 +430,7 @@ class PropulsionMissionTest(unittest.TestCase):
             val=True,
             units='unitless',
         )
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
 
         # turboprop using turboshaft engine deck and hamilton standard propeller model

@@ -11,8 +11,8 @@ from aviary.variable_info.variables import Aircraft, Settings
 
 class PropulsionPreMission(om.Group):
     """
-    Group that contains propulsion calculations for pre-mission analysis, such as
-    computing scaling factors, and sums propulsion-system level totals.
+    Group that contains propulsion calculations for pre-mission analysis for each EngineModel, such
+    as computing scaling factors, and sums propulsion-system level totals.
     """
 
     def initialize(self):
@@ -41,10 +41,9 @@ class PropulsionPreMission(om.Group):
         engine_options = self.options['engine_options']
         num_engine_type = len(engine_models)
 
-        # Each engine model pre_mission component only needs to accept and output single
-        # value relevant to that variable - this group's configure step will handle
-        # promoting/connecting just the relevant index in vectorized inputs/outputs for
-        # each component here
+        # Each engine model pre_mission component only needs to accept and output single value
+        # relevant to that variable - this group's configure step will handle promoting/connecting
+        # just the relevant index in vectorized inputs/outputs for each component here
         # Promotions are handled in configure()
         for engine in engine_models:
             options = {}
@@ -63,8 +62,8 @@ class PropulsionPreMission(om.Group):
                 )
 
         if num_engine_type > 1:
-            # Add an empty mux comp, which will be customized to handle all required
-            # outputs in configure()
+            # Add an empty mux comp, which will be customized to handle all required outputs in
+            # configure()
             self.add_subsystem('pre_mission_mux', subsys=om.MuxComp(), promotes_outputs=['*'])
 
         self.add_subsystem(
@@ -76,9 +75,9 @@ class PropulsionPreMission(om.Group):
 
     def configure(self):
         # Special configure step needed to handle multiple, unique engine models.
-        # Each engine's pre_mission component should only handle single instance of engine,
-        # so vectorized inputs/outputs are a problem. Slice all needed vector inputs and pass
-        # pre_mission components only the value they need, then mux all the outputs back together
+        # Each engine's pre_mission component should only handle single instance of engine, so
+        # vectorized inputs/outputs are a problem. Slice all needed vector inputs and pass
+        # pre_mission components only the value they need, then mux all the outputs back together.
 
         engine_models = self.options['engine_models']
         num_engine_type = len(engine_models)
@@ -119,40 +118,30 @@ class PropulsionPreMission(om.Group):
             )
             # switch dictionary keys to promoted name rather than full path
             # only handle variables that were top-level promoted inside engine model
-            eng_inputs = dict(
-                [
-                    (eng_inputs[key]['prom_name'], eng_inputs[key])
-                    for key in eng_inputs
-                    if '.' not in eng_inputs[key]['prom_name']
-                ]
-            )
+            eng_inputs = {
+                eng_inputs[key]['prom_name']: eng_inputs[key]
+                for key in eng_inputs
+                if '.' not in eng_inputs[key]['prom_name']
+            }
             # only keep inputs if they contain the pattern
-            input_dict[engine.name] = dict(
-                (key, eng_inputs[key]) for key in eng_inputs if any([x in key for x in pattern])
-            )
+            input_dict[engine.name] = {
+                key: eng_inputs[key] for key in eng_inputs if any(x in key for x in pattern)
+            }
 
             # do the same thing with outputs
             eng_outputs = engine.list_outputs(
                 return_format='dict', units=True, out_stream=out_stream, all_procs=True
             )
-            eng_outputs = dict(
-                [
-                    (eng_outputs[key]['prom_name'], eng_outputs[key])
-                    for key in eng_outputs
-                    if '.' not in eng_outputs[key]['prom_name']
-                ]
-            )
-            output_dict[engine.name] = dict(
-                (key, eng_outputs[key]) for key in eng_outputs if any([x in key for x in pattern])
-            )
+            eng_outputs = {
+                eng_outputs[key]['prom_name']: eng_outputs[key]
+                for key in eng_outputs
+                if '.' not in eng_outputs[key]['prom_name']
+            }
+            output_dict[engine.name] = {
+                key: eng_outputs[key] for key in eng_outputs if any(x in key for x in pattern)
+            }
             unique_outputs.update(
-                [
-                    (
-                        key,
-                        output_dict[engine.name][key]['units'],
-                    )
-                    for key in output_dict[engine.name]
-                ]
+                [(key, output_dict[engine.name][key]['units']) for key in output_dict[engine.name]]
             )
 
             # slice incoming inputs for this engine, so it only gets the correct index
@@ -176,8 +165,7 @@ class PropulsionPreMission(om.Group):
                 ],
             )
 
-        # add variables to the mux component and make connections to individual
-        # component outputs
+        # add variables to the mux component and make connections to individual component outputs
         if num_engine_type > 1:
             for output in unique_outputs:
                 self.pre_mission_mux.add_var(output, units=unique_outputs[output])
@@ -190,8 +178,8 @@ class PropulsionPreMission(om.Group):
                             'pre_mission_mux.' + output + '_' + str(i),
                         )
                     else:
-                        # If this component does not provide the output, pass the existing
-                        # value for that index to the mux
+                        # If this component does not provide the output, pass the existing value for
+                        # that index to the mux
                         self.connect(
                             output,
                             'pre_mission_mux.' + output + '_' + str(i),

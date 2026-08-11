@@ -33,7 +33,6 @@ class FlightODE(TwoDOFODE):
         self.options.declare('EAS_target', desc='Targeted EAS in knots')
 
     def setup(self):
-        self.options['auto_order'] = True
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']

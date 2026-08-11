@@ -2,6 +2,7 @@ import inspect
 import sys
 import warnings
 from importlib.util import module_from_spec, spec_from_file_location
+import numpy as np
 from pathlib import Path
 
 import dymos as dm
@@ -9,8 +10,7 @@ import openmdao.api as om
 from dymos.utils.misc import _unspecified
 from openmdao.utils.mpi import MPI
 
-from aviary.core.post_mission_group import PostMissionGroup
-from aviary.core.pre_mission_group import PreMissionGroup
+from aviary.core.static_group import StaticGroup
 from aviary.interface.utils import set_warning_format
 from aviary.mission.energy_state_problem_configurator import EnergyStateProblemConfigurator
 from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
@@ -70,7 +70,7 @@ class AviaryGroup(om.Group):
     def __init__(self, verbosity=None, **kwargs):
         super().__init__(**kwargs)
 
-        self.post_mission = PostMissionGroup()
+        self.post_mission = StaticGroup()
         self.verbosity = verbosity
         self.external_subsystems = []
         self.engine_models = []
@@ -113,6 +113,7 @@ class AviaryGroup(om.Group):
         # aviary_group's setup is not complete until after configure.
         sbc_vars = set()
         non_sbc_vars = set()
+        shapes = {}
         for sub in self.system_iter(recurse=False, typ=om.Group):
             pr2abs = sub._resolver.prom2abs_iter('input')
             if sub.pathname == 'traj':
@@ -136,6 +137,11 @@ class AviaryGroup(om.Group):
                 else:
                     non_sbc_vars.add(prom_name)
 
+                    # Find shaped inputs as well.
+                    shape = meta.get('shape')
+                    if np.prod(shape) > 1:
+                        shapes[prom_name] = shape
+
         sbc_only_vars = sbc_vars - non_sbc_vars
 
         for key in aviary_metadata:
@@ -151,16 +157,28 @@ class AviaryGroup(om.Group):
 
             if key in aviary_options:
                 val, units = aviary_options.get_item(key)
+                val_in_csv_file = True
             else:
                 val = aviary_metadata[key]['default_value']
                 units = aviary_metadata[key]['units']
+                val_in_csv_file = False
 
                 if val is None:
                     # optional, but no default value
                     continue
 
             kwargs = {'units': units}
+
             if key not in sbc_only_vars:
+                # If var has been declared with a shape, and isn't in the aviary_inputs, then
+                # take the default val and broadcast it.
+
+                if not val_in_csv_file and aviary_metadata[key]['multivalue']:
+                    if key in shapes and np.isscalar(val):
+                        scalar_val = val
+                        val = np.empty(shapes[key])
+                        val[:] = scalar_val
+
                 # Default val if var doesn't use shape_by_conn.
                 kwargs['val'] = val
 
@@ -206,6 +224,28 @@ class AviaryGroup(om.Group):
                     phase.indep_states.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
                     phase.indep_states.linear_solver = om.DirectSolver(rhs_checking=True)
 
+    def _override_verbosity(self, verbosity):
+        """
+        Overrides verbosity setting for this method.
+
+        Parameters
+        ----------
+        verbosity : int, Verbosity (optional)
+            Verbosity level requested for this method.
+
+        Returns
+        -------
+        Verbosity
+            New verbosity for this method.
+        """
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
+        return verbosity
+
     def load_inputs(
         self,
         aircraft_data,
@@ -224,13 +264,7 @@ class AviaryGroup(om.Group):
         This method is not strictly necessary; a user could also supply
         an AviaryValues object and/or phase_info dict of their own.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         # validate phase info modifier function
         if phase_info_modifier is not None:
@@ -339,17 +373,10 @@ class AviaryGroup(om.Group):
         ----------
         external_subsystems : list of SubsystemBuilders
             List of all external subsystems to be added.
-
         verbosity : int, Verbosity (optional)
-            Sets the printout level for the entire off-design problem that is ran.
+            Verbosity level for this API call.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         for subsystem in external_subsystems:
             if not isinstance(subsystem, SubsystemBuilder) and verbosity >= verbosity.BRIEF:
@@ -370,13 +397,7 @@ class AviaryGroup(om.Group):
         This method checks the user-supplied input values for any potential problems
         and preprocesses the inputs to prepare them for use in the Aviary problem.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         aviary_inputs = self.aviary_inputs
         # Target_distance verification for all phases
@@ -559,7 +580,7 @@ class AviaryGroup(om.Group):
 
         A user can override this method with their own pre-mission systems as desired.
         """
-        pre_mission = PreMissionGroup()
+        pre_mission = StaticGroup()
         all_subsystem_options = self.pre_mission_info.get('subsystem_options', {})
 
         self.add_subsystem(
@@ -569,7 +590,7 @@ class AviaryGroup(om.Group):
             promotes_outputs=['aircraft:*', 'mission:*'],
         )
 
-        # TODO temporary until way to merge PreMissionGroup and CorePreMission group is found
+        # TODO temporary until way to merge StaticGroup and CorePreMission group is found
         core_subsystems = self.subsystems[0:5]
 
         # Propulsion isn't included in core pre-mission group to avoid override step in
@@ -715,13 +736,7 @@ class AviaryGroup(om.Group):
         -------
         traj: The Dymos Trajectory object containing the added mission phases.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         if self.phase_info_modifier is not None:
             self.mission_info, self.post_mission_info = self.phase_info_modifier(
@@ -824,13 +839,7 @@ class AviaryGroup(om.Group):
 
         A user can override this with their own postmission systems.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         post_mission = self.post_mission
         self.add_subsystem(
@@ -1111,13 +1120,7 @@ class AviaryGroup(om.Group):
         If a variable is common to two phases, it can be linked via a direct connection or a
         constraint.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity override for
-        # just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         self._add_bus_variables_and_connect()
         self._connect_mission_bus_variables()
@@ -1486,13 +1489,7 @@ class AviaryGroup(om.Group):
         In all cases, a design variable is added for the final cruise mass of the aircraft, with no
         upper bound, and a residual mass constraint is added to ensure that the mass balances.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         all_subsystems = self.subsystems
 
@@ -1641,13 +1638,7 @@ class AviaryGroup(om.Group):
         if not hasattr(self, 'traj'):
             return
 
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
+        verbosity = self._override_verbosity(verbosity)
 
         target_prob = self
         if parent_prob is not None and parent_prefix != '':

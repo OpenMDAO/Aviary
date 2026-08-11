@@ -21,6 +21,12 @@ class ExternalSubsystemGroup(om.Group):
 class BaseODE(om.Group):
     """The base class for all ODE components."""
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Turn on for all ODE systems.
+        self.options['auto_order'] = True
+
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
         self.options.declare(
@@ -101,12 +107,13 @@ class BaseODE(om.Group):
 
             if subsystem_mission is not None:
                 target = self
-                needs_sovler = subsystem.needs_mission_solver(
+                needs_solver = subsystem.needs_mission_solver(
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options=subsystem_options,
                 )
 
-                if needs_sovler and solver_group is not None:
+                if needs_solver and solver_group is not None:
                     target = solver_group
                     use_mission_solver = True
 

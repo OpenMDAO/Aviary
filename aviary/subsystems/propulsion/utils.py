@@ -17,6 +17,7 @@ from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import isiterable
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+import warnings
 
 
 class EngineModelVariables(Enum):
@@ -97,8 +98,12 @@ def convert_geopotential_altitude(altitude):
     except TypeError:
         altitude = [altitude]
 
-    g = constants.GRAV_METRIC_FLOPS
-    radius_earth = constants.RADIUS_EARTH_METRIC
+    g = constants.GRAV_EARTH
+    radius_earth = constants.RADIUS_EARTH[0]  # meters
+    if constants.RADIUS_EARTH[1] != 'm':
+        warnings.warn(
+            'convert_geopotential_altitude() only functions properly when constants.RADIUS_EARTH is specified in meters!'
+        )
     CM1 = 0.99850  # Center of mass (Earth)? Unknown
     OC2 = 26.76566e-10  # Unknown
     GNS = 9.8236930  # grav_accel_at_surface_earth?

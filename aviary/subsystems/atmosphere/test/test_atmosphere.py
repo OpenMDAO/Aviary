@@ -318,14 +318,12 @@ class MILSPEC210AColdTestCase1(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
 
-        # inHg60 is a newer unit in OpenMDAO so we'll do this check only of that newer version is installed
-        if Version(openmdao.__version__) >= Version('3.42.0'):
-            with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
-                assert_near_equal(
-                    self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
-                    expected_pressure,
-                    tol,
-                )
+        with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
+            assert_near_equal(
+                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                expected_pressure,
+                tol,
+            )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -400,13 +398,12 @@ class MILSPEC210ATropicalTestCase1(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
 
-        if Version(openmdao.__version__) >= Version('3.42.0'):
-            with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
-                assert_near_equal(
-                    self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
-                    expected_pressure,
-                    tol,
-                )
+        with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
+            assert_near_equal(
+                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                expected_pressure,
+                tol,
+            )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -481,13 +478,12 @@ class MILSPEC210AHotTestCase1(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
 
-        if Version(openmdao.__version__) >= Version('3.42.0'):
-            with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
-                assert_near_equal(
-                    self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
-                    expected_pressure,
-                    tol,
-                )
+        with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
+            assert_near_equal(
+                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                expected_pressure,
+                tol,
+            )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -562,13 +558,12 @@ class MILSPEC210APolarTestCase1(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
 
-        if Version(openmdao.__version__) >= Version('3.42.0'):
-            with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
-                assert_near_equal(
-                    self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
-                    expected_pressure,
-                    tol,
-                )
+        with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
+            assert_near_equal(
+                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                expected_pressure,
+                tol,
+            )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
