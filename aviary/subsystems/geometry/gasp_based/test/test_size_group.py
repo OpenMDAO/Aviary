@@ -7,7 +7,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
 
@@ -18,7 +18,6 @@ class SizeGroupTestCase1(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
@@ -32,6 +31,7 @@ class SizeGroupTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.0003097, units='unitless'
         )
@@ -143,7 +143,6 @@ class SizeGroupTestCase2(unittest.TestCase):
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
@@ -157,6 +156,7 @@ class SizeGroupTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless'
         )
@@ -281,7 +281,6 @@ class SizeGroupTestCase3(unittest.TestCase):
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
@@ -295,6 +294,7 @@ class SizeGroupTestCase3(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless'
         )
@@ -416,7 +416,6 @@ class SizeGroupTestCase4(unittest.TestCase):
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
@@ -430,6 +429,7 @@ class SizeGroupTestCase4(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless'
         )
@@ -555,7 +555,6 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
@@ -570,6 +569,7 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 30.0, units='deg')
