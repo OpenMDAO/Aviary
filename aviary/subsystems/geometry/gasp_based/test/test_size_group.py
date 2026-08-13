@@ -31,7 +31,7 @@ class SizeGroupTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.0003097, units='unitless'
         )
@@ -156,7 +156,7 @@ class SizeGroupTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless'
         )
@@ -294,7 +294,7 @@ class SizeGroupTestCase3(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless'
         )
@@ -429,7 +429,7 @@ class SizeGroupTestCase4(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless'
         )
@@ -569,7 +569,7 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 30.0, units='deg')
