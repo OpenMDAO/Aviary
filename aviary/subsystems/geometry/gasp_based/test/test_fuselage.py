@@ -26,7 +26,6 @@ class FuselageParametersTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180)
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
@@ -39,6 +38,7 @@ class FuselageParametersTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
 
         setup_model_options(self.prob, options)
@@ -62,7 +62,6 @@ class FuselageParametersTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=30, units='unitless')
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
@@ -75,6 +74,7 @@ class FuselageParametersTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
 
         setup_model_options(self.prob, options)
@@ -175,7 +175,6 @@ class FuselageGroupTestCase1(
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
@@ -188,6 +187,7 @@ class FuselageGroupTestCase1(
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
 
         self.prob.model.set_input_defaults(Aircraft.Fuselage.NOSE_FINENESS, 1, units='unitless')
@@ -222,7 +222,6 @@ class FuselageGroupTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')  # not actual GASP value
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)  # not actual GASP value
         options.set_val(
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6
@@ -241,6 +240,9 @@ class FuselageGroupTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch'
+        )  # not actual GASP value
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft'
         )  # not actual GASP value
@@ -281,7 +283,6 @@ class FuselageGroupTestCase3(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=30, units='unitless')
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')  # not actual GASP value
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)  # not actual GASP value
         options.set_val(
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1
@@ -300,6 +301,9 @@ class FuselageGroupTestCase3(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch'
+        )  # not actual GASP value
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft'
         )  # not actual GASP value
@@ -340,7 +344,6 @@ class FuselageGroupTestCase4(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=30, units='unitless')
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')  # not actual GASP value
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)  # not actual GASP value
         options.set_val(
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1
@@ -359,6 +362,9 @@ class FuselageGroupTestCase4(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch'
+        )  # not actual GASP value
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft'
         )  # not actual GASP value
@@ -403,7 +409,7 @@ class BWBFuselageParameters1TestCase(unittest.TestCase):
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
         self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         self.aviary_options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
-        self.aviary_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
+        # self.aviary_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.aviary_options.set_val(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch'
         )
@@ -419,6 +425,7 @@ class BWBFuselageParameters1TestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.25970, units='unitless'
         )
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL, 0.0, units='ft'
         )
@@ -453,17 +460,18 @@ class BWBLayoutTestCase(unittest.TestCase):
         self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21.0, units='inch')
         self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28.0, units='inch')
         self.aviary_options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
-        self.aviary_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
+        # self.aviary_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.aviary_options.set_val(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch'
         )
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 150)
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
-        self.aviary_options.set_val(Settings.VERBOSITY, 3, units='unitless')
+        self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
 
         self.prob.model.add_subsystem('bwb_cabin_layout', BWBCabinLayout(), promotes=['*'])
 
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.prob.model.set_input_defaults(
             Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 65.0, units='deg'
         )
@@ -623,7 +631,6 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
-        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 150)
@@ -638,6 +645,7 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 5.0, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.25970, units='unitless'
