@@ -3573,7 +3573,6 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.WS', 'FLOPS': None},
     units='inch',
     desc='width of the economy class seats',
-    option=True,
     default_value=0.0,
 )
 
