@@ -448,8 +448,6 @@ class BWBCabinLayout(om.ExplicitComponent):
     """layout of passenger cabin for BWB."""
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_FIRST, units='inch', desc='WS_FC')
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES, units='unitless', desc='INGASP.AS')
         add_aviary_option(
             self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, units='inch', desc='PS_FC'
@@ -470,6 +468,8 @@ class BWBCabinLayout(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL, units='ft')
         self.add_input('nose_length', units='ft', desc='L_NOSE: nose length')
         add_aviary_input(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
+        add_aviary_input(self, Aircraft.Fuselage.SEAT_WIDTH_FIRST, units='inch', desc='WS_FC')
+        add_aviary_input(self, Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, units='inch')
         add_aviary_input(self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, units='inch')
 
         self.add_output(
@@ -489,12 +489,12 @@ class BWBCabinLayout(om.ExplicitComponent):
         FC_lav_galley_length = 8.0  # EL_FLGC: length of first class lavatory, galley & closet, ft
         FC_num_aisles = 2  # AS_FC: num of aisles in first class
         FC_aisle_width = 24.0  # WAS_FC: First class aisle width, inch
-        FC_seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_FIRST]
+        FC_seat_width = inputs[Aircraft.Fuselage.SEAT_WIDTH_FIRST][0]
         FC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST]
 
         BC_lav_galley_length = 8.0
         BC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS]
-        BC_seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_BUSINESS]
+        BC_seat_width = inputs[Aircraft.Fuselage.SEAT_WIDTH_BUSINESS][0]
 
         TC_num_pax_per_lav = 78  # NLAVTC: economy class passengers per lavatory
         TC_lav_width = 42.0  # WIDLAV: lavatory width, inches, in FLOPS, WIDTHL

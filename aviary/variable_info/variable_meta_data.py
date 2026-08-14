@@ -3563,7 +3563,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
     desc='width of the business class seats',
-    option=True,
     default_value=0.0,
 )
 
@@ -3582,7 +3581,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
     desc='width of the first class seats',
-    option=True,
     default_value=0.0,
 )
 

@@ -3064,6 +3064,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
             promotes=['*'],
         )
 
+        prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 22, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         # inputs from SizeGroup

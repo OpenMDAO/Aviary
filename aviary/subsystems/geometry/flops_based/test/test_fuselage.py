@@ -56,12 +56,12 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         # options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, units='unitless')
         # options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, units='unitless')
         # options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='unitless')
-        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 25, units='inch')
 
         prob.model.add_subsystem(
             'layout', DetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
         )
+        self.prob.model.set_input_defaults(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 25, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20, units='inch')
         setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)
@@ -94,12 +94,12 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 62, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
         options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 22, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 21, units='inch')
 
         prob.model.add_subsystem(
             'layout', DetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
         )
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 22, units='inch')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 21, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 18, units='inch')
         setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)

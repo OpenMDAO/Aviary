@@ -568,6 +568,7 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 22, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')

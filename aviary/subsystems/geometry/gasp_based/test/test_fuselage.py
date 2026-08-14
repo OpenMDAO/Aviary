@@ -463,7 +463,6 @@ class BWBLayoutTestCase(unittest.TestCase):
 
         self.aviary_options = AviaryValues()
 
-        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28.0, units='inch')
         self.aviary_options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         # self.aviary_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.aviary_options.set_val(
@@ -476,6 +475,7 @@ class BWBLayoutTestCase(unittest.TestCase):
 
         self.prob.model.add_subsystem('bwb_cabin_layout', BWBCabinLayout(), promotes=['*'])
 
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28.0, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21.0, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.prob.model.set_input_defaults(
@@ -533,8 +533,10 @@ class BWBLayoutTestCase(unittest.TestCase):
         self.aviary_options.set_val(
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, val=20, units='unitless'
         )
-        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, val=25.0, units='inch')
         setup_model_options(self.prob, self.aviary_options)
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, val=25.0, units='inch'
+        )
         self.prob.setup()
 
         self.prob.run_model()
@@ -634,7 +636,6 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
@@ -650,6 +651,7 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 5.0, units='ft')
