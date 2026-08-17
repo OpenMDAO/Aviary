@@ -13,7 +13,7 @@ from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder as DBFMassB
 from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import phase_info
 from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
 from aviary.variable_info.UAV_variables import Aircraft, Dynamic
-from aviary.variable_info.variables import  Settings
+from aviary.variable_info.variables import  Settings, Mission
 
 
 from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
@@ -129,6 +129,17 @@ def CruiseExample():
 
 
     prob.setup()
+
+    # Add special rescaling for small aircraft
+    prob.model.set_constraint_options(Mission.Constraints.MASS_RESIDUAL, ref=1)
+    prob.model.set_design_var_options(Aircraft.Design.GROSS_MASS, lower=2, upper=50, ref=1)
+    prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1)
+    prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1)
+    prob.model.set_constraint_options('cruise_duration_constraint.duration_resid', ref=10)
+    # prob.model.set_constraint_options(Mission.Constraints.RANGE_RESIDUAL, ref=1)
+    # prob.model.set_constraint_options('thrust_residual', ref=0.01, upper=0.01, lower=-0.01)
+    # prob.model.set_constraint_options('mass', ref=1)
+
 
     prob.set_solver_print(level=0)
     prob.set_initial_guesses()

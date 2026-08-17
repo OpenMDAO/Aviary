@@ -36,6 +36,7 @@ class CorePreMission(om.Group):
         )
 
     def setup(self, **kwargs):
+        # rely on openMDAO's auto-ordering for this group
         self.options['auto_order'] = True
 
         aviary_options = self.options['aviary_options']
