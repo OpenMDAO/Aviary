@@ -235,27 +235,27 @@ class DetailedCabinLayout(om.ExplicitComponent):
         # The 200 was derived from B757 - the largest single aisle western desig.
         if num_economy_class_pax > 200:
             if num_seat_abreast_economy <= 0:
-                num_seat_abreast_economy = 8
+                # num_seat_abreast_economy = 8
                 raise UserWarning(
                     'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY is not set.'
                 )
             if num_first_class_pax > 0 and num_seat_abreast_first <= 0:
-                num_seat_abreast_first = num_seat_abreast_economy - 2
+                # num_seat_abreast_first = num_seat_abreast_economy - 2
                 raise UserWarning('Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST is not set.')
             if num_business_class_pax > 0 and num_seat_abreast_business <= 0:
-                num_seat_abreast_business = num_seat_abreast_economy - 2
+                # num_seat_abreast_business = num_seat_abreast_economy - 2
                 raise UserWarning(
                     'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BASINESS is not set.'
                 )
 
         if num_seat_abreast_first <= 0 and num_first_class_pax > 0:
-            num_seat_abreast_first = 4
+            # num_seat_abreast_first = 4
             raise UserWarning('Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST is not set.')
         if num_seat_abreast_economy <= 0 and num_economy_class_pax > 0:
-            num_seat_abreast_economy = 6
+            # num_seat_abreast_economy = 6
             raise UserWarning('Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY is not set.')
         if num_seat_abreast_business <= 0 and num_business_class_pax > 0:
-            num_seat_abreast_business = 5
+            # num_seat_abreast_business = 5
             raise UserWarning('Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS is not set')
 
         # Though these are not user definable, the values here are typical for most transport
@@ -268,7 +268,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
         # is too much for a typical short range transport.
         if num_economy_class_pax < 60:
             if num_seat_abreast_economy <= 0:
-                num_seat_abreast_economy = 5
+                # num_seat_abreast_economy = 5
                 raise UserWarning(
                     'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY is not set.'
                 )
@@ -291,15 +291,15 @@ class DetailedCabinLayout(om.ExplicitComponent):
 
         seat_pitch_first = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST][0]
         if seat_pitch_first <= 0 and num_first_class_pax > 0:
-            seat_pitch_first = 38.0  # inch
+            # seat_pitch_first = 38.0  # inch
             raise UserWarning('Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST is not set.')
         seat_pitch_business = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS][0]
         if seat_pitch_business <= 0 and num_business_class_pax > 0:
-            seat_pitch_business = 36.0  # inch
+            # seat_pitch_business = 36.0  # inch
             raise UserWarning('Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS is not set.')
         seat_pitch_economy = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY][0]
         if seat_pitch_economy <= 0 and num_economy_class_pax > 0:
-            seat_pitch_economy = 34.0  # inch
+            # seat_pitch_economy = 34.0  # inch
             raise UserWarning('Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY is not set.')
 
         # set maximum number of galleys based on statistics (this block is not from FLOPS)
@@ -647,30 +647,30 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS
         ]
         if num_seat_abreast_business <= 0:
-            num_seat_abreast_business = 5
+            # num_seat_abreast_business = 5
             raise UserWarning('Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS is not set')
         num_seat_abreast_first = self.options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST]
         if num_seat_abreast_first <= 0:
-            num_seat_abreast_first = 4
+            # num_seat_abreast_first = 4
             raise UserWarning('Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST is not set.')
         num_seat_abreast_economy = self.options[
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY
         ]
         if num_seat_abreast_economy <= 0:
-            num_seat_abreast_economy = 6
+            # num_seat_abreast_economy = 6
             raise UserWarning('Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY is not set.')
 
         seat_pitch_business = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS][0]
         if seat_pitch_business <= 0 and num_business_class_pax > 0:
-            seat_pitch_business = 39.0  # inch
+            # seat_pitch_business = 39.0  # inch
             raise UserWarning('Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS is not set.')
         seat_pitch_first = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST][0]
         if seat_pitch_first <= 0 and num_first_class_pax > 0:
-            seat_pitch_first = 61.0  # inch
+            # seat_pitch_first = 61.0  # inch
             raise UserWarning('Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST is not set.')
         seat_pitch_economy = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY][0]
         if seat_pitch_economy <= 0 and num_economy_class_pax > 0:
-            seat_pitch_economy = 32.0  # inch
+            # seat_pitch_economy = 32.0  # inch
             raise UserWarning('Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY is not set.')
 
         # Determine unit seat areas for each type of passenger
