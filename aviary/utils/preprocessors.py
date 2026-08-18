@@ -148,8 +148,6 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
             else:
                 simple_layout = True
             aviary_options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, simple_layout, 'unitless')
-        if verbosity >= Verbosity.BRIEF:
-            warnings.warn(f'Aircraft.Fuselage.SIMPLE_LAYOUT is not set. Assuming {simple_layout}.')
     else:
         simple_layout = aviary_options.get_val(Aircraft.Fuselage.SIMPLE_LAYOUT)
 
