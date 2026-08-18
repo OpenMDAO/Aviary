@@ -440,7 +440,10 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i]
         total_thrust += thrust * num_engines
 
-    gamma_guess = np.arcsin(0.5 * total_thrust / mission_mass)
+    # 0.5 * thrust/weight can exceed 1 for very high thrust-to-weight aircraft (e.g.
+    # small electric UAVs); clip to stay in arcsin's domain since this is only an
+    # initial-guess heuristic, not a hard constraint.
+    gamma_guess = np.arcsin(np.clip(0.5 * total_thrust / mission_mass, -1.0, 1.0))
     avg_speed_guess = 0.5 * 667 * cruise_mach  # kts
 
     if initialization_guesses['time_to_climb'] <= 0:  # no guess given

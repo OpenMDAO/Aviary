@@ -1273,7 +1273,7 @@ class AviaryProblem(om.Problem):
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             with open(self.get_reports_dir() / 'input_list.txt', 'w') as outfile:
-                self.model.list_inputs(out_stream=outfile)
+                self.model.list_inputs(out_stream=outfile, units=True)
 
         def _view_realtime_plot_hook(driver):
             case_recorder_file = str(driver._rec_mgr._recorders[0]._filepath)
@@ -1339,7 +1339,7 @@ class AviaryProblem(om.Problem):
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             with open(Path(self.get_reports_dir()) / 'output_list.txt', 'w') as outfile:
-                self.model.list_outputs(out_stream=outfile)
+                self.model.list_vars(out_stream=outfile, units=True, print_arrays=True)
 
         if self.generate_payload_range and self.problem_type == ProblemType.SIZING:
             self.run_payload_range()
