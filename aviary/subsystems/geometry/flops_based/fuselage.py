@@ -636,6 +636,10 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         width_galley = 36.0  # inch
         width_closet = 12.0  # inch
 
+        num_business_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
+        num_first_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
+        num_economy_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
+
         # Establish defaults for Number of Passengers Abreast
         # and Seat Pitch for First, Business and Economy classes
 
@@ -657,15 +661,15 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             raise UserWarning('Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY is not set.')
 
         seat_pitch_business = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS][0]
-        if seat_pitch_business <= 0:
+        if seat_pitch_business <= 0 and num_business_class_pax > 0:
             seat_pitch_business = 39.0  # inch
             raise UserWarning('Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS is not set.')
         seat_pitch_first = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST][0]
-        if seat_pitch_first <= 0:
+        if seat_pitch_first <= 0 and num_first_class_pax > 0:
             seat_pitch_first = 61.0  # inch
             raise UserWarning('Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST is not set.')
         seat_pitch_economy = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY][0]
-        if seat_pitch_economy <= 0:
+        if seat_pitch_economy <= 0 and num_economy_class_pax > 0:
             seat_pitch_economy = 32.0  # inch
             raise UserWarning('Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY is not set.')
 
@@ -676,9 +680,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
         # Find the number of lavatories, galleys and closets based on the
         # number of passengers for each class and the area for each
-        num_business_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
-        num_first_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
-        num_economy_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
         num_lavas = (
             int(0.99 + num_first_class_pax / 16.0)
             + int(0.99 + num_business_class_pax / 24.0)
