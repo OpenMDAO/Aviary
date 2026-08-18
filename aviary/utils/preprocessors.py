@@ -132,6 +132,17 @@ def preprocess_options(
 
 
 def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
+    """
+    Set option values that are needed for fuselage layout computationbut are not direct inputs.
+
+    Parameters
+    ----------
+    aviary_options : AviaryValues
+        Options to be updated
+
+    Verbosity, optional
+        Sets level of printouts for this function.
+    """
     mass_method = aviary_options.get_val(Settings.MASS_METHOD)
     design_type = aviary_options.get_val(Aircraft.Design.TYPE)
 
