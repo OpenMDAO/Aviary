@@ -307,6 +307,8 @@ class Aircraft:
         AISLE_WIDTH = 'aircraft:fuselage:aisle_width'
         AVG_DIAMETER = 'aircraft:fuselage:avg_diameter'
         CABIN_AREA = 'aircraft:fuselage:cabin_area'
+        CABIN_SIDEWALL_LENGTH = 'aircraft:fuselage:cabin_sidewall_length'
+        CABIN_SIDEWALL_LENGTH_MIN = 'aircraft:fuselage:cabin_sidewall_length_min'
         CHARACTERISTIC_LENGTH = 'aircraft:fuselage:characteristic_length'
         CROSS_SECTION = 'aircraft:fuselage:cross_section'
         DELTA_DIAMETER = 'aircraft:fuselage:delta_diameter'

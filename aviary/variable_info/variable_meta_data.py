@@ -3223,6 +3223,34 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.XLW',
+    },
+    units='ft',
+    desc='Outboard wall of the passenger cabin in a BWB.',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH_MIN,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.XLWMIN',
+    },
+    units='ft',
+    option=True,
+    types=float,
+    desc='Minimum outboard wall of the passenger cabin in a BWB. The default value is based on a '
+    'required maximum depth at the side wall of 8.25 ft divided by a fuselage thickness/chord '
+    'ratio of 0.15 and 70 percent of the resulting wing root chord of 55 ft.',
+    default_value=38.5,
+)
+
+add_meta_data(
     Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
     meta_data=_MetaData,
     historical_name={
@@ -5989,7 +6017,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CROOTW',
-        'FLOPS': 'WTIN.XLOUT',
+        'FLOPS': None,  # 'XLOUT',
     },
     units='ft',
     desc='wing chord length at at the wing/fuselage intersection',

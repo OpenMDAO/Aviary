@@ -634,6 +634,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY)
         add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
         add_aviary_option(self, Aircraft.BWB.MAX_BAY_WIDTH)
+        add_aviary_option(self, Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH_MIN)
 
     def setup(self):
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
@@ -664,7 +665,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         bay_width_max, _ = self.options[Aircraft.BWB.MAX_BAY_WIDTH]
         num_bays = 0
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
-        sidewall_min = 38.5  # ft
+        sidewall_min = self.options[Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH_MIN]  # ft
+
         width_lava = 36.0  # inch
         width_galley = 36.0  # inch
         width_closet = 12.0  # inch
@@ -731,7 +733,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         if num_bays > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
 
-        num_bays_loc = num_bays
+        # Loop spans 4246~4314 in BWBFUS in sfwate.py
         iter = 0
         while True:
             num_bays_loc = num_bays
@@ -774,9 +776,10 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
             if num_bays_loc == num_bays:
                 break
-            iter = iter + 1
+
+            iter += 1
             if iter > 100:
-                warnings.warn(f'Number of iteration exceeded 100.')
+                warnings.warn(f'Number of iteration exceeded 100 in BWBDetailedCabinLayout.')
                 break
 
         length = pax_compart_length / rear_spar_percent_chord
