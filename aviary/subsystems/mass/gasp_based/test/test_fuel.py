@@ -15,7 +15,6 @@ from aviary.subsystems.mass.gasp_based.fuel import (
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 

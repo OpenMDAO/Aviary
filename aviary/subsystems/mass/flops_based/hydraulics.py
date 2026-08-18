@@ -80,6 +80,15 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         term4 = 1.0 + 0.04 * var_sweep
         term5 = max_mach**0.33
 
+        if sys_press <= 0:
+            # No hydraulic system (e.g. small electric UAVs): nothing to size.
+            J[Aircraft.Hydraulics.MASS, Aircraft.Fuselage.PLANFORM_AREA] = 0.0
+            J[Aircraft.Hydraulics.MASS, Aircraft.Wing.AREA] = 0.0
+            J[Aircraft.Hydraulics.MASS, Aircraft.Hydraulics.SYSTEM_PRESSURE] = 0.0
+            J[Aircraft.Hydraulics.MASS, Aircraft.Wing.VAR_SWEEP_MASS_PENALTY] = 0.0
+            J[Aircraft.Hydraulics.MASS, Aircraft.Hydraulics.MASS_SCALER] = 0.0
+            return
+
         J[Aircraft.Hydraulics.MASS, Aircraft.Fuselage.PLANFORM_AREA] = (
             0.57 * term2 * term3 * term4 * term5 * scaler / GRAV_ENGLISH_LBM
         )
