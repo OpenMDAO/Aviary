@@ -2,7 +2,8 @@ import numpy as np
 import openmdao.api as om
 
 from aviary import constants
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.functions import add_aviary_option
 
 
 class SolveAlphaGroup(om.Group):
@@ -14,13 +15,17 @@ class SolveAlphaGroup(om.Group):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
 
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
+
     def setup(self):
+        grav_metric = self.options[Mission.GRAVITY][0]
+
         num_nodes = self.options['num_nodes']
         self.add_subsystem(
             'required_lift',
             om.ExecComp(
                 'required_lift = mass * grav_metric',
-                grav_metric={'val': constants.GRAV_METRIC_GASP},
+                grav_metric={'val': grav_metric},
                 mass={'units': 'kg', 'shape': num_nodes},
                 required_lift={'units': 'N', 'shape': num_nodes},
                 has_diag_partials=True,
