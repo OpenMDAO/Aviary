@@ -14,8 +14,8 @@ from aviary.subsystems.mass.gasp_based.design_load import (
     LoadParameters,
     LoadSpeeds,
 )
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -51,7 +51,7 @@ class LoadSpeedsTestCase1(unittest.TestCase):
 
 class LoadSpeedsTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=0, units='unitless')
 
         self.prob = om.Problem()
@@ -87,7 +87,7 @@ class LoadSpeedsTestCase2(unittest.TestCase):
 
 class LoadSpeedsTestCase3(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.LOADING_ABOVE_20, val=False, units='unitless')
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=1, units='unitless')
 
@@ -124,7 +124,7 @@ class LoadSpeedsTestCase3(unittest.TestCase):
 
 class LoadSpeedsTestCase4(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
 
         self.prob = om.Problem()
@@ -160,7 +160,7 @@ class LoadSpeedsTestCase4(unittest.TestCase):
 
 class LoadSpeedsTestCase5(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.LOADING_ABOVE_20, val=False, units='unitless')
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=4, units='unitless')
 
@@ -196,7 +196,7 @@ class LoadSpeedsTestCase6smooth(
     unittest.TestCase
 ):  # this is the large single aisle 1 V3 test case (LoadSpeedsTestCase1) with smooth functions
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
 
         self.prob = om.Problem()
@@ -229,7 +229,7 @@ class LoadSpeedsTestCase6smooth(
 
 class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth functions
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=0, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
 
@@ -266,7 +266,7 @@ class LoadSpeedsTestCase7smooth(unittest.TestCase):  # TestCase2 with smooth fun
 
 class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth functions
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.LOADING_ABOVE_20, val=False, units='unitless')
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=1, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
@@ -304,7 +304,7 @@ class LoadSpeedsTestCase8smooth(unittest.TestCase):  # TestCase3 with smooth fun
 
 class LoadSpeedsTestCase9smooth(unittest.TestCase):  # TestCase4 with smooth functions
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
 
@@ -341,7 +341,7 @@ class LoadSpeedsTestCase9smooth(unittest.TestCase):  # TestCase4 with smooth fun
 
 class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth functions
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.LOADING_ABOVE_20, val=False, units='unitless')
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=4, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
@@ -377,7 +377,7 @@ class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth fu
 # this is the large single aisle 1 V3 test case
 class LoadParametersTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
         self.prob = om.Problem()
@@ -404,7 +404,7 @@ class LoadParametersTestCase1(unittest.TestCase):
 
 class LoadParametersTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=30000, units='ft')
 
@@ -432,7 +432,7 @@ class LoadParametersTestCase2(unittest.TestCase):
 
 class LoadParametersTestCase3(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=4, units='unitless')
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=22000, units='ft')
 
@@ -461,7 +461,7 @@ class LoadParametersTestCase3(unittest.TestCase):
 # this is the large single aisle 1 V3 test case
 class LoadParametersTestCase4smooth(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
@@ -493,7 +493,7 @@ class LoadParametersTestCase4smooth(unittest.TestCase):
 
 class LoadParametersTestCase5smooth(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=30000, units='ft')
@@ -526,7 +526,7 @@ class LoadParametersTestCase5smooth(unittest.TestCase):
 
 class LoadParametersTestCase6smooth(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=4, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=22000, units='ft')
@@ -617,7 +617,7 @@ class LoadFactorsTestCase1(unittest.TestCase):
 
 class LoadFactorsTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, val=True, units='unitless')
 
         self.prob = om.Problem()
@@ -657,7 +657,7 @@ class LoadFactorsTestCase2(unittest.TestCase):
 # this is the large single aisle 1 V3 test case
 class LoadFactorsTestCase3smooth(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
 
         self.prob = om.Problem()
@@ -704,7 +704,7 @@ class LoadFactorsTestCase3smooth(unittest.TestCase):
 
 class LoadFactorsTestCase4smooth(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, val=True, units='unitless')
 
         self.prob = om.Problem()
@@ -748,7 +748,7 @@ class LoadFactorsTestCase4smooth(unittest.TestCase):
 # this is the large single aisle 1 V3 test case
 class DesignLoadGroupTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
         self.prob = om.Problem()
@@ -790,7 +790,7 @@ class DesignLoadGroupTestCase1(unittest.TestCase):
 # this is the large single aisle 1 V3 test case
 class DesignLoadGroupTestCase2smooth(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
@@ -836,7 +836,7 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
     """PART25_STRUCTURAL_CATEGORY = 3."""
 
     def setUp(self):
-        self.options = get_option_defaults()
+        self.options = AviaryValues()
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
         )  # default
@@ -934,7 +934,7 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
     """PART25_STRUCTURAL_CATEGORY = 0."""
 
     def setUp(self):
-        self.options = get_option_defaults()
+        self.options = AviaryValues()
         self.options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=0, units='unitless')
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -1029,7 +1029,7 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
     """PART25_STRUCTURAL_CATEGORY = 1."""
 
     def setUp(self):
-        self.options = get_option_defaults()
+        self.options = AviaryValues()
         self.options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=1, units='unitless')
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -1127,7 +1127,7 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
 
 class BWBLoadSpeedsTestCATD2(unittest.TestCase):
     def setUp(self):
-        self.options = get_option_defaults()
+        self.options = AviaryValues()
         self.options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -1225,7 +1225,7 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
 
 class BWBLoadSpeedsTestCATD4(unittest.TestCase):
     def setUp(self):
-        self.options = get_option_defaults()
+        self.options = AviaryValues()
         # In this case, the value of PART25_STRUCTURAL_CATEGORY is used as max_maneuver_factor
         self.options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=4, units='unitless')
         self.options.set_val(
@@ -1398,7 +1398,7 @@ class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
     """Test for smoothing technique"""
 
     def setUp(self):
-        self.options = get_option_defaults()
+        self.options = AviaryValues()
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless'
         )
@@ -1433,7 +1433,7 @@ class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
 @use_tempdirs
 class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
         prob = self.prob = om.Problem()
@@ -1468,7 +1468,7 @@ class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
 
 class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Mission.SEA_LEVEL_DENSITY, val=0.0023769, units='slug/ft**3')
