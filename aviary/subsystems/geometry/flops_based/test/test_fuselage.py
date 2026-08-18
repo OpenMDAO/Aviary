@@ -214,9 +214,9 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 76, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 24, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 200, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 0, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 0, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 0, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 5, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6, units='unitless')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
 
         prob.model.add_subsystem(
@@ -262,9 +262,10 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 76, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 24, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 200, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 0, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 0, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 0, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 5, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6, units='unitless')
+        Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 4, units='unitless')
         options.set_val(Aircraft.BWB.MAX_BAY_WIDTH, 10.0, units='ft')
 

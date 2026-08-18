@@ -644,14 +644,17 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         ]
         if num_seat_abreast_business <= 0:
             num_seat_abreast_business = 5
+            raise UserWarning('Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS is not set')
         num_seat_abreast_first = self.options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST]
         if num_seat_abreast_first <= 0:
             num_seat_abreast_first = 4
+            raise UserWarning('Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST is not set.')
         num_seat_abreast_economy = self.options[
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY
         ]
         if num_seat_abreast_economy <= 0:
             num_seat_abreast_economy = 6
+            raise UserWarning('Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY is not set.')
 
         seat_pitch_business = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS][0]
         if seat_pitch_business <= 0:
