@@ -136,6 +136,7 @@ def CruiseExample():
     prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1)
     prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1)
     prob.model.set_constraint_options('cruise_duration_constraint.duration_resid', ref=10)
+    
     # prob.model.set_constraint_options(Mission.Constraints.RANGE_RESIDUAL, ref=1)
     # prob.model.set_constraint_options('thrust_residual', ref=0.01, upper=0.01, lower=-0.01)
     # prob.model.set_constraint_options('mass', ref=1)
