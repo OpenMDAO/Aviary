@@ -147,7 +147,6 @@ class MassPremissionTestCase2(unittest.TestCase):
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
 
         self.prob = om.Problem()
@@ -165,6 +164,9 @@ class MassPremissionTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
@@ -502,7 +504,6 @@ class MassPremissionTestCase3(unittest.TestCase):
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
 
         self.prob = om.Problem()
@@ -520,6 +521,9 @@ class MassPremissionTestCase3(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
@@ -848,7 +852,6 @@ class MassPremissionTestCase4(unittest.TestCase):
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
 
         self.prob = om.Problem()
@@ -866,6 +869,9 @@ class MassPremissionTestCase4(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
@@ -1202,7 +1208,6 @@ class MassSummationTestCase5(unittest.TestCase):
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
 
         self.prob = om.Problem()
@@ -1220,6 +1225,9 @@ class MassSummationTestCase5(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
@@ -1551,7 +1559,6 @@ class MassSummationTestCase6(unittest.TestCase):
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
 
         self.prob = om.Problem()
@@ -1569,6 +1576,9 @@ class MassSummationTestCase6(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
@@ -1901,7 +1911,6 @@ class MassSummationTestCase7(unittest.TestCase):
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.165, units='unitless')
 
         self.prob = om.Problem()
@@ -1919,6 +1928,9 @@ class MassSummationTestCase7(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
@@ -2276,7 +2288,6 @@ class MassSummationTestCase8(unittest.TestCase):
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.163, units='unitless')
 
         self.prob = om.Problem()
@@ -2294,6 +2305,9 @@ class MassSummationTestCase8(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch'
+        )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
@@ -2647,7 +2661,6 @@ class MassSummationTestCase9(unittest.TestCase):
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.163, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
@@ -2666,6 +2679,9 @@ class MassSummationTestCase9(unittest.TestCase):
             promotes=['*'],
         )
 
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch'
+        )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         self.prob.model.set_input_defaults(
@@ -3037,8 +3053,6 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
         # options from MassPremission
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=41000, units='ft')
@@ -3064,6 +3078,12 @@ class BWBMassSummationTestCase(unittest.TestCase):
             promotes=['*'],
         )
 
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch'
+        )
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 22, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')

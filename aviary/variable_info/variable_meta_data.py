@@ -1119,7 +1119,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH'},
     units='inch',
     desc='pitch of the business class seats.',
-    option=True,
     default_value=39.0,
 )
 
@@ -1129,7 +1128,6 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH'},
     units='inch',
     desc='pitch of the economy class seats.',
-    option=True,
     default_value=32.0,
 )
 
@@ -1139,7 +1137,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH'},
     units='inch',
     desc='pitch of the first class seats.',
-    option=True,
     default_value=61.0,
 )
 
