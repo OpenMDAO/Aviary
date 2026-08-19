@@ -665,7 +665,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         bay_width_max, _ = self.options[Aircraft.BWB.MAX_BAY_WIDTH]
         num_bays = 0
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
-        sidewall_min = self.options[Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH_MIN]  # ft
+        sidewall_min, _ = self.options[Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH_MIN]  # ft
 
         width_lava = 36.0  # inch
         width_galley = 36.0  # inch
