@@ -171,48 +171,11 @@ class FlightODE(TwoDOFODE):
             promotes_outputs=['theta', 'TAS_violation'],
         )
 
-        # collect the propulsion group names for later use
-        for subsystem in subsystems:
-            kwargs = {}
+        sub1 = self.add_subsystem('solver_sub', om.Group(), promotes=['*'])
+        sub1.options['auto_order'] = True
 
-            # check if subsystem_options has entry for a subsystem of this name
-            if subsystem.name in subsystem_options:
-                kwargs = subsystem_options[subsystem.name]
-            if isinstance(subsystem, AerodynamicsBuilder):
-                # set default options for Aero if not specified by user
-                base_kwargs = {
-                    'method': 'cruise',
-                }
-                kwargs.update(base_kwargs)
+        use_mission_solver = self.add_subsystems(solver_group=sub1)
 
-            system = subsystem.build_mission(
-                num_nodes=nn,
-                aviary_inputs=aviary_options,
-                user_options=user_options,
-                subsystem_options=kwargs,
-            )
-
-            if system is not None:
-                if isinstance(subsystem, AerodynamicsBuilder):
-                    target = lift_balance_group
-                else:
-                    target = self
-                mission_in = subsystem.mission_inputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                mission_out = subsystem.mission_outputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                target.add_subsystem(
-                    subsystem.name,
-                    system,
-                    promotes_inputs=mission_in,
-                    promotes_outputs=mission_out,
-                )
         self.add_alpha_control(
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,
@@ -231,3 +194,16 @@ class FlightODE(TwoDOFODE):
         )
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
+
+        if use_mission_solver:
+            sub1.nonlinear_solver = om.NewtonSolver(
+                solve_subsystems=True,
+                atol=1.0e-10,
+                rtol=1.0e-10,
+            )
+            print_level = 2
+
+            sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+            sub1.linear_solver = om.DirectSolver(assemble_jac=True)
+            sub1.nonlinear_solver.options['err_on_non_converge'] = True
+            sub1.nonlinear_solver.options['iprint'] = print_level
