@@ -87,20 +87,13 @@ def register_custom_reports():
         method='final_setup',
         pre_or_post='post',
     )
+
     register_report(
         name='list_options',
         func=_list_options_report,
         desc='Generates a report on the Problem options',
         class_name='AviaryProblem',
         method='run_driver',
-        pre_or_post='post',
-    )
-    register_report(
-        name='list_options',
-        func=_list_options_report,
-        desc='Generates a report on the Problem options',
-        class_name='AviaryProblem',
-        method='run_model',
         pre_or_post='post',
     )
 
@@ -296,7 +289,7 @@ def mission_report(prob: AviaryProblem, **kwargs):
 
             totals.set_val(
                 'Total Fuel Capacity',
-                prob.get_val(f'{var_name}aircraft:fuel:total_capacity', units='lbm')[0],
+                prob.get_val(f'{var_name}aircraft:fuel:max_capacity_mass', units='lbm')[0],
                 units='lbm',
             )
             totals.set_val(
