@@ -491,7 +491,7 @@ class MassPremissionTestCase2(unittest.TestCase):
         assert_near_equal(prob['extra_fuel_volume'], 0, tol)
         assert_near_equal(prob['max_extra_fuel_mass'], 0, tol)
         assert_near_equal(prob['wingfuel_mass_min'], 33716.89535681, tol)
-        assert_near_equal(prob[Aircraft.Fuel.TOTAL_CAPACITY], 44376.72715242, tol)
+        assert_near_equal(prob[Aircraft.Fuel.MAX_CAPACITY_MASS], 44376.72715242, tol)
         # EmpennageMass
         assert_near_equal(prob[Aircraft.Design.EMPENNAGE_MASS], 4574.10130526, tol)
         # StructureMass
@@ -3540,7 +3540,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         FUEL_MASS_REQUIRED -- WFAREQ = 36595.0
         fuel_mass_min -- WFAMIN = 18268.2
         fuel_mass.wingfuel_mass_min -- WFWMIN = 11982.2
-        Aircraft.Fuel.TOTAL_CAPACITY -- WFAMAX = 33268.2.
+        Aircraft.Fuel.MAX_CAPACITY_MASS -- WFAMAX = 33268.2.
         """
         prob = self.prob
         prob.run_model()
@@ -3631,7 +3631,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         # BodyTankCalculations
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 4954.00837132, tol)
 
-        total_cap = prob[Aircraft.Fuel.TOTAL_CAPACITY]
+        total_cap = prob[Aircraft.Fuel.MAX_CAPACITY_MASS]
         unusable = prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
         assert_near_equal(total_cap - unusable, 40216.88550633, tol)
         assert_near_equal(prob['extra_fuel_volume'], 169.53050054, tol)
