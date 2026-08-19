@@ -118,7 +118,7 @@ class AltUnusableFuelMassTest(unittest.TestCase):
             self,
             prob,
             case_name,
-            input_keys=[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],
+            input_keys=[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, Aircraft.Fuel.MAX_CAPACITY_MASS],
             output_keys=[Aircraft.Fuel.UNUSABLE_FUEL_MASS],
             version=Version.ALTERNATE,
         )
