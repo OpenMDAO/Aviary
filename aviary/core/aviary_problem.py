@@ -736,7 +736,7 @@ class AviaryProblem(om.Problem):
         if objective_type is not None:
             ref = ref if ref is not None else default_ref_values.get(objective_type, 1)
 
-            final_phase_name = self.model.regular_phases[-1]
+            final_phase_name = self.model.main_phases[-1]
 
             if objective_type == 'mass':
                 self.model.add_objective(
@@ -1188,6 +1188,16 @@ class AviaryProblem(om.Problem):
             super().setup(**kwargs)
 
         self.set_initial_guesses(verbosity=None)
+
+        # TODO this breaks if using shape_by_conn (test_shape_by_conn.py fails)
+        # generate post-setup N2 - useful if run_aviary_problem() fails
+        # outdir = Path(self.get_reports_dir(force=True))
+        # outfile = os.path.join(outdir, 'n2.html')
+        # om.n2(
+        #     self,
+        #     outfile=outfile,
+        #     show_browser=False,
+        # )
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
@@ -1719,7 +1729,7 @@ class AviaryProblem(om.Problem):
             # NOTE this operating mass is based on the previously run mission - assumed this is the
             # design mission!! Includes cargo containers needed for design (max payload)
             operating_mass = float(self.get_val(Mission.OPERATING_MASS)[0])
-            fuel_capacity = float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY)[0])
+            fuel_capacity = float(self.get_val(Aircraft.Fuel.MAX_CAPACITY_MASS)[0])
             unusable_fuel = float(self.get_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS)[0])
             max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
 
