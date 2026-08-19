@@ -491,7 +491,7 @@ class MassPremissionTestCase2(unittest.TestCase):
         assert_near_equal(prob['extra_fuel_volume'], 0, tol)
         assert_near_equal(prob['max_extra_fuel_mass'], 0, tol)
         assert_near_equal(prob['wingfuel_mass_min'], 33716.89535681, tol)
-        assert_near_equal(prob[Aircraft.Fuel.TOTAL_CAPACITY], 44376.72715242, tol)
+        assert_near_equal(prob[Aircraft.Fuel.MAX_CAPACITY_MASS], 44376.72715242, tol)
         # EmpennageMass
         assert_near_equal(prob[Aircraft.Design.EMPENNAGE_MASS], 4574.10130526, tol)
         # StructureMass
