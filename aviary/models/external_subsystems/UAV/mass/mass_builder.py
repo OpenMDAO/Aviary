@@ -1,6 +1,6 @@
 from aviary.variable_info.UAV_variables import Aircraft
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
-from aviary.subsystems.mass.UAV.premission import MassPremission
+from aviary.models.external_subsystems.UAV.mass.model.premission import MassPremission
 from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
 
 

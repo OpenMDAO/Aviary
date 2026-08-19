@@ -19,7 +19,7 @@ from aviary.variable_info.variables import Settings
 # Set False for a normal cruise run.
 DEBUG_MODEL = True
 #import the UAV builders for mass and propulsion
-from aviary.subsystems.mass.UAV.mass_builder import MassBuilder
+from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder
 from aviary.subsystems.propulsion.UAV.prop_builder import UAVBuilder
 
 from aviary.variable_info.UAV_variables import Aircraft, Dynamic

@@ -9,8 +9,8 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.aerodynamics.UAV.aero_builder import AeroBuilder
-from aviary.subsystems.mass.UAV.mass_builder import MassBuilder as DBFMassBuilder
-from aviary.models.missions.UAV.UAV_energy_phase import phase_info
+from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder as DBFMassBuilder
+from aviary.models.missions.UAV_energy_phase import phase_info
 from aviary.subsystems.propulsion.UAV.prop_builder import UAVBuilder
 from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.variable_info.variables import  Settings

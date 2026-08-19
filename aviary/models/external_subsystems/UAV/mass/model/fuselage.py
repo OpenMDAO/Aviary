@@ -2,8 +2,8 @@ import numpy as np
 import openmdao.api as om
 import jax.numpy as jnp
 
-from aviary.subsystems.mass.UAV.utils.materials_database import materials
-from aviary.subsystems.mass.UAV.utils.hashable_statics import hashable
+from aviary.models.external_subsystems.UAV.mass.utils.materials_database import materials
+from aviary.models.external_subsystems.UAV.mass.utils.hashable_statics import hashable
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 
 from aviary.variable_info.UAV_variables import Aircraft

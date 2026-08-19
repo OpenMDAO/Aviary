@@ -1,4 +1,4 @@
-from enum import Enum, IntEnum, auto, unique
+from enum import Enum
 
 class WingType(Enum):
     '''

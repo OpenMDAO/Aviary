@@ -5,7 +5,6 @@ from aviary.subsystems.propulsion.UAV.model.performance import \
     Throttle, Battery, ElectronicSpeedController, Motor, PropCoefficients, Propeller, Vectorization
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.UAV_variables import Aircraft, Dynamic
-from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 
 
 class UAVPropMission(om.Group):
