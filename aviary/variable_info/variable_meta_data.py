@@ -3113,7 +3113,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WAS', 'FLOPS': None},
     units='inch',
-    desc='width of the aisles in the passenger cabin',
+    desc='Width of the aisles in the passenger cabin. In FLOPS, aisle width is hardcoded per '
+    'passenger class.',
     default_value=24,
 )
 
