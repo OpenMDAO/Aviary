@@ -502,7 +502,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:fuel:total_capacity",
+        "aircraft:fuel:max_capacity_mass",
         45694.0,
         "lbm",
         "<class 'float'>"
@@ -1125,6 +1125,12 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:fuselage:simple_layout",
+        true,
+        "unitless",
+        "<class 'bool'>"
+    ],
+    [
         "settings:atmosphere_model",
         "STANDARD",
         "unitless",
@@ -1153,11 +1159,5 @@
         1906.0,
         "NM",
         "<class 'float'>"
-    ],
-    [
-        "aircraft:fuel:ignore_fuel_capacity_constraint",
-        false,
-        "unitless",
-        "<class 'bool'>"
     ]
 ]

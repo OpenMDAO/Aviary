@@ -5,8 +5,9 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.furnishings import BWBFurnishingMass, FurnishingMass
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import GASPEngineType
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 
@@ -15,9 +16,10 @@ class FurnishingMassTestCase1(unittest.TestCase):
     """Created based on EquipMassTestCase1"""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=True, units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, val=[GASPEngineType.TURBOJET], units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -70,13 +72,14 @@ class FurnishingMassTestCase2(unittest.TestCase):
         furnishings.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless'
         )  # large_single_aisle_1_GASP.csv
         options.set_val(
             Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=True, units='unitless'
         )  # arbitrary
+        options.set_val(Aircraft.Engine.TYPE, val=[GASPEngineType.TURBOJET], units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -112,11 +115,12 @@ class FurnishingMassTestCase3(unittest.TestCase):
     """
 
     def setUp(self):
-        self.options = get_option_defaults()
+        self.options = AviaryValues()
         self.options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=49, units='unitless')
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
         )
+        self.options.set_val(Aircraft.Engine.TYPE, val=[GASPEngineType.TURBOJET], units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -182,11 +186,12 @@ class BWBFurnishingMassTestCase1(unittest.TestCase):
     """
 
     def setUp(self):
-        self.options = get_option_defaults()
+        self.options = AviaryValues()
         self.options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
         self.options.set_val(
             Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=True, units='unitless'
         )
+        self.options.set_val(Aircraft.Engine.TYPE, val=[GASPEngineType.TURBOJET], units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -289,8 +294,9 @@ class BWBFurnishingMassTestCase2(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, val=[GASPEngineType.TURBOJET], units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -348,11 +354,12 @@ class BWBFurnishingMassTestCase3(unittest.TestCase):
         USE_EMPIRICAL_EQUATION = True
         SMOOTH_MASS_DISCONTINUITIES = False
         """
-        self.options = get_option_defaults()
+        self.options = AviaryValues()
         self.options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
         self.options.set_val(
             Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=True, units='unitless'
         )
+        self.options.set_val(Aircraft.Engine.TYPE, val=[GASPEngineType.TURBOJET], units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -398,8 +405,9 @@ class BWBFurnishingMassTestCase4(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, val=[GASPEngineType.TURBOJET], units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -436,3 +444,6 @@ class BWBFurnishingMassTestCase4(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = FurnishingMassTestCase2()
+    # test.setUp()
+    # test.test_case1()

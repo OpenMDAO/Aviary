@@ -20,7 +20,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 # TODO document what kwargs are used, and by which preprocessors in docstring?
-# TODO preprocess needed for design range vs phase_info range in sizing missions? (should be the same)
+# TODO preprocess needed to check design range equals phase_info range in sizing missions?
 def preprocess_options(
     aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None, **kwargs
 ):
@@ -91,6 +91,80 @@ def preprocess_options(
             and aviary_options.get_val(Settings.AERODYNAMICS_METHOD) is LegacyCode.FLOPS
         ):
             aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
+
+    if Settings.MASS_METHOD in aviary_options:
+        mass_method = aviary_options.get_val(Settings.MASS_METHOD)
+    else:
+        raise UserWarning('MASS_METHOD not specified. Cannot preprocess inputs.')
+
+    if Aircraft.Design.TYPE in aviary_options:
+        design_type = aviary_options.get_val(Aircraft.Design.TYPE)
+    else:
+        design_type = AircraftTypes.TRANSPORT
+        if verbosity > Verbosity.BRIEF:
+            warnings.warn('Setting Aircraft.Design.TYPE = AircraftTypes.TRANSPORT.')
+
+    if Aircraft.Fuselage.SIMPLE_LAYOUT not in aviary_options:
+        if mass_method == LegacyCode.FLOPS:
+            aviary_options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, True, 'unitless')
+            simple_layout = True
+        elif mass_method == LegacyCode.GASP:
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                simple_layout = False
+            else:
+                simple_layout = True
+            aviary_options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, simple_layout, 'unitless')
+    else:
+        simple_layout = aviary_options.get_val(Aircraft.Fuselage.SIMPLE_LAYOUT)
+
+    if simple_layout == False:
+        # Check seat widths are set
+        if mass_method == LegacyCode.FLOPS:
+            if design_type == AircraftTypes.TRANSPORT:
+                if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, '
+                            'assuming default 20.0 inches.'
+                        )
+                if Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 22.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, '
+                            'assuming default 22.0 inches.'
+                        )
+                if Aircraft.Fuselage.SEAT_WIDTH_FIRST not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 25.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, '
+                            'assuming default 25.0 inches.'
+                        )
+        elif mass_method == LegacyCode.GASP:
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, '
+                            'assuming default 20.0 inches.'
+                        )
+                if Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 22.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, '
+                            'assuming default 22.0 inches.'
+                        )
+                if Aircraft.Fuselage.SEAT_WIDTH_FIRST not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, '
+                            'assuming default 28.0 inches.'
+                        )
 
     # preprocess atmosphere / GRAV??
     # Set the gravity model based on the atmosphere model to enable calculation of weight from mass
@@ -163,7 +237,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
             Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS,
         ]
-    else:
+    elif mass_method is LegacyCode.GASP:
         pax_keys = [Aircraft.CrewPayload.NUM_PASSENGERS]
 
         design_pax_keys = [Aircraft.CrewPayload.Design.NUM_PASSENGERS]
@@ -590,7 +664,7 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
 
     if mass_method == LegacyCode.FLOPS:
         # find which fuel capacity variables the user has set:
-        if Aircraft.Fuel.TOTAL_CAPACITY not in aviary_options:
+        if Aircraft.Fuel.MAX_CAPACITY_MASS not in aviary_options:
             # Aviary will need to calculate the total capacity and can only do so if we assume any missing subsystem capacities are zero
             # TODO these are default values, double check they need to actually be set here
             if Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY not in aviary_options:
@@ -599,7 +673,7 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
             if Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY not in aviary_options:
                 aviary_options.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
         else:
-            total_capacity = aviary_options.get_val(Aircraft.Fuel.TOTAL_CAPACITY, 'lbm')
+            total_capacity = aviary_options.get_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 'lbm')
             try:
                 wing_capacity = aviary_options.get_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 'lbm')
             except KeyError:
@@ -631,7 +705,7 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
             # check if the user inputs are self consistent (as far as possible at this stage!) Aviary can still calculate outputs at runtime.
             if capacity_count == 3 and capacity_check != total_capacity:
                 raise UserWarning(
-                    f'Aircraft.Fuel.TOTAL_CAPACITY ({total_capacity} lbm) is not equal to sum of '
+                    f'Aircraft.Fuel.MAX_CAPACITY_MASS ({total_capacity} lbm) is not equal to sum of '
                     f'Aircraft.Fuel.WING_FUEL_CAPACITY ({wing_capacity} lbm), '
                     f'+ Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity} lbm), and'
                     f'Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity} lbm)'
@@ -639,7 +713,7 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
                 )
             elif capacity_count < 3 and capacity_check > total_capacity:
                 raise UserWarning(
-                    f'Aircraft.Fuel.TOTAL_CAPACITY ({total_capacity}) is less than sum of '
+                    f'Aircraft.Fuel.MAX_CAPACITY_MASS ({total_capacity}) is less than sum of '
                     f'Aircraft.Fuel.WING_FUEL_CAPACITY ({wing_capacity} lbm), '
                     f'Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity} lbm), and '
                     f'Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity} lbm) '

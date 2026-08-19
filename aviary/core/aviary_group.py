@@ -2,6 +2,7 @@ import inspect
 import sys
 import warnings
 from importlib.util import module_from_spec, spec_from_file_location
+import numpy as np
 from pathlib import Path
 
 import dymos as dm
@@ -14,8 +15,13 @@ from aviary.interface.utils import set_warning_format
 from aviary.mission.energy_state_problem_configurator import EnergyStateProblemConfigurator
 from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
-from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
+from aviary.mission.utils import (
+    get_phase_mission_bus_lengths,
+    process_guess_var,
+    separate_reserve_phases,
+)
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.subsystems.energy.energy_builder import CoreEnergyBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
@@ -73,7 +79,7 @@ class AviaryGroup(om.Group):
         self.verbosity = verbosity
         self.external_subsystems = []
         self.engine_models = []
-        self.regular_phases = []
+        self.main_phases = []
         self.reserve_phases = []
         self.subsystems = []
 
@@ -112,6 +118,7 @@ class AviaryGroup(om.Group):
         # aviary_group's setup is not complete until after configure.
         sbc_vars = set()
         non_sbc_vars = set()
+        shapes = {}
         for sub in self.system_iter(recurse=False, typ=om.Group):
             pr2abs = sub._resolver.prom2abs_iter('input')
             if sub.pathname == 'traj':
@@ -135,6 +142,11 @@ class AviaryGroup(om.Group):
                 else:
                     non_sbc_vars.add(prom_name)
 
+                    # Find shaped inputs as well.
+                    shape = meta.get('shape')
+                    if np.prod(shape) > 1:
+                        shapes[prom_name] = shape
+
         sbc_only_vars = sbc_vars - non_sbc_vars
 
         for key in aviary_metadata:
@@ -150,16 +162,28 @@ class AviaryGroup(om.Group):
 
             if key in aviary_options:
                 val, units = aviary_options.get_item(key)
+                val_in_csv_file = True
             else:
                 val = aviary_metadata[key]['default_value']
                 units = aviary_metadata[key]['units']
+                val_in_csv_file = False
 
                 if val is None:
                     # optional, but no default value
                     continue
 
             kwargs = {'units': units}
+
             if key not in sbc_only_vars:
+                # If var has been declared with a shape, and isn't in the aviary_inputs, then
+                # take the default val and broadcast it.
+
+                if not val_in_csv_file and aviary_metadata[key]['multivalue']:
+                    if key in shapes and np.isscalar(val):
+                        scalar_val = val
+                        val = np.empty(shapes[key])
+                        val[:] = scalar_val
+
                 # Default val if var doesn't use shape_by_conn.
                 kwargs['val'] = val
 
@@ -458,9 +482,12 @@ class AviaryGroup(om.Group):
         # TODO this seems like the wrong place to define the core subsystems. Maybe move to
         # load_inputs?
         ## Set Up Core Subsystems ##
-        perf = CorePerformanceBuilder('performance')
-        prop = CorePropulsionBuilder('propulsion', engine_models=self.engine_models)
-        mass = CoreMassBuilder('mass', code_origin=self.mass_method)
+        perf = CorePerformanceBuilder('performance', meta_data=self.meta_data)
+        prop = CorePropulsionBuilder(
+            'propulsion', engine_models=self.engine_models, meta_data=self.meta_data
+        )
+        mass = CoreMassBuilder('mass', code_origin=self.mass_method, meta_data=self.meta_data)
+        energy = CoreEnergyBuilder('energy', meta_data=self.meta_data)
 
         # If all phases ask for tabular aero, we can skip pre-mission. Check phase_info
         tabular = False
@@ -476,7 +503,7 @@ class AviaryGroup(om.Group):
                     tabular = False
 
         aero = CoreAerodynamicsBuilder(
-            'aerodynamics', code_origin=self.aero_method, tabular=tabular
+            'aerodynamics', code_origin=self.aero_method, tabular=tabular, meta_data=self.meta_data
         )
 
         # which geometry methods should be used?
@@ -496,9 +523,10 @@ class AviaryGroup(om.Group):
             'geometry',
             code_origin=geom_code_origin,
             code_origin_to_prioritize=code_origin_to_prioritize,
+            meta_data=self.meta_data,
         )
 
-        subsystems = self.subsystems = [prop, geom, mass, aero, perf]
+        subsystems = self.subsystems = [prop, geom, energy, mass, aero, perf]
         subsystems.extend(self.external_subsystems)
 
         self.ode_args = {
@@ -507,45 +535,7 @@ class AviaryGroup(om.Group):
         }
 
         # self._update_metadata_from_subsystems()
-        self._check_reserve_phase_separation()
-
-    def _check_reserve_phase_separation(self):
-        """
-        This method checks for reserve=True & False
-        Returns an error if a non-reserve phase is specified after a reserve phase.
-        return two dictionaries of phases: regular_phases and reserve_phases
-        For shooting trajectories, this will also check if a phase is part of the descent.
-        """
-        # Check to ensure no non-reserve phases are specified after reserve phases
-        start_reserve = False
-        raise_error = False
-        self.regular_phases = []
-        for idx, phase_name in enumerate(self.mission_info):
-            if 'user_options' in self.mission_info[phase_name]:
-                if 'reserve' in self.mission_info[phase_name]['user_options']:
-                    if self.mission_info[phase_name]['user_options']['reserve'] is False:
-                        # This is a regular phase
-                        self.regular_phases.append(phase_name)
-                        if start_reserve is True:
-                            raise_error = True
-                    else:
-                        # This is a reserve phase
-                        self.reserve_phases.append(phase_name)
-                        start_reserve = True
-                else:
-                    # This is a regular phase by default
-                    self.regular_phases.append(phase_name)
-                    if start_reserve is True:
-                        raise_error = True
-
-        if raise_error is True:
-            raise ValueError(
-                'In phase_info, reserve=False cannot be specified after a phase where '
-                'reserve=True. All reserve phases must happen after non-reserve phases. '
-                # TODO: will need to pre-pend current group level to all error messages!!
-                f'Regular Phases : {self.regular_phases} | '
-                f'Reserve Phases : {self.reserve_phases} '
-            )
+        self.main_phases, self.reserve_phases = separate_reserve_phases(self.mission_info)
 
     def add_pre_mission_systems(self, verbosity=None):
         """
@@ -572,19 +562,19 @@ class AviaryGroup(om.Group):
         )
 
         # TODO temporary until way to merge StaticGroup and CorePreMission group is found
-        core_subsystems = self.subsystems[0:5]
+        core_subsystems = self.subsystems[0:6]
 
         # Propulsion isn't included in core pre-mission group to avoid override step in
         # configure() - instead add it now
         pre_mission.add_subsystem(
-            'propulsion',
+            core_subsystems[0].name,
             core_subsystems[0].build_pre_mission(
                 self.aviary_inputs,
-                subsystem_options=all_subsystem_options.get('propulsion', {}),
+                subsystem_options=all_subsystem_options.get(core_subsystems[0].name, {}),
             ),
         )
 
-        default_subsystems = core_subsystems[1:5]
+        default_subsystems = core_subsystems[1:6]
 
         pre_mission.add_subsystem(
             'core_subsystems',
@@ -822,14 +812,6 @@ class AviaryGroup(om.Group):
         """
         verbosity = self._override_verbosity(verbosity)
 
-        post_mission = self.post_mission
-        self.add_subsystem(
-            'post_mission',
-            post_mission,
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
         # Make dymos state outputs easy to access later
         self.add_subsystem(
             'state_output',
@@ -851,6 +833,14 @@ class AviaryGroup(om.Group):
 
         self.configurator.add_post_mission_systems(self)
 
+        post_mission = self.post_mission
+        self.add_subsystem(
+            'post_mission',
+            post_mission,
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
         # Add all post-mission subsystems.
         all_subsystem_options = self.pre_mission_info.get('subsystem_options', {})
         phase_mission_bus_lengths = get_phase_mission_bus_lengths(self.traj)
@@ -868,85 +858,6 @@ class AviaryGroup(om.Group):
             if subsystem_postmission is not None:
                 post_mission.add_subsystem(name, subsystem_postmission)
 
-        # Check if regular_phases[] is accessible
-        try:
-            self.regular_phases[0]
-        except BaseException:
-            raise ValueError(
-                'regular_phases[] dictionary is not accessible. For ENERGY_STATE and '
-                'SOLVED_2DOF missions, check_and_preprocess_inputs() must be called '
-                'before add_post_mission_systems().'
-            )
-
-        # Fuel burn in taxi + takeoff + regular phases
-        post_mission.add_subsystem(
-            'fuel_burned',
-            om.ExecComp(
-                'fuel_burned = initial_mass - mass_final',
-                initial_mass={'units': 'lbm'},
-                mass_final={
-                    'units': 'lbm'
-                },  # this final mass already includes fuel burned in taxi and takeoff
-                fuel_burned={'units': 'lbm'},
-            ),
-            promotes_inputs=[('initial_mass', Mission.GROSS_MASS)],
-            promotes_outputs=[('fuel_burned', Mission.FUEL_MASS)],
-        )
-
-        self.connect(
-            f'traj.{self.regular_phases[-1]}.timeseries.mass',
-            'fuel_burned.mass_final',
-            src_indices=[-1],
-        )
-
-        # Fuel burn in reserve phases
-        if self.reserve_phases:
-            ecomp = om.ExecComp(
-                'reserve_fuel_burned = initial_mass - mass_final',
-                initial_mass={'units': 'lbm'},
-                mass_final={'units': 'lbm'},
-                reserve_fuel_burned={'units': 'lbm'},
-            )
-
-            post_mission.add_subsystem(
-                'reserve_fuel_burned',
-                ecomp,
-                promotes=[('reserve_fuel_burned', Mission.RESERVE_FUEL_MASS)],
-            )
-
-            # timeseries has to be used because Breguet cruise phases don't have
-            # states
-            self.connect(
-                f'traj.{self.reserve_phases[0]}.timeseries.mass',
-                'reserve_fuel_burned.initial_mass',
-                src_indices=[0],
-            )
-            self.connect(
-                f'traj.{self.reserve_phases[-1]}.timeseries.mass',
-                'reserve_fuel_burned.mass_final',
-                src_indices=[-1],
-            )
-
-        self.add_fuel_reserve_component()
-
-        # Ensure that the usable fuel loaded onto the aircraft is greater or equal to the mission fuel + reserve fuel
-        # The aircraft will naturally try to mimize 'total_fuel_mass_constraint' so it's not carrying extra unnecessary fuel
-        post_mission.add_subsystem(
-            'total_fuel_mass_con',
-            om.ExecComp(
-                'total_fuel_mass_constraint = total_fuel_mass - mission_fuel_burned - reserve_fuel_mass',
-                total_fuel_mass_constraint={'units': 'lbm'},
-                total_fuel_mass={'units': 'lbm'},
-                mission_fuel_burned={'units': 'lbm'},
-                reserve_fuel_mass={'units': 'lbm'},
-            ),
-            promotes_inputs=[
-                ('total_fuel_mass', Mission.TOTAL_FUEL_MASS),
-                ('mission_fuel_burned', Mission.FUEL_MASS),
-                ('reserve_fuel_mass', Mission.TOTAL_RESERVE_FUEL_MASS),
-            ],
-            promotes_outputs=[('total_fuel_mass_constraint', Mission.Constraints.MASS_RESIDUAL)],
-        )
         # Users can set the below constraint to lower=0.0, which will allow for more fuel on the aircraft than the mission
         # requires. however, caution will need to be taken to ensure the ref is of the right magnitude otherwise the optimizer
         # may not try as hard as needed to minimize this.
@@ -1030,70 +941,6 @@ class AviaryGroup(om.Group):
                     ref=1e2,
                 )
 
-        ecomp = om.ExecComp(
-            'excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel',
-            total_fuel_capacity={'units': 'lbm'},
-            unusable_fuel={'units': 'lbm'},
-            overall_fuel={'units': 'lbm'},
-            excess_fuel_capacity={'units': 'lbm'},
-        )
-
-        post_mission.add_subsystem(
-            'excess_fuel_constraint',
-            ecomp,
-            promotes_inputs=[
-                ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
-                ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
-                ('overall_fuel', Mission.TOTAL_FUEL_MASS),
-            ],
-            promotes_outputs=[
-                ('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY)
-            ],
-        )
-
-        # determine if the user wants the excess_fuel_capacity constraint active and if so add it to the problem
-        if Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT in self.aviary_inputs:
-            ignore_capacity_constraint = self.aviary_inputs.get_val(
-                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, units='unitless'
-            )
-        else:
-            ignore_capacity_constraint = self.meta_data[
-                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT
-            ]['default_value']
-            self.aviary_inputs.set_val(
-                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
-                val=ignore_capacity_constraint,
-                units='unitless',
-            )
-
-        if not ignore_capacity_constraint:
-            self.add_constraint(
-                Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY, lower=0, ref=1.0e5, units='lbm'
-            )
-        else:
-            if verbosity >= Verbosity.BRIEF:
-                warnings.warn(
-                    'Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT = True, therefore '
-                    'EXCESS_FUEL_MASS_CAPACITY constraint was not added to the Aviary problem. The '
-                    'aircraft may not have enough space for fuel, so check the value of '
-                    'Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY for details.'
-                )
-
-        post_mission.add_subsystem(
-            'block_fuel_comp',
-            om.ExecComp(
-                'block_fuel = mission_fuel_burned + fuel_burned_taxi_in',
-                block_fuel={'units': 'lbm'},
-                mission_fuel_burned={'units': 'lbm'},
-                fuel_burned_taxi_in={'units': 'lbm'},
-            ),
-            promotes_inputs=[
-                ('mission_fuel_burned', Mission.FUEL_MASS),
-                ('fuel_burned_taxi_in', Mission.Taxi.FUEL_MASS_TAXI_IN),
-            ],
-            promotes_outputs=[('block_fuel', Mission.BLOCK_FUEL_MASS)],
-        )
-
     def link_phases(self, verbosity=None, comm=None):
         """
         Link phases together after they've been added.
@@ -1106,7 +953,7 @@ class AviaryGroup(om.Group):
         self._add_bus_variables_and_connect()
         self._connect_mission_bus_variables()
 
-        final_phase = self.regular_phases[-1]
+        final_phase = self.main_phases[-1]
 
         # We connect the last points in the trajectory to the state_output component to make it
         # easier for users to access Mission.FINAL_MASS, Mission.FINAL_TIME,
@@ -1701,68 +1548,6 @@ class AviaryGroup(om.Group):
 
                 elif 'control' in var_type:
                     phase.set_control_val(key, vals=val, units=units)
-
-    def add_fuel_reserve_component(
-        self, post_mission=True, reserves_name=Mission.TOTAL_RESERVE_FUEL_MASS
-    ):
-        if post_mission:
-            reserve_calc_location = self.post_mission
-        else:
-            reserve_calc_location = self.model
-
-        reserve_fuel_margin = self.aviary_inputs.get_val(
-            Mission.RESERVE_FUEL_MARGIN, units='unitless'
-        )
-        if reserve_fuel_margin != 0:
-            # Originally tried to reference Mission.FUEL_MASS for fuel burn but in some tests this led to errors
-            reserve_fuel_frac = om.ExecComp(
-                'reserve_fuel_margin_mass = reserve_fuel_margin / 100 * (initial_mass - final_mass)',
-                reserve_fuel_margin_mass={'units': 'lbm'},
-                reserve_fuel_margin={
-                    'units': 'unitless',
-                    'val': reserve_fuel_margin,
-                },
-                initial_mass={'units': 'lbm'},
-                final_mass={'units': 'lbm'},
-            )
-
-            reserve_calc_location.add_subsystem(
-                'reserve_fuel_frac',
-                reserve_fuel_frac,
-                promotes_inputs=[
-                    ('initial_mass', Mission.GROSS_MASS),
-                    ('reserve_fuel_margin', Mission.RESERVE_FUEL_MARGIN),
-                ],
-                promotes_outputs=['reserve_fuel_margin_mass'],
-            )
-            # connect final mass
-            self.connect(
-                f'traj.{self.regular_phases[-1]}.timeseries.mass',
-                'reserve_fuel_frac.final_mass',
-                src_indices=[-1],
-            )
-
-        reserve_fuel_mass_additional = self.aviary_inputs.get_val(
-            Mission.RESERVE_FUEL_MASS_ADDITIONAL, units='lbm'
-        )
-        reserve_fuel_mass = om.ExecComp(
-            'reserve_fuel_mass = reserve_fuel_margin_mass + reserve_fuel_mass_additional + reserve_fuel_burned',
-            reserve_fuel_mass={'units': 'lbm', 'shape': 1},
-            reserve_fuel_margin_mass={'units': 'lbm', 'val': 0},
-            reserve_fuel_mass_additional={'units': 'lbm', 'val': reserve_fuel_mass_additional},
-            reserve_fuel_burned={'units': 'lbm', 'val': 0},
-        )
-
-        reserve_calc_location.add_subsystem(
-            'reserve_fuel_mass',
-            reserve_fuel_mass,
-            promotes_inputs=[
-                'reserve_fuel_margin_mass',
-                ('reserve_fuel_mass_additional', Mission.RESERVE_FUEL_MASS_ADDITIONAL),
-                ('reserve_fuel_burned', Mission.RESERVE_FUEL_MASS),
-            ],
-            promotes_outputs=[('reserve_fuel_mass', reserves_name)],
-        )
 
     def _validate_phase_info_modifier(self, phase_info_modifier):
         """Check function for required arguments (phase_info, post_mission_info, aviary_inputs)"""

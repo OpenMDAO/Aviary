@@ -26,7 +26,7 @@ def add_aviary_input(
     desc: str | None = None,
     shape_by_conn: bool = False,
     meta_data: dict = CoreMetaData,
-    shape: tuple | None = None,
+    shape: int | list | tuple | None = None,
     primal_name: str | None = None,
     **kwargs,
 ):
@@ -42,18 +42,18 @@ def add_aviary_input(
     comp: Component
         OpenMDAO component the variable `varname` will be added as an input to.
     varname: str
-        Name of variable.
+        Name of the variable in this component's namespace.
     units: str, optional
         Desired units for the variable. Units will be checked for compatibility with the default
         units for this variable in metadata.
     desc: str, optional
         Description text for the variable.
     shape_by_conn: bool, optional
-        Set to True to infer the shape from the connected output.
+        If True, shape this input to match its connected output.
     meta_data: dict, optional
         Aviary metadata dictionary. If unspecified, the default Aviary variable metadata will be used.
-    shape: tuple, optional
-        Shape for this input.
+    shape: int or list or tuple, optional
+        Shape of this variable, only required if val is not an array. Default is None.
     primal_name : str, optional
         Valid Python name to represent the variable in compute_primal if 'name' is not a valid
         Python name.
@@ -107,7 +107,7 @@ def add_aviary_output(
     desc: str | None = None,
     shape_by_conn: bool = False,
     meta_data: dict = CoreMetaData,
-    shape: tuple | None = None,
+    shape: int | list | tuple | None = None,
     primal_name: str | None = None,
     **kwargs,
 ):
@@ -123,18 +123,18 @@ def add_aviary_output(
     comp: Component
         OpenMDAO component the variable `varname` will be added as an output to.
     varname: str
-        Name of variable.
+        Name of the variable in this component's namespace.
     units: str, optional
         Desired units for the variable. Units will be checked for compatibility with the default
         units for this variable in metadata.
     desc: str, optional
         Description text for the variable.
     shape_by_conn: bool, optional
-        Set to True to infer the shape from the connected output.
+        If True, shape this input to match its connected output.
     meta_data: dict, optional
         Aviary metadata dictionary. If unspecified, the default Aviary variable metadata will be used.
-    shape: tuple, optional
-        Shape for this output.
+    shape: int or list or tuple, optional
+        Shape of this variable, only required if val is not an array. Default is None.
     primal_name : str, optional
         Valid Python name to represent the variable in compute_primal if 'name' is not a valid
         Python name.
@@ -558,7 +558,6 @@ def setup_model_options(
     group : AviaryGroup
         The AviaryGroup object that we are setting models on
     """
-
     # Use OpenMDAO's model options to pass all options through the system hierarchy.
     if prefix is not None:
         prefix = f'{prefix}.'
