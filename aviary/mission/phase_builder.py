@@ -498,8 +498,10 @@ class PhaseBuilder(ABC):
             extra_options['ref0'] = ref0
             extra_options['continuity_ref'] = ref
 
-            # TODO: We may want to consider letting the user setting this.
-            # extra_options['rate_continuity_ref'] = ref
+            # Without this, rate-continuity defects default to ref=1 while living
+            # at control-magnitude/segment-time scale; scaled jacobian rows were
+            # 1e2-1e4 (altitude 1.1e4, alpha 1.4e2), pinning IPOPT's inf_du.
+            extra_options['rate_continuity_ref'] = ref
 
         if units not in ['unitless', None]:
             extra_options['units'] = units

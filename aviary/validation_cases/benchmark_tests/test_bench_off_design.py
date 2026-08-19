@@ -284,6 +284,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         )
 
         prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, val=150000, units='lbm')
+        prob.aviary_inputs.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
