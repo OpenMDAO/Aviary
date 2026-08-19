@@ -3,7 +3,7 @@ Metadata for UAV variables defined in mass_variables.py
 """
 from copy import deepcopy
 import aviary.api as av
-from aviary.subsystems.mass.UAV_mass.variable_info.enums import WingType
+from aviary.subsystems.mass.UAV.variable_info.enums import WingType
 from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 
 ExtendedMetaData = deepcopy(av.CoreMetaData)
@@ -277,7 +277,7 @@ av.add_meta_data(
     units='unitless',
     types=str,
     desc='Path to csv file containing airfoil data',
-    default_value='subsystems/mass/UAV_mass/utils/n0012-il.csv',
+    default_value='subsystems/mass/UAV/utils/n0012-il.csv',
     meta_data = ExtendedMetaData,
     option=True,
 )
@@ -474,7 +474,7 @@ av.add_meta_data(
     units='unitless',
     types=str,
     desc='Path to csv file containing airfoil data',
-    default_value='subsystems/mass/UAV_mass/utils/n0012-il.csv',
+    default_value='subsystems/mass/UAV/utils/n0012-il.csv',
     meta_data = ExtendedMetaData,
     option=True,
 )
@@ -671,7 +671,7 @@ av.add_meta_data(
     units='unitless',
     types=str,
     desc='Path to csv file containing airfoil data',
-    default_value='subsystems/mass/UAV_mass/utils/mh84-il.csv',
+    default_value='subsystems/mass/UAV/utils/mh84-il.csv',
     meta_data = ExtendedMetaData,
     option=True,
 )
