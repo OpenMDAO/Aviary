@@ -7,10 +7,122 @@ mass calculations and geometry calculations.
 import numpy as np
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.enums import (
+    AircraftTypes,
+    AtmosphereModel,
+    FlapType,
+    GASPEngineType,
+    Verbosity,
+)
 
-V3_bug_fixed_options = get_option_defaults()
+
+def local_get_option_defaults() -> AviaryValues:
+    """Here are the variables missing in the rest of V3_bug_fixed_options"""
+    option_defaults = AviaryValues()
+
+    option_defaults.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
+    option_defaults.set_val(Aircraft.BWB.MAX_BAY_WIDTH, 0.0, units='ft')
+    option_defaults.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
+    option_defaults.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 0, units='unitless')
+    option_defaults.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 0, units='unitless')
+    option_defaults.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 0, units='unitless')
+    option_defaults.set_val(
+        Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 5, units='unitless'
+    )
+    option_defaults.set_val(
+        Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4, units='unitless'
+    )
+    option_defaults.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, units='unitless')
+    option_defaults.set_val(Aircraft.CrewPayload.NUM_CABIN_CREW, 0, units='unitless')
+    option_defaults.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, 0, units='unitless')
+    option_defaults.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, units='unitless')
+    option_defaults.set_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, 0, units='unitless')
+    option_defaults.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 0, units='unitless')
+    option_defaults.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, 0, units='unitless')
+    option_defaults.set_val(Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, 0.0, units='lbm')
+    option_defaults.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, False, units='unitless')
+    option_defaults.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, False, units='unitless')
+    option_defaults.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+    option_defaults.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.0, units='unitless')
+    option_defaults.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
+    option_defaults.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
+    option_defaults.set_val(Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, False, units='unitless')
+    option_defaults.set_val(Aircraft.Design.USE_ALT_MASS, False, units='unitless')
+    option_defaults.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, [0.0], units='lbm/h')
+    option_defaults.set_val(
+        Aircraft.Engine.DATA_FILE,
+        ['/home0/xjiang/workspace/Aviary_XJ/om-Aviary/aviary/models/engines/turbofan_23k_1.csv'],
+        units='unitless',
+    )
+    option_defaults.set_val(Aircraft.Engine.FIXED_RPM, [1.0], units='rpm')
+    option_defaults.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, [1.0], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, [0.08], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, [0.0], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, [0.0], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, [0.0], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, [False], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, [False], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.GLOBAL_HYBRID_THROTTLE, [False], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.GLOBAL_THROTTLE, [False], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, [False], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.INTERPOLATION_METHOD, ['slinear'], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.INTERPOLATION_SORT, ['mach'], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]), units='unitless')
+    option_defaults.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, [0], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.NUM_WING_ENGINES, [2], units='unitless')
+    option_defaults.set_val(
+        Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS, [True], units='unitless'
+    )
+    option_defaults.set_val(Aircraft.Engine.Propeller.NUM_BLADES, [0], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.RPM_DESIGN, [0], units='rpm')
+    option_defaults.set_val(Aircraft.Engine.SCALE_MASS, [True], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, [1.0], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, [1.0], units='unitless')
+    option_defaults.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+    option_defaults.set_val(Aircraft.Fins.NUM_FINS, 0, units='unitless')
+    option_defaults.set_val(Aircraft.Fuel.NUM_TANKS, 7, units='unitless')
+    option_defaults.set_val(Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, True, units='unitless')
+    option_defaults.set_val(Aircraft.Fuselage.MILITARY_CARGO_FLOOR, False, units='unitless')
+    option_defaults.set_val(Aircraft.Fuselage.NUM_FUSELAGES, 1, units='unitless')
+    option_defaults.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, True, units='unitless')
+    option_defaults.set_val(Aircraft.HorizontalTail.NUM_TAILS, 1, units='unitless')
+    option_defaults.set_val(Aircraft.LandingGear.DRAG_COEFFICIENT, 1.0, units='unitless')
+    option_defaults.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+    option_defaults.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 0, units='unitless')
+    option_defaults.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+    option_defaults.set_val(Aircraft.Propulsion.TOTAL_REFERENCE_SLS_THRUST, 0.0, units='lbf')
+    option_defaults.set_val(Aircraft.VerticalTail.NUM_TAILS, 1, units='unitless')
+    option_defaults.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 1.0, units='unitless')
+    option_defaults.set_val(Aircraft.Wing.DETAILED_WING, False, units='unitless')
+    option_defaults.set_val(Aircraft.Wing.FLAP_TYPE, FlapType.DOUBLE_SLOTTED, units='unitless')
+    option_defaults.set_val(Aircraft.Wing.HAS_FOLD, False, units='unitless')
+    option_defaults.set_val(Aircraft.Wing.HAS_STRUT, False, units='unitless')
+    option_defaults.set_val(
+        Aircraft.Wing.INPUT_STATION_DISTRIBUTION, np.array([0.0]), units='unitless'
+    )
+    option_defaults.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
+    option_defaults.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
+    option_defaults.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, 2, units='unitless')
+    option_defaults.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50, units='unitless')
+    option_defaults.set_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, False, units='unitless')
+    option_defaults.set_val(Mission.Constraints.MAX_MACH, 0.0, units='unitless')
+    option_defaults.set_val(Mission.GRAVITY, 9.80665, units='m/s**2')
+    option_defaults.set_val(Mission.RESERVE_FUEL_MARGIN, 0.0, units='unitless')
+    option_defaults.set_val(Mission.RESERVE_FUEL_MASS_ADDITIONAL, 0.0, units='lbm')
+    option_defaults.set_val(Mission.SEA_LEVEL_DENSITY, 1.225, units='kg/m**3')
+    option_defaults.set_val(Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, 0.0, units='deg')
+    option_defaults.set_val(Mission.Takeoff.OBSTACLE_HEIGHT, 35.0, units='ft')
+    option_defaults.set_val(Mission.Takeoff.THRUST_INCIDENCE, 0.0, units='deg')
+    option_defaults.set_val(Mission.Taxi.DURATION, 0.167, units='h')
+    option_defaults.set_val(Settings.ATMOSPHERE_MODEL, AtmosphereModel.STANDARD, units='unitless')
+    option_defaults.set_val(Settings.PAYLOAD_RANGE, False, units='unitless')
+    option_defaults.set_val(Settings.VERBOSITY, Verbosity.BRIEF, units='unitless')
+
+    return option_defaults
+
+
+V3_bug_fixed_options = local_get_option_defaults()
 V3_bug_fixed_options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
 # we keep CrewPayload.NUM_PASSENGERS here because preprocess_crewpayload is often not run in these
