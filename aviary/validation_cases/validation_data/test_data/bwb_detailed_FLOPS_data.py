@@ -326,7 +326,7 @@ outputs.set_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 97812.0, 'lbm')  # 
 
 outputs.set_val(Aircraft.Electrical.MASS, 4291.4778106479534, 'lbm')  # WELEC
 
-outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 1197720.2419621395, 'lbm')  # FMXTOT
+outputs.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 1197720.2419621395, 'lbm')  # FMXTOT
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 5444.9572934402777, 'lbm')  # WFSYS
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 1732.78186198, 'lbm')  # WUF
 outputs.set_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 1197720.2419621395, 'lbm')  # FULWMX

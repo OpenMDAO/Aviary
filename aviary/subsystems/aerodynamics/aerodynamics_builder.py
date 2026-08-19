@@ -504,7 +504,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
                 except KeyError:
                     design_type = AircraftTypes.TRANSPORT
-                    if verbosity >= Verbosity.BRIEF:
+                    if verbosity > Verbosity.BRIEF:
                         warnings.warn(
                             'No input value found for Aircraft.Design.TYPE. '
                             'Assuming the aircraft is of type: AircraftTypes.TRANSPORT.'
@@ -514,7 +514,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     num_horizontal_tails = aviary_inputs.get_val(Aircraft.HorizontalTail.NUM_TAILS)
                 except KeyError:
                     num_horizontal_tails = 1
-                    if verbosity >= Verbosity.BRIEF:
+                    if verbosity > Verbosity.BRIEF:
                         warnings.warn(
                             'No input value found for Aircraft.HorizontalTail.NUM_TAILS. '
                             'Assuming there is 1 horizontal tail.'

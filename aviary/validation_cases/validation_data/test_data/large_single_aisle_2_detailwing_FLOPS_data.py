@@ -80,7 +80,7 @@ inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)
-inputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 46063.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 46063.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)
 
 # Furnishings

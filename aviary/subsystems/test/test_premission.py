@@ -67,7 +67,7 @@ class PreMissionTestCase(unittest.TestCase):
         input_options.delete(Aircraft.Nacelle.AVG_DIAMETER)
         input_options.delete(Aircraft.Fuselage.WETTED_AREA)
         input_options.delete(Aircraft.Wing.ULTIMATE_LOAD_FACTOR)
-        input_options.delete(Aircraft.Fuel.TOTAL_CAPACITY)
+        input_options.delete(Aircraft.Fuel.MAX_CAPACITY_MASS)
         input_options.delete(Aircraft.Nacelle.AVG_LENGTH)
         input_options.delete(Aircraft.HorizontalTail.AREA)
         input_options.delete(Aircraft.VerticalTail.AREA)

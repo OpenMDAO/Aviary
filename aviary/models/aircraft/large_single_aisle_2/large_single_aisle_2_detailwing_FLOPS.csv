@@ -71,7 +71,7 @@ aircraft:fuel:auxiliary_fuel_mass_capacity,0.0,lbm
 aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
 aircraft:fuel:num_tanks,7,unitless
-aircraft:fuel:total_capacity,46063.0,lbm
+aircraft:fuel:max_capacity_mass,46063.0,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
 aircraft:furnishings:mass_scaler,1.0,unitless
 aircraft:fuselage:length,124.75,ft

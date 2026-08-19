@@ -20,7 +20,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 # TODO document what kwargs are used, and by which preprocessors in docstring?
-# TODO preprocess needed for design range vs phase_info range in sizing missions? (should be the same)
+# TODO preprocess needed to check design range equals phase_info range in sizing missions?
 def preprocess_options(
     aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None, **kwargs
 ):
@@ -664,7 +664,7 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
 
     if mass_method == LegacyCode.FLOPS:
         # find which fuel capacity variables the user has set:
-        if Aircraft.Fuel.TOTAL_CAPACITY not in aviary_options:
+        if Aircraft.Fuel.MAX_CAPACITY_MASS not in aviary_options:
             # Aviary will need to calculate the total capacity and can only do so if we assume any missing subsystem capacities are zero
             # TODO these are default values, double check they need to actually be set here
             if Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY not in aviary_options:
@@ -673,7 +673,7 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
             if Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY not in aviary_options:
                 aviary_options.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
         else:
-            total_capacity = aviary_options.get_val(Aircraft.Fuel.TOTAL_CAPACITY, 'lbm')
+            total_capacity = aviary_options.get_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 'lbm')
             try:
                 wing_capacity = aviary_options.get_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 'lbm')
             except KeyError:
@@ -705,7 +705,7 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
             # check if the user inputs are self consistent (as far as possible at this stage!) Aviary can still calculate outputs at runtime.
             if capacity_count == 3 and capacity_check != total_capacity:
                 raise UserWarning(
-                    f'Aircraft.Fuel.TOTAL_CAPACITY ({total_capacity} lbm) is not equal to sum of '
+                    f'Aircraft.Fuel.MAX_CAPACITY_MASS ({total_capacity} lbm) is not equal to sum of '
                     f'Aircraft.Fuel.WING_FUEL_CAPACITY ({wing_capacity} lbm), '
                     f'+ Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity} lbm), and'
                     f'Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity} lbm)'
@@ -713,7 +713,7 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
                 )
             elif capacity_count < 3 and capacity_check > total_capacity:
                 raise UserWarning(
-                    f'Aircraft.Fuel.TOTAL_CAPACITY ({total_capacity}) is less than sum of '
+                    f'Aircraft.Fuel.MAX_CAPACITY_MASS ({total_capacity}) is less than sum of '
                     f'Aircraft.Fuel.WING_FUEL_CAPACITY ({wing_capacity} lbm), '
                     f'Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity} lbm), and '
                     f'Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity} lbm) '
