@@ -40,19 +40,19 @@ from pathlib import Path
 
 from packaging.version import InvalidVersion, Version
 
-SAFE_SUBDIR_RE = re.compile(r"^[A-Za-z0-9._-]+$")
+SAFE_SUBDIR_RE = re.compile(r'^[A-Za-z0-9._-]+$')
 
 
 # ---------------------------------------------------------------------------
 # Git helpers
 # ---------------------------------------------------------------------------
 
+
 def _run(cmd, cwd=None, check=True, capture=False):
     """Run a subprocess command, echoing it for CI logs."""
-    print(f"$ {' '.join(cmd)}" + (f"   (cwd={cwd})" if cwd else ""))
+    print(f'$ {" ".join(cmd)}' + (f'   (cwd={cwd})' if cwd else ''))
     if capture:
-        result = subprocess.run(cmd, cwd=cwd, check=check,
-                                capture_output=True, text=True)
+        result = subprocess.run(cmd, cwd=cwd, check=check, capture_output=True, text=True)
         return result.stdout.strip()
     subprocess.run(cmd, cwd=cwd, check=check)
     return None
@@ -69,7 +69,7 @@ def get_release_tags(repo_root, extra_tags=()):
     """
     out = _run(['git', 'tag', '-l', 'v*.*.*'], cwd=repo_root, capture=True)
     raw = {t for t in out.split() if t} | set(extra_tags)
-    print(f"  discovered {len(raw)} candidate tag(s): {sorted(raw)}")
+    print(f'  discovered {len(raw)} candidate tag(s): {sorted(raw)}')
 
     parsed = []
     for t in raw:
@@ -77,7 +77,7 @@ def get_release_tags(repo_root, extra_tags=()):
         try:
             v = Version(t.lstrip('v'))
         except InvalidVersion:
-            print(f"  skipping unparseable tag: {t}")
+            print(f'  skipping unparseable tag: {t}')
             continue
         parsed.append((v, t))
 
@@ -98,6 +98,7 @@ def pick_latest_stable(parsed_tags):
 # versions.json + landing page
 # ---------------------------------------------------------------------------
 
+
 def build_versions_json(existing_subdirs, parsed_tags, latest_stable):
     """
     Build the versions.json payload.
@@ -109,22 +110,24 @@ def build_versions_json(existing_subdirs, parsed_tags, latest_stable):
     """
     versions = []
     if 'dev' in existing_subdirs:
-        versions.append({"name": "dev", "path": "dev/", "kind": "dev"})
+        versions.append({'name': 'dev', 'path': 'dev/', 'kind': 'dev'})
 
     for v, tag in parsed_tags:
         if tag not in existing_subdirs:
             continue
         stable = not (v.is_prerelease or v.is_devrelease or v.local)
-        versions.append({
-            "name": tag,
-            "path": f"{tag}/",
-            "kind": "release",
-            "stable": stable,
-        })
+        versions.append(
+            {
+                'name': tag,
+                'path': f'{tag}/',
+                'kind': 'release',
+                'stable': stable,
+            }
+        )
 
     return {
-        "latest": latest_stable if latest_stable in existing_subdirs else None,
-        "versions": versions,
+        'latest': latest_stable if latest_stable in existing_subdirs else None,
+        'versions': versions,
     }
 
 
@@ -244,9 +247,10 @@ LANDING_HTML = """<!DOCTYPE html>
 # Filesystem helpers
 # ---------------------------------------------------------------------------
 
+
 def _validate_subdir(name):
     if not SAFE_SUBDIR_RE.match(name):
-        raise ValueError(f"Refusing to use unsafe subdir name: {name!r}")
+        raise ValueError(f'Refusing to use unsafe subdir name: {name!r}')
 
 
 def _copy_html_into(root, subdir, html_dir):
@@ -254,9 +258,9 @@ def _copy_html_into(root, subdir, html_dir):
     _validate_subdir(subdir)
     dest = root / subdir
     if dest.exists():
-        print(f"  removing existing {dest}")
+        print(f'  removing existing {dest}')
         shutil.rmtree(dest)
-    print(f"  copying {html_dir} -> {dest}")
+    print(f'  copying {html_dir} -> {dest}')
     shutil.copytree(html_dir, dest)
 
 
@@ -265,44 +269,45 @@ def _write_site_metadata(root, parsed_tags, latest_stable):
     existing = {p.name for p in root.iterdir() if p.is_dir()}
     payload = build_versions_json(existing, parsed_tags, latest_stable)
 
-    versions_path = root / "versions.json"
-    versions_path.write_text(json.dumps(payload, indent=2) + "\n")
-    print(f"  wrote {versions_path}  (latest={payload['latest']}, "
-          f"count={len(payload['versions'])})")
+    versions_path = root / 'versions.json'
+    versions_path.write_text(json.dumps(payload, indent=2) + '\n')
+    print(
+        f'  wrote {versions_path}  (latest={payload["latest"]}, count={len(payload["versions"])})'
+    )
 
-    (root / "index.html").write_text(LANDING_HTML)
-    print(f"  wrote {root / 'index.html'}")
+    (root / 'index.html').write_text(LANDING_HTML)
+    print(f'  wrote {root / "index.html"}')
 
-    nojekyll = root / ".nojekyll"
+    nojekyll = root / '.nojekyll'
     if not nojekyll.exists():
-        nojekyll.write_text("")
-        print(f"  wrote {nojekyll}")
+        nojekyll.write_text('')
+        print(f'  wrote {nojekyll}')
 
 
 # ---------------------------------------------------------------------------
 # Publish modes
 # ---------------------------------------------------------------------------
 
-def publish_to_worktree(repo_root, html_dir, subdir, is_latest,
-                        parsed_tags, latest_stable, dry_run, commit_message):
+
+def publish_to_worktree(
+    repo_root, html_dir, subdir, is_latest, parsed_tags, latest_stable, dry_run, commit_message
+):
     """
     Check out gh-pages into a temp worktree, drop in the new subdir, refresh
     metadata, commit, push.
     """
-    with tempfile.TemporaryDirectory(prefix="ghp-worktree-") as tmp:
-        worktree = Path(tmp) / "gh-pages"
+    with tempfile.TemporaryDirectory(prefix='ghp-worktree-') as tmp:
+        worktree = Path(tmp) / 'gh-pages'
 
         # gh-pages might not exist yet on a fresh fork. Try to fetch; if the
         # branch is missing, create an orphan worktree.
         try:
             _run(['git', 'fetch', 'origin', 'gh-pages'], cwd=repo_root)
-            _run(['git', 'worktree', 'add', str(worktree), 'origin/gh-pages'],
-                 cwd=repo_root)
+            _run(['git', 'worktree', 'add', str(worktree), 'origin/gh-pages'], cwd=repo_root)
             _run(['git', 'checkout', '-B', 'gh-pages'], cwd=worktree)
         except subprocess.CalledProcessError:
-            print("  gh-pages branch not found; creating a fresh orphan branch")
-            _run(['git', 'worktree', 'add', '--detach', str(worktree), 'HEAD'],
-                 cwd=repo_root)
+            print('  gh-pages branch not found; creating a fresh orphan branch')
+            _run(['git', 'worktree', 'add', '--detach', str(worktree), 'HEAD'], cwd=repo_root)
             _run(['git', 'checkout', '--orphan', 'gh-pages'], cwd=worktree)
             # Empty the working tree so the orphan branch starts clean.
             for entry in worktree.iterdir():
@@ -321,16 +326,15 @@ def publish_to_worktree(repo_root, html_dir, subdir, is_latest,
 
             _run(['git', 'add', '-A'], cwd=worktree)
             # Skip commit if nothing actually changed.
-            status = _run(['git', 'status', '--porcelain'],
-                          cwd=worktree, capture=True)
+            status = _run(['git', 'status', '--porcelain'], cwd=worktree, capture=True)
             if not status:
-                print("  no changes to commit")
+                print('  no changes to commit')
                 return
 
             _run(['git', 'commit', '-m', commit_message], cwd=worktree)
 
             if dry_run:
-                print("  --dry-run: skipping git push")
+                print('  --dry-run: skipping git push')
             else:
                 _run(['git', 'push', 'origin', 'gh-pages'], cwd=worktree)
         finally:
@@ -341,14 +345,16 @@ def publish_to_worktree(repo_root, html_dir, subdir, is_latest,
             # what's left is git-binary-missing (OSError) and defensive cover
             # for CalledProcessError in case `check=False` is ever removed.
             try:
-                _run(['git', 'worktree', 'remove', '--force', str(worktree)],
-                     cwd=repo_root, check=False)
+                _run(
+                    ['git', 'worktree', 'remove', '--force', str(worktree)],
+                    cwd=repo_root,
+                    check=False,
+                )
             except (OSError, subprocess.CalledProcessError) as exc:
-                print(f"  (worktree cleanup warning: {exc})")
+                print(f'  (worktree cleanup warning: {exc})')
 
 
-def publish_to_outdir(out_dir, html_dir, subdir, is_latest,
-                      parsed_tags, latest_stable):
+def publish_to_outdir(out_dir, html_dir, subdir, is_latest, parsed_tags, latest_stable):
     """Assemble the full site tree in a plain directory (no git)."""
     out_dir.mkdir(parents=True, exist_ok=True)
     _copy_html_into(out_dir, subdir, html_dir)
@@ -361,21 +367,33 @@ def publish_to_outdir(out_dir, html_dir, subdir, is_latest,
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def parse_args(argv):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[1])
-    ap.add_argument('--kind', choices=['dev', 'tag'], required=True,
-                    help="'dev' publishes to /dev/; 'tag' publishes to /<tag>/.")
-    ap.add_argument('--tag',
-                    help="Tag name (e.g. v1.0.1). Required when --kind=tag.")
-    ap.add_argument('--html-dir', required=True,
-                    help="Path to the built HTML (e.g. aviary/docs/_build/html).")
-    ap.add_argument('--repo-root', default=None,
-                    help="Repo root (default: cwd). Only used for worktree mode.")
-    ap.add_argument('--out-dir', default=None,
-                    help="Write the full site tree to this directory instead "
-                         "of pushing to gh-pages. Useful for local preview.")
-    ap.add_argument('--dry-run', action='store_true',
-                    help="Skip the final `git push`. Ignored when --out-dir is set.")
+    ap.add_argument(
+        '--kind',
+        choices=['dev', 'tag'],
+        required=True,
+        help="'dev' publishes to /dev/; 'tag' publishes to /<tag>/.",
+    )
+    ap.add_argument('--tag', help='Tag name (e.g. v1.0.1). Required when --kind=tag.')
+    ap.add_argument(
+        '--html-dir', required=True, help='Path to the built HTML (e.g. aviary/docs/_build/html).'
+    )
+    ap.add_argument(
+        '--repo-root', default=None, help='Repo root (default: cwd). Only used for worktree mode.'
+    )
+    ap.add_argument(
+        '--out-dir',
+        default=None,
+        help='Write the full site tree to this directory instead '
+        'of pushing to gh-pages. Useful for local preview.',
+    )
+    ap.add_argument(
+        '--dry-run',
+        action='store_true',
+        help='Skip the final `git push`. Ignored when --out-dir is set.',
+    )
     return ap.parse_args(argv)
 
 
@@ -383,12 +401,12 @@ def main(argv=None):
     args = parse_args(argv)
 
     if args.kind == 'tag' and not args.tag:
-        print("--tag is required when --kind=tag", file=sys.stderr)
+        print('--tag is required when --kind=tag', file=sys.stderr)
         return 2
 
     html_dir = Path(args.html_dir).resolve()
     if not html_dir.is_dir():
-        print(f"HTML dir not found: {html_dir}", file=sys.stderr)
+        print(f'HTML dir not found: {html_dir}', file=sys.stderr)
         return 2
 
     repo_root = Path(args.repo_root).resolve() if args.repo_root else Path.cwd()
@@ -411,12 +429,9 @@ def main(argv=None):
     #   - tag builds: the newly-published tag if it's the highest stable release,
     #     otherwise unchanged.
     latest_stable_now = pick_latest_stable(parsed_tags)
-    is_latest = (args.kind == 'tag' and args.tag == latest_stable_now)
+    is_latest = args.kind == 'tag' and args.tag == latest_stable_now
 
-    commit_message = (
-        f"Publish docs for {subdir}"
-        + (" (also updated latest/)" if is_latest else "")
-    )
+    commit_message = f'Publish docs for {subdir}' + (' (also updated latest/)' if is_latest else '')
 
     if args.out_dir:
         publish_to_outdir(
@@ -427,8 +442,8 @@ def main(argv=None):
             parsed_tags=parsed_tags,
             latest_stable=latest_stable_now,
         )
-        print(f"Local site tree written to {args.out_dir}")
-        print(f"Preview with: python -m http.server -d {args.out_dir} 8000")
+        print(f'Local site tree written to {args.out_dir}')
+        print(f'Preview with: python -m http.server -d {args.out_dir} 8000')
     else:
         publish_to_worktree(
             repo_root=repo_root,
@@ -440,10 +455,10 @@ def main(argv=None):
             dry_run=args.dry_run,
             commit_message=commit_message,
         )
-        print("Done." + (" (dry-run)" if args.dry_run else ""))
+        print('Done.' + (' (dry-run)' if args.dry_run else ''))
 
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())
