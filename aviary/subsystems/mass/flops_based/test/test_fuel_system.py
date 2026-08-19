@@ -124,7 +124,7 @@ class TransportFuelSystemTest(unittest.TestCase):
             case_name,
             input_keys=[
                 Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER,
-                Aircraft.Fuel.TOTAL_CAPACITY,
+                Aircraft.Fuel.MAX_CAPACITY_MASS,
                 Aircraft.Design.MAX_MACH,
             ],
             output_keys=Aircraft.Fuel.FUEL_SYSTEM_MASS,
@@ -167,7 +167,7 @@ class TransportFuelSystemTest2(unittest.TestCase):
             promotes_inputs=['*'],
         )
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 100.0, 'lbm')
+        prob.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 100.0, 'lbm')
         prob.set_val(Aircraft.Design.MAX_MACH, 0.9, 'unitless')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
