@@ -1,1 +1,109 @@
-<meta http-equiv="Refresh" content="0; url=introduction.html" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Aviary Documentation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                     "Helvetica Neue", Arial, sans-serif;
+         max-width: 720px; margin: 3rem auto; padding: 0 1.25rem;
+         line-height: 1.55; }
+  h1 { margin-bottom: 0.25rem; }
+  .sub { color: #666; margin-top: 0; }
+  .primary { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1.5rem 0; }
+  .primary a { display: inline-block; padding: 0.6rem 1rem; border-radius: 6px;
+               text-decoration: none; border: 1px solid #ccc; }
+  .primary a.stable { background: #0b5cff; color: white; border-color: #0b5cff; }
+  .picker { margin: 2rem 0 1rem; }
+  .picker label { display: block; font-weight: 600; margin-bottom: 0.35rem; }
+  .picker select { padding: 0.5rem; min-width: 16rem; font-size: 1rem; }
+  ul.versions { padding-left: 1.25rem; }
+  ul.versions li { margin: 0.15rem 0; }
+  .kind-dev { color: #8a5a00; }
+  .empty { color: #999; font-style: italic; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #14161a; color: #e6e6e6; }
+    .sub { color: #9aa0a6; }
+    .primary a { border-color: #3a3f47; color: #e6e6e6; }
+    .primary a.stable { background: #4c8bf5; border-color: #4c8bf5; color: white; }
+  }
+</style>
+</head>
+<body>
+<h1>Aviary Documentation</h1>
+<p class="sub">Pick a version below.</p>
+
+<div class="primary" id="primary-links"></div>
+
+<div class="picker">
+  <label for="version-select">All versions</label>
+  <select id="version-select"></select>
+</div>
+
+<h3>All published versions</h3>
+<ul class="versions" id="version-list"></ul>
+
+<script>
+(async function () {
+  const primary = document.getElementById('primary-links');
+  const select = document.getElementById('version-select');
+  const list = document.getElementById('version-list');
+
+  let data;
+  try {
+    const resp = await fetch('versions.json', {cache: 'no-store'});
+    data = await resp.json();
+  } catch (e) {
+    primary.innerHTML = '<span class="empty">Could not load versions.json.</span>';
+    return;
+  }
+
+  const versions = data.versions || [];
+  if (!versions.length) {
+    primary.innerHTML = '<span class="empty">No versions published yet.</span>';
+    return;
+  }
+
+  // Primary buttons: latest stable, then dev.
+  if (data.latest) {
+    const a = document.createElement('a');
+    a.href = 'latest/';
+    a.className = 'stable';
+    a.textContent = 'Latest stable (' + data.latest + ')';
+    primary.appendChild(a);
+  }
+  const dev = versions.find(v => v.kind === 'dev');
+  if (dev) {
+    const a = document.createElement('a');
+    a.href = dev.path;
+    a.textContent = 'Development (dev)';
+    primary.appendChild(a);
+  }
+
+  // Dropdown + list of every version.
+  for (const v of versions) {
+    const opt = document.createElement('option');
+    opt.value = v.path;
+    opt.textContent = v.name + (v.kind === 'dev' ? ' (development)' : '');
+    select.appendChild(opt);
+
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = v.path;
+    a.textContent = v.name;
+    if (v.kind === 'dev') a.className = 'kind-dev';
+    li.appendChild(a);
+    if (data.latest && v.name === data.latest) {
+      li.appendChild(document.createTextNode('  — latest stable'));
+    }
+    list.appendChild(li);
+  }
+  select.addEventListener('change', () => {
+    if (select.value) window.location.href = select.value;
+  });
+})();
+</script>
+</body>
+</html>

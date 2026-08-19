@@ -1,0 +1,10 @@
+{
+  "latest": null,
+  "versions": [
+    {
+      "name": "dev",
+      "path": "dev/",
+      "kind": "dev"
+    }
+  ]
+}
