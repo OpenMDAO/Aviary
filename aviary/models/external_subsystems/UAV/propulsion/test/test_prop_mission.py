@@ -5,8 +5,8 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.propulsion.UAV.model.mission import UAVPropMission
-from aviary.variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.propulsion.model.prop_mission import UAVPropMission
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 
 

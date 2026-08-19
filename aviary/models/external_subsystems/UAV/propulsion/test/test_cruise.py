@@ -9,13 +9,13 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from pathlib import Path
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.missions.UAV_energy_phase import phase_info
-from aviary.subsystems.propulsion.UAV.prop_builder import UAVBuilder
-from aviary.subsystems.aerodynamics.UAV.aero_builder import AeroBuilder
-from aviary.subsystems.propulsion.UAV.model.mission import UAVPropMission
-from aviary.subsystems.propulsion.UAV.model.premission import UAVPropPreMission
+from aviary.models.external_subsystems.UAV.propulsion.prop_builder import UAVBuilder
+from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
+from aviary.models.external_subsystems.UAV.propulsion.model.prop_mission import UAVPropMission
+from aviary.models.external_subsystems.UAV.propulsion.model.prop_premission import UAVPropPreMission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.UAV_variables import Aircraft, Dynamic
-from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData as UAVExtendedMetaData
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import ExtendedMetaData as UAVExtendedMetaData
 from aviary.variable_info.variables import Mission, Settings
 
 

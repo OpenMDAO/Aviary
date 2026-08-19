@@ -1,21 +1,19 @@
 
 from copy import deepcopy
 
-
 import aviary.api as av
 from aviary.mission.two_dof.ode import constraints
 from aviary.variable_info.enums import AtmosphereModel
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.aerodynamics.UAV.aero_builder import AeroBuilder
+from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.missions.UAV_energy_phase import phase_info
-from aviary.subsystems.propulsion.UAV.prop_builder import UAVBuilder
-from aviary.variable_info.UAV_variables import Aircraft, Dynamic
-from aviary.variable_info.variables import  Settings
+from aviary.models.external_subsystems.UAV.propulsion.prop_builder import UAVBuilder
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic, Settings
 
-from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import ExtendedMetaData
 
 
 UAV_Prop = UAVBuilder()
@@ -170,10 +168,6 @@ def CruiseExample():
     # print('settings:equations_of_motion:', prob.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION))
     # print('settings:mass_method:', prob.aviary_inputs.get_val(Settings.MASS_METHOD))
     return prob
-
-
-
-
 
 if __name__ == '__main__':
     CruiseExample()

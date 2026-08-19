@@ -1,7 +1,7 @@
 import unittest
 
-from aviary.subsystems.aerodynamics.UAV.aero_builder import AeroBuilder
-from aviary.variable_info.variables import Dynamic
+from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Dynamic
 
 class TestRCAeroBuilder(unittest.TestCase):
     def test_mission_interface_exposes_expected_outputs_and_parameters(self):

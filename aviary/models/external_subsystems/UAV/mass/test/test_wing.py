@@ -6,7 +6,7 @@ import openmdao.api as om
 from aviary.models.external_subsystems.UAV.mass.utils.enums import WingType
 from aviary.models.external_subsystems.UAV.mass.model.wing import WingMass
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
-from aviary.variable_info.UAV_variables import Aircraft
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 
 class TestWingMass(unittest.TestCase):
     #Creates a separate problem for tests for each wing design

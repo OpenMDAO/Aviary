@@ -4,8 +4,8 @@ import openmdao.api as om
 from ambiance import Atmosphere
 
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.subsystems.aerodynamics.UAV.OAS_aero_analysis import OASAero
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.aerodynamics.model.aero_OAS_analysis import OASAero
 
 class WingTailAreaRatios(om.ExplicitComponent):
     """

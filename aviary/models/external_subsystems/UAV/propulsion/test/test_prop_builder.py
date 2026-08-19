@@ -6,7 +6,7 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 from packaging import version
 
-from aviary.subsystems.propulsion.UAV.prop_builder import UAVBuilder
+from aviary.models.external_subsystems.UAV.propulsion.prop_builder import UAVBuilder
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission, PropulsionSum
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
@@ -14,7 +14,7 @@ from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.variable_info.variables import Mission, Settings
 
 

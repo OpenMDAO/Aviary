@@ -2,10 +2,13 @@
 
 from aviary.variable_info.variables import Aircraft as av_Aircraft
 from aviary.variable_info.variables import Dynamic as av_Dynamic
+from aviary.variable_info.variables import Settings as av_Settings
+from aviary.variable_info.variables import Mission as av_Mission
 
 AviaryAircraft = av_Aircraft
 AviaryDynamic = av_Dynamic
-
+AviarySettings = av_Settings
+AviaryMission = av_Mission
 
 class Aircraft(AviaryAircraft):
     """Aircraft data hierarchy extended for UAV propulsion and mass."""
@@ -132,3 +135,11 @@ class Dynamic(AviaryDynamic):
             RPM_MAX = 'rotations_per_minute_max'
             PROP_POWER = 'prop_power'
             PROP_POWER_MAX = 'prop_power_max'
+
+class Settings(AviarySettings):
+    "needed for imports to recognize settings variables"
+    pass
+
+class Mission(AviaryMission):
+    "needed for imports to recognize mission variables"
+    pass

@@ -1,14 +1,10 @@
-'''
-
-'''
-
 import openmdao.api as om
 import numpy as np
 # np.seterr(divide='raise', invalid='raise')
 import matplotlib.pyplot as plt
 
 import aviary.api as av
-from aviary.subsystems.aerodynamics.UAV.aero_builder import AeroBuilder
+from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
 # from aviary.subsystems.aerodynamics.UAV.model import TotalAircraftAero #they are not used so commented out
 # from aviary.utils.functions import set_aviary_initial_values
 # from aviary.utils.aviary_values import AviaryValues
@@ -20,9 +16,9 @@ from aviary.variable_info.variables import Settings
 DEBUG_MODEL = True
 #import the UAV builders for mass and propulsion
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder
-from aviary.subsystems.propulsion.UAV.prop_builder import UAVBuilder
+from aviary.models.external_subsystems.UAV.propulsion.prop_builder import UAVBuilder
 
-from aviary.variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 
 aero_builder = AeroBuilder(name='UAV_aero')
 
@@ -95,7 +91,7 @@ print('Aero builder:', aero_builder.name)
 print('Propulsion builder:', propulsion_builder.name)
 print('Mass builder:', mass_builder.name)
 
-prob.load_external_subsystems([ mass_builder, aero_builder,  propulsion_builder,])
+prob.load_external_subsystems([mass_builder, aero_builder,  propulsion_builder,])
 
 prob.aviary_inputs.set_val(
     Settings.ATMOSPHERE_MODEL,
@@ -132,34 +128,33 @@ prob.aviary_inputs.set_val(Dynamic.Vehicle.MASS, 3.787, units='kg')
 
 prob.check_and_preprocess_inputs()
 prob.build_model()
-# prob.add_driver('IPOPT',use_coloring=False, max_iter=max_iter)
+# prob.add_driver('IPOPT',use_coloring=False, max_iter=15)
 prob.setup()
 prob.set_initial_guesses()
 prob.final_setup()
 
 ################
-# Check what supplies mass to AlphaComp
-mass_inputs = prob.model.list_inputs(
-    includes=['*alpha_comp*mass*'],
-    val=True,
-    units=True,
-    prom_name=True,
-    out_stream=None,
-)
+# # Check what supplies mass to AlphaComp
+# mass_inputs = prob.model.list_inputs(
+#     includes=['*alpha_comp*mass*'],
+#     val=True,
+#     units=True,
+#     prom_name=True,
+#     out_stream=None,
+# )
 
-for name, meta in mass_inputs:
-    source = prob.model._conn_global_abs_in2out.get(name, 'UNCONNECTED')
+# for name, meta in mass_inputs:
+#     source = prob.model._conn_global_abs_in2out.get(name, 'UNCONNECTED')
 
-    print('\nAlphaComp mass check:')
-    print('  Input: ', name)
-    print('  Source:', source)
-    print('  Value: ', meta['val'], meta['units'])
+#     print('\nAlphaComp mass check:')
+#     print('  Input: ', name)
+#     print('  Source:', source)
+#     print('  Value: ', meta['val'], meta['units'])
 
 om.n2(
-prob,
-outfile='uav_aero_full_n2.html',
-show_browser=True,
-title='UAV Mass-Aero-Propulsion Full Model',
+    prob,
+    #show_browser=True,
+    title='UAV Mass-Aero-Propulsion Full Model',
 )
 
 # =========================================================
@@ -216,17 +211,17 @@ if DEBUG_MODEL:
     # -----------------------------------------------------
 
     has_uav_mass = any(
-        'subsystems.mass.uav_mass' in system
+        'models.external_subsystems.UAV.mass' in system
         for system in assembled_systems
     )
 
     has_uav_aero = any(
-        'subsystems.aerodynamics.uav_aero' in system
+        'models.external_subsystems.UAV.aerodynamics' in system
         for system in assembled_systems
     )
 
     has_uav_propulsion = any(
-        'subsystems.propulsion.uav' in system
+        'models.external_subsystems.UAV.propulsion' in system
         for system in assembled_systems
     )
 
@@ -236,7 +231,6 @@ if DEBUG_MODEL:
     print('Custom UAV aero present:', has_uav_aero)
     print('Custom UAV propulsion present:', has_uav_propulsion)
     
-
     assert has_uav_mass, (
         'The custom UAV mass subsystem was not built.'
     )

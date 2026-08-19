@@ -6,8 +6,8 @@ from aviary.variable_info.functions import add_aviary_input as _add_aviary_input
 from aviary.variable_info.functions import add_aviary_option as _add_aviary_option
 from aviary.variable_info.functions import add_aviary_output as _add_aviary_output
 from aviary.variable_info.variables import Settings
-from aviary.variable_info.UAV_variables import Aircraft, Dynamic
-from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import ExtendedMetaData
 
 # RC electric variables live in ExtendedMetaData; bind it onto the add_aviary_* helpers.
 add_aviary_input = partial(_add_aviary_input, meta_data=ExtendedMetaData)
@@ -36,13 +36,6 @@ class Throttle(om.ExplicitComponent):
         throttle = inputs[Dynamic.Vehicle.Propulsion.THROTTLE]
         max_current = np.asarray(self.options[Aircraft.Engine.Motor.MAX_CONT_CURRENT][0]).item()
         outputs[Dynamic.Vehicle.Propulsion.CURRENT] = throttle * max_current
-
-
-
-
-
-
-
 
 
 class Battery(om.ExplicitComponent):
@@ -258,7 +251,7 @@ class Motor(om.ExplicitComponent):
 
 
 #TODO: reading in of data should be changed later:
-from aviary.subsystems.propulsion.UAV.Parsing.PropDataReader import PropDataReader
+from aviary.models.external_subsystems.UAV.propulsion.Parsing.PropDataReader import PropDataReader
 xt, ct, cp = PropDataReader()
 ct = ct.flatten()
 cp = cp.flatten()

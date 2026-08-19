@@ -1,10 +1,10 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.propulsion.UAV.model.performance import \
+from aviary.models.external_subsystems.UAV.propulsion.model.prop_performance import \
     Throttle, Battery, ElectronicSpeedController, Motor, PropCoefficients, Propeller, Vectorization
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 
 
 class UAVPropMission(om.Group):

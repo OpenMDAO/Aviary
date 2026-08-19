@@ -5,7 +5,7 @@ import openmdao.api as om
 
 from aviary.models.external_subsystems.UAV.mass.model.verticaltail import VerticalTailMass
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
-from aviary.variable_info.UAV_variables import Aircraft
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 
 class TestVerticalTailMass(unittest.TestCase):
     def setUp(self):

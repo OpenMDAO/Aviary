@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import openmdao.api as om
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.subsystems.propulsion.UAV.model.mission import UAVPropMission
-from aviary.variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.propulsion.model.prop_mission import UAVPropMission
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 
 
 prob = om.Problem()

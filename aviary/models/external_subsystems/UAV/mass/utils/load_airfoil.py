@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from aviary.variable_info.UAV_variables import Aircraft
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 from aviary.models.external_subsystems.UAV.mass.utils.materials_database import materials
 from aviary.utils.functions import get_path
 '''
