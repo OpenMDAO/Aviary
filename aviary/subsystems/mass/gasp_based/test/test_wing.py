@@ -170,8 +170,10 @@ class TotalWingMassTestCase2(unittest.TestCase):
     """Has fold and no strut."""
 
     def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        # Option values below are the _MetaData defaults except where noted.
+        options = AviaryValues()
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')  # toggled ON for this test
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem('strut_fold', StrutAndFoldMass(), promotes=['*'])
@@ -181,6 +183,10 @@ class TotalWingMassTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below are the _MetaData defaults except where noted (marked "not actual GASP value").
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.MASS_SCALER, val=1.0, units='unitless'
+        )
         self.prob.model.set_input_defaults('isolated_wing_mass', val=15830.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Wing.AREA, val=100, units='ft**2'
