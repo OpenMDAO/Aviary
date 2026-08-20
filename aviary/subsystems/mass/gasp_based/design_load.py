@@ -1157,10 +1157,7 @@ class DesignLoadGroup(om.Group):
         self.add_subsystem(
             'params',
             LoadParameters(),
-            promotes_inputs=[
-                'max_airspeed',
-                'vel_c',
-            ],
+            promotes_inputs=['max_airspeed', 'vel_c'],
             promotes_outputs=['density_ratio', 'V9', Aircraft.Design.MAX_MACH],
         )
 
