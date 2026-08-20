@@ -3175,18 +3175,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.XLW',
-    },
-    units='ft',
-    desc='Outboard wall of the passenger cabin in a BWB.',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH_MIN,
     meta_data=_MetaData,
     historical_name={
