@@ -26,6 +26,7 @@ mission:reserve_fuel_mass_additional,4998,lbm
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:drag_divergence_shift,0.033,unitless
+aircraft:design:max_mach,0.785,unitless
 aircraft:design:type,transport,unitless
 aircraft:electrical:system_mass_per_passenger,16.0,lbm
 aircraft:engine:additional_mass_fraction,0.135,unitless
@@ -140,7 +141,6 @@ aircraft:wing:taper_ratio,0.33,unitless
 aircraft:wing:thickness_to_chord_root,0.15,unitless
 aircraft:wing:thickness_to_chord_tip,0.12,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
-mission:constraints:max_mach,0.785,unitless
 aircraft:design:cruise_altitude,37500,ft # double check against phase_info
 aircraft:design:gross_mass,175400.0,lbm
 aircraft:design:lift_coefficient_max_flaps_up,1.2596,unitless
