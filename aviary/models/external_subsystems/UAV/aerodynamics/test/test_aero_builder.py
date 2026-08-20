@@ -3,6 +3,7 @@ import unittest
 from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Dynamic
 
+
 class TestRCAeroBuilder(unittest.TestCase):
     def test_mission_interface_exposes_expected_outputs_and_parameters(self):
         builder = AeroBuilder()
@@ -12,11 +13,11 @@ class TestRCAeroBuilder(unittest.TestCase):
         self.assertIn(Dynamic.Mission.VELOCITY, mission_inputs)
         self.assertIn('alpha', mission_inputs)
 
-        # These commented values are not in mission inputs/outputs 
+        # These commented values are not in mission inputs/outputs
         # at this time, more investigation required
 
-        #self.assertIn(Aircraft.Wing.SPAN, mission_inputs)
-        #self.assertIn(Aircraft.HorizontalTail.SPAN, mission_inputs)
+        # self.assertIn(Aircraft.Wing.SPAN, mission_inputs)
+        # self.assertIn(Aircraft.HorizontalTail.SPAN, mission_inputs)
         # self.assertIn(Aircraft.Fuselage.LENGTH, mission_inputs)
         # self.assertIn(Aircraft.VerticalTail.SPAN, mission_inputs)
 

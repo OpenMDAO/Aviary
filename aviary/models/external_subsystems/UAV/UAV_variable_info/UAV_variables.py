@@ -10,6 +10,7 @@ AviaryDynamic = av_Dynamic
 AviarySettings = av_Settings
 AviaryMission = av_Mission
 
+
 class Aircraft(AviaryAircraft):
     """Aircraft data hierarchy extended for UAV propulsion and mass."""
 
@@ -136,10 +137,14 @@ class Dynamic(AviaryDynamic):
             PROP_POWER = 'prop_power'
             PROP_POWER_MAX = 'prop_power_max'
 
+
 class Settings(AviarySettings):
     "needed for imports to recognize settings variables"
+
     pass
+
 
 class Mission(AviaryMission):
     "needed for imports to recognize mission variables"
+
     pass

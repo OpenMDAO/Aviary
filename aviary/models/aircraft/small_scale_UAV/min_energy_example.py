@@ -1,4 +1,3 @@
-
 from copy import deepcopy
 
 import aviary.api as av
@@ -11,87 +10,83 @@ from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import Aero
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.missions.UAV_energy_phase import phase_info
 from aviary.models.external_subsystems.UAV.propulsion.prop_builder import UAVBuilder
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic, Settings, Mission
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import (
+    Aircraft,
+    Dynamic,
+    Settings,
+    Mission,
+)
 
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import ExtendedMetaData
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
+    ExtendedMetaData,
+)
 
 
 UAV_Prop = UAVBuilder()
 
+
 @use_tempdirs
 def CruiseExample():
-    prob = av.AviaryProblem(name='min_energy_cruise',verbosity=2, meta_data=ExtendedMetaData)
+    prob = av.AviaryProblem(name='min_energy_cruise', verbosity=2, meta_data=ExtendedMetaData)
     prob.options['group_by_pre_opt_post'] = True
     # just selecting cruise
     cruise_phase_info = {
         'pre_mission': deepcopy(phase_info['pre_mission']),
         'cruise': {
-        'subsystem_options': {'aerodynamics': {'method': 'external'}},
-        'user_options': {
-            'num_segments': 5,
-            'order': 3,
-            'mach_optimize': True,
-
-            'mach_initial': (0.07, 'unitless'),
-
-            'mach_bounds': ((0.05, 0.15), 'unitless'),
-            'mach_ref': (0.1, 'unitless'),
-            'mass_ref': (4.0, 'kg'),
-
-            'altitude_ref': (200, 'ft'),
-            # 'mach_final': (0.05, 'unitless'),
-
-
-            'altitude_optimize': True,
-            'altitude_initial': (-6900, 'm'),
-            'altitude_bounds': ((-6950,-6700), 'm'),
-            'altitude_final': (-6900, 'm'),
-            'distance_initial': (0.0, 'm'),
-
-            'distance_ref': (1000.0, 'm'),
-            # target_distance adds an equality constraint (in aviary_group.py)
-            # pinning final distance to this value. Commented out for the
-            # max-range objective below, since distance needs to be free to
-            # grow until the battery constraint binds. Uncomment to go back
-            # to the fixed-distance min-energy formulation.
-            # 'target_distance': (1000.0, 'm'),
-            'throttle_enforcement': 'control',
-
-            # 'throttle_polynomial_order': 1,
-
-            #Time
-            'time_initial': (0.0, 's'),
-            'time_duration_bounds': ((0,180), 's'),
-
-            'constraints': {Dynamic.Vehicle.LIFT_COEFFICIENT: {
-                    'upper': 1.2,
-                    'units': 'unitless',
-                    'type': 'path',
-
+            'subsystem_options': {'aerodynamics': {'method': 'external'}},
+            'user_options': {
+                'num_segments': 5,
+                'order': 3,
+                'mach_optimize': True,
+                'mach_initial': (0.07, 'unitless'),
+                'mach_bounds': ((0.05, 0.15), 'unitless'),
+                'mach_ref': (0.1, 'unitless'),
+                'mass_ref': (4.0, 'kg'),
+                'altitude_ref': (200, 'ft'),
+                # 'mach_final': (0.05, 'unitless'),
+                'altitude_optimize': True,
+                'altitude_initial': (-6900, 'm'),
+                'altitude_bounds': ((-6950, -6700), 'm'),
+                'altitude_final': (-6900, 'm'),
+                'distance_initial': (0.0, 'm'),
+                'distance_ref': (1000.0, 'm'),
+                # target_distance adds an equality constraint (in aviary_group.py)
+                # pinning final distance to this value. Commented out for the
+                # max-range objective below, since distance needs to be free to
+                # grow until the battery constraint binds. Uncomment to go back
+                # to the fixed-distance min-energy formulation.
+                # 'target_distance': (1000.0, 'm'),
+                'throttle_enforcement': 'control',
+                # 'throttle_polynomial_order': 1,
+                # Time
+                'time_initial': (0.0, 's'),
+                'time_duration_bounds': ((0, 180), 's'),
+                'constraints': {
+                    Dynamic.Vehicle.LIFT_COEFFICIENT: {
+                        'upper': 1.2,
+                        'units': 'unitless',
+                        'type': 'path',
+                    },
                 },
             },
-
+            'initial_guesses': {
+                'distance': ([0, 1000], 'm'),
+                'time': ([0, 55], 's'),
+            },
         },
-        'initial_guesses': {
-            'distance': ([0, 1000], 'm'),
-            'time': ([0, 55], 's'),
-        },
-    },
         'post_mission': deepcopy(phase_info['post_mission']),
     }
 
-    prob.load_inputs(
-        'aviary/models/aircraft/UAV/small_scale_uav.csv', cruise_phase_info
-    )
+    prob.load_inputs('aviary/models/aircraft/UAV/small_scale_uav.csv', cruise_phase_info)
 
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units='m**2')
     print('Wetted Area:', number)
 
-    prob.load_external_subsystems(
-        external_subsystems=[UAV_Prop, AeroBuilder(), DBFMassBuilder()]
-    )
+    prob.load_external_subsystems(external_subsystems=[UAV_Prop, AeroBuilder(), DBFMassBuilder()])
 
-    prob.aviary_inputs.set_val(Settings.ATMOSPHERE_MODEL, AtmosphereModel.STANDARD, units='unitless')
+    prob.aviary_inputs.set_val(
+        Settings.ATMOSPHERE_MODEL, AtmosphereModel.STANDARD, units='unitless'
+    )
     prob.check_and_preprocess_inputs()
 
     prob.build_model()
@@ -123,7 +118,9 @@ def CruiseExample():
     prob.add_design_variables()
 
     # Add special solver scaling for small aircraft
-    prob.model.set_output_solver_options('link_cruise_mass.mass', ref=1) # energy_state_problem_configurator.py
+    prob.model.set_output_solver_options(
+        'link_cruise_mass.mass', ref=1
+    )  # energy_state_problem_configurator.py
     # prob.model.set_output_solver_options('throttle_balance', res_ref=1e3) # energy_state_ODE.py
 
     prob.setup()
@@ -143,27 +140,30 @@ def CruiseExample():
     #     print(name, meta)
     # exit()
 
-
     # Add special rescaling for small aircraft
-    prob.model.set_constraint_options(Mission.Constraints.MASS_RESIDUAL, ref=1) # aviary_group.py
-    prob.model.set_design_var_options(Aircraft.Design.GROSS_MASS, lower=2, upper=50, ref=1) # aviary_group.py
-    prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1) # aviary_group.py
+    prob.model.set_constraint_options(Mission.Constraints.MASS_RESIDUAL, ref=1)  # aviary_group.py
+    prob.model.set_design_var_options(
+        Aircraft.Design.GROSS_MASS, lower=2, upper=50, ref=1
+    )  # aviary_group.py
+    prob.model.set_design_var_options(
+        Mission.GROSS_MASS, lower=2, upper=50, ref=1
+    )  # aviary_group.py
     # prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1) # aviary_group.py
     # prob.model.set_constraint_options('cruise_duration_constraint.duration_resid', ref=10) # aviary_group.py
     # prob.model.set_constraint_options(Mission.Constraints.RANGE_RESIDUAL, ref=1) # aviary_group.py
-    prob.model.traj.phases.cruise.rhs_all.set_constraint_options('thrust_residual', ref=0.01, upper=0.01, lower=-0.01) # energy_state_ODE.py
+    prob.model.traj.phases.cruise.rhs_all.set_constraint_options(
+        'thrust_residual', ref=0.01, upper=0.01, lower=-0.01
+    )  # energy_state_ODE.py
 
     prob.set_solver_print(level=0)
     prob.set_initial_guesses()
 
     # prob.set_val('traj.cruise.states:mass', 4.1, units='kg')
 
-
     prob.set_val('traj.cruise.controls:rpm_slack', 2877.0, units='rpm')
     prob.set_val('traj.cruise.controls:throttle', 0.561)
     prob.set_val('traj.cruise.controls:mach', 0.0538)
     prob.set_val('traj.cruise.rhs_all.thrust_net_max_total', 9.69, units='lbf')
-
 
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units='m**2')
     print('Wetted Area:', number)
@@ -197,6 +197,7 @@ def CruiseExample():
     # print('settings:equations_of_motion:', prob.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION))
     # print('settings:mass_method:', prob.aviary_inputs.get_val(Settings.MASS_METHOD))
     return prob
+
 
 if __name__ == '__main__':
     CruiseExample()

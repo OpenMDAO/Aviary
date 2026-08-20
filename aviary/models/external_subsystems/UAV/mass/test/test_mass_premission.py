@@ -1,42 +1,44 @@
 import unittest
 import numpy as np
 import openmdao.api as om
-import os 
+import os
 
 from aviary.models.external_subsystems.UAV.mass.model.mass_premission import MassPremission
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 from aviary.models.external_subsystems.UAV.mass.utils.enums import WingType
+
+
 class TestMassPremission(unittest.TestCase):
     def set_defaults(self, comp, Aircraft):
         # Spars
         comp.options[Aircraft.NUM_SPARS] = 1.0
-        comp.options[Aircraft.SPAR_OUTER_DIAMETER] = (0.02, "m")
+        comp.options[Aircraft.SPAR_OUTER_DIAMETER] = (0.02, 'm')
         comp.options[Aircraft.SPAR_WALL_THICKNESS] = (0.002, 'm')
         comp.options[Aircraft.SPAR_DENSITY] = (1500.0, 'kg/m**3')
 
         # Options that only exist for certain mass components
-        if hasattr(Aircraft, "NUM_STRINGERS"):
+        if hasattr(Aircraft, 'NUM_STRINGERS'):
             comp.options[Aircraft.NUM_STRINGERS] = 2.0
-        if hasattr(Aircraft, "FLOOR_THICKNESS"):
+        if hasattr(Aircraft, 'FLOOR_THICKNESS'):
             comp.options[Aircraft.FLOOR_THICKNESS] = (0.003, 'm')
-        if hasattr(Aircraft, "FLOOR_DENSITY"):
+        if hasattr(Aircraft, 'FLOOR_DENSITY'):
             comp.options[Aircraft.FLOOR_DENSITY] = (340.0, 'kg/m**3')
-        if hasattr(Aircraft, "FLOOR_LENGTH"):
-            comp.options[Aircraft.FLOOR_LENGTH] = (2/3, 'm')
-        if hasattr(Aircraft, "STRINGER_THICKNESS"):
+        if hasattr(Aircraft, 'FLOOR_LENGTH'):
+            comp.options[Aircraft.FLOOR_LENGTH] = (2 / 3, 'm')
+        if hasattr(Aircraft, 'STRINGER_THICKNESS'):
             comp.options[Aircraft.STRINGER_THICKNESS] = (0.005, 'm')
-        if hasattr(Aircraft, "STRINGER_DENSITY"):
+        if hasattr(Aircraft, 'STRINGER_DENSITY'):
             comp.options[Aircraft.STRINGER_DENSITY] = (160, 'kg/m**3')
-        if hasattr(Aircraft, "BULKHEAD_LIGHTENING_FACTOR"):
+        if hasattr(Aircraft, 'BULKHEAD_LIGHTENING_FACTOR'):
             comp.options[Aircraft.BULKHEAD_LIGHTENING_FACTOR] = 0.18
-        if hasattr(Aircraft, "FOAM_DENSITY"):
+        if hasattr(Aircraft, 'FOAM_DENSITY'):
             comp.options[Aircraft.FOAM_DENSITY] = (2.0, 'kg/m**3')
-        if hasattr(Aircraft, "ROD_DENSITY"):
+        if hasattr(Aircraft, 'ROD_DENSITY'):
             comp.options[Aircraft.ROD_DENSITY] = (1500.0, 'kg/m**3')
-        if hasattr(Aircraft, "ROD_RADIUS"):
-            comp.options[Aircraft.ROD_RADIUS] = (0.003,'m')
-        if hasattr(Aircraft, "ROD_THICKNESS"):
-            comp.options[Aircraft.ROD_THICKNESS] = (0.0005,'m')
+        if hasattr(Aircraft, 'ROD_RADIUS'):
+            comp.options[Aircraft.ROD_RADIUS] = (0.003, 'm')
+        if hasattr(Aircraft, 'ROD_THICKNESS'):
+            comp.options[Aircraft.ROD_THICKNESS] = (0.0005, 'm')
 
         # Sheeting
         comp.options[Aircraft.SHEETING_THICKNESS] = (0.003, 'm')
@@ -53,8 +55,8 @@ class TestMassPremission(unittest.TestCase):
 
     def setUp(self):
         base = os.path.dirname(os.path.dirname(__file__))
-        airfoil_dir = os.path.join(base, "utils")
-        airfoil = os.path.abspath(os.path.join(airfoil_dir, "mh84-il.csv"))
+        airfoil_dir = os.path.join(base, 'utils')
+        airfoil = os.path.abspath(os.path.join(airfoil_dir, 'mh84-il.csv'))
 
         self.prob = om.Problem()
         self.prob.model = MassPremission()
@@ -66,54 +68,53 @@ class TestMassPremission(unittest.TestCase):
         vtail = self.prob.model.vertical_tail_mass
         fuse = self.prob.model.fuselage_mass
 
-        #Setting rib parameters
+        # Setting rib parameters
         rib_materials = ['Balsa'] * 15 + ['Ply'] * 5
         rib_thicks = np.ones(20) * 0.004
-        
-        #Setting UAV defaults
+
+        # Setting UAV defaults
         self.set_defaults(wing, Aircraft.Wing)
         self.set_defaults(htail, Aircraft.HorizontalTail)
         self.set_defaults(vtail, Aircraft.VerticalTail)
         self.set_defaults(fuse, Aircraft.Fuselage)
 
-        #Setting necessary options
+        # Setting necessary options
         wing.options[Aircraft.Wing.RIB_MATERIALS] = rib_materials
-        wing.options[Aircraft.Wing.RIB_THICKNESS] = (rib_thicks, "m")
-        wing.options[Aircraft.Wing.RIB_LIGHTENING_FACTOR] = 2/3
+        wing.options[Aircraft.Wing.RIB_THICKNESS] = (rib_thicks, 'm')
+        wing.options[Aircraft.Wing.RIB_LIGHTENING_FACTOR] = 2 / 3
         wing.options[Aircraft.Wing.AIRFOIL_PATH] = airfoil
         wing.options[Aircraft.Wing.TYPE] = WingType.MEDIUM
 
         htail.options[Aircraft.HorizontalTail.RIB_MATERIALS] = rib_materials
-        htail.options[Aircraft.HorizontalTail.RIB_THICKNESS] = (rib_thicks, "m")
-        htail.options[Aircraft.HorizontalTail.RIB_LIGHTENING_FACTOR] = 2/3
+        htail.options[Aircraft.HorizontalTail.RIB_THICKNESS] = (rib_thicks, 'm')
+        htail.options[Aircraft.HorizontalTail.RIB_LIGHTENING_FACTOR] = 2 / 3
         htail.options[Aircraft.HorizontalTail.AIRFOIL_PATH] = airfoil
 
         vtail.options[Aircraft.VerticalTail.RIB_MATERIALS] = rib_materials
-        vtail.options[Aircraft.VerticalTail.RIB_THICKNESS] = (rib_thicks, "m")
-        vtail.options[Aircraft.VerticalTail.RIB_LIGHTENING_FACTOR] = 2/3
+        vtail.options[Aircraft.VerticalTail.RIB_THICKNESS] = (rib_thicks, 'm')
+        vtail.options[Aircraft.VerticalTail.RIB_LIGHTENING_FACTOR] = 2 / 3
         vtail.options[Aircraft.VerticalTail.AIRFOIL_PATH] = airfoil
-        
+
         fuse.options[Aircraft.Fuselage.BULKHEAD_MATERIALS] = rib_materials
-        fuse.options[Aircraft.Fuselage.BULKHEAD_THICKNESS] = (rib_thicks, "m")
+        fuse.options[Aircraft.Fuselage.BULKHEAD_THICKNESS] = (rib_thicks, 'm')
 
-        #Setting geometry values:
-        self.prob.set_val(Aircraft.Wing.SPAN, 1.4225, units="m")
-        self.prob.set_val(Aircraft.Wing.ROOT_CHORD, 0.508, units="m")
+        # Setting geometry values:
+        self.prob.set_val(Aircraft.Wing.SPAN, 1.4225, units='m')
+        self.prob.set_val(Aircraft.Wing.ROOT_CHORD, 0.508, units='m')
 
-        self.prob.set_val(Aircraft.HorizontalTail.ROOT_CHORD, 0.508, units="m")
-        self.prob.set_val(Aircraft.HorizontalTail.SPAN, 1.4225, units="m")
+        self.prob.set_val(Aircraft.HorizontalTail.ROOT_CHORD, 0.508, units='m')
+        self.prob.set_val(Aircraft.HorizontalTail.SPAN, 1.4225, units='m')
 
-        self.prob.set_val(Aircraft.VerticalTail.ROOT_CHORD, 0.508, units="m")
-        self.prob.set_val(Aircraft.VerticalTail.SPAN, 1.4225, units="m")
+        self.prob.set_val(Aircraft.VerticalTail.ROOT_CHORD, 0.508, units='m')
+        self.prob.set_val(Aircraft.VerticalTail.SPAN, 1.4225, units='m')
 
-        self.prob.set_val(Aircraft.Fuselage.LENGTH, 1.33, units="m")
-        self.prob.set_val(Aircraft.Fuselage.AVG_HEIGHT, 0.07, units="m")
-        self.prob.set_val(Aircraft.Fuselage.AVG_WIDTH, 0.05, units="m")
+        self.prob.set_val(Aircraft.Fuselage.LENGTH, 1.33, units='m')
+        self.prob.set_val(Aircraft.Fuselage.AVG_HEIGHT, 0.07, units='m')
+        self.prob.set_val(Aircraft.Fuselage.AVG_WIDTH, 0.05, units='m')
 
         self.prob.run_model()
 
     def test_outputs_exist(self):
-
         """Do all promoted mass outputs exist and are they positive?"""
 
         wing = self.prob.get_val(Aircraft.Wing.MASS)
@@ -136,5 +137,6 @@ class TestMassPremission(unittest.TestCase):
         print('Expected: ', expected)
         print('Actual: ', total[0])
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     unittest.main()

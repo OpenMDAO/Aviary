@@ -6,14 +6,13 @@ from aviary.models.external_subsystems.UAV.mass.model.fuselage import FuselageMa
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 
+
 class TestFuselageMass(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
         fm = FuselageMass()
 
-        self.prob.model.add_subsystem(
-            'fuselage', fm, promotes_inputs=['*'], promotes_outputs=['*']
-        )
+        self.prob.model.add_subsystem('fuselage', fm, promotes_inputs=['*'], promotes_outputs=['*'])
 
         ribs = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2])
         bulkhead_materials = np.where(ribs != 0, 'Ply', 'Balsa').tolist()
@@ -24,7 +23,7 @@ class TestFuselageMass(unittest.TestCase):
         fm.options[Aircraft.Fuselage.BULKHEAD_THICKNESS] = (rib_thicks, 'm')
         fm.options[Aircraft.Fuselage.BULKHEAD_LIGHTENING_FACTOR] = 0.18
         fm.options[Aircraft.Fuselage.NUM_SPARS] = 1.0
-        fm.options[Aircraft.Fuselage.SPAR_OUTER_DIAMETER] = (0.008,'m')
+        fm.options[Aircraft.Fuselage.SPAR_OUTER_DIAMETER] = (0.008, 'm')
         fm.options[Aircraft.Fuselage.SPAR_WALL_THICKNESS] = (0.0005, 'm')
         fm.options[Aircraft.Fuselage.SPAR_DENSITY] = (1500.0, 'kg/m**3')
         fm.options[Aircraft.Fuselage.AREAL_SKIN_DENSITY] = (0.08, 'kg/m**2')
@@ -41,7 +40,7 @@ class TestFuselageMass(unittest.TestCase):
 
         self.prob.setup(force_alloc_complex=True)
 
-        #inputs
+        # inputs
         self.prob.set_val(Aircraft.Fuselage.LENGTH, 1.33, units='m')
         self.prob.set_val(Aircraft.Fuselage.AVG_HEIGHT, 0.07, units='m')
         self.prob.set_val(Aircraft.Fuselage.AVG_WIDTH, 0.05, units='m')

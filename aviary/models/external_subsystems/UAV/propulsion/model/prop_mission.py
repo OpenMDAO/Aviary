@@ -1,8 +1,15 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.models.external_subsystems.UAV.propulsion.model.prop_performance import \
-    Throttle, Battery, ElectronicSpeedController, Motor, PropCoefficients, Propeller, Vectorization
+from aviary.models.external_subsystems.UAV.propulsion.model.prop_performance import (
+    Throttle,
+    Battery,
+    ElectronicSpeedController,
+    Motor,
+    PropCoefficients,
+    Propeller,
+    Vectorization,
+)
 from aviary.utils.aviary_values import AviaryValues
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 
@@ -19,16 +26,11 @@ class UAVPropMission(om.Group):
             default=None,
         )
 
-
     def setup(self):
         nn = self.options['num_nodes']
 
-
-
         # constraint ties the motor to the prop load; in solver mode the solver does.
         motor_load_factor = 1.0
-
-
 
         rpm_in = [(Dynamic.Vehicle.Propulsion.RPM, 'rpm_slack')]
         self.set_input_defaults('rpm_slack', val=np.ones(nn) * 60.0, units='rev/s')
@@ -39,12 +41,10 @@ class UAVPropMission(om.Group):
             promotes_inputs=[
                 Dynamic.Vehicle.Propulsion.THROTTLE,
             ],
-
-            promotes_outputs = [
-                Dynamic.Vehicle.Propulsion.CURRENT,]
+            promotes_outputs=[
+                Dynamic.Vehicle.Propulsion.CURRENT,
+            ],
         )
-
-
 
         self.add_subsystem(
             'battery',
@@ -56,7 +56,7 @@ class UAVPropMission(om.Group):
             ],
             promotes_outputs=[
                 ('dt_denergy_used', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN),
-            ]
+            ],
         )
 
         self.add_subsystem(
@@ -64,7 +64,7 @@ class UAVPropMission(om.Group):
             ElectronicSpeedController(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.Propulsion.THROTTLE,
-                Dynamic.Vehicle.Propulsion.CURRENT
+                Dynamic.Vehicle.Propulsion.CURRENT,
             ],
         )
 
@@ -72,37 +72,37 @@ class UAVPropMission(om.Group):
             'motor',
             Motor(num_nodes=nn, load_factor=motor_load_factor),
             promotes_inputs=[
-
                 Aircraft.Engine.Motor.IDLE_CURRENT,
                 Aircraft.Engine.Motor.RESISTANCE,
                 Aircraft.Engine.Motor.KV,
                 Dynamic.Vehicle.Propulsion.CURRENT,
-                ],
+            ],
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.RPM,
-                ]
+            ],
         )
 
-
-        self.add_subsystem('vectorize_geo', Vectorization(num_nodes=nn),
+        self.add_subsystem(
+            'vectorize_geo',
+            Vectorization(num_nodes=nn),
             promotes_inputs=[Aircraft.Engine.Propeller.DIAMETER, Aircraft.Engine.Propeller.PITCH],
-            promotes_outputs=['temp_diameter', 'temp_pitch']
-            )
-
-
+            promotes_outputs=['temp_diameter', 'temp_pitch'],
+        )
 
         self.add_subsystem(
             'propco',
             # akima would be smoother but needs >=5 points/dim; this table has 3.
-            PropCoefficients(method='lagrange2', extrapolate=True, training_data_gradients=True, vec_size=nn),
+            PropCoefficients(
+                method='lagrange2', extrapolate=True, training_data_gradients=True, vec_size=nn
+            ),
             promotes_inputs=[
                 Dynamic.Mission.VELOCITY,
                 'temp_diameter',
                 'temp_pitch',
-            ] + rpm_in,
-            promotes_outputs=['ct', 'cp']
+            ]
+            + rpm_in,
+            promotes_outputs=['ct', 'cp'],
         )
-
 
         self.add_subsystem(
             'prop',
@@ -111,16 +111,14 @@ class UAVPropMission(om.Group):
                 Aircraft.Engine.Propeller.DIAMETER,
                 'ct',
                 'cp',
-
-                Dynamic.Atmosphere.DENSITY
-                ] + rpm_in,
+                Dynamic.Atmosphere.DENSITY,
+            ]
+            + rpm_in,
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.PROP_POWER,
                 Dynamic.Vehicle.Propulsion.THRUST,
-
-                ]
+            ],
         )
-
 
         self.add_subsystem(
             'rpm_balance',
@@ -135,33 +133,18 @@ class UAVPropMission(om.Group):
         )
         self.connect(Dynamic.Vehicle.Propulsion.RPM, 'rpm_balance.rpm_motor')
 
-
-
-
-
-
-
-
         self.add_subsystem(
             'energy_con',
             om.ExecComp(
                 'energy_constraint = energy_capacity-energy_used',
-                energy_constraint={'val':np.zeros(nn), 'units': 'W*h'},
-                energy_capacity={'val':1.0 , 'units': 'W*h'},
-                energy_used={'val':np.zeros(nn), 'units': 'W*h'},
+                energy_constraint={'val': np.zeros(nn), 'units': 'W*h'},
+                energy_capacity={'val': 1.0, 'units': 'W*h'},
+                energy_used={'val': np.zeros(nn), 'units': 'W*h'},
                 has_diag_partials=True,
             ),
-
-            promotes_inputs=[
-                ('energy_capacity', Aircraft.Battery.ENERGY_CAPACITY),
-                'energy_used'
-                ],
-            promotes_outputs=[
-                'energy_constraint'
-                ],
+            promotes_inputs=[('energy_capacity', Aircraft.Battery.ENERGY_CAPACITY), 'energy_used'],
+            promotes_outputs=['energy_constraint'],
         )
-
-
 
         self.connect('battery.voltage_out', 'esc.voltage_in')
         self.connect('esc.voltage_out', 'motor.voltage_in')
@@ -172,9 +155,6 @@ class UAVPropMission(om.Group):
         # this row ~270 in the scaled jacobian at ref=40
         self.add_constraint('rpm_balance.rpm_defect', lower=-40.0, upper=40.0, ref=400, units='rpm')
 
-
         self.add_constraint('energy_constraint', lower=0.0, indices=[-1], ref=100, units='W*h')
-
-
 
         self.options['auto_order'] = True

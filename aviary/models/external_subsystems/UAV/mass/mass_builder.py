@@ -1,7 +1,9 @@
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.models.external_subsystems.UAV.mass.model.mass_premission import MassPremission
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import ExtendedMetaData
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
+    ExtendedMetaData,
+)
 
 
 class MassBuilder(SubsystemBuilder):
@@ -12,16 +14,15 @@ class MassBuilder(SubsystemBuilder):
     """
 
     def build_pre_mission(self, aviary_inputs, subsystem_options=None):
-
         subsystem_options = subsystem_options or {}
         return MassPremission(
-
-            aviary_inputs = aviary_inputs,
-            subsystem_options = subsystem_options,
-
+            aviary_inputs=aviary_inputs,
+            subsystem_options=subsystem_options,
         )
 
-    def get_design_vars(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
+    def get_design_vars(
+        self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None
+    ):
         DVs = {
             # WETTED_AREA is no longer a design variable for any surface: each mass component
             # now computes its wetted area as span * root_chord (see wing.py / horizontaltail.py /
@@ -84,9 +85,7 @@ class MassBuilder(SubsystemBuilder):
         return DVs
 
     def get_inputs(self):
-
         return [
-
             Aircraft.Wing.SPAN,
             Aircraft.Wing.ROOT_CHORD,
             Aircraft.Fuselage.LENGTH,
@@ -97,17 +96,13 @@ class MassBuilder(SubsystemBuilder):
             Aircraft.HorizontalTail.ROOT_CHORD,
             Aircraft.VerticalTail.SPAN,
             Aircraft.VerticalTail.ROOT_CHORD,
-
         ]
 
     def get_outputs(self):
-
         return [
-
             Aircraft.Wing.MASS,
             Aircraft.HorizontalTail.MASS,
             Aircraft.VerticalTail.MASS,
             Aircraft.Fuselage.MASS,
             Aircraft.Design.STRUCTURE_MASS,
-
         ]

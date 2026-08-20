@@ -121,6 +121,3 @@ plt.show()
 plt
 
 print('done')
-
-
-

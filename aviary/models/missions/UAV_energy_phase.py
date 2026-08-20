@@ -2,7 +2,7 @@ from copy import deepcopy
 
 
 phase_info = {
-    'pre_mission': {'include_takeoff': False,  'optimize_mass': False},
+    'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
     'climb': {
         'subsystem_options': {'aerodynamics': {'method': 'computed'}},
         'user_options': {
@@ -31,10 +31,7 @@ phase_info = {
                 }
             },
         },
-        'initial_guesses': {
-            'time': ([0, 6], 's'),
-            'mach': ([0.05, 0.1], 'unitless')
-        },
+        'initial_guesses': {'time': ([0, 6], 's'), 'mach': ([0.05, 0.1], 'unitless')},
     },
     'cruise': {
         'subsystem_options': {'aerodynamics': {'method': 'external'}},
@@ -42,33 +39,24 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'mach_optimize': True,
-
             'mach_initial': (0.0538, 'unitless'),
-
             'mach_bounds': ((0.05, 0.3), 'unitless'),
             # 'mach_ref': (0.05, 'unitless'),
             'mass_ref': (4.0, 'kg'),
-
-
             # 'alt_ref': (100, 'ft'),
             # 'mach_final': (0.05, 'unitless'),
-
-
             'altitude_optimize': True,
             'altitude_initial': (200.0, 'ft'),
             'altitude_bounds': ((100.0, 300.0), 'ft'),
             'altitude_final': (200.0, 'ft'),
             'distance_initial': (0.0, 'm'),
-
             'distance_ref': (1000.0, 'm'),
             'target_distance': (1000.0, 'm'),
             'throttle_enforcement': 'control',
-
             # 'throttle_polynomial_order': 1,
-
-            #Time
+            # Time
             'time_initial': (0.0, 's'),
-            'time_duration_bounds': ((0,180.0), 's'),
+            'time_duration_bounds': ((0, 180.0), 's'),
         },
         'initial_guesses': {
             'distance': ([0, 1000], 'm'),

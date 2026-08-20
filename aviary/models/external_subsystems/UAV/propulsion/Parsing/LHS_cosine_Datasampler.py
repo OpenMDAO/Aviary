@@ -43,7 +43,7 @@ def SampleDataLHScosine(x, ct, cp):
     cpc = np.ndarray((0, 1))
     random.seed(6)  # Random seed
     rand.seed(6)  # NumPy seed
-    n = 2200 # Number of division (Best chosen through trial and error)
+    n = 2200  # Number of division (Best chosen through trial and error)
 
     # Creating  a cosine weight matrix
     A = np.array([abs(np.cos(i * np.pi / (n))) for i in range(n)])
@@ -57,9 +57,7 @@ def SampleDataLHScosine(x, ct, cp):
     # Looping through all divisions
     for i in range(n - 1):
         # potential values in or above current segment
-        potentialValues = x[
-            x[:, 3] >= number_list[i]
-        ]  # Note xt0[:, 3] is extracting only velocity
+        potentialValues = x[x[:, 3] >= number_list[i]]  # Note xt0[:, 3] is extracting only velocity
         potentialT = ct[x[:, 3] >= number_list[i]]
         potentialP = cp[x[:, 3] >= number_list[i]]
 
@@ -136,9 +134,7 @@ def SampleDataLHS(xt0, ct0, cp0):
         else:
             potentialT = potentialT[potentialValues[:, 3] < ((i + 1) * segmentSize)]
             potentialP = potentialP[potentialValues[:, 3] < ((i + 1) * segmentSize)]
-            potentialValues = potentialValues[
-                potentialValues[:, 3] < ((i + 1) * segmentSize)
-            ]
+            potentialValues = potentialValues[potentialValues[:, 3] < ((i + 1) * segmentSize)]
 
         numValues = potentialValues.shape[0]
 

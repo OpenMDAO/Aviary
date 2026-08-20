@@ -6,7 +6,8 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.external_subsystems.UAV.propulsion.model.prop_premission import UAVPropPreMission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic 
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
+
 
 class TestUAVPreMission(unittest.TestCase):
     @use_tempdirs
@@ -16,11 +17,9 @@ class TestUAVPreMission(unittest.TestCase):
 
         options.set_val(Aircraft.Engine.Motor.KV_EQ_SLOPE, 2105.53674)
         options.set_val(Aircraft.Engine.Motor.KV_EQ_INT, -80.83469)
-        
+
         prob.model.add_subsystem(
-            'rc_calcs',
-            UAVPropPreMission(aviary_options=options),
-            promotes=['*']
+            'rc_calcs', UAVPropPreMission(aviary_options=options), promotes=['*']
         )
 
         prob.setup(force_alloc_complex=True)
@@ -28,7 +27,7 @@ class TestUAVPreMission(unittest.TestCase):
         prob.set_val(Aircraft.Battery.MASS, 0.707, units='kg')
         prob.set_val(Aircraft.Battery.VOLTAGE, 22.2, units='V')
         prob.set_val(Aircraft.Engine.Motor.IDLE_CURRENT, 0.91, units='A')
-        
+
         prob.set_val(Aircraft.Engine.Motor.MASS, 0.288, units='kg')
 
         prob.run_model()

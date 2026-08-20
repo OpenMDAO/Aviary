@@ -18,11 +18,7 @@ from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables impor
 from aviary.variable_info.variables import Mission, Settings
 
 
-
-
 class TestUAVBuilder(unittest.TestCase):
-
-
     @use_tempdirs
     def test_propulsion_mission_power_balance(self):
         # 'clean' test using GASP-derived engine deck
@@ -34,15 +30,10 @@ class TestUAVBuilder(unittest.TestCase):
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, 1)
 
-
         engine = UAVBuilder(options=options)
         preprocess_propulsion(options, engine_models=[engine])
 
-
-
-        prob.model = PropulsionMission(
-            num_nodes=nn, aviary_options=options, engine_models=[engine]
-        )
+        prob.model = PropulsionMission(num_nodes=nn, aviary_options=options, engine_models=[engine])
 
         prob.model.add_subsystem(
             'propulsion_pre_mission',
@@ -53,8 +44,6 @@ class TestUAVBuilder(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Battery.VOLTAGE, val=22.2, units='V')
         prob.model.set_input_defaults(Aircraft.Engine.Motor.IDLE_CURRENT, val=0.91, units='A')
-
-
 
         setup_model_options(prob, options)
         prob.setup()
@@ -69,7 +58,6 @@ class TestUAVBuilder(unittest.TestCase):
         prob.set_val(Aircraft.Engine.Propeller.PITCH, 10, units='inch')
         prob.set_val(Dynamic.Mission.VELOCITY, 20, units='ft/s')
 
-
         prob.run_model()
 
         battery_power = prob.get_val('rc_electric.battery.power', units='W')
@@ -77,7 +65,6 @@ class TestUAVBuilder(unittest.TestCase):
         motor_power = prob.get_val('rc_electric.motor.power', units='W')
         prop_power = prob.get_val('rc_electric.prop_power', units='W')
         power_residual = battery_power + esc_power + motor_power - prop_power
-
 
         self.assertFalse(
             np.isnan(power_residual).any(), 'powertrain produced NaN over the throttle sweep'

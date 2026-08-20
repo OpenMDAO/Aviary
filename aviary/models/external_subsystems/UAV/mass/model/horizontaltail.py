@@ -125,25 +125,27 @@ class HorizontalTailMass(om.JaxExplicitComponent):
         self.declare_partials(Aircraft.HorizontalTail.MASS, '*')
 
     def get_self_statics(self):
-        return hashable((
-            self.options[Aircraft.HorizontalTail.NUM_SPARS],
-            self.options[Aircraft.HorizontalTail.RIB_LIGHTENING_FACTOR],
-            self.options[Aircraft.HorizontalTail.RIB_THICKNESS],
-            self.options[Aircraft.HorizontalTail.AREAL_SKIN_DENSITY],
-            self.options[Aircraft.HorizontalTail.SPAR_OUTER_DIAMETER],
-            self.options[Aircraft.HorizontalTail.SPAR_DENSITY],
-            self.options[Aircraft.HorizontalTail.SPAR_WALL_THICKNESS],
-            self.options[Aircraft.HorizontalTail.GLUE_FACTOR],
-            self.options[Aircraft.HorizontalTail.STRINGER_THICKNESS],
-            self.options[Aircraft.HorizontalTail.STRINGER_DENSITY],
-            self.options[Aircraft.HorizontalTail.SHEETING_THICKNESS],
-            self.options[Aircraft.HorizontalTail.SHEETING_DENSITY],
-            self.options[Aircraft.HorizontalTail.SHEETING_COVERAGE],
-            self.options[Aircraft.HorizontalTail.SHEETING_LIGHTENING_FACTOR],
-            self.options[Aircraft.HorizontalTail.NUM_STRINGERS],
-            self.options[Aircraft.HorizontalTail.RIB_MATERIALS],
-            self.options[Aircraft.HorizontalTail.MISC_MASS],
-        ))
+        return hashable(
+            (
+                self.options[Aircraft.HorizontalTail.NUM_SPARS],
+                self.options[Aircraft.HorizontalTail.RIB_LIGHTENING_FACTOR],
+                self.options[Aircraft.HorizontalTail.RIB_THICKNESS],
+                self.options[Aircraft.HorizontalTail.AREAL_SKIN_DENSITY],
+                self.options[Aircraft.HorizontalTail.SPAR_OUTER_DIAMETER],
+                self.options[Aircraft.HorizontalTail.SPAR_DENSITY],
+                self.options[Aircraft.HorizontalTail.SPAR_WALL_THICKNESS],
+                self.options[Aircraft.HorizontalTail.GLUE_FACTOR],
+                self.options[Aircraft.HorizontalTail.STRINGER_THICKNESS],
+                self.options[Aircraft.HorizontalTail.STRINGER_DENSITY],
+                self.options[Aircraft.HorizontalTail.SHEETING_THICKNESS],
+                self.options[Aircraft.HorizontalTail.SHEETING_DENSITY],
+                self.options[Aircraft.HorizontalTail.SHEETING_COVERAGE],
+                self.options[Aircraft.HorizontalTail.SHEETING_LIGHTENING_FACTOR],
+                self.options[Aircraft.HorizontalTail.NUM_STRINGERS],
+                self.options[Aircraft.HorizontalTail.RIB_MATERIALS],
+                self.options[Aircraft.HorizontalTail.MISC_MASS],
+            )
+        )
 
     def compute_primal(self, span, root_chord):
         num_spars = self.options[Aircraft.HorizontalTail.NUM_SPARS]

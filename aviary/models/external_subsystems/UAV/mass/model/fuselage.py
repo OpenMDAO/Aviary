@@ -11,63 +11,132 @@ from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_d
     ExtendedMetaData,
 )
 
+
 class FuselageMass(om.JaxExplicitComponent):
     def initialize(self):
-        add_aviary_option(self, Aircraft.Fuselage.FLOOR_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.NUM_SPARS, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.SPAR_OUTER_DIAMETER, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.SPAR_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.SPAR_WALL_THICKNESS, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.BULKHEAD_THICKNESS, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.BULKHEAD_LIGHTENING_FACTOR, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.AREAL_SKIN_DENSITY, units='kg/m**2', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.FLOOR_THICKNESS, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.FLOOR_LENGTH, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.GLUE_FACTOR, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.STRINGER_THICKNESS, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.STRINGER_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.SHEETING_THICKNESS, units='m', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.SHEETING_COVERAGE, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.SHEETING_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.SHEETING_LIGHTENING_FACTOR, units='unitless', meta_data=ExtendedMetaData)
-        add_aviary_option(self, Aircraft.Fuselage.BULKHEAD_MATERIALS, units='unitless', meta_data=ExtendedMetaData)
+        add_aviary_option(
+            self, Aircraft.Fuselage.FLOOR_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.NUM_SPARS, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.SPAR_OUTER_DIAMETER, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.SPAR_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.SPAR_WALL_THICKNESS, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.BULKHEAD_THICKNESS, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self,
+            Aircraft.Fuselage.BULKHEAD_LIGHTENING_FACTOR,
+            units='unitless',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.AREAL_SKIN_DENSITY, units='kg/m**2', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.FLOOR_THICKNESS, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.FLOOR_LENGTH, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.GLUE_FACTOR, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.STRINGER_THICKNESS, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.STRINGER_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.SHEETING_THICKNESS, units='m', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.SHEETING_COVERAGE, units='unitless', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.SHEETING_DENSITY, units='kg/m**3', meta_data=ExtendedMetaData
+        )
+        add_aviary_option(
+            self,
+            Aircraft.Fuselage.SHEETING_LIGHTENING_FACTOR,
+            units='unitless',
+            meta_data=ExtendedMetaData,
+        )
+        add_aviary_option(
+            self, Aircraft.Fuselage.BULKHEAD_MATERIALS, units='unitless', meta_data=ExtendedMetaData
+        )
         add_aviary_option(self, Aircraft.Fuselage.MISC_MASS, units='kg', meta_data=ExtendedMetaData)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='m', meta_data=ExtendedMetaData, primal_name='length')
-        add_aviary_input(self, Aircraft.Fuselage.AVG_HEIGHT, units='m', meta_data=ExtendedMetaData, primal_name='avg_height')
-        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, units='m**2', meta_data=ExtendedMetaData, primal_name='wetted_area')
-        add_aviary_input(self, Aircraft.Fuselage.AVG_WIDTH, units='m', meta_data=ExtendedMetaData, primal_name='avg_width')
+        add_aviary_input(
+            self,
+            Aircraft.Fuselage.LENGTH,
+            units='m',
+            meta_data=ExtendedMetaData,
+            primal_name='length',
+        )
+        add_aviary_input(
+            self,
+            Aircraft.Fuselage.AVG_HEIGHT,
+            units='m',
+            meta_data=ExtendedMetaData,
+            primal_name='avg_height',
+        )
+        add_aviary_input(
+            self,
+            Aircraft.Fuselage.WETTED_AREA,
+            units='m**2',
+            meta_data=ExtendedMetaData,
+            primal_name='wetted_area',
+        )
+        add_aviary_input(
+            self,
+            Aircraft.Fuselage.AVG_WIDTH,
+            units='m',
+            meta_data=ExtendedMetaData,
+            primal_name='avg_width',
+        )
 
-        add_aviary_output(self, Aircraft.Fuselage.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='mass')
+        add_aviary_output(
+            self, Aircraft.Fuselage.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='mass'
+        )
 
         # primal_name mismatch breaks jax dependency inference; declare explicitly
         self.declare_partials(Aircraft.Fuselage.MASS, '*')
 
     def get_self_statics(self):
-        return hashable((
-            self.options[Aircraft.Fuselage.FLOOR_DENSITY],
-            self.options[Aircraft.Fuselage.NUM_SPARS],
-            self.options[Aircraft.Fuselage.SPAR_OUTER_DIAMETER],
-            self.options[Aircraft.Fuselage.SPAR_DENSITY],
-            self.options[Aircraft.Fuselage.SPAR_WALL_THICKNESS],
-            self.options[Aircraft.Fuselage.BULKHEAD_THICKNESS],
-            self.options[Aircraft.Fuselage.BULKHEAD_LIGHTENING_FACTOR],
-            self.options[Aircraft.Fuselage.AREAL_SKIN_DENSITY],
-            self.options[Aircraft.Fuselage.FLOOR_THICKNESS],
-            self.options[Aircraft.Fuselage.FLOOR_LENGTH],
-            self.options[Aircraft.Fuselage.GLUE_FACTOR],
-            self.options[Aircraft.Fuselage.STRINGER_THICKNESS],
-            self.options[Aircraft.Fuselage.STRINGER_DENSITY],
-            self.options[Aircraft.Fuselage.SHEETING_THICKNESS],
-            self.options[Aircraft.Fuselage.SHEETING_COVERAGE],
-            self.options[Aircraft.Fuselage.SHEETING_DENSITY],
-            self.options[Aircraft.Fuselage.SHEETING_LIGHTENING_FACTOR],
-            self.options[Aircraft.Fuselage.BULKHEAD_MATERIALS],
-            self.options[Aircraft.Fuselage.MISC_MASS],
-
-
-        ))
+        return hashable(
+            (
+                self.options[Aircraft.Fuselage.FLOOR_DENSITY],
+                self.options[Aircraft.Fuselage.NUM_SPARS],
+                self.options[Aircraft.Fuselage.SPAR_OUTER_DIAMETER],
+                self.options[Aircraft.Fuselage.SPAR_DENSITY],
+                self.options[Aircraft.Fuselage.SPAR_WALL_THICKNESS],
+                self.options[Aircraft.Fuselage.BULKHEAD_THICKNESS],
+                self.options[Aircraft.Fuselage.BULKHEAD_LIGHTENING_FACTOR],
+                self.options[Aircraft.Fuselage.AREAL_SKIN_DENSITY],
+                self.options[Aircraft.Fuselage.FLOOR_THICKNESS],
+                self.options[Aircraft.Fuselage.FLOOR_LENGTH],
+                self.options[Aircraft.Fuselage.GLUE_FACTOR],
+                self.options[Aircraft.Fuselage.STRINGER_THICKNESS],
+                self.options[Aircraft.Fuselage.STRINGER_DENSITY],
+                self.options[Aircraft.Fuselage.SHEETING_THICKNESS],
+                self.options[Aircraft.Fuselage.SHEETING_COVERAGE],
+                self.options[Aircraft.Fuselage.SHEETING_DENSITY],
+                self.options[Aircraft.Fuselage.SHEETING_LIGHTENING_FACTOR],
+                self.options[Aircraft.Fuselage.BULKHEAD_MATERIALS],
+                self.options[Aircraft.Fuselage.MISC_MASS],
+            )
+        )
 
     def compute_primal(self, length, avg_height, wetted_area, avg_width):
         rho_floor, units = self.options[Aircraft.Fuselage.FLOOR_DENSITY]
@@ -97,8 +166,12 @@ class FuselageMass(om.JaxExplicitComponent):
         rib_mass = jnp.sum(rib_volumes * rho_rib)
 
         # Spar volume
-        spar_volume = (num_spars * length * jnp.pi
-                    * (spar_outer_diameter * spar_wall_thickness - spar_wall_thickness**2))
+        spar_volume = (
+            num_spars
+            * length
+            * jnp.pi
+            * (spar_outer_diameter * spar_wall_thickness - spar_wall_thickness**2)
+        )
 
         # Other volumes
         sheeting_volume = (

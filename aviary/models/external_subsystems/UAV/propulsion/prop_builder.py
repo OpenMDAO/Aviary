@@ -8,17 +8,17 @@ from aviary.variable_info.variables import Mission
 
 """ Builder for the UAV Propulsion Subsystem (RC Electric) """
 
+
 class UAVBuilder(EngineModel):
     # UAVPropMission computes its own max-power chain (battery_max ... prop_max),
     # so tell Aviary NOT to build a duplicate full-throttle copy of the engine.
     # The duplicate re-declared every constraint and broke the optimizer (TOO_FEW_DOF).
-    compute_max_values =True
+    compute_max_values = True
 
     def __init__(self, options: AviaryValues = None, name='rc_electric'):
         """Initializes the PropellerBuilder object with a given name."""
         # aviary_inputs = AviaryValues()
         super().__init__(name, options)
-
 
     def build_pre_mission(self, aviary_inputs, **kwargs):  # m, b,
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
@@ -27,11 +27,11 @@ class UAVBuilder(EngineModel):
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
 
-
         return UAVPropMission(num_nodes=num_nodes, aviary_options=self.options)
 
-
-    def get_design_vars(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
+    def get_design_vars(
+        self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None
+    ):
         """
         Design vars are only tested to see if they exist in pre_mission
         Returns a dictionary of design variables for the gearbox subsystem, where the keys are the
@@ -56,23 +56,20 @@ class UAVBuilder(EngineModel):
             Aircraft.Engine.Motor.IDLE_CURRENT: {
                 'units': 'A',
                 'lower': 0.91,
-                'upper': 3.6, #TODO: this placeholder can be varied
+                'upper': 3.6,  # TODO: this placeholder can be varied
                 # 'val': 2.2,
             },
-
-
             Aircraft.Engine.Motor.MASS: {
-
                 'units': 'lbm',
-                'lower': 1.0362,   # 0.47 kg -> KV low enough to keep rpm_max in the prop grid
-                'upper': 1.4330,   # 0.65 kg
+                'lower': 1.0362,  # 0.47 kg -> KV low enough to keep rpm_max in the prop grid
+                'upper': 1.4330,  # 0.65 kg
             },
-
-
         }
         return DVs
 
-    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
+    def get_parameters(
+        self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None
+    ):
         """
         Parameters are only tested to see if they exist in mission.
         The value doesn't change throughout the mission.
@@ -86,9 +83,6 @@ class UAVBuilder(EngineModel):
         parameters : dict
         A dict of names for the propeller subsystem.
         """
-
-
-
 
         parameters = {
             Aircraft.Battery.ENERGY_CAPACITY: {
@@ -115,10 +109,6 @@ class UAVBuilder(EngineModel):
                 'val': 2.2,
                 'units': 'A',
             },
-
-
-
-
             Aircraft.Engine.Propeller.DIAMETER: {
                 'val': 19,
                 'units': 'inch',
@@ -131,7 +121,9 @@ class UAVBuilder(EngineModel):
 
         return parameters
 
-    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
+    def get_states(
+        self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None
+    ):
         states = {
             'energy_used': {
                 'units': 'W*h',
@@ -141,31 +133,26 @@ class UAVBuilder(EngineModel):
                 'fix_initial': True,
                 'lower': 0.0,
                 'ref': 100.0,
-
             },
         }
 
         return states
 
-
-
-    def get_controls(self, aviary_inputs = None, user_options = None, subsystem_options = None, phase_name=None):
-
-
+    def get_controls(
+        self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_name=None
+    ):
         controls = {
-
-
-        #Rpm slack variable the optimizer chooses to keep the propeller RPM within the bounds of the training data. The motor RPM is forced to match this value at the optimum.
-        'rpm_slack': {
-            'targets': 'rpm_slack',
-            'units': 'rpm',
-            'opt': True,
-            'lower': 2800,
-            'upper': 10800,
-            'ref': 10800,
-            'continuity_ref': 10800,
-            'rate_continuity_ref': 10800,
-        },
+            # Rpm slack variable the optimizer chooses to keep the propeller RPM within the bounds of the training data. The motor RPM is forced to match this value at the optimum.
+            'rpm_slack': {
+                'targets': 'rpm_slack',
+                'units': 'rpm',
+                'opt': True,
+                'lower': 2800,
+                'upper': 10800,
+                'ref': 10800,
+                'continuity_ref': 10800,
+                'rate_continuity_ref': 10800,
+            },
         }
 
         # Solver mode computes current/current_max internally in UAVPropMission.
@@ -177,20 +164,13 @@ class UAVBuilder(EngineModel):
     ):
         return False
 
+    def get_mass_names(
+        self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None
+    ):
+        return [Aircraft.Battery.MASS, Aircraft.Engine.Motor.MASS]  # , Aircraft.Engine.MASS]
 
-    def get_mass_names(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
-
-
-        return [Aircraft.Battery.MASS, Aircraft.Engine.Motor.MASS]#, Aircraft.Engine.MASS]
-
-
-
-
-
-
-
-
-    #TODO add new outputs
-    def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
-
+    # TODO add new outputs
+    def mission_outputs(
+        self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None
+    ):
         return ['*']

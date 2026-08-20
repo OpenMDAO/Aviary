@@ -7,16 +7,17 @@ from aviary.models.external_subsystems.UAV.mass.model.verticaltail import Vertic
 from aviary.models.external_subsystems.UAV.mass.model.mass_summation import MassSummation
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 
+
 class MassPremission(om.Group):
     def initialize(self):
-        self.options.declare("aviary_inputs", types=av.AviaryValues)
-        self.options.declare("subsystem_options", types=dict, default={})
-    
+        self.options.declare('aviary_inputs', types=av.AviaryValues)
+        self.options.declare('subsystem_options', types=dict, default={})
+
     def setup(self):
         self.add_subsystem(
-            'wing_mass', 
-            WingMass(), 
-            promotes_inputs=['*'], 
+            'wing_mass',
+            WingMass(),
+            promotes_inputs=['*'],
             promotes_outputs=[Aircraft.Wing.MASS],
         )
         self.add_subsystem(
@@ -38,9 +39,5 @@ class MassPremission(om.Group):
             promotes_outputs=[Aircraft.Fuselage.MASS],
         )
         self.add_subsystem(
-            'mass_group', 
-            MassSummation(), 
-            promotes_inputs=['*'], 
-            promotes_outputs=['*']
+            'mass_group', MassSummation(), promotes_inputs=['*'], promotes_outputs=['*']
         )
-

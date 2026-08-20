@@ -15,12 +15,15 @@ from aviary.models.external_subsystems.UAV.propulsion.model.prop_mission import 
 from aviary.models.external_subsystems.UAV.propulsion.model.prop_premission import UAVPropPreMission
 from aviary.utils.aviary_values import AviaryValues
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import ExtendedMetaData as UAVExtendedMetaData
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
+    ExtendedMetaData as UAVExtendedMetaData,
+)
 from aviary.variable_info.variables import Mission, Settings
 from openmdao.utils.testing_utils import use_tempdirs
 
 
 UAV_Prop = UAVBuilder()  # or 'solver' for the solver-based power balance mode
+
 
 @use_tempdirs
 def CruiseExample():
@@ -33,22 +36,16 @@ def CruiseExample():
         'post_mission': deepcopy(phase_info['post_mission']),
     }
 
-    prob.load_inputs(
-        'aviary/models/aircraft/UAV/small_scale_uav.csv', cruise_phase_info
-    )
+    prob.load_inputs('aviary/models/aircraft/UAV/small_scale_uav.csv', cruise_phase_info)
 
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units='m**2')
     print('Wetted Area:', number)
 
     prob.load_external_subsystems(external_subsystems=[UAV_Prop, AeroBuilder(), DBFMassBuilder()])
 
-
     prob.check_and_preprocess_inputs()
 
     prob.build_model()
-
-
-
 
     prob.add_driver('IPOPT', use_coloring=False, max_iter=15)
     prob.add_driver('SNOPT', use_coloring=True, max_iter=15)
@@ -68,7 +65,9 @@ def CruiseExample():
     prob.add_objective(objective_type='time')
 
     # Add special solver scaling for small aircraft
-    prob.model.set_output_solver_options('link_cruise_mass.mass', ref=1) # energy_state_problem_configurator.py
+    prob.model.set_output_solver_options(
+        'link_cruise_mass.mass', ref=1
+    )  # energy_state_problem_configurator.py
     # prob.model.set_output_solver_options('throttle_balance', res_ref=1e3) # energy_state_ODE.py
 
     prob.setup()
@@ -89,13 +88,21 @@ def CruiseExample():
     # exit()
 
     # Add special rescaling for small aircraft
-    prob.model.set_constraint_options(Mission.Constraints.MASS_RESIDUAL, ref=1) # aviary_group.py
-    prob.model.set_design_var_options(Aircraft.Design.GROSS_MASS, lower=2, upper=50, ref=1) # aviary_group.py
-    prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1) # aviary_group.py
-    prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1) # aviary_group.py
+    prob.model.set_constraint_options(Mission.Constraints.MASS_RESIDUAL, ref=1)  # aviary_group.py
+    prob.model.set_design_var_options(
+        Aircraft.Design.GROSS_MASS, lower=2, upper=50, ref=1
+    )  # aviary_group.py
+    prob.model.set_design_var_options(
+        Mission.GROSS_MASS, lower=2, upper=50, ref=1
+    )  # aviary_group.py
+    prob.model.set_constraint_options(
+        'cruise_distance_constraint.distance_resid', ref=1
+    )  # aviary_group.py
     # prob.model.set_constraint_options('cruise_duration_constraint.duration_resid', ref=10) # aviary_group.py
     # prob.model.set_constraint_options(Mission.Constraints.RANGE_RESIDUAL, ref=1) # aviary_group.py
-    prob.model.traj.phases.cruise.rhs_all.set_constraint_options('thrust_residual', ref=0.01, upper=0.01, lower=-0.01) # energy_state_ODE.py
+    prob.model.traj.phases.cruise.rhs_all.set_constraint_options(
+        'thrust_residual', ref=0.01, upper=0.01, lower=-0.01
+    )  # energy_state_ODE.py
     reports_dir = prob.get_reports_dir()
     reports_dir.mkdir(parents=True, exist_ok=True)
 

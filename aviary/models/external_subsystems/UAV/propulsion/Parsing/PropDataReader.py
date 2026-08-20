@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+
 def PropDataReader():
     """A function to read in propulsion data to ndarrays and apply reasonable
         restrictions to training data
@@ -19,19 +20,19 @@ def PropDataReader():
     # Opening data files
     # CHANGE THESE TO THE FILE PATH
     base_path = os.path.dirname(__file__)
-    file_xt= os.path.join(base_path, 'prop_xt.dat')
-    file_yt= os.path.join(base_path, 'prop_yt.dat')
+    file_xt = os.path.join(base_path, 'prop_xt.dat')
+    file_yt = os.path.join(base_path, 'prop_yt.dat')
 
-    fx = open(file_xt, "r")
-    fy = open(file_yt, "r")
+    fx = open(file_xt, 'r')
+    fy = open(file_yt, 'r')
 
     # Looping through lines of .dat file
     for xline, yline in zip(fx.readlines(), fy.readlines()):
-        if xline.strip().startswith("#"):
-                    continue
+        if xline.strip().startswith('#'):
+            continue
         # Converting line into array
-        xlineArr = np.array([float(i) for i in xline.strip().split(" ")])
-        ylineArr = np.array([float(i) for i in yline.strip().split(" ")])
+        xlineArr = np.array([float(i) for i in xline.strip().split(' ')])
+        ylineArr = np.array([float(i) for i in yline.strip().split(' ')])
 
         # Conversion factors
         in2m = 0.0254
@@ -42,8 +43,7 @@ def PropDataReader():
             xlineArr[3] < 50  # V < 50 m/s
             and xlineArr[0] / in2m < 20  # D < 20 in
             and xlineArr[0] / in2m > 12  # D > 12
-            and xlineArr[2] / rpm2rps
-            < 150000 / (xlineArr[0] / in2m)  # RPM limits suggested by APC
+            and xlineArr[2] / rpm2rps < 150000 / (xlineArr[0] / in2m)  # RPM limits suggested by APC
         ):
             # If within limits, add to returning arrays
             xt = np.vstack([xt, xlineArr])

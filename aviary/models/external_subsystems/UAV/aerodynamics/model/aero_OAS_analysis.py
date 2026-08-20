@@ -1,4 +1,3 @@
-
 import numpy as np
 import openmdao.api as om
 
@@ -9,7 +8,13 @@ from openaerostruct.meshing.mesh_generator import generate_mesh
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
 from aviary.variable_info.enums import AtmosphereModel
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic, Settings, Mission
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import (
+    Aircraft,
+    Dynamic,
+    Settings,
+    Mission,
+)
+
 
 class AeroConditions(om.ExplicitComponent):
     """
@@ -23,51 +28,21 @@ class AeroConditions(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(
-            self,
-            Dynamic.Mission.VELOCITY,
-            shape=nn,
-            units='m/s'
-        )
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, shape=nn, units='m/s')
 
-        add_aviary_input(
-            self,
-            Dynamic.Atmosphere.DENSITY,
-            shape=nn,
-            units='kg/m**3'
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.DENSITY, shape=nn, units='kg/m**3')
 
-        add_aviary_input(
-            self,
-            Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
-            shape=nn,
-            units='Pa*s'
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_VISCOSITY, shape=nn, units='Pa*s')
 
-        add_aviary_output(
-            self,
-            Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
-            shape=nn,
-            units='m**2/s'
-        )
+        add_aviary_output(self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, shape=nn, units='m**2/s')
 
-        add_aviary_output(
-            self,
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            shape=nn,
-            units='N/m**2'
-        )
+        add_aviary_output(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
 
-        self.add_output(
-            're',
-            shape=nn,
-            units='1/m'
-        )
+        self.add_output('re', shape=nn, units='1/m')
 
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-
         V = inputs[Dynamic.Mission.VELOCITY]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         mu = inputs[Dynamic.Atmosphere.DYNAMIC_VISCOSITY]
@@ -79,9 +54,8 @@ class AeroConditions(om.ExplicitComponent):
         # Reynolds number per unit length for OpenAeroStruct
         outputs['re'] = V / nu
 
-        outputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE] = (
-            0.5 * rho * V**2
-        )
+        outputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE] = 0.5 * rho * V**2
+
 
 class CollectLiftDrag(om.ExplicitComponent):
     def initialize(self):
@@ -123,10 +97,11 @@ class CollectLiftDrag(om.ExplicitComponent):
             partials['lifting_surface_CL', 'CL_' + str(i)] = 1.0
             partials['lifting_surface_CD', 'CD_' + str(i)] = 1.0
 
+
 class BroadcastWing(om.ExplicitComponent):
     # broadcast geometric variables to node in the mesh
     def setup(self):
-        nn = 12 # half of num_y in mesh
+        nn = 12  # half of num_y in mesh
         add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='deg')
         self.add_output('broadcast_incidence', val=np.zeros(nn), units='deg')
 
@@ -137,7 +112,9 @@ class BroadcastWing(om.ExplicitComponent):
         cols = np.zeros(nn, int)
 
         self.declare_partials('broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows, cols=cols)
-        self.declare_partials('broadcast_wing_chord', Aircraft.Wing.ROOT_CHORD, rows=rows, cols=cols)
+        self.declare_partials(
+            'broadcast_wing_chord', Aircraft.Wing.ROOT_CHORD, rows=rows, cols=cols
+        )
 
     def compute(self, inputs, outputs):
         outputs['broadcast_incidence'][:] = inputs[Aircraft.Wing.INCIDENCE]
@@ -148,17 +125,20 @@ class BroadcastWing(om.ExplicitComponent):
         partials['broadcast_incidence', Aircraft.Wing.INCIDENCE] = np.ones(nn)
         partials['broadcast_wing_chord', Aircraft.Wing.ROOT_CHORD] = np.ones(nn)
 
+
 class BroadcastHTailChord(om.ExplicitComponent):
     # broadcast geometric variables to node in the mesh
     def setup(self):
-        nn = 10 # half of num_y from mesh
+        nn = 10  # half of num_y from mesh
         add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='m')
         self.add_output('broadcast_htail_chord', val=np.zeros(nn), units='m')
 
         rows = np.arange(nn)
         cols = np.zeros(nn, int)
 
-        self.declare_partials('broadcast_htail_chord', Aircraft.HorizontalTail.ROOT_CHORD, rows=rows, cols=cols)
+        self.declare_partials(
+            'broadcast_htail_chord', Aircraft.HorizontalTail.ROOT_CHORD, rows=rows, cols=cols
+        )
 
     def compute(self, inputs, outputs):
         outputs['broadcast_htail_chord'][:] = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
@@ -167,8 +147,8 @@ class BroadcastHTailChord(om.ExplicitComponent):
         nn = 10
         partials['broadcast_htail_chord', Aircraft.HorizontalTail.ROOT_CHORD] = np.ones(nn)
 
-class AlphaComp(om.ExplicitComponent):
 
+class AlphaComp(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
         add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
@@ -178,42 +158,50 @@ class AlphaComp(om.ExplicitComponent):
         rows_cols = np.arange(nn)
         add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
         add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
-        self.add_input( 'alpha', val=np.full(nn, 3.0), units='deg', )
+        self.add_input(
+            'alpha',
+            val=np.full(nn, 3.0),
+            units='deg',
+        )
 
         # This output will be constrained to zero.
-        self.add_output( 'lift_balance_residual', val=np.zeros(nn),  units='N', desc='Lift equilibrium residual', )
-        self.declare_partials('lift_balance_residual', Dynamic.Vehicle.LIFT, rows=rows_cols, cols=rows_cols)
-        self.declare_partials('lift_balance_residual', Dynamic.Vehicle.MASS, rows=rows_cols, cols=rows_cols)
+        self.add_output(
+            'lift_balance_residual',
+            val=np.zeros(nn),
+            units='N',
+            desc='Lift equilibrium residual',
+        )
+        self.declare_partials(
+            'lift_balance_residual', Dynamic.Vehicle.LIFT, rows=rows_cols, cols=rows_cols
+        )
+        self.declare_partials(
+            'lift_balance_residual', Dynamic.Vehicle.MASS, rows=rows_cols, cols=rows_cols
+        )
         self.declare_partials('lift_balance_residual', 'alpha', rows=rows_cols, cols=rows_cols)
 
     def compute(self, inputs, outputs):
         L = inputs[Dynamic.Vehicle.LIFT]
         m = inputs[Dynamic.Vehicle.MASS]
-        g = self.options[Mission.GRAVITY][0] # m/s**2
-        outputs['lift_balance_residual'] = L - (m * g) #chnaged the lift equation to be equal to weight instead of weight * cos(alpha)
+        g = self.options[Mission.GRAVITY][0]  # m/s**2
+        outputs['lift_balance_residual'] = L - (
+            m * g
+        )  # chnaged the lift equation to be equal to weight instead of weight * cos(alpha)
 
-    def compute_partials(self, inputs, partials): #changes the lift equation to be equal to weight instead of weight * cos(alpha)
+    def compute_partials(
+        self, inputs, partials
+    ):  # changes the lift equation to be equal to weight instead of weight * cos(alpha)
         nn = self.options['num_nodes']
 
-        g = self.options[Mission.GRAVITY][0] # m/s**2
+        g = self.options[Mission.GRAVITY][0]  # m/s**2
 
-        partials[
-            'lift_balance_residual',
-            Dynamic.Vehicle.LIFT
-        ] = np.ones(nn)
+        partials['lift_balance_residual', Dynamic.Vehicle.LIFT] = np.ones(nn)
 
-        partials[
-            'lift_balance_residual',
-            Dynamic.Vehicle.MASS
-        ] = -g * np.ones(nn)
+        partials['lift_balance_residual', Dynamic.Vehicle.MASS] = -g * np.ones(nn)
 
-        partials[
-            'lift_balance_residual',
-            'alpha'
-        ] = np.zeros(nn)
+        partials['lift_balance_residual', 'alpha'] = np.zeros(nn)
+
 
 class OASAero(om.Group):
-
     def initialize(self):
         self.options.declare('num_nodes', types=int)
         self.options.declare('aviary_inputs')
@@ -225,31 +213,25 @@ class OASAero(om.Group):
         self.add_subsystem(
             'aero_conditions',
             AeroConditions(num_nodes=nn),
-
             promotes_inputs=[
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Atmosphere.DENSITY,
                 Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
             ],
-
             promotes_outputs=[
                 're',
                 Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
         )
-        atmosphere_model = aviary_inputs.get_val(
-            Settings.ATMOSPHERE_MODEL
-        )
+        atmosphere_model = aviary_inputs.get_val(Settings.ATMOSPHERE_MODEL)
 
         self.add_subsystem(
             'aviary_atmosphere',
             AtmosphereComp(
                 num_nodes=nn,
                 h_def='geometric',
-                **{
-                    Settings.ATMOSPHERE_MODEL: atmosphere_model
-                },
+                **{Settings.ATMOSPHERE_MODEL: atmosphere_model},
             ),
             promotes_inputs=[
                 Dynamic.Mission.ALTITUDE,
@@ -264,30 +246,30 @@ class OASAero(om.Group):
             'broadcast_wing',
             BroadcastWing(),
             promotes_inputs=[Aircraft.Wing.INCIDENCE, Aircraft.Wing.ROOT_CHORD],
-            promotes_outputs=['broadcast_incidence', 'broadcast_wing_chord']
+            promotes_outputs=['broadcast_incidence', 'broadcast_wing_chord'],
         )
 
         self.add_subsystem(
             'broadcast_htail_chord',
             BroadcastHTailChord(),
             promotes_inputs=[Aircraft.HorizontalTail.ROOT_CHORD],
-            promotes_outputs=['broadcast_htail_chord']
+            promotes_outputs=['broadcast_htail_chord'],
         )
 
         # WING
 
         mesh_dict = {
-            'num_y': 23, # if changing, change in broadcast components too
+            'num_y': 23,  # if changing, change in broadcast components too
             'num_x': 7,
             'wing_type': 'rect',
             'symmetry': True,
-            'span': 1, # set to 1, aviary inputs will be scaling factor
+            'span': 1,  # set to 1, aviary inputs will be scaling factor
             'root_chord': 1,
             'taper': 1,
             'sweep': 1,
             'span_cos_spacing': 1,
             'chord_cos_spacing': 1,
-            'num_twist_cp': 1
+            'num_twist_cp': 1,
         }
 
         wing_mesh = generate_mesh(mesh_dict)
@@ -300,12 +282,11 @@ class OASAero(om.Group):
             'fem_model_type': 'tube',
             't_over_c': aviary_inputs.get_val(Aircraft.Wing.THICKNESS_TO_CHORD),
             'c_max_t': aviary_inputs.get_val(Aircraft.Wing.MAX_THICKNESS_LOCATION),
-
             'with_viscous': False,
             'with_wave': False,
             'k_lam': 0.15,
             'CL0': 0.1,
-            'CD0': 0.015
+            'CD0': 0.015,
         }
 
         # HTAIL
@@ -334,7 +315,7 @@ class OASAero(om.Group):
             'sweep': 1,
             'span_cos_spacing': 1,
             'chord_cos_spacing': 1,
-            'offset': np.array([htail_dist, 0, htail_z_offset]), # offset from wing, x-aft and z-up
+            'offset': np.array([htail_dist, 0, htail_z_offset]),  # offset from wing, x-aft and z-up
         }
 
         htail_mesh = generate_mesh(mesh_dict)
@@ -346,13 +327,12 @@ class OASAero(om.Group):
             'mesh': htail_mesh,
             'fem_model_type': 'tube',
             't_over_c': aviary_inputs.get_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD),
-            'c_max_t': 0.3, # NACA 00 series
-
+            'c_max_t': 0.3,  # NACA 00 series
             'with_viscous': False,
             'with_wave': False,
             'k_lam': 0.15,
             'CL0': 0.0,
-            'CD0': 0.015
+            'CD0': 0.015,
         }
 
         surfaces = [wing_surface, htail_surface]
@@ -373,18 +353,23 @@ class OASAero(om.Group):
             promotes_outputs=[
                 'lift_balance_residual',
             ],
-         )
+        )
 
         for surface in surfaces:
             geom_group = Geometry(surface=surface)
             self.add_subsystem(surface['name'], geom_group)
 
         for i in range(nn):
-            point_name = 'aero_point_'+ str(i)
+            point_name = 'aero_point_' + str(i)
             self.add_subsystem(point_name, AeroPoint(surfaces=surfaces))
 
             self.promotes(point_name, inputs=[('v', Dynamic.Mission.VELOCITY)], src_indices=[i])
-            self.promotes( point_name, inputs=['alpha'], src_indices=[i], flat_src_indices=True,)
+            self.promotes(
+                point_name,
+                inputs=['alpha'],
+                src_indices=[i],
+                flat_src_indices=True,
+            )
             self.connect('re', f'{point_name}.re', src_indices=[i])
             self.connect('prob_vars.cg', f'{point_name}.cg')
             self.connect(Dynamic.Atmosphere.DENSITY, f'{point_name}.rho', src_indices=[i])
@@ -403,12 +388,12 @@ class OASAero(om.Group):
         self.add_subsystem(
             'collect_lift_drag',
             CollectLiftDrag(num_nodes=nn),
-                promotes_outputs=[
-                    Dynamic.Vehicle.LIFT,
-                    'lifting_surface_drag',
-                    'lifting_surface_CL',
-                    'lifting_surface_CD'
-                ]
+            promotes_outputs=[
+                Dynamic.Vehicle.LIFT,
+                'lifting_surface_drag',
+                'lifting_surface_CL',
+                'lifting_surface_CD',
+            ],
         )
 
         self.options['auto_order'] = True
@@ -422,7 +407,7 @@ class OASAero(om.Group):
         self.connect('broadcast_wing_chord', 'wing.mesh.scale_x.chord')
         self.connect('broadcast_htail_chord', 'htail.mesh.scale_x.chord')
 
-        #self.promotes('wing', inputs=[('mesh.taper.taper', Aircraft.Wing.TAPER_RATIO)])
+        # self.promotes('wing', inputs=[('mesh.taper.taper', Aircraft.Wing.TAPER_RATIO)])
         # self.promotes('htail', inputs=[('mesh.taper.taper', Aircraft.HorizontalTail.TAPER_RATIO)])
 
         self.promotes('wing', inputs=[('mesh.sweep.sweep', Aircraft.Wing.SWEEP)])

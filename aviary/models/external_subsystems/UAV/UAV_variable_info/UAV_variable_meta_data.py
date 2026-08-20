@@ -1,6 +1,7 @@
 """
 Metadata for UAV variables defined in mass_variables.py
 """
+
 from copy import deepcopy
 import aviary.api as av
 from aviary.models.external_subsystems.UAV.mass.utils.enums import WingType
@@ -37,7 +38,7 @@ av.add_meta_data(
     units='kg/m**2',
     desc='Areal density of fuselage skin',
     default_value=0.08,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -46,7 +47,7 @@ av.add_meta_data(
     units='m',
     desc='UAV Height of fuselage (assumed rectangular prism shape)',
     default_value=0.3,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -55,7 +56,7 @@ av.add_meta_data(
     units='m',
     desc='Width of fuselage (assumed rectangular prism shape)',
     default_value=0.3,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -65,7 +66,7 @@ av.add_meta_data(
     types=float,
     desc='Material density of the rib',
     default_value=[0.0],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
@@ -75,7 +76,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the rib area that remains after lightening cuts',
     default_value=0.5,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -85,12 +86,28 @@ av.add_meta_data(
     types=str,
     desc='Material density of the bulkhead',
     default_value=[
-        'Balsa', 'Balsa', 'Balsa', 'Balsa', 'Balsa',
-        'Balsa', 'Balsa', 'Balsa', 'Balsa', 'Balsa',
-        'Balsa', 'Balsa', 'Balsa', 'Balsa', 'Ply',
-        'Ply', 'Ply', 'Ply', 'Ply', 'Ply',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Ply',
+        'Ply',
+        'Ply',
+        'Ply',
+        'Ply',
+        'Ply',
     ],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
@@ -101,12 +118,28 @@ av.add_meta_data(
     types=float,
     desc='Thickness of a single rib',
     default_value=[
-        0.003175, 0.003175, 0.003175, 0.003175, 0.003175,
-        0.003175, 0.003175, 0.003175, 0.003175, 0.003175,
-        0.003175, 0.003175, 0.003175, 0.003175, 0.003175,
-        0.003175, 0.003175, 0.003175, 0.003175, 0.00635,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.00635,
     ],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
@@ -116,7 +149,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Density of fuselage floor',
     default_value=0.02,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -125,7 +158,7 @@ av.add_meta_data(
     units='m',
     desc='length of fuselage floor',
     default_value=0.7,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -134,7 +167,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of fuselage floor',
     default_value=0.003,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -143,7 +176,7 @@ av.add_meta_data(
     units='unitless',
     desc='Added margin for glue. Only added to ribs, spars, and stringers',
     default_value=0.15,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -152,7 +185,7 @@ av.add_meta_data(
     units='kg',
     desc='Mass made up of smaller, non structural components. Can be used for higher fidelity options as well',
     default_value=0.0,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -161,7 +194,7 @@ av.add_meta_data(
     units='unitless',
     desc='Number of fuselage ribs',
     default_value=10,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -170,7 +203,7 @@ av.add_meta_data(
     units='unitless',
     desc='Number of fuselage spars',
     default_value=2,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -179,7 +212,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the wetted area covered by sheeting',
     default_value=1.0,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -188,7 +221,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the sheeting',
     default_value=250,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -197,7 +230,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the sheeting area that remains after lightening cuts',
     default_value=0.5,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -206,7 +239,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of sheeting',
     default_value=0.003,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -215,7 +248,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the spar',
     default_value=1500,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -224,7 +257,7 @@ av.add_meta_data(
     units='m',
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.005,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -233,7 +266,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of spar wall',
     default_value=0.002,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -242,7 +275,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the stringer',
     default_value=250,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -251,7 +284,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of stringers',
     default_value=0.005,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -268,7 +301,7 @@ av.add_meta_data(
     units='kg/m**2',
     desc='Areal density of horizontal tail skin',
     default_value=0.08,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -278,7 +311,7 @@ av.add_meta_data(
     types=str,
     desc='Path to csv file containing airfoil data',
     default_value='subsystems/mass/UAV/utils/n0012-il.csv',
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -287,7 +320,7 @@ av.add_meta_data(
     units='unitless',
     desc='Added margin for glue. Only added to ribs, spars, and stringers',
     default_value=0.15,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -296,7 +329,7 @@ av.add_meta_data(
     units='kg',
     desc='Mass made up of smaller, non structural components. Can be used for higher fidelity options as well',
     default_value=0.0,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -305,7 +338,7 @@ av.add_meta_data(
     units='unitless',
     desc='Number of wing ribs',
     default_value=10,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -314,7 +347,7 @@ av.add_meta_data(
     units='unitless',
     desc='Number of wing spars',
     default_value=2,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -323,7 +356,7 @@ av.add_meta_data(
     units='unitless',
     desc='Number of stringers(assumed length=span)',
     default_value=2.0,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -333,7 +366,7 @@ av.add_meta_data(
     types=float,
     desc='Material density of the rib',
     default_value=[0.0],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
@@ -343,7 +376,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the rib area that remains after lightening cuts',
     default_value=0.5,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -353,7 +386,7 @@ av.add_meta_data(
     types=str,
     desc='Material of the rib',
     default_value=['Balsa'],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
@@ -364,11 +397,10 @@ av.add_meta_data(
     types=float,
     desc='Thickness of a single rib',
     default_value=[0.00635],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
-
 
 
 av.add_meta_data(
@@ -376,7 +408,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the wetted area covered by sheeting',
     default_value=1.0,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -385,7 +417,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the sheeting',
     default_value=250,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -394,7 +426,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the sheeting area that remains after lightening cuts',
     default_value=0.5,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -403,7 +435,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of sheeting',
     default_value=0.003,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -412,7 +444,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the spar',
     default_value=1500,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -421,7 +453,7 @@ av.add_meta_data(
     units='m',
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.005,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -430,7 +462,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of spar wall',
     default_value=0.002,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -439,7 +471,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the stringer',
     default_value=250,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -448,7 +480,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of stringers',
     default_value=0.005,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -465,7 +497,7 @@ av.add_meta_data(
     units='kg/m**2',
     desc='Areal density of vertical tail skin',
     default_value=0.08,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -475,7 +507,7 @@ av.add_meta_data(
     types=str,
     desc='Path to csv file containing airfoil data',
     default_value='subsystems/mass/UAV/utils/n0012-il.csv',
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -484,7 +516,7 @@ av.add_meta_data(
     units='unitless',
     desc='Added margin for glue. Only added to ribs, spars, and stringers',
     default_value=0.15,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -493,7 +525,7 @@ av.add_meta_data(
     units='kg',
     desc='Mass made up of smaller, non structural components. Can be used for higher fidelity options as well',
     default_value=0.0,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -502,7 +534,7 @@ av.add_meta_data(
     units='unitless',
     desc='Number of wing ribs',
     default_value=10,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -511,7 +543,7 @@ av.add_meta_data(
     units='unitless',
     desc='Number of wing spars',
     default_value=2,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -520,7 +552,7 @@ av.add_meta_data(
     units='unitless',
     desc='Number of stringers(assumed length=span)',
     default_value=2.0,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -530,7 +562,7 @@ av.add_meta_data(
     types=float,
     desc='Material density of the rib',
     default_value=[0.0],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
@@ -540,7 +572,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the rib area that remains after lightening cuts',
     default_value=0.5,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -550,7 +582,7 @@ av.add_meta_data(
     types=str,
     desc='Material of the rib',
     default_value=['Balsa'],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
@@ -561,7 +593,7 @@ av.add_meta_data(
     types=float,
     desc='Thickness of a single rib',
     default_value=[0.00635],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
@@ -571,7 +603,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the wetted area covered by sheeting',
     default_value=1.0,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -580,7 +612,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the sheeting',
     default_value=250,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -589,7 +621,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the sheeting area that remains after lightening cuts',
     default_value=0.5,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -598,7 +630,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of sheeting',
     default_value=0.003,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -607,7 +639,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the spar',
     default_value=1500,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -616,7 +648,7 @@ av.add_meta_data(
     units='m',
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.005,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -625,7 +657,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of spar wall',
     default_value=0.002,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -634,7 +666,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the stringer',
     default_value=250,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -643,7 +675,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of stringers',
     default_value=0.005,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -662,7 +694,7 @@ av.add_meta_data(
     units='kg/m**2',
     desc='Areal density of wing skin',
     default_value=0.08,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -672,7 +704,7 @@ av.add_meta_data(
     types=str,
     desc='Path to csv file containing airfoil data',
     default_value='subsystems/mass/UAV/utils/mh84-il.csv',
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -681,8 +713,8 @@ av.add_meta_data(
     units='kg/m**3',
     desc='density of foam used for simple wing design',
     default_value=2.0,
-    meta_data = ExtendedMetaData,
-    option=True
+    meta_data=ExtendedMetaData,
+    option=True,
 )
 
 av.add_meta_data(
@@ -690,7 +722,7 @@ av.add_meta_data(
     units='unitless',
     desc='Added margin for glue. Only added to ribs, spars, and stringers',
     default_value=0.15,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -699,7 +731,7 @@ av.add_meta_data(
     units='unitless',
     desc='Number of wing ribs',
     default_value=10,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -708,7 +740,7 @@ av.add_meta_data(
     units='unitless',
     desc='Number of wing spars',
     default_value=2,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -717,7 +749,7 @@ av.add_meta_data(
     units='unitless',
     desc='Number of stringers(assumed length=span)',
     default_value=2.0,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -727,7 +759,7 @@ av.add_meta_data(
     types=float,
     desc='Material density of the rib',
     default_value=[0.0],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
@@ -737,7 +769,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the rib area that remains after lightening cuts',
     default_value=0.5,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -747,12 +779,28 @@ av.add_meta_data(
     types=str,
     desc='Material of the rib',
     default_value=[
-        'Balsa', 'Balsa', 'Balsa', 'Balsa', 'Balsa',
-        'Balsa', 'Balsa', 'Balsa', 'Balsa', 'Balsa',
-        'Balsa', 'Balsa', 'Balsa', 'Balsa', 'Balsa',
-        'Ply', 'Ply', 'Ply', 'Ply', 'Ply',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Balsa',
+        'Ply',
+        'Ply',
+        'Ply',
+        'Ply',
+        'Ply',
     ],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
@@ -763,12 +811,28 @@ av.add_meta_data(
     types=float,
     desc='Thickness of a single rib',
     default_value=[
-        0.003175, 0.003175, 0.003175, 0.003175, 0.003175,
-        0.003175, 0.003175, 0.003175, 0.003175, 0.003175,
-        0.003175, 0.003175, 0.003175, 0.003175, 0.003175,
-        0.003175, 0.003175, 0.003175, 0.003175, 0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
+        0.003175,
     ],
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     multivalue=True,
     option=True,
 )
@@ -778,8 +842,8 @@ av.add_meta_data(
     units='kg/m**3',
     desc='density of rod used for simple wing design',
     default_value=2.0,
-    meta_data = ExtendedMetaData,
-    option=True
+    meta_data=ExtendedMetaData,
+    option=True,
 )
 
 av.add_meta_data(
@@ -787,8 +851,8 @@ av.add_meta_data(
     units='m',
     desc='radius of rod for simple wing',
     default_value=2.0,
-    meta_data = ExtendedMetaData,
-    option=True
+    meta_data=ExtendedMetaData,
+    option=True,
 )
 
 av.add_meta_data(
@@ -796,7 +860,7 @@ av.add_meta_data(
     units='m',
     desc='thickness of the rod in simple wing design',
     default_value=2.0,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -805,7 +869,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the wetted area covered by sheeting',
     default_value=1.0,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -814,7 +878,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the sheeting',
     default_value=250,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -823,7 +887,7 @@ av.add_meta_data(
     units='unitless',
     desc='Fraction of the sheeting area that remains after lightening cuts',
     default_value=0.5,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -832,7 +896,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of sheeting',
     default_value=0.003,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -841,7 +905,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the spar',
     default_value=1500,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -850,7 +914,7 @@ av.add_meta_data(
     units='m',
     desc='Diameter/thickness of a single spar (assumed cylindrical)',
     default_value=0.005,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -859,7 +923,7 @@ av.add_meta_data(
     units='m',
     desc='Thickness of spar wall',
     default_value=0.002,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -868,7 +932,7 @@ av.add_meta_data(
     units='kg/m**3',
     desc='Material density of the stringer',
     default_value=250,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
@@ -877,18 +941,18 @@ av.add_meta_data(
     units='m',
     desc='Thickness of stringers',
     default_value=0.005,
-    meta_data = ExtendedMetaData,
+    meta_data=ExtendedMetaData,
     option=True,
 )
 
 av.add_meta_data(
     Aircraft.Wing.TYPE,
-    meta_data = ExtendedMetaData,
-    units = 'unitless',
-    desc = 'Specifies "simple" or "medium" wing design',
-    default_value = WingType.SIMPLE,
-    option = True,
-    types = WingType,
+    meta_data=ExtendedMetaData,
+    units='unitless',
+    desc='Specifies "simple" or "medium" wing design',
+    default_value=WingType.SIMPLE,
+    option=True,
+    types=WingType,
 )
 
 ##### RC Variables #####

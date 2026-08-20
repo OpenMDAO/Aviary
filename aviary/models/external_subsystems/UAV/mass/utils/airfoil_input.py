@@ -3,8 +3,10 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 import os
 
+
 def shoelace_area(x, y):
     return 0.5 * np.abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+
 
 def compute_max_thickness(x, y):
     """
@@ -106,11 +108,12 @@ def load_airfoil_csv(file_path, delimiter=',', header=False):
 
     return x_normalized, y_normalized
 
+
 """Example of how this is used:"""
 
 chord_length = 13.4  # in
 base = os.path.dirname(__file__)
-airfoil_path = os.path.abspath(os.path.join(base, "n0012-il.csv"))
+airfoil_path = os.path.abspath(os.path.join(base, 'n0012-il.csv'))
 
 x, y = load_airfoil_csv(airfoil_path, header=True)
 
