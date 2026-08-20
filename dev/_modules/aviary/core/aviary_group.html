@@ -1388,7 +1388,7 @@
         <span class="c1"># Users can set the below constraint to lower=0.0, which will allow for more fuel on the aircraft than the mission</span>
         <span class="c1"># requires. however, caution will need to be taken to ensure the ref is of the right magnitude otherwise the optimizer</span>
         <span class="c1"># may not try as hard as needed to minimize this.</span>
-        <span class="k">if</span> <span class="n">Settings</span><span class="o">.</span><span class="n">EQUATIONS_OF_MOTION</span> <span class="ow">is</span> <span class="n">SOLVED_2DOF</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">EQUATIONS_OF_MOTION</span><span class="p">)</span> <span class="ow">is</span> <span class="n">SOLVED_2DOF</span><span class="p">:</span>
             <span class="c1"># For missions where we are allowed to have more fuel in the tanks than we burn during the mission.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span>
                 <span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">MASS_RESIDUAL</span><span class="p">,</span>
