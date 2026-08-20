@@ -139,6 +139,8 @@ class PreMissionTestCase(unittest.TestCase):
 
         # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
         self.prob.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units='unitless')
+        # Set LargeSingleAisle1FLOPS value
+        self.prob.set_val(Aircraft.Design.MAX_MACH, val=0.785, units='unitless')
 
     def test_GASP_mass_FLOPS_everything_else(self):
         # Note: in geomtry subsystem, both GASP and FLOPS based subsystems are used
