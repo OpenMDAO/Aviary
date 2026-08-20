@@ -715,6 +715,13 @@
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1787234330.913611] [runnervm76f27:4692 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x557f94394f50 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1787234330.913888] [runnervm76f27:4692 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm76f27:04692] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      221
                      variables with only lower bounds:      215
                 variables with lower and upper bounds:        6
@@ -745,16 +752,15 @@ Total number of inequality constraints...............:      105
       Index  Name                                                                    Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
         275  traj.descent.throttle[path]                                                i   0.000000E+00    5.130921E-07    1.000000E+00         l    9.00000E+100
 
-
 Number of Iterations....: 43
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.8536025661584006e+00    1.8536025661584006e+00
-Dual infeasibility......:   2.5952105689283017e-07    2.5952105689283017e-07
-Constraint violation....:   2.4102497658141961e-09    2.4102497658141961e-09
+Objective...............:   1.8536025661773194e+00    1.8536025661773194e+00
+Dual infeasibility......:   2.6059286064968817e-07    2.6059286064968817e-07
+Constraint violation....:   2.4097249390148386e-09    2.4097249390148386e-09
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   1.0177202528196773e-07    1.0177202528196773e-07
-Overall NLP error.......:   2.5952105689283017e-07    2.5952105689283017e-07
+Complementarity.........:   1.0177167738056574e-07    1.0177167738056574e-07
+Overall NLP error.......:   2.6059286064968817e-07    2.6059286064968817e-07
 
 
 Number of objective function evaluations             = 45
@@ -764,7 +770,7 @@ Number of inequality constraint evaluations          = 45
 Number of equality constraint Jacobian evaluations   = 44
 Number of inequality constraint Jacobian evaluations = 44
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 36.026
+Total seconds in IPOPT                               = 18.606
 
 EXIT: Optimal Solution Found.
 </pre></div>

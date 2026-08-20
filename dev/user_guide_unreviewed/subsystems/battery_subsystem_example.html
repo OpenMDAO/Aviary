@@ -919,6 +919,13 @@ Wall<span class="w"> </span>clock<span class="w"> </span>time:<span class="w">  
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_constraints (__main__.TestBattery.test_check_constraints) ... 
 </pre></div>
 </div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1787234723.161354] [runnervm76f27:5660 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55c64f573460 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1787234723.161671] [runnervm76f27:5660 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm76f27:05660] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
 </pre></div>
 </div>
@@ -1163,12 +1170,12 @@ TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>----------------------------------------------------------------------
-Ran 38 tests in 1.806s
+Ran 38 tests in 1.411s
 
 FAILED (errors=3)
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;unittest.main.TestProgram at 0x7fc827cbd550&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;unittest.main.TestProgram at 0x7f082e7cd6a0&gt;
 </pre></div>
 </div>
 </div>
@@ -1393,12 +1400,12 @@ AssertionError: 6 is not an instance of &lt;class &#39;dict&#39;&gt; : the value
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>----------------------------------------------------------------------
-Ran 38 tests in 0.293s
+Ran 38 tests in 0.142s
 
 FAILED (failures=3, errors=3)
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;unittest.main.TestProgram at 0x7fc8203965d0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;unittest.main.TestProgram at 0x7f082d1dd6d0&gt;
 </pre></div>
 </div>
 </div>
