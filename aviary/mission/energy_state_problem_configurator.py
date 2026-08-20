@@ -340,7 +340,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
             # TODO: replace hard_coded ref for this constraint.
             eq.add_eq_output(
-                'mass', eq_units='lbm', normalize=False, ref=1, add_constraint=True
+                'mass', eq_units='lbm', normalize=False, ref=100000.0, add_constraint=True
             )
 
             aviary_group.connect(

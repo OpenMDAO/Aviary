@@ -85,7 +85,7 @@ class EnergyStateODE(_BaseODE):
         # THROTTLE Section
         # TODO: Split this out into a function that can be used by the other ODEs.
         # TODO: Need a thrust residual ref in the phase_info.
-        thrust_res_ref = 1e3
+        thrust_res_ref = 1.0e6
         if num_engine_type > 1:
             # Multi Engine
 
@@ -133,7 +133,7 @@ class EnergyStateODE(_BaseODE):
                     ],
                     promotes_outputs=['*'],
                 )
-                self.add_constraint('thrust_residual', ref=0.01, upper=0.01, lower=-0.01)
+                self.add_constraint('thrust_residual', ref=thrust_res_ref, equals=0.0)
             else:
                 # Add a balance comp to compute throttle based on the required thrust.
                 sub1.add_subsystem(
