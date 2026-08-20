@@ -174,6 +174,7 @@ class DetailedWingBendingTest(unittest.TestCase):
         )
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-10)
 
+        # is this needed? There is no compute_partial() in DetailedWingBendingFact
         partial_data = prob.check_partials(
             out_stream=None,
             compact_print=True,
