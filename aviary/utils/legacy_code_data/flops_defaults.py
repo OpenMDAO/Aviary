@@ -36,4 +36,12 @@ flops_deprecated_vars = [
     'OPTION.IPOLP',
     'OPTION.NOISE',
     'WTIN.CARBAS',
+    'WTIN.FUSCLA',
+    'WTIN.FUSCLB',
+    'WTIN.FSWREF',
+    'WTIN.FUELRF',
+    'WTIN.FUSCLB',
+    'WTIN.FUSCLA',
+    'WTIN.FSWREF',
+    'WTIN.FUELRF',
 ]

@@ -13,7 +13,10 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 class GroundrollEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group', GroundrollEOM(num_nodes=2), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        self.prob.model.add_subsystem(
+            'group', GroundrollEOM(num_nodes=2, **options), promotes=['*']
+        )
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm'
         )
