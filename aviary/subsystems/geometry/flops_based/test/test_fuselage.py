@@ -52,7 +52,7 @@ class DetailedCabinLayoutTest(unittest.TestCase):
 
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 158, units='unitless')
-        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
 
         prob.model.add_subsystem(
             'layout', DetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
@@ -86,19 +86,19 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 6)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 10)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 83, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 62, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
-        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
 
         prob.model.add_subsystem(
             'layout', DetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
         )
-        prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 22, units='inch')
-        prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 21, units='inch')
-        prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 18, units='inch')
         setup_model_options(prob, options)
         prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 83, units='inch')
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 62, units='inch')
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
+        prob.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 22, units='inch')
+        prob.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 21, units='inch')
+        prob.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 18, units='inch')
         prob.set_val(Aircraft.Design.RANGE, val=7370.0, units='NM')
         prob.run_model()
 
@@ -169,9 +169,6 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 4, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, units='inch')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
 
         prob.model.add_subsystem(
@@ -179,6 +176,9 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         )
         setup_model_options(prob, options)
         prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, units='inch')
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, units='inch')
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, units='inch')
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=45.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
@@ -214,12 +214,9 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 76, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 24, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 200, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 0, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 0, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 0, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 0.0, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 0.0, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 0.0, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 5, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6, units='unitless')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
 
         prob.model.add_subsystem(
@@ -227,6 +224,9 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         )
         setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, units='inch')
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, units='inch')
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, units='inch')
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=60.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
@@ -262,12 +262,10 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 76, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 24, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 200, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 0, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 0, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 0, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 0.0, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 0.0, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 0.0, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 5, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6, units='unitless')
+        Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 4, units='unitless')
         options.set_val(Aircraft.BWB.MAX_BAY_WIDTH, 10.0, units='ft')
 
@@ -276,6 +274,9 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         )
         setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, units='inch')
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, units='inch')
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, units='inch')
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=60.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
         # prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=50.0, units='ft')
