@@ -17,12 +17,12 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData as UAVExtendedMetaData
 from aviary.variable_info.variables import Mission, Settings
-
+from openmdao.utils.testing_utils import use_tempdirs
 
 
 UAV_Prop = UAVBuilder()  # or 'solver' for the solver-based power balance mode
 
-
+@use_tempdirs
 def CruiseExample():
     prob = av.AviaryProblem(verbosity=2, meta_data=UAVExtendedMetaData)
     prob.options['group_by_pre_opt_post'] = True
@@ -51,23 +51,51 @@ def CruiseExample():
 
 
     prob.add_driver('IPOPT', use_coloring=False, max_iter=15)
+    prob.add_driver('SNOPT', use_coloring=True, max_iter=15)
 
-    prob.driver.opt_settings['print_level'] = 5
-    prob.driver.opt_settings['mu_strategy'] = 'monotone'
-    prob.driver.opt_settings['tol'] = 1e-5
-    prob.driver.opt_settings['mu_init'] = 1.0
-    prob.driver.opt_settings['limited_memory_max_history'] = 50
-    prob.driver.opt_settings['acceptable_tol'] = 5e-5
-    prob.driver.opt_settings['constr_viol_tol'] = 1e-5
-    prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-5
+    # prob.driver.opt_settings['print_level'] = 5
+    # prob.driver.opt_settings['mu_strategy'] = 'monotone'
+    # prob.driver.opt_settings['tol'] = 1e-5
+    # prob.driver.opt_settings['mu_init'] = 1.0
+    # prob.driver.opt_settings['limited_memory_max_history'] = 50
+    # prob.driver.opt_settings['acceptable_tol'] = 5e-5
+    # prob.driver.opt_settings['constr_viol_tol'] = 1e-5
+    # prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-5
     # prob.driver.options['debug_print'] = ['desvars', 'objs', 'nl_cons', 'ln_cons']
 
     prob.add_design_variables()
 
     prob.add_objective(objective_type='time')
 
+    # Add special solver scaling for small aircraft
+    prob.model.set_output_solver_options('link_cruise_mass.mass', ref=1) # energy_state_problem_configurator.py
+    # prob.model.set_output_solver_options('throttle_balance', res_ref=1e3) # energy_state_ODE.py
+
     prob.setup()
 
+    # use to see all the constraints in the problem
+    # print("")
+    # print("====== A list of Constraints on the problem ======")
+    # for system in prob.model.system_iter(recurse=True, include_self=True):
+    #     for name, meta in system._responses.items():
+    #         if meta['type'] == 'con':
+    #             print(f'{system.pathname}: {name}')
+    # exit()
+    # an extremely verbose way to viewing constraints
+    # prob.final_setup()
+    # constraints = prob.model.get_constraints(recurse=True)
+    # for name, meta in constraints.items():
+    #     print(name, meta)
+    # exit()
+
+    # Add special rescaling for small aircraft
+    prob.model.set_constraint_options(Mission.Constraints.MASS_RESIDUAL, ref=1) # aviary_group.py
+    prob.model.set_design_var_options(Aircraft.Design.GROSS_MASS, lower=2, upper=50, ref=1) # aviary_group.py
+    prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1) # aviary_group.py
+    prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1) # aviary_group.py
+    # prob.model.set_constraint_options('cruise_duration_constraint.duration_resid', ref=10) # aviary_group.py
+    # prob.model.set_constraint_options(Mission.Constraints.RANGE_RESIDUAL, ref=1) # aviary_group.py
+    prob.model.traj.phases.cruise.rhs_all.set_constraint_options('thrust_residual', ref=0.01, upper=0.01, lower=-0.01) # energy_state_ODE.py
 
     prob.set_solver_print(level=0)
     prob.set_initial_guesses()

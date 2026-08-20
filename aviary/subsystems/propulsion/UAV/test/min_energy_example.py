@@ -14,14 +14,14 @@ from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import phase_info
 from aviary.subsystems.propulsion.UAV.UAV_Builder import UAVBuilder
 from aviary.variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.variable_info.variables import  Settings, Mission
-
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.variable_info.UAV_variable_meta_data import ExtendedMetaData
 
 
 UAV_Prop = UAVBuilder()
 
-
+@use_tempdirs
 def CruiseExample():
     prob = av.AviaryProblem(name='min_energy_cruise',verbosity=2, meta_data=ExtendedMetaData)
     prob.options['group_by_pre_opt_post'] = True
@@ -125,22 +125,36 @@ def CruiseExample():
 
     prob.add_design_variables()
 
-
-
+    # Add special solver scaling for small aircraft
+    prob.model.set_output_solver_options('link_cruise_mass.mass', ref=1) # energy_state_problem_configurator.py
+    # prob.model.set_output_solver_options('throttle_balance', res_ref=1e3) # energy_state_ODE.py
 
     prob.setup()
 
-    # Add special rescaling for small aircraft
-    prob.model.set_constraint_options(Mission.Constraints.MASS_RESIDUAL, ref=1)
-    prob.model.set_design_var_options(Aircraft.Design.GROSS_MASS, lower=2, upper=50, ref=1)
-    prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1)
-    prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1)
-    prob.model.set_constraint_options('cruise_duration_constraint.duration_resid', ref=10)
-    
-    # prob.model.set_constraint_options(Mission.Constraints.RANGE_RESIDUAL, ref=1)
-    # prob.model.set_constraint_options('thrust_residual', ref=0.01, upper=0.01, lower=-0.01)
-    # prob.model.set_constraint_options('mass', ref=1)
+    # use to see all the constraints in the problem
+    # print("")
+    # print("====== A list of Constraints on the problem ======")
+    # for system in prob.model.system_iter(recurse=True, include_self=True):
+    #     for name, meta in system._responses.items():
+    #         if meta['type'] == 'con':
+    #             print(f'{system.pathname}: {name}')
+    # exit()
+    # an extremely verbose way to viewing constraints
+    # prob.final_setup()
+    # constraints = prob.model.get_constraints(recurse=True)
+    # for name, meta in constraints.items():
+    #     print(name, meta)
+    # exit()
 
+
+    # Add special rescaling for small aircraft
+    prob.model.set_constraint_options(Mission.Constraints.MASS_RESIDUAL, ref=1) # aviary_group.py
+    prob.model.set_design_var_options(Aircraft.Design.GROSS_MASS, lower=2, upper=50, ref=1) # aviary_group.py
+    prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1) # aviary_group.py
+    # prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1) # aviary_group.py
+    # prob.model.set_constraint_options('cruise_duration_constraint.duration_resid', ref=10) # aviary_group.py
+    # prob.model.set_constraint_options(Mission.Constraints.RANGE_RESIDUAL, ref=1) # aviary_group.py
+    prob.model.traj.phases.cruise.rhs_all.set_constraint_options('thrust_residual', ref=0.01, upper=0.01, lower=-0.01) # energy_state_ODE.py
 
     prob.set_solver_print(level=0)
     prob.set_initial_guesses()
