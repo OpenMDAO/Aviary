@@ -1391,7 +1391,8 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.FEXCRT', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
-    desc='excrescence aero drag factor',
+    desc='Additional excrescence aero drag factor used on top of '
+    'Aircraft.Design.PERCENT_EXCRESCENCE_DRAG for GASP-based aerodynamics',
 )
 
 add_meta_data(
@@ -1623,7 +1624,8 @@ add_meta_data(
     units='unitless',
     option=True,
     default_value=0.0,
-    desc='excrescence drag as percentage of fuselage, wing, nacelle, (winglet), empennage and strut',
+    desc='excrescence drag as percentage of fuselage, wing, nacelle, (winglet), empennage and strut.'
+    'For FLOPS aerodynamics, this defaults to 0.06 if not set, for GASP aero the default is 0.0.',
 )
 
 add_meta_data(
@@ -2811,16 +2813,8 @@ add_meta_data(
         'FLOPS': 'WTIN.FULAUX',  # ['&DEFINE.WTIN.FULAUX', 'FAWT.FULAUX'],
     },
     units='lbm',
-    desc='fuel capacity of the auxiliary tank',
+    desc='Fuel capacity of the Jet-A auxiliary tank',
     default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Fuel.BURN_PER_PASSENGER_MILE,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='lbm/NM',
-    desc='average fuel burn per passenger per mile flown',
 )
 
 add_meta_data(
@@ -2828,9 +2822,10 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': 'WTIN.FULDEN'},
     units='lbm/galUS',
-    desc='fuel density (jet fuel typical density of 6.7 lbm/galUS used in the calculation of wing_capacity'
+    desc='Fuel density (jet fuel typical density of 6.7 lbm/galUS used in the calculation of wing_capacity'
     '(if wing_capacity is not input) and in the calculation of fuel system weight.',
     default_value=6.7,
+    # multivalue=True,
 )
 
 add_meta_data(
@@ -2844,7 +2839,7 @@ add_meta_data(
         'FLOPS': None,
     },
     units='lbm',
-    desc='Fuel system mass. Includes tanks (both protected and unprotected), plumbing, and '
+    desc='Jet-A fuel system mass. Includes tanks (both protected and unprotected), plumbing, and '
     'similar masses.',
     default_value=0.0,
 )
@@ -2854,7 +2849,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SKFS', 'FLOPS': None},
     units='unitless',
-    desc='mass trend coefficient of fuel system',
+    desc='Mass trend coefficient of Jet-A fuel system',
     default_value=0.0,
 )
 
@@ -2867,7 +2862,7 @@ add_meta_data(
         'FLOPS': 'WTIN.WFSYS',
     },
     units='unitless',
-    desc='scaler for fuel system mass',
+    desc='Scaler for Jet-A fuel system mass',
     default_value=1.0,
 )
 
@@ -2880,7 +2875,7 @@ add_meta_data(
         'FLOPS': 'WTIN.FULFMX',
     },
     units='lbm',
-    desc='fuel capacity of the fuselage',
+    desc='Total mass capacity of Jet-A fuel stored in the fuselage',
     default_value=0.0,
 )
 
@@ -2890,10 +2885,40 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': 'WTIN.IFUFU'},
     units='unitless',
     desc='Flag to control enforcement of fuel_capacity constraint. '
-    'If False (default) Aviary will add the excess fuel constraint and only converge if there is enough fuel capacity to complete the mission.'
-    'If set True Aviary will ignore this constraint, and allow mission fuel > total_fuel_capacity. Use carefully!',
+    'If False (default) Aviary will add the excess fuel constraint and only converge if there is '
+    'enough fuel capacity to complete the mission. If set True Aviary will ignore this constraint, '
+    'and allow mission fuel > total_fuel_capacity. Use carefully!',
     default_value=False,
     types=bool,
+    option=True,
+)
+
+add_meta_data(
+    Aircraft.Fuel.MAX_CAPACITY_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.FMXTOT',  # ['&DEFINE.WTIN.FMXTOT', 'PLRNG.FMXTOT'],
+    },
+    units='lbm',
+    desc='Maximum fuel mass capacity of the aircraft including wing, fuselage and auxiliary tanks. '
+    'Used in generating payload-range diagram (Default = wing_capacity + fuselage_capacity + '
+    'aux_capacity)',
+    default_value=0.0,
+    # multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Fuel.MAX_CAPACITY_VOLUME,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,  # '~WEIGHT.ZFEQ',
+    },
+    units='galUS',  # need to check this
+    desc='Maximum fuel volume capacity',
+    default_value=0.0,
+    # multivalue=True,
 )
 
 add_meta_data(
@@ -2904,36 +2929,10 @@ add_meta_data(
         'FLOPS': 'WTIN.NTANK',  # ['&DEFINE.WTIN.NTANK', 'WTS.NTANK'],
     },
     units='unitless',
-    desc='number of fuel tanks',
+    desc='Number of Jet-A fuel tanks',
     types=int,
     option=True,
     default_value=7,
-)
-
-add_meta_data(
-    Aircraft.Fuel.TOTAL_CAPACITY,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FMXTOT',  # ['&DEFINE.WTIN.FMXTOT', 'PLRNG.FMXTOT'],
-    },
-    units='lbm',
-    desc='Total fuel capacity of the aircraft including wing, fuselage and '
-    'auxiliary tanks. Used in generating payload-range diagram (Default = '
-    'wing_capacity + fuselage_capacity + aux_capacity)',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Fuel.TOTAL_VOLUME,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # '~WEIGHT.ZFEQ',
-    },
-    units='galUS',  # need to check this
-    desc='Total fuel volume',
-    default_value=0.0,
 )
 
 add_meta_data(
@@ -2947,8 +2946,9 @@ add_meta_data(
         'FLOPS': None,
     },
     units='lbm',
-    desc='unusable fuel mass',
+    desc='Unusable fuel mass',
     default_value=0.0,
+    # multivalue=True,
 )
 
 add_meta_data(
@@ -2957,7 +2957,7 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.CW(13)', 'FLOPS': None},
     default_value=0.0,
     units='unitless',
-    desc='mass trend coefficient of trapped fuel factor',
+    desc='Mass trend coefficient of trapped Jet-A fuel factor',
 )
 
 add_meta_data(
@@ -2969,7 +2969,7 @@ add_meta_data(
         'FLOPS': 'WTIN.WUF',
     },
     units='unitless',
-    desc='scaler for Unusable fuel mass',
+    desc='Scaler for unusable Jet-A fuel mass',
     default_value=1.0,
 )
 
@@ -2978,8 +2978,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FVOL_MRG', 'FLOPS': None},
     units='unitless',
-    desc='Extra volume required in the wing fuel tank as a percentage of design mission fuel mass.'
-    'Only used in GASP wing tank mass and fuel system mass sizing calculations.',
+    desc='Extra volume required in the wing Jet-A fuel tank as a percentage of design mission fuel '
+    'mass. Only used in GASP wing tank mass and fuel system mass sizing calculations.',
     default_value=0.0,
 )
 
@@ -2988,7 +2988,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SKWF', 'FLOPS': None},
     units='unitless',
-    desc='fraction of total theoretical wing volume used for wing fuel',
+    desc='Fraction of total theoretical wing volume used for wing Jet-A fuel',
     default_value=0.0,
 )
 
@@ -3000,55 +3000,7 @@ add_meta_data(
         'FLOPS': 'WTIN.FULWMX',  # ['&DEFINE.WTIN.FULWMX', 'WTS.FULWMX'],
     },
     units='lbm',
-    desc='fuel capacity of the auxiliary tank',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Fuel.WING_REF_CAPACITY,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FUELRF',  # ['&DEFINE.WTIN.FUELRF', 'WPAB.FUELRF'],
-    },
-    units='lbm',  # TODO FLOPS says lbm, sfwate.f line 827
-    desc='reference fuel volume',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Fuel.WING_REF_CAPACITY_AREA,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FSWREF',  # ['&DEFINE.WTIN.FSWREF', 'WPAB.FSWREF'],
-    },
-    units='unitless',  # TODO FLOPS says unitless, sfwate.f line 828
-    desc='reference wing area for fuel capacity',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Fuel.WING_REF_CAPACITY_TERM_A,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FUSCLA',  # ['&DEFINE.WTIN.FUSCLA', 'WPAB.FUSCLA'],
-    },
-    units='unitless',
-    desc='scaling factor A',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Fuel.WING_REF_CAPACITY_TERM_B,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FUSCLB',  # ['&DEFINE.WTIN.FUSCLB', 'WPAB.FUSCLB'],
-    },
-    units='unitless',
-    desc='scaling factor B',
+    desc='Total mass capacity of Jet-A fuel stored in the wings',
     default_value=0.0,
 )
 
@@ -3069,7 +3021,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FVOLREQ', 'FLOPS': None},
     units='ft**3',
-    desc='wing tank fuel volume when carrying design fuel plus fuel margin',
+    desc='Wing tank Jet-A fuel volume when carrying design fuel plus fuel margin',
     default_value=0.0,
 )
 
@@ -3192,8 +3144,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WAS', 'FLOPS': None},
     units='inch',
-    desc='width of the aisles in the passenger cabin',
-    option=True,
+    desc='Width of the aisles in the passenger cabin. In FLOPS, aisle width is hardcoded per '
+    'passenger class.',
     default_value=24,
 )
 
@@ -3623,7 +3575,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
     desc='width of the business class seats',
-    option=True,
     default_value=0.0,
 )
 
@@ -3633,7 +3584,6 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.WS', 'FLOPS': None},
     units='inch',
     desc='width of the economy class seats',
-    option=True,
     default_value=0.0,
 )
 
@@ -3643,7 +3593,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
     desc='width of the first class seats',
-    option=True,
     default_value=0.0,
 )
 
@@ -6955,10 +6904,10 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
-    desc='Fuel burned from taxi-out through all regular phases of the mission (e.g. takeoff, climb, cruse, descent, landing).'
-    'This does not include fuel burned in reserve phases or taxi-in.'
-    'The only time taxi-in would be included in this is if the user'
-    'specifies a taxi phase as part of the regular mission phases.',
+    desc='Fuel burned from taxi-out through all regular phases of the mission (e.g. takeoff, climb, '
+    'cruse, descent, landing). This does not include fuel burned in reserve phases or taxi-in. The '
+    'only time taxi-in would be included in this is if the user specifies a taxi phase as part of '
+    'the regular mission phases.',
 )
 
 add_meta_data(
@@ -7032,9 +6981,9 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     option=True,
     units='unitless',
-    desc='required fuel reserves: given as a precentage of mission fuel.'
+    desc='Required fuel reserves, given as a precentage of mission fuel.'
     'Mission fuel only includes normal phases and excludes reserve phases.',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -7053,7 +7002,7 @@ add_meta_data(
     option=True,
     units='lbm',
     desc='required fuel reserves: directly in lbm',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -7085,7 +7034,7 @@ add_meta_data(
     units='lbm',
     desc='the total fuel reserves which is the sum of: '
     'Mission.RESERVE_FUEL_MASS, Mission.RESERVE_FUEL_MASS_ADDITIONAL, Mission.RESERVE_FUEL_MARGIN',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
