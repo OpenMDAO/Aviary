@@ -191,9 +191,6 @@ class DetailedCabinLayout(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_BUSINESS)
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_FIRST)
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
@@ -208,6 +205,9 @@ class DetailedCabinLayout(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.RANGE, units='NM')
+        add_aviary_input(self, Aircraft.Fuselage.SEAT_WIDTH_BUSINESS)
+        add_aviary_input(self, Aircraft.Fuselage.SEAT_WIDTH_FIRST)
+        add_aviary_input(self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY)
 
         add_aviary_output(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
@@ -455,9 +455,9 @@ class DetailedCabinLayout(om.ExplicitComponent):
             num_rows_economy = int(np.ceil(num_economy_class_pax / num_seat_abreast_economy))
 
         # Calculate the fuselage width of the passenger seats
-        seat_width_first = self.options[Aircraft.Fuselage.SEAT_WIDTH_FIRST][0]
-        seat_width_business = self.options[Aircraft.Fuselage.SEAT_WIDTH_BUSINESS][0]
-        seat_width_economy = self.options[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY][0]
+        seat_width_first = inputs[Aircraft.Fuselage.SEAT_WIDTH_FIRST][0]
+        seat_width_business = inputs[Aircraft.Fuselage.SEAT_WIDTH_BUSINESS][0]
+        seat_width_economy = inputs[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY][0]
         if num_first_class_pax > 0:
             width_first_class = (
                 num_aisles * aisle_width_first_class + num_seat_abreast_first * seat_width_first

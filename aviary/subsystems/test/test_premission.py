@@ -119,6 +119,9 @@ class PreMissionTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, val=16.0, units='lbm'
         )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, val=20.2, units='inch'
+        )
 
         setup_model_options(self.prob, input_options)
 
