@@ -3113,8 +3113,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WAS', 'FLOPS': None},
     units='inch',
-    desc='width of the aisles in the passenger cabin',
-    option=True,
+    desc='Width of the aisles in the passenger cabin. In FLOPS, aisle width is hardcoded per '
+    'passenger class.',
     default_value=24,
 )
 
@@ -3516,7 +3516,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
     desc='width of the business class seats',
-    option=True,
     default_value=0.0,
 )
 
@@ -3526,7 +3525,6 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.WS', 'FLOPS': None},
     units='inch',
     desc='width of the economy class seats',
-    option=True,
     default_value=0.0,
 )
 
@@ -3536,7 +3534,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
     desc='width of the first class seats',
-    option=True,
     default_value=0.0,
 )
 
