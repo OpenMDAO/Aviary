@@ -3,6 +3,7 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import nacelle_count_factor
+from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -21,6 +22,8 @@ class NacelleMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Engine.NUM_WING_ENGINES)
+        add_aviary_option(self, Aircraft.Design.TYPE)
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
@@ -42,13 +45,13 @@ class NacelleMass(om.ExplicitComponent):
         shape = np.arange(num_engine_type)
 
         self.declare_partials(
-            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_DIAMETER, rows=shape, cols=shape, val=1.0
+            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_DIAMETER, rows=shape, cols=shape
         )
         self.declare_partials(
-            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_LENGTH, rows=shape, cols=shape, val=1.0
+            Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_LENGTH, rows=shape, cols=shape
         )
         self.declare_partials(
-            Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER, rows=shape, cols=shape, val=1.0
+            Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER, rows=shape, cols=shape
         )
         self.declare_partials(
             Aircraft.Nacelle.MASS,
@@ -66,7 +69,11 @@ class NacelleMass(om.ExplicitComponent):
 
         # Original FLOPS nacelle equation was mass of all nacelles - here we average it to nacelle
         # mass per individual engine
-        count_factor = nacelle_count_factor(num_eng) / num_eng
+        if self.options[Aircraft.Design.TYPE] == AircraftTypes.BLENDED_WING_BODY:
+            count_factor = self.options[Aircraft.Engine.NUM_WING_ENGINES]
+        else:
+            count_factor = nacelle_count_factor(num_eng) / num_eng
+
         # This should be distributed thrust factor, see issue #1096.
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
@@ -80,7 +87,11 @@ class NacelleMass(om.ExplicitComponent):
         avg_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
         scaler = inputs[Aircraft.Nacelle.MASS_SCALER]
 
-        count_factor = nacelle_count_factor(num_eng) / num_eng
+        if self.options[Aircraft.Design.TYPE] == AircraftTypes.BLENDED_WING_BODY:
+            count_factor = self.options[Aircraft.Engine.NUM_WING_ENGINES]
+        else:
+            count_factor = nacelle_count_factor(num_eng) / num_eng
+
         # This should be distributed thrust factor, see issue #1096.
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
