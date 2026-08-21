@@ -775,7 +775,6 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
                 f.write(f'    {target}\n')
             f.write('\n')
 
-
             f.write('  impacts:\n')
             for leaf in sorted(down_leaves):
                 f.write(f'    {leaf}\n')
