@@ -706,7 +706,6 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
 
     overriding_abs = {}
     for prom_name in overridden_prom:
-
         adh_prom = prom_name.partition(':')[-1]
 
         try:
@@ -719,7 +718,6 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
             continue
 
         overriding_abs[adh_prom] = (srcs, targets)
-
 
     if MPI and prob.comm.rank != 0:
         # All collective calls are completed. Reports only generated on rank 0.
@@ -775,25 +773,25 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
             problems_found = True
 
             f.write('\n')
-            f.write(f"Override: **{name}**\n")
+            f.write(f'Override: **{name}**\n')
             f.write('```\n')
-            f.write(f"  Override Value:{v1},  Computed Value:{v2}\n")
+            f.write(f'  Override Value:{v1},  Computed Value:{v2}\n')
             f.write('\n')
 
-            f.write("  depends on:\n")
+            f.write('  depends on:\n')
             for leaf in sorted(up_leaves):
-                f.write(f"    {leaf}\n")
+                f.write(f'    {leaf}\n')
             f.write('\n')
 
-            f.write("  feeds:\n")
+            f.write('  feeds:\n')
             for target in sorted(relevant_targets):
-                f.write(f"    {target}\n")
+                f.write(f'    {target}\n')
             f.write('\n')
 
 
-            f.write("  impacts:\n")
+            f.write('  impacts:\n')
             for leaf in sorted(down_leaves):
-                f.write(f"    {leaf}\n")
+                f.write(f'    {leaf}\n')
             f.write('```\n')
 
     if not problems_found:
