@@ -417,7 +417,7 @@ class DetailedWingBendingTest(unittest.TestCase):
     def test_intensity_factor(self):
         """
         data taken from high_wing_single_aisle.csv
-        Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL = 3, 1, 1.5, 2.5
+        Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL = 3, 1, 1.5, 2.5, 1.25, 2.75
         """
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
@@ -513,6 +513,34 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         bending_mat_factor = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         assert_near_equal(bending_mat_factor, 2.61652282, tolerance=1e-9)
+
+        pod_inertia_factor = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
+        assert_near_equal(pod_inertia_factor, 1.0, tolerance=1e-9)
+
+        prob.model.set_input_defaults(
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=1.25, units='unitless'
+        )
+        setup_model_options(prob, options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        bending_mat_factor = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
+        # without smoothing, it is 1.7507575953
+        assert_near_equal(bending_mat_factor, 1.78032845, tolerance=1e-9)
+
+        pod_inertia_factor = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
+        assert_near_equal(pod_inertia_factor, 1.0, tolerance=1e-9)
+
+        prob.model.set_input_defaults(
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=2.75, units='unitless'
+        )
+        setup_model_options(prob, options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        bending_mat_factor = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
+        # without smoothing, it is 2.7838124896
+        assert_near_equal(bending_mat_factor, 2.8107811534, tolerance=1e-9)
 
         pod_inertia_factor = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
         assert_near_equal(pod_inertia_factor, 1.0, tolerance=1e-9)
