@@ -5,7 +5,7 @@ import os
 
 from aviary.models.external_subsystems.UAV.mass.model.mass_premission import MassPremission
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
-from aviary.models.external_subsystems.UAV.mass.utils.enums import WingType
+from aviary.models.external_subsystems.UAV.mass.utils.UAV_enums import WingType
 class TestMassPremission(unittest.TestCase):
     def set_defaults(self, comp, Aircraft):
         # Spars

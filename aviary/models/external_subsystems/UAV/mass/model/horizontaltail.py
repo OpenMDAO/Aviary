@@ -167,6 +167,9 @@ class HorizontalTailMass(om.JaxExplicitComponent):
         rib_materials = self.options[Aircraft.HorizontalTail.RIB_MATERIALS]
         misc_mass, units = self.options[Aircraft.HorizontalTail.MISC_MASS]
 
+        if len(rib_materials) != len(rib_thickness):
+            raise ValueError("Mismatch in rib materials/thicknesses")
+        
         load_airfoil_if_needed(self, Aircraft.HorizontalTail)
         chord = root_chord
         # Wetted area derived from span x chord (was a separate input/DV), so span/chord
@@ -196,5 +199,5 @@ class HorizontalTailMass(om.JaxExplicitComponent):
 
         structural_mass = stringer_mass + sheeting_mass + rib_mass + spar_mass + skin_mass
         total_mass = (1 + glue_factor) * structural_mass + misc_mass
-
+        
         return total_mass

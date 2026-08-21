@@ -8,7 +8,7 @@ from aviary.variable_info.variables import Mission
 
 """ Builder for the UAV Propulsion Subsystem (RC Electric) """
 
-class UAVBuilder(EngineModel):
+class PropBuilder(EngineModel):
     # UAVPropMission computes its own max-power chain (battery_max ... prop_max),
     # so tell Aviary NOT to build a duplicate full-throttle copy of the engine.
     # The duplicate re-declared every constraint and broke the optimizer (TOO_FEW_DOF).

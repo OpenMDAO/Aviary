@@ -9,7 +9,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from pathlib import Path
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.missions.UAV_energy_phase import phase_info
-from aviary.models.external_subsystems.UAV.propulsion.prop_builder import UAVBuilder
+from aviary.models.external_subsystems.UAV.propulsion.prop_builder import PropBuilder
 from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
 from aviary.models.external_subsystems.UAV.propulsion.model.prop_mission import UAVPropMission
 from aviary.models.external_subsystems.UAV.propulsion.model.prop_premission import UAVPropPreMission
@@ -20,7 +20,7 @@ from aviary.variable_info.variables import Mission, Settings
 
 
 
-UAV_Prop = UAVBuilder()  # or 'solver' for the solver-based power balance mode
+UAV_Prop = PropBuilder()  # or 'solver' for the solver-based power balance mode
 
 
 def CruiseExample():

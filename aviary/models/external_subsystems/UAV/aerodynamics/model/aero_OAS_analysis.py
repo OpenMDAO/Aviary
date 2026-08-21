@@ -238,6 +238,7 @@ class OASAero(om.Group):
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
         )
+
         atmosphere_model = aviary_inputs.get_val(
             Settings.ATMOSPHERE_MODEL
         )
