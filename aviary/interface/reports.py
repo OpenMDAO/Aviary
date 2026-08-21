@@ -775,8 +775,8 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
             problems_found = True
 
             f.write('\n')
-            f.write(f"Override: {name}\n")
-            f.write('\n')
+            f.write(f"Override: **{name}**\n")
+            f.write('```\n')
             f.write(f"  Override Value:{v1},  Computed Value:{v2}\n")
             f.write('\n')
 
@@ -794,7 +794,7 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
             f.write("  impacts:\n")
             for leaf in sorted(down_leaves):
                 f.write(f"    {leaf}\n")
-            f.write('\n')
+            f.write('```\n')
 
     if not problems_found:
         f.write('  None\n\n')
