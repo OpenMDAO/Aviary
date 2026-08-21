@@ -696,8 +696,8 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
 
     var_abs = group.list_outputs(out_stream=None, val=False)
     var_prom = [v['prom_name'] for k, v in var_abs]
-    prom2abs = group._resolver.absnames
-    abs2prom = group._resolver.abs2prom
+    prom2abs = resolver.absnames
+    abs2prom = resolver.abs2prom
     graph = group._relevance._graph
     all_desvars = prob.driver._designvars
     all_responses = [z['source'] for z in prob.driver._responses.values()]
