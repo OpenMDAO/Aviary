@@ -696,9 +696,9 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
 
     var_abs = group.list_outputs(out_stream=None, val=False)
     var_prom = [v['prom_name'] for k, v in var_abs]
-    prom2abs = resolver.absnames
-    abs2prom = resolver.abs2prom
-    graph = group._relevance._graph
+    prom2abs = prob.model._resolver.absnames
+    abs2prom = prob.model._resolver.abs2prom
+    graph = prob.model._relevance._graph
     all_desvars = prob.driver._designvars
     all_responses = [z['source'] for z in prob.driver._responses.values()]
 
@@ -731,22 +731,9 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
     problems_found = False
     for name, data in overriding_abs.items():
         srcs, targets = data
-
         src = srcs[0]
-        src_comp = src.rpartition('.')[0]
-        if src_comp in group._pre_components:
-            # Upstream component not impacted by desvar.
-            # Skip to next override.
-            continue
 
-        relevant_targets = []
-        for target in targets:
-            target_comp = target.rpartition('.')[0]
-            if target in group._post_components:
-                # Downstream component does not impact obj/con.
-                # Continue checking other targets.
-                continue
-            relevant_targets.append(target_comp)
+        relevant_targets = [t.rpartition('.')[0] for t in targets]
 
         if relevant_targets:
             # True variable relevancy check for design vars.
