@@ -676,7 +676,10 @@ This command needs the name of the aircraft csv file and phase_info file. Becaus
   warnings.warn(&quot;matplotlib not found, plotting disabled.&quot;)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1787348833.172303] [runnervm76f27:4734 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x564657d3c2b0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1787348833.172622] [runnervm76f27:4734 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+[runnervm76f27:04734] pml_ucx.c:313  Error: Failed to create UCP worker
+Traceback (most recent call last):
   File <span class=" -Color -Color-Magenta">&quot;/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/bin/aviary&quot;</span>, line <span class=" -Color -Color-Magenta">6</span>, in <span class=" -Color -Color-Magenta">&lt;module&gt;</span>
     sys.exit(<span class=" -Color -Color-Red">aviary_cmd</span><span class=" -Color -Color-Bold -Color-Bold-Red">()</span>)
              <span class=" -Color -Color-Red">~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^</span>
@@ -753,6 +756,13 @@ This command needs the name of the aircraft csv file and phase_info file. Becaus
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1787348834.849520] [runnervm76f27:4711 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x555dc3a5d070 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1787348834.849828] [runnervm76f27:4711 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm76f27:04711] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
                      variables with only lower bounds:       93
                 variables with lower and upper bounds:        3
@@ -767,12 +777,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813949090359194e+00    1.3813949090359194e+00
-Dual infeasibility......:   3.1079084705870668e-08    3.1079084705870668e-08
-Constraint violation....:   5.0573880654402683e-15    5.0573880654402683e-15
+Objective...............:   1.3813949090358990e+00    1.3813949090358990e+00
+Dual infeasibility......:   3.1079082291135537e-08    3.1079082291135537e-08
+Constraint violation....:   4.0290590094078150e-15    4.0290590094078150e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922309819264237e-08    9.0922309819264237e-08
-Overall NLP error.......:   9.0922309819264237e-08    9.0922309819264237e-08
+Complementarity.........:   9.0922309819272191e-08    9.0922309819272191e-08
+Overall NLP error.......:   9.0922309819272191e-08    9.0922309819272191e-08
 
 
 Number of objective function evaluations             = 16
@@ -782,7 +792,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 6.875
+Total seconds in IPOPT                               = 4.840
 
 EXIT: Optimal Solution Found.
 

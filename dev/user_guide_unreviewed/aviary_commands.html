@@ -727,7 +727,7 @@ options:
 </div>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: aviary convert fortran_to_aviary [-h] -f {FLOPS,GASP} [--force]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: aviary convert fortran_to_aviary [-h] -f {GASP,FLOPS} [--force]
                                         [-v {0,1,2,3}]
                                         input_deck [output_file]
 
@@ -739,7 +739,7 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -f, --format {FLOPS,GASP}
+  -f, --format {GASP,FLOPS}
                         Name of the legacy code the deck originated from
   --force               Allow overwriting existing output files
   -v, --verbosity {0,1,2,3}

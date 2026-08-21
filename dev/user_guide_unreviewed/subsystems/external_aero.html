@@ -700,6 +700,13 @@ Angle of Attack (deg) [-2.  0.  2.  4.  6.  8. 10.]
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1787349385.282755] [runnervm76f27:5738 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55d3c92a4ac0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1787349385.283057] [runnervm76f27:5738 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm76f27:05738] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>================================
 pre_mission.core_subsystems.mass
 ================================
@@ -787,9 +794,7 @@ traj.phases.cruise.rhs_all.solver_sub
 +  ==================================================
 +  traj.phases.cruise.rhs_all.solver_sub.aerodynamics
 +  ==================================================
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+  NL: Newton 0 ; 2.79973531e-06 1
++  NL: Newton 0 ; 2.79973531e-06 1
 +  NL: Newton 1 ; 4.7494371e-10 0.00016963879
 +  NL: Newton Converged
 NL: Newton 0 ; 0.0114615784 1
@@ -800,7 +805,9 @@ NL: Newton 0 ; 0.0114615784 1
 +  NL: Newton 0 ; 1.63709129e-17 1
 +  NL: Newton Converged
 NL: Newton 1 ; 5.59036774e-07 4.87748505e-05
-+  
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+  
 +  ==================================================
 +  traj.phases.cruise.rhs_all.solver_sub.aerodynamics
 +  ==================================================
@@ -825,9 +832,7 @@ traj.phases.descent.rhs_all.solver_sub
 +  NL: Newton 1 ; 2.76091002e-10 9.57545869e-05
 +  NL: Newton Converged
 NL: Newton 0 ; 0.123936285 1
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+  
++  
 +  ===================================================
 +  traj.phases.descent.rhs_all.solver_sub.aerodynamics
 +  ===================================================
