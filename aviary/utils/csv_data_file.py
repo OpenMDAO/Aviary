@@ -10,6 +10,7 @@ from openmdao.utils.units import is_compatible, valid_units
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.legacy_aliases import resolve_legacy_variable_name
 
 
 # multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+
@@ -109,6 +110,7 @@ def read_data_file(
                         item = [item[i].strip(') ') for i in range(len(item))]
                         # OpenMDAO vars can't have spaces, convert to underscores
                         name = re.sub('\\s', '_', item[0])
+                        name = resolve_legacy_variable_name(name)
                         if aliases:
                             # "reverse" lookup name in alias dict
                             for key in aliases:

@@ -18,7 +18,7 @@ class DesignMCLTest(unittest.TestCase):
 
         options = {}
         options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
-        options[Mission.Constraints.MAX_MACH] = 1.2
+        options[Aircraft.Design.MAX_MACH] = 1.2
 
         model.add_subsystem(
             'design',
@@ -49,7 +49,7 @@ class DesignMCLTest(unittest.TestCase):
 
         options = {}
         options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
-        options[Mission.Constraints.MAX_MACH] = 0.9
+        options[Aircraft.Design.MAX_MACH] = 0.9
 
         model.add_subsystem(
             'design',
@@ -80,7 +80,7 @@ class DesignMCLTest(unittest.TestCase):
 
         options = {}
         options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
-        options[Mission.Constraints.MAX_MACH] = 1.2
+        options[Aircraft.Design.MAX_MACH] = 1.2
 
         model.add_subsystem(
             'design',
@@ -111,7 +111,7 @@ class DesignMCLTest(unittest.TestCase):
 
         options = {}
         options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
-        options[Mission.Constraints.MAX_MACH] = 0.9
+        options[Aircraft.Design.MAX_MACH] = 0.9
 
         model.add_subsystem(
             'design',

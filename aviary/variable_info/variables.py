@@ -166,6 +166,7 @@ class Aircraft:
         LIFT_INDEPENDENT_DRAG_POLAR = 'aircraft:design:lift_independent_drag_polar'
         LIFT_POLAR = 'aircraft:design:lift_polar'
         MACH = 'aircraft:design:mach'
+        MAX_MACH = 'aircraft:design:max_mach'
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'
         MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
@@ -699,7 +700,8 @@ class Mission:
         EXCESS_FUEL_MASS_CAPACITY = 'mission:constraints:excess_fuel_mass_capacity'
         GEARBOX_SHAFT_POWER_RESIDUAL = 'mission:constraints:gearbox_shaft_power_residual'
         MASS_RESIDUAL = 'mission:constraints:mass_residual'
-        MAX_MACH = 'mission:constraints:max_mach'
+        # Backward-compatible symbol alias; new code uses Aircraft.Design.MAX_MACH.
+        MAX_MACH = Aircraft.Design.MAX_MACH
         RANGE_RESIDUAL = 'mission:constraints:range_residual'
         RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
 

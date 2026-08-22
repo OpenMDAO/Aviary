@@ -21,6 +21,7 @@ from openmdao.utils.units import convert_units as _convert_units
 
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import cast_type, check_type
+from aviary.variable_info.legacy_aliases import resolve_legacy_variable_name
 from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
@@ -47,6 +48,8 @@ class AviaryValues(NamedValues):
         TypeError
             if units of `None` were specified or units of any type other than `str`
         """
+        key = resolve_legacy_variable_name(key)
+
         if key in meta_data:
             val = cast_type(key, val, meta_data)
             check_type(key, val, meta_data)
@@ -54,6 +57,18 @@ class AviaryValues(NamedValues):
             self._check_units_compatibility(key, val, units, meta_data=meta_data)
 
         super().set_val(key=key, val=val, units=units)
+
+    def get_item(self, key):
+        return super().get_item(resolve_legacy_variable_name(key))
+
+    def get_val(self, key, units='unitless'):
+        return super().get_val(resolve_legacy_variable_name(key), units)
+
+    def delete(self, key):
+        return super().delete(resolve_legacy_variable_name(key))
+
+    def __contains__(self, key):
+        return super().__contains__(resolve_legacy_variable_name(key))
 
     def _check_units_compatibility(self, key, val, units, meta_data=CoreMetaData):
         """

@@ -975,7 +975,7 @@
         "<class 'float'>"
     ],
     [
-        "mission:constraints:max_mach",
+        "aircraft:design:max_mach",
         0.785,
         "unitless",
         "<class 'float'>"

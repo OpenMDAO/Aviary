@@ -88,7 +88,7 @@ aircraft:wing:taper_ratio,0.311,unitless
 aircraft:wing:thickness_to_chord,0.11,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0,unitless
-mission:constraints:max_mach,0.85,unitless
+aircraft:design:max_mach,0.85,unitless
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:takeoff:braking_friction_coefficient,0.3,unitless
 mission:takeoff:rolling_friction_coefficient,0.025,unitless

@@ -27,7 +27,7 @@ class Design(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.AIRFOIL_TECHNOLOGY)
-        add_aviary_option(self, Mission.Constraints.MAX_MACH)
+        add_aviary_option(self, Aircraft.Design.MAX_MACH)
 
     def setup(self):
         # Aircraft design inputs
@@ -45,7 +45,7 @@ class Design(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         AITEK = self.options[Aircraft.Wing.AIRFOIL_TECHNOLOGY]
-        VMAX = self.options[Mission.Constraints.MAX_MACH]
+        VMAX = self.options[Aircraft.Design.MAX_MACH]
 
         AR, CAM, SW25, TC = inputs.values()
 
@@ -87,7 +87,7 @@ class Design(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials):
         AITEK = self.options[Aircraft.Wing.AIRFOIL_TECHNOLOGY]
-        VMAX = self.options[Mission.Constraints.MAX_MACH]
+        VMAX = self.options[Aircraft.Design.MAX_MACH]
 
         AR, CAM, SW25, TC = inputs.values()
 

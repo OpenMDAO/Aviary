@@ -14,7 +14,7 @@ class TransportAirCondMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
-        add_aviary_option(self, Mission.Constraints.MAX_MACH)
+        add_aviary_option(self, Aircraft.Design.MAX_MACH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.AirConditioning.MASS_SCALER, units='unitless')
@@ -34,7 +34,7 @@ class TransportAirCondMass(om.ExplicitComponent):
         avionics_wt = inputs[Aircraft.Avionics.MASS] * GRAV_ENGLISH_LBM
         height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
 
         outputs[Aircraft.AirConditioning.MASS] = (
             ((3.2 * (planform * height) ** 0.6 + 9 * pax**0.83) * max_mach + 0.075 * avionics_wt)
@@ -49,7 +49,7 @@ class TransportAirCondMass(om.ExplicitComponent):
         avionics_wt = inputs[Aircraft.Avionics.MASS] * GRAV_ENGLISH_LBM
         height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
 
         planform_exp = planform**0.6
         height_exp = height**0.6

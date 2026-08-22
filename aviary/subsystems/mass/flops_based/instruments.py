@@ -19,7 +19,7 @@ class TransportInstrumentMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
-        add_aviary_option(self, Mission.Constraints.MAX_MACH)
+        add_aviary_option(self, Aircraft.Design.MAX_MACH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
@@ -37,7 +37,7 @@ class TransportInstrumentMass(om.ExplicitComponent):
         num_fuse_eng_fact = distributed_engine_count_factor(num_fuse_eng)
 
         fuse_area = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
         mass_scaler = inputs[Aircraft.Instruments.MASS_SCALER]
 
         instrument_weight = (
@@ -57,7 +57,7 @@ class TransportInstrumentMass(om.ExplicitComponent):
         num_fuse_eng_fact = distributed_engine_count_factor(num_fuse_eng)
 
         fuse_area = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
         mass_scaler = inputs[Aircraft.Instruments.MASS_SCALER]
 
         fact = 10.0 + 2.5 * num_crew + num_wing_eng_fact + 1.5 * num_fuse_eng_fact

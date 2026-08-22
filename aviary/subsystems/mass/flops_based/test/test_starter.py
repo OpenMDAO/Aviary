@@ -57,7 +57,7 @@ class TransportStarterMassTest(unittest.TestCase):
         options = {
             Aircraft.Engine.NUM_ENGINES: np.array([5]),
             Aircraft.Propulsion.TOTAL_NUM_ENGINES: 5,
-            Mission.Constraints.MAX_MACH: 0.785,
+            Aircraft.Design.MAX_MACH: 0.785,
         }
 
         prob.model.add_subsystem(
@@ -105,7 +105,7 @@ class TransportStarterMassTest2(unittest.TestCase):
         options = {
             Aircraft.Engine.NUM_ENGINES: np.array([5]),
             Aircraft.Propulsion.TOTAL_NUM_ENGINES: 5,
-            Mission.Constraints.MAX_MACH: 0.785,
+            Aircraft.Design.MAX_MACH: 0.785,
         }
 
         prob.model.add_subsystem(
@@ -118,7 +118,7 @@ class TransportStarterMassTest2(unittest.TestCase):
         prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
         prob.model_options[Aircraft.Engine.NUM_ENGINES] = np.array([5])
         prob.model_options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 5
-        prob.model_options[Mission.Constraints.MAX_MACH] = 0.875
+        prob.model_options[Aircraft.Design.MAX_MACH] = 0.875
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')

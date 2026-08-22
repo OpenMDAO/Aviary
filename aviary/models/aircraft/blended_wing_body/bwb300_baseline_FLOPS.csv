@@ -174,7 +174,7 @@ aircraft:wing:thickness_to_chord_reference,0.0,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,0.61,unitless
-mission:constraints:max_mach,0.9,unitless
+aircraft:design:max_mach,0.9,unitless
 aircraft:design:gross_mass,600000.0,lbm
 aircraft:design:range,7500.0,NM
 mission:landing:drag_coefficient_min,0.0,unitless

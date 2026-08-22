@@ -7074,7 +7074,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Constraints.MAX_MACH,
+    Aircraft.Design.MAX_MACH,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -7086,8 +7086,12 @@ add_meta_data(
         #  ],
     },
     units='unitless',
-    desc='aircraft cruise Mach number',
-    # TODO: derived default value: Aircraft.Design.CRUISE_MACH ???
+    desc=(
+        'Maximum aircraft design Mach number. Used by FLOPS-based air-conditioning, '
+        'fuel-system, hydraulics, instruments, passenger-service, starter, and surface-'
+        'control mass correlations, and by FLOPS pre-mission aerodynamics when computing '
+        'the design lift coefficient.'
+    ),
     default_value=0.0,
     option=True,
 )
