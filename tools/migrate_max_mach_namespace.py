@@ -61,8 +61,12 @@ def metadata_block(text, symbol):
 def patch_metadata(text):
     # Check if MAX_MACH is already correctly placed after MAX_FUSELAGE_PITCH_ANGLE
     try:
-        anchor_start, anchor_end = metadata_block(text, '    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,')
-        max_mach_start, max_mach_end = metadata_block(text, '    Aircraft.Design.MAX_MACH,')
+        anchor_start, anchor_end = metadata_block(
+            text, '    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,'
+        )
+        max_mach_start, max_mach_end = metadata_block(
+            text, '    Aircraft.Design.MAX_MACH,'
+        )
     except RuntimeError:
         # If we can't find the blocks, let the original logic handle it
         pass
@@ -85,7 +89,7 @@ def patch_metadata(text):
             if expected_desc in block:
                 # Already in correct position with correct description - no changes needed
                 return text
-    
+
     # Need to move/fix the block
     start, end = metadata_block(text, '    Aircraft.Design.MAX_MACH,')
     block = text[start:end]
