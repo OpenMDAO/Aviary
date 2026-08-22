@@ -1,0 +1,48 @@
+name: Reposition MAX_MACH metadata
+
+on:
+  push:
+    branches:
+      - refactor/aircraft-design-max-mach
+
+permissions:
+  contents: write
+
+jobs:
+  reposition:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/aircraft-design-max-mach
+      - name: Move metadata beside Aircraft.Design.MACH
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('aviary/variable_info/variable_meta_data.py')
+          text = path.read_text(encoding='utf-8')
+          target = text.find('add_meta_data(\n    Aircraft.Design.MAX_MACH,')
+          if target < 0:
+              raise SystemExit('MAX_MACH metadata block not found')
+          target_end = text.find('\n)\n', target) + 3
+          block = text[target:target_end]
+          text = text[:target] + text[target_end:]
+
+          mach = text.find('    Aircraft.Design.MACH,')
+          if mach < 0:
+              raise SystemExit('Aircraft.Design.MACH metadata block not found')
+          mach_start = text.rfind('add_meta_data(\n', 0, mach)
+          mach_end = text.find('\n)\n', mach) + 3
+          text = text[:mach_end] + '\n' + block + text[mach_end:]
+          path.write_text(text, encoding='utf-8')
+          PY
+          git diff --check
+      - name: Commit source organization fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add aviary/variable_info/variable_meta_data.py
+          git commit -m "refactor: colocate MAX_MACH aircraft design metadata"
+          git push origin HEAD:refactor/aircraft-design-max-mach
