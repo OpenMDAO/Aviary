@@ -1,0 +1,130 @@
+name: Apply MAX_MACH CI corrections
+
+on:
+  push:
+    branches:
+      - refactor/aircraft-design-max-mach
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/aircraft-design-max-mach
+      - name: Correct hierarchy, metadata, fixtures, and migration contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          def block_bounds(text, symbol):
+              pos = text.find(symbol)
+              if pos < 0:
+                  raise RuntimeError(f'missing metadata symbol: {symbol}')
+              start = text.rfind('add_meta_data(\n', 0, pos)
+              end = text.find('\n)\n', pos)
+              if start < 0 or end < 0:
+                  raise RuntimeError(f'bad metadata block: {symbol}')
+              return start, end + 3
+
+          # Variable hierarchy: remove the duplicate Mission symbol and place the
+          # canonical aircraft variable in alphabetical order.
+          p = Path('aviary/variable_info/variables.py')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace(
+              '        # Backward-compatible symbol alias; new code uses Aircraft.Design.MAX_MACH.\n'
+              '        MAX_MACH = Aircraft.Design.MAX_MACH\n',
+              '',
+          )
+          canonical = "        MAX_MACH = 'aircraft:design:max_mach'\n"
+          text = text.replace(canonical, '')
+          anchor = "        MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'\n"
+          if anchor not in text:
+              raise RuntimeError('MAX_FUSELAGE_PITCH_ANGLE variable anchor missing')
+          text = text.replace(anchor, anchor + canonical, 1)
+          p.write_text(text, encoding='utf-8')
+
+          # Metadata hierarchy: MAX_FUSELAGE_PITCH_ANGLE < MAX_MACH < MAX_STRUCTURAL_SPEED.
+          p = Path('aviary/variable_info/variable_meta_data.py')
+          text = p.read_text(encoding='utf-8')
+          start, end = block_bounds(text, '    Aircraft.Design.MAX_MACH,')
+          block = text[start:end]
+          text = text[:start] + text[end:]
+          _, anchor_end = block_bounds(text, '    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,')
+          text = text[:anchor_end] + '\n' + block + text[anchor_end:]
+          p.write_text(text, encoding='utf-8')
+
+          # Fortran converter validation is line-order sensitive. The renamed key
+          # must move from the old Mission section into the sorted Aircraft.Design section.
+          fixtures = [
+              'aviary/utils/test/data/converter_test_advanced_single_aisle_FLOPS.csv',
+              'aviary/utils/test/data/converter_test_BWB_detailed_FLOPS.csv',
+              'aviary/utils/test/data/converter_test_BWB_simple_FLOPS.csv',
+          ]
+          for name in fixtures:
+              p = Path(name)
+              lines = p.read_text(encoding='utf-8').splitlines()
+              max_lines = [line for line in lines if line.startswith('aircraft:design:max_mach,')]
+              if len(max_lines) != 1:
+                  raise RuntimeError(f'{name}: expected one MAX_MACH line, got {len(max_lines)}')
+              max_line = max_lines[0]
+              lines = [line for line in lines if not line.startswith('aircraft:design:max_mach,')]
+              idx = next(i for i, line in enumerate(lines) if line.startswith('aircraft:design:mach,'))
+              lines.insert(idx + 1, max_line)
+              p.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+
+          # Contract now verifies that the old Python symbol is gone; serialized
+          # legacy input compatibility is handled by the string-key resolver.
+          p = Path('aviary/variable_info/test/test_max_mach_namespace.py')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace(
+              '        self.assertEqual(Mission.Constraints.MAX_MACH, Aircraft.Design.MAX_MACH)\n',
+              "        self.assertFalse(hasattr(Mission.Constraints, 'MAX_MACH'))\n",
+          )
+          p.write_text(text, encoding='utf-8')
+
+          # Keep the deterministic migration tool consistent with the corrected end state.
+          p = Path('tools/migrate_max_mach_namespace.py')
+          text = p.read_text(encoding='utf-8')
+          old_chunk = '''    old = "        MAX_MACH = 'mission:constraints:max_mach'\\n"\n    alias = (\n        '        # Backward-compatible symbol alias; new code uses Aircraft.Design.MAX_MACH.\\n'\n        '        MAX_MACH = Aircraft.Design.MAX_MACH\\n'\n    )\n    if old in text:\n        text = text.replace(old, alias, 1)\n    elif 'MAX_MACH = Aircraft.Design.MAX_MACH' not in text:\n        raise RuntimeError('Mission.Constraints.MAX_MACH definition not found')\n\n    anchor = "        MACH = 'aircraft:design:mach'\\n"\n    canonical = "        MAX_MACH = 'aircraft:design:max_mach'\\n"\n    if canonical not in text:\n        if anchor not in text:\n            raise RuntimeError('Aircraft.Design.MACH anchor not found')\n        text = text.replace(anchor, anchor + canonical, 1)\n'''
+          new_chunk = '''    old = "        MAX_MACH = 'mission:constraints:max_mach'\\n"\n    alias = (\n        '        # Backward-compatible symbol alias; new code uses Aircraft.Design.MAX_MACH.\\n'\n        '        MAX_MACH = Aircraft.Design.MAX_MACH\\n'\n    )\n    text = text.replace(old, '', 1).replace(alias, '', 1)\n\n    canonical = "        MAX_MACH = 'aircraft:design:max_mach'\\n"\n    text = text.replace(canonical, '')\n    anchor = (\n        "        MAX_FUSELAGE_PITCH_ANGLE = "\n        "'aircraft:design:max_fuselage_pitch_angle'\\n"\n    )\n    if anchor not in text:\n        raise RuntimeError('Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE anchor not found')\n    text = text.replace(anchor, anchor + canonical, 1)\n'''
+          if old_chunk not in text:
+              raise RuntimeError('patch_variables implementation did not match expected source')
+          text = text.replace(old_chunk, new_chunk, 1)
+          text = text.replace(
+              "    _, mach_end = metadata_block(text, '    Aircraft.Design.MACH,')\n"
+              "    text = text[:mach_end] + '\\n' + block + text[mach_end:]\n",
+              "    _, anchor_end = metadata_block(\n"
+              "        text, '    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,'\n"
+              "    )\n"
+              "    text = text[:anchor_end] + '\\n' + block + text[anchor_end:]\n",
+          )
+          text = text.replace(
+              "'python_symbol': 'Mission.Constraints.MAX_MACH aliases Aircraft.Design.MAX_MACH',",
+              "'python_symbol': 'legacy Python symbol removed; serialized legacy key remains supported',",
+          )
+          p.write_text(text, encoding='utf-8')
+
+          # Preserve the original migration audit while correcting its compatibility statement.
+          p = Path('aviary/variable_info/migrations/max_mach_namespace_manifest.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          data['compatibility']['python_symbol'] = (
+              'legacy Python symbol removed; serialized legacy key remains supported'
+          )
+          p.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+          PY
+          python tools/migrate_max_mach_namespace.py --write --check
+          python -m compileall -q aviary tools/migrate_max_mach_namespace.py
+          git diff --check
+      - name: Commit corrections
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: preserve MAX_MACH hierarchy invariants"
+          git push origin HEAD:refactor/aircraft-design-max-mach
