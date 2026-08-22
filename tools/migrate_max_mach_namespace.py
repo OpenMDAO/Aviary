@@ -40,10 +40,7 @@ def patch_variables(text):
 
     canonical = "        MAX_MACH = 'aircraft:design:max_mach'\n"
     text = text.replace(canonical, '')
-    anchor = (
-        "        MAX_FUSELAGE_PITCH_ANGLE = "
-        "'aircraft:design:max_fuselage_pitch_angle'\n"
-    )
+    anchor = "        MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'\n"
     if anchor not in text:
         raise RuntimeError('Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE anchor not found')
     text = text.replace(anchor, anchor + canonical, 1)
@@ -82,9 +79,7 @@ def patch_metadata(text):
 
     # Remove the block first, then insert it immediately after Aircraft.Design.MACH.
     text = text[:start] + text[end:]
-    _, anchor_end = metadata_block(
-        text, '    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,'
-    )
+    _, anchor_end = metadata_block(text, '    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,')
     text = text[:anchor_end] + '\n' + block + text[anchor_end:]
     return text
 
