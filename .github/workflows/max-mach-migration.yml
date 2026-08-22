@@ -1,0 +1,40 @@
+name: Apply MAX_MACH namespace migration
+
+on:
+  push:
+    branches:
+      - refactor/aircraft-design-max-mach
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/aircraft-design-max-mach
+          fetch-depth: 0
+
+      - name: Apply deterministic repository migration
+        run: |
+          python tools/migrate_max_mach_namespace.py --write --check
+
+      - name: Static validation
+        run: |
+          python -m compileall -q aviary tools/migrate_max_mach_namespace.py
+          git diff --check
+
+      - name: Commit generated migration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Migration already applied"
+          else
+            git commit -m "refactor: migrate MAX_MACH to aircraft design namespace"
+            git push origin HEAD:refactor/aircraft-design-max-mach
+          fi
