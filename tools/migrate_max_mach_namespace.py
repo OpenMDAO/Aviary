@@ -65,17 +65,17 @@ def patch_metadata(text):
     start, end = metadata_block(text, '    Aircraft.Design.MAX_MACH,')
     block = text[start:end]
     desc = (
-        "    desc=(\n"
+        '    desc=(\n'
         "        'Maximum aircraft design Mach number. Used by FLOPS-based air-conditioning, '\n"
         "        'fuel-system, hydraulics, instruments, passenger-service, starter, and surface-'\n"
         "        'control mass correlations, and by FLOPS pre-mission aerodynamics when computing '\n"
         "        'the design lift coefficient.'\n"
-        "    ),\n"
+        '    ),\n'
     )
-    pattern = re.compile(r"    desc=.*?(?=    [a-zA-Z_]+\s*=|\)\n)", re.S)
+    pattern = re.compile(r'    desc=.*?(?=    [a-zA-Z_]+\s*=|\)\n)', re.S)
     match = pattern.search(block)
     if match:
-        block = block[:match.start()] + desc + block[match.end():]
+        block = block[: match.start()] + desc + block[match.end() :]
     else:
         close = block.rfind(')\n')
         block = block[:close] + desc + block[close:]
@@ -99,7 +99,7 @@ def patch_values(text):
         text = text.replace(marker, normalize + marker, 1)
 
     marker = '    def _check_units_compatibility(self, key, val, units, meta_data=CoreMetaData):\n'
-    methods = '''    def get_item(self, key):
+    methods = """    def get_item(self, key):
         return super().get_item(resolve_legacy_variable_name(key))
 
     def get_val(self, key, units='unitless'):
@@ -111,7 +111,7 @@ def patch_values(text):
     def __contains__(self, key):
         return super().__contains__(resolve_legacy_variable_name(key))
 
-'''
+"""
     if 'def get_item(self, key):' not in text:
         if marker not in text:
             raise RuntimeError('AviaryValues insertion point not found')
