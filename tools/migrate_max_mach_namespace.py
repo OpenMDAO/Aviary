@@ -59,6 +59,34 @@ def metadata_block(text, symbol):
 
 
 def patch_metadata(text):
+    # Check if MAX_MACH is already correctly placed after MAX_FUSELAGE_PITCH_ANGLE
+    try:
+        anchor_start, anchor_end = metadata_block(text, '    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,')
+        max_mach_start, max_mach_end = metadata_block(text, '    Aircraft.Design.MAX_MACH,')
+    except RuntimeError:
+        # If we can't find the blocks, let the original logic handle it
+        pass
+    else:
+        # If MAX_MACH immediately follows MAX_FUSELAGE_PITCH_ANGLE (with only one blank line),
+        # check if the description is correct
+        expected_gap = '\n'
+        gap = text[anchor_end:max_mach_start]
+        if gap == expected_gap:
+            # Check if description matches expected
+            block = text[max_mach_start:max_mach_end]
+            expected_desc = (
+                '    desc=(\n'
+                "        'Maximum aircraft design Mach number. Used by FLOPS-based air-conditioning, '\n"
+                "        'fuel-system, hydraulics, instruments, passenger-service, starter, and surface-'\n"
+                "        'control mass correlations, and by FLOPS pre-mission aerodynamics when computing '\n"
+                "        'the design lift coefficient.'\n"
+                '    ),\n'
+            )
+            if expected_desc in block:
+                # Already in correct position with correct description - no changes needed
+                return text
+    
+    # Need to move/fix the block
     start, end = metadata_block(text, '    Aircraft.Design.MAX_MACH,')
     block = text[start:end]
     desc = (
@@ -77,10 +105,14 @@ def patch_metadata(text):
         close = block.rfind(')\n')
         block = block[:close] + desc + block[close:]
 
-    # Remove the block first, then insert it immediately after Aircraft.Design.MACH.
+    # Remove the block first, then insert it immediately after MAX_FUSELAGE_PITCH_ANGLE.
     text = text[:start] + text[end:]
     _, anchor_end = metadata_block(text, '    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,')
-    text = text[:anchor_end] + '\n' + block + text[anchor_end:]
+    # Check if there are already blank lines after anchor_end and trim them to single newline
+    insert_pos = anchor_end
+    while insert_pos < len(text) and text[insert_pos] == '\n':
+        insert_pos += 1
+    text = text[:anchor_end] + '\n' + block + text[insert_pos:]
     return text
 
 
@@ -161,7 +193,10 @@ def apply():
             changed.append(str(rel))
 
     out = ROOT / MANIFEST
-    if changed or not out.exists():
+    # Only rewrite manifest if there were actual content migrations (symbol/key replacements)
+    # or if the manifest doesn't exist yet
+    has_real_migrations = counts['python_symbol'] > 0 or counts['serialized_key'] > 0
+    if has_real_migrations or not out.exists():
         manifest = {
             'issue': 'OpenMDAO/Aviary#1046',
             'canonical_symbol': NEW_SYMBOL,
