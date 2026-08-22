@@ -15,7 +15,7 @@ class TransportFuelSystemMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
-        add_aviary_option(self, Mission.Constraints.MAX_MACH)
+        add_aviary_option(self, Aircraft.Design.MAX_MACH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
@@ -31,7 +31,7 @@ class TransportFuelSystemMass(om.ExplicitComponent):
         capacity = inputs[Aircraft.Fuel.MAX_CAPACITY_MASS]
         num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
 
         outputs[Aircraft.Fuel.FUEL_SYSTEM_MASS] = (
             1.07 * capacity**0.58 * num_eng_fact**0.43 * max_mach**0.34 * scaler
@@ -42,7 +42,7 @@ class TransportFuelSystemMass(om.ExplicitComponent):
         capacity = inputs[Aircraft.Fuel.MAX_CAPACITY_MASS]
         num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
 
         J[Aircraft.Fuel.FUEL_SYSTEM_MASS, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER] = (
             1.07 * capacity**0.58 * num_eng_fact**0.43 * max_mach**0.34 / GRAV_ENGLISH_LBM

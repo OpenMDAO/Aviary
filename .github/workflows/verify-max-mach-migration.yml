@@ -1,0 +1,21 @@
+name: Verify MAX_MACH migration idempotence
+
+on:
+  push:
+    branches:
+      - refactor/aircraft-design-max-mach
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Re-run migration and audit
+        run: |
+          python tools/migrate_max_mach_namespace.py --write --check
+          git diff --exit-code
+      - name: Verify Python syntax
+        run: python -m compileall -q aviary tools/migrate_max_mach_namespace.py

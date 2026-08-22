@@ -230,7 +230,7 @@ inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
 # ---------------------------
 inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.785)
 inputs.set_val(Aircraft.Design.RANGE, 2960.0, 'NM')
-inputs.set_val(Mission.Constraints.MAX_MACH, 0.82)
+inputs.set_val(Aircraft.Design.MAX_MACH, 0.82)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
 inputs.set_val(Mission.Takeoff.FUEL_MASS, 659, 'lbm')

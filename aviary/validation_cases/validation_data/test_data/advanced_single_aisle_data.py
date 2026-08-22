@@ -295,7 +295,7 @@ inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
 # ---------------------------
 inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.785)
 inputs.set_val(Aircraft.Design.RANGE, 3500, 'NM')
-inputs.set_val(Mission.Constraints.MAX_MACH, 0.785)
+inputs.set_val(Aircraft.Design.MAX_MACH, 0.785)
 inputs.set_val(Mission.Landing.DRAG_COEFFICIENT_MIN, 0.045, 'unitless')
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 2.0, 'unitless')
 inputs.set_val(Mission.Takeoff.AIRPORT_ALTITUDE, 0.0, 'ft')

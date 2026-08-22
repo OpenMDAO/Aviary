@@ -1588,6 +1588,7 @@ add_meta_data(
     default_value=0.0,
 )
 
+
 add_meta_data(
     Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,
     meta_data=_MetaData,
@@ -1595,6 +1596,29 @@ add_meta_data(
     units='deg',
     desc='maximum fuselage pitch allowed',
     default_value=15,
+)
+
+add_meta_data(
+    Aircraft.Design.MAX_MACH,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.VMMO',
+        #  [  # inputs
+        #      '&DEFINE.WTIN.VMMO', 'VLIMIT.VMMO',
+        #      # outputs
+        #      'VLIMIT.VMAX',
+        #  ],
+    },
+    units='unitless',
+    desc=(
+        'Maximum aircraft design Mach number. Used by FLOPS-based air-conditioning, '
+        'fuel-system, hydraulics, instruments, passenger-service, starter, and surface-'
+        'control mass correlations, and by FLOPS pre-mission aerodynamics when computing '
+        'the design lift coefficient.'
+    ),
+    default_value=0.0,
+    option=True,
 )
 
 add_meta_data(
@@ -7073,24 +7097,6 @@ add_meta_data(
     '(within acceptable tolerance)',
 )
 
-add_meta_data(
-    Mission.Constraints.MAX_MACH,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.VMMO',
-        #  [  # inputs
-        #      '&DEFINE.WTIN.VMMO', 'VLIMIT.VMMO',
-        #      # outputs
-        #      'VLIMIT.VMAX',
-        #  ],
-    },
-    units='unitless',
-    desc='aircraft cruise Mach number',
-    # TODO: derived default value: Aircraft.Design.CRUISE_MACH ???
-    default_value=0.0,
-    option=True,
-)
 
 add_meta_data(
     Mission.Constraints.RANGE_RESIDUAL,

@@ -12,7 +12,7 @@ class SurfaceControlMass(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Mission.Constraints.MAX_MACH)
+        add_aviary_option(self, Aircraft.Design.MAX_MACH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, units='unitless')
@@ -31,7 +31,7 @@ class SurfaceControlMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         scaler = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
         gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         flap_ratio = inputs[Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO]
         wing_area = inputs[Aircraft.Wing.AREA]
@@ -48,7 +48,7 @@ class SurfaceControlMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         scaler = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
         gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         flap_ratio = inputs[Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO]
         wing_area = inputs[Aircraft.Wing.AREA]

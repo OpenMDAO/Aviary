@@ -21,7 +21,7 @@ class TransportStarterMass(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
-        add_aviary_option(self, Mission.Constraints.MAX_MACH)
+        add_aviary_option(self, Aircraft.Design.MAX_MACH)
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
@@ -39,7 +39,7 @@ class TransportStarterMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         total_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
 
         d_nacelle = inputs[Aircraft.Nacelle.AVG_DIAMETER]
         num_engines_factor = distributed_engine_count_factor(total_engines)
@@ -57,7 +57,7 @@ class TransportStarterMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         total_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = self.options[Aircraft.Design.MAX_MACH]
 
         d_nacelle = inputs[Aircraft.Nacelle.AVG_DIAMETER]
         eng_count_factor = distributed_engine_count_factor(total_engines)
