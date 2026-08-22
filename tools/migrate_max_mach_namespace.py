@@ -64,9 +64,7 @@ def patch_metadata(text):
         anchor_start, anchor_end = metadata_block(
             text, '    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,'
         )
-        max_mach_start, max_mach_end = metadata_block(
-            text, '    Aircraft.Design.MAX_MACH,'
-        )
+        max_mach_start, max_mach_end = metadata_block(text, '    Aircraft.Design.MAX_MACH,')
     except RuntimeError:
         # If we can't find the blocks, let the original logic handle it
         pass
