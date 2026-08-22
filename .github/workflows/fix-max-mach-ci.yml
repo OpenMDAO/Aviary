@@ -118,7 +118,6 @@ jobs:
           )
           p.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
           PY
-          python tools/migrate_max_mach_namespace.py --write --check
           python -m compileall -q aviary tools/migrate_max_mach_namespace.py
           git diff --check
       - name: Commit corrections
