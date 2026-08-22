@@ -4,7 +4,10 @@ from pathlib import Path
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.csv_data_file import read_data_file
-from aviary.variable_info.legacy_aliases import LEGACY_VARIABLE_NAME_MAP, resolve_legacy_variable_name
+from aviary.variable_info.legacy_aliases import (
+    LEGACY_VARIABLE_NAME_MAP,
+    resolve_legacy_variable_name,
+)
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -45,7 +48,18 @@ class MaxMachNamespaceTest(unittest.TestCase):
             Path('aviary/variable_info/migrations/max_mach_namespace_manifest.json'),
             Path('tools/migrate_max_mach_namespace.py'),
         }
-        suffixes = {'.py', '.csv', '.json', '.ipynb', '.md', '.rst', '.txt', '.toml', '.yaml', '.yml'}
+        suffixes = {
+            '.py',
+            '.csv',
+            '.json',
+            '.ipynb',
+            '.md',
+            '.rst',
+            '.txt',
+            '.toml',
+            '.yaml',
+            '.yml',
+        }
         failures = []
         for path in root.rglob('*'):
             if not path.is_file() or path.suffix.lower() not in suffixes:
