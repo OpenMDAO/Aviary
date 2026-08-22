@@ -13,11 +13,12 @@ OLD_KEY = 'mission:constraints:max_mach'
 NEW_KEY = 'aircraft:design:max_mach'
 SUFFIXES = {'.py', '.csv', '.json', '.ipynb', '.md', '.rst', '.txt', '.toml', '.yaml', '.yml'}
 SKIP = {'.git', '.venv', 'venv', 'build', 'dist', '__pycache__', '.pytest_cache'}
+MANIFEST = Path('aviary/variable_info/migrations/max_mach_namespace_manifest.json')
 ALLOW = {
     Path('tools/migrate_max_mach_namespace.py'),
     Path('aviary/variable_info/legacy_aliases.py'),
     Path('aviary/variable_info/test/test_max_mach_namespace.py'),
-    Path('aviary/variable_info/migrations/max_mach_namespace_manifest.json'),
+    MANIFEST,
 }
 
 
@@ -49,14 +50,20 @@ def patch_variables(text):
     return text
 
 
+def metadata_block(text, symbol):
+    pos = text.find(symbol)
+    if pos < 0:
+        raise RuntimeError(f'{symbol} metadata block not found')
+    start = text.rfind('add_meta_data(\n', 0, pos)
+    end = text.find('\n)\n', pos)
+    if start < 0 or end < 0:
+        raise RuntimeError(f'{symbol} metadata block boundaries not found')
+    return start, end + 3
+
+
 def patch_metadata(text):
-    start = text.find('add_meta_data(\n    Aircraft.Design.MAX_MACH,')
-    if start < 0:
-        raise RuntimeError('MAX_MACH metadata block not found')
-    end = text.find('\n)\n', start)
-    if end < 0:
-        raise RuntimeError('MAX_MACH metadata block end not found')
-    block = text[start:end + 3]
+    start, end = metadata_block(text, '    Aircraft.Design.MAX_MACH,')
+    block = text[start:end]
     desc = (
         "    desc=(\n"
         "        'Maximum aircraft design Mach number. Used by FLOPS-based air-conditioning, '\n"
@@ -72,7 +79,12 @@ def patch_metadata(text):
     else:
         close = block.rfind(')\n')
         block = block[:close] + desc + block[close:]
-    return text[:start] + block + text[end + 3:]
+
+    # Remove the block first, then insert it immediately after Aircraft.Design.MACH.
+    text = text[:start] + text[end:]
+    _, mach_end = metadata_block(text, '    Aircraft.Design.MACH,')
+    text = text[:mach_end] + '\n' + block + text[mach_end:]
+    return text
 
 
 def patch_values(text):
@@ -151,23 +163,24 @@ def apply():
             path.write_text(after, encoding='utf-8')
             changed.append(str(rel))
 
-    manifest = {
-        'issue': 'OpenMDAO/Aviary#1046',
-        'canonical_symbol': NEW_SYMBOL,
-        'canonical_key': NEW_KEY,
-        'legacy_symbol': OLD_SYMBOL,
-        'legacy_key': OLD_KEY,
-        'changed_file_count': len(changed),
-        'changed_files': sorted(changed),
-        'replacement_counts': counts,
-        'compatibility': {
-            'python_symbol': 'Mission.Constraints.MAX_MACH aliases Aircraft.Design.MAX_MACH',
-            'serialized_inputs': 'legacy raw names normalize before metadata validation/storage',
-        },
-    }
-    out = ROOT / 'aviary/variable_info/migrations/max_mach_namespace_manifest.json'
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
+    out = ROOT / MANIFEST
+    if changed or not out.exists():
+        manifest = {
+            'issue': 'OpenMDAO/Aviary#1046',
+            'canonical_symbol': NEW_SYMBOL,
+            'canonical_key': NEW_KEY,
+            'legacy_symbol': OLD_SYMBOL,
+            'legacy_key': OLD_KEY,
+            'changed_file_count': len(changed),
+            'changed_files': sorted(changed),
+            'replacement_counts': counts,
+            'compatibility': {
+                'python_symbol': 'Mission.Constraints.MAX_MACH aliases Aircraft.Design.MAX_MACH',
+                'serialized_inputs': 'legacy raw names normalize before metadata validation/storage',
+            },
+        }
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
     return changed, counts
 
 
