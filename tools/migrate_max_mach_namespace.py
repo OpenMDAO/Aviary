@@ -36,17 +36,17 @@ def patch_variables(text):
         '        # Backward-compatible symbol alias; new code uses Aircraft.Design.MAX_MACH.\n'
         '        MAX_MACH = Aircraft.Design.MAX_MACH\n'
     )
-    if old in text:
-        text = text.replace(old, alias, 1)
-    elif 'MAX_MACH = Aircraft.Design.MAX_MACH' not in text:
-        raise RuntimeError('Mission.Constraints.MAX_MACH definition not found')
+    text = text.replace(old, '', 1).replace(alias, '', 1)
 
-    anchor = "        MACH = 'aircraft:design:mach'\n"
     canonical = "        MAX_MACH = 'aircraft:design:max_mach'\n"
-    if canonical not in text:
-        if anchor not in text:
-            raise RuntimeError('Aircraft.Design.MACH anchor not found')
-        text = text.replace(anchor, anchor + canonical, 1)
+    text = text.replace(canonical, '')
+    anchor = (
+        "        MAX_FUSELAGE_PITCH_ANGLE = "
+        "'aircraft:design:max_fuselage_pitch_angle'\n"
+    )
+    if anchor not in text:
+        raise RuntimeError('Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE anchor not found')
+    text = text.replace(anchor, anchor + canonical, 1)
     return text
 
 
@@ -82,8 +82,10 @@ def patch_metadata(text):
 
     # Remove the block first, then insert it immediately after Aircraft.Design.MACH.
     text = text[:start] + text[end:]
-    _, mach_end = metadata_block(text, '    Aircraft.Design.MACH,')
-    text = text[:mach_end] + '\n' + block + text[mach_end:]
+    _, anchor_end = metadata_block(
+        text, '    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,'
+    )
+    text = text[:anchor_end] + '\n' + block + text[anchor_end:]
     return text
 
 
@@ -175,7 +177,7 @@ def apply():
             'changed_files': sorted(changed),
             'replacement_counts': counts,
             'compatibility': {
-                'python_symbol': 'Mission.Constraints.MAX_MACH aliases Aircraft.Design.MAX_MACH',
+                'python_symbol': 'legacy Python symbol removed; serialized legacy key remains supported',
                 'serialized_inputs': 'legacy raw names normalize before metadata validation/storage',
             },
         }

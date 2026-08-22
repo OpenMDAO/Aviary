@@ -62,7 +62,7 @@
     "serialized_key": 24
   },
   "compatibility": {
-    "python_symbol": "Mission.Constraints.MAX_MACH aliases Aircraft.Design.MAX_MACH",
+    "python_symbol": "legacy Python symbol removed; serialized legacy key remains supported",
     "serialized_inputs": "legacy raw names normalize before metadata validation/storage"
   }
 }

@@ -1588,6 +1588,16 @@ add_meta_data(
     default_value=0.0,
 )
 
+
+add_meta_data(
+    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.THEMAX', 'FLOPS': None},
+    units='deg',
+    desc='maximum fuselage pitch allowed',
+    default_value=15,
+)
+
 add_meta_data(
     Aircraft.Design.MAX_MACH,
     meta_data=_MetaData,
@@ -1609,15 +1619,6 @@ add_meta_data(
     ),
     default_value=0.0,
     option=True,
-)
-
-add_meta_data(
-    Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.THEMAX', 'FLOPS': None},
-    units='deg',
-    desc='maximum fuselage pitch allowed',
-    default_value=15,
 )
 
 add_meta_data(

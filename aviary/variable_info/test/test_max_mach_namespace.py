@@ -15,7 +15,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 class MaxMachNamespaceTest(unittest.TestCase):
     def test_canonical_namespace(self):
         self.assertEqual(Aircraft.Design.MAX_MACH, 'aircraft:design:max_mach')
-        self.assertEqual(Mission.Constraints.MAX_MACH, Aircraft.Design.MAX_MACH)
+        self.assertFalse(hasattr(Mission.Constraints, 'MAX_MACH'))
         self.assertIn(Aircraft.Design.MAX_MACH, CoreMetaData)
         self.assertNotIn('mission:constraints:max_mach', CoreMetaData)
 
