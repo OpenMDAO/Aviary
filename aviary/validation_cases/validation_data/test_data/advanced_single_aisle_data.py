@@ -361,7 +361,7 @@ outputs.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 30800.0, 'lbm')
 outputs.set_val(Aircraft.Electrical.MASS, 2375.0, 'lbm')
 
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 518.0, 'lbm')
-outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 33136.4, 'lbm')
+outputs.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 33136.4, 'lbm')
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 462.0, 'lbm')
 outputs.set_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 33136.4, 'lbm')
 

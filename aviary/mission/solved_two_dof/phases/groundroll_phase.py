@@ -37,15 +37,30 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             desc='The order of polynomials for interpolation in the transcription '
             'created in Dymos. The default value is 3.',
         )
-
-        defaults = {
+        # Note that the integration variable ('time') for this phase is velocity hence the units of 'time' being 'kn'
+        # Dymos calls the integration variable 'time' regardless of its real name, value or units.
+        velocity_defaults = {
             'time_initial_bounds': (0.0, 100.0),
             'time_duration_bounds': (0.0, 3600.0),
             'time_initial_ref': 100.0,
             'time_duration_ref': 100.0,
             'time_initial_direct_link': False,
         }
-        self.add_time_options(units='kn', defaults=defaults)
+        self.add_time_options(units='kn', defaults=velocity_defaults)
+
+        mass_defaults = {
+            'mass_bounds': (1, None),
+            'mass_ref': 100.0e3,
+            'mass_defect_ref': 100.0e3,
+        }
+        self.add_state_options('mass', units='lbm', defaults=mass_defaults)
+
+        distance_defaults = {
+            'distance_ref': 1e3,
+            'distance_defect_ref': 1e3,
+            'distance_bounds': (0.0, None),
+        }
+        self.add_state_options('distance', units='ft', defaults=distance_defaults)
 
         # The options below have not yet been revamped.
 
@@ -75,7 +90,7 @@ class GroundrollPhase(PhaseBuilder):
     This is used exclusively by the Solved 2DOF Phase Builder.
     """
 
-    __slots__ = ('subsystems', 'meta_data')
+    __slots__ = ('subsystems', 'meta_data', 'phase')
 
     _initial_guesses_meta_data_ = {}
 
@@ -110,9 +125,9 @@ class GroundrollPhase(PhaseBuilder):
         duration_ref = user_options.get_val('time_duration_ref', units='kn')
         constraints = user_options.get_val('constraints')
 
-        phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
+        self.phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
 
-        phase.set_time_options(
+        self.phase.set_time_options(
             fix_initial=True,
             fix_duration=False,
             units='kn',
@@ -121,7 +136,7 @@ class GroundrollPhase(PhaseBuilder):
             duration_ref=duration_ref,
         )
 
-        phase.set_state_options(
+        self.phase.set_state_options(
             'time',
             rate_source='dt_dv',
             units='s',
@@ -131,49 +146,29 @@ class GroundrollPhase(PhaseBuilder):
             defect_ref=1.0,
             solve_segments='forward',
         )
+        self.add_state(name='mass', target=Dynamic.Vehicle.MASS, rate_source='dmass_dv')
+        self.add_state(name='distance', target=Dynamic.Mission.DISTANCE, rate_source='over_a')
 
-        phase.set_state_options(
-            'mass',
-            rate_source='dmass_dv',
-            fix_initial=True,
-            fix_final=False,
-            lower=1,
-            upper=500.0e3,
-            ref=100.0e3,
-            defect_ref=100.0e3,
-            units='lbm',
+        self.phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=32.3)
+        self.phase.add_parameter('t_init_flaps', units='s', static_target=True, opt=False, val=44.0)
+        self.phase.add_parameter(
+            'wing_area', units='ft**2', static_target=True, opt=False, val=1370
         )
-
-        phase.set_state_options(
-            Dynamic.Mission.DISTANCE,
-            rate_source='over_a',
-            fix_initial=True,
-            fix_final=False,
-            lower=0,
-            upper=8000.0,
-            ref=1.0e2,
-            defect_ref=1.0e2,
-            units='ft',
-        )
-
-        phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=32.3)
-        phase.add_parameter('t_init_flaps', units='s', static_target=True, opt=False, val=44.0)
-        phase.add_parameter('wing_area', units='ft**2', static_target=True, opt=False, val=1370)
 
         self._add_user_defined_constraints(phase, constraints)
 
-        phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK)
-        phase.add_timeseries_output(Dynamic.Vehicle.DRAG)
-        phase.add_timeseries_output('EAS', units='kn')
-        phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
-        phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
-        phase.add_timeseries_output(Dynamic.Vehicle.MASS)
-        phase.add_timeseries_output('normal_force')
-        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
-        phase.add_timeseries_output('time')
-        phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
+        self.phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+        self.phase.add_timeseries_output(Dynamic.Vehicle.DRAG)
+        self.phase.add_timeseries_output('EAS', units='kn')
+        self.phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
+        self.phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
+        self.phase.add_timeseries_output(Dynamic.Vehicle.MASS)
+        self.phase.add_timeseries_output('normal_force')
+        self.phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
+        self.phase.add_timeseries_output('time')
+        self.phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
 
-        return phase
+        return self.phase
 
     def make_default_transcription(self):
         """Return a transcription object to be used by default in build_phase."""

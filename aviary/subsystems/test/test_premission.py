@@ -65,7 +65,7 @@ class PreMissionTestCase(unittest.TestCase):
         input_options.delete(Aircraft.Nacelle.AVG_DIAMETER)
         input_options.delete(Aircraft.Fuselage.WETTED_AREA)
         input_options.delete(Aircraft.Wing.ULTIMATE_LOAD_FACTOR)
-        input_options.delete(Aircraft.Fuel.TOTAL_CAPACITY)
+        input_options.delete(Aircraft.Fuel.MAX_CAPACITY_MASS)
         input_options.delete(Aircraft.Nacelle.AVG_LENGTH)
         input_options.delete(Aircraft.HorizontalTail.AREA)
         input_options.delete(Aircraft.VerticalTail.AREA)
@@ -116,6 +116,9 @@ class PreMissionTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, val=16.0, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, val=20.2, units='inch'
         )
 
         setup_model_options(self.prob, input_options)

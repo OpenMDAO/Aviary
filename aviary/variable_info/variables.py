@@ -43,6 +43,13 @@ class Aircraft:
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
         )
+        REAR_SPAR_PERCENT_CHORD_CENTERLINE = (
+            'aircraft:blended_wing_body_design:rear_spar_percent_chord_centerline'
+        )
+        REAR_SPAR_PERCENT_CHORD_ROOT = (
+            'aircraft:blended_wing_body_design:rear_spar_percent_chord_root'
+        )
+        WING_ROOT_INDEX = 'aircraft:blended_wing_body_design:wing_root_index'
 
     class Canard:
         AREA = 'aircraft:canard:area'
@@ -263,27 +270,21 @@ class Aircraft:
 
     class Fuel:
         AUXILIARY_FUEL_MASS_CAPACITY = 'aircraft:fuel:auxiliary_fuel_mass_capacity'
-        BURN_PER_PASSENGER_MILE = 'aircraft:fuel:burn_per_passenger_mile'
         DENSITY = 'aircraft:fuel:density'
         FUEL_SYSTEM_MASS = 'aircraft:fuel:fuel_system_mass'
         FUEL_SYSTEM_MASS_COEFFICIENT = 'aircraft:fuel:fuel_system_mass_coefficient'
         FUEL_SYSTEM_MASS_SCALER = 'aircraft:fuel:fuel_system_mass_scaler'
         FUSELAGE_FUEL_MASS_CAPACITY = 'aircraft:fuel:fuselage_fuel_mass_capacity'
         IGNORE_FUEL_CAPACITY_CONSTRAINT = 'aircraft:fuel:ignore_fuel_capacity_constraint'
+        MAX_CAPACITY_MASS = 'aircraft:fuel:max_capacity_mass'
+        MAX_CAPACITY_VOLUME = 'aircraft:fuel:max_capacity_volume'
         NUM_TANKS = 'aircraft:fuel:num_tanks'
-        TOTAL_CAPACITY = 'aircraft:fuel:total_capacity'
-        TOTAL_VOLUME = 'aircraft:fuel:total_volume'
         UNUSABLE_FUEL_MASS = 'aircraft:fuel:unusable_fuel_mass'
         UNUSABLE_FUEL_MASS_COEFFICIENT = 'aircraft:fuel:unusable_fuel_mass_coefficient'
         UNUSABLE_FUEL_MASS_SCALER = 'aircraft:fuel:unusable_fuel_mass_scaler'
         VOLUME_MARGIN = 'aircraft:fuel:volume_margin'
         WING_FUEL_FRACTION = 'aircraft:fuel:wing_fuel_fraction'
         WING_FUEL_MASS_CAPACITY = 'aircraft:fuel:wing_fuel_mass_capacity'
-        WING_REF_CAPACITY = 'aircraft:fuel:wing_ref_capacity'
-        WING_REF_CAPACITY_AREA = 'aircraft:fuel:wing_ref_capacity_area'
-        WING_REF_CAPACITY_TERM_A = 'aircraft:fuel:wing_ref_capacity_term_a'
-        WING_REF_CAPACITY_TERM_B = 'aircraft:fuel:wing_ref_capacity_term_b'
-        # WING_VOLUME = 'aircraft:fuel:wing_volume'
         WING_VOLUME_DESIGN = 'aircraft:fuel:wing_volume_design'
         WING_VOLUME_GEOMETRIC_MAX = 'aircraft:fuel:wing_volume_geometric_max'
         WING_VOLUME_STRUCTURAL_MAX = 'aircraft:fuel:wing_volume_structural_max'
@@ -300,6 +301,7 @@ class Aircraft:
         AISLE_WIDTH = 'aircraft:fuselage:aisle_width'
         AVG_DIAMETER = 'aircraft:fuselage:avg_diameter'
         CABIN_AREA = 'aircraft:fuselage:cabin_area'
+        CABIN_SIDEWALL_LENGTH_MIN = 'aircraft:fuselage:cabin_sidewall_length_min'
         CHARACTERISTIC_LENGTH = 'aircraft:fuselage:characteristic_length'
         CROSS_SECTION = 'aircraft:fuselage:cross_section'
         DELTA_DIAMETER = 'aircraft:fuselage:delta_diameter'
