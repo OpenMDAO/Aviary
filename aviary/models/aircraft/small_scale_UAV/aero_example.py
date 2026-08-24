@@ -17,10 +17,70 @@ from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables impor
 DEBUG_MODEL = False  # Set to True to enable debugging output
 
 # Build a cruise-only phase_info using UAV_energy_phase
+# cruise_phase_info = {
+#     'pre_mission': deepcopy(full_phase_info['pre_mission']),
+#     'cruise': deepcopy(full_phase_info['cruise']),
+#     'post_mission': deepcopy(full_phase_info['post_mission']),
+# }
+
 cruise_phase_info = {
-    'pre_mission': deepcopy(full_phase_info['pre_mission']),
-    'cruise': deepcopy(full_phase_info['cruise']),
-    'post_mission': deepcopy(full_phase_info['post_mission']),
+    'pre_mission': {
+        'include_takeoff': False,
+        'external_subsystems': [],
+        'optimize_mass': False,
+
+        # CRITICAL FIX: tell Aviary to use your external atmosphere
+        'subsystem_options': {
+            'atmosphere': {'method': 'external'},
+            'aerodynamics': {'method': 'external'},
+        },
+    },
+
+    'cruise': {
+        # CRITICAL FIX: same here
+        'subsystem_options': {
+            'atmosphere': {'method': 'external'},
+            'aerodynamics': {'method': 'external'},
+        },
+
+        'user_options': {
+            'num_segments': 1,
+            'order': 3,
+
+            'mach_optimize': False,
+            'mach_polynomial_order': 1,
+            'mach_initial': (0.08, 'unitless'),
+            'mach_final': (0.08, 'unitless'),
+            'mach_bounds': ((0.07, 0.11), 'unitless'),
+
+            'altitude_optimize': False,
+            'altitude_polynomial_order': 1,
+            'altitude_initial': (520, 'm'),
+            'altitude_final': (520, 'm'),
+            'altitude_bounds': ((500, 600), 'm'),
+
+            'throttle_enforcement': 'control',
+            'time_initial': (0, 's'),
+            'time_duration_bounds': ((1.0, 300.0), 's'),
+        },
+
+        'initial_guesses': {
+            'time': ([0, 250], 's'),
+            'distance': ([0, 800], 'm'),
+        },
+    },
+
+    'post_mission': {
+        'target_range': (5, 'm'),
+        'include_landing': False,
+        'external_subsystems': [],
+
+        # CRITICAL FIX: also here (post_mission uses the ODE too)
+        'subsystem_options': {
+            'atmosphere': {'method': 'external'},
+            'aerodynamics': {'method': 'external'},
+        },
+    },
 }
 
 prob = av.AviaryProblem(verbosity=1, meta_data=UAVExtendedMetaData)
@@ -77,12 +137,6 @@ prob.aviary_inputs.set_val(Dynamic.Vehicle.MASS, 3.787, units='kg')
 #set up the model
 prob.check_and_preprocess_inputs()
 prob.build_model()
-
-# # --- FIX INITIAL GUESSES FOR THE TRAJECTORY ---
-# num_nodes = prob.model.get_io_metadata()['traj.phases.cruise.states:altitude']['size']
-
-# prob.set_val('traj.phases.cruise.states:altitude', 520.0*np.ones(num_nodes), units='m')
-# prob.set_val('traj.phases.cruise.states:velocity', 36.0*np.ones(num_nodes), units='m/s')
              
 #set up optimization
 # prob.add_driver('IPOPT', max_iter=15)
@@ -95,122 +149,128 @@ prob.setup()
 prob.set_initial_guesses()
 prob.final_setup()
 
-# om.n2(
-#     prob,
-#     #show_browser=True,
-#     title='UAV Mass-Aero-Propulsion Full Model',
-# )
+# # --- FIX INITIAL GUESSES FOR THE TRAJECTORY ---
+# num_nodes = prob.model.get_io_metadata()['traj.phases.cruise.states:altitude']['size']
 
-#debugging before running the model
-if DEBUG_MODEL:
-    print('\nASSEMBLED UAV-RELATED SYSTEMS:\n')
-    assembled_systems = []
+# prob.set_val('traj.phases.cruise.states:altitude', 520.0*np.ones(num_nodes), units='m')
+# prob.set_val('traj.phases.cruise.states:velocity', 36.0*np.ones(num_nodes), units='m/s')
 
-    for system in prob.model.system_iter(recurse=True, include_self=False):
-        pathname = system.pathname
-        module_name = system.__class__.__module__
-        class_name = system.__class__.__name__
-        desc = f'{pathname} | {module_name}.{class_name}'
-        assembled_systems.append(desc.lower())
-
-        if any(
-            kw in desc.lower()
-            for kw in (
-                'uav_mass',
-                'uav_aero',
-                'propulsion.uav',
-                'rc_electric',
-                'battery',
-                'esc',
-                'motor',
-                'propeller',
-                'gasp_based',
-                'flops_based',
-                'turbofan',
-                'engine_deck',
-            )
-        ):
-            print(desc)
-
-    has_uav_mass = any('models.external_subsystems.uav.mass' in s
-                       for s in assembled_systems)
-    has_uav_aero = any('models.external_subsystems.uav.aerodynamics' in s
-                       for s in assembled_systems)
-    has_uav_prop = any('models.external_subsystems.uav.propulsion' in s
-                       for s in assembled_systems)
-
-    print('\nCUSTOM SUBSYSTEM CHECKS:\n')
-    print('Custom UAV mass present:', has_uav_mass)
-    print('Custom UAV aero present:', has_uav_aero)
-    print('Custom UAV propulsion present:', has_uav_prop)
-
-
-    assert has_uav_mass, (
-        'The custom UAV mass subsystem was not built.'
-    )
-
-    assert has_uav_aero, (
-        'The custom UAV aerodynamic subsystem was not built.'
-    )
-
-    assert has_uav_prop, (
-        'The custom UAV electric propulsion subsystem was not built.'
-    )
-    
-    has_builtin_aero = any('solver_sub.aerodynamics' in s for s in assembled_systems)
-    print('Built-in solver_sub aerodynamics present:', has_builtin_aero)
-    # This should be False when cruise uses external aero only.
-    assert not has_builtin_aero, "Duplicate lift output from built-in aero."
-
-# Check that unwanted large-aircraft systems are absent
-
-    has_large_aircraft_mass = any(
-        (
-            'subsystems.mass.gasp_based' in system
-            or 'subsystems.mass.flops_based' in system
-        )
-        for system in assembled_systems
-    )
-    has_builtin_geometry = any(
-    (
-        'subsystems.geometry.gasp_based' in system
-        or 'subsystems.geometry.flops_based' in system
-    )
-    for system in assembled_systems
+om.n2(
+    prob,
+    show_browser=True,
+    title='UAV Mass-Aero-Propulsion Full Model',
 )
 
-    has_conventional_engine = any(
-        (
-            'turbofan' in system
-            or 'engine_deck' in system
-        )
-        for system in assembled_systems
-    )
+#debugging before running the model
+# if DEBUG_MODEL:
+#     print('\nASSEMBLED UAV-RELATED SYSTEMS:\n')
+#     assembled_systems = []
 
-    print('\nUNWANTED SUBSYSTEM CHECKS:\n')
-#these will print yes sometimes even if the subsystems are not present. and its because its present in inputs but they are set to 0 so they arent really used.
-    print(
-        'Built-in GASP/FLOPS mass present:',
-        has_large_aircraft_mass,
-    )
-    print(
-        'Built-in GASP/FLOPS geometry present:',
-        has_builtin_geometry,
-    )
-    print(
-        'Turbofan or EngineDeck present:',
-        has_conventional_engine,
-    )
+#     for system in prob.model.system_iter(recurse=True, include_self=False):
+#         pathname = system.pathname
+#         module_name = system.__class__.__module__
+#         class_name = system.__class__.__name__
+#         desc = f'{pathname} | {module_name}.{class_name}'
+#         assembled_systems.append(desc.lower())
 
-    # assert not has_large_aircraft_mass, (
-    #     'A built-in GASP/FLOPS large-aircraft mass '
-    #     'subsystem is present.'
-    # )
+#         if any(
+#             kw in desc.lower()
+#             for kw in (
+#                 'uav_mass',
+#                 'uav_aero',
+#                 'propulsion.uav',
+#                 'rc_electric',
+#                 'battery',
+#                 'esc',
+#                 'motor',
+#                 'propeller',
+#                 'gasp_based',
+#                 'flops_based',
+#                 'turbofan',
+#                 'engine_deck',
+#             )
+#         ):
+#             print(desc)
 
-    assert not has_conventional_engine, (
-        'A conventional turbofan or EngineDeck '
-        'propulsion model is present.'
-    )
+#     has_uav_mass = any('models.external_subsystems.uav.mass' in s
+#                        for s in assembled_systems)
+#     has_uav_aero = any('models.external_subsystems.uav.aerodynamics' in s
+#                        for s in assembled_systems)
+#     has_uav_prop = any('models.external_subsystems.uav.propulsion' in s
+#                        for s in assembled_systems)
+
+#     print('\nCUSTOM SUBSYSTEM CHECKS:\n')
+#     print('Custom UAV mass present:', has_uav_mass)
+#     print('Custom UAV aero present:', has_uav_aero)
+#     print('Custom UAV propulsion present:', has_uav_prop)
+
+
+#     assert has_uav_mass, (
+#         'The custom UAV mass subsystem was not built.'
+#     )
+
+#     assert has_uav_aero, (
+#         'The custom UAV aerodynamic subsystem was not built.'
+#     )
+
+#     assert has_uav_prop, (
+#         'The custom UAV electric propulsion subsystem was not built.'
+#     )
+    
+#     has_builtin_aero = any('solver_sub.aerodynamics' in s for s in assembled_systems)
+#     print('Built-in solver_sub aerodynamics present:', has_builtin_aero)
+#     # This should be False when cruise uses external aero only.
+#     assert not has_builtin_aero, "Duplicate lift output from built-in aero."
+
+# # Check that unwanted large-aircraft systems are absent
+
+#     has_large_aircraft_mass = any(
+#         (
+#             'subsystems.mass.gasp_based' in system
+#             or 'subsystems.mass.flops_based' in system
+#         )
+#         for system in assembled_systems
+#     )
+#     has_builtin_geometry = any(
+#     (
+#         'subsystems.geometry.gasp_based' in system
+#         or 'subsystems.geometry.flops_based' in system
+#     )
+#     for system in assembled_systems
+# )
+
+#     has_conventional_engine = any(
+#         (
+#             'turbofan' in system
+#             or 'engine_deck' in system
+#         )
+#         for system in assembled_systems
+#     )
+
+#     print('\nUNWANTED SUBSYSTEM CHECKS:\n')
+# #these will print yes sometimes even if the subsystems are not present. and its because its present in inputs but they are set to 0 so they arent really used.
+#     print(
+#         'Built-in GASP/FLOPS mass present:',
+#         has_large_aircraft_mass,
+#     )
+#     print(
+#         'Built-in GASP/FLOPS geometry present:',
+#         has_builtin_geometry,
+#     )
+#     print(
+#         'Turbofan or EngineDeck present:',
+#         has_conventional_engine,
+#     )
+
+#     # assert not has_large_aircraft_mass, (
+#     #     'A built-in GASP/FLOPS large-aircraft mass '
+#     #     'subsystem is present.'
+#     # )
+
+#     assert not has_conventional_engine, (
+#         'A conventional turbofan or EngineDeck '
+#         'propulsion model is present.'
+#     )
 
 # # NORMAL MODEL EXECUTION
 # # This must remain outside the DEBUG_MODEL block.
@@ -224,30 +284,7 @@ print('\nMODEL RUN COMPLETED.\n')
 
 print("\nAVIARY ATMOSPHERE CHECK:\n")
 
-prob.model.list_outputs(includes=['*OAS_aero.aviary_atmosphere*'], val=True, units=True, prom_name=True,)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+prob.model.list_outputs(includes=['*OAS_aero.av_atmosphere*'], val=True, units=True, prom_name=True,)
 
 # DEBUGGING AFTER THE MODEL RUNS
 

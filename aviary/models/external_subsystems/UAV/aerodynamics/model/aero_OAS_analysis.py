@@ -1,4 +1,3 @@
-
 import numpy as np
 import openmdao.api as om
 
@@ -221,17 +220,14 @@ class OASAero(om.Group):
     def setup(self):
         nn = self.options['num_nodes']
         aviary_inputs = self.options['aviary_inputs']
-
         self.add_subsystem(
             'aero_conditions',
             AeroConditions(num_nodes=nn),
-
             promotes_inputs=[
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Atmosphere.DENSITY,
                 Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
             ],
-
             promotes_outputs=[
                 're',
                 Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
@@ -239,25 +235,21 @@ class OASAero(om.Group):
             ],
         )
 
-        atmosphere_model = aviary_inputs.get_val(
-            Settings.ATMOSPHERE_MODEL
-        )
+        atmosphere_model = aviary_inputs.get_val(Settings.ATMOSPHERE_MODEL)
 
         self.add_subsystem(
-            'aviary_atmosphere',
+            'av_atmosphere',
             AtmosphereComp(
                 num_nodes=nn,
                 h_def='geometric',
-                **{
-                    Settings.ATMOSPHERE_MODEL: atmosphere_model
-                },
+                **{Settings.ATMOSPHERE_MODEL: atmosphere_model},
             ),
-            promotes_inputs=[
-                Dynamic.Mission.ALTITUDE,
-            ],
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
                 Dynamic.Atmosphere.DENSITY,
                 Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+                'temperature',
+                'speed_of_sound',
             ],
         )
 
@@ -265,30 +257,32 @@ class OASAero(om.Group):
             'broadcast_wing',
             BroadcastWing(),
             promotes_inputs=[Aircraft.Wing.INCIDENCE, Aircraft.Wing.ROOT_CHORD],
-            promotes_outputs=['broadcast_incidence', 'broadcast_wing_chord']
+            promotes_outputs=['broadcast_incidence', 'broadcast_wing_chord'],
         )
 
         self.add_subsystem(
             'broadcast_htail_chord',
             BroadcastHTailChord(),
             promotes_inputs=[Aircraft.HorizontalTail.ROOT_CHORD],
-            promotes_outputs=['broadcast_htail_chord']
+            promotes_outputs=['broadcast_htail_chord'],
         )
 
-        # WING
+        # WING: use actual Aviary geometry
+        wing_span = aviary_inputs.get_val(Aircraft.Wing.SPAN, units='m')
+        wing_root_chord = aviary_inputs.get_val(Aircraft.Wing.ROOT_CHORD, units='m')
 
         mesh_dict = {
-            'num_y': 23, # if changing, change in broadcast components too
+            'num_y': 23,
             'num_x': 7,
             'wing_type': 'rect',
             'symmetry': True,
-            'span': 1, # set to 1, aviary inputs will be scaling factor
-            'root_chord': 1,
+            'span': wing_span,
+            'root_chord': wing_root_chord,
             'taper': 1,
             'sweep': 1,
             'span_cos_spacing': 1,
             'chord_cos_spacing': 1,
-            'num_twist_cp': 1
+            'num_twist_cp': 1,
         }
 
         wing_mesh = generate_mesh(mesh_dict)
@@ -301,41 +295,36 @@ class OASAero(om.Group):
             'fem_model_type': 'tube',
             't_over_c': aviary_inputs.get_val(Aircraft.Wing.THICKNESS_TO_CHORD),
             'c_max_t': aviary_inputs.get_val(Aircraft.Wing.MAX_THICKNESS_LOCATION),
-
             'with_viscous': False,
             'with_wave': False,
             'k_lam': 0.15,
             'CL0': 0.1,
-            'CD0': 0.015
+            'CD0': 0.015,
         }
 
-        # HTAIL
-
-        # location of htail relative to aerodynamic center of wing
+        # HTAIL: use actual Aviary geometry
         wing_dist = aviary_inputs.get_val(Aircraft.Wing.CENTER_DISTANCE, units='unitless')
         fuselage_length = aviary_inputs.get_val(Aircraft.Fuselage.LENGTH, units='m')
         wing_location = wing_dist * fuselage_length
         htail_dist = fuselage_length - wing_location
 
-        # Vertical separation between wing and htail planes (high wing, tail on
-        # fuselage). A coplanar tail sits exactly in the wing's trailing vortex
-        # sheet, which is singular in a VLM: lift then oscillates at mm scale in
-        # chord/span with occasional blowups (CL ~ -90), feeding the optimizer
-        # derivatives of noise ~4000x the physical trend.
-        htail_z_offset = 0.10  # m, ~2/3 fuselage max height
+        htail_z_offset = 0.10  # m
+
+        htail_span = aviary_inputs.get_val(Aircraft.HorizontalTail.SPAN, units='m')
+        htail_root_chord = aviary_inputs.get_val(Aircraft.HorizontalTail.ROOT_CHORD, units='m')
 
         mesh_dict = {
             'num_y': 19,
             'num_x': 6,
             'wing_type': 'rect',
             'symmetry': True,
-            'span': 1,
-            'root_chord': 1,
+            'span': htail_span,
+            'root_chord': htail_root_chord,
             'taper': 1,
             'sweep': 1,
             'span_cos_spacing': 1,
             'chord_cos_spacing': 1,
-            'offset': np.array([htail_dist, 0, htail_z_offset]), # offset from wing, x-aft and z-up
+            'offset': np.array([htail_dist, 0, htail_z_offset]),
         }
 
         htail_mesh = generate_mesh(mesh_dict)
@@ -347,19 +336,17 @@ class OASAero(om.Group):
             'mesh': htail_mesh,
             'fem_model_type': 'tube',
             't_over_c': aviary_inputs.get_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD),
-            'c_max_t': 0.3, # NACA 00 series
-
+            'c_max_t': 0.3,
             'with_viscous': False,
             'with_wave': False,
             'k_lam': 0.15,
             'CL0': 0.0,
-            'CD0': 0.015
+            'CD0': 0.015,
         }
 
         surfaces = [wing_surface, htail_surface]
 
         prob_vars = om.IndepVarComp()
-        # array of zeros for CG (x, y, z)
         prob_vars.add_output('cg', val=np.zeros(3), units='m')
         self.add_subsystem('prob_vars', prob_vars, promotes=[])
 
@@ -371,21 +358,19 @@ class OASAero(om.Group):
                 Dynamic.Vehicle.MASS,
                 'alpha',
             ],
-            promotes_outputs=[
-                'lift_balance_residual',
-            ],
-         )
+            promotes_outputs=['lift_balance_residual'],
+        )
 
         for surface in surfaces:
             geom_group = Geometry(surface=surface)
             self.add_subsystem(surface['name'], geom_group)
 
         for i in range(nn):
-            point_name = 'aero_point_'+ str(i)
+            point_name = 'aero_point_' + str(i)
             self.add_subsystem(point_name, AeroPoint(surfaces=surfaces))
 
             self.promotes(point_name, inputs=[('v', Dynamic.Mission.VELOCITY)], src_indices=[i])
-            self.promotes( point_name, inputs=['alpha'], src_indices=[i], flat_src_indices=True,)
+            self.promotes(point_name, inputs=['alpha'], src_indices=[i], flat_src_indices=True)
             self.connect('re', f'{point_name}.re', src_indices=[i])
             self.connect('prob_vars.cg', f'{point_name}.cg')
             self.connect(Dynamic.Atmosphere.DENSITY, f'{point_name}.rho', src_indices=[i])
@@ -397,36 +382,24 @@ class OASAero(om.Group):
 
             for surface in surfaces:
                 name = surface['name']
-
                 self.connect(f'{name}.mesh', f'{point_name}.{name}.def_mesh')
                 self.connect(f'{name}.mesh', f'{point_name}.aero_states.{name}_def_mesh')
 
         self.add_subsystem(
             'collect_lift_drag',
             CollectLiftDrag(num_nodes=nn),
-                promotes_outputs=[
-                    Dynamic.Vehicle.LIFT,
-                    'lifting_surface_drag',
-                    'lifting_surface_CL',
-                    'lifting_surface_CD'
-                ]
+            promotes_outputs=[
+                Dynamic.Vehicle.LIFT,
+                'lifting_surface_drag',
+                'lifting_surface_CL',
+                'lifting_surface_CD',
+            ],
         )
+        print("DEBUG ALTITUDE:", aviary_inputs.get_val(Dynamic.Mission.ALTITUDE, units='m'))
 
         self.options['auto_order'] = True
 
     def configure(self):
-        # changing any value in Aviary applies a scaling factor to the existing geometry in the mesh
-        # that's why all the values are 1 in the mesh dictionaries
-        self.promotes('wing', inputs=[('mesh.stretch.span', Aircraft.Wing.SPAN)])
-        self.promotes('htail', inputs=[('mesh.stretch.span', Aircraft.HorizontalTail.SPAN)])
-
-        self.connect('broadcast_wing_chord', 'wing.mesh.scale_x.chord')
-        self.connect('broadcast_htail_chord', 'htail.mesh.scale_x.chord')
-
-        #self.promotes('wing', inputs=[('mesh.taper.taper', Aircraft.Wing.TAPER_RATIO)])
-        # self.promotes('htail', inputs=[('mesh.taper.taper', Aircraft.HorizontalTail.TAPER_RATIO)])
-
-        self.promotes('wing', inputs=[('mesh.sweep.sweep', Aircraft.Wing.SWEEP)])
-        self.promotes('htail', inputs=[('mesh.sweep.sweep', Aircraft.HorizontalTail.SWEEP)])
-
+        # No span/chord promotions; geometry is already set in mesh_dict
+        # Use broadcast only for incidence twist
         self.connect('broadcast_incidence', 'wing.mesh.rotate.twist')
