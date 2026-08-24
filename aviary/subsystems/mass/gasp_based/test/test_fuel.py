@@ -5,12 +5,13 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.fuel import (
-    BodyTankCalculations,
     BWBFuselageMass,
     FuelComponents,
     FuelMass,
     FuelSysAndFullFuselageMass,
     FuselageMass,
+    TankCapacity,
+    WingFuelMin,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
@@ -24,7 +25,8 @@ class BodyCalculationTestCase1(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
+        self.prob.model.add_subsystem('wing_fuel_min', WingFuelMin(), promotes=['*'])
+        self.prob.model.add_subsystem('tank_capacity', TankCapacity(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_DESIGN, val=857.480639944284, units='ft**3'
@@ -71,7 +73,8 @@ class BodyCalculationTestCase2(
 ):  # this is v 3.6 large single aisle 1 test case with wing loading of 150 psf and fuel margin of 10%
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
+        self.prob.model.add_subsystem('wing_fuel_min', WingFuelMin(), promotes=['*'])
+        self.prob.model.add_subsystem('tank_capacity', TankCapacity(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_DESIGN, val=989.2, units='ft**3'
@@ -121,7 +124,8 @@ class BodyCalculationTestCase3(unittest.TestCase):
 
     def test_case1(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
+        self.prob.model.add_subsystem('wing_fuel_min', WingFuelMin(), promotes=['*'])
+        self.prob.model.add_subsystem('tank_capacity', TankCapacity(), promotes=['*'])
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_DESIGN, val=989.2, units='ft**3'
         )
@@ -153,9 +157,15 @@ class BodyCalculationTestCase4smooth(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
-        self.prob.model.wing_calcs.options[Settings.VERBOSITY] = Verbosity.QUIET
-        self.prob.model.wing_calcs.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = True
+        wing_fuel_min = self.prob.model.add_subsystem(
+            'wing_fuel_min', WingFuelMin(), promotes=['*']
+        )
+        tank_capacity = self.prob.model.add_subsystem(
+            'tank_capacity', TankCapacity(), promotes=['*']
+        )
+        tank_capacity.options[Settings.VERBOSITY] = Verbosity.QUIET
+        wing_fuel_min.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = True
+        tank_capacity.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = True
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_DESIGN, val=857.480639944284, units='ft**3'
@@ -204,9 +214,15 @@ class BodyCalculationTestCase5(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
-        self.prob.model.wing_calcs.options[Settings.VERBOSITY] = Verbosity.QUIET
-        self.prob.model.wing_calcs.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = False
+        wing_fuel_min = self.prob.model.add_subsystem(
+            'wing_fuel_min', WingFuelMin(), promotes=['*']
+        )
+        tank_capacity = self.prob.model.add_subsystem(
+            'tank_capacity', TankCapacity(), promotes=['*']
+        )
+        tank_capacity.options[Settings.VERBOSITY] = Verbosity.QUIET
+        wing_fuel_min.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = False
+        tank_capacity.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = False
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_DESIGN, val=661.583, units='ft**3'
@@ -255,9 +271,15 @@ class BodyCalculationTestCase6smooth(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
-        self.prob.model.wing_calcs.options[Settings.VERBOSITY] = Verbosity.QUIET
-        self.prob.model.wing_calcs.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = True
+        wing_fuel_min = self.prob.model.add_subsystem(
+            'wing_fuel_min', WingFuelMin(), promotes=['*']
+        )
+        tank_capacity = self.prob.model.add_subsystem(
+            'tank_capacity', TankCapacity(), promotes=['*']
+        )
+        tank_capacity.options[Settings.VERBOSITY] = Verbosity.QUIET
+        wing_fuel_min.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = True
+        tank_capacity.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = True
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_DESIGN, val=661.583, units='ft**3'
@@ -303,9 +325,15 @@ class BodyCalculationTestCase7smooth(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
-        self.prob.model.wing_calcs.options[Settings.VERBOSITY] = Verbosity.QUIET
-        self.prob.model.wing_calcs.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = True
+        wing_fuel_min = self.prob.model.add_subsystem(
+            'wing_fuel_min', WingFuelMin(), promotes=['*']
+        )
+        tank_capacity = self.prob.model.add_subsystem(
+            'tank_capacity', TankCapacity(), promotes=['*']
+        )
+        tank_capacity.options[Settings.VERBOSITY] = Verbosity.QUIET
+        wing_fuel_min.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = True
+        tank_capacity.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES] = True
 
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_DESIGN, val=615.03323815, units='ft**3'
@@ -355,9 +383,6 @@ class FuelComponentsTestCase(unittest.TestCase):
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 1114, units='ft**3'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuel.MAX_CAPACITY_MASS, val=55725.1, units='lbm'
-        )
 
     def test_case1(self):
         """not to smooth mass discontinuties (OEM_wingfuel_wt > volume_wingfuel_wt)"""
@@ -377,7 +402,6 @@ class FuelComponentsTestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 857.480639944284, tol)
         assert_near_equal(self.prob['OEM_fuel_vol'], 1577.160566039489, tol)
         assert_near_equal(self.prob[Mission.OPERATING_MASS], 96508.0, tol)
-        assert_near_equal(self.prob['payload_mass_max_fuel'], 23166.9, tol)
         assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
         assert_near_equal(self.prob['max_wingfuel_mass'], 55725.1, tol)
 
@@ -402,7 +426,6 @@ class FuelComponentsTestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 857.480639944284, tol)
         assert_near_equal(self.prob['OEM_fuel_vol'], 1577.160566039489, tol)
         assert_near_equal(self.prob[Mission.OPERATING_MASS], 96508.0, tol)
-        assert_near_equal(self.prob['payload_mass_max_fuel'], 23166.9, tol)
         assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
         assert_near_equal(self.prob['max_wingfuel_mass'], 55725.1, tol)
 
@@ -432,7 +455,6 @@ class FuelAndOEMTestCase2(unittest.TestCase):
         prob.model.set_input_defaults('fuel_mass_required', val=42892.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 1114, units='ft**3')
         prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Fuel.MAX_CAPACITY_MASS, val=55725.1, units='lbm')
 
         setup_model_options(prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
@@ -829,7 +851,6 @@ class BWBFuelAndOEMTestCase(unittest.TestCase):
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 605.90781747, units='ft**3'
         )
         prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, 10.0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Fuel.MAX_CAPACITY_MASS, 26652.3, units='lbm')
 
         setup_model_options(prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
@@ -844,7 +865,6 @@ class BWBFuelAndOEMTestCase(unittest.TestCase):
         assert_near_equal(self.prob['OEM_fuel_vol'], 1233.80378225, tol)
         assert_near_equal(self.prob[Mission.OPERATING_MASS], 88282.366, tol)
 
-        assert_near_equal(self.prob['payload_mass_max_fuel'], 35065.334, tol)
         assert_near_equal(self.prob['volume_wingfuel_mass'], 30308.86876357, tol)
         assert_near_equal(self.prob['max_wingfuel_mass'], 30308.86876357, tol)
 
@@ -858,7 +878,8 @@ class BWBBodyCalculationTest(unittest.TestCase):
 
     def setUp(self):
         prob = self.prob = om.Problem()
-        prob.model.add_subsystem('wing_calcs', BodyTankCalculations(), promotes=['*'])
+        prob.model.add_subsystem('wing_fuel_min', WingFuelMin(), promotes=['*'])
+        prob.model.add_subsystem('tank_capacity', TankCapacity(), promotes=['*'])
 
         prob.model.set_input_defaults(Aircraft.Fuel.WING_VOLUME_DESIGN, 532.8, units='ft**3')
         prob.model.set_input_defaults(
@@ -886,6 +907,7 @@ class BWBBodyCalculationTest(unittest.TestCase):
         assert_near_equal(self.prob['extra_fuel_volume'], 0.69314718, tol)
         assert_near_equal(self.prob['max_extra_fuel_mass'], 34.67277748, tol)
         assert_near_equal(self.prob['wingfuel_mass_min'], 9194.93172252, tol)
+        assert_near_equal(self.prob['payload_mass_max_fuel'], 45940.249, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
