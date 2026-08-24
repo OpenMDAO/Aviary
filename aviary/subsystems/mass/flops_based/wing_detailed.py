@@ -329,6 +329,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
     # Basically, Engine.WING_LOCATIONS is ignored if there are one or fewer wing engines
 
     def initialize(self):
+        add_aviary_option(self, Aircraft.BWB.WING_ROOT_INDEX)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Engine.NUM_WING_ENGINES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
@@ -340,6 +341,10 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
     def setup(self):
         input_station_distribution = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
         num_input_stations = len(input_station_distribution)
+        root = self.options[Aircraft.BWB.WING_ROOT_INDEX]
+        if root < 1:
+            num_input_stations += 1
+
         total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
@@ -384,25 +389,32 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         num_integration_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
+        root = self.options[Aircraft.BWB.WING_ROOT_INDEX]
+
         width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         wingspan = inputs[Aircraft.Wing.SPAN][0]
         rate_span = (wingspan - width) / wingspan
 
-        bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=width.dtype
-        )
-        if not self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
-            bwb_input_station_dist[1] = width / 2.0
+        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
+
+        if root < 1:
+            bwb_input_station_dist = np.zeros(len(input_station_dist) + 1, dtype=width.dtype)
+            bwb_input_station_dist[1:] = input_station_dist
+            if not self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
+                bwb_input_station_dist[1] = width / 2.0
+            else:
+                bwb_input_station_dist = np.where(
+                    bwb_input_station_dist <= 1.0,
+                    bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
+                    bwb_input_station_dist + width / 2.0,  # else
+                )
+                bwb_input_station_dist[0] = 0.0
+                bwb_input_station_dist[1] = width / 2.0
+
         else:
-            bwb_input_station_dist = np.where(
-                bwb_input_station_dist <= 1.0,
-                bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
-                bwb_input_station_dist + width / 2.0,  # else
-            )
-            bwb_input_station_dist[0] = 0.0
-            bwb_input_station_dist[1] = width / 2.0
+            bwb_input_station_dist = np.asarray(input_station_dist)
+
         inp_stations_mod = []
         for x in bwb_input_station_dist:
             if x > 1.0:
@@ -410,11 +422,16 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             else:
                 inp_stations_mod.append(x)
         inp_stations_mod = np.array(inp_stations_mod)
-        # For BWB, always start from inp_stations_mod[1], not inp_stations_mod[0]
-        inp_stations_mod = inp_stations_mod[1:]
+
+        if root == 0:
+            # Remove prepended centerline for this calculation.
+            # Otherwise, wing starts where the user specified.
+            root = 1
+
+        inp_stations_mod = inp_stations_mod[root:]
 
         load_path_sweep = inputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION']
-        load_path_sweep_mod = np.array(load_path_sweep[1:])
+        load_path_sweep_mod = np.array(load_path_sweep[root:])
 
         ar = inputs[Aircraft.Wing.ASPECT_RATIO][0]
         arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE][0]
@@ -431,7 +448,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
                 chord_mod.append(2 * x / wingspan)
             else:
                 chord_mod.append(x * ar_scale_factor)
-        chord_mod = np.array(chord_mod)
+        chord_mod = np.array(chord_mod)[root:]
 
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
         faert = inputs[Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR]
@@ -439,7 +456,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         thickness_to_chord = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE]
-        thickness_to_chord_mod = thickness_to_chord[1:] * tc[0] / tcref[0]
+        thickness_to_chord_mod = thickness_to_chord[root:] * tc[0] / tcref[0]
 
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
         # odd numbers of wing mounted engines assume the "odd" engine out is not on the
@@ -475,7 +492,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         chord_interp = InterpND(
             method='slinear', points=(inp_stations_mod), x_interp=integration_stations
         )
-        chord_int_stations = chord_interp.evaluate_spline(chord_mod[1:], compute_derivative=False)
+        chord_int_stations = chord_interp.evaluate_spline(chord_mod, compute_derivative=False)
         # Scale
         chord_int_stations *= ar_scale_factor
 
