@@ -1241,6 +1241,19 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.COMPUTE_HTAIL_AREA,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='unitless',
+    option=True,
+    default_value=False,
+    types=bool,
+    desc='if true, compute horizontal tail area from its volume coefficient instead of '
+    'taking it as a user input. Only used by FLOPS-based geometry; GASP-based geometry '
+    'always computes horizontal tail area.',
+)
+
+add_meta_data(
     Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
@@ -1250,6 +1263,19 @@ add_meta_data(
     types=bool,
     desc='if true, use empirical tail volume coefficient equation. This is '
     'true if VBARHX is 0 in GASP.',
+)
+
+add_meta_data(
+    Aircraft.Design.COMPUTE_VTAIL_AREA,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='unitless',
+    option=True,
+    default_value=False,
+    types=bool,
+    desc='if true, compute vertical tail area from its volume coefficient instead of '
+    'taking it as a user input. Only used by FLOPS-based geometry; GASP-based geometry '
+    'always computes vertical tail area.',
 )
 
 add_meta_data(

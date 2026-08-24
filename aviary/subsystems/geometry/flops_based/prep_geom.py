@@ -11,6 +11,7 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     OtherCharacteristicLengths,
     WingCharacteristicLength,
 )
+from aviary.subsystems.geometry.flops_based.empennage import EmpennageSize
 from aviary.subsystems.geometry.flops_based.fuselage import (
     BWBDetailedCabinLayout,
     BWBFuselagePrelim,
@@ -40,6 +41,8 @@ class PrepGeom(om.Group):
         add_aviary_option(self, Aircraft.Fuselage.SIMPLE_LAYOUT)
         add_aviary_option(self, Aircraft.Design.TYPE)
         add_aviary_option(self, Aircraft.BWB.DETAILED_WING_PROVIDED)
+        add_aviary_option(self, Aircraft.Design.COMPUTE_HTAIL_AREA)
+        add_aviary_option(self, Aircraft.Design.COMPUTE_VTAIL_AREA)
 
     def setup(self):
         is_simple_layout = self.options[Aircraft.Fuselage.SIMPLE_LAYOUT]
@@ -110,6 +113,18 @@ class PrepGeom(om.Group):
         elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'wing_prelim', WingPrelim(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
+
+        # Must precede 'wetted_area', which consumes the tail areas.
+        if (
+            self.options[Aircraft.Design.COMPUTE_HTAIL_AREA]
+            or self.options[Aircraft.Design.COMPUTE_VTAIL_AREA]
+        ):
+            self.add_subsystem(
+                'empennage',
+                EmpennageSize(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
         self.add_subsystem(
