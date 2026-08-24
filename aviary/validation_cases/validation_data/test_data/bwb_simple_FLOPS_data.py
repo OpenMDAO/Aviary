@@ -199,7 +199,7 @@ inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)  # FLAPR
 inputs.set_val(Aircraft.Wing.DETAILED_WING, True)
 inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 121.05, 'ft**2')  # GLOV
 
-inputs.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, np.array([0.0, 0.5, 1.0]))  # ETAW
+inputs.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, np.array([0.5, 1.0]))  # ETAW
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)  # PDIST
 inputs.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 2.0)  # CAM
 inputs.set_val(Aircraft.Wing.MISC_MASS_SCALER, 1.0)  # FRWI3
@@ -364,7 +364,7 @@ outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 14152.3734702, 'lbm')  # WSC
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 3.4488813)  # AR
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 3.4488813)  # ARREF
 outputs.set_val(Aircraft.Wing.MASS, 86742.28126808, 'lbm')  # WWING
-outputs.set_val(Aircraft.Wing.ROOT_CHORD, 63.96, 'ft')  # XLW
+outputs.set_val(Aircraft.Wing.ROOT_CHORD, 91.37142857142858, 'ft')  # XLOUT
 outputs.set_val(Aircraft.Wing.AREA, 16555.972297926455, 'ft**2')  # SW
 outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.53107166)  # PCTL
 outputs.set_val(Aircraft.Wing.WETTED_AREA, 33816.732336575638, 'ft**2')  # SWET(1)

@@ -67,14 +67,6 @@ class BWBFuselagePrelim(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
         add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='ft')
-        self.add_input(
-            'Rear_spar_percent_chord',
-            0.7,
-            units='unitless',
-            desc='RSPSOB: Rear spar percent chord for BWB at side of body, '
-            ' or more precisely, the passenger compartment ends at the '
-            ' 70% of fuselage length from the leading edge.',
-        )
 
         add_aviary_output(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
@@ -91,7 +83,6 @@ class BWBFuselagePrelim(om.ExplicitComponent):
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.MAX_WIDTH,
                 Aircraft.Wing.ROOT_CHORD,
-                'Rear_spar_percent_chord',
             ],
         )
 
@@ -100,20 +91,14 @@ class BWBFuselagePrelim(om.ExplicitComponent):
         length = inputs[Aircraft.Fuselage.LENGTH]
         max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
         root_chord = inputs[Aircraft.Wing.ROOT_CHORD]
-        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
 
         if length <= 0.0:
             raise ValueError(
                 f'Aircraft.Fuselage.LENGTH must be positive, however {length} is provided.'
             )
-        if rear_spar_percent_chord <= 0.0:
-            raise ValueError(
-                'Rear_spar_percent_chord must be positive, '
-                f'however {rear_spar_percent_chord} is provided.'
-            )
 
         ref_diameter = 0.5 * (max_height + max_width)
-        planform_area = max_width * (length + root_chord / rear_spar_percent_chord) / 2.0
+        planform_area = max_width * (length + root_chord) / 2.0
 
         outputs[Aircraft.Fuselage.REF_DIAMETER] = ref_diameter
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = planform_area
@@ -122,18 +107,12 @@ class BWBFuselagePrelim(om.ExplicitComponent):
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         length = inputs[Aircraft.Fuselage.LENGTH]
         root_chord = inputs[Aircraft.Wing.ROOT_CHORD]
-        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
 
         partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.LENGTH] = max_width / 2.0
         partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.MAX_WIDTH] = (
-            length + root_chord / rear_spar_percent_chord
+            length + root_chord
         ) / 2.0
-        partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Wing.ROOT_CHORD] = (
-            max_width / rear_spar_percent_chord / 2.0
-        )
-        partials[Aircraft.Fuselage.PLANFORM_AREA, 'Rear_spar_percent_chord'] = (
-            -max_width * root_chord / rear_spar_percent_chord**2 / 2.0
-        )
+        partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Wing.ROOT_CHORD] = max_width / 2.0
 
 
 class SimpleCabinLayout(om.ExplicitComponent):
@@ -460,15 +439,15 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
         add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
+        add_aviary_option(self, Aircraft.BWB.MAX_BAY_WIDTH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
         add_aviary_input(self, Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, units='unitless')
-        self.add_input(
-            'Rear_spar_percent_chord', 0.7, units='unitless', desc='RSPCHD at fuselage centerline'
-        )
+        add_aviary_input(self, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE)
+        add_aviary_input(self, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT)
 
         add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
@@ -481,7 +460,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
             of=[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH],
             wrt=[
                 Aircraft.Fuselage.LENGTH,
-                'Rear_spar_percent_chord',
+                Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE,
             ],
         )
         self.declare_partials(
@@ -490,7 +469,8 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.MAX_WIDTH,
                 Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
-                'Rear_spar_percent_chord',
+                Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE,
+                Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT,
             ],
         )
         self.declare_partials(
@@ -499,7 +479,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.MAX_WIDTH,
                 Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
-                'Rear_spar_percent_chord',
+                Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE,
             ],
         )
         self.declare_partials(
@@ -514,10 +494,13 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         verbosity = self.options[Settings.VERBOSITY]
 
         length = inputs[Aircraft.Fuselage.LENGTH]
-        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
+        rear_spar_percent_chord_cl = inputs[Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE]
+        rear_spar_percent_chord_root = inputs[Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT]
+
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         height_to_width = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD]
-        bay_width_nom = 12.0  # ft
+
+        bay_width_nom = self.options[Aircraft.BWB.MAX_BAY_WIDTH][0]
 
         if length <= 0.0:
             raise ValueError(
@@ -528,53 +511,79 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
                 f'Aircraft.Fuselage.MAX_HEIGHT must be positive, however {max_width} is provided.'
             )
 
-        pax_compart_length = rear_spar_percent_chord * length
+        pax_compart_length = rear_spar_percent_chord_cl * length
 
         sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
         tan_sweep = np.tan(sweep / 57.296)
-        root_chord = pax_compart_length - tan_sweep * max_width / 2.0
-        area_cabin = (pax_compart_length + root_chord) * max_width / 2.0
+        sidewall = pax_compart_length - tan_sweep * max_width / 2.0
+        area_cabin = (pax_compart_length + sidewall) * max_width / 2.0
         max_height = height_to_width * length
 
         # Enforce maximum number of bays
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
-        num_bays = int(0.5 + max_width / bay_width_nom)
+
+        # The original fortran code enforced the maximum number of bays with an additional check
+        # that is equivalent to "rounding up" because we are using max width here.
+        # TODO: Much of this will need a re-write if we add the FLOPS capability that lets you
+        # pick the inputs you want, and it calculates the others. This will involve sorting out
+        # when "WF" means max width, and when it means computed width.
+        num_bays = np.ceil(0.5 + max_width.real / bay_width_nom)
         if num_bays.real > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
+
         outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
 
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
-        outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
+        outputs[Aircraft.Wing.ROOT_CHORD] = sidewall / rear_spar_percent_chord_root
         outputs[Aircraft.Fuselage.CABIN_AREA] = area_cabin
         outputs[Aircraft.Fuselage.MAX_HEIGHT] = max_height
 
     def compute_partials(self, inputs, J):
         length = inputs[Aircraft.Fuselage.LENGTH]
-        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
+        rear_spar_percent_chord_cl = inputs[Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE]
+        rear_spar_percent_chord_root = inputs[Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT]
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
-        tan_sweep = np.tan(sweep / 57.296)
-        pax_compart_length = rear_spar_percent_chord * length
         height_to_width = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD]
 
-        J[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, Aircraft.Fuselage.LENGTH] = (
-            rear_spar_percent_chord
-        )
-        J[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'Rear_spar_percent_chord'] = length
+        tan_sweep = np.tan(sweep / 57.296)
+        pax_compart_length = rear_spar_percent_chord_cl * length
+        sidewall = pax_compart_length - tan_sweep * max_width / 2.0
 
-        J[Aircraft.Wing.ROOT_CHORD, Aircraft.Fuselage.LENGTH] = rear_spar_percent_chord
-        J[Aircraft.Wing.ROOT_CHORD, 'Rear_spar_percent_chord'] = length
-        J[Aircraft.Wing.ROOT_CHORD, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = (
-            -max_width / (np.cos(sweep / 57.296)) ** 2 / 57.296 / 2.0
+        J[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, Aircraft.Fuselage.LENGTH] = (
+            rear_spar_percent_chord_cl
         )
-        J[Aircraft.Wing.ROOT_CHORD, Aircraft.Fuselage.MAX_WIDTH] = -tan_sweep / 2.0
+        J[
+            Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH,
+            Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE,
+        ] = length
+
+        fact1 = (np.cos(sweep / 57.296)) ** 2
+
+        J[Aircraft.Wing.ROOT_CHORD, Aircraft.Fuselage.LENGTH] = (
+            rear_spar_percent_chord_cl / rear_spar_percent_chord_root
+        )
+        J[Aircraft.Wing.ROOT_CHORD, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE] = (
+            length / rear_spar_percent_chord_root
+        )
+        J[Aircraft.Wing.ROOT_CHORD, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = (
+            -max_width / fact1 / 57.296 / 2.0 / rear_spar_percent_chord_root
+        )
+        J[Aircraft.Wing.ROOT_CHORD, Aircraft.Fuselage.MAX_WIDTH] = (
+            -tan_sweep / 2.0 / rear_spar_percent_chord_root
+        )
+        J[Aircraft.Wing.ROOT_CHORD, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT] = (
+            -sidewall / rear_spar_percent_chord_root**2
+        )
 
         J[Aircraft.Fuselage.CABIN_AREA, Aircraft.Fuselage.LENGTH] = (
-            rear_spar_percent_chord * max_width
+            rear_spar_percent_chord_cl * max_width
         )
-        J[Aircraft.Fuselage.CABIN_AREA, 'Rear_spar_percent_chord'] = length * max_width
+        J[Aircraft.Fuselage.CABIN_AREA, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE] = (
+            length * max_width
+        )
         J[Aircraft.Fuselage.CABIN_AREA, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = (
-            -(max_width**2) / 4.0 / (np.cos(sweep / 57.296)) ** 2 / 57.296
+            -(max_width**2) / 4.0 / fact1 / 57.296
         )
         J[Aircraft.Fuselage.CABIN_AREA, Aircraft.Fuselage.MAX_WIDTH] = (
             pax_compart_length - tan_sweep * max_width / 2.0
@@ -597,6 +606,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY)
         add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
         add_aviary_option(self, Aircraft.BWB.MAX_BAY_WIDTH)
+        add_aviary_option(self, Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH_MIN)
 
     def setup(self):
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
@@ -607,6 +617,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS)
         add_aviary_input(self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST)
         add_aviary_input(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY)
+        add_aviary_input(self, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE)
+        add_aviary_input(self, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT)
 
         add_aviary_output(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
@@ -621,8 +633,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
-        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
+        rear_spar_percent_chord = inputs[Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE]
+        rear_spar_percent_chord_root = inputs[Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT]
         sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
         height_to_width = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD]
         tan_sweep = np.tan(sweep / 57.296)
@@ -631,7 +643,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         bay_width_max, _ = self.options[Aircraft.BWB.MAX_BAY_WIDTH]
         num_bays = 0
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
-        root_chord_min = 38.5  # ft
+        sidewall_min, _ = self.options[Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH_MIN]  # ft
+
         width_lava = 36.0  # inch
         width_galley = 36.0  # inch
         width_closet = 12.0  # inch
@@ -705,7 +718,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         if num_bays > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
 
-        num_bays_loc = num_bays
+        # Loop spans 4246~4314 in BWBFUS in sfwate.py
         iter = 0
         while True:
             num_bays_loc = num_bays
@@ -720,11 +733,11 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             area_cabin = area_seats + area_service + area_waste + area_aisle
 
             # Calculate cabin dimensions
-            root_chord = root_chord_min
+            sidewall = sidewall_min
             max_width = (
-                2.0 * (-root_chord + np.sqrt(root_chord**2 + tan_sweep * area_cabin)) / tan_sweep
+                2.0 * (-sidewall + np.sqrt(sidewall**2 + tan_sweep * area_cabin)) / tan_sweep
             )
-            pax_compart_length = root_chord + tan_sweep * max_width / 2.0
+            pax_compart_length = sidewall + tan_sweep * max_width / 2.0
 
             # Enforce maximum number of bays
             num_bays_tmp = 0.5 + max_width / bay_width_nom
@@ -742,15 +755,16 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
                     num_bays = num_bays_max
                     max_width = num_bays_max * bay_width
                     pax_compart_length = area_cabin / max_width + tan_sweep * max_width / 4.0
-                    root_chord = pax_compart_length - tan_sweep * max_width / 2.0
+                    sidewall = pax_compart_length - tan_sweep * max_width / 2.0
                 else:
                     num_bays = smooth_int_tanh(num_bays_tmp, mu=40.0)
 
             if num_bays_loc == num_bays:
                 break
-            iter = iter + 1
+
+            iter += 1
             if iter > 100:
-                warnings.warn(f'Number of iteration exceeded 100.')
+                warnings.warn(f'Number of iteration exceeded 100 in BWBDetailedCabinLayout.')
                 break
 
         length = pax_compart_length / rear_spar_percent_chord
@@ -762,7 +776,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         outputs[Aircraft.Fuselage.CABIN_AREA] = area_cabin
         outputs[Aircraft.Fuselage.MAX_WIDTH] = max_width
         outputs[Aircraft.Fuselage.MAX_HEIGHT] = max_height
-        outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
+        outputs[Aircraft.Wing.ROOT_CHORD] = sidewall / rear_spar_percent_chord_root
         outputs['bay_width'] = bay_width
 
         # For improvement on using int function on num_bays, see issue #1084.
