@@ -402,12 +402,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
     (but excluding struts and fold effects) using a nonlinear solver.
     """
 
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
-
     def setup(self):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS, units='lbm')
         self.add_input(

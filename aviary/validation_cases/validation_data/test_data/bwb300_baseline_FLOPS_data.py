@@ -98,9 +98,6 @@ inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)  # NTANK
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)  # WUF
 inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, False)  # IFUFU
 inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6883549569366508, 'unitless')
-inputs.set_val(Aircraft.Fuel.WING_REF_CAPACITY, 0.0, 'lbm')  # FUELRF
-inputs.set_val(Aircraft.Fuel.WING_REF_CAPACITY_TERM_A, 0.0)  # FUSCLA
-inputs.set_val(Aircraft.Fuel.WING_REF_CAPACITY_TERM_B, 0.0)  # FUSCLB
 inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 
 # Furnishings
@@ -117,6 +114,7 @@ inputs.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, 0.1792)  # TCF
 inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)  # SWETF
 inputs.set_val(Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)  # TRLB
 inputs.set_val(Aircraft.Fuselage.LAMINAR_FLOW_UPPER, 0.0)  # TRUB
+inputs.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.1792)  # TCF
 
 # Horizontal Tail
 # ---------------------------
@@ -215,7 +213,7 @@ inputs.set_val(Aircraft.Wing.SPAN, 186.631829293424, 'ft')  # SPAN
 
 inputs.set_val(
     Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
-    np.array([-1.0, 48.25, 33.20, 18.97, 14.19, 10.20, 3.220]),
+    np.array([48.25, 33.20, 18.97, 14.19, 10.20, 3.220]),
 )  # CHD
 inputs.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.85)  # FCOMP
 inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.3)  # FLAPR
@@ -226,14 +224,14 @@ inputs.set_val(
 
 inputs.set_val(
     Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-    np.array([0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0]),  # ETAW
+    np.array([0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0]),  # ETAW
 )
 
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)  # PDIST
 
 inputs.set_val(
     Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
-    np.array([0.0, 0.0, 0.0, 17.0, 17.0, 17.0]),
+    np.array([0.0, 0.0, 17.0, 17.0, 17.0]),
     'deg',  # SWL
 )
 inputs.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 2.0)  # CAM
@@ -251,7 +249,7 @@ inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.0)  # TCREF
 
 inputs.set_val(
     Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
-    np.array([-1.0, 0.125, 0.125, 0.076, 0.076, 0.076, 0.06]),  # TOC
+    np.array([0.125, 0.125, 0.076, 0.076, 0.076, 0.06]),  # TOC
 )
 inputs.set_val(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.75)  # ULF
 inputs.set_val(Aircraft.Wing.VAR_SWEEP_MASS_PENALTY, 0.0)  # VARSWP
@@ -326,7 +324,7 @@ outputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, 2450.00190713, 'lbm')
 
 outputs.set_val(Aircraft.Electrical.MASS, 2646.5272348061812, 'lbm')  # WELEC
 
-outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 787493.65267017565, 'lbm')  # FMXTOT
+outputs.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 787493.65267017565, 'lbm')  # FMXTOT
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 3656.7260445688612, 'lbm')  # WFSYS
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 1314.83910317, 'lbm')  # WUF
 outputs.set_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 787493.65267018, 'lbm')  # FULWMX
@@ -415,7 +413,7 @@ outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 24461.161868706797, 'lbm')  # 
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 8093.1997108029764, 'lbm')  # WSC
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 4.84361005)  # AR
 outputs.set_val(Aircraft.Wing.MASS, 50145.60120438, 'lbm')  # WWING
-outputs.set_val(Aircraft.Wing.ROOT_CHORD, 38.5, 'ft')  # XLW
+outputs.set_val(Aircraft.Wing.ROOT_CHORD, 55.0, 'ft')  # XLOUT
 outputs.set_val(Aircraft.Wing.AREA, 8421.7146805052689, 'ft**2')  # SW
 outputs.set_val(Aircraft.Wing.WETTED_AREA, 17302.04910213, 'ft**2')  # SWET(1)
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 4.84361005)  # ARREF
