@@ -55,7 +55,7 @@ aircraft:fuselage:nose_fineness,1,unitless
 aircraft:fuselage:num_aisles,1,unitless
 aircraft:fuselage:pilot_compartment_length,9.5,ft
 aircraft:fuselage:pressure_differential,7.5,psi
-aircraft:fuselage:seat_width,20.2,inch
+aircraft:fuselage:seat_width_economy,20.2,inch
 aircraft:fuselage:tail_fineness,3,unitless
 aircraft:fuselage:wetted_area,4000,ft**2
 aircraft:horizontal_tail:aspect_ratio,6.0,unitless

@@ -12,8 +12,8 @@ from aviary.validation_cases.validation_data.test_data.V3_bug_fixed_IO import (
     V3_bug_fixed_non_metadata,
     V3_bug_fixed_options,
 )
+from aviary.variable_info.enums import AircraftTypes, GASPEngineType
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -133,7 +133,7 @@ class MassPremissionTestCase2(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
@@ -148,8 +148,22 @@ class MassPremissionTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+        options.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -390,18 +404,119 @@ class MassPremissionTestCase2(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        self.prob.run_model()
+        prob = self.prob
+        prob.run_model()
 
         tol = 5e-4
         # size values:
-        assert_near_equal(self.prob['size.cabin_height'], 13.1, tol)
-        assert_near_equal(self.prob['size.cabin_len'], 72.1, tol)
-        assert_near_equal(self.prob['size.nose_height'], 8.6, tol)
+        # FuselageParameters
+        assert_near_equal(prob['size.cabin_height'], 13.1, tol)
+        assert_near_equal(prob['size.cabin_len'], 72.1, tol)
+        assert_near_equal(prob['size.nose_height'], 8.6, tol)
+        # FuselageSize
+        assert_near_equal(prob[Aircraft.Fuselage.LENGTH], 129.49722222, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.WETTED_AREA], 4000.00108449, tol)
+        assert_near_equal(prob[Aircraft.TailBoom.LENGTH], 129.49722222, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 1068.92361111, tol)
+        # WingSize
+        assert_near_equal(prob[Aircraft.Wing.AREA], 1370.3125, tol)
+        assert_near_equal(prob[Aircraft.Wing.SPAN], 117.81878299, tol)
+        # WingParameters
+        assert_near_equal(prob[Aircraft.Wing.CENTER_CHORD], 17.48974356, tol)
+        assert_near_equal(prob[Aircraft.Wing.AVERAGE_CHORD], 12.61453233, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 16.40711451, tol)
+        assert_near_equal(prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13965584, tol)
+        assert_near_equal(prob[Aircraft.Wing.LEADING_EDGE_SWEEP], 0.47639483, tol)
+        # WingVolume
+        assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 1114.00563103, tol)
+        # GASPEngineDiameter
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_DIAMETER], 7.351408, tol)
+        # GASPEngineLength
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], 14.702816, tol)
+        # GASPEngineSurfaceArea
+        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 339.5634375, tol)
+        # LoadSpeeds
+        assert_near_equal(prob['max_airspeed'], 350.0, tol)
+        assert_near_equal(prob['vel_c'], 350.0, tol)
+        assert_near_equal(prob['max_maneuver_factor'], 2.5, tol)
+        assert_near_equal(prob['min_dive_vel'], 420.0, tol)
+        # MassParameters
+        assert_near_equal(prob[Aircraft.Wing.MATERIAL_FACTOR], 1.22128833, tol)
+        assert_near_equal(prob['c_strut_braced'], 1, tol)
+        assert_near_equal(prob['c_gear_loc'], 1, tol)
+        assert_near_equal(prob[Aircraft.Propulsion.ENGINE_POSITION_FACTOR], 0.95, tol)
+        assert_near_equal(prob['half_sweep'], 0.39471574, tol)
+        # PayloadGroup
+        assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 36000.0, tol)
+        assert_near_equal(prob[Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS], 36000.0, tol)
+        assert_near_equal(prob['payload_mass_des'], 36000.0, tol)
+        assert_near_equal(prob['payload_mass_max'], 46040.0, tol)
+        # ACMass
+        assert_near_equal(prob[Aircraft.AirConditioning.MASS], 1324.55345246, tol)
+        # FurnishingMass
+        assert_near_equal(prob[Aircraft.Furnishings.MASS], 13268.77210825, tol)
+        # AntiIcingMass
+        assert_near_equal(prob[Aircraft.AntiIcing.MASS], 683.47110765, tol)
+        # APUMass
+        assert_near_equal(prob[Aircraft.APU.MASS], 1077.969377, tol)
+        # AvionicsMass
+        assert_near_equal(prob[Aircraft.Avionics.MASS], 1514.0, tol)
+        # ElectricalMass
+        assert_near_equal(prob[Aircraft.Electrical.MASS], 170.0, tol)
+        # HydraulicsMass
+        assert_near_equal(prob[Aircraft.Hydraulics.MASS], 1479.33343636, tol)
+        # InstrumentMass
+        assert_near_equal(prob[Aircraft.Instruments.MASS], 547.49288363, tol)
+        # OxygenSystemMass
+        assert_near_equal(prob[Aircraft.OxygenSystem.MASS], 50.0, tol)
+        # WingMassSolve
+        assert_near_equal(prob['isolated_wing_mass'], 15652.61578394, tol)
+        # StrutAndFoldMass
+        assert_near_equal(prob[Aircraft.Strut.MASS], 0.0, tol)
+        assert_near_equal(prob[Aircraft.Wing.FOLD_MASS], 0, tol)
+        # WingMassTotal
+        assert_near_equal(prob[Aircraft.Wing.MASS], 15652.61578394, tol)
+        # FuelSysAndFullFuselageMass
+        assert_near_equal(prob['fus_mass_full'], 101584.83829383, tol)
+        # FuselageMass
+        assert_near_equal(prob[Aircraft.Fuselage.MASS], 18614.6407651, tol)
+        # FuelMass
+        assert_near_equal(prob['fuel_mass'], 43756.89535681, tol)
+        assert_near_equal(prob['fuel_mass_required'], 43756.89535681, tol)
+        assert_near_equal(prob['fuel_mass_min'], 33716.89535681, tol)
+        # FuelComponents
+        assert_near_equal(prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS], 619.8317956, tol)
+        # BodyTankCalculations
+        assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol)
+        assert_near_equal(prob['extra_fuel_volume'], 0, tol)
+        assert_near_equal(prob['max_extra_fuel_mass'], 0, tol)
+        assert_near_equal(prob['wingfuel_mass_min'], 33716.89535681, tol)
+        assert_near_equal(prob[Aircraft.Fuel.MAX_CAPACITY_MASS], 44376.72715242, tol)
+        # EmpennageMass
+        assert_near_equal(prob[Aircraft.Design.EMPENNAGE_MASS], 4574.10130526, tol)
+        # StructureMass
+        assert_near_equal(prob[Aircraft.Design.STRUCTURE_MASS], 50136.9197232, tol)
+        # PropulsionMass
+        assert_near_equal(prob[Aircraft.Propulsion.MASS], 16164.80430963, tol)
+        # SystemsEquipmentMass
+        assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 23934.94881476, tol)
+        # EmptyMass
+        assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 90236.67284758, tol)
+        # OperatingItemsMass
+        assert_near_equal(prob[Mission.OPERATING_ITEMS_MASS], 5406.4317956, tol)
+        # OperatingMass
+        assert_near_equal(prob[Mission.OPERATING_MASS], 95643.10464319, tol)
+        # ZeroFuelMass
+        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 131643.10464319, tol)
+        # UsefulLoadMass
+        assert_near_equal(prob[Aircraft.Design.USEFUL_LOAD_MASS], 85163.32715242, tol)
 
-        assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 17.49, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 16.41, tol)
+        # assert_near_equal(prob[Aircraft], 14, tol)
+
+        assert_near_equal(prob[Aircraft.Wing.CENTER_CHORD], 17.49, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 16.41, tol)
         assert_near_equal(
-            self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.1397, tol
+            prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.1397, tol
         )  # not exact GASP value from the output file, likely due to rounding error
 
         # note: this is not the value in the GASP output, because the output calculates
@@ -488,7 +603,8 @@ class MassPremissionTestCase3(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
+
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
@@ -503,8 +619,21 @@ class MassPremissionTestCase3(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+        options.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -834,7 +963,7 @@ class MassPremissionTestCase4(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
@@ -849,8 +978,21 @@ class MassPremissionTestCase4(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+        options.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1188,7 +1330,7 @@ class MassSummationTestCase5(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
@@ -1203,8 +1345,22 @@ class MassSummationTestCase5(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+        options.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1537,7 +1693,7 @@ class MassSummationTestCase6(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
@@ -1552,8 +1708,21 @@ class MassSummationTestCase6(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+        options.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1887,7 +2056,7 @@ class MassSummationTestCase7(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=154, units='unitless')
@@ -1902,8 +2071,20 @@ class MassSummationTestCase7(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.165, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+        options.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -2259,7 +2440,7 @@ class MassSummationTestCase8(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
@@ -2277,8 +2458,18 @@ class MassSummationTestCase8(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.163, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+        options.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -2631,7 +2822,7 @@ class MassSummationTestCase9(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=154, units='unitless')
@@ -2648,9 +2839,19 @@ class MassSummationTestCase9(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.163, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
+        options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+        options.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -3019,7 +3220,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
     """GASP BWB model."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         # options from SizeGroup
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
@@ -3033,12 +3234,13 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=150, units='unitless')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
         # options from MassPremission
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=41000, units='ft')
@@ -3048,6 +3250,18 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 2, units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
         options.set_val(Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, 0.0667, units='lbm')
+
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+        options.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
+        options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
+        options.set_val(Aircraft.BWB.MAX_BAY_WIDTH, 0.0, units='ft')
+        options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
+        options.set_val(Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER, False, units='unitless')
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 1.225, units='kg/m**3')
+        options.set_val(Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, True, units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(

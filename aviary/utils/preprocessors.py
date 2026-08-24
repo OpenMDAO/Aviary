@@ -92,6 +92,80 @@ def preprocess_options(
         ):
             aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
 
+    if Settings.MASS_METHOD in aviary_options:
+        mass_method = aviary_options.get_val(Settings.MASS_METHOD)
+    else:
+        raise UserWarning('MASS_METHOD not specified. Cannot preprocess inputs.')
+
+    if Aircraft.Design.TYPE in aviary_options:
+        design_type = aviary_options.get_val(Aircraft.Design.TYPE)
+    else:
+        design_type = AircraftTypes.TRANSPORT
+        if verbosity > Verbosity.BRIEF:
+            warnings.warn('Setting Aircraft.Design.TYPE = AircraftTypes.TRANSPORT.')
+
+    if Aircraft.Fuselage.SIMPLE_LAYOUT not in aviary_options:
+        if mass_method == LegacyCode.FLOPS:
+            aviary_options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, True, 'unitless')
+            simple_layout = True
+        elif mass_method == LegacyCode.GASP:
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                simple_layout = False
+            else:
+                simple_layout = True
+            aviary_options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, simple_layout, 'unitless')
+    else:
+        simple_layout = aviary_options.get_val(Aircraft.Fuselage.SIMPLE_LAYOUT)
+
+    if simple_layout == False:
+        # Check seat widths are set
+        if mass_method == LegacyCode.FLOPS:
+            if design_type == AircraftTypes.TRANSPORT:
+                if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, '
+                            'assuming default 20.0 inches.'
+                        )
+                if Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 22.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, '
+                            'assuming default 22.0 inches.'
+                        )
+                if Aircraft.Fuselage.SEAT_WIDTH_FIRST not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 25.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, '
+                            'assuming default 25.0 inches.'
+                        )
+        elif mass_method == LegacyCode.GASP:
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, '
+                            'assuming default 20.0 inches.'
+                        )
+                if Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 22.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, '
+                            'assuming default 22.0 inches.'
+                        )
+                if Aircraft.Fuselage.SEAT_WIDTH_FIRST not in aviary_options:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28.0, 'inch')
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, '
+                            'assuming default 28.0 inches.'
+                        )
+
     # preprocess atmosphere / GRAV??
     # Set the gravity model based on the atmosphere model to enable calculation of weight from mass
     from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
@@ -163,7 +237,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
             Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS,
         ]
-    else:
+    elif mass_method is LegacyCode.GASP:
         pax_keys = [Aircraft.CrewPayload.NUM_PASSENGERS]
 
         design_pax_keys = [Aircraft.CrewPayload.Design.NUM_PASSENGERS]

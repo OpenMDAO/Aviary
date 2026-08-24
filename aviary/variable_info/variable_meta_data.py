@@ -333,11 +333,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.BWB.MAX_BAY_WIDTH,
     meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'FUSEIN.BAYWMX',
-        'LEAPS1': None,
-    },
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BAYWMX'},
     units='ft',
     desc='maximum bay width',
     types=float,
@@ -3515,7 +3511,17 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SEAT_WIDTH,
+    Aircraft.Fuselage.SEAT_WIDTH_BUSINESS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='inch',
+    desc='width of the business class seats',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.SEAT_WIDTH_ECONOMY,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WS', 'FLOPS': None},
     units='inch',
@@ -3525,9 +3531,19 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuselage.SEAT_WIDTH_FIRST,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='inch',
+    desc='width of the first class seats',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': 'WTIN.TCSOB', 'LEAPS1': None},
+    historical_name={'GASP': None, 'FLOPS': 'WTIN.TCSOB'},
     units='unitless',
     desc='fuselage thickness/chord ratio at side of body',
     default_value=0.0,

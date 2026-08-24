@@ -45,7 +45,7 @@ class FlareODE(_BaseODE):
             promotes_inputs=[
                 'mass',
                 Dynamic.Atmosphere.DENSITY,
-                ('area', Aircraft.Wing.AREA),
+                Aircraft.Wing.AREA,
                 ('lift_coefficient_max', Mission.Landing.LIFT_COEFFICIENT_MAX),
             ],
             promotes_outputs=[('stall_speed', 'v_stall')],
