@@ -9,19 +9,11 @@ from aviary.variable_info.variables import Settings
 from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder
 from aviary.models.external_subsystems.UAV.propulsion.prop_builder import PropBuilder
-from aviary.models.missions.UAV_energy_phase import phase_info as full_phase_info
 
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import ExtendedMetaData as UAVExtendedMetaData
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic, Mission
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 
 DEBUG_MODEL = False  # Set to True to enable debugging output
-
-# Build a cruise-only phase_info using UAV_energy_phase
-# cruise_phase_info = {
-#     'pre_mission': deepcopy(full_phase_info['pre_mission']),
-#     'cruise': deepcopy(full_phase_info['cruise']),
-#     'post_mission': deepcopy(full_phase_info['post_mission']),
-# }
 
 cruise_phase_info = {
     'pre_mission': {
@@ -29,7 +21,6 @@ cruise_phase_info = {
         'external_subsystems': [],
         'optimize_mass': False,
 
-        # CRITICAL FIX: tell Aviary to use your external atmosphere
         'subsystem_options': {
             'atmosphere': {'method': 'external'},
             'aerodynamics': {'method': 'external'},
@@ -37,7 +28,6 @@ cruise_phase_info = {
     },
 
     'cruise': {
-        # CRITICAL FIX: same here
         'subsystem_options': {
             'atmosphere': {'method': 'external'},
             'aerodynamics': {'method': 'external'},
@@ -75,7 +65,6 @@ cruise_phase_info = {
         'include_landing': False,
         'external_subsystems': [],
 
-        # CRITICAL FIX: also here (post_mission uses the ODE too)
         'subsystem_options': {
             'atmosphere': {'method': 'external'},
             'aerodynamics': {'method': 'external'},
@@ -139,11 +128,11 @@ prob.check_and_preprocess_inputs()
 prob.build_model()
              
 #set up optimization
-# prob.add_driver('IPOPT', max_iter=15)
-# prob.driver.opt_settings['tol'] = 1e-6
+prob.add_driver('IPOPT', max_iter=15)
+#prob.driver.opt_settings['tol'] = 1e-6
 
-# prob.add_design_variables()
-# prob.add_objective(objective_type = 'time')
+prob.add_design_variables()
+prob.add_objective(objective_type = 'time')
 
 prob.setup()
 prob.set_initial_guesses()
@@ -155,11 +144,11 @@ prob.final_setup()
 # prob.set_val('traj.phases.cruise.states:altitude', 520.0*np.ones(num_nodes), units='m')
 # prob.set_val('traj.phases.cruise.states:velocity', 36.0*np.ones(num_nodes), units='m/s')
 
-om.n2(
-    prob,
-    show_browser=True,
-    title='UAV Mass-Aero-Propulsion Full Model',
-)
+# om.n2(
+#     prob,
+#     show_browser=True,
+#     title='UAV Mass-Aero-Propulsion Full Model',
+# )
 
 #debugging before running the model
 # if DEBUG_MODEL:
@@ -275,8 +264,8 @@ om.n2(
 # # NORMAL MODEL EXECUTION
 # # This must remain outside the DEBUG_MODEL block.
 
-prob.run_model()
-# prob.run_aviary_problem(run_driver=True)
+#prob.run_model()
+prob.run_aviary_problem(run_driver=True)
 
 print('Structure mass:',prob.get_val(Aircraft.Design.STRUCTURE_MASS, units='kg'))
 print('Cruise mass:',prob.get_val('traj.phases.cruise.indep_states.states:mass', units='kg'))
