@@ -21,7 +21,8 @@ phase_info = {
             'altitude_bounds': ((0.0, 1000.0), 'ft'),
             'mass_initial': (120.0e3, 'lbm'),
             'mass_ref': (120.0e3, 'lbm'),
-            'throttle_enforcement': 'bounded',
+            'mass_bounds': ((0.0, 200.0e3), 'lbm'),
+            'throttle_enforcement': 'path_constraint',
             'rotation': False,
             'constraints': {
                 'flight_path_angle': {
@@ -59,7 +60,8 @@ phase_info = {
             'altitude_final': (50.0, 'ft'),
             'altitude_bounds': ((0.0, 1000.0), 'ft'),
             'mass_ref': (120.0e3, 'lbm'),
-            'throttle_enforcement': 'bounded',
+            'mass_bounds': ((0.0, 200.0e3), 'lbm'),
+            'throttle_enforcement': 'path_constraint',
             'rotation': False,
             'constraints': {
                 'flight_path_angle': {
@@ -96,6 +98,7 @@ phase_info = {
             'altitude_final': (0.0, 'ft'),
             'altitude_bounds': ((0.0, 1000.0), 'ft'),
             'mass_ref': (120.0e3, 'lbm'),
+            'mass_bounds': ((0.0, 200.0e3), 'lbm'),
             'throttle_enforcement': 'path_constraint',
             'rotation': False,
             'constraints': {},
