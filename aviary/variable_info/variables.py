@@ -43,6 +43,13 @@ class Aircraft:
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
         )
+        REAR_SPAR_PERCENT_CHORD_CENTERLINE = (
+            'aircraft:blended_wing_body_design:rear_spar_percent_chord_centerline'
+        )
+        REAR_SPAR_PERCENT_CHORD_ROOT = (
+            'aircraft:blended_wing_body_design:rear_spar_percent_chord_root'
+        )
+        WING_ROOT_INDEX = 'aircraft:blended_wing_body_design:wing_root_index'
 
     class Canard:
         AREA = 'aircraft:canard:area'
@@ -294,6 +301,7 @@ class Aircraft:
         AISLE_WIDTH = 'aircraft:fuselage:aisle_width'
         AVG_DIAMETER = 'aircraft:fuselage:avg_diameter'
         CABIN_AREA = 'aircraft:fuselage:cabin_area'
+        CABIN_SIDEWALL_LENGTH_MIN = 'aircraft:fuselage:cabin_sidewall_length_min'
         CHARACTERISTIC_LENGTH = 'aircraft:fuselage:characteristic_length'
         CROSS_SECTION = 'aircraft:fuselage:cross_section'
         DELTA_DIAMETER = 'aircraft:fuselage:delta_diameter'
