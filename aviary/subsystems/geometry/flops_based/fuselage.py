@@ -379,7 +379,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
         # eng_flag = num_engines - 2 * int(num_engines / 2)  # a center mounted engine if 1.
         eng_flag = int(
-            np.any(num_engines % 2 != 0)
+            any(x % 2 != 0 for x in num_engines)
         )  # there is at least one center mounted engine if 1.
         first_class_len = num_first_class_pax * seat_pitch_first / num_seat_abreast_first
         business_class_len = (
