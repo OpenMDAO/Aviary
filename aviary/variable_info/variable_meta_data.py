@@ -383,6 +383,37 @@ add_meta_data(
     default_value=0.0,
 )
 
+add_meta_data(
+    Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.RSPCHD'},
+    units='unitless',
+    desc='BWB rear spar percent chord at the centerline. The cabin generally ends here.',
+    default_value=0.7,
+)
+
+add_meta_data(
+    Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.RSPSOB'},
+    units='unitless',
+    desc='BWB rear spar percent chord at the wing root. The cabin generally ends here.',
+    default_value=0.7,
+)
+
+add_meta_data(
+    Aircraft.BWB.WING_ROOT_INDEX,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NESOB'},
+    desc='When using the detailed wing definition, the index where that defines the location of '
+    'the wing root. When this is 0, the wing definition starts at the root. When it is greater '
+    'than 0, the wing definition should start at the centerline, and the root chord is defined at '
+    'this index. NOTE: index started at 1 in FLOPS, but starts at 0 in Aviary.',
+    option=True,
+    types=int,
+    default_value=0,
+)
+
 #   _____                                      _
 #  / ____|                                    | |
 # | |        __ _   _ __     __ _   _ __    __| |
@@ -3113,8 +3144,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WAS', 'FLOPS': None},
     units='inch',
-    desc='width of the aisles in the passenger cabin',
-    option=True,
+    desc='Width of the aisles in the passenger cabin. In FLOPS, aisle width is hardcoded per '
+    'passenger class.',
     default_value=24,
 )
 
@@ -3141,6 +3172,22 @@ add_meta_data(
     units='ft**2',
     desc='fixed area of passenger cabin for blended wing body transports',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH_MIN,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.XLWMIN',
+    },
+    units='ft',
+    option=True,
+    types=float,
+    desc='Minimum outboard wall of the passenger cabin in a BWB. The default value is based on a '
+    'required maximum depth at the side wall of 8.25 ft divided by a fuselage thickness/chord '
+    'ratio of 0.15 and 70 percent of the resulting wing root chord of 55 ft.',
+    default_value=38.5,
 )
 
 add_meta_data(
@@ -3516,7 +3563,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
     desc='width of the business class seats',
-    option=True,
     default_value=0.0,
 )
 
@@ -3526,7 +3572,6 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.WS', 'FLOPS': None},
     units='inch',
     desc='width of the economy class seats',
-    option=True,
     default_value=0.0,
 )
 
@@ -3536,7 +3581,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
     desc='width of the first class seats',
-    option=True,
     default_value=0.0,
 )
 
@@ -5910,7 +5954,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CROOTW',
-        'FLOPS': 'WTIN.XLW',
+        'FLOPS': None,  # 'XLOUT',
     },
     units='ft',
     desc='wing chord length at at the wing/fuselage intersection',

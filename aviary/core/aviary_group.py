@@ -861,7 +861,7 @@ class AviaryGroup(om.Group):
         # Users can set the below constraint to lower=0.0, which will allow for more fuel on the aircraft than the mission
         # requires. however, caution will need to be taken to ensure the ref is of the right magnitude otherwise the optimizer
         # may not try as hard as needed to minimize this.
-        if Settings.EQUATIONS_OF_MOTION is SOLVED_2DOF:
+        if self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION) is SOLVED_2DOF:
             # For missions where we are allowed to have more fuel in the tanks than we burn during the mission.
             self.add_constraint(
                 Mission.Constraints.MASS_RESIDUAL,
