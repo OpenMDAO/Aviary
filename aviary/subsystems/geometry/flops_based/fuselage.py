@@ -176,7 +176,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY)
-        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
@@ -376,8 +376,11 @@ class DetailedCabinLayout(om.ExplicitComponent):
 
         # Calculate the passenger compartment length
 
-        num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
-        eng_flag = num_engines - 2 * int(num_engines / 2)  # a center mounted engine if 1.
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        # eng_flag = num_engines - 2 * int(num_engines / 2)  # a center mounted engine if 1.
+        eng_flag = int(
+            np.any(num_engines % 2 != 0)
+        )  # there is at least one center mounted engine if 1.
         first_class_len = num_first_class_pax * seat_pitch_first / num_seat_abreast_first
         business_class_len = (
             num_business_class_pax * seat_pitch_business / num_seat_abreast_business
@@ -395,6 +398,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
         num_doors = 1 + int((pax_compart_length / 50.0) * num_seat_abreast_economy / 6.0)
 
         # Final passenger compartment length
+        # assume all central engines are aligned along the same line relative to the fuselage
         pax_compart_length = (pax_compart_length + num_doors * 2.96) * fuselage_multiplier
         fuselage_length = pax_compart_length + 25.0 * eng_flag + 40.0
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length

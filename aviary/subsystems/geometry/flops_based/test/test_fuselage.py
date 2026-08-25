@@ -52,7 +52,7 @@ class DetailedCabinLayoutTest(unittest.TestCase):
 
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 158, units='unitless')
-        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
 
         prob.model.add_subsystem(
             'layout', DetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
@@ -86,7 +86,7 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 6)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 10)
-        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
 
         prob.model.add_subsystem(
             'layout', DetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
