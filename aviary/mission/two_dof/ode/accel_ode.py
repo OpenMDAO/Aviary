@@ -32,7 +32,7 @@ class AccelODE(TwoDOFODE):
         }
         self.options['subsystem_options'].setdefault('aerodynamics', {}).update(kwargs)
 
-        self.add_subsystems()
+        self.add_subsystems_and_solver()
 
         self.add_subsystem(
             'accel_eom',

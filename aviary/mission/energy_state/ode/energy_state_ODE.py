@@ -58,12 +58,9 @@ class EnergyStateODE(_BaseODE):
 
         throttle_enforcement = options['throttle_enforcement']
 
-        sub1 = self.add_subsystem('solver_sub', om.Group(), promotes=['*'])
-        sub1.options['auto_order'] = True
+        ode_sub = self.add_subsystems_and_solver(couple_propulsion=throttle_enforcement != 'control')
 
-        use_mission_solver = self.add_subsystems(solver_group=sub1)
-
-        sub1.add_subsystem(
+        ode_sub.add_subsystem(
             name='mission_EOM',
             subsys=MissionEOM(num_nodes=nn),
             promotes_inputs=[
@@ -89,7 +86,7 @@ class EnergyStateODE(_BaseODE):
         if num_engine_type > 1:
             # Multi Engine
 
-            sub1.add_subsystem(
+            ode_sub.add_subsystem(
                 name='throttle_balance',
                 subsys=om.BalanceComp(
                     name='aggregate_throttle',
@@ -105,7 +102,7 @@ class EnergyStateODE(_BaseODE):
                 promotes_outputs=['*'],
             )
 
-            sub1.add_subsystem(
+            ode_sub.add_subsystem(
                 'throttle_allocator',
                 ThrottleAllocator(
                     num_nodes=nn, throttle_allocation=self.options['throttle_allocation']
@@ -136,7 +133,7 @@ class EnergyStateODE(_BaseODE):
                 self.add_constraint('thrust_residual', ref=thrust_res_ref, equals=0.0)
             else:
                 # Add a balance comp to compute throttle based on the required thrust.
-                sub1.add_subsystem(
+                ode_sub.add_subsystem(
                     name='throttle_balance',
                     subsys=om.BalanceComp(
                         name=Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -163,16 +160,3 @@ class EnergyStateODE(_BaseODE):
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='m/s')
-
-        if use_mission_solver or throttle_enforcement != 'control':
-            sub1.nonlinear_solver = om.NewtonSolver(
-                solve_subsystems=True,
-                atol=1.0e-10,
-                rtol=1.0e-10,
-            )
-            print_level = 2
-
-            sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-            sub1.linear_solver = om.DirectSolver(assemble_jac=True)
-            sub1.nonlinear_solver.options['err_on_non_converge'] = True
-            sub1.nonlinear_solver.options['iprint'] = print_level

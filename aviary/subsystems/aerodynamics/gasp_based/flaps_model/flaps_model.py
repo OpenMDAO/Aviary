@@ -134,5 +134,5 @@ class FlapsGroup(om.Group):
 
         self.nonlinear_solver.options['iprint'] = 0
         self.nonlinear_solver.options['maxiter'] = 25
-        self.nonlinear_solver.options['atol'] = 1e-8
-        self.nonlinear_solver.options['rtol'] = 1e-8
+        self.nonlinear_solver.options['atol'] = 1e-10
+        self.nonlinear_solver.options['rtol'] = 1e-10

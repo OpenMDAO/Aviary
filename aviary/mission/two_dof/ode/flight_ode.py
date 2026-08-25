@@ -74,8 +74,8 @@ class FlightODE(TwoDOFODE):
             mach_balance_group.nonlinear_solver = om.NewtonSolver()
             mach_balance_group.nonlinear_solver.options['solve_subsystems'] = True
             mach_balance_group.nonlinear_solver.options['iprint'] = 0
-            mach_balance_group.nonlinear_solver.options['atol'] = 1e-7
-            mach_balance_group.nonlinear_solver.options['rtol'] = 1e-7
+            mach_balance_group.nonlinear_solver.options['atol'] = 1e-10
+            mach_balance_group.nonlinear_solver.options['rtol'] = 1e-10
             mach_balance_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
             mach_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
@@ -133,8 +133,8 @@ class FlightODE(TwoDOFODE):
         lift_balance_group.nonlinear_solver = om.NewtonSolver()
         lift_balance_group.nonlinear_solver.options['solve_subsystems'] = True
         lift_balance_group.nonlinear_solver.options['iprint'] = 0
-        lift_balance_group.nonlinear_solver.options['atol'] = 1e-7
-        lift_balance_group.nonlinear_solver.options['rtol'] = 1e-7
+        lift_balance_group.nonlinear_solver.options['atol'] = 1e-10
+        lift_balance_group.nonlinear_solver.options['rtol'] = 1e-10
         lift_balance_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         lift_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
@@ -171,10 +171,10 @@ class FlightODE(TwoDOFODE):
             promotes_outputs=['theta', 'TAS_violation'],
         )
 
-        sub1 = self.add_subsystem('solver_sub', om.Group(), promotes=['*'])
-        sub1.options['auto_order'] = True
-
-        use_mission_solver = self.add_subsystems(solver_group=sub1)
+        use_mission_solver = self.add_subsystems_and_solver(
+            solver_sub=lift_balance_group,
+            couple_aero=True,
+        )
 
         self.add_alpha_control(
             alpha_group=lift_balance_group,
@@ -195,15 +195,3 @@ class FlightODE(TwoDOFODE):
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
 
-        if use_mission_solver:
-            sub1.nonlinear_solver = om.NewtonSolver(
-                solve_subsystems=True,
-                atol=1.0e-10,
-                rtol=1.0e-10,
-            )
-            print_level = 2
-
-            sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-            sub1.linear_solver = om.DirectSolver(assemble_jac=True)
-            sub1.nonlinear_solver.options['err_on_non_converge'] = True
-            sub1.nonlinear_solver.options['iprint'] = print_level
