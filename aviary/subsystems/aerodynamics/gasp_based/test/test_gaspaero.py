@@ -28,9 +28,10 @@ from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     Xlifts,
 )
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 here = os.path.abspath(os.path.dirname(__file__))
 cruise_data = pd.read_csv(os.path.join(here, 'data', 'aero_data_cruise.csv'))
@@ -296,9 +297,8 @@ def _init_geom(prob):
 
 class XLiftsTest(unittest.TestCase):
     def test_case1(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
-        options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+        options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, Verbosity.QUIET)
 
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -336,9 +336,8 @@ class XLiftsTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-4, rtol=1e-3)
 
     def test_case2(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
-        options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+        options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, Verbosity.QUIET)
 
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -499,7 +498,7 @@ class UFacTest(unittest.TestCase):
 
     def test_case2(self):
         """BWB case with smooth derivative (used in BWBAeroSetup)."""
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
 
         prob = om.Problem()
@@ -529,7 +528,7 @@ class UFacTest(unittest.TestCase):
 
     def test_case3(self):
         """BWB case without smoothness, hence exactly the same as GASP (used in BWBAeroSetup)."""
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
 
         prob = om.Problem()
@@ -648,7 +647,7 @@ class WingTailRatiosTest(unittest.TestCase):
 
 class AeroGeomTest(unittest.TestCase):
     def test_case1(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
         options.set_val(Aircraft.Wing.HAS_STRUT, False)
 
@@ -724,8 +723,7 @@ class AeroGeomTest(unittest.TestCase):
         assert_near_equal(prob['SA7'], [0.03978045, 0.03978045], tol)
 
     def test_case_multiengine(self):
-        # 3-engine test case. 2nd and 3rd engine's properties are arbitrary
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4, 1]))
         options.set_val(Aircraft.Wing.HAS_STRUT, False)
 

@@ -11,9 +11,10 @@ from aviary.subsystems.propulsion.propeller.propeller_performance import (
     PropellerPerformance,
     TipSpeed,
 )
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 # Setting up truth values from GASP (The first 12 are actual truth values, the rest are intelligent guesses)
 # test values now are slightly different due to setup - max tip speed was limited to test
@@ -188,15 +189,23 @@ class PropellerPerformanceTest(unittest.TestCase):
     """Test computation of propeller performance test using Hamilton Standard model."""
 
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for PropellerPerformance and its subsystems
+        # (PropellerMap, PreHamiltonStandard, HamiltonStandard, PostHamiltonStandard,
+        # TipSpeed, AreaSquareRatio, AdvanceRatio, InstallLoss) and the peer Atmosphere /
+        # FlightConditions subsystem.
+        options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, val=Verbosity.QUIET)
         options.set_val(
             Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS,
             val=True,
             units='unitless',
         )
+        # Intentionally NOT setting Aircraft.Engine.Propeller.DATA_FILE: PropellerPerformance
+        # falls back to use_propeller_map=False when the key is missing (KeyError branch),
+        # which is the behavior this test relies on.
         options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
-        options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
-        options.set_val(Settings.VERBOSITY, 0)
+        options.set_val(Mission.SEA_LEVEL_DENSITY, val=1.225, units='kg/m**3')
 
         prob = om.Problem()
 

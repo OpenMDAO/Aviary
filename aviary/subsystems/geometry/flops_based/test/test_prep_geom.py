@@ -41,8 +41,8 @@ from aviary.validation_cases.validation_tests import (
     get_flops_outputs,
     print_case,
 )
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import override_aviary_vars, setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 unit_data_sets = get_flops_case_names(
@@ -799,7 +799,14 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
     """
 
     def setUp(self):
-        options = self.options = get_option_defaults()
+        # PrepGeom under BWB + simple layout + detailed-wing-computed branch instantiates:
+        # BWBSimpleCabinLayout, BWBComputeDetailedWingDist, BWBFuselagePrelim, BWBWingPrelim,
+        # WettedAreaGroup (PrelimWettedArea, BWBWingWettedArea, TailWettedArea,
+        # BWBFuselageWettedArea, NacelleWettedArea, CanardWettedArea), _FuselageRatios,
+        # BWBWingCharacteristicLength, NacelleCharacteristicLength, OtherCharacteristicLengths,
+        # TotalWettedArea, MainGearLength, NoseGearLength.
+        # Union of add_aviary_option calls in that set that the test needs to override:
+        options = self.options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=True, units='unitless')
         options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, val=False, units='unitless')
@@ -808,7 +815,8 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
-        options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, False, units='unitless')
+        # MainGearLength reads NUM_WING_ENGINES with sum(); must be iterable (multivalue).
+        options.set_val(Aircraft.Engine.NUM_WING_ENGINES, np.array([0]), units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('prep_geom', PrepGeom(), promotes=['*'])
@@ -1038,7 +1046,14 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
     """
 
     def setUp(self):
-        options = self.options = get_option_defaults()
+        # PrepGeom under BWB + detailed layout + detailed-wing-provided branch instantiates:
+        # BWBDetailedCabinLayout, BWBUpdateDetailedWingDist, BWBFuselagePrelim, BWBWingPrelim,
+        # WettedAreaGroup (PrelimWettedArea, BWBWingWettedArea, TailWettedArea,
+        # BWBFuselageWettedArea, NacelleWettedArea, CanardWettedArea), _FuselageRatios,
+        # BWBWingCharacteristicLength, NacelleCharacteristicLength, OtherCharacteristicLengths,
+        # TotalWettedArea, MainGearLength, NoseGearLength.
+        # Union of add_aviary_option calls in that set that the test needs to override:
+        options = self.options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 100, units='unitless')
@@ -1060,6 +1075,8 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         )
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
+        # MainGearLength reads NUM_WING_ENGINES with sum(); must be iterable (multivalue).
+        options.set_val(Aircraft.Engine.NUM_WING_ENGINES, np.array([0]), units='unitless')
         options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
 
         prob = self.prob = om.Problem()
