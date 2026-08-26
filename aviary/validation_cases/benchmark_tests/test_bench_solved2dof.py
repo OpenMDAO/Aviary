@@ -4,13 +4,14 @@ import aviary.api as av
 from aviary.models.missions.solved2dof_default import phase_info
 from aviary.models.missions.solved2dof_landing_default import phase_info as phase_info_landing
 from openmdao.utils.assert_utils import assert_near_equal
-from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 
 @use_tempdirs
 class TestBenchSolved2DOF(unittest.TestCase):
     """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_Solved2DOF(self):
         subsystem_options = {
             'aerodynamics': {
@@ -106,6 +107,7 @@ class TestBenchSolved2DOF(unittest.TestCase):
         assert_near_equal(prob.get_val(av.Mission.FINAL_TIME, units='s'), 108.84030411, tol)
         assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 459.3830223, tol)
 
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_Solved2DOF_landing(self):
         # This problem solves better with a reduced ref for objective time, therefore need to call add_objectve()
         subsystem_options = {
