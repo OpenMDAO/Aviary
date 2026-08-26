@@ -82,6 +82,7 @@ energy_phase_info = {
 # 2DOF
 two_dof_phase_info = {
     'groundroll': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'ground_roll': True,
@@ -108,6 +109,7 @@ two_dof_phase_info = {
         },
     },
     'rotation': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'rotation': True,
@@ -139,6 +141,7 @@ two_dof_phase_info = {
         },
     },
     'ascent': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,

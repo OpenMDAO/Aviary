@@ -167,7 +167,7 @@ class FlightODE(TwoDOFODE):
             promotes_outputs=['theta', 'TAS_violation'],
         )
 
-        _ = self.add_subsystems_and_solver(
+        self.add_subsystems_and_solver(
             solver_sub=lift_balance_group,
             couple_aero=True,
         )
