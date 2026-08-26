@@ -148,6 +148,7 @@ gasp_default_values = NamedValues(
         'INGASP.UWT_AFT': (5.0, 'lbm/ft**2'),
         'INGASP.SWP_FB': (50.0, 'deg'),
         'INGASP.CLALPH_B0': (1.5708, '1/rad'),
+        'INGASP.UWPAX': (200, 'lbm'),
     }
 )
 
