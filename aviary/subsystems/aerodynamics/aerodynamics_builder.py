@@ -212,7 +212,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                 aero_supergroup.linear_solver = om.DirectSolver()
                 newton = aero_supergroup.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
                 newton.options['iprint'] = 2
-                newton.options['atol'] = 1e-10
+                newton.options['atol'] = 1e-12
                 newton.options['rtol'] = 1e-12
 
                 # return the supergroup instead of the individual aero method group

@@ -157,8 +157,6 @@ class UnsteadySolvedODE(TwoDOFODE):
         kwargs = {
             'method': 'low_speed',
         }
-        if self.options['clean']:
-            kwargs['method'] = 'cruise'
         for subsystem in subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
@@ -182,12 +180,6 @@ class UnsteadySolvedODE(TwoDOFODE):
                 )
                 if isinstance(subsystem, AerodynamicsBuilder):
                     mission_inputs = mission_in.copy()
-                    if (
-                        subsystem.code_origin is LegacyCode.FLOPS
-                        and 'angle_of_attack' in mission_inputs
-                    ):
-                        mission_inputs.remove('angle_of_attack')
-                        mission_inputs.append(('angle_of_attack', Dynamic.Vehicle.ANGLE_OF_ATTACK))
                     control_iter_group.add_subsystem(
                         subsystem.name,
                         system,

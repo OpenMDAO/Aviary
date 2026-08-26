@@ -173,6 +173,7 @@ two_dof_phase_info = {
         },
     },
     'accel': {
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.ACCEL,
             'num_segments': 1,
@@ -251,6 +252,7 @@ two_dof_phase_info = {
         },
     },
     'cruise': {
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.SIMPLE_CRUISE,
             'num_segments': 1,

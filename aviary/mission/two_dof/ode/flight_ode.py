@@ -34,10 +34,6 @@ class FlightODE(TwoDOFODE):
 
     def setup(self):
         nn = self.options['num_nodes']
-        aviary_options = self.options['aviary_options']
-        subsystems = self.options['subsystems']
-        subsystem_options = self.options['subsystem_options']
-        user_options = self.options['user_options']
         input_speed_type = self.options['input_speed_type']
 
         if input_speed_type is SpeedType.EAS:
@@ -171,7 +167,7 @@ class FlightODE(TwoDOFODE):
             promotes_outputs=['theta', 'TAS_violation'],
         )
 
-        use_mission_solver = self.add_subsystems_and_solver(
+        _ = self.add_subsystems_and_solver(
             solver_sub=lift_balance_group,
             couple_aero=True,
         )

@@ -53,7 +53,7 @@ class BaseODE(om.Group):
         )
 
     def add_subsystems_and_solver(
-        self, solver_sub=None, couple_propulsion=False, couple_aero=False
+        self, solver_sub=None, couple_propulsion=False, couple_aero=False, aero_solver_sub=False,
     ):
         """
         Adds all specified subsystems to this ODE. Subsystems that need a solver due to coupling
@@ -68,6 +68,9 @@ class BaseODE(om.Group):
             thrust balance.
         couple_aero : bool
             When True, the ODE couples with any aerodynamics subsystems via a force balance.
+        aero_solver_sub : None or om.Group
+            Some ODEs (like solved 2DOF) place the are and propulsion cycles in separate
+            subsystems. When this is specified, the aero subsystem is placed in this sub.
         Returns
         -------
         om.Group
@@ -121,15 +124,17 @@ class BaseODE(om.Group):
                             solve_subsystems=True,
                             atol=1.0e-10,
                             rtol=1.0e-10,
+                            err_on_non_converge=True,
+                            iprint=2,
                         )
-                        print_level = 2
-
                         solver_sub.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-                        solver_sub.linear_solver = om.DirectSolver(assemble_jac=True)
-                        solver_sub.nonlinear_solver.options['err_on_non_converge'] = True
-                        solver_sub.nonlinear_solver.options['iprint'] = print_level
 
-                    target = solver_sub
+                        solver_sub.linear_solver = om.DirectSolver(assemble_jac=True)
+
+                    if aero_solver_sub and couple_aero and isinstance(subsystem, AerodynamicsBuilder):
+                        target = aero_solver_sub
+                    else:
+                        target = solver_sub
 
                 mission_in = subsystem.mission_inputs(
                     aviary_inputs=aviary_options,

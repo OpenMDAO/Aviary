@@ -30,7 +30,7 @@ class TestTwoDOFPhases(unittest.TestCase):
         local_phase_info = deepcopy(two_dof_phase_info)
 
         local_phase_info['cruise'] = {
-            'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
+            'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
             'user_options': {
                 'phase_type': PhaseType.BREGUET_RANGE,
                 'alt_cruise': (37.5e3, 'ft'),
