@@ -151,8 +151,6 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
         if mass_method == LegacyCode.FLOPS:
             aviary_options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, True, 'unitless')
             simple_layout = True
-            if verbosity >= Verbosity.BRIEF:
-                warnings.warn('Aircraft.Fuselage.SIMPLE_LAYOUT is not set. Assuming True.')
         elif mass_method == LegacyCode.GASP:
             if design_type == AircraftTypes.BLENDED_WING_BODY:
                 simple_layout = False
@@ -165,42 +163,6 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
     if simple_layout == False:
         # Check seat widths are set
         if mass_method == LegacyCode.FLOPS:
-            # initialize number of pax
-            if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in aviary_options:
-                num_business_class_pax = aviary_options.get_val(
-                    Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 'unitless'
-                )
-            else:
-                num_business_class_pax = 0
-                aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 0)
-                if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        'Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS not set, '
-                        'assuming default 0.'
-                    )
-            if Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS in aviary_options:
-                num_economy_class_pax = aviary_options.get_val(
-                    Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 'unitless'
-                )
-            else:
-                num_economy_class_pax = 0
-                aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 0)
-                if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        'Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS not set, assuming default 0.'
-                    )
-            if Aircraft.CrewPayload.Design.NUM_FIRST_CLASS in aviary_options:
-                num_first_class_pax = aviary_options.get_val(
-                    Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 'unitless'
-                )
-            else:
-                num_first_class_pax = 0
-                aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 0)
-                if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS not set, assuming default 0.'
-                    )
-
             # initialize number of seat abreast
             if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS in aviary_options:
                 num_seat_abreast_business = aviary_options.get_val(
