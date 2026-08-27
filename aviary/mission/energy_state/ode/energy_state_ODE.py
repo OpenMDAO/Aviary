@@ -58,7 +58,9 @@ class EnergyStateODE(_BaseODE):
 
         throttle_enforcement = options['throttle_enforcement']
 
-        ode_sub = self.add_subsystems_and_solver(couple_propulsion=throttle_enforcement != 'control')
+        ode_sub = self.add_subsystems_and_solver(
+            couple_propulsion=throttle_enforcement != 'control'
+        )
 
         ode_sub.add_subsystem(
             name='mission_EOM',
