@@ -290,7 +290,9 @@ class WingFoldAreaTestCase1(unittest.TestCase):
     def setUp(self):
         # Option values below are the _MetaData defaults except where noted.
         options = AviaryValues()
-        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')  # toggled OFF for this test
+        options.set_val(
+            Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless'
+        )  # toggled OFF for this test
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -326,7 +328,9 @@ class WingFoldVolumeTestCase1(unittest.TestCase):
     def setUp(self):
         # Option values below are the _MetaData defaults except where noted.
         options = AviaryValues()
-        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')  # toggled OFF for this test
+        options.set_val(
+            Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless'
+        )  # toggled OFF for this test
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -515,7 +519,9 @@ class BWBWingFoldVolumeTestCase1(unittest.TestCase):
     def setUp(self):
         # Option values below are the _MetaData defaults except where noted.
         options = AviaryValues()
-        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')  # toggled OFF for this test
+        options.set_val(
+            Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless'
+        )  # toggled OFF for this test
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
