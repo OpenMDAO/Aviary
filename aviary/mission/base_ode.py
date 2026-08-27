@@ -53,7 +53,7 @@ class BaseODE(om.Group):
         )
 
     def add_subsystems_and_solver(
-        self, solver_sub=None, couple_propulsion=False, couple_aero=False, aero_solver_sub=False,
+        self, solver_sub=None, couple_propulsion=False, couple_aero=False, aero_solver_sub=False
     ):
         """
         Adds all specified subsystems to this ODE. Subsystems that need a solver due to coupling
@@ -69,7 +69,7 @@ class BaseODE(om.Group):
         couple_aero : bool
             When True, the ODE couples with any aerodynamics subsystems via a force balance.
         aero_solver_sub : None or om.Group
-            Some ODEs (like solved 2DOF) place the are and propulsion cycles in separate
+            Some ODEs (like solved 2DOF) place the aerodynamics and propulsion cycles in separate
             subsystems. When this is specified, the aero subsystem is placed in this sub.
         Returns
         -------
@@ -131,7 +131,11 @@ class BaseODE(om.Group):
 
                         solver_sub.linear_solver = om.DirectSolver(assemble_jac=True)
 
-                    if aero_solver_sub and couple_aero and isinstance(subsystem, AerodynamicsBuilder):
+                    if (
+                        aero_solver_sub
+                        and couple_aero
+                        and isinstance(subsystem, AerodynamicsBuilder)
+                    ):
                         target = aero_solver_sub
                     else:
                         target = solver_sub

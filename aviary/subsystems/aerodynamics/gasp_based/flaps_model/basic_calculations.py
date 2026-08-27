@@ -77,7 +77,10 @@ class BasicFlapsGeometry(om.ExplicitComponent):
     def setup_partials(self):
         # output partials
         self.declare_partials(
-            'VLAM8', [Aircraft.Wing.SWEEP], dependent=True, method='cs',
+            'VLAM8',
+            [Aircraft.Wing.SWEEP],
+            dependent=True,
+            method='cs',
         )
         self.declare_partials(
             'VDEL4',
@@ -102,7 +105,10 @@ class BasicFlapsGeometry(om.ExplicitComponent):
             method='cs',
         )
         self.declare_partials(
-            'VLAM9', [Aircraft.Wing.SLAT_CHORD_RATIO], dependent=True, method='cs',
+            'VLAM9',
+            [Aircraft.Wing.SLAT_CHORD_RATIO],
+            dependent=True,
+            method='cs',
         )
         self.declare_partials(
             Aircraft.Wing.SLAT_SPAN_RATIO,

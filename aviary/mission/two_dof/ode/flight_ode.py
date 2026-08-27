@@ -190,4 +190,3 @@ class FlightODE(TwoDOFODE):
         )
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
-
