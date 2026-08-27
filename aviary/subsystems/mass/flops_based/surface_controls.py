@@ -2,7 +2,7 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class SurfaceControlMass(om.ExplicitComponent):
@@ -11,14 +11,12 @@ class SurfaceControlMass(om.ExplicitComponent):
     FLOPS weight equations, modified to output mass instead of weight.
     """
 
-    def initialize(self):
-        add_aviary_option(self, Mission.Constraints.MAX_MACH)
-
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Design.MAX_MACH, units='unitless')
 
         add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS, units='lbm')
         add_aviary_output(self, Aircraft.Wing.CONTROL_SURFACE_AREA, units='ft**2')
@@ -31,7 +29,7 @@ class SurfaceControlMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         scaler = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = inputs[Aircraft.Design.MAX_MACH]
         gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         flap_ratio = inputs[Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO]
         wing_area = inputs[Aircraft.Wing.AREA]
@@ -48,7 +46,7 @@ class SurfaceControlMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         scaler = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = inputs[Aircraft.Design.MAX_MACH]
         gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         flap_ratio = inputs[Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO]
         wing_area = inputs[Aircraft.Wing.AREA]
@@ -77,6 +75,10 @@ class SurfaceControlMass(om.ExplicitComponent):
             * scaler
             / GRAV_ENGLISH_LBM
         )
+
+        J[Aircraft.Wing.SURFACE_CONTROL_MASS, Aircraft.Design.MAX_MACH] = (
+            0.52 * 1.1 * max_mach**-0.48 * surface_area_exp * gross_weight_exp * scaler
+        ) / GRAV_ENGLISH_LBM
 
         J[Aircraft.Wing.SURFACE_CONTROL_MASS, Aircraft.Wing.AREA] = (
             1.1
