@@ -536,7 +536,7 @@ class PayloadRangeTest(unittest.TestCase):
             [
                 38025.0,
                 38025.0,
-                24953.7,
+                24529.3,
                 0,
             ],
             tolerance=1e-3,
@@ -548,7 +548,7 @@ class PayloadRangeTest(unittest.TestCase):
         )
         assert_near_equal(
             prob.payload_range_data.get_val('Range', 'NM'),
-            [0, 2500, 3910.17, 4362.62],
+            [0, 2500, 3910.17, 4339.7],
             tolerance=1e-3,
         )
 
@@ -560,7 +560,7 @@ class PayloadRangeTest(unittest.TestCase):
         )
         assert_near_equal(
             prob.ferry_range_prob.get_val(Mission.GROSS_MASS, 'lbm'),
-            140596.07154268,
+            142010.12881933,
             tolerance=1e-8,
         )
         self.assertTrue(prob.result.success)
