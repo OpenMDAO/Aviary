@@ -210,6 +210,12 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:design:max_mach",
+        0.785,
+        "unitless",
+        "<class 'float'>"
+    ],
+    [
         "aircraft:design:subsonic_drag_coeff_factor",
         1.0,
         "unitless",
@@ -972,12 +978,6 @@
         "aircraft:wing:wetted_area",
         2396.56,
         "ft**2",
-        "<class 'float'>"
-    ],
-    [
-        "mission:constraints:max_mach",
-        0.785,
-        "unitless",
         "<class 'float'>"
     ],
     [
