@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+import warnings
 
 from aviary.utils.math import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import Verbosity
@@ -340,6 +341,7 @@ class LoadParameters(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.PART25_STRUCTURAL_CATEGORY)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
         add_aviary_option(self, Aircraft.Design.CRUISE_ALTITUDE, units='ft')
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         self.add_input(
@@ -354,8 +356,9 @@ class LoadParameters(om.ExplicitComponent):
             desc='VM0: maximum operating equivalent airspeed',
         )
 
-        self.add_output(
-            'max_mach',
+        add_aviary_output(
+            self,
+            Aircraft.Design.MAX_MACH,
             units='unitless',
             desc='EMM0: maximum operating Mach number',
         )
@@ -370,11 +373,12 @@ class LoadParameters(om.ExplicitComponent):
             desc='V9: intermediate value. Typically it is maximum flight speed.',
         )
 
-        self.declare_partials('max_mach', 'max_airspeed')
+        self.declare_partials(Aircraft.Design.MAX_MACH, 'max_airspeed')
         self.declare_partials('density_ratio', 'max_airspeed')
         self.declare_partials('V9', '*')
 
     def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
         vel_c = inputs['vel_c']
         max_airspeed = inputs['max_airspeed']
 
@@ -383,19 +387,31 @@ class LoadParameters(om.ExplicitComponent):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         if cruise_alt <= 22500.0:
+            # 486.33 comes from the "average" altitude (roughly 16000 ft)
             max_mach = max_airspeed / 486.33
         if cruise_alt > 22500.0 and cruise_alt <= 36000.0:
+            # 424.73 comes from the "average" altitude (roughly 28000 ft)
             max_mach = max_airspeed / 424.73
         if cruise_alt > 36000.0:
             max_mach = max_airspeed / 372.34
 
         if smooth:
+            if max_mach > 0.90:
+                if verbosity > Verbosity.BRIEF:
+                    warnings.warn(
+                        f'Calculated Aircraft.Design.MAX_MACH = {max_mach}  '
+                        'GASP only models subsonic flight: Setting Aircraft.Design.MAX_MACH = 0.9.'
+                    )
             max_mach = max_mach * sigmoidX(max_mach / 0.9, 1, -0.01) + 0.9 * sigmoidX(
                 max_mach / 0.9, 1, 0.01
             )
-
         else:
-            if max_mach > 0.90:  # note: this creates a discontinuity
+            if max_mach > 0.90:
+                if verbosity > Verbosity.BRIEF:
+                    warnings.warn(
+                        f'Calculated Aircraft.Design.MAX_MACH = {max_mach}  '
+                        'GASP only models subsonic flight: Setting Aircraft.Design.MAX_MACH = 0.9.'
+                    )
                 max_mach = 0.90
 
         density_ratio = (max_airspeed / (661.7 * max_mach)) ** 1.61949
@@ -435,7 +451,7 @@ class LoadParameters(om.ExplicitComponent):
             if CATD < 3.0 and density_ratio <= 0.6820:  # note: this creates a discontinuity
                 density_ratio = 0.6820
 
-        outputs['max_mach'] = max_mach
+        outputs[Aircraft.Design.MAX_MACH] = max_mach
         outputs['density_ratio'] = density_ratio
         outputs['V9'] = V9
 
@@ -579,7 +595,7 @@ class LoadParameters(om.ExplicitComponent):
                 density_ratio = 0.6820
                 ddensity_ratio_dmax_airspeed = 0.0
 
-        partials['max_mach', 'max_airspeed'] = dmax_mach_dmax_airspeed
+        partials[Aircraft.Design.MAX_MACH, 'max_airspeed'] = dmax_mach_dmax_airspeed
         partials['density_ratio', 'max_airspeed'] = ddensity_ratio_dmax_airspeed
         partials['V9', 'max_airspeed'] = dV9_dmax_airspeed
         partials['V9', 'vel_c'] = dV9_dvel_c
@@ -609,9 +625,9 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
 
         if verbosity > Verbosity.BRIEF:
             if AR <= 0.0:
-                print('Aircraft.Wing.ASPECT_RATIO must be positive.')
+                warnings.warn('Aircraft.Wing.ASPECT_RATIO must be positive.')
             if DLMC4 == np.pi / 2.0:
-                print('Aircraft.Wing.SWEEP can not be 90 degrees.')
+                warnings.warn('Aircraft.Wing.SWEEP can not be 90 degrees.')
 
         outputs[Aircraft.Design.LIFT_CURVE_SLOPE] = (
             np.pi
@@ -1141,11 +1157,8 @@ class DesignLoadGroup(om.Group):
         self.add_subsystem(
             'params',
             LoadParameters(),
-            promotes_inputs=[
-                'max_airspeed',
-                'vel_c',
-            ],
-            promotes_outputs=['density_ratio', 'V9', 'max_mach'],
+            promotes_inputs=['max_airspeed', 'vel_c'],
+            promotes_outputs=['density_ratio', 'V9', Aircraft.Design.MAX_MACH],
         )
 
         self.add_subsystem(
@@ -1225,9 +1238,9 @@ class BWBLoadSpeeds(om.ExplicitComponent):
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             if verbosity > Verbosity.BRIEF:
                 if exp_wing_area <= 0.0:
-                    print('Aircraft.Wing.EXPOSED_AREA must be positive.')
+                    warnings.warn('Aircraft.Wing.EXPOSED_AREA must be positive.')
                 if gross_mass <= 0.0:
-                    print('Aircraft.Design.GROSS_MASS must be positive.')
+                    warnings.warn('Aircraft.Design.GROSS_MASS must be positive.')
             wing_loading = gross_mass / exp_wing_area
 
             VCMAX = 0.9 * max_struct_speed_kts
@@ -1616,9 +1629,9 @@ class BWBLoadFactors(om.ExplicitComponent):
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             if verbosity > Verbosity.BRIEF:
                 if exp_wing_area <= 0.0:
-                    print('Aircraft.Wing.EXPOSED_AREA must be positive.')
+                    warnings.warn('Aircraft.Wing.EXPOSED_AREA must be positive.')
                 if gross_mass <= 0.0:
-                    print('Aircraft.Design.GROSS_MASS must be positive.')
+                    warnings.warn('Aircraft.Design.GROSS_MASS must be positive.')
             wing_loading = gross_mass / exp_wing_area
 
             density_ratio = inputs['density_ratio']
@@ -2195,7 +2208,7 @@ class BWBDesignLoadGroup(om.Group):
             'params',
             LoadParameters(),
             promotes_inputs=['max_airspeed', 'vel_c'],
-            promotes_outputs=['density_ratio', 'V9', 'max_mach'],
+            promotes_outputs=['density_ratio', 'V9', Aircraft.Design.MAX_MACH],
         )
 
         self.add_subsystem(

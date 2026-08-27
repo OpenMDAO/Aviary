@@ -106,7 +106,7 @@ def local_get_option_defaults() -> AviaryValues:
     option_defaults.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, 2, units='unitless')
     option_defaults.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50, units='unitless')
     option_defaults.set_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, False, units='unitless')
-    option_defaults.set_val(Mission.Constraints.MAX_MACH, 0.0, units='unitless')
+    option_defaults.set_val(Aircraft.Design.MAX_MACH, 0.0, units='unitless')
     option_defaults.set_val(Mission.GRAVITY, 9.80665, units='m/s**2')
     option_defaults.set_val(Mission.RESERVE_FUEL_MARGIN, 0.0, units='unitless')
     option_defaults.set_val(Mission.RESERVE_FUEL_MASS_ADDITIONAL, 0.0, units='lbm')
