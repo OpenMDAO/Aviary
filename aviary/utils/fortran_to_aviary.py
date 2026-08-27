@@ -981,8 +981,9 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in input_values:
         missing_vars.append('SAH')
     if len(missing_vars) > 0:
-        raise RuntimeError(
-            f'The following variables are required but are not provided:\n {missing_vars}'
+        warnings.warn(
+            f'The following variables are required but are not provided:\n {missing_vars}\n'
+            'Default values are assumed if needed.'
         )
 
     vehicle_data['input_values'] = input_values
