@@ -88,7 +88,9 @@ class AviaryProblem(om.Problem):
             'run_status',
             'sizing_results',
             'input_checks',
-            'overridden_variables',
+            'overridden_variables_setup',
+            'overridden_variables_run_model',
+            'overridden_variables_run_driver',
             'list_options',
         ]
         for report in new_reports:

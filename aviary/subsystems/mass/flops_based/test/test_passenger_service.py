@@ -44,7 +44,11 @@ class PassengerServiceMassTest(unittest.TestCase):
             self,
             prob,
             case_name,
-            input_keys=[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, Aircraft.Design.RANGE],
+            input_keys=[
+                Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER,
+                Aircraft.Design.RANGE,
+                Aircraft.Design.MAX_MACH,
+            ],
             output_keys=Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
             version=Version.TRANSPORT_and_BWB,
             tol=2e-4,
@@ -80,6 +84,7 @@ class PassengerServiceMassTest2(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Design.RANGE, 3500.0, 'nmi')
+        prob.set_val(Aircraft.Design.MAX_MACH, 0.8, 'unitless')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
