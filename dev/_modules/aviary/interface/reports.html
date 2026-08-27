@@ -506,6 +506,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.mpi</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span>
@@ -584,11 +585,29 @@
     <span class="p">)</span>
 
     <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;overridden_variables&#39;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;overridden_variables_setup&#39;</span><span class="p">,</span>
         <span class="n">func</span><span class="o">=</span><span class="n">overridden_variables_report</span><span class="p">,</span>
         <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the overridden variables&#39;</span><span class="p">,</span>
         <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
         <span class="n">method</span><span class="o">=</span><span class="s1">&#39;final_setup&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;overridden_variables_run_model&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">overridden_variables_report</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the overridden variables&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_model&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;overridden_variables_run_driver&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">overridden_variables_report</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the overridden variables&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
         <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -1201,6 +1220,31 @@
             <span class="n">val</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">aircraft_variable_name</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
             <span class="n">non_external_overridden_variables</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">aircraft_variable_name</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">))</span>
 
+    <span class="n">var_abs</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">list_outputs</span><span class="p">(</span><span class="n">out_stream</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">var_prom</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;prom_name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">var_abs</span><span class="p">]</span>
+    <span class="n">prom2abs</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_resolver</span><span class="o">.</span><span class="n">absnames</span>
+    <span class="n">abs2prom</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_resolver</span><span class="o">.</span><span class="n">abs2prom</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_relevance</span><span class="o">.</span><span class="n">_graph</span>
+    <span class="n">all_desvars</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">_designvars</span>
+    <span class="n">all_responses</span> <span class="o">=</span> <span class="p">[</span><span class="n">z</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">_responses</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+
+    <span class="n">overridden_prom</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">var_prom</span> <span class="k">if</span> <span class="s1">&#39;OVERRIDE&#39;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+
+    <span class="n">overriding_abs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">prom_name</span> <span class="ow">in</span> <span class="n">overridden_prom</span><span class="p">:</span>
+        <span class="n">adh_prom</span> <span class="o">=</span> <span class="n">prom_name</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="n">prom2abs</span><span class="p">(</span><span class="n">adh_prom</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">srcs</span> <span class="o">=</span> <span class="n">prom2abs</span><span class="p">(</span><span class="n">prom_name</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">overriding_abs</span><span class="p">[</span><span class="n">adh_prom</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">srcs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">MPI</span> <span class="ow">and</span> <span class="n">prob</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># All collective calls are completed. Reports only generated on rank 0.</span>
         <span class="k">return</span>
@@ -1208,6 +1252,64 @@
     <span class="c1"># Now that we have collected all overridden variables, write the report</span>
     <span class="k">if</span> <span class="n">mission_name</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;# MULTIMISSION: </span><span class="si">{</span><span class="n">mission_name</span><span class="si">}</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;## Potential Problems</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">problems_found</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">overriding_abs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">srcs</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="n">srcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">relevant_targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">relevant_targets</span><span class="p">:</span>
+            <span class="c1"># True variable relevancy check for design vars.</span>
+            <span class="n">upstream_nodes</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">ancestors</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+            <span class="n">up_leaves</span> <span class="o">=</span> <span class="p">[</span><span class="n">abs2prom</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">upstream_nodes</span> <span class="k">if</span> <span class="s1">&#39;_auto_ivc.&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="p">]</span>
+            <span class="n">up_leaves</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">up_leaves</span> <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">all_desvars</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">up_leaves</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># True variable relevancy check for responses.</span>
+            <span class="n">abs_names</span> <span class="o">=</span> <span class="n">prom2abs</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">downstream_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="n">abs_names</span><span class="p">:</span>
+                <span class="n">downstream_nodes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">descendants</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">abs_name</span><span class="p">))</span>
+
+            <span class="n">down_leaves</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">downstream_nodes</span> <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">all_responses</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">down_leaves</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">v1</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">v2</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+            <span class="n">problems_found</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Override: **</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">**</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;```</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  Override Value:</span><span class="si">{</span><span class="n">v1</span><span class="si">}</span><span class="s1">,  Computed Value:</span><span class="si">{</span><span class="n">v2</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  depends on:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">up_leaves</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">leaf</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  feeds:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">relevant_targets</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  impacts:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">down_leaves</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">leaf</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;```</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">problems_found</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  None</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;## Internal Overrides</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">non_external_overridden_variables</span><span class="p">:</span>
