@@ -14,6 +14,7 @@ outputs = BWBsimpleFLOPS['outputs'] = AviaryValues()
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')  # SBASE
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.0)  # EWMARG
 inputs.set_val(Aircraft.Design.GROSS_MASS, 874099.0, 'lbm')  # DGW
+inputs.set_val(Aircraft.Design.MAX_MACH, 0.85)  # VMMO
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)  # FCDI
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUB
@@ -199,7 +200,7 @@ inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)  # FLAPR
 inputs.set_val(Aircraft.Wing.DETAILED_WING, True)
 inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 121.05, 'ft**2')  # GLOV
 
-inputs.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, np.array([0.0, 0.5, 1.0]))  # ETAW
+inputs.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, np.array([0.5, 1.0]))  # ETAW
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)  # PDIST
 inputs.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 2.0)  # CAM
 inputs.set_val(Aircraft.Wing.MISC_MASS_SCALER, 1.0)  # FRWI3
@@ -225,7 +226,6 @@ inputs.set_val(Aircraft.Wing.SPAN_EFFICIENCY_FACTOR, 0.0)  # E
 # ---------------------------
 inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.85)  # VCMN
 inputs.set_val(Aircraft.Design.RANGE, 7750.0, 'NM')  # DESRNG
-inputs.set_val(Mission.Constraints.MAX_MACH, 0.85)  # VMMO
 # inputs.set_val(Mission.Takeoff.FUEL, 577, 'lbm')  # FTKOFL
 
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3.0)  # CLLDM
@@ -364,7 +364,7 @@ outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 14152.3734702, 'lbm')  # WSC
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 3.4488813)  # AR
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 3.4488813)  # ARREF
 outputs.set_val(Aircraft.Wing.MASS, 86742.28126808, 'lbm')  # WWING
-outputs.set_val(Aircraft.Wing.ROOT_CHORD, 63.96, 'ft')  # XLW
+outputs.set_val(Aircraft.Wing.ROOT_CHORD, 91.37142857142858, 'ft')  # XLOUT
 outputs.set_val(Aircraft.Wing.AREA, 16555.972297926455, 'ft**2')  # SW
 outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.53107166)  # PCTL
 outputs.set_val(Aircraft.Wing.WETTED_AREA, 33816.732336575638, 'ft**2')  # SWET(1)
