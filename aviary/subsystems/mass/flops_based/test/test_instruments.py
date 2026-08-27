@@ -14,7 +14,7 @@ from aviary.validation_cases.validation_tests import (
     print_case,
     Version,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 @use_tempdirs
@@ -38,7 +38,6 @@ class TransportInstrumentsMassTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
         }
 
         prob.model.add_subsystem(
@@ -47,7 +46,7 @@ class TransportInstrumentsMassTest(unittest.TestCase):
             promotes_outputs=[
                 Aircraft.Instruments.MASS,
             ],
-            promotes_inputs=[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Instruments.MASS_SCALER],
+            promotes_inputs=['*'],
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -56,7 +55,11 @@ class TransportInstrumentsMassTest(unittest.TestCase):
             self,
             prob,
             case_name,
-            input_keys=[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Instruments.MASS_SCALER],
+            input_keys=[
+                Aircraft.Fuselage.PLANFORM_AREA,
+                Aircraft.Instruments.MASS_SCALER,
+                Aircraft.Design.MAX_MACH,
+            ],
             output_keys=Aircraft.Instruments.MASS,
             version=Version.TRANSPORT_and_BWB,
             tol=1e-3,
@@ -94,7 +97,6 @@ class TransportInstrumentsMassTest2(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
         }
 
         prob.model.add_subsystem(
@@ -103,10 +105,15 @@ class TransportInstrumentsMassTest2(unittest.TestCase):
             promotes_outputs=[
                 Aircraft.Instruments.MASS,
             ],
-            promotes_inputs=[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Instruments.MASS_SCALER],
+            promotes_inputs=[
+                Aircraft.Fuselage.PLANFORM_AREA,
+                Aircraft.Instruments.MASS_SCALER,
+                Aircraft.Design.MAX_MACH,
+            ],
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.PLANFORM_AREA, 1500.0, 'ft**2')
+        prob.set_val(Aircraft.Design.MAX_MACH, 0.82, 'unitless')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
