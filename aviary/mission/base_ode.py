@@ -1,6 +1,8 @@
 import openmdao.api as om
 
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import CoreMetaData
 
@@ -62,7 +64,7 @@ class BaseODE(om.Group):
         Parameters
         ----------
         solver_sub: None or om.Group
-            Pre-created subsystem for the solver.
+            Pre-created group to add the solver.
         couple_propulsion : bool
             When True, the ODE couples with any propulsion subsystems via a throttle to commanded
             thrust balance.
@@ -70,7 +72,7 @@ class BaseODE(om.Group):
             When True, the ODE couples with any aerodynamics subsystems via a force balance.
         aero_solver_sub : None or om.Group
             Some ODEs (like solved 2DOF) place the aerodynamics and propulsion cycles in separate
-            subsystems. When this is specified, the aero subsystem is placed in this sub.
+            groups. When this is specified, the aerodynamics subsystem is placed in this sub.
         Returns
         -------
         om.Group
@@ -82,10 +84,6 @@ class BaseODE(om.Group):
         all_subsystems = self.options['subsystems']
         all_subsystem_options = self.options['subsystem_options']
         user_options = self.options['user_options']
-
-        # Prevent circular import
-        from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
-        from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 
         for subsystem in all_subsystems:
             # check if subsystem_options has entry for a subsystem of this name
