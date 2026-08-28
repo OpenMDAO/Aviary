@@ -267,17 +267,13 @@ class OASAero(om.Group):
             promotes_outputs=['broadcast_htail_chord'],
         )
 
-        # WING: use actual Aviary geometry
-        wing_span = aviary_inputs.get_val(Aircraft.Wing.SPAN, units='m')
-        wing_root_chord = aviary_inputs.get_val(Aircraft.Wing.ROOT_CHORD, units='m')
-
         mesh_dict = {
             'num_y': 23,
             'num_x': 7,
             'wing_type': 'rect',
             'symmetry': True,
-            'span': wing_span,
-            'root_chord': wing_root_chord,
+            'span': 1,
+            'root_chord': 1,
             'taper': 1,
             'sweep': 1,
             'span_cos_spacing': 1,
@@ -310,16 +306,13 @@ class OASAero(om.Group):
 
         htail_z_offset = 0.10  # m
 
-        htail_span = aviary_inputs.get_val(Aircraft.HorizontalTail.SPAN, units='m')
-        htail_root_chord = aviary_inputs.get_val(Aircraft.HorizontalTail.ROOT_CHORD, units='m')
-
         mesh_dict = {
             'num_y': 19,
             'num_x': 6,
             'wing_type': 'rect',
             'symmetry': True,
-            'span': htail_span,
-            'root_chord': htail_root_chord,
+            'span': 1,
+            'root_chord': 1,
             'taper': 1,
             'sweep': 1,
             'span_cos_spacing': 1,
@@ -369,7 +362,7 @@ class OASAero(om.Group):
             point_name = 'aero_point_' + str(i)
             self.add_subsystem(point_name, AeroPoint(surfaces=surfaces))
 
-            self.promotes(point_name, inputs=[('v', Dynamic.Mission.VELOCITY)], src_indices=[i])
+            self.connect(Dynamic.Mission.VELOCITY, f'{point_name}.v', src_indices=[i])
             self.promotes(point_name, inputs=['alpha'], src_indices=[i], flat_src_indices=True)
             self.connect('re', f'{point_name}.re', src_indices=[i])
             self.connect('prob_vars.cg', f'{point_name}.cg')
@@ -395,11 +388,19 @@ class OASAero(om.Group):
                 'lifting_surface_CD',
             ],
         )
-        print("DEBUG ALTITUDE:", aviary_inputs.get_val(Dynamic.Mission.ALTITUDE, units='m'))
 
         self.options['auto_order'] = True
 
     def configure(self):
-        # No span/chord promotions; geometry is already set in mesh_dict
-        # Use broadcast only for incidence twist
+        # changing any value in Aviary applies a scaling factor to the existing geometry in the mesh
+        # that's why all the values are 1 in the mesh dictionaries
+        self.promotes('wing', inputs=[('mesh.stretch.span', Aircraft.Wing.SPAN)])
+        self.promotes('htail', inputs=[('mesh.stretch.span', Aircraft.HorizontalTail.SPAN)])
+
+        self.connect('broadcast_wing_chord', 'wing.mesh.scale_x.chord')
+        self.connect('broadcast_htail_chord', 'htail.mesh.scale_x.chord')
+
+        self.promotes('wing', inputs=[('mesh.sweep.sweep', Aircraft.Wing.SWEEP)])
+        self.promotes('htail', inputs=[('mesh.sweep.sweep', Aircraft.HorizontalTail.SWEEP)])
+
         self.connect('broadcast_incidence', 'wing.mesh.rotate.twist')
