@@ -1,7 +1,34 @@
+from pathlib import Path
+import sys
+
 import numpy as np
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
+
+
+def print_benchmark_results(prob):
+    """
+    Prints summary of results for a completed benchmark.
+    """
+
+    frame = sys._getframe(1)
+    test_name = frame.f_code.co_name
+    file_name = frame.f_code.co_filename
+    file_name = Path(file_name).name
+
+    print(f"BENCH: {file_name}:{test_name} -- {prob.driver.options['optimizer']}")
+
+    pyopt = prob.driver.pyopt_solution
+    code = pyopt.optInform['value']
+    msg = pyopt.optInform['text']
+    dt = pyopt.optTime
+    nobj = pyopt.userObjCalls
+    nsen = pyopt.userSensCalls
+    data = prob.list_driver_vars(driver_scaling=False, out_stream=None)
+    obj = data['objectives'].pop()[1]['val'][0]
+    print(f" Obj: {obj:.4f}   Time: {dt:.2f} s   Obj Calls: {nobj}   Sens Calls: {nsen}   Status: {code} - {msg}")
+    print('', flush=True)
 
 
 def compare_against_expected_values(prob, expected_dict):

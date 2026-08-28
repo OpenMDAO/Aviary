@@ -5,6 +5,7 @@ from aviary.models.missions.solved2dof_default import phase_info
 from aviary.models.missions.solved2dof_landing_default import phase_info as phase_info_landing
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+from aviary.validation_cases.benchmark_utils import print_benchmark_results
 
 
 @use_tempdirs
@@ -102,7 +103,9 @@ class TestBenchSolved2DOF(unittest.TestCase):
             max_iter=100,
         )
 
+        print_benchmark_results(prob)
         self.assertTrue(prob.result.success)
+
         tol = 1e-2
         assert_near_equal(prob.get_val(av.Mission.FINAL_TIME, units='s'), 108.84030411, tol)
         assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 459.3830223, tol)
@@ -210,7 +213,9 @@ class TestBenchSolved2DOF(unittest.TestCase):
         prob.setup()
         prob.run_aviary_problem()
 
+        print_benchmark_results(prob)
         self.assertTrue(prob.result.success)
+
         tol = 1e-2
         assert_near_equal(prob.get_val(av.Mission.FINAL_TIME, units='s'), 68.30353617, tol)
         assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 98.91566618, tol)

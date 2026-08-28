@@ -7,6 +7,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.models.missions.two_dof_default import phase_info
 from aviary.interface.run_aviary import run_aviary
+from aviary.validation_cases.benchmark_utils import print_benchmark_results
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -32,6 +33,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             optimizer='IPOPT',
         )
 
+        print_benchmark_results(prob)
         # TODO: This problem does not always converge.
         # self.assertTrue(prob.result.success)
 
@@ -53,17 +55,19 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 else:
                     assert_near_equal(prob.get_val(var_name), expected_val, tolerance=rtol)
 
+
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_swap_3_FwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwGm.csv',
             local_phase_info,
-            verbosity=1,
+            verbosity=0,
             optimizer='SNOPT',
             max_iter=60,
         )
 
+        print_benchmark_results(prob)
         self.assertTrue(prob.result.success)
 
         rtol = 1e-2
@@ -83,8 +87,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     assert_near_equal(prob.get_val(var_name)[-1], expected_val, tolerance=rtol)
                 else:
                     assert_near_equal(prob.get_val(var_name), expected_val, tolerance=rtol)
-
-        self.assertTrue(prob.result.success)
 
 
 if __name__ == '__main__':
