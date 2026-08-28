@@ -256,7 +256,6 @@ class BodyTankCalculations(om.ExplicitComponent):
         dmax_extra_fuel_wt_dgeom_fuel_vol = dextra_fuel_volume_dgeom_fuel_vol * rho_fuel
         dmax_extra_fuel_wt_drho_fuel = extra_fuel_volume
 
-        # Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY
         extra_fuel_wt = req_fuel_wt - max_wingfuel_wt
         dextra_fuel_wt_dreq_fuel_wt = 1
         dextra_fuel_wt_dmax_wingfuel_wt = -1
