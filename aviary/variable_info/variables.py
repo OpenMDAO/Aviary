@@ -43,6 +43,13 @@ class Aircraft:
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
         )
+        REAR_SPAR_PERCENT_CHORD_CENTERLINE = (
+            'aircraft:blended_wing_body_design:rear_spar_percent_chord_centerline'
+        )
+        REAR_SPAR_PERCENT_CHORD_ROOT = (
+            'aircraft:blended_wing_body_design:rear_spar_percent_chord_root'
+        )
+        WING_ROOT_INDEX = 'aircraft:blended_wing_body_design:wing_root_index'
 
     class Canard:
         AREA = 'aircraft:canard:area'
@@ -160,6 +167,7 @@ class Aircraft:
         LIFT_POLAR = 'aircraft:design:lift_polar'
         MACH = 'aircraft:design:mach'
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'
+        MAX_MACH = 'aircraft:design:max_mach'
         MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
         PERCENT_EXCRESCENCE_DRAG = 'aircraft:design:percent_excrescence_drag'
@@ -294,6 +302,7 @@ class Aircraft:
         AISLE_WIDTH = 'aircraft:fuselage:aisle_width'
         AVG_DIAMETER = 'aircraft:fuselage:avg_diameter'
         CABIN_AREA = 'aircraft:fuselage:cabin_area'
+        CABIN_SIDEWALL_LENGTH_MIN = 'aircraft:fuselage:cabin_sidewall_length_min'
         CHARACTERISTIC_LENGTH = 'aircraft:fuselage:characteristic_length'
         CROSS_SECTION = 'aircraft:fuselage:cross_section'
         DELTA_DIAMETER = 'aircraft:fuselage:delta_diameter'
@@ -691,7 +700,6 @@ class Mission:
         EXCESS_FUEL_MASS_CAPACITY = 'mission:constraints:excess_fuel_mass_capacity'
         GEARBOX_SHAFT_POWER_RESIDUAL = 'mission:constraints:gearbox_shaft_power_residual'
         MASS_RESIDUAL = 'mission:constraints:mass_residual'
-        MAX_MACH = 'mission:constraints:max_mach'
         RANGE_RESIDUAL = 'mission:constraints:range_residual'
         RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
 
