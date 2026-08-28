@@ -23,7 +23,7 @@ for j, line in enumerate(lines):
         line = line.partition('BENCH: ')[-1]
         if line in results:
             raise RuntimeError(f'Use a unique name for test {line}!')
-        results[line] = lines[j+1]
+        results[line] = lines[j + 1]
 
 for name, bench_data in sorted(results.items()):
     print(name)
@@ -37,5 +37,3 @@ print('\n')
 
 for line in lines[-11:]:
     print(line)
-
-print('done')
