@@ -496,10 +496,6 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
                 # TODO: Pull from upstream phase.
                 altitude_initial = wrapped_convert_units(options['altitude_bounds'], 'ft')[0]
 
-            if altitude_final is None:
-                # TODO: Pull from downstream phase.
-                altitude_final = wrapped_convert_units(options['altitude_bounds'], 'ft')[0]
-
             if altitude_initial is None and altitude_final is None:
                 # No way to get an IC, so just some nominal values.
                 altitude_initial = 0.0
