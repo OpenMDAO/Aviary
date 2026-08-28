@@ -160,6 +160,9 @@ class VerticalTailMass(om.JaxExplicitComponent):
         rib_materials = self.options[Aircraft.VerticalTail.RIB_MATERIALS]
         misc_mass, units = self.options[Aircraft.VerticalTail.MISC_MASS]
 
+        if len(rib_materials) != len(rib_thickness):
+            raise ValueError("Mismatch in rib materials/thicknesses")
+        
         load_airfoil_if_needed(self, Aircraft.VerticalTail)
         chord = root_chord
         # Wetted area derived from span x chord (was a separate input/DV), so span/chord
