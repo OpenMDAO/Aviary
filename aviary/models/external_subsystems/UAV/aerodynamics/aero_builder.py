@@ -50,10 +50,10 @@ class AeroBuilder(SubsystemBuilder):
             'units': 'm',
             'static_target': True,
         }
-        params[Aircraft.Wing.SWEEP] = {
-            'units': 'deg',
-            'static_target': True,
-        }
+        # params[Aircraft.Wing.SWEEP] = {
+        #     'units': 'deg',
+        #     'static_target': True,
+        # }
         params[Aircraft.Wing.INCIDENCE] = {
             'units': 'deg',
             'static_target': True
@@ -70,10 +70,10 @@ class AeroBuilder(SubsystemBuilder):
             'units': 'm',
             'static_target': True
         }
-        params[Aircraft.HorizontalTail.SWEEP] = {
-            'units': 'deg',
-            'static_target': True
-        }
+        # params[Aircraft.HorizontalTail.SWEEP] = {
+        #     'units': 'deg',
+        #     'static_target': True
+        # }
         params[Aircraft.Fuselage.MAX_HEIGHT] = {
             'units': 'm',
             'static_target': True
