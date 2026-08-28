@@ -11,8 +11,8 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 class TestBenchSolved2DOF(unittest.TestCase):
     """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
-    @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_Solved2DOF(self):
+    @require_pyoptsparse(optimizer='SNOPT')
+    def bench_test_Solved2DOF(self):
         subsystem_options = {
             'aerodynamics': {
                 'method': 'low_speed',
@@ -97,7 +97,7 @@ class TestBenchSolved2DOF(unittest.TestCase):
         prob = av.run_aviary(
             aircraft_data='validation_cases/validation_data/test_models/aircraft_for_bench_solved2dof.csv',
             phase_info=phase_info,
-            optimizer='IPOPT',
+            optimizer='SNOPT',
             objective_type='time',
             max_iter=100,
         )
@@ -107,8 +107,8 @@ class TestBenchSolved2DOF(unittest.TestCase):
         assert_near_equal(prob.get_val(av.Mission.FINAL_TIME, units='s'), 108.84030411, tol)
         assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 459.3830223, tol)
 
-    @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_Solved2DOF_landing(self):
+    @require_pyoptsparse(optimizer='SNOPT')
+    def bench_test_Solved2DOF_landing(self):
         # This problem solves better with a reduced ref for objective time, therefore need to call add_objectve()
         subsystem_options = {
             'aerodynamics': {
@@ -204,7 +204,7 @@ class TestBenchSolved2DOF(unittest.TestCase):
         )
         prob.check_and_preprocess_inputs()
         prob.build_model()
-        prob.add_driver('IPOPT', max_iter=100)
+        prob.add_driver('SNOPT', max_iter=100)
         prob.add_design_variables()
         prob.add_objective('time', ref=1e2)
         prob.setup()
@@ -217,4 +217,6 @@ class TestBenchSolved2DOF(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    z = TestBenchSolved2DOF()
+    z.bench_test_Solved2DOF_landing()
