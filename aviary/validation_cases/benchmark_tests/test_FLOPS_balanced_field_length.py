@@ -159,6 +159,7 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
 
         return takeoff
 
+
 if __name__ == '__main__':
     use_SNOPT = False
 
