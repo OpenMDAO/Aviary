@@ -12,7 +12,7 @@ class TestBenchSolved2DOF(unittest.TestCase):
     """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_Solved2DOF(self):
+    def bench_test_Solved2DOF(self):
         subsystem_options = {
             'aerodynamics': {
                 'method': 'low_speed',
@@ -108,7 +108,7 @@ class TestBenchSolved2DOF(unittest.TestCase):
         assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 459.3830223, tol)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_Solved2DOF_landing(self):
+    def bench_test_Solved2DOF_landing(self):
         # This problem solves better with a reduced ref for objective time, therefore need to call add_objectve()
         subsystem_options = {
             'aerodynamics': {
