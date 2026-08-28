@@ -626,33 +626,33 @@ class MassPremissionTestCase2a(unittest.TestCase):
                 override_aviary_vars(self, aviary_options)
 
         options = AviaryValues()
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
-        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
-        options.set_val(
-            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
-        )
-        options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
-        options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
-        options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
-        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
-        options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
-        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
-        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
-        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=True, units='unitless')
-        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=True, units='unitless')
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
-        options.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
-        options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
-        options.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
-        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
-        options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
-        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
+        # options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        # options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
+        # options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
+        # options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        # options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
+        # options.set_val(
+        #     Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
+        # )
+        # options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
+        # options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
+        # options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
+        # options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
+        # options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
+        # options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+        # options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        # options.set_val(Aircraft.Engine.TYPE, [GASPEngineType.TURBOJET], units='unitless')
+        # options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
+        # options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        # options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
+        # options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
+        # options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        # options.set_val(Aircraft.Design.TYPE, AircraftTypes.TRANSPORT, units='unitless')
+        # options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
+        # options.set_val(Aircraft.Wing.LOADING_ABOVE_20, True, units='unitless')
+        # options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2, units='unitless')
+        # options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2, units='unitless')
+        # options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')
 
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -836,9 +836,37 @@ class MassPremissionTestCase2a(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
-        setup_model_options(prob, options)
+        # setup_model_options(prob, options)
+        prob.model_options['*'] = {
+            Aircraft.Electrical.HAS_HYBRID_SYSTEM: False,
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS: 180,
+            Aircraft.CrewPayload.NUM_PASSENGERS: 180,
+            Aircraft.Design.CRUISE_ALTITUDE: (37500, 'ft'),
+            Aircraft.Wing.CHOOSE_FOLD_LOCATION: False,
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED: True,
+            Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED: True,
+            Aircraft.LandingGear.FIXED_GEAR: False,
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY: 6,
+            Aircraft.Fuselage.NUM_AISLES: 1,
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY: (29, 'inch'),
+            Aircraft.Engine.ADDITIONAL_MASS_FRACTION: 0.14,
+            Aircraft.Engine.NUM_ENGINES: [2],
+            Aircraft.Engine.TYPE: [GASPEngineType.TURBOJET],
+            Aircraft.Wing.HAS_FOLD: False,
+            Aircraft.Wing.HAS_STRUT: False,
+            Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF: True,
+            Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF: True,
+            Aircraft.Electrical.HAS_HYBRID_SYSTEM: False,
+            Aircraft.Design.TYPE: AircraftTypes.TRANSPORT,
+            Aircraft.Design.PART25_STRUCTURAL_CATEGORY: 3,
+            Aircraft.Wing.LOADING_ABOVE_20: True,
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: 2,
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES: 2,
+            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES: False,
+        }
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
+        prob.model.list_vars(units=True)
 
         tol = 5e-4
         assert_near_equal(prob[Aircraft.HorizontalTail.VOLUME_COEFFICIENT], 1.189, tol)
