@@ -1,6 +1,5 @@
 import numpy as np
 import openmdao.api as om
-from scipy.special import expit
 
 from ambiance import Atmosphere
 
