@@ -55,7 +55,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 else:
                     assert_near_equal(prob.get_val(var_name), expected_val, tolerance=rtol)
 
-
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_swap_3_FwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
