@@ -177,6 +177,9 @@ class MassPremissionTestCase2(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
         )
@@ -355,7 +358,6 @@ class MassPremissionTestCase2(unittest.TestCase):
             Aircraft.LandingGear.FIXED_GEAR: False,
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY: 6,
             Aircraft.Fuselage.NUM_AISLES: 1,
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY: (29, 'inch'),
             Aircraft.Engine.ADDITIONAL_MASS_FRACTION: 0.14,
             Aircraft.Engine.NUM_ENGINES: [2],
             Aircraft.Engine.TYPE: [GASPEngineType.TURBOJET],
@@ -575,6 +577,9 @@ class MassPremissionTestCase3(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
         )
@@ -756,7 +761,6 @@ class MassPremissionTestCase3(unittest.TestCase):
             Aircraft.LandingGear.FIXED_GEAR: False,
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY: 6,
             Aircraft.Fuselage.NUM_AISLES: 1,
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY: (29, 'inch'),
             Aircraft.Engine.ADDITIONAL_MASS_FRACTION: 0.14,
             Aircraft.Engine.NUM_ENGINES: [2],
             Aircraft.Engine.TYPE: [GASPEngineType.TURBOJET],
@@ -869,6 +873,9 @@ class MassPremissionTestCase4(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
         )
@@ -1052,7 +1059,6 @@ class MassPremissionTestCase4(unittest.TestCase):
             Aircraft.LandingGear.FIXED_GEAR: False,
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY: 6,
             Aircraft.Fuselage.NUM_AISLES: 1,
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY: (29, 'inch'),
             Aircraft.Engine.ADDITIONAL_MASS_FRACTION: 0.14,
             Aircraft.Engine.NUM_ENGINES: [2],
             Aircraft.Engine.TYPE: [GASPEngineType.TURBOJET],
@@ -1181,6 +1187,9 @@ class MassPremissionTestCase5(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
         )
@@ -1373,7 +1382,6 @@ class MassPremissionTestCase5(unittest.TestCase):
             Aircraft.LandingGear.FIXED_GEAR: False,
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY: 6,
             Aircraft.Fuselage.NUM_AISLES: 1,
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY: (29, 'inch'),
             Aircraft.Engine.ADDITIONAL_MASS_FRACTION: 0.14,
             Aircraft.Engine.NUM_ENGINES: [2],
             Aircraft.Engine.TYPE: [GASPEngineType.TURBOJET],
@@ -1497,6 +1505,9 @@ class MassPremissionTestCase6(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
         )
@@ -1691,7 +1702,6 @@ class MassPremissionTestCase6(unittest.TestCase):
             Aircraft.LandingGear.FIXED_GEAR: False,
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY: 6,
             Aircraft.Fuselage.NUM_AISLES: 1,
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY: (29, 'inch'),
             Aircraft.Engine.ADDITIONAL_MASS_FRACTION: 0.14,
             Aircraft.Engine.NUM_ENGINES: [2],
             Aircraft.Engine.TYPE: [GASPEngineType.TURBOJET],
@@ -1816,6 +1826,9 @@ class MassPremissionTestCase7(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
         )
@@ -2018,7 +2031,6 @@ class MassPremissionTestCase7(unittest.TestCase):
             Aircraft.LandingGear.FIXED_GEAR: False,
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY: 6,
             Aircraft.Fuselage.NUM_AISLES: 1,
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY: (29, 'inch'),
             Aircraft.Engine.ADDITIONAL_MASS_FRACTION: 0.165,
             Aircraft.Engine.NUM_ENGINES: [2],
             Aircraft.Engine.TYPE: [GASPEngineType.TURBOJET],
@@ -2152,6 +2164,9 @@ class MassPremissionTestCase8(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch'
+        )
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
         )
@@ -2370,7 +2385,6 @@ class MassPremissionTestCase8(unittest.TestCase):
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES: True,
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY: 6,
             Aircraft.Fuselage.NUM_AISLES: 1,
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY: (44.2, 'inch'),
             Aircraft.Engine.ADDITIONAL_MASS_FRACTION: 0.163,
             Aircraft.Engine.NUM_ENGINES: [2],
             Aircraft.Engine.TYPE: [GASPEngineType.TURBOJET],
@@ -2493,6 +2507,9 @@ class MassPremissionTestCase9(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch'
+        )
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
         )
@@ -2719,7 +2736,6 @@ class MassPremissionTestCase9(unittest.TestCase):
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES: True,
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY: 6,
             Aircraft.Fuselage.NUM_AISLES: 1,
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY: (44.2, 'inch'),
             Aircraft.Engine.ADDITIONAL_MASS_FRACTION: 0.163,
             Aircraft.Electrical.HAS_HYBRID_SYSTEM: True,
             Aircraft.Engine.NUM_ENGINES: [2],
