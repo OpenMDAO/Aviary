@@ -5,6 +5,55 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output, 
 from aviary.variable_info.variables import Aircraft
 
 
+class MomentRatio(om.ExplicitComponent):
+    """GASP tail moment ratio"""
+
+    def initialize(self):
+        self.options.declare(
+            'orientation',
+            values=['horizontal', 'vertical'],
+            desc='Tail orientation, can be horizontal or vertical.',
+        )
+
+    def setup(self):
+        veritcal = self.options['orientation'] == 'vertical'
+        if veritcal:
+            self.io_names = {
+                'moment_ratio': Aircraft.VerticalTail.MOMENT_RATIO,
+            }
+        else:
+            self.io_names = {
+                'moment_ratio': Aircraft.HorizontalTail.MOMENT_RATIO,
+            }
+
+        # coefficients used in the empirical equation
+        if veritcal:
+            self.k = [1.862, 0.338]
+        else:
+            self.k = [0.271, 0.0955]
+
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless'
+        )
+
+        add_aviary_output(self, self.io_names['moment_ratio'], units='unitless')
+
+    def setup_partials(self):
+        self.declare_partials(self.io_names['moment_ratio'], '*')
+
+    def compute(self, inputs, outputs):
+        htail_loc = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
+        k1, k2 = self.k
+        ch2 = k1 + k2 * htail_loc
+        outputs[self.io_names['moment_ratio']] = ch2
+
+    def compute_partials(self, inputs, J):
+        str_moment_ratio = self.io_names['moment_ratio']
+
+        k1, k2 = self.k
+        J[str_moment_ratio, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION] = k2
+
+
 class TailVolCoef(om.ExplicitComponent):
     """GASP tail volume coefficient fallback calculation.
 
@@ -245,6 +294,19 @@ class EmpennageSize(om.Group):
 
     def setup(self):
         # For cruciform/T-tail configurations, see issue #1089
+
+        # self.add_subsystem(
+        #     'htail_mr',
+        #     MomentRatio(orientation='horizontal'),
+        #     promotes_inputs=['*'],
+        #     promotes_outputs=['*'],
+        # )
+        # self.add_subsystem(
+        #     'vtail_mr',
+        #     MomentRatio(orientation='vertical'),
+        #     promotes_inputs=['*'],
+        #     promotes_outputs=['*'],
+        # )
 
         if self.options[Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF]:
             self.add_subsystem(
