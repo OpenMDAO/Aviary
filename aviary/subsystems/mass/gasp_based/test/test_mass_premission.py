@@ -57,19 +57,17 @@ class MassPremissionTestCase1(unittest.TestCase):
     """
 
     def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'gasp_based_geom',
-            SizeGroup(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=[
-                'aircraft:*',
-            ],
-        )
-        self.prob.model.add_subsystem(
-            'total_mass',
-            MassPremission(),
-            promotes=['*'],
+        options = AviaryValues()
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless')
+        options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145, units='unitless')
+        options.set_val(Settings.VERBOSITY, 0)
+
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'premission',
+            PreMission(aviary_options=options),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
         )
 
         input_options = V3_bug_fixed_options.deepcopy()
@@ -115,9 +113,9 @@ class MassPremissionTestCase1(unittest.TestCase):
 
         tol = 5e-4
         expected_values = {
-            'gasp_based_geom.cabin_height': 13.1,
-            'gasp_based_geom.cabin_len': 72.09722222222223,
-            'gasp_based_geom.nose_height': 8.6,
+            'size.cabin_height': 13.1,
+            'size.cabin_len': 72.09722222222223,
+            'size.nose_height': 8.6,
             Aircraft.Wing.CENTER_CHORD: 17.63,
             Aircraft.Wing.ROOT_CHORD: 16.54,
             Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: 0.1397,  # not exact GASP value from the output file, likely due to rounding error
@@ -3265,4 +3263,7 @@ class BWBStructMassTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = MassPremissionTestCase1()
+    test.setUp()
+    test.test_case1()
