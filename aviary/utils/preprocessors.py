@@ -160,6 +160,10 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
     else:
         simple_layout = aviary_options.get_val(Aircraft.Fuselage.SIMPLE_LAYOUT)
 
+    num_economy_class_pax = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
+    num_business_class_pax = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
+    num_first_class_pax = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+
     if simple_layout == False:
         # Check seat widths are set
         if mass_method == LegacyCode.FLOPS:
