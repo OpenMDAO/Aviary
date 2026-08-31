@@ -189,11 +189,6 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     raise Warning(
                         f'Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS = {num_economy_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY ({num_seat_abreast_economy}) must be greater than 0.'
                     )
-                if num_economy_class_pax == 0 and num_seat_abreast_economy == 0:
-                    num_seat_abreast_economy_set_user = (
-                        False  # need to overwrite with default to avoid div 0 in fuselage.py
-                    )
-
             if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS in aviary_options:
                 num_seat_abreast_business_set_user = True
                 num_seat_abreast_business = aviary_options.get_val(
@@ -203,11 +198,6 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     raise Warning(
                         f'Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS = {num_business_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY ({num_seat_abreast_business}) must be greater than 0.'
                     )
-                if num_business_class_pax == 0 and num_seat_abreast_business == 0:
-                    num_seat_abreast_business_set_user = (
-                        False  # need to overwrite with default to avoid div 0 in fuselage.py
-                    )
-
             if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST in aviary_options:
                 num_seat_abreast_first_set_user = True
                 num_seat_abreast_first = aviary_options.get_val(
@@ -216,10 +206,6 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 if num_first_class_pax > 0 and num_seat_abreast_first <= 0:
                     raise Warning(
                         f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST ({num_seat_abreast_first}) must be greater than 0.'
-                    )
-                if num_first_class_pax == 0 and num_seat_abreast_first == 0:
-                    num_seat_abreast_first_set_user = (
-                        False  # need to overwrite with default to avoid div 0 in fuselage.py
                     )
 
             # Seat Widths
