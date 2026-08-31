@@ -1125,6 +1125,12 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:design:type",
+        "TRANSPORT",
+        "unitless",
+        "<enum 'AircraftTypes'>"
+    ],
+    [
         "aircraft:fuselage:simple_layout",
         true,
         "unitless",

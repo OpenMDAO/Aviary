@@ -61,12 +61,12 @@ inputs.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 200)  # NPT
 inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 76)  # NPB
 inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 24)  # NPF
 inputs.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, 200)  # NPT
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 0)  # NBABR
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 0)  # NFABR
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 0)  # NTABR
-inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 0.0, 'inch')  # BPITCH
-inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 0.0, 'inch')  # FPITCH
-inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 0.0, 'inch')  # TPITCH
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 5)  # NBABR
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4)  # NFABR
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)  # NTABR
+inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, 'inch')  # BPITCH
+inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, 'inch')  # FPITCH
+inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, 'inch')  # TPITCH
 
 inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, 1.0)  # WCON
 inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 2)  # NFLCR
