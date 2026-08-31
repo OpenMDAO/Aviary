@@ -258,9 +258,9 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 seat_pitch_business = aviary_options.get_val(
                     Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 'inch'
                 )
-                if num_business_class_pax > 0 and seat_width_business <= 0:
+                if num_business_class_pax > 0 and seat_pitch_business <= 0:
                     raise Warning(
-                        f'Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS = {num_business_class_pax}, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS ({seat_width_business}) should be greater than 0.'
+                        f'Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS = {num_business_class_pax}, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS ({seat_pitch_business}) should be greater than 0.'
                     )
             if Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST in aviary_options:
                 seat_pitch_first_set_user = True
@@ -269,7 +269,7 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 )
                 if num_first_class_pax > 0 and seat_pitch_first <= 0:
                     raise Warning(
-                        f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.CrewPayload.Design.SEAT_WIDTH_FIRST ({seat_width_first}) should be greater than 0.'
+                        f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.CrewPayload.Design.SEAT_WIDTH_FIRST ({seat_pitch_first}) should be greater than 0.'
                     )
 
             # Now adjust the above defaults based on aircraft type and size:
