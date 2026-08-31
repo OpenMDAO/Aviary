@@ -45,7 +45,7 @@ class EngineModel(SubsystemBuilder):
     compute_max_values = False
 
     def __init__(
-        self, name: str = None, options: AviaryValues = None, meta_data: dict = None, **kwargs
+        self, name: str = None, meta_data: dict = None, options: AviaryValues = None, **kwargs
     ):
         super().__init__(name, meta_data=meta_data)
         if options is not None:

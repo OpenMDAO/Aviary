@@ -10,6 +10,11 @@ from openmdao.core.driver import Driver
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
+from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
+from aviary.utils.preprocessors import preprocess_options
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     balanced_liftoff_user_options as _takeoff_liftoff_user_options,
 )
@@ -19,11 +24,6 @@ from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_dat
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     inputs as _inputs,
 )
-from aviary.subsystems.premission import CorePreMission
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
-from aviary.utils.preprocessors import preprocess_options
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -77,7 +77,10 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
 
         driver.recording_options['record_derivatives'] = False
 
-        default_mission_subsystems = get_default_mission_subsystems('FLOPS', engines)
+        # test encounters issues needing set_input_defaults() if any other subsystems are loaded here
+        default_mission_subsystems = [
+            get_default_subsystems('FLOPS', engines)[k] for k in ['propulsion', 'aerodynamics']
+        ]
 
         # Upstream static analysis for aero
         takeoff.model.add_subsystem(

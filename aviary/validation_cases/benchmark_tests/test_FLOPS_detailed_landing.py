@@ -8,6 +8,11 @@ from openmdao.core.driver import Driver
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
+from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
+from aviary.utils.preprocessors import preprocess_options
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     inputs as _inputs,
 )
@@ -17,11 +22,6 @@ from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_dat
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     landing_trajectory_builder as _landing_trajectory_builder,
 )
-from aviary.subsystems.premission import CorePreMission
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
-from aviary.utils.preprocessors import preprocess_options
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -74,14 +74,17 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         engines = [build_engine_deck(aviary_options)]
         preprocess_options(aviary_options, engine_models=engines)
 
-        default_premission_subsystems = get_default_mission_subsystems('FLOPS', engines)
+        # test encounters issues needing set_input_defaults() if any other subsystems are loaded here
+        default_mission_subsystems = [
+            get_default_subsystems('FLOPS', engines)[k] for k in ['propulsion', 'aerodynamics']
+        ]
 
         # Upstream static analysis for aero
         landing.model.add_subsystem(
             'pre_mission',
             CorePreMission(
                 aviary_options=aviary_options,
-                subsystems=default_premission_subsystems,
+                subsystems=default_mission_subsystems,
                 subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],

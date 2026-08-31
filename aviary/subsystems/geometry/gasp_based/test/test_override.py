@@ -11,7 +11,7 @@ from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.process_input_decks import create_vehicle
-from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -26,7 +26,7 @@ class GASPOverrideTestCase(unittest.TestCase):
 
         engines = [build_engine_deck(aviary_inputs)]
 
-        subsystems = get_default_premission_subsystems('GASP', engines)
+        subsystems = get_default_subsystems('GASP', engines).values()
         preprocess_propulsion(aviary_inputs, engines)
 
         prob = om.Problem()

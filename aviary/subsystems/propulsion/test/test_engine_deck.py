@@ -119,7 +119,7 @@ class EngineDeckTest(unittest.TestCase):
         data_input.set_val('thrust', expected_thrust, 'lbf')
         data_input.set_val('fuel_flow', expected_fuel_flow_rate, 'lbm/h')
 
-        model = EngineDeck('engine', aviary_values, data_input)
+        model = EngineDeck('engine', options=aviary_values, data=data_input)
 
         mach_number = model.data[keys.MACH]
         altitude = model.data[keys.ALTITUDE]

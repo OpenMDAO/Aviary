@@ -11,6 +11,7 @@ from aviary.subsystems.propulsion.utils import EngineModelVariables, build_engin
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
@@ -60,13 +61,14 @@ class TurbopropModel(EngineModel):
     def __init__(
         self,
         name='turboprop_model',
+        meta_data=CoreMetaData,
         options: AviaryValues = None,
         shaft_power_model: SubsystemBuilder = None,
         propeller_model: SubsystemBuilder = None,
         gearbox_model: SubsystemBuilder = None,
     ):
         # also calls _preprocess_inputs() as part of EngineModel __init__
-        super().__init__(name, options)
+        super().__init__(name, meta_data=meta_data, options=options)
 
         self.shaft_power_model = shaft_power_model
         self.propeller_model = propeller_model

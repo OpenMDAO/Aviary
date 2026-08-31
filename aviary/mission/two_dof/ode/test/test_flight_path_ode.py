@@ -8,7 +8,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.mission.two_dof.ode.flight_path_ode import FlightPathODE
 from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
@@ -26,9 +26,10 @@ class FlightPathODETestCase(unittest.TestCase):
         aviary_options = get_option_defaults()
         aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', [build_engine_deck(aviary_options)]
-        )
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [build_engine_deck(aviary_options)])[k]
+            for k in ['propulsion', 'aerodynamics']
+        ]
 
         self.fp = self.prob.model = FlightPathODE(
             num_nodes=2,
