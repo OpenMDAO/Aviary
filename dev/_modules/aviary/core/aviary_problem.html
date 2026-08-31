@@ -2069,7 +2069,7 @@
         <span class="p">):</span>
             <span class="n">num_pax</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">num_economy</span><span class="p">,</span> <span class="n">num_business</span><span class="p">,</span> <span class="n">num_first_class</span><span class="p">]))</span>
 
-        <span class="c1"># only FLOPS cares about seat class or specific cargo categories</span>
+        <span class="c1"># only FLOPS cares about seat class, specific cargo categories and cargo containers</span>
         <span class="k">if</span> <span class="n">mass_method</span> <span class="o">==</span> <span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">num_first_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">inputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FIRST_CLASS</span><span class="p">,</span> <span class="n">num_first_class</span><span class="p">)</span>
@@ -2082,6 +2082,15 @@
                 <span class="n">inputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">WING_CARGO</span><span class="p">,</span> <span class="n">wing_cargo</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">misc_cargo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">inputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MISC_CARGO</span><span class="p">,</span> <span class="n">misc_cargo</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+            <span class="c1"># fix cargo_container_mass so it doesn&#39;t change for off_design</span>
+            <span class="n">cargo_container_mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">CARGO_CONTAINER_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">inputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">CARGO_CONTAINER_MASS</span><span class="p">,</span> <span class="n">cargo_container_mass</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Setting CARGO_CONTAINER_MASS for off design mission equal to design mission = </span><span class="si">{</span><span class="n">cargo_container_mass</span><span class="si">}</span><span class="s1"> lbm&#39;</span>
+                <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="s1">&#39;Off-design functionality is in beta for GASP-mass based aircraft. Please manually &#39;</span>

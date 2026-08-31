@@ -715,8 +715,8 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      221
-                     variables with only lower bounds:      215
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      219
+                     variables with only lower bounds:      213
                 variables with lower and upper bounds:        6
                      variables with only upper bounds:        0
 Total number of equality constraints.................:      215
@@ -726,25 +726,28 @@ Total number of inequality constraints...............:      105
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 43
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.8536025661726279e+00    1.8536025661726279e+00
-Dual infeasibility......:   2.5770712572089566e-07    2.5770712572089566e-07
-Constraint violation....:   2.4100900384641527e-09    2.4100900384641527e-09
+Objective...............:   1.9306770153230624e+00    1.9306770153230624e+00
+Dual infeasibility......:   3.9474143763185516e-08    3.9474143763185516e-08
+Constraint violation....:   1.9230894404495811e-11    1.9230894404495811e-11
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   1.0177240494851422e-07    1.0177240494851422e-07
-Overall NLP error.......:   2.5770712572089566e-07    2.5770712572089566e-07
+Complementarity.........:   9.0961728239619371e-08    9.0961728239619371e-08
+Overall NLP error.......:   9.0961728239619371e-08    9.0961728239619371e-08
 
 
-Number of objective function evaluations             = 45
-Number of objective gradient evaluations             = 44
-Number of equality constraint evaluations            = 45
-Number of inequality constraint evaluations          = 45
-Number of equality constraint Jacobian evaluations   = 44
-Number of inequality constraint Jacobian evaluations = 44
+Number of objective function evaluations             = 27
+Number of objective gradient evaluations             = 19
+Number of equality constraint evaluations            = 27
+Number of inequality constraint evaluations          = 27
+Number of equality constraint Jacobian evaluations   = 24
+Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT       
+Total seconds in IPOPT                               = 22.031
+
+EXIT: Optimal Solution Found.
+
 
 Optimization Problem -- Optimization using pyOpt_sparse
 ================================================================================
@@ -753,21 +756,17 @@ Optimization Problem -- Optimization using pyOpt_sparse
 
    Objectives
       Index  Name                               Value
-          0  mission:objectives:fuel     1.853603E+00
+          0  mission:objectives:fuel     1.930677E+00
 
    Variables (c - continuous, i - integer, d - discrete)
       Index  Name                                                 Type      Lower Bound            Value      Upper Bound     Status
           2  traj.climb.t_duration_0                                 c     5.000000E-01     5.000006E-01     1.500000E+00          l
-         96  traj.reserve_climb.t_duration_0                         c     2.702703E-01     2.702705E-01     1.729730E+00          l
-        190  traj.reserve_descent.t_duration_0                       c     5.000000E-01     5.000003E-01     1.500000E+00          l
+         96  traj.reserve_climb.t_duration_0                         c     2.702703E-01     2.702704E-01     1.729730E+00          l
 
    Constraints (i - inequality, e - equality)
       Index  Name                                                                    Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-        275  traj.descent.throttle[path]                                                i   0.000000E+00    5.130921E-07    1.000000E+00         l    9.00000E+100
-
-                        = 31.404
-
-EXIT: Optimal Solution Found.
+        275  traj.descent.throttle[path]                                                i   0.000000E+00    5.110334E-07    1.000000E+00         l    9.00000E+100
+        319  traj.reserve_descent.throttle[path]                                        i   0.000000E+00    1.452069E-07    1.000000E+00         l    9.00000E+100
 </pre></div>
 </div>
 <div class="output text_html">

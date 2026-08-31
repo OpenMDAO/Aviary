@@ -1551,10 +1551,6 @@
             <span class="n">phase_info2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_info</span><span class="p">[</span><span class="n">phase2</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">]</span>
             <span class="n">vars2</span> <span class="o">=</span> <span class="n">link_vars_dict</span><span class="p">[</span><span class="n">phase2</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserve_phases</span> <span class="ow">and</span> <span class="n">phase2</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserve_phases</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                <span class="c1"># Don&#39;t link to first reserve phase.</span>
-                <span class="k">continue</span>
-
             <span class="c1"># Find common vars across 1-2 boundary</span>
             <span class="n">common</span> <span class="o">=</span> <span class="n">vars1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">vars2</span><span class="p">)</span>
             <span class="n">upstream_analytic</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">vars1</span> <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;initial_&#39;</span><span class="p">)]</span>
