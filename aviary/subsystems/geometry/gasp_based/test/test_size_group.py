@@ -594,6 +594,12 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
             promotes_inputs=['*'],
         )
 
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch'
+        )
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 22, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
@@ -660,8 +666,6 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
             Aircraft.Fuselage.SEAT_WIDTH_FIRST: (28, 'inch'),
             Aircraft.Fuselage.NUM_AISLES: 3,
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY: 18,
-            Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST: (36, 'inch'),
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY: (32, 'inch'),
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS: 11,
             Aircraft.Engine.NUM_ENGINES: [2],
         }
