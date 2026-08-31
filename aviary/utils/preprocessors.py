@@ -487,7 +487,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
         if key in aviary_options:
             # mark that the user provided any information on design passenger count
             design_pax_provided = True
-            if key == Aircraft.CrewPayload.NUM_PASSENGERS:
+            if key == Aircraft.CrewPayload.Design.NUM_PASSENGERS:
                 design_pax_sum_provided = True
         else:
             # default all non-provided passenger info to 0
