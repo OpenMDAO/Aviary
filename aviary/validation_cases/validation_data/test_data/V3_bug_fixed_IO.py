@@ -41,8 +41,6 @@ def local_get_option_defaults() -> AviaryValues:
     option_defaults.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 0, units='unitless')
     option_defaults.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, 0, units='unitless')
     option_defaults.set_val(Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, 0.0, units='lbm')
-    option_defaults.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, True, units='unitless')
-    option_defaults.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, True, units='unitless')
     option_defaults.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
     option_defaults.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.0, units='unitless')
     option_defaults.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, False, units='unitless')

@@ -1238,30 +1238,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='unitless',
-    option=True,
-    default_value=False,
-    types=bool,
-    desc='if true, use empirical tail volume coefficient equation. This is '
-    'true if VBARHX is 0 in GASP.',
-)
-
-add_meta_data(
-    Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='unitless',
-    option=True,
-    default_value=False,
-    types=bool,
-    desc='if true, use empirical tail volume coefficient equation. This is '
-    'true if VBARVX is 0 in GASP.',
-)
-
-add_meta_data(
     Aircraft.Design.CRUISE_ALTITUDE,
     meta_data=_MetaData,
     # In GASP, it is HNCRU, not CRALT

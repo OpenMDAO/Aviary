@@ -288,10 +288,6 @@ class EmpennageSize(om.Group):
     computed via empirical relationships to general airplane parameters.
     """
 
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF)
-        add_aviary_option(self, Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF)
-
     def setup(self):
         # For cruciform/T-tail configurations, see issue #1089
 
@@ -308,20 +304,18 @@ class EmpennageSize(om.Group):
         #     promotes_outputs=['*'],
         # )
 
-        if self.options[Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF]:
-            self.add_subsystem(
-                'htail_vc',
-                TailVolCoef(orientation='horizontal'),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
-        if self.options[Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF]:
-            self.add_subsystem(
-                'vtail_vc',
-                TailVolCoef(orientation='vertical'),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
+        self.add_subsystem(
+            'htail_vc',
+            TailVolCoef(orientation='horizontal'),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
+            'vtail_vc',
+            TailVolCoef(orientation='vertical'),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
 
         self.add_subsystem(
             'htail',
