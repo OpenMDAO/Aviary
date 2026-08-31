@@ -16,6 +16,7 @@ from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_d
 )
 from aviary.utils.functions import get_path
 
+
 class WingMass(om.JaxExplicitComponent):
     def initialize(self):
         # simple wing options

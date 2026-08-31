@@ -14,6 +14,7 @@ from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_d
 )
 from aviary.utils.functions import get_path
 
+
 class HorizontalTailMass(om.JaxExplicitComponent):
     def initialize(self):
         add_aviary_option(

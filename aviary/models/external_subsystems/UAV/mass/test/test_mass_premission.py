@@ -124,8 +124,8 @@ class TestMassPremission(unittest.TestCase):
         total = self.prob.get_val(Aircraft.Design.STRUCTURE_MASS)[0]
 
         print('wing', wing)
-        print('ht',ht)
-        print('vt',vt)
+        print('ht', ht)
+        print('vt', vt)
 
         self.assertAlmostEqual(wing, 0.734733)
         self.assertAlmostEqual(ht, 0.734733)
