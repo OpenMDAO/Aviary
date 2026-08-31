@@ -192,7 +192,7 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 'unitless'
                 )
                 if num_economy_class_pax > 0 and num_seat_abreast_economy <= 0:
-                    raise Warning(
+                    raise ValueError(
                         f'Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS = {num_economy_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY ({num_seat_abreast_economy}) must be greater than 0.'
                     )
             if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS in aviary_options:
@@ -201,8 +201,8 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 'unitless'
                 )
                 if num_business_class_pax > 0 and num_seat_abreast_business <= 0:
-                    raise Warning(
-                        f'Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS = {num_business_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY ({num_seat_abreast_business}) must be greater than 0.'
+                    raise ValueError(
+                        f'Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS = {num_business_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS ({num_seat_abreast_business}) must be greater than 0.'
                     )
             if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST in aviary_options:
                 num_seat_abreast_first_set_user = True
@@ -210,7 +210,7 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 'unitless'
                 )
                 if num_first_class_pax > 0 and num_seat_abreast_first <= 0:
-                    raise Warning(
+                    raise ValueError(
                         f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST ({num_seat_abreast_first}) must be greater than 0.'
                     )
 
@@ -221,7 +221,7 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 'inch'
                 )
                 if num_economy_class_pax > 0 and seat_width_economy <= 0:
-                    raise Warning(
+                    raise ValueError(
                         f'Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS = {num_economy_class_pax}, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY ({seat_width_economy}) should be greater than 0.'
                     )
             if Aircraft.Fuselage.SEAT_WIDTH_BUSINESS in aviary_options:
@@ -230,7 +230,7 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 'inch'
                 )
                 if num_business_class_pax > 0 and seat_width_business <= 0:
-                    raise Warning(
+                    raise ValueError(
                         f'Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS = {num_business_class_pax}, Aircraft.Fuselage.SEAT_WIDTH_BUSINESS ({seat_width_business}) should be greater than 0.'
                     )
             if Aircraft.Fuselage.SEAT_WIDTH_FIRST in aviary_options:
@@ -239,7 +239,7 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     Aircraft.Fuselage.SEAT_WIDTH_FIRST, 'inch'
                 )
                 if num_first_class_pax > 0 and seat_width_first <= 0:
-                    raise Warning(
+                    raise ValueError(
                         f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.Fuselage.SEAT_WIDTH_FIRST ({seat_width_first}) should be greater than 0.'
                     )
 
@@ -250,7 +250,7 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 'inch'
                 )
                 if num_economy_class_pax > 0 and seat_pitch_economy <= 0:
-                    raise Warning(
+                    raise ValueError(
                         f'Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS = {num_economy_class_pax}, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY ({seat_pitch_economy}) should be greater than 0.'
                     )
             if Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS in aviary_options:
@@ -259,7 +259,7 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 'inch'
                 )
                 if num_business_class_pax > 0 and seat_pitch_business <= 0:
-                    raise Warning(
+                    raise ValueError(
                         f'Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS = {num_business_class_pax}, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS ({seat_pitch_business}) should be greater than 0.'
                     )
             if Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST in aviary_options:
@@ -268,8 +268,8 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 'inch'
                 )
                 if num_first_class_pax > 0 and seat_pitch_first <= 0:
-                    raise Warning(
-                        f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.CrewPayload.Design.SEAT_WIDTH_FIRST ({seat_pitch_first}) should be greater than 0.'
+                    raise ValueError(
+                        f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST ({seat_pitch_first}) should be greater than 0.'
                     )
 
             # Now adjust the above defaults based on aircraft type and size:
@@ -279,19 +279,14 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     num_seat_abreast_economy = 5
                     num_seat_abreast_business = 4
                     num_seat_abreast_first = 4
-                elif num_economy_class_pax > 60 and num_economy_class_pax <= 200:
+                elif num_economy_class_pax <= 200:
                     num_seat_abreast_economy = 6
                     num_seat_abreast_business = 5
                     num_seat_abreast_first = 4
-                elif num_economy_class_pax > 200:
+                else:
                     num_seat_abreast_economy = 8
                     num_seat_abreast_business = 6
                     num_seat_abreast_first = 6
-                else:
-                    # catch all shouldn't be needed
-                    num_seat_abreast_economy = 6
-                    num_seat_abreast_business = 5
-                    num_seat_abreast_first = 4
 
                 # set defaults for seat width
                 seat_width_economy = 20
