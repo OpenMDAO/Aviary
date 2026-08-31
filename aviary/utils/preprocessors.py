@@ -215,7 +215,7 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 )
                 if num_first_class_pax > 0 and num_seat_abreast_first <= 0:
                     raise Warning(
-                        f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY ({num_seat_abreast_first}) must be greater than 0.'
+                        f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST ({num_seat_abreast_first}) must be greater than 0.'
                     )
                 if num_first_class_pax == 0 and num_seat_abreast_first == 0:
                     num_seat_abreast_first_set_user = (
