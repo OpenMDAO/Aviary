@@ -7,8 +7,8 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary import constants
 from aviary.subsystems.mass.gasp_based.engine import EngineMassGroup
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import extract_options, setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 
@@ -17,9 +17,10 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
     """HAS_HYBRID_SYSTEM = False."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2])
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -68,7 +69,6 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
 
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             Aircraft.Engine.POD_MASS: 1892.24386333,
             Aircraft.Nacelle.MASS: 1018.74,
@@ -90,9 +90,10 @@ class EngineTestCase2(unittest.TestCase):
     """HAS_HYBRID_SYSTEM = True."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2])
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -147,7 +148,6 @@ class EngineTestCase2(unittest.TestCase):
 
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             Aircraft.Engine.POD_MASS: 1892.24386333,
             'eng_comb_mass': 14370.8,
@@ -169,9 +169,10 @@ class EngineGroupTestCase1(unittest.TestCase):
     """HAS_HYBRID_SYSTEM = False (large single aisle 1 V3)."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2])
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -244,9 +245,10 @@ class EngineGroupTestCase2(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2])
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -326,7 +328,7 @@ class EngineGroupTestCase2(unittest.TestCase):
 @use_tempdirs
 class EngineTestCaseMultiEngine(unittest.TestCase):
     def test_case1(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
@@ -383,7 +385,6 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
         tol = 5e-4
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 23405.94,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
             Aircraft.Engine.ADDITIONAL_MASS: [882.4158, 513.0],
             Aircraft.Engine.POD_MASS: [1892.24386333, 1072.40259317],
             'eng_comb_mass': 26142.7716,
@@ -410,7 +411,7 @@ class EngineTestCaseMultiEngine2(unittest.TestCase):
         engine.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
@@ -472,7 +473,6 @@ class EngineTestCaseMultiEngine2(unittest.TestCase):
         tol = 5e-4
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 23405.94,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
             Aircraft.Engine.ADDITIONAL_MASS: [882.4158, 513.0],
             Aircraft.Engine.POD_MASS: [1870.53906934, 1060.10196575],
             'eng_comb_mass': 26142.7716,
@@ -492,9 +492,10 @@ class BWBEngineTestCase(unittest.TestCase):
     """GASP BWB model."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.04373)
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2])
 
         prob = self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -527,7 +528,6 @@ class BWBEngineTestCase(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 7005.15475443,
             Aircraft.Nacelle.MASS: 487.39296691,
             'pylon_mass': 558.757916785,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2092.30176475,
             Aircraft.Engine.ADDITIONAL_MASS: 153.16770871,
             Aircraft.Engine.POD_MASS: 1046.15088237,
             'eng_comb_mass': 7311.49017184,

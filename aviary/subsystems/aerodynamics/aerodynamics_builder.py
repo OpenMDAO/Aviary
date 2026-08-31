@@ -504,7 +504,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
                 except KeyError:
                     design_type = AircraftTypes.TRANSPORT
-                    if verbosity >= Verbosity.BRIEF:
+                    if verbosity > Verbosity.BRIEF:
                         warnings.warn(
                             'No input value found for Aircraft.Design.TYPE. '
                             'Assuming the aircraft is of type: AircraftTypes.TRANSPORT.'
@@ -514,7 +514,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     num_horizontal_tails = aviary_inputs.get_val(Aircraft.HorizontalTail.NUM_TAILS)
                 except KeyError:
                     num_horizontal_tails = 1
-                    if verbosity >= Verbosity.BRIEF:
+                    if verbosity > Verbosity.BRIEF:
                         warnings.warn(
                             'No input value found for Aircraft.HorizontalTail.NUM_TAILS. '
                             'Assuming there is 1 horizontal tail.'
@@ -713,10 +713,22 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
     def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_timeseries() on all engine models and return combined result."""
-        timeseries_vars = [
-            Dynamic.Vehicle.DRAG_COEFFICIENT,
-            Dynamic.Vehicle.LIFT_COEFFICIENT,
-        ]
+        if subsystem_options is None:
+            subsystem_options = {}
+
+        timeseries_vars = []
+
+        try:
+            method = subsystem_options['method']
+        except KeyError:
+            method = None
+
+        if method != 'external':
+            timeseries_vars = [
+                Dynamic.Vehicle.DRAG_COEFFICIENT,
+                Dynamic.Vehicle.LIFT_COEFFICIENT,
+            ]
+
         return timeseries_vars
 
     def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
@@ -771,16 +783,6 @@ COMPUTED_CORE_INPUTS = [
     Aircraft.Fuselage.LAMINAR_FLOW_UPPER,
     Aircraft.Fuselage.LENGTH_TO_DIAMETER,
     Aircraft.Fuselage.WETTED_AREA,
-    # Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
-    # Aircraft.HorizontalTail.FINENESS,
-    # Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER,
-    # Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER,
-    # Aircraft.HorizontalTail.WETTED_AREA,
-    # Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
-    # Aircraft.VerticalTail.FINENESS,
-    # Aircraft.VerticalTail.LAMINAR_FLOW_LOWER,
-    # Aircraft.VerticalTail.LAMINAR_FLOW_UPPER,
-    # Aircraft.VerticalTail.WETTED_AREA,
     Aircraft.Wing.AREA,
     Aircraft.Wing.ASPECT_RATIO,
     Aircraft.Wing.CHARACTERISTIC_LENGTH,

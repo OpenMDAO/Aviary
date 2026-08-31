@@ -88,7 +88,9 @@ class AviaryProblem(om.Problem):
             'run_status',
             'sizing_results',
             'input_checks',
-            'overridden_variables',
+            'overridden_variables_setup',
+            'overridden_variables_run_model',
+            'overridden_variables_run_driver',
             'list_options',
         ]
         for report in new_reports:
@@ -736,7 +738,7 @@ class AviaryProblem(om.Problem):
         if objective_type is not None:
             ref = ref if ref is not None else default_ref_values.get(objective_type, 1)
 
-            final_phase_name = self.model.regular_phases[-1]
+            final_phase_name = self.model.main_phases[-1]
 
             if objective_type == 'mass':
                 self.model.add_objective(
@@ -1189,6 +1191,16 @@ class AviaryProblem(om.Problem):
 
         self.set_initial_guesses(verbosity=None)
 
+        # TODO this breaks if using shape_by_conn (test_shape_by_conn.py fails)
+        # generate post-setup N2 - useful if run_aviary_problem() fails
+        # outdir = Path(self.get_reports_dir(force=True))
+        # outfile = os.path.join(outdir, 'n2.html')
+        # om.n2(
+        #     self,
+        #     outfile=outfile,
+        #     show_browser=False,
+        # )
+
     def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
         Set initial guesses for trajectory states and controls.
@@ -1273,7 +1285,7 @@ class AviaryProblem(om.Problem):
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             with open(self.get_reports_dir() / 'input_list.txt', 'w') as outfile:
-                self.model.list_inputs(out_stream=outfile)
+                self.model.list_inputs(out_stream=outfile, units=True)
 
         def _view_realtime_plot_hook(driver):
             case_recorder_file = str(driver._rec_mgr._recorders[0]._filepath)
@@ -1339,7 +1351,7 @@ class AviaryProblem(om.Problem):
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             with open(Path(self.get_reports_dir()) / 'output_list.txt', 'w') as outfile:
-                self.model.list_outputs(out_stream=outfile)
+                self.model.list_vars(out_stream=outfile, units=True, print_arrays=True)
 
         if self.generate_payload_range and self.problem_type == ProblemType.SIZING:
             self.run_payload_range()
@@ -1488,7 +1500,7 @@ class AviaryProblem(om.Problem):
         ):
             num_pax = sum(filter(None, [num_economy, num_business, num_first_class]))
 
-        # only FLOPS cares about seat class or specific cargo categories
+        # only FLOPS cares about seat class, specific cargo categories and cargo containers
         if mass_method == LegacyCode.FLOPS:
             if num_first_class is not None:
                 inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, num_first_class)
@@ -1501,6 +1513,15 @@ class AviaryProblem(om.Problem):
                 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, wing_cargo, 'lbm')
             if misc_cargo is not None:
                 inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, misc_cargo, 'lbm')
+            # fix cargo_container_mass so it doesn't change for off_design
+            cargo_container_mass = self.get_val(
+                Aircraft.CrewPayload.CARGO_CONTAINER_MASS, units='lbm'
+            )[0]
+            inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, cargo_container_mass, 'lbm')
+            if verbosity >= Verbosity.BRIEF:
+                warnings.warn(
+                    f'Setting CARGO_CONTAINER_MASS for off design mission equal to design mission = {cargo_container_mass} lbm'
+                )
         else:
             warnings.warn(
                 'Off-design functionality is in beta for GASP-mass based aircraft. Please manually '
@@ -1719,7 +1740,7 @@ class AviaryProblem(om.Problem):
             # NOTE this operating mass is based on the previously run mission - assumed this is the
             # design mission!! Includes cargo containers needed for design (max payload)
             operating_mass = float(self.get_val(Mission.OPERATING_MASS)[0])
-            fuel_capacity = float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY)[0])
+            fuel_capacity = float(self.get_val(Aircraft.Fuel.MAX_CAPACITY_MASS)[0])
             unusable_fuel = float(self.get_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS)[0])
             max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
 

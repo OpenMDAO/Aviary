@@ -22,12 +22,12 @@ aircraft:crew_and_payload:cargo_container_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:design:num_business_class,76,unitless
 aircraft:crew_and_payload:design:num_economy_class,200,unitless
 aircraft:crew_and_payload:design:num_first_class,24,unitless
-aircraft:crew_and_payload:design:num_seats_abreast_business,0,unitless
-aircraft:crew_and_payload:design:num_seats_abreast_economy,0,unitless
-aircraft:crew_and_payload:design:num_seats_abreast_first,0,unitless
-aircraft:crew_and_payload:design:seat_pitch_business,0,inch
-aircraft:crew_and_payload:design:seat_pitch_economy,0,inch
-aircraft:crew_and_payload:design:seat_pitch_first,0,inch
+aircraft:crew_and_payload:design:num_seats_abreast_business,5,unitless
+aircraft:crew_and_payload:design:num_seats_abreast_economy,6,unitless
+aircraft:crew_and_payload:design:num_seats_abreast_first,4,unitless
+aircraft:crew_and_payload:design:seat_pitch_business,39.0,inch
+aircraft:crew_and_payload:design:seat_pitch_economy,32.0,inch
+aircraft:crew_and_payload:design:seat_pitch_first,61.0,inch
 aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:mass_per_passenger,165.0,lbm
 aircraft:crew_and_payload:misc_cargo,0.0,lbm
@@ -84,10 +84,8 @@ aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
 aircraft:fuel:wing_fuel_fraction,0.6883549569366508,unitless
-aircraft:fuel:wing_ref_capacity,0.0,lbm
-aircraft:fuel:wing_ref_capacity_term_a,0.0,unitless
-aircraft:fuel:wing_ref_capacity_term_b,0.0,unitless
 aircraft:furnishings:mass_scaler,1.118,unitless
+aircraft:fuselage:height_to_width_ratio,0.1792,unitless
 aircraft:fuselage:sidebody_thickness_to_chord,0.1792,unitless
 aircraft:fuselage:laminar_flow_lower,0.0,unitless
 aircraft:fuselage:laminar_flow_upper,0.0,unitless
@@ -142,17 +140,17 @@ aircraft:wing:airfoil_technology,2.0,unitless
 # aircraft:wing:aspect_ratio,5.4252,unitless
 # aircraft:wing:aspect_ratio_reference,0.0,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
-aircraft:wing:chord_per_semispan_distribution,-1.0,48.25,33.2,18.97,14.19,10.2,3.22,unitless
+aircraft:wing:chord_per_semispan_distribution,48.25,33.2,18.97,14.19,10.2,3.22,unitless
 aircraft:wing:composite_fraction,0.85,unitless
 aircraft:wing:control_surface_area_ratio,0.3,unitless
 aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:dihedral,3.0,deg
 aircraft:wing:glove_and_bat,1230.5,ft**2
-aircraft:wing:input_station_distribution,0.0,0.0,0.2075,0.415,0.6927,0.928,1.0,unitless
+aircraft:wing:input_station_distribution,0.0,0.2075,0.415,0.6927,0.928,1.0,unitless
 aircraft:wing:laminar_flow_lower,0.0,unitless
 aircraft:wing:laminar_flow_upper,0.0,unitless
 aircraft:wing:load_distribution_control,2.0,unitless
-aircraft:wing:load_path_sweep_distribution,0.0,0.0,0.0,17.0,17.0,17.0,deg
+aircraft:wing:load_path_sweep_distribution,0.0,0.0,17.0,17.0,17.0,deg
 aircraft:wing:mass_scaler,1.0,unitless
 aircraft:wing:max_camber_at_70_semispan,2.0,unitless
 aircraft:wing:misc_mass_scaler,1.0,unitless
@@ -168,12 +166,12 @@ aircraft:wing:surface_control_mass_scaler,1.0,unitless
 aircraft:wing:sweep,35.7,deg
 aircraft:wing:taper_ratio,0.311,unitless
 aircraft:wing:thickness_to_chord,0.11,unitless
-aircraft:wing:thickness_to_chord_distribution,-1.0,0.125,0.125,0.076,0.076,0.076,0.06,unitless
+aircraft:wing:thickness_to_chord_distribution,0.125,0.125,0.076,0.076,0.076,0.06,unitless
 aircraft:wing:thickness_to_chord_reference,0.0,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,0.61,unitless
-mission:constraints:max_mach,0.9,unitless
+aircraft:design:max_mach,0.9,unitless
 aircraft:design:gross_mass,600000.0,lbm
 aircraft:design:range,7500.0,NM
 mission:landing:drag_coefficient_min,0.0,unitless
@@ -255,7 +253,6 @@ CONFIN.WSR,0.0
 ENGDIN.IFILL,2
 ENGDIN.MAXCR,1
 ENGDIN.NGPRT,1
-FUSEIN.TCF,0.1792
 FUSEIN.XLW,50.0
 MISSIN.ACTAB,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 MISSIN.ADTAB,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
