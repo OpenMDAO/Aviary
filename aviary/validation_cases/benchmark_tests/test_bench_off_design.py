@@ -112,15 +112,17 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             self.prob.get_val(Aircraft.Design.RANGE),
             tolerance=1e-12,
         )
-        assert_near_equal(prob_off_design_max_range.get_val(Mission.RANGE), 2377.4, tolerance=1e-3)
+        assert_near_equal(
+            prob_off_design_max_range.get_val(Mission.RANGE), 2406.74846166, tolerance=1e-3
+        )
         assert_near_equal(
             prob_off_design_max_range.get_val(Mission.TOTAL_FUEL_MASS, 'lbm'),
-            28976.71270599,
+            29252.33210511,
             tolerance=1e-5,
         )
         assert_near_equal(
             prob_off_design_max_range.get_val(Mission.OPERATING_MASS, 'lbm'),
-            97798.28729401,
+            self.prob.get_val(Mission.OPERATING_MASS, 'lbm'),
             tolerance=1e-5,
         )
         assert_near_equal(
@@ -205,12 +207,12 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         assert_near_equal(prob_off_design_min_fuel.get_val(Mission.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
             prob_off_design_min_fuel.get_val(Mission.TOTAL_FUEL_MASS, 'lbm'),
-            24245.7724282,
+            24216.80682191,
             tolerance=1e-5,
         )
         assert_near_equal(
             prob_off_design_min_fuel.get_val(Mission.OPERATING_MASS, 'lbm'),
-            97798.34840008,
+            self.prob.get_val(Mission.OPERATING_MASS, 'lbm'),
             tolerance=1e-5,
         )
         assert_near_equal(
@@ -240,7 +242,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         )
         assert_near_equal(
             prob_off_design_min_fuel.get_val(Mission.GROSS_MASS, 'lbm'),
-            158294.12082828,
+            157989.476521,
             tolerance=1e-5,
         )
         assert_near_equal(
@@ -536,7 +538,7 @@ class PayloadRangeTest(unittest.TestCase):
             [
                 38025.0,
                 38025.0,
-                24953.7,
+                24529.3,
                 0,
             ],
             tolerance=1e-3,
@@ -548,7 +550,7 @@ class PayloadRangeTest(unittest.TestCase):
         )
         assert_near_equal(
             prob.payload_range_data.get_val('Range', 'NM'),
-            [0, 2500, 3910.17, 4362.62],
+            [0, 2500, 3910.17, 4339.7],
             tolerance=1e-3,
         )
 
@@ -560,7 +562,7 @@ class PayloadRangeTest(unittest.TestCase):
         )
         assert_near_equal(
             prob.ferry_range_prob.get_val(Mission.GROSS_MASS, 'lbm'),
-            140596.07154268,
+            142010.12881933,
             tolerance=1e-8,
         )
         self.assertTrue(prob.result.success)

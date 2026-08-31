@@ -167,7 +167,7 @@ aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0,unitless
 aircraft:wing:wetted_area,2210.280228,ft**2
 aircraft:wing:wetted_area_scaler,1,unitless
-mission:constraints:max_mach,0.785,unitless
+aircraft:design:max_mach,0.785,unitless
 aircraft:design:gross_mass,130000,lbm
 aircraft:design:range,3500,NM
 mission:landing:airport_altitude,0,ft

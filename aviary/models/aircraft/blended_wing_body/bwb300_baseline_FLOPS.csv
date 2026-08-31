@@ -22,12 +22,12 @@ aircraft:crew_and_payload:cargo_container_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:design:num_business_class,76,unitless
 aircraft:crew_and_payload:design:num_economy_class,200,unitless
 aircraft:crew_and_payload:design:num_first_class,24,unitless
-aircraft:crew_and_payload:design:num_seats_abreast_business,0,unitless
-aircraft:crew_and_payload:design:num_seats_abreast_economy,0,unitless
-aircraft:crew_and_payload:design:num_seats_abreast_first,0,unitless
-aircraft:crew_and_payload:design:seat_pitch_business,0,inch
-aircraft:crew_and_payload:design:seat_pitch_economy,0,inch
-aircraft:crew_and_payload:design:seat_pitch_first,0,inch
+aircraft:crew_and_payload:design:num_seats_abreast_business,5,unitless
+aircraft:crew_and_payload:design:num_seats_abreast_economy,6,unitless
+aircraft:crew_and_payload:design:num_seats_abreast_first,4,unitless
+aircraft:crew_and_payload:design:seat_pitch_business,39.0,inch
+aircraft:crew_and_payload:design:seat_pitch_economy,32.0,inch
+aircraft:crew_and_payload:design:seat_pitch_first,61.0,inch
 aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:mass_per_passenger,165.0,lbm
 aircraft:crew_and_payload:misc_cargo,0.0,lbm
@@ -84,9 +84,6 @@ aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
 aircraft:fuel:wing_fuel_fraction,0.6883549569366508,unitless
-aircraft:fuel:wing_reference_capacity,0.0,lbm
-aircraft:fuel:wing_reference_capacity_term_a,0.0,unitless
-aircraft:fuel:wing_reference_capacity_term_b,0.0,unitless
 aircraft:furnishings:mass_scaler,1.118,unitless
 aircraft:fuselage:height_to_width_ratio,0.1792,unitless
 aircraft:fuselage:sidebody_thickness_to_chord,0.1792,unitless
@@ -174,7 +171,7 @@ aircraft:wing:thickness_to_chord_reference,0.0,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,0.61,unitless
-mission:constraints:max_mach,0.9,unitless
+aircraft:design:max_mach,0.9,unitless
 aircraft:design:gross_mass,600000.0,lbm
 aircraft:design:range,7500.0,NM
 mission:landing:drag_coefficient_min,0.0,unitless
