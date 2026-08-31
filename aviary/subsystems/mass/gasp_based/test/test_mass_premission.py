@@ -2470,7 +2470,7 @@ class MassPremissionTestCase8(unittest.TestCase):
 
 
 @use_tempdirs
-class MassPremissionTestCase9a(unittest.TestCase):
+class MassPremissionTestCase9(unittest.TestCase):
     """
     This is the electrified Trans-sonic Truss-Braced Wing V3.6 test case
     All values are from V3.6 output, hand calculated from the output, or were printed out after running the code manually.
@@ -3263,7 +3263,4 @@ class BWBStructMassTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = MassPremissionTestCase1()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
