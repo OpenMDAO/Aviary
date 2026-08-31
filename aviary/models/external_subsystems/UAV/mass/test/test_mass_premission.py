@@ -114,28 +114,24 @@ class TestMassPremission(unittest.TestCase):
 
         self.prob.run_model()
 
-    def test_outputs_exist(self):
-        """Do all promoted mass outputs exist and are they positive?"""
+    def test_outputs(self):
+        """Do all promoted mass outputs match."""
 
-        wing = self.prob.get_val(Aircraft.Wing.MASS)
-        ht = self.prob.get_val(Aircraft.HorizontalTail.MASS)
-        vt = self.prob.get_val(Aircraft.VerticalTail.MASS)
-        fuse = self.prob.get_val(Aircraft.Fuselage.MASS)
-        total = self.prob.get_val(Aircraft.Design.STRUCTURE_MASS)
+        wing = self.prob.get_val(Aircraft.Wing.MASS)[0]
+        ht = self.prob.get_val(Aircraft.HorizontalTail.MASS)[0]
+        vt = self.prob.get_val(Aircraft.VerticalTail.MASS)[0]
+        fuse = self.prob.get_val(Aircraft.Fuselage.MASS)[0]
+        total = self.prob.get_val(Aircraft.Design.STRUCTURE_MASS)[0]
 
-        self.assertTrue(wing > 0)
-        self.assertTrue(ht > 0)
-        self.assertTrue(vt > 0)
-        self.assertTrue(fuse > 0)
-        self.assertTrue(total > 0)
+        print('wing', wing)
+        print('ht',ht)
+        print('vt',vt)
 
-    def test_mass_summation(self):
-        total = self.prob.get_val(Aircraft.Design.STRUCTURE_MASS)
-        expected = 2.5233985
-
-        self.assertAlmostEqual(total[0], expected, places=6)
-        print('Expected: ', expected)
-        print('Actual: ', total[0])
+        self.assertAlmostEqual(wing, 0.734733)
+        self.assertAlmostEqual(ht, 0.734733)
+        self.assertAlmostEqual(vt, 0.734733)
+        self.assertAlmostEqual(fuse, 0.3191996)
+        self.assertAlmostEqual(total, 2.52339859)
 
 
 if __name__ == '__main__':

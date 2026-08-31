@@ -7,14 +7,14 @@ import jax.numpy as jnp
 from aviary.models.external_subsystems.UAV.mass.utils.enums import WingType
 from aviary.models.external_subsystems.UAV.mass.utils.materials_database import materials
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.models.external_subsystems.UAV.mass.utils.load_airfoil import load_airfoil_if_needed
+from aviary.models.external_subsystems.UAV.mass.utils.load_airfoil import load_airfoil_csv
 from aviary.models.external_subsystems.UAV.mass.utils.hashable_statics import hashable
 
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
     ExtendedMetaData,
 )
-
+from aviary.utils.functions import get_path
 
 class WingMass(om.JaxExplicitComponent):
     def initialize(self):
@@ -84,8 +84,6 @@ class WingMass(om.JaxExplicitComponent):
         )
         add_aviary_option(self, Aircraft.Wing.MISC_MASS, units='kg', meta_data=ExtendedMetaData)
 
-        self._airfoil_loaded = False
-
     def setup(self):
         add_aviary_input(
             self, Aircraft.Wing.SPAN, units='m', meta_data=ExtendedMetaData, primal_name='span'
@@ -102,6 +100,16 @@ class WingMass(om.JaxExplicitComponent):
             self, Aircraft.Wing.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='mass'
         )
 
+        # Pull n_area from the airfoil csv
+        path = get_path(self.options[Aircraft.Wing.AIRFOIL_PATH])
+        x, y = load_airfoil_csv(path, header=True)
+        self.n_area = 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+        if self.options[Aircraft.Wing.TYPE] == WingType.MEDIUM:
+            rib_materials = self.options[Aircraft.Wing.RIB_MATERIALS]
+            self.rho_rib = np.array([materials.get_item(m)[0] for m in rib_materials])
+        else:
+            self.rho_rib = np.array([0])
+
         # primal_name mismatch breaks jax dependency inference; declare explicitly
         self.declare_partials(Aircraft.Wing.MASS, '*')
 
@@ -109,12 +117,14 @@ class WingMass(om.JaxExplicitComponent):
         return hashable(
             (
                 self.options[Aircraft.Wing.TYPE],
+                self.n_area,
                 # Simple wing options
                 self.options[Aircraft.Wing.FOAM_DENSITY],
                 self.options[Aircraft.Wing.ROD_DENSITY],
                 self.options[Aircraft.Wing.ROD_RADIUS],
                 self.options[Aircraft.Wing.ROD_THICKNESS],
                 # Medium wing options
+                self.rho_rib,
                 self.options[Aircraft.Wing.NUM_SPARS],
                 self.options[Aircraft.Wing.RIB_LIGHTENING_FACTOR],
                 self.options[Aircraft.Wing.RIB_THICKNESS],
@@ -135,7 +145,6 @@ class WingMass(om.JaxExplicitComponent):
         )
 
     def compute_primal(self, span, root_chord):
-        load_airfoil_if_needed(self, Aircraft.Wing)
         chord = root_chord
         # Wetted area is now derived from the same span x chord reference area the aero uses,
         # so span/chord drive the skin & sheeting mass terms too (was a separate input/DV).
@@ -182,8 +191,6 @@ class WingMass(om.JaxExplicitComponent):
             rho_sheeting, units = self.options[Aircraft.Wing.SHEETING_DENSITY]
             sheeting_lightening_factor = self.options[Aircraft.Wing.SHEETING_LIGHTENING_FACTOR]
             num_stringer = self.options[Aircraft.Wing.NUM_STRINGERS]
-            # This is used to calculate rho_rib in other components but done differently here
-            # rib_materials = self.options[Aircraft.Wing.RIB_MATERIALS]
             misc_mass, units = self.options[Aircraft.Wing.MISC_MASS]
 
             cs_area = self.n_area * (chord**2) * rib_lightening_factor

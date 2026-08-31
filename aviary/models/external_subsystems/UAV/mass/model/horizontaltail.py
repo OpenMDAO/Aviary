@@ -5,14 +5,14 @@ import openmdao.api as om
 
 from aviary.models.external_subsystems.UAV.mass.utils.materials_database import materials
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.models.external_subsystems.UAV.mass.utils.load_airfoil import load_airfoil_if_needed
+from aviary.models.external_subsystems.UAV.mass.utils.load_airfoil import load_airfoil_csv
 from aviary.models.external_subsystems.UAV.mass.utils.hashable_statics import hashable
 
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
     ExtendedMetaData,
 )
-
+from aviary.utils.functions import get_path
 
 class HorizontalTailMass(om.JaxExplicitComponent):
     def initialize(self):
@@ -95,8 +95,6 @@ class HorizontalTailMass(om.JaxExplicitComponent):
             self, Aircraft.HorizontalTail.MISC_MASS, units='kg', meta_data=ExtendedMetaData
         )
 
-        self._airfoil_loaded = False
-
     def setup(self):
         add_aviary_input(
             self,
@@ -121,6 +119,11 @@ class HorizontalTailMass(om.JaxExplicitComponent):
             primal_name='mass',
         )
 
+        # Pull n_area from the airfoil csv
+        path = get_path(self.options[Aircraft.HorizontalTail.AIRFOIL_PATH])
+        x, y = load_airfoil_csv(path, header=True)
+        self.n_area = 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+
         # primal_name mismatch breaks jax dependency inference; declare explicitly
         self.declare_partials(Aircraft.HorizontalTail.MASS, '*')
 
@@ -144,6 +147,7 @@ class HorizontalTailMass(om.JaxExplicitComponent):
                 self.options[Aircraft.HorizontalTail.NUM_STRINGERS],
                 self.options[Aircraft.HorizontalTail.RIB_MATERIALS],
                 self.options[Aircraft.HorizontalTail.MISC_MASS],
+                self.n_area,
             )
         )
 
@@ -169,7 +173,6 @@ class HorizontalTailMass(om.JaxExplicitComponent):
         rib_materials = self.options[Aircraft.HorizontalTail.RIB_MATERIALS]
         misc_mass, units = self.options[Aircraft.HorizontalTail.MISC_MASS]
 
-        load_airfoil_if_needed(self, Aircraft.HorizontalTail)
         chord = root_chord
         # Wetted area derived from span x chord (was a separate input/DV), so span/chord
         # drive the skin & sheeting mass terms too.
