@@ -37,7 +37,7 @@ jobs:
         uses: ./actions/.github/actions/prepare_environment
         with:
           NAME: 'latest'
-          OPENMDAO_PIXI_ENVIRONMENT: 'py313'
+          OPENMDAO_PIXI_ENVIRONMENT: 'py314'
           OPENMDAO_INSTALL_FROM: 'pypi'
           OPENMDAO: ''
           SNOPT: '7.7'
