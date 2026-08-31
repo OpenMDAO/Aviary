@@ -2835,6 +2835,12 @@ class BWBStructMassTestCase(unittest.TestCase):
             promotes_inputs=['*'],
         )
 
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch'
+        )
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 22, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
@@ -3189,7 +3195,7 @@ class BWBStructMassTestCase(unittest.TestCase):
         assert_near_equal(prob['max_wingfuel_mass'], 30308.86876369, tol)
         assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 775.43831801, tol)
         assert_near_equal(prob[Mission.OPERATING_MASS], 80987.12286499, tol)
-        # BodyTankCalculations
+        # TankCapacity / WingFuelMin
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 4954.00837132, tol)
         total_cap = prob[Aircraft.Fuel.MAX_CAPACITY_MASS]
         unusable = prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
