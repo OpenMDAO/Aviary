@@ -160,24 +160,30 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
     else:
         simple_layout = aviary_options.get_val(Aircraft.Fuselage.SIMPLE_LAYOUT)
 
-    num_economy_class_pax = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
-    num_business_class_pax = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
-    num_first_class_pax = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
-
-    # flags for whether values were user inputs.
-    num_seat_abreast_economy_set_user = False
-    num_seat_abreast_business_set_user = False
-    num_seat_abreast_first_set_user = False
-    seat_width_economy_set_user = False
-    seat_width_business_set_user = False
-    seat_width_first_set_user = False
-    seat_pitch_economy_set_user = False
-    seat_pitch_business_set_user = False
-    seat_pitch_first_set_user = False
-
     if simple_layout == False:
         # Set correct default values for
         if mass_method == LegacyCode.FLOPS:
+            num_economy_class_pax = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS
+            )
+            num_business_class_pax = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS
+            )
+            num_first_class_pax = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.NUM_FIRST_CLASS
+            )
+
+            # flags for whether values were user inputs.
+            num_seat_abreast_economy_set_user = False
+            num_seat_abreast_business_set_user = False
+            num_seat_abreast_first_set_user = False
+            seat_width_economy_set_user = False
+            seat_width_business_set_user = False
+            seat_width_first_set_user = False
+            seat_pitch_economy_set_user = False
+            seat_pitch_business_set_user = False
+            seat_pitch_first_set_user = False
+
             # Consistency check based on number of passengers in each class
             # Set default if not input
             if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY in aviary_options:
