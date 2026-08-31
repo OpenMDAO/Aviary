@@ -409,6 +409,37 @@
 
 
 
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/theory_guide/mass.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
 <div class="dropdown dropdown-source-buttons">
   <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
     <i class="fab fa-github"></i>
@@ -464,7 +495,7 @@
       
       
       
-      <li><a href="../_sources/theory_guide/mass.md" target="_blank"
+      <li><a href="../_sources/theory_guide/mass.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -474,7 +505,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.md</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -557,7 +588,13 @@
 </li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gasp-based-mass-subsystem">GASP Based Mass Subsystem</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fuel-model">Fuel Model</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
             </nav>
@@ -570,7 +607,33 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="core-mass-subsystem">
+  <div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span><span class="p">,</span> <span class="n">Mission</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.subsystems.mass.gasp_based.fuel</span><span class="w"> </span><span class="kn">import</span> <span class="n">BWBFuselageMass</span><span class="p">,</span> <span class="n">FuselageMass</span><span class="p">,</span> <span class="n">TankCapacity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_variable_name</span><span class="p">,</span> <span class="n">glue_variable</span>
+
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">(</span><span class="n">BWBFuselageMass</span><span class="p">),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">(</span><span class="n">FuselageMass</span><span class="p">),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">(</span><span class="n">TankCapacity</span><span class="p">),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">MAX_CAPACITY_MASS</span><span class="p">),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><code class="docutils literal notranslate"><span class="pre">BWBFuselageMass</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">FuselageMass</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">TankCapacity</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Mission.TOTAL_FUEL_MASS</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">Aircraft.Fuel.MAX_CAPACITY_MASS</span></code></p>
+</div>
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="core-mass-subsystem">
 <h1>Core Mass Subsystem<a class="headerlink" href="#core-mass-subsystem" title="Link to this heading">#</a></h1>
 <p>The core mass subsystem is responsible for calculating the mass properties of the aircraft.
 This includes the empty weight, fuel weight, payload weight, and other mass properties.</p>
@@ -607,6 +670,20 @@ This includes the empty weight, fuel weight, payload weight, and other mass prop
 <section class="tex2jax_ignore mathjax_ignore" id="references">
 <h1>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h1>
 <p>For additional information, please see the following resources:</p>
+<section id="gasp-based-mass-subsystem">
+<h2>GASP Based Mass Subsystem<a class="headerlink" href="#gasp-based-mass-subsystem" title="Link to this heading">#</a></h2>
+<section id="fuel-model">
+<h3>Fuel Model<a class="headerlink" href="#fuel-model" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The GASP mass subsystem has a nonlinear solver needed to compute fuel-related variables. In order for it to converge, one must provide good initial guesses for the inputs. Otherwise, it may claim that convergence is reached but gives rise to a strange solution.</p></li>
+<li><p>The computation in the <code class="docutils literal notranslate"><span class="pre">TankCapacity</span></code> component can not be matched in GASP Fortran code exactly. It is possible that <code class="docutils literal notranslate"><span class="pre">extra_fuel_volume</span></code> becomes negative. We added code to make sure that it is always positive.</p></li>
+<li><p><strong>Note:</strong> The historic name of <code class="docutils literal notranslate"><span class="pre">FUEL_MASS_REQUIRED</span></code> is <code class="docutils literal notranslate"><span class="pre">INGASP.WFAREQ</span></code>, but <code class="docutils literal notranslate"><span class="pre">WFAREQ</span></code> includes fuel margin in GASP while <code class="docutils literal notranslate"><span class="pre">FUEL_MASS_REQUIRED</span></code> doesn’t. The historic name of <code class="docutils literal notranslate"><span class="pre">TOTAL_FUEL_MASS</span></code> is <code class="docutils literal notranslate"><span class="pre">INGASP.WFA</span></code>, but does not include fuel margin in GASP.</p></li>
+<li><p><strong>Note:</strong> GASP Fortran code has features that are not implemented in Aviary (e.g. tail boom support, tip tank weight, fuselage acoustic treatment, pylon, acoustic treatment).</p></li>
+</ul>
+<p>The fuel computation is a nonlinear system of equations. A simplied XDSM diagram is shown below:</p>
+<p><img alt="GASP based fuel mass computation" src="../_images/gasp_fuel_mass.png" /></p>
+<p>A Newton solver is applied until <code class="docutils literal notranslate"><span class="pre">FUEL_MASS</span></code>, <code class="docutils literal notranslate"><span class="pre">wingfuel_mass_min</span></code> and <code class="docutils literal notranslate"><span class="pre">Aircraft.Fuel.MAX_CAPACITY_MASS</span></code> are converged.</p>
+<p>For conventional aircraft, <code class="docutils literal notranslate"><span class="pre">BWBFuselageMass</span></code> is replaced by <code class="docutils literal notranslate"><span class="pre">FuselageMass</span></code>.</p>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="flops-weights" role="doc-footnote">
@@ -615,6 +692,8 @@ This includes the empty weight, fuel weight, payload weight, and other mass prop
 Transfer Program. URL: <a class="reference external" href="https://ntrs.nasa.gov/citations/20170005851">https://ntrs.nasa.gov/citations/20170005851</a></p>
 </aside>
 </aside>
+</section>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -690,7 +769,13 @@ Transfer Program. URL: <a class="reference external" href="https://ntrs.nasa.gov
 </li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gasp-based-mass-subsystem">GASP Based Mass Subsystem</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fuel-model">Fuel Model</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
   </nav></div>
