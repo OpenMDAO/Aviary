@@ -234,26 +234,26 @@ class TestEmpennageGroup1(unittest.TestCase):
             promotes_inputs=['*'],
         )
 
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
-        self.prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.615, units='ft')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.615, units='ft')
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units='unitless'
         )
 
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.VOLUME_COEFFICIENT, val=0.145, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
 
@@ -280,9 +280,9 @@ class TestEmpennageGroup1(unittest.TestCase):
 
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected, tol)
+                assert_near_equal(prob[var_name], expected, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, **partial_tols)
 
 
@@ -294,50 +294,51 @@ class TestEmpennageGroup2(unittest.TestCase):
     """
 
     def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('emp', EmpennageSize(), promotes=['*'])
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem('emp', EmpennageSize(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.615, units='ft')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.615, units='ft')
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units='unitless'
         )
 
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.VOLUME_COEFFICIENT, val=0.145, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.MOMENT_RATIO, val=2.362, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
 
     def test_large_sinle_aisle_1_calc_volcoefs(self):
         options = get_option_defaults()
 
-        setup_model_options(self.prob, options)
+        prob = self.prob
+        setup_model_options(prob, options)
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless')
-        self.prob.set_val(Aircraft.Fuselage.LENGTH, 129.4, units='ft')
-        self.prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, 13.1, units='ft')
+        prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless')
+        prob.set_val(Aircraft.Fuselage.LENGTH, 129.4, units='ft')
+        prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, 13.1, units='ft')
 
-        self.prob.run_model()
+        prob.run_model()
 
         # not actual GASP values
         expected_values = {
@@ -347,9 +348,9 @@ class TestEmpennageGroup2(unittest.TestCase):
 
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected, tol)
+                assert_near_equal(prob[var_name], expected, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, **partial_tols)
 
 
@@ -416,6 +417,3 @@ class BWBTestEmpennageGroup(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    test = BWBTestEmpennageGroup()
-    test.setUp()
-    # test.test_case()

@@ -9,7 +9,6 @@ from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import override_aviary_vars, setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Settings
 
 # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
@@ -302,59 +301,53 @@ class SizeGroupTestCase3(unittest.TestCase):
             promotes_inputs=['*'],
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
+        prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
         )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
+        prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=25, units='deg')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=25, units='deg')
+        prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
-        self.prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, val=25, units='ft')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
+        prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, val=25, units='ft')
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
+        prob.model.set_input_defaults(
             Aircraft.Engine.WING_LOCATIONS, val=np.array([0.35]), units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units='ft'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.NOSE_FINENESS, 1, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.TAIL_FINENESS, 3, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.NOSE_FINENESS, 1, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Fuselage.TAIL_FINENESS, 3, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless')
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 2, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 2, units='unitless')
 
         # setup_model_options(prob, options)
         prob.model_options['*'] = {
@@ -368,7 +361,7 @@ class SizeGroupTestCase3(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: 2,
         }
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         prob = self.prob
@@ -413,9 +406,9 @@ class SizeGroupTestCase3(unittest.TestCase):
 
         for var_name, expected_val in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
+                assert_near_equal(prob[var_name], expected_val, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-12)
 
 
@@ -435,61 +428,53 @@ class SizeGroupTestCase4(unittest.TestCase):
             promotes_inputs=['*'],
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
+        prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
         )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
+        prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
+        prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=25, units='deg')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=25, units='deg')
+        prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
+        prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, val=0, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Strut.AREA_RATIO, val=0.021893, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Strut.AREA_RATIO, val=0.021893, units='unitless')
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units='ft'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.NOSE_FINENESS, 1, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.TAIL_FINENESS, 3, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units='ft')
+        prob.model.set_input_defaults(Aircraft.Fuselage.NOSE_FINENESS, 1, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Fuselage.TAIL_FINENESS, 3, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless')
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 2, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 2, units='unitless')
 
         # setup_model_options(prob, options)
         prob.model_options['*'] = {
@@ -504,7 +489,7 @@ class SizeGroupTestCase4(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: 2,
         }
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
         prob = self.prob

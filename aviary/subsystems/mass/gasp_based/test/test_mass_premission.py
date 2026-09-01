@@ -83,35 +83,34 @@ class MassPremissionTestCase1(unittest.TestCase):
 
         for key, (val, units) in input_options.items():
             if not CoreMetaData[key]['option']:
-                self.prob.model.set_input_defaults(key, val=val, units=units)
+                prob.model.set_input_defaults(key, val=val, units=units)
 
         for key, (val, units) in V3_bug_fixed_non_metadata.items():
-            self.prob.model.set_input_defaults(key, val=val, units=units)
+            prob.model.set_input_defaults(key, val=val, units=units)
 
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless'
         )
 
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
-        )
+        prob.model.set_input_defaults(Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h')
         # self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
         # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
-        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
+        prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
+        prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
 
         setup_model_options(self.prob, input_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        self.prob.run_model()
+        prob = self.prob
+        prob.run_model()
 
         tol = 5e-4
         expected_values = {
@@ -149,7 +148,7 @@ class MassPremissionTestCase1(unittest.TestCase):
 
         for var_name, expected_val in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
+                assert_near_equal(prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
@@ -181,7 +180,7 @@ class MassPremissionTestCase2(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
         )
         prob.model.set_input_defaults(
@@ -869,7 +868,7 @@ class MassPremissionTestCase4(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
         )
         prob.model.set_input_defaults(
@@ -1179,7 +1178,7 @@ class MassPremissionTestCase5(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
         )
         prob.model.set_input_defaults(
@@ -1493,7 +1492,7 @@ class MassPremissionTestCase6(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
         )
         prob.model.set_input_defaults(
@@ -1810,7 +1809,7 @@ class MassPremissionTestCase7(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
         )
         prob.model.set_input_defaults(
@@ -2144,7 +2143,7 @@ class MassPremissionTestCase8(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch'
         )
         prob.model.set_input_defaults(
@@ -2483,7 +2482,7 @@ class MassPremissionTestCase9(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch'
         )
         prob.model.set_input_defaults(
