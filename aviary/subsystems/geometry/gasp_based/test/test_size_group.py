@@ -536,6 +536,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBSizeGroupTestCase1(unittest.TestCase):
     """GASP BWB model does not compute volume coeffiients.  So, override."""
 

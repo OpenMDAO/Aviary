@@ -1468,6 +1468,7 @@ class MassPremissionTestCase5(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
 
+@use_tempdirs
 class MassPremissionTestCase6(unittest.TestCase):
     """
     This is thelarge single aisle 1V3.6 test case with a fuel margin of 10%, a wing loading of 150 psf, and a SLS thrust of 29500 lbf
@@ -3187,6 +3188,7 @@ class BWBStructMassTestCase(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
+@use_tempdirs
 class StructMassTestCase1(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -3219,6 +3221,7 @@ class StructMassTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBStructMassTestCase(unittest.TestCase):
     """Using BWB data."""
 
