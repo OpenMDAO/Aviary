@@ -58,8 +58,10 @@ class MassPremissionTestCase1(unittest.TestCase):
 
     def setUp(self):
         options = AviaryValues()
-        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 1.189, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.2307, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = self.prob = om.Problem()
@@ -163,8 +165,10 @@ class MassPremissionTestCase2(unittest.TestCase):
 
     def setUp(self):
         options = AviaryValues()
-        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 1.189, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.2307, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = self.prob = om.Problem()
@@ -219,10 +223,6 @@ class MassPremissionTestCase2(unittest.TestCase):
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless')
-        prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
@@ -561,8 +561,10 @@ class MassPremissionTestCase3(unittest.TestCase):
 
     def setUp(self):
         options = AviaryValues()
-        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 1.189, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.2307, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = self.prob = om.Problem()
@@ -617,10 +619,6 @@ class MassPremissionTestCase3(unittest.TestCase):
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless')
-        prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
@@ -855,8 +853,10 @@ class MassPremissionTestCase4(unittest.TestCase):
 
     def setUp(self):
         options = AviaryValues()
-        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 1.189, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.2307, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = self.prob = om.Problem()
@@ -911,10 +911,6 @@ class MassPremissionTestCase4(unittest.TestCase):
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless')
-        prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
@@ -1167,8 +1163,10 @@ class MassPremissionTestCase5(unittest.TestCase):
 
     def setUp(self):
         options = AviaryValues()
-        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 1.189, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.2307, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = self.prob = om.Problem()
@@ -1223,10 +1221,6 @@ class MassPremissionTestCase5(unittest.TestCase):
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless')
-        prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
@@ -1483,8 +1477,10 @@ class MassPremissionTestCase6(unittest.TestCase):
 
     def setUp(self):
         options = AviaryValues()
-        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 1.189, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.145, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.2307, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = self.prob = om.Problem()
@@ -1539,10 +1535,6 @@ class MassPremissionTestCase6(unittest.TestCase):
             Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless')
-        prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
@@ -1802,8 +1794,10 @@ class MassPremissionTestCase7(unittest.TestCase):
 
     def setUp(self):
         options = AviaryValues()
-        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 1.189, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.09986, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.2307, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 2.1621, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = self.prob = om.Problem()
@@ -1855,10 +1849,6 @@ class MassPremissionTestCase7(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuselage.TAIL_FINENESS, 3, units='unitless')
         prob.model.set_input_defaults(Aircraft.Fuselage.WETTED_AREA_SCALER, 1, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.1, units='unitless')
-        prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 2.1621, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
@@ -2138,8 +2128,10 @@ class MassPremissionTestCase8(unittest.TestCase):
 
     def setUp(self):
         options = AviaryValues()
-        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.43, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 1.43, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.066, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.13067, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 3.0496, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = self.prob = om.Problem()
@@ -2165,12 +2157,8 @@ class MassPremissionTestCase8(unittest.TestCase):
             Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.13067, units='unitless'
-        )
-        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.025, units='unitless'
         )
-        prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 3.0496, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
@@ -2479,8 +2467,10 @@ class MassPremissionTestCase9(unittest.TestCase):
 
     def setUp(self):
         options = AviaryValues()
-        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.43, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 1.43, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.066, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.13067, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 3.0496, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = self.prob = om.Problem()
@@ -2506,12 +2496,8 @@ class MassPremissionTestCase9(unittest.TestCase):
             Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.13067, units='unitless'
-        )
-        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.025, units='unitless'
         )
-        prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 3.0496, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
@@ -2825,6 +2811,8 @@ class BWBStructMassTestCase(unittest.TestCase):
         options = AviaryValues()
         options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=0.000001, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.015, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.5463, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 5.2615, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = self.prob = om.Problem()
@@ -2862,10 +2850,6 @@ class BWBStructMassTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuselage.NOSE_FINENESS, 0.6, units='unitless')
         prob.model.set_input_defaults(Aircraft.Fuselage.TAIL_FINENESS, 1.75, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.1, units='unitless')
-        prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, 0.5463, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_RATIO, 5.2615, units='unitless')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.ASPECT_RATIO, 1.705, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2205, units='unitless'

@@ -44,24 +44,25 @@ class PreMission(om.Group):
 
 class TestMomentRatio(unittest.TestCase):
     def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
             'hmr',
             MomentRatio(orientation='horizontal'),
             promotes=['aircraft:*'],
         )
-        self.prob.model.add_subsystem(
+        prob.model.add_subsystem(
             'vmr',
             MomentRatio(orientation='vertical'),
             promotes=['aircraft:*'],
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless'
         )
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case_1(self):
-        self.prob.run_model()
+        prob = self.prob
+        prob.run_model()
 
         # These are not actual GASP values.
         expected_values = {
@@ -71,14 +72,13 @@ class TestMomentRatio(unittest.TestCase):
 
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected, tol)
+                assert_near_equal(prob[var_name], expected, tol)
 
     def test_case_2(self):
-        self.prob.setup(check=False, force_alloc_complex=True)
-        self.prob.set_val(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=1, units='unitless'
-        )
-        self.prob.run_model()
+        prob = self.prob
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 1, units='unitless')
+        prob.run_model()
 
         # These are not actual GASP values.
         expected_values = {
@@ -88,10 +88,10 @@ class TestMomentRatio(unittest.TestCase):
 
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected, tol)
+                assert_near_equal(prob[var_name], expected, tol)
 
-    def test_partials(self):
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        prob = self.prob
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, **partial_tols)
 
 
@@ -220,8 +220,10 @@ class TestEmpennageGroup1(unittest.TestCase):
 
     def setUp(self):
         options = AviaryValues()
-        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=0.000001, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 0.000001, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.015, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.2307, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = self.prob = om.Problem()
@@ -236,9 +238,6 @@ class TestEmpennageGroup1(unittest.TestCase):
             Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units='unitless'
-        )
         self.prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.615, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
@@ -250,9 +249,6 @@ class TestEmpennageGroup1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.VOLUME_COEFFICIENT, val=0.145, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.MOMENT_RATIO, val=2.362, units='unitless'
-        )
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -262,7 +258,6 @@ class TestEmpennageGroup1(unittest.TestCase):
         )
 
         prob.setup(check=False, force_alloc_complex=True)
-        self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_large_sinle_aisle_1_defaults(self):
         prob = self.prob
@@ -364,8 +359,10 @@ class BWBTestEmpennageGroup(unittest.TestCase):
 
     def test_case(self):
         options = AviaryValues()
-        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=0.000001, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 0.000001, units='unitless')
         options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.015, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.5463, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 5.2615, units='unitless')
         options.set_val(Settings.VERBOSITY, 0)
 
         prob = om.Problem()
@@ -377,18 +374,12 @@ class BWBTestEmpennageGroup(unittest.TestCase):
         )
 
         prob.model.set_input_defaults(Aircraft.Wing.AREA, val=2142.85714286, units='ft**2')
-        prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.5463, units='unitless'
-        )
         prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=16.2200522, units='ft')
         prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=1.705, units='unitless'
         )
         prob.model.set_input_defaults(
             Aircraft.HorizontalTail.TAPER_RATIO, val=0.366, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.VerticalTail.MOMENT_RATIO, val=5.2615, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501094, units='ft')
         prob.model.set_input_defaults(
@@ -425,3 +416,6 @@ class BWBTestEmpennageGroup(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    test = BWBTestEmpennageGroup()
+    test.setUp()
+    # test.test_case()
