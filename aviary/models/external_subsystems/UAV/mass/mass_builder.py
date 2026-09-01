@@ -29,8 +29,6 @@ class MassBuilder(SubsystemBuilder):
             # verticaltail.py) -- the same areas the aero forms in UAV_Aero/aero_model.py
             # (WingTailAreaRatios) -- so span & chord drive both lift/drag and skin/sheeting mass.
             # Starting values live in the aircraft CSV, not here: OpenMDAO's
-            # add_design_var() takes no 'val' argument, so anything set here would have to
-            # be stripped back out before the dict is passed through.
             Aircraft.Wing.SPAN: {
                 'units': 'm',
                 'lower': 1.0,
@@ -41,26 +39,6 @@ class MassBuilder(SubsystemBuilder):
                 'lower': 0.1,
                 'upper': 2.0,
             },
-            # Aircraft.Fuselage.WETTED_AREA: {
-            #     'units': 'm**2',
-            #     'lower': 0.1,
-            #     'upper': 5.0,
-            # },
-            # Aircraft.Fuselage.LENGTH: {
-            #     'units': 'm',
-            #     'lower': 0.1,
-            #     'upper': 5.0,
-            # },
-            # Aircraft.Fuselage.AVG_HEIGHT: {
-            #     'units': 'm',
-            #     'lower': 0.1,
-            #     'upper': 2.0,
-            # },
-            # Aircraft.Fuselage.AVG_WIDTH: {
-            #     'units': 'm',
-            #     'lower': 0.1,
-            #     'upper': 2.0,
-            # },
             Aircraft.HorizontalTail.SPAN: {
                 'units': 'm',
                 'lower': 0.1,

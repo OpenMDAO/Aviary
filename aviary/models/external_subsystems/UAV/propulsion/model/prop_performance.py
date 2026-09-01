@@ -10,6 +10,7 @@ from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables impor
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
     ExtendedMetaData,
 )
+from aviary.models.external_subsystems.UAV.propulsion.Parsing.PropDataReader import PropDataReader
 
 # RC electric variables live in ExtendedMetaData; bind it onto the add_aviary_* helpers.
 add_aviary_input = partial(_add_aviary_input, meta_data=ExtendedMetaData)
@@ -313,17 +314,6 @@ class Motor(om.ExplicitComponent):
         )
         partials['power', Aircraft.Engine.Motor.IDLE_CURRENT] = -voltage_prop
 
-
-# TODO: reading in of data should be changed later:
-from aviary.models.external_subsystems.UAV.propulsion.Parsing.PropDataReader import PropDataReader
-
-xt, ct, cp = PropDataReader()
-ct = ct.flatten()
-cp = cp.flatten()
-order = np.lexsort((xt[:, 3], xt[:, 2], xt[:, 1], xt[:, 0]))
-xt = xt[order]
-
-
 class Vectorization(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -345,7 +335,6 @@ class Vectorization(om.ExplicitComponent):
         outputs['temp_diameter'] = inputs[Aircraft.Engine.Propeller.DIAMETER] * np.ones(nn)
         outputs['temp_pitch'] = inputs[Aircraft.Engine.Propeller.PITCH] * np.ones(nn)
 
-
 class PropCoefficients(om.MetaModelSemiStructuredComp):
     def initialize(self):
         self.options.declare('method', default='lagrange2', types=str)
@@ -354,6 +343,12 @@ class PropCoefficients(om.MetaModelSemiStructuredComp):
         self.options.declare('vec_size', default=1, types=int)
 
     def setup(self):
+        xt, ct, cp = PropDataReader()
+        ct = ct.flatten()
+        cp = cp.flatten()
+        order = np.lexsort((xt[:, 3], xt[:, 2], xt[:, 1], xt[:, 0]))
+        xt = xt[order]
+
         nn = self.options['vec_size']
         self.add_input(
             'temp_diameter',

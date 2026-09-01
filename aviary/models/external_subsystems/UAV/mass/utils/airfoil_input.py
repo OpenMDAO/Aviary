@@ -87,6 +87,9 @@ def load_airfoil_dat(file_path):
 
 
 def load_airfoil_csv(file_path, delimiter=',', header=False):
+    if not os.path.exists(file_path):
+            raise FileNotFoundError(f"Airfoil CSV file '{file_path}' not found.")
+    
     skip = 1 if header else 0
     data = np.loadtxt(file_path, delimiter=delimiter, skiprows=skip)
 
@@ -109,20 +112,21 @@ def load_airfoil_csv(file_path, delimiter=',', header=False):
     return x_normalized, y_normalized
 
 
-"""Example of how this is used:"""
 
-chord_length = 13.4  # in
-base = os.path.dirname(__file__)
-airfoil_path = os.path.abspath(os.path.join(base, 'n0012-il.csv'))
+if __name__ == '__main__':
+    """Example of how this tool is used:"""
+    chord_length = 13.4  # in
+    base = os.path.dirname(__file__)
+    airfoil_path = os.path.abspath(os.path.join(base, 'n0012-il.csv'))
 
-x, y = load_airfoil_csv(airfoil_path, header=True)
+    x, y = load_airfoil_csv(airfoil_path, header=True)
 
-area, t_max, x_t_max = visualize_airfoil_area(x, y)
+    area, t_max, x_t_max = visualize_airfoil_area(x, y)
 
-area = area * (chord_length**2)
+    area = area * (chord_length**2)
 
-print(f'Airfoil cross-sectional area: {area:.4f} in²')
+    print(f'Airfoil cross-sectional area: {area:.4f} in²')
 
-t_c_ratio = t_max / chord_length
-print(f'Thickness-to-chord ratio: {t_c_ratio:.4f}')
-print(f'Max thickness: {t_max:.4f} in at x = {x_t_max:.4f}')
+    t_c_ratio = t_max / chord_length
+    print(f'Thickness-to-chord ratio: {t_c_ratio:.4f}')
+    print(f'Max thickness: {t_max:.4f} in at x = {x_t_max:.4f}')

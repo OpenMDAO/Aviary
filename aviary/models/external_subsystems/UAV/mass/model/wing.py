@@ -7,7 +7,7 @@ import jax.numpy as jnp
 from aviary.models.external_subsystems.UAV.mass.utils.enums import WingType
 from aviary.models.external_subsystems.UAV.mass.utils.materials_database import materials
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.models.external_subsystems.UAV.mass.utils.load_airfoil import load_airfoil_csv
+from aviary.models.external_subsystems.UAV.mass.utils.airfoil_input import load_airfoil_csv
 from aviary.models.external_subsystems.UAV.mass.utils.hashable_statics import hashable
 
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
