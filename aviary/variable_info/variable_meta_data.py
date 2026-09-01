@@ -1152,7 +1152,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH'},
     units='inch',
     desc='pitch of the business class seats.',
-    option=True,
     default_value=39.0,
 )
 
@@ -1162,7 +1161,6 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH'},
     units='inch',
     desc='pitch of the economy class seats.',
-    option=True,
     default_value=32.0,
 )
 
@@ -1172,7 +1170,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH'},
     units='inch',
     desc='pitch of the first class seats.',
-    option=True,
     default_value=61.0,
 )
 
@@ -3179,8 +3176,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WAS', 'FLOPS': None},
     units='inch',
-    desc='Width of the aisles in the passenger cabin. In FLOPS, aisle width is hardcoded per '
-    'passenger class.',
+    desc='width of the aisles in the passenger cabin',
     default_value=24,
 )
 

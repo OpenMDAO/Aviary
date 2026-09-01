@@ -22,6 +22,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.default_subsystems import get_default_subsystems
+from aviary.validation_cases.benchmark_utils import print_benchmark_results
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -46,7 +47,8 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
         # driver.opt_settings['nlp_scaling_method'] = None
         # driver.opt_settings['linear_solver'] = 'mumps'
 
-        self._do_run(driver, optimizer)
+        prob = self._do_run(driver, optimizer)
+        print_benchmark_results(prob)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_SNOPT(self):
@@ -60,7 +62,8 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
         driver.opt_settings['Major feasibility tolerance'] = 1e-6
         driver.opt_settings['iSumm'] = 6
 
-        self._do_run(driver, optimizer)
+        prob = self._do_run(driver, optimizer)
+        print_benchmark_results(prob)
 
     def _do_run(self, driver: Driver, optimizer, *args):
         aviary_options = _inputs.deepcopy()
@@ -160,6 +163,8 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
         actual = takeoff.model.get_val('traj.takeoff_liftoff.states:distance', units='ft')[-1]
 
         assert_near_equal(actual, desired, 2e-2)
+
+        return takeoff
 
 
 if __name__ == '__main__':

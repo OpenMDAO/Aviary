@@ -24,6 +24,7 @@ from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_dat
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     inputs as _inputs,
 )
+from aviary.validation_cases.benchmark_utils import print_benchmark_results
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -43,7 +44,8 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         driver.opt_settings['tol'] = 1e-3
         driver.opt_settings['print_level'] = 4
 
-        self._do_run(driver, optimizer)
+        prob = self._do_run(driver, optimizer)
+        print_benchmark_results(prob)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_SNOPT(self):
@@ -57,7 +59,8 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         driver.opt_settings['Major feasibility tolerance'] = 1e-6
         driver.opt_settings['iSumm'] = 6
 
-        self._do_run(driver, optimizer)
+        prob = self._do_run(driver, optimizer)
+        print_benchmark_results(prob)
 
     def _do_run(self, driver: Driver, optimizer, *args):
         aviary_options = _inputs.deepcopy()
@@ -156,6 +159,8 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         desired = 156.55
         actual = takeoff.model.get_val('traj.balanced_rotate.states:velocity', units='kn')[-1]
         assert_near_equal(actual, desired, 2e-2)
+
+        return takeoff
 
 
 if __name__ == '__main__':
