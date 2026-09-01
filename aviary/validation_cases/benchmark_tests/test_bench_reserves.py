@@ -19,33 +19,32 @@ class ReserveTest(unittest.TestCase):
 
         phase_info_local.update(
             {
-                'cruise': {
+                'reserve_cruise': {
                     'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
                     'user_options': {
-                        'phase_type': PhaseType.BREGUET_RANGE,
+                        'reserve': True,
+                        'phase_type': PhaseType.SIMPLE_CRUISE,
                         'target_distance': (300, 'km'),
                         'alt_cruise': (20_000, 'ft'),
                         'mach_cruise': 0.5,
-                        'mass_bounds': ((0, None), 'lbm'),
                         'mass_ref': (100_000, 'lbm'),
-                        'time_duration_bounds': ((0.0, 15.0), 'h'),
-                        'time_duration_ref': (8, 'h'),
+                        'time_duration_bounds': ((0, 300), 'min'),
                     },
                     'initial_guesses': {
                         'mass': ([168500.0, 135000], 'lbm'),
-                        'time': ([1504.0, 26500.0], 's'),
+                        'time': ([1504.0, 18000.0], 's'),
                     },
                 },
             }
         )
 
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
         prob.load_inputs(
-            'models/aircraft/small_single_aisle/small_single_aisle_GASP.csv',
+            'large_single_aisle_1_GASP.csv',
             phase_info_local,
         )
 
-        prob.aviary_inputs.set_val(Mission.RESERVE_FUEL_MARGIN, 0.05)
+        prob.aviary_inputs.set_val(Mission.RESERVE_FUEL_MARGIN, 5)
         prob.aviary_inputs.set_val(Mission.RESERVE_FUEL_MASS_ADDITIONAL, 125, units='lbm')
 
         prob.check_and_preprocess_inputs()
@@ -60,10 +59,12 @@ class ReserveTest(unittest.TestCase):
 
         prob.setup()
 
+        prob.run_aviary_problem()
+
         expected_values = {
-            'reserve_fuel_margin_mass': (-360, 'lbm'),
-            Mission.RESERVE_FUEL_MASS: (-10750, 'lbm'),
-            Mission.TOTAL_RESERVE_FUEL_MASS: (20020, 'lbm'),
+            'energy.reserve_fuel_margin_mass': (1887.21889734, 'lbm'),
+            Mission.RESERVE_FUEL_MASS: (37744.37794685, 'lbm'),
+            Mission.TOTAL_RESERVE_FUEL_MASS: (39756.5968442, 'lbm'),
         }
 
         for var_name, (expected, units) in expected_values.items():
@@ -101,13 +102,13 @@ class ReserveTest(unittest.TestCase):
             }
         )
 
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
         prob.load_inputs(
-            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
+            'advanced_single_aisle_FLOPS.csv',
             phase_info_local,
         )
 
-        prob.aviary_inputs.set_val(Mission.RESERVE_FUEL_MARGIN, 0.05)
+        prob.aviary_inputs.set_val(Mission.RESERVE_FUEL_MARGIN, 5)
         prob.aviary_inputs.set_val(Mission.RESERVE_FUEL_MASS_ADDITIONAL, 125, units='lbm')
 
         prob.check_and_preprocess_inputs()
@@ -122,10 +123,12 @@ class ReserveTest(unittest.TestCase):
 
         prob.setup()
 
+        prob.run_aviary_problem()
+
         expected_values = {
-            'reserve_fuel_margin_mass': (-360, 'lbm'),
-            Mission.RESERVE_FUEL_MASS: (-10750, 'lbm'),
-            Mission.TOTAL_RESERVE_FUEL_MASS: (20020, 'lbm'),
+            'energy.reserve_fuel_margin_mass': (790.46785778, 'lbm'),
+            Mission.RESERVE_FUEL_MASS: (15809.3571555, 'lbm'),
+            Mission.TOTAL_RESERVE_FUEL_MASS: (16724.82501328, 'lbm'),
         }
 
         for var_name, (expected, units) in expected_values.items():
@@ -135,3 +138,6 @@ class ReserveTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = ReserveTest()
+    # test.test_reserves_energy()
+    # test.test_reserves_2dof()
