@@ -89,7 +89,6 @@ class BWBWingGroupTest(unittest.TestCase):
                 Aircraft.Fuselage.MAX_WIDTH,
                 # WingMiscMass
                 Aircraft.Wing.COMPOSITE_FRACTION,
-                # Aircraft.Wing.AREA,
                 Aircraft.Wing.MISC_MASS_SCALER,
                 # WingShearControlMass
                 Aircraft.Wing.CONTROL_SURFACE_AREA,

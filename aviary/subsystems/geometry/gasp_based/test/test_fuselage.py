@@ -239,6 +239,9 @@ class FuselageGroupTestCase2(unittest.TestCase):
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('group', FuselageGroup(), promotes=['*'])
 
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
@@ -286,6 +289,9 @@ class FuselageGroupTestCase3(unittest.TestCase):
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('group', FuselageGroup(), promotes=['*'])
 
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
@@ -333,6 +339,9 @@ class FuselageGroupTestCase4(unittest.TestCase):
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('group', FuselageGroup(), promotes=['*'])
 
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
@@ -366,7 +375,6 @@ class BWBFuselageParameters1TestCase(unittest.TestCase):
         aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
         aviary_options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
-        aviary_options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
         aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 150)
         aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 18)
         aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -414,14 +422,18 @@ class BWBLayoutTestCase(unittest.TestCase):
         aviary_options = self.aviary_options = AviaryValues()
 
         aviary_options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
-        aviary_options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
-        aviary_options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
         aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 150)
         aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
         aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
 
         prob.model.add_subsystem('bwb_cabin_layout', BWBCabinLayout(), promotes=['*'])
 
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch'
+        )
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28.0, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21.0, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
@@ -458,7 +470,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
     def test_case2(self):
-        """Testing case: economy class only"""
+        """Testing case: economy class only."""
         self.aviary_options.set_val(
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
             val=0,
@@ -474,7 +486,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         assert_near_equal(prob['fuselage_station_aft'], 51.25449, tol)
 
     def test_case3(self):
-        """Testing case: first class + business class + economy class"""
+        """Testing case: first class + business class + economy class."""
         self.aviary_options.set_val(
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, val=20, units='unitless'
         )
@@ -592,6 +604,12 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('group', BWBFuselageGroup(), promotes=['*'])
 
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch'
+        )
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
