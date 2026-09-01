@@ -1,10 +1,10 @@
 import unittest
-import aviary.api as av
 from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
+import aviary.api as av
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.missions.energy_state_default import phase_info as energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as twodof_phase_info

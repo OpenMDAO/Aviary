@@ -45,3 +45,6 @@ PSLS_PSF = 2116.22
 
 # sea level standard temperature in deg R
 TSLS_DEGR = 518.67
+
+# fuel properties
+DENSITY_JET_A = (6.7, 'lbm/galUS')

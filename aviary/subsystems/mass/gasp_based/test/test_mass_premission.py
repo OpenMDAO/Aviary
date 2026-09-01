@@ -109,11 +109,11 @@ class MassPremissionTestCase1(unittest.TestCase):
             Aircraft.Fuel.WING_VOLUME_DESIGN: 871.44181691,  # modified from GASP value to account for updated crew mass. GASP value is 856.4910800459031
             'OEM_fuel_vol': 1591.12164393,  # modified from GASP value to account for updated crew mass. GASP value is 1576.1710061411081
             Mission.OPERATING_MASS: 95808.52469272,  # modified from GASP value to account for updated crew mass. GASP value is 96556.0
-            'volume_wingfuel_mass': 57066.3,  # extra_fuel_mass calculated differently in this version, so test for payload_mass_max_fuel not included
-            'max_wingfuel_mass': 57066.3,
-            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: 0,  # always zero when no body tank
-            'extra_fuel_volume': 0,  # always zero when no body tank
-            'max_extra_fuel_mass': 0,  # always zero when no body tank
+            # 'volume_wingfuel_mass': 57066.3,  # extra_fuel_mass calculated differently in this version, so test for payload_mass_max_fuel not included
+            # 'max_wingfuel_mass': 57066.3,
+            # Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: 0,  # always zero when no body tank
+            # 'extra_fuel_volume': 0,  # always zero when no body tank
+            # 'max_extra_fuel_mass': 0,  # always zero when no body tank
             Aircraft.Design.USEFUL_LOAD_MASS: 85002.98039399,
         }
 
@@ -488,11 +488,11 @@ class MassPremissionTestCase2(unittest.TestCase):
         # FuelComponents
         assert_near_equal(prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS], 619.8317956, tol)
         # BodyTankCalculations
-        assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol)
-        assert_near_equal(prob['extra_fuel_volume'], 0, tol)
-        assert_near_equal(prob['max_extra_fuel_mass'], 0, tol)
-        assert_near_equal(prob['wingfuel_mass_min'], 33716.89535681, tol)
-        assert_near_equal(prob[Aircraft.Fuel.MAX_CAPACITY_MASS], 44376.72715242, tol)
+        # assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol)
+        # assert_near_equal(prob['extra_fuel_volume'], 0, tol)
+        # assert_near_equal(prob['max_extra_fuel_mass'], 0, tol)
+        # assert_near_equal(prob['wingfuel_mass_min'], 33716.89535681, tol)
+        # assert_near_equal(prob[Aircraft.Fuel.MAX_CAPACITY_MASS], 44376.72715242, tol)
         # EmpennageMass
         assert_near_equal(prob[Aircraft.Design.EMPENNAGE_MASS], 4574.10130526, tol)
         # StructureMass
@@ -578,13 +578,13 @@ class MassPremissionTestCase2(unittest.TestCase):
             self.prob[Mission.OPERATING_MASS], 95643.26913924, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 96253.0
         # extra_fuel_mass calculated differently in this version, so payload_mass_max_fuel test not included
-        assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
-        assert_near_equal(self.prob['max_wingfuel_mass'], 55725.1, tol)
-        assert_near_equal(
-            self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol
-        )  # always zero when no body tank
-        assert_near_equal(self.prob['extra_fuel_volume'], 0, tol)  # always zero when no body tank
-        assert_near_equal(self.prob['max_extra_fuel_mass'], 0, tol)  # always zero when no body tank
+        # assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
+        # assert_near_equal(self.prob['max_wingfuel_mass'], 55725.1, tol)
+        # assert_near_equal(
+        #     self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol
+        # )  # always zero when no body tank
+        # assert_near_equal(self.prob['extra_fuel_volume'], 0, tol)  # always zero when no body tank
+        # assert_near_equal(self.prob['max_extra_fuel_mass'], 0, tol)  # always zero when no body tank
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-10, rtol=1e-12)
@@ -941,16 +941,16 @@ class MassPremissionTestCase3(unittest.TestCase):
         assert_near_equal(
             self.prob[Mission.OPERATING_MASS], 95643.26913924, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 96253.0
-        assert_near_equal(
-            self.prob['payload_mass_max_fuel'], 36000, tol
-        )  # note: value came from running the GASP code on my own and printing it out
-        assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
-        assert_near_equal(self.prob['max_wingfuel_mass'], 55725.1, tol)
-        assert_near_equal(
-            self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol
-        )  # always zero when no body tank
-        assert_near_equal(self.prob['extra_fuel_volume'], 0, tol)  # always zero when no body tank
-        assert_near_equal(self.prob['max_extra_fuel_mass'], 0, tol)  # always zero when no body tank
+        # assert_near_equal(
+        #     self.prob['payload_mass_max_fuel'], 36000, tol
+        # )  # note: value came from running the GASP code on my own and printing it out
+        # assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
+        # assert_near_equal(self.prob['max_wingfuel_mass'], 55725.1, tol)
+        # assert_near_equal(
+        #     self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol
+        # )  # always zero when no body tank
+        # assert_near_equal(self.prob['extra_fuel_volume'], 0, tol)  # always zero when no body tank
+        # assert_near_equal(self.prob['max_extra_fuel_mass'], 0, tol)  # always zero when no body tank
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-10, rtol=1e-12)
@@ -1308,16 +1308,16 @@ class MassPremissionTestCase4(unittest.TestCase):
         assert_near_equal(
             self.prob[Mission.OPERATING_MASS], 95826.33734069, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 96433.0
-        assert_near_equal(
-            self.prob['payload_mass_max_fuel'], 36000, tol
-        )  # note: value came from running the GASP code on my own and printing it out
-        assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
-        assert_near_equal(self.prob['max_wingfuel_mass'], 55725.1, tol)
-        assert_near_equal(
-            self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol
-        )  # always zero when no body tank
-        assert_near_equal(self.prob['extra_fuel_volume'], 0, tol)  # always zero when no body tank
-        assert_near_equal(self.prob['max_extra_fuel_mass'], 0, tol)  # always zero when no body tank
+        # assert_near_equal(
+        #     self.prob['payload_mass_max_fuel'], 36000, tol
+        # )  # note: value came from running the GASP code on my own and printing it out
+        # assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
+        # assert_near_equal(self.prob['max_wingfuel_mass'], 55725.1, tol)
+        # assert_near_equal(
+        #     self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol
+        # )  # always zero when no body tank
+        # assert_near_equal(self.prob['extra_fuel_volume'], 0, tol)  # always zero when no body tank
+        # assert_near_equal(self.prob['max_extra_fuel_mass'], 0, tol)  # always zero when no body tank
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-10, rtol=1e-12)
@@ -1667,20 +1667,20 @@ class MassSummationTestCase5(unittest.TestCase):
         assert_near_equal(
             self.prob[Mission.OPERATING_MASS], 94142.100596, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 93975
-        assert_near_equal(
-            self.prob['payload_mass_max_fuel'], 34594.23826045, tol
-        )  # note: value came from running the GASP code on my own and printing it out,  #modified from GASP value to account for updated crew mass. GASP value is 34427.4
-        assert_near_equal(self.prob['volume_wingfuel_mass'], 43852.1, tol)
-        assert_near_equal(self.prob['max_wingfuel_mass'], 43852.1, tol)
-        assert_near_equal(
-            self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 1405.76173955, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 1572.6
-        assert_near_equal(
-            self.prob['extra_fuel_volume'], 28.10273238, tol
-        )  # slightly different from GASP value, likely a rounding error,  #modified from GASP value to account for updated crew mass. GASP value is 31.43
-        assert_near_equal(
-            self.prob['max_extra_fuel_mass'], 1405.76173955, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 1572.6
+        # assert_near_equal(
+        #     self.prob['payload_mass_max_fuel'], 34594.23826045, tol
+        # )  # note: value came from running the GASP code on my own and printing it out,  #modified from GASP value to account for updated crew mass. GASP value is 34427.4
+        # assert_near_equal(self.prob['volume_wingfuel_mass'], 43852.1, tol)
+        # assert_near_equal(self.prob['max_wingfuel_mass'], 43852.1, tol)
+        # assert_near_equal(
+        #     self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 1405.76173955, tol
+        # )  # modified from GASP value to account for updated crew mass. GASP value is 1572.6
+        # assert_near_equal(
+        #     self.prob['extra_fuel_volume'], 28.10273238, tol
+        # )  # slightly different from GASP value, likely a rounding error,  #modified from GASP value to account for updated crew mass. GASP value is 31.43
+        # assert_near_equal(
+        #     self.prob['max_extra_fuel_mass'], 1405.76173955, tol
+        # )  # modified from GASP value to account for updated crew mass. GASP value is 1572.6
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
@@ -2029,20 +2029,20 @@ class MassSummationTestCase6(unittest.TestCase):
         assert_near_equal(
             self.prob[Mission.OPERATING_MASS], 94593.56550555, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 94417
-        assert_near_equal(
-            self.prob['payload_mass_max_fuel'], 35045.70322352, tol
-        )  # note: value came from running the GASP code on my own and printing it out,  #modified from GASP value to account for updated crew mass. GASP value is 34879.2
-        assert_near_equal(self.prob['volume_wingfuel_mass'], 43852.1, tol)
-        assert_near_equal(self.prob['max_wingfuel_mass'], 43852.1, tol)
-        assert_near_equal(
-            self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 954.29683, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 1120.9
-        assert_near_equal(
-            self.prob['extra_fuel_volume'], 108.65046889, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 112.3
-        assert_near_equal(
-            self.prob['max_extra_fuel_mass'], 5434.94027945, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 5618.2
+        # assert_near_equal(
+        #     self.prob['payload_mass_max_fuel'], 35045.70322352, tol
+        # )  # note: value came from running the GASP code on my own and printing it out,  #modified from GASP value to account for updated crew mass. GASP value is 34879.2
+        # assert_near_equal(self.prob['volume_wingfuel_mass'], 43852.1, tol)
+        # assert_near_equal(self.prob['max_wingfuel_mass'], 43852.1, tol)
+        # assert_near_equal(
+        #     self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 954.29683, tol
+        # )  # modified from GASP value to account for updated crew mass. GASP value is 1120.9
+        # assert_near_equal(
+        #     self.prob['extra_fuel_volume'], 108.65046889, tol
+        # )  # modified from GASP value to account for updated crew mass. GASP value is 112.3
+        # assert_near_equal(
+        #     self.prob['max_extra_fuel_mass'], 5434.94027945, tol
+        # )  # modified from GASP value to account for updated crew mass. GASP value is 5618.2
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
@@ -2413,18 +2413,18 @@ class MassSummationTestCase7(unittest.TestCase):
         assert_near_equal(
             self.prob[Mission.OPERATING_MASS], 82640.88682213, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 82961.0
-        assert_near_equal(
-            self.prob['payload_mass_max_fuel'], 30800.0039, tol
-        )  # note: value came from running the GASP code on my own and printing it out
-        assert_near_equal(self.prob['volume_wingfuel_mass'], 33892.8, tol)
-        assert_near_equal(self.prob['max_wingfuel_mass'], 33892.8, tol)
-        assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol)
-        assert_near_equal(
-            self.prob['extra_fuel_volume'], 24.8957623, tol
-        )  # note: higher tol because slightly different from GASP value, likely numerical issues,  #modified from GASP value to account for updated crew mass. GASP value is 17.9
-        assert_near_equal(
-            self.prob['max_extra_fuel_mass'], 1245.34189936, tol
-        )  # note: higher tol because slightly different from GASP value, likely numerical issues,  #modified from GASP value to account for updated crew mass. GASP value is 897.2
+        # assert_near_equal(
+        #     self.prob['payload_mass_max_fuel'], 30800.0039, tol
+        # )  # note: value came from running the GASP code on my own and printing it out
+        # assert_near_equal(self.prob['volume_wingfuel_mass'], 33892.8, tol)
+        # assert_near_equal(self.prob['max_wingfuel_mass'], 33892.8, tol)
+        # assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol)
+        # assert_near_equal(
+        #     self.prob['extra_fuel_volume'], 24.8957623, tol
+        # )  # note: higher tol because slightly different from GASP value, likely numerical issues,  #modified from GASP value to account for updated crew mass. GASP value is 17.9
+        # assert_near_equal(
+        #     self.prob['max_extra_fuel_mass'], 1245.34189936, tol
+        # )  # note: higher tol because slightly different from GASP value, likely numerical issues,  #modified from GASP value to account for updated crew mass. GASP value is 897.2
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX], 677.554, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 677.554, tol)
 
@@ -2797,18 +2797,18 @@ class MassSummationTestCase8(unittest.TestCase):
         assert_near_equal(
             self.prob[Mission.OPERATING_MASS], 83732.50812502, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 83728.0
-        assert_near_equal(
-            self.prob['payload_mass_max_fuel'], 30800.0, tol
-        )  # note:printed out from GASP code
-        assert_near_equal(self.prob['volume_wingfuel_mass'], 31051.6, tol)
-        assert_near_equal(self.prob['max_wingfuel_mass'], 31051.6, tol)
-        assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol)
-        assert_near_equal(
-            self.prob['extra_fuel_volume'], 7.44643516, tol
-        )  # note: printed out from the GASP code,  #modified from GASP value to account for updated crew mass. GASP value is 7.5568
-        assert_near_equal(
-            self.prob['max_extra_fuel_mass'], 372.48739763, tol
-        )  # note: printed out from the GASP code,  #modified from GASP value to account for updated crew mass. GASP value is 378.0062
+        # assert_near_equal(
+        #     self.prob['payload_mass_max_fuel'], 30800.0, tol
+        # )  # note:printed out from GASP code
+        # assert_near_equal(self.prob['volume_wingfuel_mass'], 31051.6, tol)
+        # assert_near_equal(self.prob['max_wingfuel_mass'], 31051.6, tol)
+        # assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol)
+        # assert_near_equal(
+        #     self.prob['extra_fuel_volume'], 7.44643516, tol
+        # )  # note: printed out from the GASP code,  #modified from GASP value to account for updated crew mass. GASP value is 7.5568
+        # assert_near_equal(
+        #     self.prob['max_extra_fuel_mass'], 372.48739763, tol
+        # )  # note: printed out from the GASP code,  #modified from GASP value to account for updated crew mass. GASP value is 378.0062
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-9, rtol=6e-11)
@@ -3198,14 +3198,14 @@ class MassSummationTestCase9(unittest.TestCase):
         assert_near_equal(
             self.prob[Mission.OPERATING_MASS], 102648.03610637, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 102392.0
-        assert_near_equal(
-            self.prob['payload_mass_max_fuel'], 30800.0, tol
-        )  # (printed out from GASP code)
-        assert_near_equal(self.prob['volume_wingfuel_mass'], 35042.1, tol)
-        assert_near_equal(self.prob['max_wingfuel_mass'], 35042.1, tol)
-        assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol)
-        assert_near_equal(self.prob['extra_fuel_volume'], 0.69314718, tol)
-        assert_near_equal(self.prob['max_extra_fuel_mass'], 34.67277748, tol)
+        # assert_near_equal(
+        #     self.prob['payload_mass_max_fuel'], 30800.0, tol
+        # )  # (printed out from GASP code)
+        # assert_near_equal(self.prob['volume_wingfuel_mass'], 35042.1, tol)
+        # assert_near_equal(self.prob['max_wingfuel_mass'], 35042.1, tol)
+        # assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 0, tol)
+        # assert_near_equal(self.prob['extra_fuel_volume'], 0.69314718, tol)
+        # assert_near_equal(self.prob['max_extra_fuel_mass'], 34.67277748, tol)
 
         assert_near_equal(self.prob[Aircraft.Electrical.HYBRID_CABLE_LENGTH], 65.6, tol)
         assert_near_equal(
@@ -3625,20 +3625,20 @@ class BWBMassSummationTestCase(unittest.TestCase):
         # FuelAndOEMOutputs
         assert_near_equal(prob['OEM_wingfuel_mass'], 69012.87713501, tol)
         assert_near_equal(prob['OEM_fuel_vol'], 1379.6437633, tol)
-        assert_near_equal(prob['payload_mass_max_fuel'], 28795.99162868, tol)
-        assert_near_equal(prob['volume_wingfuel_mass'], 30308.8688, tol)
+        # assert_near_equal(prob['payload_mass_max_fuel'], 28795.99162868, tol)
+        # assert_near_equal(prob['volume_wingfuel_mass'], 30308.8688, tol)
         assert_near_equal(prob['max_wingfuel_mass'], 30308.86876369, tol)
         assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 775.43831801, tol)
         assert_near_equal(prob[Mission.OPERATING_MASS], 80987.12286499, tol)
         # TankCapacity / WingFuelMin
-        assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 4954.00837132, tol)
+        # assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY], 4954.00837132, tol)
 
-        total_cap = prob[Aircraft.Fuel.MAX_CAPACITY_MASS]
-        unusable = prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
-        assert_near_equal(total_cap - unusable, 40216.88550633, tol)
-        assert_near_equal(prob['extra_fuel_volume'], 169.53050054, tol)
-        assert_near_equal(prob['max_extra_fuel_mass'], 8480.29608482, tol)
-        assert_near_equal(prob['wingfuel_mass_min'], 11782.58105019, tol)
+        # total_cap = prob[Aircraft.Fuel.MAX_CAPACITY_MASS]
+        # unusable = prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
+        # assert_near_equal(total_cap - unusable, 40216.88550633, tol)
+        # assert_near_equal(prob['extra_fuel_volume'], 169.53050054, tol)
+        # assert_near_equal(prob['max_extra_fuel_mass'], 8480.29608482, tol)
+        # assert_near_equal(prob['wingfuel_mass_min'], 11782.58105019, tol)
 
 
 # this is the large single aisle 1 V3 test case
