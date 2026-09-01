@@ -1367,7 +1367,12 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;climb&#39;: lower, upper, ref
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1788285667.940019] [runnervmgx7h7:4751 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55ba8f8ae400 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1788285667.940307] [runnervmgx7h7:4751 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervmgx7h7:04751] pml_ucx.c:313  Error: Failed to create UCP worker
+Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;climb&#39;: lower, upper, ref
 
 Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;climb&#39;: lower, upper, ref
 
@@ -1398,12 +1403,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3234421093809345e+00    1.3234421093809345e+00
-Dual infeasibility......:   3.6141886793169438e-08    3.6141886793169438e-08
+Objective...............:   1.3234421093809317e+00    1.3234421093809317e+00
+Dual infeasibility......:   3.6141994026837973e-08    3.6141994026837973e-08
 Constraint violation....:   2.2737367544323207e-14    2.2737367544323207e-14
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0924048114258051e-08    9.0924048114258051e-08
-Overall NLP error.......:   9.0924048114258051e-08    9.0924048114258051e-08
+Complementarity.........:   9.0924048114257468e-08    9.0924048114257468e-08
+Overall NLP error.......:   9.0924048114257468e-08    9.0924048114257468e-08
 
 
 Number of objective function evaluations             = 16
@@ -1413,7 +1418,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 7.190
+Total seconds in IPOPT                               = 5.826
 
 EXIT: Optimal Solution Found.
 
