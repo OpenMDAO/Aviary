@@ -723,6 +723,7 @@ class AeroGeomTest(unittest.TestCase):
         assert_near_equal(prob['SA7'], [0.03978045, 0.03978045], tol)
 
     def test_case_multiengine(self):
+        # 3-engine test case. 2nd and 3rd engine's properties are arbitrary
         options = AviaryValues()
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4, 1]))
         options.set_val(Aircraft.Wing.HAS_STRUT, False)

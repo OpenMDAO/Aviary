@@ -799,13 +799,6 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
     """
 
     def setUp(self):
-        # PrepGeom under BWB + simple layout + detailed-wing-computed branch instantiates:
-        # BWBSimpleCabinLayout, BWBComputeDetailedWingDist, BWBFuselagePrelim, BWBWingPrelim,
-        # WettedAreaGroup (PrelimWettedArea, BWBWingWettedArea, TailWettedArea,
-        # BWBFuselageWettedArea, NacelleWettedArea, CanardWettedArea), _FuselageRatios,
-        # BWBWingCharacteristicLength, NacelleCharacteristicLength, OtherCharacteristicLengths,
-        # TotalWettedArea, MainGearLength, NoseGearLength.
-        # Union of add_aviary_option calls in that set that the test needs to override:
         options = self.options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=True, units='unitless')
@@ -1048,13 +1041,6 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
     """
 
     def setUp(self):
-        # PrepGeom under BWB + detailed layout + detailed-wing-provided branch instantiates:
-        # BWBDetailedCabinLayout, BWBUpdateDetailedWingDist, BWBFuselagePrelim, BWBWingPrelim,
-        # WettedAreaGroup (PrelimWettedArea, BWBWingWettedArea, TailWettedArea,
-        # BWBFuselageWettedArea, NacelleWettedArea, CanardWettedArea), _FuselageRatios,
-        # BWBWingCharacteristicLength, NacelleCharacteristicLength, OtherCharacteristicLengths,
-        # TotalWettedArea, MainGearLength, NoseGearLength.
-        # Union of add_aviary_option calls in that set that the test needs to override:
         options = self.options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=False, units='unitless')
