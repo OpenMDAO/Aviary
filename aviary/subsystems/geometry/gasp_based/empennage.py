@@ -291,18 +291,18 @@ class EmpennageSize(om.Group):
     def setup(self):
         # For cruciform/T-tail configurations, see issue #1089
 
-        # self.add_subsystem(
-        #     'htail_mr',
-        #     MomentRatio(orientation='horizontal'),
-        #     promotes_inputs=['*'],
-        #     promotes_outputs=['*'],
-        # )
-        # self.add_subsystem(
-        #     'vtail_mr',
-        #     MomentRatio(orientation='vertical'),
-        #     promotes_inputs=['*'],
-        #     promotes_outputs=['*'],
-        # )
+        self.add_subsystem(
+            'htail_mr',
+            MomentRatio(orientation='horizontal'),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
+            'vtail_mr',
+            MomentRatio(orientation='vertical'),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
 
         self.add_subsystem(
             'htail_vc',
