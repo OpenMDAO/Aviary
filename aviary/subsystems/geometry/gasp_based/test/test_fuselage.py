@@ -31,7 +31,6 @@ class FuselageParametersTestCase1(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180)
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
 
@@ -42,6 +41,9 @@ class FuselageParametersTestCase1(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
 
         setup_model_options(prob, options)
 
@@ -69,7 +71,6 @@ class FuselageParametersTestCase2(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=30, units='unitless')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
 
@@ -80,6 +81,9 @@ class FuselageParametersTestCase2(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
 
         setup_model_options(prob, options)
 
@@ -180,7 +184,6 @@ class FuselageGroupTestCase1(
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
 
@@ -194,6 +197,9 @@ class FuselageGroupTestCase1(
         prob.model.set_input_defaults(Aircraft.Fuselage.NOSE_FINENESS, 1, units='unitless')
         prob.model.set_input_defaults(Aircraft.Fuselage.TAIL_FINENESS, 3, units='unitless')
         prob.model.set_input_defaults(Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
 
         setup_model_options(prob, options)
 
@@ -254,7 +260,7 @@ class FuselageGroupTestCase2(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """outputs are not actual GASP value"""
+        """Testing GASP data case."""
         prob = self.prob
         prob.run_model()
 
@@ -304,7 +310,7 @@ class FuselageGroupTestCase3(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """outputs are not actual GASP value"""
+        """Outputs are not actual GASP value."""
         prob = self.prob
         prob.run_model()
 
@@ -354,7 +360,7 @@ class FuselageGroupTestCase4(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """outputs are not actual GASP value"""
+        """Outputs are not actual GASP value."""
         prob = self.prob
         prob.run_model()
 
@@ -450,7 +456,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         prob.setup()
 
     def test_case1(self):
-        """Testing GASP data case: first class + economy class"""
+        """Testing GASP data case: first class + economy class."""
         prob = self.prob
         prob.run_model()
 

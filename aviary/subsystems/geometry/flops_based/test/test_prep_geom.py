@@ -16,11 +16,9 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
-from aviary.subsystems.geometry.flops_based.nacelle import (
-    NacelleWettedArea,
-    NacelleTotalWettedArea,
-)
-from aviary.subsystems.geometry.flops_based.prep_geom import _FuselageRatios, PrepGeom
+from aviary.subsystems.geometry.flops_based.nacelle import NacelleTotalWettedArea, NacelleWettedArea
+from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom, _FuselageRatios
+from aviary.subsystems.geometry.flops_based.utils import Names
 from aviary.subsystems.geometry.flops_based.wetted_area_total import (
     BWBWingWettedArea,
     FuselageWettedArea,
@@ -28,7 +26,6 @@ from aviary.subsystems.geometry.flops_based.wetted_area_total import (
     TailWettedArea,
     WingWettedArea,
 )
-from aviary.subsystems.geometry.flops_based.utils import Names
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
@@ -41,7 +38,6 @@ from aviary.validation_cases.validation_tests import (
     get_flops_outputs,
     print_case,
 )
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import override_aviary_vars, setup_model_options
 from aviary.variable_info.variables import Aircraft
 
@@ -684,7 +680,7 @@ Canard_test_data = AviaryValues(
 
 @use_tempdirs
 class BWBWingTest(unittest.TestCase):
-    "BWBWing computation test using detailed wing inputs"
+    """BWBWing computation test using detailed wing inputs."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -752,7 +748,7 @@ class BWBWingTest(unittest.TestCase):
         assert_near_equal(out1, exp1, tolerance=1e-8)
 
     def test_case2(self):
-        """Provided detailed wing case for bwb300_baseline"""
+        """Provided detailed wing case for bwb300_baseline."""
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(
@@ -865,7 +861,8 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
 
     def test_case1(self):
         """
-        Testing FLOPS data case:
+        Testing FLOPS data case:.
+
         Aircraft.BWB.NUM_BAYS -- NBAY = 5
         Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH -- XLP = 96.25
         Aircraft.Wing.ROOT_CHORD -- XLW = 63.960195184412598, ROOT_CHORD = XLW / 0.7
@@ -1166,7 +1163,8 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
 
     def test_case1(self):
         """
-        Testing FLOPS data case:
+        Testing FLOPS data case:.
+
         Aircraft.BWB.NUM_BAYS -- NBAY = 7
         Aircraft.Fuselage.LENGTH -- XL = 112.3
         Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH -- XLP = 78.61
@@ -1202,7 +1200,6 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         Aircraft.Nacelle.CHARACTERISTIC_LENGTH -- EL(5)-EL(7) = 15.686120387590995
         """
         prob = self.prob
-        options = self.options
 
         prob.run_model()
 

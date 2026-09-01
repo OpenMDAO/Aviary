@@ -722,7 +722,7 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
     def test_case1(self):
         """
         Testing GASP data case.
-        
+
         Aircraft.Fuselage.AVG_DIAMETER -- SWF = 38.00
         fuselage.cabin_height -- HC = 9.87
         fuselage.cabin_len -- LC = 43.8
