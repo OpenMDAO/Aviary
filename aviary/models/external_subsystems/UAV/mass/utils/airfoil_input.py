@@ -88,8 +88,8 @@ def load_airfoil_dat(file_path):
 
 def load_airfoil_csv(file_path, delimiter=',', header=False):
     if not os.path.exists(file_path):
-            raise FileNotFoundError(f"Airfoil CSV file '{file_path}' not found.")
-    
+        raise FileNotFoundError(f"Airfoil CSV file '{file_path}' not found.")
+
     skip = 1 if header else 0
     data = np.loadtxt(file_path, delimiter=delimiter, skiprows=skip)
 
@@ -110,7 +110,6 @@ def load_airfoil_csv(file_path, delimiter=',', header=False):
     y_normalized = y / chord_length
 
     return x_normalized, y_normalized
-
 
 
 if __name__ == '__main__':

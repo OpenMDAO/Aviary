@@ -70,12 +70,12 @@ class UAVPropPreMission(om.Group):
         )
 
         # TODO: Cite
-        # The KV empirical fit appears to use motor mass in grams. 
+        # The KV empirical fit appears to use motor mass in grams.
         # # Aviary provides motor_mass here in kg, so convert kg -> g. or else the number becomes unrealistically high.
         self.add_subsystem(
             'motor_kv_calc',
             om.ExecComp(
-                'kv = m * max_current / (motor_mass * 1000.0) + b',  
+                'kv = m * max_current / (motor_mass * 1000.0) + b',
                 kv={'val': 0.0, 'units': 'rpm/V'},
                 max_current={'val': max_cont_current, 'units': 'A'},
                 motor_mass={'val': 0.0, 'units': 'kg'},

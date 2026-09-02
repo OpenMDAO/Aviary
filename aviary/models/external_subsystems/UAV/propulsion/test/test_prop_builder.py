@@ -6,7 +6,7 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 from packaging import version
 
-from aviary.models.external_subsystems.UAV.propulsion.prop_builder import UAVBuilder
+from aviary.models.external_subsystems.UAV.propulsion.prop_builder import PropBuilder
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission, PropulsionSum
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
@@ -18,7 +18,7 @@ from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables impor
 from aviary.variable_info.variables import Mission, Settings
 
 
-class TestUAVBuilder(unittest.TestCase):
+class TestPropBuilder(unittest.TestCase):
     @use_tempdirs
     def test_propulsion_mission_power_balance(self):
         # 'clean' test using GASP-derived engine deck
@@ -30,7 +30,7 @@ class TestUAVBuilder(unittest.TestCase):
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, 1)
 
-        engine = UAVBuilder(options=options)
+        engine = PropBuilder(options=options)
         preprocess_propulsion(options, engine_models=[engine])
 
         prob.model = PropulsionMission(num_nodes=nn, aviary_options=options, engine_models=[engine])

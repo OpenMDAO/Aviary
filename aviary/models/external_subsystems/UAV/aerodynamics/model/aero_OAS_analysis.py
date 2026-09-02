@@ -42,17 +42,27 @@ class AeroConditions(om.ExplicitComponent):
 
         arange = np.arange(nn)
 
-        self.declare_partials(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, [Dynamic.Atmosphere.DYNAMIC_VISCOSITY,Dynamic.Atmosphere.DENSITY], rows=arange, cols=arange)
+        self.declare_partials(
+            Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
+            [Dynamic.Atmosphere.DYNAMIC_VISCOSITY, Dynamic.Atmosphere.DENSITY],
+            rows=arange,
+            cols=arange,
+        )
         self.declare_partials('re', '*', rows=arange, cols=arange)
-        self.declare_partials(Dynamic.Atmosphere.DYNAMIC_PRESSURE, [Dynamic.Mission.VELOCITY,Dynamic.Atmosphere.DENSITY], rows=arange, cols=arange)
+        self.declare_partials(
+            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            [Dynamic.Mission.VELOCITY, Dynamic.Atmosphere.DENSITY],
+            rows=arange,
+            cols=arange,
+        )
 
     def compute(self, inputs, outputs):
         V = inputs[Dynamic.Mission.VELOCITY]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         mu = inputs[Dynamic.Atmosphere.DYNAMIC_VISCOSITY]
 
-        outputs[Dynamic.Atmosphere.KINEMATIC_VISCOSITY] = mu * rho**(-1)
-        outputs['re'] = V * rho * mu**(-1) # Reynolds number per unit length for OpenAeroStruct
+        outputs[Dynamic.Atmosphere.KINEMATIC_VISCOSITY] = mu * rho ** (-1)
+        outputs['re'] = V * rho * mu ** (-1)  # Reynolds number per unit length for OpenAeroStruct
         outputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE] = 0.5 * rho * V**2
 
     def compute_partials(self, inputs, J):
@@ -60,13 +70,15 @@ class AeroConditions(om.ExplicitComponent):
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         mu = inputs[Dynamic.Atmosphere.DYNAMIC_VISCOSITY]
 
-        J[Dynamic.Atmosphere.KINEMATIC_VISCOSITY,Dynamic.Atmosphere.DYNAMIC_VISCOSITY] = rho**(-1)
-        J[Dynamic.Atmosphere.KINEMATIC_VISCOSITY,Dynamic.Atmosphere.DENSITY] = -mu * rho**(-2)
-        J['re',Dynamic.Mission.VELOCITY] = rho * mu**(-1)
-        J['re',Dynamic.Atmosphere.DENSITY] = V * mu**(-1)
-        J['re',Dynamic.Atmosphere.DYNAMIC_VISCOSITY] = -V * rho * mu**(-2)
-        J[Dynamic.Atmosphere.DYNAMIC_PRESSURE,Dynamic.Mission.VELOCITY] = rho * V
-        J[Dynamic.Atmosphere.DYNAMIC_PRESSURE,Dynamic.Atmosphere.DENSITY] = 0.5 * V**2
+        J[Dynamic.Atmosphere.KINEMATIC_VISCOSITY, Dynamic.Atmosphere.DYNAMIC_VISCOSITY] = rho ** (
+            -1
+        )
+        J[Dynamic.Atmosphere.KINEMATIC_VISCOSITY, Dynamic.Atmosphere.DENSITY] = -mu * rho ** (-2)
+        J['re', Dynamic.Mission.VELOCITY] = rho * mu ** (-1)
+        J['re', Dynamic.Atmosphere.DENSITY] = V * mu ** (-1)
+        J['re', Dynamic.Atmosphere.DYNAMIC_VISCOSITY] = -V * rho * mu ** (-2)
+        J[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Mission.VELOCITY] = rho * V
+        J[Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Atmosphere.DENSITY] = 0.5 * V**2
 
 
 class CollectLiftDrag(om.ExplicitComponent):
@@ -127,7 +139,9 @@ class BroadcastWing(om.ExplicitComponent):
         rows = np.arange(nn)
         cols = np.zeros(nn, int)
 
-        self.declare_partials('broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows, cols=cols, val=np.ones(nn))
+        self.declare_partials(
+            'broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows, cols=cols, val=np.ones(nn)
+        )
         self.declare_partials(
             'broadcast_wing_chord', Aircraft.Wing.ROOT_CHORD, rows=rows, cols=cols, val=np.ones(nn)
         )
@@ -152,11 +166,16 @@ class BroadcastHTailChord(om.ExplicitComponent):
         cols = np.zeros(nn, int)
 
         self.declare_partials(
-            'broadcast_htail_chord', Aircraft.HorizontalTail.ROOT_CHORD, rows=rows, cols=cols, val=np.ones(nn)
+            'broadcast_htail_chord',
+            Aircraft.HorizontalTail.ROOT_CHORD,
+            rows=rows,
+            cols=cols,
+            val=np.ones(nn),
         )
 
     def compute(self, inputs, outputs):
         outputs['broadcast_htail_chord'][:] = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
+
 
 class AlphaComp(om.ExplicitComponent):
     def initialize(self):
@@ -219,7 +238,6 @@ class OASAero(om.Group):
     def setup(self):
         nn = self.options['num_nodes']
         aviary_inputs = self.options['aviary_inputs']
-
         self.add_subsystem(
             'aero_conditions',
             AeroConditions(num_nodes=nn),
@@ -237,18 +255,18 @@ class OASAero(om.Group):
         atmosphere_model = aviary_inputs.get_val(Settings.ATMOSPHERE_MODEL)
 
         self.add_subsystem(
-            'aviary_atmosphere',
+            'av_atmosphere',
             AtmosphereComp(
                 num_nodes=nn,
                 h_def='geometric',
                 **{Settings.ATMOSPHERE_MODEL: atmosphere_model},
             ),
-            promotes_inputs=[
-                Dynamic.Mission.ALTITUDE,
-            ],
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
                 Dynamic.Atmosphere.DENSITY,
                 Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+                'temperature',
+                'speed_of_sound',
             ],
         )
 
@@ -265,8 +283,6 @@ class OASAero(om.Group):
             promotes_inputs=[Aircraft.HorizontalTail.ROOT_CHORD],
             promotes_outputs=['broadcast_htail_chord'],
         )
-
-        # WING
 
         mesh_dict = {
             'num_y': 23,  # if changing, change in broadcast components too
@@ -299,20 +315,13 @@ class OASAero(om.Group):
             'CD0': 0.015,
         }
 
-        # HTAIL
-
-        # location of htail relative to aerodynamic center of wing
+        # HTAIL: use actual Aviary geometry
         wing_dist = aviary_inputs.get_val(Aircraft.Wing.CENTER_DISTANCE, units='unitless')
         fuselage_length = aviary_inputs.get_val(Aircraft.Fuselage.LENGTH, units='m')
         wing_location = wing_dist * fuselage_length
         htail_dist = fuselage_length - wing_location
 
-        # Vertical separation between wing and htail planes (high wing, tail on
-        # fuselage). A coplanar tail sits exactly in the wing's trailing vortex
-        # sheet, which is singular in a VLM: lift then oscillates at mm scale in
-        # chord/span with occasional blowups (CL ~ -90), feeding the optimizer
-        # derivatives of noise ~4000x the physical trend.
-        htail_z_offset = 0.10  # m, ~2/3 fuselage max height
+        htail_z_offset = 0.10  # m
 
         mesh_dict = {
             'num_y': 19,
@@ -348,7 +357,6 @@ class OASAero(om.Group):
         surfaces = [wing_surface, htail_surface]
 
         prob_vars = om.IndepVarComp()
-        # array of zeros for CG (x, y, z)
         prob_vars.add_output('cg', val=np.zeros(3), units='m')
         self.add_subsystem('prob_vars', prob_vars, promotes=[])
 
@@ -391,7 +399,6 @@ class OASAero(om.Group):
 
             for surface in surfaces:
                 name = surface['name']
-
                 self.connect(f'{name}.mesh', f'{point_name}.{name}.def_mesh')
                 self.connect(f'{name}.mesh', f'{point_name}.aero_states.{name}_def_mesh')
 

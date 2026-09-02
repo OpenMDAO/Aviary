@@ -7,9 +7,9 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from pathlib import Path
-from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder as DBFMassBuilder
+from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder
 from aviary.models.missions.UAV_energy_phase import phase_info
-from aviary.models.external_subsystems.UAV.propulsion.prop_builder import UAVBuilder
+from aviary.models.external_subsystems.UAV.propulsion.prop_builder import PropBuilder
 from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
 from aviary.models.external_subsystems.UAV.propulsion.model.prop_mission import UAVPropMission
 from aviary.models.external_subsystems.UAV.propulsion.model.prop_premission import UAVPropPreMission
@@ -20,6 +20,7 @@ from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_d
 )
 from aviary.variable_info.variables import Mission, Settings
 from openmdao.utils.testing_utils import use_tempdirs
+
 
 @use_tempdirs
 def CruiseExample():
@@ -37,7 +38,7 @@ def CruiseExample():
     number = prob.aviary_inputs.get_val(Aircraft.Wing.WETTED_AREA, units='m**2')
     print('Wetted Area:', number)
 
-    prob.load_external_subsystems(external_subsystems=[UAVBuilder(), AeroBuilder(), DBFMassBuilder()])
+    prob.load_external_subsystems(external_subsystems=[PropBuilder(), AeroBuilder(), MassBuilder()])
 
     prob.check_and_preprocess_inputs()
 
@@ -60,9 +61,7 @@ def CruiseExample():
     prob.add_objective(objective_type='time')
 
     # Add special solver scaling for small aircraft
-    prob.model.set_output_solver_options(
-        'link_cruise_mass.mass', ref=1
-    ) 
+    prob.model.set_output_solver_options('link_cruise_mass.mass', ref=1)
     prob.setup()
 
     # Add special rescaling for small aircraft
@@ -70,7 +69,9 @@ def CruiseExample():
     prob.model.set_design_var_options(Aircraft.Design.GROSS_MASS, lower=2, upper=50, ref=1)
     prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1)
     prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1)
-    prob.model.traj.phases.cruise.rhs_all.set_constraint_options('thrust_residual', ref=0.01, upper=0.01, lower=-0.01)
+    prob.model.traj.phases.cruise.rhs_all.set_constraint_options(
+        'thrust_residual', ref=0.01, upper=0.01, lower=-0.01
+    )
     reports_dir = prob.get_reports_dir()
     reports_dir.mkdir(parents=True, exist_ok=True)
 
@@ -111,11 +112,13 @@ def CruiseExample():
     print('settings:mass_method:', prob.aviary_inputs.get_val(Settings.MASS_METHOD))
     return prob
 
+
 # NOTE: no @use_tempdirs here. DBFMassBuilder reads its airfoil CSV via a repo-root-
 # relative path (like the dbf_based_mass unit tests), so this must run from the repo root.
 class TestUAVCruiseExample(unittest.TestCase):
     def test_subsystems_in_cruise_attempt(self):
         prob = CruiseExample()
+
 
 if __name__ == '__main__':
     unittest.main()

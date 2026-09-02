@@ -5,7 +5,7 @@ import os
 
 from aviary.models.external_subsystems.UAV.mass.model.mass_premission import MassPremission
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
-from aviary.models.external_subsystems.UAV.mass.utils.enums import WingType
+from aviary.models.external_subsystems.UAV.mass.utils.UAV_enums import WingType
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (

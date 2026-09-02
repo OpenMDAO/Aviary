@@ -1,10 +1,8 @@
 import numpy as np
-import os
-
 import openmdao.api as om
 import jax.numpy as jnp
 
-from aviary.models.external_subsystems.UAV.mass.utils.enums import WingType
+from aviary.models.external_subsystems.UAV.mass.utils.UAV_enums import WingType
 from aviary.models.external_subsystems.UAV.mass.utils.materials_database import materials
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.models.external_subsystems.UAV.mass.utils.airfoil_input import load_airfoil_csv
@@ -192,7 +190,13 @@ class WingMass(om.JaxExplicitComponent):
             rho_sheeting, units = self.options[Aircraft.Wing.SHEETING_DENSITY]
             sheeting_lightening_factor = self.options[Aircraft.Wing.SHEETING_LIGHTENING_FACTOR]
             num_stringer = self.options[Aircraft.Wing.NUM_STRINGERS]
+            rib_materials = self.options[Aircraft.Wing.RIB_MATERIALS]
             misc_mass, units = self.options[Aircraft.Wing.MISC_MASS]
+
+            if len(rib_materials) != len(rib_thickness):
+                raise ValueError(
+                    'Mismatch in number of rib materials vs. number of rib thicknesses'
+                )
 
             cs_area = self.n_area * (chord**2) * rib_lightening_factor
             rho_rib = self.rho_rib.reshape(-1)

@@ -9,10 +9,10 @@ from aviary.variable_info.variables import Mission
 """ Builder for the UAV Propulsion Subsystem (RC Electric) """
 
 
-class UAVBuilder(EngineModel):
-    # compute_max_values is set to True to prevent a rein-instantiation of the whole 
-    # propulsion model and all it's constraints. We don't need to calculate an excess 
-    # power constraint for this model so not knowing what the max thrust could be is alright. 
+class PropBuilder(EngineModel):
+    # compute_max_values is set to True to prevent a rein-instantiation of the whole
+    # propulsion model and all it's constraints. We don't need to calculate an excess
+    # power constraint for this model so not knowing what the max thrust could be is alright.
     compute_max_values = True
 
     def __init__(self, options: AviaryValues = None, name='rc_electric'):

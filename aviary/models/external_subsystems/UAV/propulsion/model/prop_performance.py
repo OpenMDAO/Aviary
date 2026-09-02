@@ -314,6 +314,7 @@ class Motor(om.ExplicitComponent):
         )
         partials['power', Aircraft.Engine.Motor.IDLE_CURRENT] = -voltage_prop
 
+
 class Vectorization(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
@@ -334,6 +335,7 @@ class Vectorization(om.ExplicitComponent):
 
         outputs['temp_diameter'] = inputs[Aircraft.Engine.Propeller.DIAMETER] * np.ones(nn)
         outputs['temp_pitch'] = inputs[Aircraft.Engine.Propeller.PITCH] * np.ones(nn)
+
 
 class PropCoefficients(om.MetaModelSemiStructuredComp):
     def initialize(self):

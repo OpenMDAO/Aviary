@@ -4,7 +4,7 @@ Metadata for UAV variables defined in mass_variables.py
 
 from copy import deepcopy
 import aviary.api as av
-from aviary.models.external_subsystems.UAV.mass.utils.enums import WingType
+from aviary.models.external_subsystems.UAV.mass.utils.UAV_enums import WingType
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 
 ExtendedMetaData = deepcopy(av.CoreMetaData)
@@ -955,14 +955,14 @@ av.add_meta_data(
     types=WingType,
 )
 
-#   ____            _     _                         
-#  |  _ \          | |   | |                        
-#  | |_) |   __ _  | |_  | |_    ___   _ __   _   _ 
+#   ____            _     _
+#  |  _ \          | |   | |
+#  | |_) |   __ _  | |_  | |_    ___   _ __   _   _
 #  |  _ <   / _` | | __| | __|  / _ \ | '__| | | | |
 #  | |_) | | (_| | | |_  | |_  |  __/ | |    | |_| |
 #  |____/   \__,_|  \__|  \__|  \___| |_|     \__, |
 #                                              __/ |
-#                                             |___/ 
+#                                             |___/
 # ==================================================
 
 av.add_meta_data(

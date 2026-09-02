@@ -1,7 +1,6 @@
 from copy import deepcopy
 
 import aviary.api as av
-from aviary.mission.two_dof.ode import constraints
 from aviary.variable_info.enums import AtmosphereModel
 import numpy as np
 import openmdao.api as om
@@ -9,20 +8,20 @@ import openmdao.api as om
 from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.missions.UAV_energy_phase import phase_info
-from aviary.models.external_subsystems.UAV.propulsion.prop_builder import UAVBuilder
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import (
     Aircraft,
     Dynamic,
     Settings,
     Mission,
 )
+from aviary.models.external_subsystems.UAV.propulsion.prop_builder import PropBuilder
 
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
     ExtendedMetaData,
 )
 
 
-UAV_Prop = UAVBuilder()
+UAV_Prop = PropBuilder()
 
 
 @use_tempdirs
@@ -96,21 +95,21 @@ def CruiseExample():
 
     cruise_phase.add_objective('distance', loc='final', ref=-1000.0, units='m')
 
-    prob.add_driver('SNOPT', use_coloring=True, max_iter=100)
+    prob.add_driver('IPOPT', use_coloring=False, max_iter=100)
 
-    # prob.driver.opt_settings['print_level'] = 5
-    # prob.driver.opt_settings['mu_strategy'] = 'monotone'
-    # prob.driver.opt_settings['tol'] = 1e-5
-    # prob.driver.opt_settings['mu_init'] = 1.0
-    # prob.driver.opt_settings['limited_memory_max_history'] = 50
-    # prob.driver.opt_settings['acceptable_tol'] = 5e-5
-    # prob.driver.opt_settings['constr_viol_tol'] = 1e-5
-    # prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-5
+    prob.driver.opt_settings['print_level'] = 5
+    prob.driver.opt_settings['mu_strategy'] = 'monotone'
+    prob.driver.opt_settings['tol'] = 1e-5
+    prob.driver.opt_settings['mu_init'] = 1.0
+    prob.driver.opt_settings['limited_memory_max_history'] = 50
+    prob.driver.opt_settings['acceptable_tol'] = 5e-5
+    prob.driver.opt_settings['constr_viol_tol'] = 1e-5
+    prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-5
     # Report exactly which Jacobian entries go NaN/Inf instead of a bare EXIT message.
-    # prob.driver.opt_settings['check_derivatives_for_naninf'] = 'yes'
+    prob.driver.opt_settings['check_derivatives_for_naninf'] = 'yes'
 
-    # prob.driver.opt_settings['recalc_y'] = 'yes'
-    # prob.driver.opt_settings['recalc_y_feas_tol'] = 1e-2
+    prob.driver.opt_settings['recalc_y'] = 'yes'
+    prob.driver.opt_settings['recalc_y_feas_tol'] = 1e-2
 
     # prob.driver.opt_settings['acceptable_iter'] = 0
     # prob.driver.options['debug_print'] = ['desvars', 'objs', 'nl_cons', 'ln_cons']

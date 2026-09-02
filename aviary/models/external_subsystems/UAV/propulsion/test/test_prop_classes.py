@@ -1,6 +1,6 @@
 import unittest
 import aviary.api as av
-from aviary.models.external_subsystems.UAV.propulsion.prop_builder import UAVBuilder
+from aviary.models.external_subsystems.UAV.propulsion.prop_builder import PropBuilder
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -15,6 +15,7 @@ from aviary.models.external_subsystems.UAV.propulsion.model.prop_performance imp
 )
 
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
+
 
 @use_tempdirs
 class TestBattery(unittest.TestCase):
