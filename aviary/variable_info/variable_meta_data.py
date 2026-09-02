@@ -1150,7 +1150,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH'},
     units='inch',
     desc='pitch of the business class seats.',
-    option=True,
     default_value=39.0,
 )
 
@@ -1160,7 +1159,6 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH'},
     units='inch',
     desc='pitch of the economy class seats.',
-    option=True,
     default_value=32.0,
 )
 
@@ -1170,7 +1168,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH'},
     units='inch',
     desc='pitch of the first class seats.',
-    option=True,
     default_value=61.0,
 )
 
@@ -1267,6 +1264,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.CRUISE_ALTITUDE,
     meta_data=_MetaData,
+    # In GASP, it is HNCRU, not CRALT
     historical_name={'GASP': 'INGASP.CRALT', 'FLOPS': None},
     units='ft',
     option=True,
@@ -1595,6 +1593,24 @@ add_meta_data(
     units='deg',
     desc='maximum fuselage pitch allowed',
     default_value=15,
+)
+
+add_meta_data(
+    Aircraft.Design.MAX_MACH,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.VMMO',
+        #  [  # inputs
+        #      '&DEFINE.WTIN.VMMO', 'VLIMIT.VMMO',
+        #      # outputs
+        #      'VLIMIT.VMAX',
+        #  ],
+    },
+    units='unitless',
+    desc='aircraft cruise Mach number',
+    # TODO: derived default value: Aircraft.Design.CRUISE_MACH ???
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3144,8 +3160,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WAS', 'FLOPS': None},
     units='inch',
-    desc='Width of the aisles in the passenger cabin. In FLOPS, aisle width is hardcoded per '
-    'passenger class.',
+    desc='width of the aisles in the passenger cabin',
     default_value=24,
 )
 
@@ -7071,25 +7086,6 @@ add_meta_data(
     desc='residual to make sure aircraft mass closes on actual '
     'gross takeoff mass, value should be zero at convergence '
     '(within acceptable tolerance)',
-)
-
-add_meta_data(
-    Mission.Constraints.MAX_MACH,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.VMMO',
-        #  [  # inputs
-        #      '&DEFINE.WTIN.VMMO', 'VLIMIT.VMMO',
-        #      # outputs
-        #      'VLIMIT.VMAX',
-        #  ],
-    },
-    units='unitless',
-    desc='aircraft cruise Mach number',
-    # TODO: derived default value: Aircraft.Design.CRUISE_MACH ???
-    default_value=0.0,
-    option=True,
 )
 
 add_meta_data(

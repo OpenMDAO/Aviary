@@ -1021,10 +1021,6 @@ class AviaryGroup(om.Group):
             phase_info2 = self.mission_info[phase2]['user_options']
             vars2 = link_vars_dict[phase2]
 
-            if self.reserve_phases and phase2 == self.reserve_phases[0]:
-                # Don't link to first reserve phase.
-                continue
-
             # Find common vars across 1-2 boundary
             common = vars1.intersection(vars2)
             upstream_analytic = [item for item in vars1 if item.startswith('initial_')]

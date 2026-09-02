@@ -17,6 +17,7 @@ inputs.set_val(
     Aircraft.Design.GROSS_MASS, 600000.0, 'lbm'
 )  # DGW, value taken from GW which is not in Aviary
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
+inputs.set_val(Aircraft.Design.MAX_MACH, 0.9)  # VMMO
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)  # FCDI
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUB
 inputs.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUP
@@ -60,12 +61,12 @@ inputs.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 200)  # NPT
 inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 76)  # NPB
 inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 24)  # NPF
 inputs.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, 200)  # NPT
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 0)  # NBABR
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 0)  # NFABR
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 0)  # NTABR
-inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 0.0, 'inch')  # BPITCH
-inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 0.0, 'inch')  # FPITCH
-inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 0.0, 'inch')  # TPITCH
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 5)  # NBABR
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4)  # NFABR
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)  # NTABR
+inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, 'inch')  # BPITCH
+inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, 'inch')  # FPITCH
+inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, 'inch')  # TPITCH
 
 inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, 1.0)  # WCON
 inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 2)  # NFLCR
@@ -266,7 +267,6 @@ inputs.set_val(Aircraft.Wing.LAMINAR_FLOW_UPPER, 0.0)  # TRUW
 # ---------------------------
 inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.85)  # VCMN
 inputs.set_val(Aircraft.Design.RANGE, 7500.0, 'NM')  # DESRNG
-inputs.set_val(Mission.Constraints.MAX_MACH, 0.9)  # VMMO
 
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3.0)  # CLLDM
 inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 1.3)  # CLTOM
