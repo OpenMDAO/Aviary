@@ -39,8 +39,6 @@ class AeroConditions(om.ExplicitComponent):
 
         self.add_output('re', shape=nn, units='1/m')
 
-        
-
     def setup_partials(self):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
@@ -155,8 +153,6 @@ class BroadcastHTailChord(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='m')
         self.add_output('broadcast_htail_chord', val=np.zeros(nn), units='m')
 
-        
-
     def setup_partials(self):
         nn = self.options['num_nodes']
         rows_cols = np.arange(nn)
@@ -172,7 +168,7 @@ class BroadcastHTailChord(om.ExplicitComponent):
         outputs['broadcast_htail_chord'][:] = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
 
 
-class AlphaComp(om.ExplicitComponent):
+class LiftBalanceComp(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
         add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
