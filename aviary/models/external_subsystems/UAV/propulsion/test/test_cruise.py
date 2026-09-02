@@ -1,28 +1,22 @@
-import unittest
 from copy import deepcopy
-from pathlib import Path
+import unittest
+
+import numpy as np
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
-import numpy as np
-import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from pathlib import Path
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder
 from aviary.models.missions.UAV_energy_phase import phase_info
 from aviary.models.external_subsystems.UAV.propulsion.prop_builder import PropBuilder
 from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
-from aviary.models.external_subsystems.UAV.propulsion.model.prop_mission import UAVPropMission
-from aviary.models.external_subsystems.UAV.propulsion.model.prop_premission import UAVPropPreMission
-from aviary.utils.aviary_values import AviaryValues
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
     ExtendedMetaData as UAVExtendedMetaData,
 )
 from aviary.variable_info.variables import Mission, Settings
-from openmdao.utils.testing_utils import use_tempdirs
 
 
-@use_tempdirs
 def CruiseExample():
     prob = av.AviaryProblem(verbosity=2, meta_data=UAVExtendedMetaData)
     prob.options['group_by_pre_opt_post'] = True
@@ -113,8 +107,7 @@ def CruiseExample():
     return prob
 
 
-# NOTE: no @use_tempdirs here. DBFMassBuilder reads its airfoil CSV via a repo-root-
-# relative path (like the dbf_based_mass unit tests), so this must run from the repo root.
+@use_tempdirs
 class TestUAVCruiseExample(unittest.TestCase):
     def test_subsystems_in_cruise_attempt(self):
         prob = CruiseExample()
