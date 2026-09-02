@@ -6,27 +6,29 @@ aircraft:canard:area,0.0,ft**2
 aircraft:canard:aspect_ratio,0.0,unitless
 aircraft:canard:thickness_to_chord,0.0,unitless
 aircraft:crew_and_payload:baggage_mass_per_passenger,0.0,lbm
+aircraft:crew_and_payload:cabin_crew_mass_scaler,0.0,unitless
 aircraft:crew_and_payload:cargo_container_mass_scaler,0.0,unitless
 aircraft:crew_and_payload:design:num_business_class,0,unitless
 aircraft:crew_and_payload:design:num_first_class,0,unitless
 aircraft:crew_and_payload:design:num_passengers,0,unitless
-aircraft:crew_and_payload:design:num_tourist_class,0,unitless
+aircraft:crew_and_payload:design:num_economy_class,0,unitless
 aircraft:crew_and_payload:flight_crew_mass_scaler,0,unitless
 aircraft:crew_and_payload:mass_per_passenger,0,lbm
 aircraft:crew_and_payload:misc_cargo,0.0,lbm
-aircraft:crew_and_payload:non_flight_crew_mass_scaler,0.0,unitless
 aircraft:crew_and_payload:num_flight_attendants,0,unitless
 aircraft:crew_and_payload:num_flight_crew,0,unitless
 aircraft:crew_and_payload:num_galley_crew,0,unitless
 aircraft:crew_and_payload:passenger_service_mass_scaler,0.0,unitless
 aircraft:crew_and_payload:wing_cargo,0.0,lbm
 aircraft:design:base_area,0.0,ft**2
+aircraft:design:cruise_altitude,200,ft
 aircraft:design:cruise_mach,0.04,unitless
 aircraft:design:empty_mass_margin_scaler,0.0,unitless
 aircraft:design:gross_mass, 8.45,lbm
 aircraft:design:lift_dependent_drag_coeff_factor,0.909839381134961,unitless
 mission:reserve_fuel_mass_additional,0.0,lbm
 mission:reserve_fuel_margin,0.0,unitless
+aircraft:design:max_mach,0.04,unitless
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
 aircraft:design:use_alt_mass,False,unitless
@@ -50,7 +52,6 @@ aircraft:engine:reference_mass,1 ,lbm
 aircraft:engine:reference_sls_thrust,10,lbf
 aircraft:engine:scale_factor,1.0,unitless
 aircraft:engine:scale_mass,False,unitless
-aircraft:engine:scale_performance,True,unitless
 aircraft:engine:scaled_sls_thrust,0,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1.,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1.,unitless
@@ -61,12 +62,11 @@ aircraft:fins:mass_scaler,0.0,unitless
 aircraft:fins:mass,0.0,lbm
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,10.0,unitless
-aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
-aircraft:fuel:density_ratio,1.0,unitless
+aircraft:fuel:auxiliary_fuel_mass_capacity,0.0,lbm
+aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:fuel_system_mass_scaler,0.0,unitless
-aircraft:fuel:fuselage_fuel_capacity,0.0,kg
+aircraft:fuel:fuselage_fuel_mass_capacity,0.0,kg
 aircraft:fuel:num_tanks,0,unitless
-aircraft:fuel:total_capacity,0.0,lbm
 aircraft:fuel:ignore_fuel_capacity_constraint,True,unitless
 aircraft:fuel:unusable_fuel_mass_scaler,0.0,unitless
 aircraft:furnishings:mass_scaler,0.0,unitless
@@ -87,7 +87,7 @@ aircraft:horizontal_tail:aspect_ratio,2.625,unitless
 aircraft:horizontal_tail:mass_scaler,1.0,unitless
 aircraft:horizontal_tail:taper_ratio,1,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.12,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
+aircraft:horizontal_tail:vertical_tail_mount_location,0.0,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:wetted_area,0.352,m**2
 aircraft:hydraulics:mass_scaler,0.0,unitless
@@ -117,17 +117,17 @@ aircraft:wing:airfoil_technology,1,unitless
 aircraft:wing:area,0.88,m**2
 aircraft:wing:aspect_ratio,5.5,unitless
 aircraft:wing:bending_material_mass_scaler,0.0,unitless
-aircraft:wing:chord_per_semispan,0.31,0.23,0.084,unitless
+aircraft:wing:chord_per_semispan_distribution,0.31,0.23,0.084,unitless
 aircraft:wing:composite_fraction,0.2,unitless
 aircraft:wing:control_surface_area,0,ft**2
 aircraft:wing:control_surface_area_ratio,0.1,unitless
+aircraft:wing:detailed_wing,False,unitless
 aircraft:wing:fuselage_interference_factor,1.2,unitless
-aircraft:wing:use_detailed_mass,False,unitless
 aircraft:wing:glove_and_bat,0,ft**2
-aircraft:wing:input_station_dist,0.,0.2759,0.9367,unitless
+aircraft:wing:input_station_distribution,0.,0.2759,0.9367,unitless
 aircraft:wing:load_distribution_control,2.0,unitless
 aircraft:wing:load_fraction,1.0,unitless
-aircraft:wing:load_path_sweep_dist,0.,22.,deg
+aircraft:wing:load_path_sweep_distribution,0.,22.,deg
 aircraft:wing:mass_scaler,1.0,unitless
 aircraft:wing:max_camber_at_70_semispan,0.0,unitless
 aircraft:wing:misc_mass_scaler,0.0,unitless
@@ -136,10 +136,10 @@ aircraft:wing:shear_control_mass_scaler,0.0,unitless
 aircraft:wing:span_efficiency_reduction,False,unitless
 aircraft:wing:span,2.2,m
 aircraft:wing:strut_bracing_factor,0.0,unitless
-aircraft:wing:surface_ctrl_mass_scaler,0.0,unitless
+aircraft:wing:surface_control_mass_scaler,0.0,unitless
 aircraft:wing:sweep,0,deg
 aircraft:wing:taper_ratio,1,unitless
-aircraft:wing:thickness_to_chord_dist,0.145,0.115,0.104,unitless
+aircraft:wing:thickness_to_chord_distribution,0.145,0.115,0.104,unitless
 aircraft:wing:thickness_to_chord,0.13,unitless
 aircraft:wing:max_thickness_location,0.30,unitless
 aircraft:wing:center_distance,0.50,unitless
@@ -148,21 +148,14 @@ aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
 aircraft:wing:wetted_area,0.85,m**2
-mission:constraints:max_mach,0.04,unitless
-mission:design:cruise_altitude,200,ft
-mission:design:gross_mass, 7, kg
-mission:design:range,1000,ft
-mission:design:thrust_takeoff_per_eng,0,
 mission:landing:lift_coefficient_max,1.4,unitless
-mission:summary:cruise_mach,0.0314,unitless
-mission:summary:fuel_flow_scaler,1.0,unitless
-mission:takeoff:fuel_simple,0,lbm
 mission:takeoff:lift_coefficient_max,1.4,unitless
 mission:takeoff:lift_over_drag,8,unitless
 settings:equations_of_motion,ENERGY_STATE
 settings:aerodynamics_method,FLOPS
 settings:mass_method,FLOPS
 settings:verbosity, 3
+
 aircraft:fuselage:wetted_area,0.6,m**2
 aircraft:fuselage:bulkhead_materials,[Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Ply,Ply,Ply,Ply,Ply,Ply],unitless
 aircraft:fuselage:bulkhead_thickness,[0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.003175,0.00635],m
@@ -203,7 +196,7 @@ aircraft:horizontal_tail:sheeting_thickness,0.08,inch
 aircraft:horizontal_tail:spar_density,2.8,lbm/ft**3
 aircraft:horizontal_tail:spar_outer_diameter,1.5,inch
 aircraft:horizontal_tail:spar_wall_thickness,0.125,inch
-aircraft:horizontal_tail:skin_density,20.0,g/m**2
+aircraft:horizontal_tail:areal_skin_density,20.0,g/m**2
 aircraft:horizontal_tail:stringer_density,2.2,lbm/ft**3
 aircraft:horizontal_tail:stringer_thickness,0.1,inch
 aircraft:vertical_tail:root_chord,0.3048,m
@@ -227,7 +220,7 @@ aircraft:vertical_tail:sheeting_thickness,0.08,inch
 aircraft:vertical_tail:spar_density,2.8,lbm/ft**3
 aircraft:vertical_tail:spar_outer_diameter,1.5,inch
 aircraft:vertical_tail:spar_wall_thickness,0.125,inch
-aircraft:vertical_tail:skin_density,20.0,g/m**2
+aircraft:vertical_tail:areal_skin_density,20.0,g/m**2
 aircraft:vertical_tail:stringer_density,2.2,lbm/ft**3
 aircraft:vertical_tail:stringer_thickness,0.1,inch
 aircraft:wing:airfoil_path,../../../mass/UAV/utils/mh84-il.csv,unitless
@@ -245,7 +238,7 @@ aircraft:wing:number_of_stringers,2.5,unitless
 aircraft:wing:glue_factor,0.15,unitless
 aircraft:wing:number_of_spars,1.1,unitless
 aircraft:wing:rib_lightening_factor,0.6666666667,unitless
-aircraft:wing:skin_density,20.0,g/m**2
+aircraft:wing:areal_skin_density,20.0,g/m**2
 aircraft:wing:spar_density,2.0,g/cm**3
 aircraft:wing:spar_outer_diameter,1.0,inch
 aircraft:wing:spar_wall_thickness,0.0625,inch
@@ -254,8 +247,6 @@ aircraft:wing:root_chord,0.4,m
 aircraft:hydraulics:mass, 0, lbm
 aircraft:fuel:unusable_fuel_mass, 0, lbm
 aircraft:electrical:mass, 0, lbm
-aircraft:design:touchdown_mass, 4,kg
+aircraft:design:touchdown_mass_max, 4,kg
 aircraft:engine:pod_mass, 0, lbm
 aircraft:wing:bending_material_mass, 0, lbm
-aircraft:fuel:burn_per_passenger_mile,0.0
-mission:design:fuel_mass, 0, lbm
