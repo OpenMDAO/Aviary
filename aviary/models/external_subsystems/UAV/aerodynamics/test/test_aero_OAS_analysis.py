@@ -60,7 +60,7 @@ class TestLiftBalanceComp(unittest.TestCase):
         prob = om.Problem()
 
         prob.model.add_subsystem(
-            'alpha',
+            'liftbalance',
             LiftBalanceComp(num_nodes=nn),
             promotes=['*'],
         )
@@ -92,9 +92,6 @@ class TestLiftBalanceComp(unittest.TestCase):
             rtol=1.0e-10,
         )
 
-
-if __name__ == '__main__':
-    unittest.main()
 
 if __name__ == '__main__':
     unittest.main()
