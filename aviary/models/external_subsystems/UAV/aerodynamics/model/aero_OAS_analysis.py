@@ -103,7 +103,9 @@ class CollectLiftDrag(om.ExplicitComponent):
         nn = self.options['num_nodes']
         for i in range(nn):
             self.declare_partials(Dynamic.Vehicle.LIFT, 'L_' + str(i), rows=[i], cols=[0], val=1.0)
-            self.declare_partials('lifting_surface_drag', 'D_' + str(i), rows=[i], cols=[0], val=1.0)
+            self.declare_partials(
+                'lifting_surface_drag', 'D_' + str(i), rows=[i], cols=[0], val=1.0
+            )
             self.declare_partials('lifting_surface_CL', 'CL_' + str(i), rows=[i], cols=[0], val=1.0)
             self.declare_partials('lifting_surface_CD', 'CD_' + str(i), rows=[i], cols=[0], val=1.0)
 
@@ -114,6 +116,7 @@ class CollectLiftDrag(om.ExplicitComponent):
         outputs['lifting_surface_drag'] = np.array([inputs['D_' + str(i)] for i in range(nn)])
         outputs['lifting_surface_CL'] = np.array([inputs['CL_' + str(i)] for i in range(nn)])
         outputs['lifting_surface_CD'] = np.array([inputs['CD_' + str(i)] for i in range(nn)])
+
 
 class BroadcastWing(om.ExplicitComponent):
     # broadcast geometric variables to node in the mesh
@@ -133,9 +136,15 @@ class BroadcastWing(om.ExplicitComponent):
         nn = self.options['num_nodes']
         rows_cols = np.arange(nn)
         self.declare_partials(
-            'broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows_cols, cols=rows_cols, val=1.0)
+            'broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows_cols, cols=rows_cols, val=1.0
+        )
         self.declare_partials(
-            'broadcast_wing_chord', Aircraft.Wing.ROOT_CHORD, rows=rows_cols, cols=rows_cols, val=1.0)
+            'broadcast_wing_chord',
+            Aircraft.Wing.ROOT_CHORD,
+            rows=rows_cols,
+            cols=rows_cols,
+            val=1.0,
+        )
 
     def compute(self, inputs, outputs):
         outputs['broadcast_incidence'][:] = inputs[Aircraft.Wing.INCIDENCE]
@@ -200,12 +209,9 @@ class LiftBalanceComp(om.ExplicitComponent):
         L = inputs[Dynamic.Vehicle.LIFT]
         m = inputs[Dynamic.Vehicle.MASS]
         g = self.options[Mission.GRAVITY][0]  # m/s**2
-        outputs['lift_balance_residual'] = L - (
-            m * g
-        )
+        outputs['lift_balance_residual'] = L - (m * g)
 
-    def compute_partials(
-        self, inputs, partials):
+    def compute_partials(self, inputs, partials):
         g = self.options[Mission.GRAVITY][0]  # m/s**2
         partials['lift_balance_residual', Dynamic.Vehicle.MASS] = -g
 
