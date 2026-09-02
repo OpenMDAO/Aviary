@@ -8,9 +8,8 @@ from aviary.models.external_subsystems.UAV.propulsion.model.prop_premission impo
 from aviary.utils.aviary_values import AviaryValues
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 
-
+@use_tempdirs
 class TestUAVPreMission(unittest.TestCase):
-    @use_tempdirs
     def test_premission_calcs(self):
         prob = om.Problem()
         options = AviaryValues()

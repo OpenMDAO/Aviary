@@ -10,9 +10,9 @@ from aviary.variable_info.variables import Mission
 
 
 class UAVBuilder(EngineModel):
-    # UAVPropMission computes its own max-power chain (battery_max ... prop_max),
-    # so tell Aviary NOT to build a duplicate full-throttle copy of the engine.
-    # The duplicate re-declared every constraint and broke the optimizer (TOO_FEW_DOF).
+    # compute_max_values is set to True to prevent a rein-instantiation of the whole 
+    # propulsion model and all it's constraints. We don't need to calculate an excess 
+    # power constraint for this model so not knowing what the max thrust could be is alright. 
     compute_max_values = True
 
     def __init__(self, options: AviaryValues = None, name='rc_electric'):

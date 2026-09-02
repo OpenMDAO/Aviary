@@ -16,9 +16,8 @@ from aviary.models.external_subsystems.UAV.propulsion.model.prop_performance imp
 
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 
-
+@use_tempdirs
 class TestBattery(unittest.TestCase):
-    @use_tempdirs
     def test_battery(self):
         nn = 3
 
@@ -50,7 +49,6 @@ class TestBattery(unittest.TestCase):
 
 
 class TestMotor(unittest.TestCase):
-    @use_tempdirs
     def test_motor(self):
         nn = 3
 
@@ -88,7 +86,6 @@ class TestMotor(unittest.TestCase):
 
 
 class TestPropeller(unittest.TestCase):
-    @use_tempdirs
     def test_propeller(self):
         nn = 3
 
@@ -124,7 +121,6 @@ class TestPropeller(unittest.TestCase):
 
 
 class TestESC(unittest.TestCase):
-    @use_tempdirs
     def test_esc(self):
         nn = 3
 
@@ -162,7 +158,6 @@ class TestESC(unittest.TestCase):
 
 
 class TestVectorization(unittest.TestCase):
-    @use_tempdirs
     def test_vectorization(self):
         nn = 3
 
@@ -195,7 +190,6 @@ class TestVectorization(unittest.TestCase):
 
 
 class TestPropCoefficients(unittest.TestCase):
-    @use_tempdirs
     def test_prop_coefficients(self):
         nn = 3
 

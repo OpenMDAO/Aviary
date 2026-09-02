@@ -299,9 +299,9 @@ class Averages(om.ExplicitComponent):
         self.add_input('lifting_surface_CL', shape=nn, units='unitless')
         self.add_output('avg_CL', units='unitless')
 
-        self.declare_partials('avg_CD', 'CD')
-        self.declare_partials('avg_CD_fus', 'CD_fus')
-        self.declare_partials('avg_CL', 'lifting_surface_CL')
+        self.declare_partials('avg_CD', 'CD', val=np.ones(nn) / nn)
+        self.declare_partials('avg_CD_fus', 'CD_fus', val=np.ones(nn) / nn)
+        self.declare_partials('avg_CL', 'lifting_surface_CL', val=np.ones(nn) / nn)
 
     def compute(self, inputs, outputs):
         total_CD = inputs['CD']
@@ -312,12 +312,6 @@ class Averages(om.ExplicitComponent):
 
         total_CL = inputs['lifting_surface_CL']
         outputs['avg_CL'] = np.mean(total_CL)
-
-    def compute_partials(self, inputs, partials):
-        nn = self.options['num_nodes']
-        partials['avg_CD', 'CD'] = np.ones(nn) / nn
-        partials['avg_CD_fus', 'CD_fus'] = np.ones(nn) / nn
-        partials['avg_CL', 'lifting_surface_CL'] = np.ones(nn) / nn
 
 
 class TotalAircraftAero(om.Group):

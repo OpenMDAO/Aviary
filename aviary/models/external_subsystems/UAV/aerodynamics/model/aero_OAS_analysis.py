@@ -40,21 +40,33 @@ class AeroConditions(om.ExplicitComponent):
 
         self.add_output('re', shape=nn, units='1/m')
 
-        self.declare_partials('*', '*', method='fd')
+        arange = np.arange(nn)
+
+        self.declare_partials(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, [Dynamic.Atmosphere.DYNAMIC_VISCOSITY,Dynamic.Atmosphere.DENSITY], rows=arange, cols=arange)
+        self.declare_partials('re', '*', rows=arange, cols=arange)
+        self.declare_partials(Dynamic.Atmosphere.DYNAMIC_PRESSURE, [Dynamic.Mission.VELOCITY,Dynamic.Atmosphere.DENSITY], rows=arange, cols=arange)
 
     def compute(self, inputs, outputs):
         V = inputs[Dynamic.Mission.VELOCITY]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         mu = inputs[Dynamic.Atmosphere.DYNAMIC_VISCOSITY]
 
-        nu = mu / rho
-
-        outputs[Dynamic.Atmosphere.KINEMATIC_VISCOSITY] = nu
-
-        # Reynolds number per unit length for OpenAeroStruct
-        outputs['re'] = V / nu
-
+        outputs[Dynamic.Atmosphere.KINEMATIC_VISCOSITY] = mu * rho**(-1)
+        outputs['re'] = V * rho * mu**(-1) # Reynolds number per unit length for OpenAeroStruct
         outputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE] = 0.5 * rho * V**2
+
+    def compute_partials(self, inputs, J):
+        V = inputs[Dynamic.Mission.VELOCITY]
+        rho = inputs[Dynamic.Atmosphere.DENSITY]
+        mu = inputs[Dynamic.Atmosphere.DYNAMIC_VISCOSITY]
+
+        J[Dynamic.Atmosphere.KINEMATIC_VISCOSITY,Dynamic.Atmosphere.DYNAMIC_VISCOSITY] = rho**(-1)
+        J[Dynamic.Atmosphere.KINEMATIC_VISCOSITY,Dynamic.Atmosphere.DENSITY] = -mu * rho**(-2)
+        J['re',Dynamic.Mission.VELOCITY] = rho * mu**(-1)
+        J['re',Dynamic.Atmosphere.DENSITY] = V * mu**(-1)
+        J['re',Dynamic.Atmosphere.DYNAMIC_VISCOSITY] = -V * rho * mu**(-2)
+        J[Dynamic.Atmosphere.DYNAMIC_PRESSURE,Dynamic.Mission.VELOCITY] = rho * V
+        J[Dynamic.Atmosphere.DYNAMIC_PRESSURE,Dynamic.Atmosphere.DENSITY] = 0.5 * V**2
 
 
 class CollectLiftDrag(om.ExplicitComponent):
@@ -100,8 +112,12 @@ class CollectLiftDrag(om.ExplicitComponent):
 
 class BroadcastWing(om.ExplicitComponent):
     # broadcast geometric variables to node in the mesh
+    def initialize(self):
+        self.options.declare('num_nodes', types=int)
+
     def setup(self):
-        nn = 12  # half of num_y in mesh
+        nn = self.options['num_nodes']
+
         add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='deg')
         self.add_output('broadcast_incidence', val=np.zeros(nn), units='deg')
 
@@ -111,25 +127,24 @@ class BroadcastWing(om.ExplicitComponent):
         rows = np.arange(nn)
         cols = np.zeros(nn, int)
 
-        self.declare_partials('broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows, cols=cols)
+        self.declare_partials('broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows, cols=cols, val=np.ones(nn))
         self.declare_partials(
-            'broadcast_wing_chord', Aircraft.Wing.ROOT_CHORD, rows=rows, cols=cols
+            'broadcast_wing_chord', Aircraft.Wing.ROOT_CHORD, rows=rows, cols=cols, val=np.ones(nn)
         )
 
     def compute(self, inputs, outputs):
         outputs['broadcast_incidence'][:] = inputs[Aircraft.Wing.INCIDENCE]
         outputs['broadcast_wing_chord'][:] = inputs[Aircraft.Wing.ROOT_CHORD]
 
-    def compute_partials(self, inputs, partials):
-        nn = 12
-        partials['broadcast_incidence', Aircraft.Wing.INCIDENCE] = np.ones(nn)
-        partials['broadcast_wing_chord', Aircraft.Wing.ROOT_CHORD] = np.ones(nn)
-
 
 class BroadcastHTailChord(om.ExplicitComponent):
     # broadcast geometric variables to node in the mesh
+    def initialize(self):
+        self.options.declare('num_nodes', types=int)
+
     def setup(self):
-        nn = 10  # half of num_y from mesh
+        nn = self.options['num_nodes']
+
         add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='m')
         self.add_output('broadcast_htail_chord', val=np.zeros(nn), units='m')
 
@@ -137,16 +152,11 @@ class BroadcastHTailChord(om.ExplicitComponent):
         cols = np.zeros(nn, int)
 
         self.declare_partials(
-            'broadcast_htail_chord', Aircraft.HorizontalTail.ROOT_CHORD, rows=rows, cols=cols
+            'broadcast_htail_chord', Aircraft.HorizontalTail.ROOT_CHORD, rows=rows, cols=cols, val=np.ones(nn)
         )
 
     def compute(self, inputs, outputs):
         outputs['broadcast_htail_chord'][:] = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
-
-    def compute_partials(self, inputs, partials):
-        nn = 10
-        partials['broadcast_htail_chord', Aircraft.HorizontalTail.ROOT_CHORD] = np.ones(nn)
-
 
 class AlphaComp(om.ExplicitComponent):
     def initialize(self):

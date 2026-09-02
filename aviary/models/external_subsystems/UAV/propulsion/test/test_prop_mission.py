@@ -9,9 +9,8 @@ from aviary.models.external_subsystems.UAV.propulsion.model.prop_mission import 
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 
-
+@use_tempdirs
 class TestUAVMission(unittest.TestCase):
-    @use_tempdirs
     def test_residual(self):
         nn = 3
 
