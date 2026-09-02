@@ -272,14 +272,14 @@ class OASAero(om.Group):
 
         self.add_subsystem(
             'broadcast_wing',
-            BroadcastWing(),
+            BroadcastWing(num_nodes=nn),
             promotes_inputs=[Aircraft.Wing.INCIDENCE, Aircraft.Wing.ROOT_CHORD],
             promotes_outputs=['broadcast_incidence', 'broadcast_wing_chord'],
         )
 
         self.add_subsystem(
             'broadcast_htail_chord',
-            BroadcastHTailChord(),
+            BroadcastHTailChord(num_nodes=nn),
             promotes_inputs=[Aircraft.HorizontalTail.ROOT_CHORD],
             promotes_outputs=['broadcast_htail_chord'],
         )
