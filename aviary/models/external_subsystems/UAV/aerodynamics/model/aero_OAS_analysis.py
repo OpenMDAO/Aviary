@@ -118,65 +118,6 @@ class CollectLiftDrag(om.ExplicitComponent):
         outputs['lifting_surface_CD'] = np.array([inputs['CD_' + str(i)] for i in range(nn)])
 
 
-class BroadcastWing(om.ExplicitComponent):
-    # broadcast geometric variables to node in the mesh
-    def initialize(self):
-        self.options.declare('num_nodes', types=int)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-
-        add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='deg')
-        self.add_output('broadcast_incidence', val=np.zeros(nn), units='deg')
-
-        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='m')
-        self.add_output('broadcast_wing_chord', val=np.zeros(nn), units='m')
-
-    def setup_partials(self):
-        nn = self.options['num_nodes']
-        rows_cols = np.arange(nn)
-        self.declare_partials(
-            'broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows_cols, cols=rows_cols, val=1.0
-        )
-        self.declare_partials(
-            'broadcast_wing_chord',
-            Aircraft.Wing.ROOT_CHORD,
-            rows=rows_cols,
-            cols=rows_cols,
-            val=1.0,
-        )
-
-    def compute(self, inputs, outputs):
-        outputs['broadcast_incidence'][:] = inputs[Aircraft.Wing.INCIDENCE]
-        outputs['broadcast_wing_chord'][:] = inputs[Aircraft.Wing.ROOT_CHORD]
-
-
-class BroadcastHTailChord(om.ExplicitComponent):
-    # broadcast geometric variables to node in the mesh
-    def initialize(self):
-        self.options.declare('num_nodes', types=int)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-
-        add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='m')
-        self.add_output('broadcast_htail_chord', val=np.zeros(nn), units='m')
-
-    def setup_partials(self):
-        nn = self.options['num_nodes']
-        rows_cols = np.arange(nn)
-        self.declare_partials(
-            'broadcast_htail_chord',
-            Aircraft.HorizontalTail.ROOT_CHORD,
-            rows=rows_cols,
-            cols=rows_cols,
-            val=1.0,
-        )
-
-    def compute(self, inputs, outputs):
-        outputs['broadcast_htail_chord'][:] = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
-
-
 class LiftBalanceComp(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -214,6 +155,39 @@ class LiftBalanceComp(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
         g = self.options[Mission.GRAVITY][0]  # m/s**2
         partials['lift_balance_residual', Dynamic.Vehicle.MASS] = -g
+
+
+class Broadcaster(om.ExplicitComponent):
+    """
+    Broadcast geometric variables into the mesh transformation components in OAS.
+
+    The wing incidence angle nees a broadcaster component while the others don't. This may
+    be due to an OpenMDAO bug.
+
+    We may need to pass the Twist vars here to turn None into unitless.
+    """
+    # This number is the number of sections along half of the wing.
+    num_sections = 12
+
+    def setup(self):
+        nn = self.num_sections
+        add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='deg')
+        self.add_output('broadcast_incidence', val=np.zeros(nn), units='deg')
+
+    def setup_partials(self):
+        nn = self.num_sections
+        rows = np.arange(nn)
+        cols = np.zeros(nn)
+        self.declare_partials(
+            'broadcast_incidence',
+            Aircraft.Wing.INCIDENCE,
+            rows=rows,
+            cols=cols,
+            val=1.0,
+        )
+
+    def compute(self, inputs, outputs):
+        outputs['broadcast_incidence'][:] = inputs[Aircraft.Wing.INCIDENCE]
 
 
 class OASAero(om.Group):
@@ -256,19 +230,7 @@ class OASAero(om.Group):
             ],
         )
 
-        self.add_subsystem(
-            'broadcast_wing',
-            BroadcastWing(num_nodes=nn),
-            promotes_inputs=[Aircraft.Wing.INCIDENCE, Aircraft.Wing.ROOT_CHORD],
-            promotes_outputs=['broadcast_incidence', 'broadcast_wing_chord'],
-        )
-
-        self.add_subsystem(
-            'broadcast_htail_chord',
-            BroadcastHTailChord(num_nodes=nn),
-            promotes_inputs=[Aircraft.HorizontalTail.ROOT_CHORD],
-            promotes_outputs=['broadcast_htail_chord'],
-        )
+        self.add_subsystem('broadcast', Broadcaster(), promotes=['*'])
 
         mesh_dict = {
             'num_y': 23,  # if changing, change in broadcast components too
@@ -347,8 +309,8 @@ class OASAero(om.Group):
         self.add_subsystem('prob_vars', prob_vars, promotes=[])
 
         self.add_subsystem(
-            'alpha_comp',
-            AlphaComp(num_nodes=nn),
+            'lift_balance_comp',
+            LiftBalanceComp(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.MASS,
@@ -406,9 +368,21 @@ class OASAero(om.Group):
         self.promotes('wing', inputs=[('mesh.stretch.span', Aircraft.Wing.SPAN)])
         self.promotes('htail', inputs=[('mesh.stretch.span', Aircraft.HorizontalTail.SPAN)])
 
-        self.connect('broadcast_wing_chord', 'wing.mesh.scale_x.chord')
-        self.connect('broadcast_htail_chord', 'htail.mesh.scale_x.chord')
+        shape = self.wing.mesh.scale_x.get_io_metadata(iotypes=['input'])['chord']['shape']
+        self.promotes(
+            'wing',
+            inputs=[('mesh.scale_x.chord', Aircraft.Wing.ROOT_CHORD)],
+            src_indices = np.zeros(shape, dtype=np.int64),
+        )
 
+        shape = self.htail.mesh.scale_x.get_io_metadata(iotypes=['input'])['chord']['shape']
+        self.promotes(
+            'htail',
+            inputs=[('mesh.scale_x.chord', Aircraft.HorizontalTail.ROOT_CHORD)],
+            src_indices = np.zeros(shape, dtype=np.int64),
+        )
+
+        # OAS uses "None" instead of "unitless". Will need to add to broadcaster.
         # self.promotes('wing', inputs=[('mesh.taper.taper', Aircraft.Wing.TAPER_RATIO)])
         # self.promotes('htail', inputs=[('mesh.taper.taper', Aircraft.HorizontalTail.TAPER_RATIO)])
 
