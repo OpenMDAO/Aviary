@@ -1,9 +1,9 @@
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
-from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.models.external_subsystems.UAV.mass.model.mass_premission import MassPremission
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
     ExtendedMetaData,
 )
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 
 class MassBuilder(SubsystemBuilder):
