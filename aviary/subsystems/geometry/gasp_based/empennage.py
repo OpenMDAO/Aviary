@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+import warnings
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
@@ -281,6 +282,43 @@ class TailSize(om.ExplicitComponent):
         J[str_arm, str_wing_ref] = 1.0 / r_arm
 
 
+class ChordCheck(om.ExplicitComponent):
+    def setup(self):
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless'
+        )
+        add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.HorizontalTail.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='ft')
+        add_aviary_input(self, Aircraft.VerticalTail.ROOT_CHORD, units='ft')
+        add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, units='unitless')
+
+    def compute(self, inputs, outputs):
+        htail_loc = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
+        hrchord = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
+        vrchord = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
+        v_tr = inputs[Aircraft.VerticalTail.TAPER_RATIO]
+        h_area = inputs[Aircraft.HorizontalTail.AREA]
+        h_span = inputs[Aircraft.HorizontalTail.SPAN]
+
+        if htail_loc > 0:
+            chord_check = vrchord * (1.0 - htail_loc * (1.0 - v_tr))
+            if chord_check < hrchord:
+                corr_hrchord = chord_check
+                warnings.warn(
+                    f'Horizontal tail center-line chord must be {corr_hrchord} '
+                    '(ft) to be located at specified position on vertical tail.'
+                )
+                corr_h_tr = 2.0 * h_area / corr_hrchord / h_span - 1.0
+                if corr_h_tr <= 1.0:
+                    warnings.warn(f'Horizontal taper ratio should be {corr_h_tr}.')
+                else:
+                    corr_h_tr = 1.0
+                    corr_h_ar = h_area / corr_hrchord / corr_hrchord
+                    warnings.warn(f'Horizontal taper ratio should be {corr_h_tr}.')
+                    warnings.warn(f'Horizontal aspect ratio should be {corr_h_ar}.')
+
+
 class EmpennageSize(om.Group):
     """GASP geometry calculations for both horizontal and vertical tails.
 
@@ -329,4 +367,10 @@ class EmpennageSize(om.Group):
             TailSize(orientation='vertical'),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
+        )
+
+        self.add_subsystem(
+            'chord_check',
+            ChordCheck(),
+            promotes_inputs=['*'],
         )
