@@ -60,7 +60,7 @@ def smooth_load_intensity_by_factor(load_dist_factor, intn_stations):
     intn_stations (array): integration stations
 
     Note: In FLOPS, load_dist_factor can be 0 in which case load intensities are computed
-          based on input pressure distribution.
+          based on input pressure distribution. This is NOT currently implemented in Aviary.
     """
     a = 1.0 - intn_stations
     b = np.sqrt(1.0 - intn_stations**2)
