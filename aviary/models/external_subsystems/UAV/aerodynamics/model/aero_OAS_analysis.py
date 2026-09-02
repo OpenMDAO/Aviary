@@ -39,8 +39,6 @@ class AeroConditions(om.ExplicitComponent):
 
         self.add_output('re', shape=nn, units='1/m')
 
-
-
     def setup_partials(self):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
@@ -105,7 +103,9 @@ class CollectLiftDrag(om.ExplicitComponent):
         nn = self.options['num_nodes']
         for i in range(nn):
             self.declare_partials(Dynamic.Vehicle.LIFT, 'L_' + str(i), rows=[i], cols=[0], val=1.0)
-            self.declare_partials('lifting_surface_drag', 'D_' + str(i), rows=[i], cols=[0], val=1.0)
+            self.declare_partials(
+                'lifting_surface_drag', 'D_' + str(i), rows=[i], cols=[0], val=1.0
+            )
             self.declare_partials('lifting_surface_CL', 'CL_' + str(i), rows=[i], cols=[0], val=1.0)
             self.declare_partials('lifting_surface_CD', 'CD_' + str(i), rows=[i], cols=[0], val=1.0)
 
@@ -136,9 +136,15 @@ class BroadcastWing(om.ExplicitComponent):
         nn = self.options['num_nodes']
         rows_cols = np.arange(nn)
         self.declare_partials(
-            'broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows_cols, cols=rows_cols, val=1.0)
+            'broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows_cols, cols=rows_cols, val=1.0
+        )
         self.declare_partials(
-            'broadcast_wing_chord', Aircraft.Wing.ROOT_CHORD, rows=rows_cols, cols=rows_cols, val=1.0)
+            'broadcast_wing_chord',
+            Aircraft.Wing.ROOT_CHORD,
+            rows=rows_cols,
+            cols=rows_cols,
+            val=1.0,
+        )
 
     def compute(self, inputs, outputs):
         outputs['broadcast_incidence'][:] = inputs[Aircraft.Wing.INCIDENCE]
@@ -156,8 +162,6 @@ class BroadcastHTailChord(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='m')
         self.add_output('broadcast_htail_chord', val=np.zeros(nn), units='m')
 
-
-
     def setup_partials(self):
         nn = self.options['num_nodes']
         rows_cols = np.arange(nn)
@@ -173,7 +177,7 @@ class BroadcastHTailChord(om.ExplicitComponent):
         outputs['broadcast_htail_chord'][:] = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
 
 
-class AlphaComp(om.ExplicitComponent):
+class LiftBalanceComp(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
         add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
@@ -205,12 +209,9 @@ class AlphaComp(om.ExplicitComponent):
         L = inputs[Dynamic.Vehicle.LIFT]
         m = inputs[Dynamic.Vehicle.MASS]
         g = self.options[Mission.GRAVITY][0]  # m/s**2
-        outputs['lift_balance_residual'] = L - (
-            m * g
-        )
+        outputs['lift_balance_residual'] = L - (m * g)
 
-    def compute_partials(
-        self, inputs, partials):
+    def compute_partials(self, inputs, partials):
         g = self.options[Mission.GRAVITY][0]  # m/s**2
         partials['lift_balance_residual', Dynamic.Vehicle.MASS] = -g
 
