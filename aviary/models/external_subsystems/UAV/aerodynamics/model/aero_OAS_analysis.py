@@ -7,7 +7,6 @@ from openaerostruct.meshing.mesh_generator import generate_mesh
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
-from aviary.variable_info.enums import AtmosphereModel
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import (
     Aircraft,
     Dynamic,
@@ -40,8 +39,11 @@ class AeroConditions(om.ExplicitComponent):
 
         self.add_output('re', shape=nn, units='1/m')
 
-        arange = np.arange(nn)
+        
 
+    def setup_partials(self):
+        nn = self.options['num_nodes']
+        arange = np.arange(nn)
         self.declare_partials(
             Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
             [Dynamic.Atmosphere.DYNAMIC_VISCOSITY, Dynamic.Atmosphere.DENSITY],
@@ -99,11 +101,13 @@ class CollectLiftDrag(om.ExplicitComponent):
         self.add_output('lifting_surface_CL', shape=(nn,), units='unitless')
         self.add_output('lifting_surface_CD', shape=(nn,), units='unitless')
 
+    def setup_partials(self):
+        nn = self.options['num_nodes']
         for i in range(nn):
-            self.declare_partials(Dynamic.Vehicle.LIFT, 'L_' + str(i), rows=[i], cols=[0])
-            self.declare_partials('lifting_surface_drag', 'D_' + str(i), rows=[i], cols=[0])
-            self.declare_partials('lifting_surface_CL', 'CL_' + str(i), rows=[i], cols=[0])
-            self.declare_partials('lifting_surface_CD', 'CD_' + str(i), rows=[i], cols=[0])
+            self.declare_partials(Dynamic.Vehicle.LIFT, 'L_' + str(i), rows=[i], cols=[0], val=1.0)
+            self.declare_partials('lifting_surface_drag', 'D_' + str(i), rows=[i], cols=[0], val=1.0)
+            self.declare_partials('lifting_surface_CL', 'CL_' + str(i), rows=[i], cols=[0], val=1.0)
+            self.declare_partials('lifting_surface_CD', 'CD_' + str(i), rows=[i], cols=[0], val=1.0)
 
     def compute(self, inputs, outputs):
         nn = self.options['num_nodes']
@@ -112,15 +116,6 @@ class CollectLiftDrag(om.ExplicitComponent):
         outputs['lifting_surface_drag'] = np.array([inputs['D_' + str(i)] for i in range(nn)])
         outputs['lifting_surface_CL'] = np.array([inputs['CL_' + str(i)] for i in range(nn)])
         outputs['lifting_surface_CD'] = np.array([inputs['CD_' + str(i)] for i in range(nn)])
-
-    def compute_partials(self, inputs, partials):
-        nn = self.options['num_nodes']
-        for i in range(nn):
-            partials[Dynamic.Vehicle.LIFT, 'L_' + str(i)] = 1.0
-            partials['lifting_surface_drag', 'D_' + str(i)] = 1.0
-            partials['lifting_surface_CL', 'CL_' + str(i)] = 1.0
-            partials['lifting_surface_CD', 'CD_' + str(i)] = 1.0
-
 
 class BroadcastWing(om.ExplicitComponent):
     # broadcast geometric variables to node in the mesh
@@ -136,15 +131,13 @@ class BroadcastWing(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='m')
         self.add_output('broadcast_wing_chord', val=np.zeros(nn), units='m')
 
-        rows = np.arange(nn)
-        cols = np.zeros(nn, int)
-
+    def setup_partials(self):
+        nn = self.options['num_nodes']
+        rows_cols = np.arange(nn)
         self.declare_partials(
-            'broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows, cols=cols, val=np.ones(nn)
-        )
+            'broadcast_incidence', Aircraft.Wing.INCIDENCE, rows=rows_cols, cols=rows_cols, val=1.0)
         self.declare_partials(
-            'broadcast_wing_chord', Aircraft.Wing.ROOT_CHORD, rows=rows, cols=cols, val=np.ones(nn)
-        )
+            'broadcast_wing_chord', Aircraft.Wing.ROOT_CHORD, rows=rows_cols, cols=rows_cols, val=1.0)
 
     def compute(self, inputs, outputs):
         outputs['broadcast_incidence'][:] = inputs[Aircraft.Wing.INCIDENCE]
@@ -162,15 +155,17 @@ class BroadcastHTailChord(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='m')
         self.add_output('broadcast_htail_chord', val=np.zeros(nn), units='m')
 
-        rows = np.arange(nn)
-        cols = np.zeros(nn, int)
+        
 
+    def setup_partials(self):
+        nn = self.options['num_nodes']
+        rows_cols = np.arange(nn)
         self.declare_partials(
             'broadcast_htail_chord',
             Aircraft.HorizontalTail.ROOT_CHORD,
-            rows=rows,
-            cols=cols,
-            val=np.ones(nn),
+            rows=rows_cols,
+            cols=rows_cols,
+            val=1.0,
         )
 
     def compute(self, inputs, outputs):
@@ -184,14 +179,8 @@ class AlphaComp(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        rows_cols = np.arange(nn)
         add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
         add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
-        self.add_input(
-            'alpha',
-            val=np.full(nn, 3.0),
-            units='deg',
-        )
 
         # This output will be constrained to zero.
         self.add_output(
@@ -200,13 +189,16 @@ class AlphaComp(om.ExplicitComponent):
             units='N',
             desc='Lift equilibrium residual',
         )
+
+    def setup_partials(self):
+        nn = self.options['num_nodes']
+        rows_cols = np.arange(nn)
         self.declare_partials(
-            'lift_balance_residual', Dynamic.Vehicle.LIFT, rows=rows_cols, cols=rows_cols
+            'lift_balance_residual', Dynamic.Vehicle.LIFT, rows=rows_cols, cols=rows_cols, val=1.0
         )
         self.declare_partials(
             'lift_balance_residual', Dynamic.Vehicle.MASS, rows=rows_cols, cols=rows_cols
         )
-        self.declare_partials('lift_balance_residual', 'alpha', rows=rows_cols, cols=rows_cols)
 
     def compute(self, inputs, outputs):
         L = inputs[Dynamic.Vehicle.LIFT]
@@ -214,20 +206,12 @@ class AlphaComp(om.ExplicitComponent):
         g = self.options[Mission.GRAVITY][0]  # m/s**2
         outputs['lift_balance_residual'] = L - (
             m * g
-        )  # chnaged the lift equation to be equal to weight instead of weight * cos(alpha)
+        )
 
     def compute_partials(
-        self, inputs, partials
-    ):  # changes the lift equation to be equal to weight instead of weight * cos(alpha)
-        nn = self.options['num_nodes']
-
+        self, inputs, partials):
         g = self.options[Mission.GRAVITY][0]  # m/s**2
-
-        partials['lift_balance_residual', Dynamic.Vehicle.LIFT] = np.ones(nn)
-
-        partials['lift_balance_residual', Dynamic.Vehicle.MASS] = -g * np.ones(nn)
-
-        partials['lift_balance_residual', 'alpha'] = np.zeros(nn)
+        partials['lift_balance_residual', Dynamic.Vehicle.MASS] = -g
 
 
 class OASAero(om.Group):
