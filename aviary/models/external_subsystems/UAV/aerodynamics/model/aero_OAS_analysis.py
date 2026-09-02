@@ -39,7 +39,7 @@ class AeroConditions(om.ExplicitComponent):
 
         self.add_output('re', shape=nn, units='1/m')
 
-        
+
 
     def setup_partials(self):
         nn = self.options['num_nodes']
@@ -117,6 +117,7 @@ class CollectLiftDrag(om.ExplicitComponent):
         outputs['lifting_surface_CL'] = np.array([inputs['CL_' + str(i)] for i in range(nn)])
         outputs['lifting_surface_CD'] = np.array([inputs['CD_' + str(i)] for i in range(nn)])
 
+
 class BroadcastWing(om.ExplicitComponent):
     # broadcast geometric variables to node in the mesh
     def initialize(self):
@@ -155,7 +156,7 @@ class BroadcastHTailChord(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='m')
         self.add_output('broadcast_htail_chord', val=np.zeros(nn), units='m')
 
-        
+
 
     def setup_partials(self):
         nn = self.options['num_nodes']
@@ -350,7 +351,6 @@ class OASAero(om.Group):
             promotes_inputs=[
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Vehicle.MASS,
-                'alpha',
             ],
             promotes_outputs=[
                 'lift_balance_residual',
