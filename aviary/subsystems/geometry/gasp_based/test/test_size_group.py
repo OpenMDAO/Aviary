@@ -5,9 +5,10 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Settings
 
 # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
 
@@ -15,8 +16,19 @@ from aviary.variable_info.variables import Aircraft
 @use_tempdirs
 class SizeGroupTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for SizeGroup and its subsystems
+        # (FuselageGroup, WingGroup, EmpennageSize, GASPEngineSizeGroup).
+        options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
+        options.set_val(Aircraft.Design.TYPE, val='transport', units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
@@ -137,16 +149,25 @@ class SizeGroupTestCase1(unittest.TestCase):
 @use_tempdirs
 class SizeGroupTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for SizeGroup and its subsystems
+        # (FuselageGroup, WingGroup, EmpennageSize, GASPEngineSizeGroup).
+        options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
+        options.set_val(Aircraft.Design.TYPE, val='transport', units='unitless')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
@@ -281,16 +302,29 @@ class SizeGroupTestCase2(unittest.TestCase):
 @use_tempdirs
 class SizeGroupTestCase3(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for SizeGroup and its subsystems
+        # (FuselageGroup, WingGroup, EmpennageSize, GASPEngineSizeGroup, CableSize).
+        options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
+        options.set_val(Aircraft.Design.TYPE, val='transport', units='unitless')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
+        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, val=2, units='unitless')
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
-        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=True, units='unitless')
-        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=True, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
-        options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
+        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=True, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=True, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
         self.prob = om.Problem()
@@ -421,12 +455,20 @@ class SizeGroupTestCase3(unittest.TestCase):
 @use_tempdirs
 class SizeGroupTestCase4(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for SizeGroup and its subsystems
+        # (FuselageGroup, WingGroup, EmpennageSize, GASPEngineSizeGroup).
+        options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
+        options.set_val(Aircraft.Design.TYPE, val='transport', units='unitless')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
+        options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless')
         options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=True, units='unitless')
         options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=True, units='unitless')
-        options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
-        options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless')
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
@@ -558,22 +600,34 @@ class SizeGroupTestCase4(unittest.TestCase):
 @use_tempdirs
 class BWBSizeGroupTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for SizeGroup and its BWB subsystems
+        # (BWBFuselageGroup, BWBWingGroup, EmpennageSize, GASPEngineSizeGroup).
+        options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
-        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=False, units='unitless')
-        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
-        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
+        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
+        options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, val=0, units='unitless')
+        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
-        options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, val=39.0, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, val=0.0, units='inch')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -667,7 +721,8 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
 
     def test_case1(self):
         """
-        Testing GASP data case:
+        Testing GASP data case.
+
         Aircraft.Fuselage.AVG_DIAMETER -- SWF = 38.00
         fuselage.cabin_height -- HC = 9.87
         fuselage.cabin_len -- LC = 43.8

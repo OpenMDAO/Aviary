@@ -15,8 +15,8 @@ from aviary.subsystems.geometry.gasp_based.fuselage import (
     FuselageSize,
 )
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Settings
 
 
@@ -25,20 +25,25 @@ class FuselageParametersTestCase1(unittest.TestCase):
     """this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix."""
 
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the FuselageParameters component.
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180)
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('parameters', FuselageParameters(), promotes=['*'])
 
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
-        )
+        # Input values below (hardcoded, not read from _MetaData).
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
 
         setup_model_options(prob, options)
 
@@ -60,20 +65,25 @@ class FuselageParametersTestCase1(unittest.TestCase):
 
 class FuselageParametersTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the FuselageParameters component.
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=30, units='unitless')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('parameters', FuselageParameters(), promotes=['*'])
 
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
-        )
+        # Input values below (hardcoded, not read from _MetaData).
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
 
         setup_model_options(prob, options)
 
@@ -131,7 +141,9 @@ class FuselageSizeTestCase2(unittest.TestCase):
     """this is the GASP test case for V3.6 advanced tube and wing."""
 
     def setUp(self):
-        options = get_option_defaults()
+        # FuselageSize declares no aviary options — use an empty AviaryValues so this test does
+        # not depend on any _MetaData drift.
+        options = AviaryValues()
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('parameters', FuselageSize(), promotes=['*'])
@@ -166,23 +178,28 @@ class FuselageGroupTestCase1(
     unittest.TestCase
 ):  # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the full FuselageGroup subsystem hierarchy.
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('group', FuselageGroup(), promotes=['*'])
 
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
-        )
+        # Input values below (hardcoded, not read from _MetaData).
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.NOSE_FINENESS, 1, units='unitless')
         prob.model.set_input_defaults(Aircraft.Fuselage.TAIL_FINENESS, 3, units='unitless')
         prob.model.set_input_defaults(Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )
 
         setup_model_options(prob, options)
 
@@ -208,11 +225,22 @@ class FuselageGroupTestCase1(
 
 class FuselageGroupTestCase2(unittest.TestCase):
     def setUp(self):
-        """default values are not actual GASP values"""
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the full FuselageGroup subsystem hierarchy.
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
+        options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')  # not actual GASP value
+        options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)  # not actual GASP value
+        options.set_val(
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6
+        )  # not actual GASP value
+        options.set_val(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )  # not actual GASP value
+        options.set_val(
+            Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch'
+        )  # not actual GASP value
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('group', FuselageGroup(), promotes=['*'])
@@ -232,7 +260,7 @@ class FuselageGroupTestCase2(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """outputs are not actual GASP value"""
+        """Testing GASP data case."""
         prob = self.prob
         prob.run_model()
 
@@ -248,11 +276,21 @@ class FuselageGroupTestCase2(unittest.TestCase):
 
 class FuselageGroupTestCase3(unittest.TestCase):
     def setUp(self):
-        """default values are not actual GASP value"""
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the full FuselageGroup subsystem hierarchy.
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=30, units='unitless')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)  # not actual GASP value
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
+        options.set_val(
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1
+        )  # not actual GASP value
+        options.set_val(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )  # not actual GASP value
+        options.set_val(
+            Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch'
+        )  # not actual GASP value
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('group', FuselageGroup(), promotes=['*'])
@@ -272,7 +310,7 @@ class FuselageGroupTestCase3(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """outputs are not actual GASP value"""
+        """Outputs are not actual GASP value."""
         prob = self.prob
         prob.run_model()
 
@@ -288,11 +326,21 @@ class FuselageGroupTestCase3(unittest.TestCase):
 
 class FuselageGroupTestCase4(unittest.TestCase):
     def setUp(self):
-        """default values are not actual GASP value"""
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the full FuselageGroup subsystem hierarchy.
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=30, units='unitless')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)  # not actual GASP value
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
+        options.set_val(
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1
+        )  # not actual GASP value
+        options.set_val(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
+        )  # not actual GASP value
+        options.set_val(
+            Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch'
+        )  # not actual GASP value
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('group', FuselageGroup(), promotes=['*'])
@@ -312,7 +360,7 @@ class FuselageGroupTestCase4(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """outputs are not actual GASP value"""
+        """Outputs are not actual GASP value."""
         prob = self.prob
         prob.run_model()
 
@@ -408,7 +456,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         prob.setup()
 
     def test_case1(self):
-        """Testing GASP data case: first class + economy class"""
+        """Testing GASP data case: first class + economy class."""
         prob = self.prob
         prob.run_model()
 
@@ -428,7 +476,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
     def test_case2(self):
-        """Testing case: economy class only"""
+        """Testing case: economy class only."""
         self.aviary_options.set_val(
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
             val=0,
@@ -444,7 +492,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         assert_near_equal(prob['fuselage_station_aft'], 51.25449, tol)
 
     def test_case3(self):
-        """Testing case: first class + business class + economy class"""
+        """Testing case: first class + business class + economy class."""
         self.aviary_options.set_val(
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, val=20, units='unitless'
         )
@@ -542,11 +590,20 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
     """this is the GASP test case."""
 
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the full BWBFuselageGroup subsystem hierarchy.
+        options = AviaryValues()
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 0.0, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 150)
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
+        options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 0)
 
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
 
