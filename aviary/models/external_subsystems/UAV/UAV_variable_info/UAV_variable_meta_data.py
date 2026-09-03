@@ -61,17 +61,6 @@ av.add_meta_data(
 )
 
 av.add_meta_data(
-    Aircraft.Fuselage.BULKHEAD_DENSITY,
-    units='kg/m**3',
-    types=float,
-    desc='Material density of the rib',
-    default_value=[0.0],
-    meta_data=ExtendedMetaData,
-    multivalue=True,
-    option=True,
-)
-
-av.add_meta_data(
     Aircraft.Fuselage.BULKHEAD_LIGHTENING_FACTOR,
     units='unitless',
     desc='Fraction of the rib area that remains after lightening cuts',
@@ -185,15 +174,6 @@ av.add_meta_data(
     units='kg',
     desc='Mass made up of smaller, non structural components. Can be used for higher fidelity options as well',
     default_value=0.0,
-    meta_data=ExtendedMetaData,
-    option=True,
-)
-
-av.add_meta_data(
-    Aircraft.Fuselage.NUM_BULKHEADS,
-    units='unitless',
-    desc='Number of fuselage ribs',
-    default_value=10,
     meta_data=ExtendedMetaData,
     option=True,
 )
@@ -334,15 +314,6 @@ av.add_meta_data(
 )
 
 av.add_meta_data(
-    Aircraft.HorizontalTail.NUM_RIBS,
-    units='unitless',
-    desc='Number of wing ribs',
-    default_value=10,
-    meta_data=ExtendedMetaData,
-    option=True,
-)
-
-av.add_meta_data(
     Aircraft.HorizontalTail.NUM_SPARS,
     units='unitless',
     desc='Number of wing spars',
@@ -357,17 +328,6 @@ av.add_meta_data(
     desc='Number of stringers(assumed length=span)',
     default_value=2.0,
     meta_data=ExtendedMetaData,
-    option=True,
-)
-
-av.add_meta_data(
-    Aircraft.HorizontalTail.RIB_DENSITY,
-    units='kg/m**3',
-    types=float,
-    desc='Material density of the rib',
-    default_value=[0.0],
-    meta_data=ExtendedMetaData,
-    multivalue=True,
     option=True,
 )
 
@@ -530,15 +490,6 @@ av.add_meta_data(
 )
 
 av.add_meta_data(
-    Aircraft.VerticalTail.NUM_RIBS,
-    units='unitless',
-    desc='Number of wing ribs',
-    default_value=10,
-    meta_data=ExtendedMetaData,
-    option=True,
-)
-
-av.add_meta_data(
     Aircraft.VerticalTail.NUM_SPARS,
     units='unitless',
     desc='Number of wing spars',
@@ -553,17 +504,6 @@ av.add_meta_data(
     desc='Number of stringers(assumed length=span)',
     default_value=2.0,
     meta_data=ExtendedMetaData,
-    option=True,
-)
-
-av.add_meta_data(
-    Aircraft.VerticalTail.RIB_DENSITY,
-    units='kg/m**3',
-    types=float,
-    desc='Material density of the rib',
-    default_value=[0.0],
-    meta_data=ExtendedMetaData,
-    multivalue=True,
     option=True,
 )
 
@@ -727,15 +667,6 @@ av.add_meta_data(
 )
 
 av.add_meta_data(
-    Aircraft.Wing.NUM_RIBS,
-    units='unitless',
-    desc='Number of wing ribs',
-    default_value=10,
-    meta_data=ExtendedMetaData,
-    option=True,
-)
-
-av.add_meta_data(
     Aircraft.Wing.NUM_SPARS,
     units='unitless',
     desc='Number of wing spars',
@@ -750,17 +681,6 @@ av.add_meta_data(
     desc='Number of stringers(assumed length=span)',
     default_value=2.0,
     meta_data=ExtendedMetaData,
-    option=True,
-)
-
-av.add_meta_data(
-    Aircraft.Wing.RIB_DENSITY,
-    units='kg/m**3',
-    types=float,
-    desc='Material density of the rib',
-    default_value=[0.0],
-    meta_data=ExtendedMetaData,
-    multivalue=True,
     option=True,
 )
 
@@ -1054,35 +974,10 @@ av.add_meta_data(
 )
 
 av.add_meta_data(
-    Dynamic.Vehicle.Propulsion.CURRENT_MAX,
-    meta_data=ExtendedMetaData,
-    units='A',
-    desc='Electrical current flow through an engine at full throttle',
-    multivalue=True,
-)
-
-av.add_meta_data(
-    Dynamic.Vehicle.Propulsion.RPM_MAX,
-    meta_data=ExtendedMetaData,
-    units='rpm',
-    desc='Rotational rate of shaft, per engine, at max throttle condition.',
-    multivalue=True,
-)
-
-av.add_meta_data(
     Dynamic.Vehicle.Propulsion.PROP_POWER,
     meta_data=ExtendedMetaData,
     units='W',
     desc='Power output from a propeller',
-    default_value=0.0,
-    multivalue=True,
-)
-
-av.add_meta_data(
-    Dynamic.Vehicle.Propulsion.PROP_POWER_MAX,
-    meta_data=ExtendedMetaData,
-    units='W',
-    desc='Power output from a propeller at full throttle',
     default_value=0.0,
     multivalue=True,
 )

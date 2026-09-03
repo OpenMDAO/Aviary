@@ -155,7 +155,7 @@ class PropBuilder(EngineModel):
             },
         }
 
-        # Solver mode computes current/current_max internally in UAVPropMission.
+        # Solver mode computes current internally in UAVPropMission.
         # Declaring them as Dymos controls creates duplicate connections.
         return controls
 
