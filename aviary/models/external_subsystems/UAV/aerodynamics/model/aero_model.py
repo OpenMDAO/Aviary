@@ -229,16 +229,8 @@ class LandingGearDrag(om.ExplicitComponent):
     def setup_partials(self):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
-        self.declare_partials(
-            'D_gear',
-            [
-                Aircraft.LandingGear.DRAG_COEFFICIENT,
-                Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                Aircraft.Wing.AREA,
-            ],
-            rows=arange,
-            cols=arange,
-        )
+        self.declare_partials('D_gear',[Aircraft.LandingGear.DRAG_COEFFICIENT,Aircraft.Wing.AREA,])
+        self.declare_partials('D_gear',Dynamic.Atmosphere.DYNAMIC_PRESSURE,rows=arange,cols=arange)
 
     def compute(self, inputs, outputs):
         CD_gear = inputs[Aircraft.LandingGear.DRAG_COEFFICIENT]
