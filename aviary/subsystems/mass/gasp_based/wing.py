@@ -736,8 +736,8 @@ class WingMassGroup(om.Group):
 
         newton = isolated_mass.nonlinear_solver = om.NewtonSolver()
 
-        newton.options['atol'] = 1e-9
-        newton.options['rtol'] = 1e-9
+        newton.options['atol'] = 1e-10
+        newton.options['rtol'] = 1e-10
         newton.options['iprint'] = 2
         newton.options['maxiter'] = 10
         newton.options['solve_subsystems'] = True
@@ -796,8 +796,8 @@ class BWBWingMassGroup(om.Group):
 
         newton = isolated_mass.nonlinear_solver = om.NewtonSolver()
 
-        newton.options['atol'] = 1e-9
-        newton.options['rtol'] = 1e-9
+        newton.options['atol'] = 1e-10
+        newton.options['rtol'] = 1e-10
         newton.options['iprint'] = 2
         newton.options['maxiter'] = 10
         newton.options['solve_subsystems'] = True

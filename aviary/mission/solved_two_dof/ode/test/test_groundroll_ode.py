@@ -28,10 +28,13 @@ class GroundrollODETestCase(unittest.TestCase):
             'GASP', [build_engine_deck(aviary_options)]
         )
 
+        subsystem_options = {'aerodynamics': {'method': 'low_speed'}}
+
         self.prob.model = GroundrollODE(
             num_nodes=2,
             aviary_options=get_option_defaults(),
             subsystems=default_mission_subsystems,
+            subsystem_options=subsystem_options,
         )
 
         setup_model_options(self.prob, aviary_options)

@@ -25,10 +25,13 @@ class CruiseODETestCase(unittest.TestCase):
             'GASP', [build_engine_deck(aviary_options)]
         )
 
+        subsystem_options = {'aerodynamics': {'method': 'cruise', 'output_alpha': True}}
+
         self.prob.model = BreguetCruiseODE(
             num_nodes=2,
             aviary_options=aviary_options,
             subsystems=default_mission_subsystems,
+            subsystem_options=subsystem_options,
         )
 
         self.prob.model.set_input_defaults(
@@ -93,10 +96,13 @@ class ElectricCruiseODETestCase(unittest.TestCase):
             'GASP', build_engine_deck(aviary_options)
         )
 
+        subsystem_options = {'aerodynamics': {'method': 'cruise', 'output_alpha': True}}
+
         self.prob.model = ElectricBreguetCruiseODE(
             num_nodes=2,
             aviary_options=aviary_options,
             subsystems=default_mission_subsystems,
+            subsystem_options=subsystem_options,
         )
 
         self.prob.model.set_input_defaults(

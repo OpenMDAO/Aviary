@@ -81,7 +81,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         local_phase_info = deepcopy(phase_info)
 
         local_phase_info['cruise'] = {
-            'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
+            'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
             'user_options': {
                 'phase_type': PhaseType.BREGUET_RANGE,
                 'alt_cruise': (37.5e3, 'ft'),
