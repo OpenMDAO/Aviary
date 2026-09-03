@@ -1,6 +1,6 @@
-import numpy as np
-import matplotlib.pyplot as plt
 import os
+
+import numpy as np
 
 
 def PropDataReader():
@@ -23,11 +23,13 @@ def PropDataReader():
     file_xt = os.path.join(base_path, 'prop_xt.dat')
     file_yt = os.path.join(base_path, 'prop_yt.dat')
 
-    fx = open(file_xt, 'r')
-    fy = open(file_yt, 'r')
+    with open(file_xt, 'r') as f_in:
+        xlines = f_in.readlines()
+    with open(file_yt, 'r') as f_in:
+        ylines = f_in.readlines()
 
     # Looping through lines of .dat file
-    for xline, yline in zip(fx.readlines(), fy.readlines()):
+    for xline, yline in zip(xlines, ylines):
         if xline.strip().startswith('#'):
             continue
         # Converting line into array

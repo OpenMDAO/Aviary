@@ -6,7 +6,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.external_subsystems.UAV.propulsion.model.prop_premission import UAVPropPreMission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 
 
 @use_tempdirs
