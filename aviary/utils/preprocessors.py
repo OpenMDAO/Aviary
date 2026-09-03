@@ -1199,5 +1199,11 @@ def _get_engine_variables():
     for item in get_names_from_hierarchy(Aircraft.Engine):
         yield item
 
+    excluded_names = [
+        Aircraft.Nacelle.TOTAL_WETTED_AREA,
+        Aircraft.Nacelle.DRAG_FACTOR,
+        Aircraft.Nacelle.PYLON_DRAG_FACTOR,
+    ]
     for item in get_names_from_hierarchy(Aircraft.Nacelle):
-        yield item
+        if item not in excluded_names:
+            yield item
