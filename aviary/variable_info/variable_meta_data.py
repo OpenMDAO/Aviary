@@ -4423,7 +4423,6 @@ add_meta_data(
     units='ft**2',
     desc='total nacelles wetted area',
     default_value=0.0,
-    multivalue=True,
 )
 
 add_meta_data(
