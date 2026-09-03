@@ -68,5 +68,41 @@ class TestFuselageDrag(unittest.TestCase):
         # If it fails at 1e-6, 1e-5 is completely acceptable for FD checks.
         assert_check_partials(cp_data, atol=1e-5, rtol=1e-5)
 
+class TestVTailDrag(unittest.TestCase):
+    def test_partials(self):
+        prob = om.Problem()
+        nn = 3
+        
+        # Add the component (assuming VTailDrag is imported or defined above)
+        prob.model.add_subsystem('comp', VTailDrag(num_nodes=nn), promotes=['*'])
+        prob.setup(force_alloc_complex=True)
+
+        # Set distinct realistic scalar values to prevent 1.0 or 0.0 from hiding math errors
+        prob.set_val('R_LS', val=1.1)
+        prob.set_val('Cf_vtail', val=0.0044)
+        prob.set_val('L_prime', val=1.2)
+        
+        prob.set_val(Aircraft.VerticalTail.ROOT_CHORD, val=1.5)
+        prob.set_val(Aircraft.VerticalTail.TAPER_RATIO, val=0.5)
+        prob.set_val(Aircraft.VerticalTail.SPAN, val=4.0)
+        prob.set_val(Aircraft.Wing.AREA, val=15.0)
+        prob.set_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, val=0.12)
+        
+        # Set dynamic pressure as a vector to ensure correct vectorized behavior
+        prob.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, val=np.array([50000.0, 75000.0, 101325.0])) 
+
+        prob.run_model()
+
+        # Check partials using central finite difference 
+        cp_data = prob.check_partials(
+            compact_print=True, 
+            out_stream=None, 
+            method='fd', 
+            form='central'
+        )
+        
+        # Assert derivatives match within tolerances
+        assert_check_partials(cp_data, atol=1e-6, rtol=1e-6)
+
 if __name__ == '__main__':
     unittest.main()

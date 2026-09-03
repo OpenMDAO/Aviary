@@ -182,12 +182,9 @@ class VTailDrag(om.ExplicitComponent):
                 Aircraft.Wing.AREA,
                 Aircraft.VerticalTail.THICKNESS_TO_CHORD,
             ],
-            rows=arange,
-            cols=arange,
             method='cs'
         )
-        self.declare_partials('D_vtail',[Aircraft.VerticalTail.ROOT_CHORD,Aircraft.VerticalTail.TAPER_RATIO,Aircraft.VerticalTail.SPAN,Aircraft.Wing.AREA], rows=arange, cols=arange) # we have calculated partials for this
-        self.declare_partials('D_vtail',['R_LS','Cf_vtail','L_prime',Aircraft.VerticalTail.THICKNESS_TO_CHORD,], rows=arange, cols=arange, method='cs') # we have not calculated partials for this
+        self.declare_partials('D_vtail',['R_LS','Cf_vtail','L_prime',Aircraft.VerticalTail.THICKNESS_TO_CHORD,Aircraft.VerticalTail.ROOT_CHORD,Aircraft.VerticalTail.TAPER_RATIO,Aircraft.VerticalTail.SPAN,Aircraft.Wing.AREA], method='cs') # we have not calculated partials for this
         self.declare_partials('D_vtail',Dynamic.Atmosphere.DYNAMIC_PRESSURE, rows=arange, cols=arange, method='cs') # has a different shape/size compared to other partials
 
     def compute(self, inputs, outputs):
@@ -215,61 +212,6 @@ class VTailDrag(om.ExplicitComponent):
 
         outputs['D_vtail'] = q * S_ref_vtail * CD0_vtail
         outputs['CD_vtail'] = CD0_vtail  # lift induced negligible
-
-    def compute_partials(self, inputs, partials):
-        R_LS = inputs['R_LS']
-        Cf_vtail = inputs['Cf_vtail']
-        L_prime = inputs['L_prime']
-
-        c = inputs[Aircraft.VerticalTail.ROOT_CHORD]
-        taper = inputs[Aircraft.VerticalTail.TAPER_RATIO]
-        b = inputs[Aircraft.VerticalTail.SPAN]
-        S_ref_wing = inputs[Aircraft.Wing.AREA]
-
-        t_on_c = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
-        q = inputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE]
-
-        partials['D_vtail', Aircraft.VerticalTail.ROOT_CHORD] = (
-            b**2
-            * Cf_vtail
-            * q
-            * R_LS
-            * c
-            * (taper + 1) ** 2
-            * ((L_prime * t_on_c) * +100 * ((t_on_c) ** 4) + 1)
-            / S_ref_wing
-        )
-        partials['D_vtail', Aircraft.VerticalTail.TAPER_RATIO] = (
-            b**2
-            * c**2
-            * Cf_vtail
-            * q
-            * R_LS
-            * c
-            * (taper + 1)
-            * ((L_prime * t_on_c) * +100 * ((t_on_c) ** 4) + 1)
-            / S_ref_wing
-        )
-        partials['D_vtail', Aircraft.VerticalTail.SPAN] = (
-            Cf_vtail
-            * q
-            * R_LS
-            * b
-            * ((c * taper) + c) ** 2
-            * ((L_prime * t_on_c) * +100 * ((t_on_c) ** 4) + 1)
-            / S_ref_wing
-        )
-        partials['D_vtail', Aircraft.Wing.AREA] = (
-            -0.5
-            * b**2
-            * Cf_vtail
-            * q
-            * R_LS
-            * ((c * taper) + c) ** 2
-            * ((L_prime * t_on_c) * +100 * ((t_on_c) ** 4) + 1)
-            / S_ref_wing**2
-        )
-
 
 class LandingGearDrag(om.ExplicitComponent):
     def initialize(self):
