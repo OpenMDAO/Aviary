@@ -239,8 +239,6 @@ class OASAero(om.Group):
             'symmetry': True,
             'span': 1,  # set to 1, aviary inputs will be scaling factor
             'root_chord': 1,
-            'taper': 1,
-            'sweep': 1,
             'span_cos_spacing': 1,
             'chord_cos_spacing': 1,
             'num_twist_cp': 1,
@@ -248,13 +246,15 @@ class OASAero(om.Group):
 
         wing_mesh = generate_mesh(mesh_dict)
 
+        tc = aviary_inputs.get_val(Aircraft.Wing.THICKNESS_TO_CHORD)
+
         wing_surface = {
             'name': 'wing',
             'symmetry': True,
             'S_ref_type': 'projected',
             'mesh': wing_mesh,
             'fem_model_type': 'tube',
-            't_over_c': aviary_inputs.get_val(Aircraft.Wing.THICKNESS_TO_CHORD),
+            't_over_c_cp': np.array([tc, tc]),
             'c_max_t': aviary_inputs.get_val(Aircraft.Wing.MAX_THICKNESS_LOCATION),
             'with_viscous': False,
             'with_wave': False,
@@ -278,8 +278,6 @@ class OASAero(om.Group):
             'symmetry': True,
             'span': 1,
             'root_chord': 1,
-            'taper': 1,
-            'sweep': 1,
             'span_cos_spacing': 1,
             'chord_cos_spacing': 1,
             'offset': np.array([htail_dist, 0, htail_z_offset]),  # offset from wing, x-aft and z-up
@@ -287,13 +285,15 @@ class OASAero(om.Group):
 
         htail_mesh = generate_mesh(mesh_dict)
 
+        tc = aviary_inputs.get_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD)
+
         htail_surface = {
             'name': 'htail',
             'symmetry': True,
             'S_ref_type': 'projected',
             'mesh': htail_mesh,
             'fem_model_type': 'tube',
-            't_over_c': aviary_inputs.get_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD),
+            't_over_c_cp': np.array([tc, tc]),
             'c_max_t': 0.3,  # NACA 00 series
             'with_viscous': False,
             'with_wave': False,

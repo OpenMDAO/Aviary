@@ -1,6 +1,6 @@
-from copy import deepcopy
-
-
+"""
+Phase info for a simple UAV mission.
+"""
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
     'climb': {
@@ -85,6 +85,5 @@ phase_info = {
     'post_mission': {
         'include_landing': False,
         # 'target_range': (200, 'ft'),
-        # 'constraint_range':True,
     },
 }
