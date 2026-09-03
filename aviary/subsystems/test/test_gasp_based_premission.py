@@ -29,7 +29,9 @@ class PreMissionGroupTest(unittest.TestCase):
         """premission: geometry + mass."""
         prob = self.prob
         preprocess_options(self.gasp_inputs)
-        geom_and_mass_subsystems = [get_default_subsystems('GASP')[k] for k in ['geometry', 'mass']]
+        geom_and_mass_subsystems = [
+            get_default_subsystems('GASP')[k] for k in ['geometry', 'mass', 'energy']
+        ]
 
         prob.model.add_subsystem(
             'pre_mission',
@@ -409,7 +411,9 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         prob = self.prob
 
         preprocess_options(self.gasp_inputs)
-        geom_and_mass_subsystems = [get_default_subsystems('GASP')[k] for k in ['geometry', 'mass']]
+        geom_and_mass_subsystems = [
+            get_default_subsystems('GASP')[k] for k in ['geometry', 'mass', 'energy']
+        ]
 
         prob.model.add_subsystem(
             'pre_mission',

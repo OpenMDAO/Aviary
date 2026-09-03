@@ -18,7 +18,7 @@ from aviary.utils.process_input_decks import create_vehicle
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
-# @use_tempdirs
+@use_tempdirs
 @require_pyoptsparse(optimizer='IPOPT')
 # TODO need to add asserts with "truth" values
 class LargeHybridTurbopropFreighterBenchmark(unittest.TestCase):

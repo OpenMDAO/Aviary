@@ -1367,7 +1367,7 @@ add_meta_data(
         'FLOPS': None,  # 'DARM.WMARG',
     },
     units='lbm',
-    desc='empty mass margin',
+    desc='Fraction of calculated empty mass to be added as additional margin.',
     default_value=0.0,
 )
 
@@ -1381,7 +1381,7 @@ add_meta_data(
         'FLOPS': 'WTIN.EWMARG',  # ['&DEFINE.WTIN.EWMARG', 'DARM.EWMARG'],
     },
     units='unitless',
-    desc='empty mass margin scaler',
+    desc='Empty mass margin scaler',
     default_value=0.0,
 )
 
@@ -7006,8 +7006,8 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     option=True,
     units='unitless',
-    desc='Required fuel reserves, given as a precentage of mission fuel.'
-    'Mission fuel only includes normal phases and excludes reserve phases.',
+    desc='Required fuel reserves, given as a fraction of mission fuel. Mission fuel only includes '
+    'main phases and excludes reserve phases.',
     default_value=0.0,
 )
 

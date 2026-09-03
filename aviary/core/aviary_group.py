@@ -1026,12 +1026,14 @@ class AviaryGroup(om.Group):
             upstream_analytic = [item for item in vars1 if item.startswith('initial_')]
             downstream_analytic = [item for item in vars2 if item.startswith('initial_')]
 
-            # If the user specifies a specific initial mach/altitude for the first reserve phase,
-            # allow discontinuities for those variables between the main and reserve mission
-            if self.reserve_phases and phase2 == self.reserve_phases[0]:
-                for var in (Dynamic.Mission.ALTITUDE, Dynamic.Atmosphere.MACH):
-                    if phase_info2.get(f'{var}_initial', (None, None))[0]:
-                        common = common - {var}
+            # TODO 2DOF simple cruise breaks this, so it currently can't support discontinuous reserves
+            if self.mission_method is ENERGY_STATE:
+                # If the user specifies a specific initial mach/altitude for the first reserve phase,
+                # allow discontinuities for those variables between the main and reserve mission
+                if self.reserve_phases and phase2 == self.reserve_phases[0]:
+                    for var in (Dynamic.Mission.ALTITUDE, Dynamic.Atmosphere.MACH):
+                        if phase_info2.get(f'{var}_initial', (None, None))[0]:
+                            common = common - {var}
 
             # Sort because of MPI
             for var in sorted(common):

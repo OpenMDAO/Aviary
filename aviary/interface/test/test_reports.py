@@ -36,6 +36,7 @@ class TestReports(unittest.TestCase):
             'time (s)',
             'altitude (ft)',
             'altitude_rate (ft/s)',
+            'cumulative_fuel_burn (lbm)',
             'distance (m)',
             'drag (lbf)',
             'drag_coefficient (unitless)',
@@ -57,6 +58,7 @@ class TestReports(unittest.TestCase):
                 '0.0',
                 '0.0',
                 '8.333333333333337',
+                '1.0',
                 '1.0',
                 '21108.341035874902',
                 '0.260025166162475',
@@ -171,6 +173,6 @@ class TestReports(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestReports()
-    test.test_multiple_off_design_report_directories()
+    unittest.main()
+    # test = TestReports()
+    # test.test_multiple_off_design_report_directories()
