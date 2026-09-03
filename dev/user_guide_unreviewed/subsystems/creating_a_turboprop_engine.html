@@ -37,8 +37,8 @@
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=3683e473" />
     <link rel="stylesheet" type="text/css" href="../../_static/version_switcher.css?v=516df71e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=3683e473" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -654,12 +654,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1788286349.187793] [runnervmgx7h7:5785 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55f197fac620 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1788286349.188116] [runnervmgx7h7:5785 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervmgx7h7:05785] pml_ucx.c:313  Error: Failed to create UCP worker
-Warning: As-flown payload (42673.0 lbm) is greater than maximum payload (31273.0 lbm). The aircraft will be undersized for this payload!
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: As-flown payload (42673.0 lbm) is greater than maximum payload (31273.0 lbm). The aircraft will be undersized for this payload!
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1198: OMDeprecationWarning:&#39;pre_mission.core_subsystems.mass.fixed_mass.payload&#39; &lt;class PayloadGroup&gt;: d(payload_mass_des)/d(aircraft:crew_and_payload:mass_per_passenger_with_bags): Partial was declared to be exactly zero. This is inefficient and the declaration should be removed. In a future version of OpenMDAO this behavior will raise an error.
