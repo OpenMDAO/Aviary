@@ -383,22 +383,14 @@ class CoreMassBuilder(MassBuilder):
             f.write('||||\n')
 
             # FUEL GROUP #
-            val1, units1 = find_variable_in_problem(Mission.FUEL_MASS, prob, self.meta_data)
-            val2, units2 = find_variable_in_problem(Mission.RESERVE_FUEL_MASS, prob, self.meta_data)
-            if val1 != 'Not Found in Model' or val2 != 'Not Found in Model':
-                fuel_sum = 0
-                units = units1
-                if not isinstance(val1, str):
-                    fuel_sum += val1
-                if not isinstance(val2, str):
-                    # need to make sure summing masses of the same units
-                    if units1 != units2:
-                        fuel_sum += convert_units(val2, units2, units1)
-                    else:
-                        fuel_sum += val2
-                f.write(f'|Total Fuel|{fuel_sum}|{units}|\n')
-                f.write(f'|{tab}Mission Fuel|{val1}|{units1}|\n')
-                f.write(f'|{tab}Reserve Fuel|{val2}|{units2}|\n')
+            val, units = find_variable_in_problem(Mission.TOTAL_FUEL_MASS, prob, self.meta_data)
+            f.write(f'|Total Fuel|{val}|{units}|\n')
+            val, units = find_variable_in_problem(Mission.FUEL_MASS, prob, self.meta_data)
+            f.write(f'|{tab}Mission Fuel|{val}|{units}|\n')
+            val, units = find_variable_in_problem(
+                Mission.TOTAL_RESERVE_FUEL_MASS, prob, self.meta_data
+            )
+            f.write(f'|{tab}Reserve Fuel|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Mission.GROSS_MASS, prob, self.meta_data)
             f.write(f'|**Gross Mass**|**{val}**|**{units}**|\n')
