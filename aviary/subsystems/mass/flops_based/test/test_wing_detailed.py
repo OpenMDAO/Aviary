@@ -53,9 +53,6 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION: inputs.get_val(
                 Aircraft.Wing.INPUT_STATION_DISTRIBUTION
             ),
-            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: inputs.get_val(
-                Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
-            ),
             Aircraft.Wing.NUM_INTEGRATION_STATIONS: inputs.get_val(
                 Aircraft.Wing.NUM_INTEGRATION_STATIONS
             ),
@@ -86,6 +83,7 @@ class DetailedWingBendingTest(unittest.TestCase):
                 Aircraft.Engine.WING_LOCATIONS,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
                 Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
+                Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL,
             ],
             output_keys=[
                 Aircraft.Wing.BENDING_MATERIAL_FACTOR,
@@ -125,9 +123,6 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION: aviary_options.get_val(
                 Aircraft.Wing.INPUT_STATION_DISTRIBUTION
             ),
-            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
-                Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
-            ),
             Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(
                 Aircraft.Wing.NUM_INTEGRATION_STATIONS
             ),
@@ -150,6 +145,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
             Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL,
         ]
 
         for key in input_keys:
@@ -178,6 +174,7 @@ class DetailedWingBendingTest(unittest.TestCase):
         )
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-10)
 
+        # is this needed? There is no compute_partial() in DetailedWingBendingFact
         partial_data = prob.check_partials(
             out_stream=None,
             compact_print=True,
@@ -213,9 +210,6 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION: aviary_options.get_val(
                 Aircraft.Wing.INPUT_STATION_DISTRIBUTION
             ),
-            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
-                Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
-            ),
             Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(
                 Aircraft.Wing.NUM_INTEGRATION_STATIONS
             ),
@@ -240,6 +234,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
             Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL,
         ]
 
         for key in input_keys:
@@ -296,9 +291,6 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION: aviary_options.get_val(
                 Aircraft.Wing.INPUT_STATION_DISTRIBUTION
             ),
-            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
-                Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
-            ),
             Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(
                 Aircraft.Wing.NUM_INTEGRATION_STATIONS
             ),
@@ -323,6 +315,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
             Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL,
         ]
 
         for key in input_keys:
@@ -374,9 +367,6 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION: aviary_options.get_val(
                 Aircraft.Wing.INPUT_STATION_DISTRIBUTION
             ),
-            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
-                Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
-            ),
             Aircraft.Wing.NUM_INTEGRATION_STATIONS: aviary_options.get_val(
                 Aircraft.Wing.NUM_INTEGRATION_STATIONS
             ),
@@ -401,6 +391,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
             Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL,
         ]
 
         for key in input_keys:
@@ -426,7 +417,7 @@ class DetailedWingBendingTest(unittest.TestCase):
     def test_intensity_factor(self):
         """
         data taken from high_wing_single_aisle.csv
-        Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL = 3, 1, 1.5, 2.5
+        Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL = 3, 1, 1.5, 2.5, 1.25, 2.75
         """
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
@@ -435,7 +426,6 @@ class DetailedWingBendingTest(unittest.TestCase):
         options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION, val=[0.0, 0.5, 1.0], units='unitless'
         )
-        options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=3, units='unitless')
         options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, val=46, units='unitless')
 
         prob = self.prob
@@ -470,6 +460,9 @@ class DetailedWingBendingTest(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, val=0.01, units='unitless'
         )
+        prob.model.set_input_defaults(
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=3, units='unitless'
+        )
 
         setup_model_options(prob, options)
         prob.setup(check=False, force_alloc_complex=True)
@@ -485,7 +478,9 @@ class DetailedWingBendingTest(unittest.TestCase):
         pod_inertia_factor = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
         assert_near_equal(pod_inertia_factor, 0.9772998541, tolerance=1e-9)
 
-        options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=1, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=1, units='unitless'
+        )
         setup_model_options(prob, options)
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
@@ -496,7 +491,9 @@ class DetailedWingBendingTest(unittest.TestCase):
         pod_inertia_factor = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
         assert_near_equal(pod_inertia_factor, 1.0, tolerance=1e-9)
 
-        options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=1.5, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=1.5, units='unitless'
+        )
         setup_model_options(prob, options)
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
@@ -507,13 +504,43 @@ class DetailedWingBendingTest(unittest.TestCase):
         pod_inertia_factor = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
         assert_near_equal(pod_inertia_factor, 1.0, tolerance=1e-9)
 
-        options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=2.5, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=2.5, units='unitless'
+        )
         setup_model_options(prob, options)
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
 
         bending_mat_factor = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         assert_near_equal(bending_mat_factor, 2.61652282, tolerance=1e-9)
+
+        pod_inertia_factor = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
+        assert_near_equal(pod_inertia_factor, 1.0, tolerance=1e-9)
+
+        prob.model.set_input_defaults(
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=1.25, units='unitless'
+        )
+        setup_model_options(prob, options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        bending_mat_factor = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
+        # without smoothing, it is 1.7507575953
+        assert_near_equal(bending_mat_factor, 1.78032845, tolerance=1e-9)
+
+        pod_inertia_factor = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
+        assert_near_equal(pod_inertia_factor, 1.0, tolerance=1e-9)
+
+        prob.model.set_input_defaults(
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, val=2.75, units='unitless'
+        )
+        setup_model_options(prob, options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        bending_mat_factor = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
+        # without smoothing, it is 2.7838124896
+        assert_near_equal(bending_mat_factor, 2.8107811534, tolerance=1e-9)
 
         pod_inertia_factor = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
         assert_near_equal(pod_inertia_factor, 1.0, tolerance=1e-9)
@@ -542,7 +569,6 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
         aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [0.5, 1.0], units='unitless'
         )
-        aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
         aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50, units='unitless')
         aviary_options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, False, units='unitless')
 
@@ -563,6 +589,9 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless'
         )
 
         setup_model_options(self.prob, aviary_options)
@@ -614,7 +643,6 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
             [0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
-        aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
         aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 100, units='unitless')
         aviary_options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
 
@@ -635,6 +663,9 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless'
         )
 
         setup_model_options(self.prob, aviary_options)
@@ -734,7 +765,6 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
             [0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
             units='unitless',
         )
-        aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
         aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 10, units='unitless')
         aviary_options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
 
@@ -754,6 +784,9 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless'
         )
 
         setup_model_options(self.prob, aviary_options)
@@ -797,6 +830,3 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # test = DetailedWingBendingTest()
-    # test.setUp()
-    # test.test_intensity_factor()
