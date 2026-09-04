@@ -2097,7 +2097,9 @@ add_meta_data(
         'FLOPS': 'ENGDIN.FFFAC',
     },
     units='unitless',
-    desc='Linear term in fuel flow scaling equation',
+    desc='Linear term in fuel flow scaling equation. Note that the slope of fuel flow with resepect '
+    'to this variable changes from positive to negative as Aircraft.Engine.SCALE_FACTOR crosses '
+    'above 1.',
     default_value=0.0,
     option=True,
     multivalue=True,
