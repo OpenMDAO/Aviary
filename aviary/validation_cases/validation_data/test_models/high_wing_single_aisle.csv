@@ -32,7 +32,7 @@ aircraft:engine:flight_idle_max_fraction,1.01,unitless   #check
 aircraft:engine:flight_idle_min_fraction,0.08,unitless
 aircraft:engine:flight_idle_thrust_fraction,0.00001,unitless   #check
 aircraft:engine:fuel_flow_scaler_constant_term,0.,unitless
-aircraft:engine:fuel_flow_scaler_linear_term,1.,unitless
+aircraft:engine:fuel_flow_scaler_linear_term,0.,unitless
 aircraft:engine:generate_flight_idle,True,unitless
 aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
