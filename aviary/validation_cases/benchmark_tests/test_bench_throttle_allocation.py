@@ -126,6 +126,8 @@ class ThrottleAllocationTestcase(unittest.TestCase):
 
         prob.run_aviary_problem(suppress_solver_print=True)
 
+        self.assertTrue(prob.result.success)
+
         alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
         alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
@@ -165,6 +167,8 @@ class ThrottleAllocationTestcase(unittest.TestCase):
         prob.setup()
 
         prob.run_aviary_problem(suppress_solver_print=True)
+
+        self.assertTrue(prob.result.success)
 
         alloc_climb = prob.get_val('traj.climb.controls:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.controls:throttle_allocations')
