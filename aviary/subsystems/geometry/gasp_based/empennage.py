@@ -1,8 +1,58 @@
 import numpy as np
 import openmdao.api as om
+import warnings
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft
+
+
+class MomentRatio(om.ExplicitComponent):
+    """GASP tail moment ratio"""
+
+    def initialize(self):
+        self.options.declare(
+            'orientation',
+            values=['horizontal', 'vertical'],
+            desc='Tail orientation, can be horizontal or vertical.',
+        )
+
+    def setup(self):
+        veritcal = self.options['orientation'] == 'vertical'
+        if veritcal:
+            self.io_names = {
+                'moment_ratio': Aircraft.VerticalTail.MOMENT_RATIO,
+            }
+        else:
+            self.io_names = {
+                'moment_ratio': Aircraft.HorizontalTail.MOMENT_RATIO,
+            }
+
+        # coefficients used in the empirical equation
+        if veritcal:
+            self.k = [1.862, 0.338]
+        else:
+            self.k = [0.271, 0.0955]
+
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless'
+        )
+
+        add_aviary_output(self, self.io_names['moment_ratio'], units='unitless')
+
+    def setup_partials(self):
+        self.declare_partials(self.io_names['moment_ratio'], '*')
+
+    def compute(self, inputs, outputs):
+        htail_loc = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
+        k1, k2 = self.k
+        ch2 = k1 + k2 * htail_loc
+        outputs[self.io_names['moment_ratio']] = ch2
+
+    def compute_partials(self, inputs, J):
+        str_moment_ratio = self.io_names['moment_ratio']
+
+        k1, k2 = self.k
+        J[str_moment_ratio, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION] = k2
 
 
 class TailVolCoef(om.ExplicitComponent):
@@ -232,6 +282,43 @@ class TailSize(om.ExplicitComponent):
         J[str_arm, str_wing_ref] = 1.0 / r_arm
 
 
+class ChordCheck(om.ExplicitComponent):
+    def setup(self):
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless'
+        )
+        add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.HorizontalTail.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='ft')
+        add_aviary_input(self, Aircraft.VerticalTail.ROOT_CHORD, units='ft')
+        add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, units='unitless')
+
+    def compute(self, inputs, outputs):
+        htail_loc = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
+        hrchord = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
+        vrchord = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
+        v_tr = inputs[Aircraft.VerticalTail.TAPER_RATIO]
+        h_area = inputs[Aircraft.HorizontalTail.AREA]
+        h_span = inputs[Aircraft.HorizontalTail.SPAN]
+
+        if htail_loc > 0:
+            chord_check = vrchord * (1.0 - htail_loc * (1.0 - v_tr))
+            if chord_check < hrchord:
+                corr_hrchord = chord_check
+                warnings.warn(
+                    f'Horizontal tail center-line chord must be {corr_hrchord} '
+                    '(ft) to be located at specified position on vertical tail.'
+                )
+                corr_h_tr = 2.0 * h_area / corr_hrchord / h_span - 1.0
+                if corr_h_tr <= 1.0:
+                    warnings.warn(f'Horizontal taper ratio should be {corr_h_tr}.')
+                else:
+                    corr_h_tr = 1.0
+                    corr_h_ar = h_area / corr_hrchord / corr_hrchord
+                    warnings.warn(f'Horizontal taper ratio should be {corr_h_tr}.')
+                    warnings.warn(f'Horizontal aspect ratio should be {corr_h_ar}.')
+
+
 class EmpennageSize(om.Group):
     """GASP geometry calculations for both horizontal and vertical tails.
 
@@ -239,27 +326,34 @@ class EmpennageSize(om.Group):
     computed via empirical relationships to general airplane parameters.
     """
 
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF)
-        add_aviary_option(self, Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF)
-
     def setup(self):
         # For cruciform/T-tail configurations, see issue #1089
 
-        if self.options[Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF]:
-            self.add_subsystem(
-                'htail_vc',
-                TailVolCoef(orientation='horizontal'),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
-        if self.options[Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF]:
-            self.add_subsystem(
-                'vtail_vc',
-                TailVolCoef(orientation='vertical'),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
+        self.add_subsystem(
+            'htail_mr',
+            MomentRatio(orientation='horizontal'),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
+            'vtail_mr',
+            MomentRatio(orientation='vertical'),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        self.add_subsystem(
+            'htail_vc',
+            TailVolCoef(orientation='horizontal'),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
+            'vtail_vc',
+            TailVolCoef(orientation='vertical'),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
 
         self.add_subsystem(
             'htail',
@@ -273,4 +367,10 @@ class EmpennageSize(om.Group):
             TailSize(orientation='vertical'),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
+        )
+
+        self.add_subsystem(
+            'chord_check',
+            ChordCheck(),
+            promotes_inputs=['*'],
         )
