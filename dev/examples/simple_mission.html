@@ -302,6 +302,7 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Examples Outline</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Running a Simple Mission</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_optimization.html">Running a Custom Optimization</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="reserve_mission.html">Running a Reserve Mission</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="off_design_missions.html">Off-Design Missions</a></li>
@@ -598,40 +599,13 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.cmd_entry_points</span><span class="w"> </span><span class="kn">import</span> <span class="n">_command_map</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.run_aviary</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_aviary</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue_keys</span><span class="p">,</span> <span class="n">glue_variable</span>
-
-<span class="n">Path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;advanced_single_aisle_FLOPS.csv&#39;</span><span class="p">))</span>
-<span class="n">Path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;models/missions/energy_state_default.py&#39;</span><span class="p">))</span>
-
-<span class="k">if</span> <span class="s1">&#39;run_mission&#39;</span> <span class="ow">in</span> <span class="n">_command_map</span><span class="p">:</span>
-    <span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;run_mission&#39;</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">glue_variable</span><span class="p">(</span><span class="n">run_aviary</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">glue_variable</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">run_aviary</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">()&#39;</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<p><code class="docutils literal notranslate"><span class="pre">run_mission</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">run_aviary</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">run_aviary()</span></code></p>
-</div>
-</div>
-<section class="tex2jax_ignore mathjax_ignore" id="running-a-simple-mission">
+  <section class="tex2jax_ignore mathjax_ignore" id="running-a-simple-mission">
 <h1>Running a Simple Mission<a class="headerlink" href="#running-a-simple-mission" title="Link to this heading">#</a></h1>
-<p>This example will show how to run an already existing aircraft through a pre-defined mission in Aviary. We will demonstrate two ways to run this example: through the command line interface, and using the Python API.</p>
+<p>This example will show how to run an example aircraft through a pre-defined mission in Aviary. We will demonstrate two ways to run this example: through the command line interface, and using the Python API.</p>
 <section id="aircraft">
 <h2>Aircraft<a class="headerlink" href="#aircraft" title="Link to this heading">#</a></h2>
-<p>The aircraft model used in this example is Aviary’s “Advanced Single Aisle”. This is a model of a theoretical aircraft with technology predictions of what a next-generation air transport might look like. The advanced single aisle is a conventional “tube-and-wing” configuration that seats 154 passengers - essentially a Boeing 737 or Airbus A320 with slightly improved performance. This aircraft uses the FLOPS analysis for aerodyanmics, geometry, and mass estimation.</p>
-<p>The aircraft model exists as a csv text file (which can be seen <a class="reference download internal" download="" href="../_downloads/793f37602ad20f239d8bab9a689e4d54/advanced_single_aisle_FLOPS.csv"><span class="xref download myst">here</span></a>).</p>
+<p>The aircraft model used in this example is Aviary’s “Advanced Single Aisle”. This is a model of a theoretical aircraft with technology predictions of what a next-generation air transport might look like. The advanced single aisle is a conventional “tube-and-wing” configuration that seats 154 passengers - essentially a Boeing 737 or Airbus A320 with slightly improved performance. This aircraft uses the FLOPS analysis for aerodynamics, geometry, and mass estimation.</p>
+<p>The aircraft model exists as a csv file (which can be seen <a class="reference download internal" download="" href="../_downloads/793f37602ad20f239d8bab9a689e4d54/advanced_single_aisle_FLOPS.csv"><span class="xref download myst">here</span></a>).</p>
 </section>
 <section id="mission">
 <h2>Mission<a class="headerlink" href="#mission" title="Link to this heading">#</a></h2>
@@ -663,11 +637,10 @@
 <section id="running-via-the-command-line">
 <h2>Running via the Command Line<a class="headerlink" href="#running-via-the-command-line" title="Link to this heading">#</a></h2>
 <p>We can run this aircraft model through the default mission very simply from the command line using the <code class="docutils literal notranslate"><span class="pre">run_mission</span></code> command. <!-- TODO: link to docs on that specific command once that is reviewed -->
-This command needs the name of the aircraft csv file and phase_info file. Because we are using an example model provided in the Aviary source code itself, we only have to specify the name of this known aircraft. If you want to run your own custom model, you will need to provide the filepath to where that csv file is located.</p>
-<p>In addition, we are also using the default “phase_info”, so we do not need to specify our own file. Just like with the aircraft model, if you want to run a custom mission you must provide the path to where you have defined that Python script.</p>
+This command normally needs the name of the aircraft csv file and phase_info file, since we are using an example model and default phase_info provided in the Aviary source code itself, we only have to specify the name of this known aircraft.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>aviary<span class="w"> </span>run_mission<span class="w"> </span>advanced_single_aisle
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>aviary<span class="w"> </span>run_mission<span class="w"> </span>advanced_single_aisle_FLOPS
 </pre></div>
 </div>
 </div>
@@ -676,63 +649,123 @@ This command needs the name of the aircraft csv file and phase_info file. Becaus
   warnings.warn(&quot;matplotlib not found, plotting disabled.&quot;)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
-  File <span class=" -Color -Color-Magenta">&quot;/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/bin/aviary&quot;</span>, line <span class=" -Color -Color-Magenta">6</span>, in <span class=" -Color -Color-Magenta">&lt;module&gt;</span>
-    sys.exit(<span class=" -Color -Color-Red">aviary_cmd</span><span class=" -Color -Color-Bold -Color-Bold-Red">()</span>)
-             <span class=" -Color -Color-Red">~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/home/runner/work/Aviary/Aviary/aviary/interface/cmd_entry_points.py&quot;</span>, line <span class=" -Color -Color-Magenta">203</span>, in <span class=" -Color -Color-Magenta">aviary_cmd</span>
-    <span class=" -Color -Color-Red">options.executor</span><span class=" -Color -Color-Bold -Color-Bold-Red">(options, user_args)</span>
-    <span class=" -Color -Color-Red">~~~~~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/home/runner/work/Aviary/Aviary/aviary/interface/run_aviary.py&quot;</span>, line <span class=" -Color -Color-Magenta">199</span>, in <span class=" -Color -Color-Magenta">_exec_run_aviary</span>
-    <span class=" -Color -Color-Red">run_aviary_cmd</span><span class=" -Color -Color-Bold -Color-Bold-Red">(</span>
-    <span class=" -Color -Color-Red">~~~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">input_deck=args.input_deck,</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-    ...&lt;4 lines&gt;...
-        <span class=" -Color -Color-Bold -Color-Bold-Red">real_time_plotting=args.rtplot,</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-    <span class=" -Color -Color-Bold -Color-Bold-Red">)</span>
-    <span class=" -Color -Color-Bold -Color-Bold-Red">^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/home/runner/work/Aviary/Aviary/aviary/interface/run_aviary.py&quot;</span>, line <span class=" -Color -Color-Magenta">155</span>, in <span class=" -Color -Color-Magenta">run_aviary_cmd</span>
-    prob = run_aviary(input_deck, phase_info, **kwargs)
-  File <span class=" -Color -Color-Magenta">&quot;/home/runner/work/Aviary/Aviary/aviary/interface/run_aviary.py&quot;</span>, line <span class=" -Color -Color-Magenta">88</span>, in <span class=" -Color -Color-Magenta">run_aviary</span>
-    <span class=" -Color -Color-Red">prob.load_inputs</span><span class=" -Color -Color-Bold -Color-Bold-Red">(</span>
-    <span class=" -Color -Color-Red">~~~~~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">aircraft_data, phase_info, phase_info_modifier=phase_info_modifier, verbosity=verbosity</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-    <span class=" -Color -Color-Bold -Color-Bold-Red">)</span>
-    <span class=" -Color -Color-Bold -Color-Bold-Red">^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/home/runner/work/Aviary/Aviary/aviary/core/aviary_problem.py&quot;</span>, line <span class=" -Color -Color-Magenta">202</span>, in <span class=" -Color -Color-Magenta">load_inputs</span>
-    aviary_inputs, verbosity = <span class=" -Color -Color-Red">self.model.load_inputs</span><span class=" -Color -Color-Bold -Color-Bold-Red">(</span>
-                               <span class=" -Color -Color-Red">~~~~~~~~~~~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">aircraft_data=aircraft_data,</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-    ...&lt;3 lines&gt;...
-        <span class=" -Color -Color-Bold -Color-Bold-Red">verbosity=verbosity,</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^</span>
-    <span class=" -Color -Color-Bold -Color-Bold-Red">)</span>
-    <span class=" -Color -Color-Bold -Color-Bold-Red">^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/home/runner/work/Aviary/Aviary/aviary/core/aviary_group.py&quot;</span>, line <span class=" -Color -Color-Magenta">284</span>, in <span class=" -Color -Color-Magenta">load_inputs</span>
-    aviary_inputs, self.initialization_guesses = <span class=" -Color -Color-Red">create_vehicle</span><span class=" -Color -Color-Bold -Color-Bold-Red">(</span>
-                                                 <span class=" -Color -Color-Red">~~~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">aircraft_data, meta_data=self.meta_data, verbosity=verbosity</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-    <span class=" -Color -Color-Bold -Color-Bold-Red">)</span>
-    <span class=" -Color -Color-Bold -Color-Bold-Red">^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/home/runner/work/Aviary/Aviary/aviary/utils/process_input_decks.py&quot;</span>, line <span class=" -Color -Color-Magenta">111</span>, in <span class=" -Color -Color-Magenta">create_vehicle</span>
-    aircraft_values, initialization_guesses = <span class=" -Color -Color-Red">parse_inputs</span><span class=" -Color -Color-Bold -Color-Bold-Red">(</span>
-                                              <span class=" -Color -Color-Red">~~~~~~~~~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">vehicle_deck=vehicle_deck,</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-    ...&lt;2 lines&gt;...
-        <span class=" -Color -Color-Bold -Color-Bold-Red">meta_data=meta_data,</span>
-        <span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^</span>
-    <span class=" -Color -Color-Bold -Color-Bold-Red">)</span>
-    <span class=" -Color -Color-Bold -Color-Bold-Red">^</span>
-  File <span class=" -Color -Color-Magenta">&quot;/home/runner/work/Aviary/Aviary/aviary/utils/process_input_decks.py&quot;</span>, line <span class=" -Color -Color-Magenta">160</span>, in <span class=" -Color -Color-Magenta">parse_inputs</span>
-    with <span class=" -Color -Color-Red">open</span><span class=" -Color -Color-Bold -Color-Bold-Red">(vehicle_deck, newline=&#39;&#39;)</span> as f_in:
-         <span class=" -Color -Color-Red">~~~~</span><span class=" -Color -Color-Bold -Color-Bold-Red">^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
-<span class=" -Color -Color-Bold -Color-Bold-Magenta">IsADirectoryError</span>: <span class=" -Color -Color-Magenta">[Errno 21] Is a directory: &#39;/home/runner/work/Aviary/Aviary/aviary/models/aircraft/advanced_single_aisle&#39;</span>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
+                     variables with only lower bounds:       93
+                variables with lower and upper bounds:        3
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:       94
+Total number of inequality constraints...............:       61
+        inequality constraints with only lower bounds:        1
+   inequality constraints with lower and upper bounds:       60
+        inequality constraints with only upper bounds:        0
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
+
+                                   (scaled)                 (unscaled)
+Objective...............:   1.3813638330255082e+00    1.3813638330255082e+00
+Dual infeasibility......:   3.1079971202967873e-08    3.1079971202967873e-08
+Constraint violation....:   5.0505127569295273e-15    5.0505127569295273e-15
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   9.0922310433391341e-08    9.0922310433391341e-08
+Overall NLP error.......:   9.0922310433391341e-08    9.0922310433391341e-08
+
+
+Number of objective function evaluations             = 16
+Number of objective gradient evaluations             = 16
+Number of equality constraint evaluations            = 16
+Number of inequality constraint evaluations          = 16
+Number of equality constraint Jacobian evaluations   = 16
+Number of inequality constraint Jacobian evaluations = 16
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 7.108
+
+EXIT: Optimal Solution Found.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization Problem -- Optimization using pyOpt_sparse
+================================================================================
+    Objective Function: _objfunc
+
+
+   Objectives
+      Index  Name                               Value
+          0  mission:objectives:fuel     1.381364E+00
+
+   Variables (c - continuous, i - integer, d - discrete)
+      Index  Name                              Type      Lower Bound            Value      Upper Bound     Status
+          2  traj.climb.t_duration_0              c     5.000000E-01     5.000006E-01     1.500000E+00          l
+
+   Constraints (i - inequality, e - equality)
+      Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
+        154  traj.descent.throttle[path]                             i   0.000000E+00    5.220541E-07    1.000000E+00         l    9.00000E+100
+</pre></div>
+</div>
+</div>
+</div>
+<p>If you want to run your own custom aircraft or mission analysis, you will need to provide the filepaths to where the aircraft csv file and phase_info mission files are located.
+The following command explicitly points to the files used in the above run of the advanced_single_aisle_FLOPS model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>aviary<span class="w"> </span>run_mission<span class="w"> </span>--phase_info<span class="w"> </span>models/missions/energy_state_default.py<span class="w"> </span>models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/modopt/core/visualization.py:11: UserWarning: matplotlib not found, plotting disabled.
+  warnings.warn(&quot;matplotlib not found, plotting disabled.&quot;)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
+                     variables with only lower bounds:       93
+                variables with lower and upper bounds:        3
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:       94
+Total number of inequality constraints...............:       61
+        inequality constraints with only lower bounds:        1
+   inequality constraints with lower and upper bounds:       60
+        inequality constraints with only upper bounds:        0
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
+
+                                   (scaled)                 (unscaled)
+Objective...............:   1.3813638330255082e+00    1.3813638330255082e+00
+Dual infeasibility......:   3.1079971202967873e-08    3.1079971202967873e-08
+Constraint violation....:   5.0505127569295273e-15    5.0505127569295273e-15
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   9.0922310433391341e-08    9.0922310433391341e-08
+Overall NLP error.......:   9.0922310433391341e-08    9.0922310433391341e-08
+
+
+Number of objective function evaluations             = 16
+Number of objective gradient evaluations             = 16
+Number of equality constraint evaluations            = 16
+Number of inequality constraint evaluations          = 16
+Number of equality constraint Jacobian evaluations   = 16
+Number of inequality constraint Jacobian evaluations = 16
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 7.008
+
+EXIT: Optimal Solution Found.
+
+
+Optimization Problem -- Optimization using pyOpt_sparse
+================================================================================
+    Objective Function: _objfunc
+
+
+   Objectives
+      Index  Name                               Value
+          0  mission:objectives:fuel     1.381364E+00
+
+   Variables (c - continuous, i - integer, d - discrete)
+      Index  Name                              Type      Lower Bound            Value      Upper Bound     Status
+          2  traj.climb.t_duration_0              c     5.000000E-01     5.000006E-01     1.500000E+00          l
+
+   Constraints (i - inequality, e - equality)
+      Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
+        154  traj.descent.throttle[path]                             i   0.000000E+00    5.220541E-07    1.000000E+00         l    9.00000E+100
 </pre></div>
 </div>
 </div>
@@ -767,12 +800,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813949090359181e+00    1.3813949090359181e+00
-Dual infeasibility......:   3.1079083637281060e-08    3.1079083637281060e-08
-Constraint violation....:   4.5974843637493777e-15    4.5974843637493777e-15
+Objective...............:   1.3813638330255038e+00    1.3813638330255038e+00
+Dual infeasibility......:   3.1079969794372437e-08    3.1079969794372437e-08
+Constraint violation....:   5.0663948725173528e-15    5.0663948725173528e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922309819267281e-08    9.0922309819267281e-08
-Overall NLP error.......:   9.0922309819267281e-08    9.0922309819267281e-08
+Complementarity.........:   9.0922310433412238e-08    9.0922310433412238e-08
+Overall NLP error.......:   9.0922310433412238e-08    9.0922310433412238e-08
 
 
 Number of objective function evaluations             = 16
@@ -782,7 +815,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 5.989
+Total seconds in IPOPT                               = 7.122
 
 EXIT: Optimal Solution Found.
 
@@ -794,7 +827,7 @@ Optimization Problem -- Optimization using pyOpt_sparse
 
    Objectives
       Index  Name                               Value
-          0  mission:objectives:fuel     1.381395E+00
+          0  mission:objectives:fuel     1.381364E+00
 
    Variables (c - continuous, i - integer, d - discrete)
       Index  Name                              Type      Lower Bound            Value      Upper Bound     Status
@@ -802,7 +835,7 @@ Optimization Problem -- Optimization using pyOpt_sparse
 
    Constraints (i - inequality, e - equality)
       Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-        154  traj.descent.throttle[path]                             i   0.000000E+00    5.220413E-07    1.000000E+00         l    9.00000E+100
+        154  traj.descent.throttle[path]                             i   0.000000E+00    5.220541E-07    1.000000E+00         l    9.00000E+100
 </pre></div>
 </div>
 <div class="output text_html">

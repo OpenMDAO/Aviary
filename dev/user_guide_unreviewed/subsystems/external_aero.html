@@ -298,6 +298,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples/intro.html">Examples Outline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/simple_mission.html">Running a Simple Mission</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/custom_optimization.html">Running a Custom Optimization</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../../examples/reserve_mission.html">Running a Reserve Mission</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples_unreviewed/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/off_design_missions.html">Off-Design Missions</a></li>
@@ -772,7 +773,9 @@ NL: Newton 1 ; 1.4420568e-05 0.000194332998
 +  =================================================
 +  NL: Newton 0 ; 2.13138809e-21 1
 +  NL: Newton Converged
-NL: Newton 2 ; 2.56600034e-17 3.45796738e-16
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NL: Newton 2 ; 2.56600034e-17 3.45796738e-16
 NL: Newton Converged
 
 ===============================
@@ -788,9 +791,7 @@ traj.phases.cruise.rhs_all.solver_sub
 +  traj.phases.cruise.rhs_all.solver_sub.aerodynamics
 +  ==================================================
 +  NL: Newton 0 ; 2.79973531e-06 1
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+  NL: Newton 1 ; 4.7494371e-10 0.00016963879
++  NL: Newton 1 ; 4.7494371e-10 0.00016963879
 +  NL: Newton Converged
 NL: Newton 0 ; 0.0114615784 1
 +  
@@ -824,7 +825,9 @@ traj.phases.descent.rhs_all.solver_sub
 +  NL: Newton 0 ; 2.88331882e-06 1
 +  NL: Newton 1 ; 2.76091002e-10 9.57545869e-05
 +  NL: Newton Converged
-NL: Newton 0 ; 0.123936285 1
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NL: Newton 0 ; 0.123936285 1
 +  
 +  ===================================================
 +  traj.phases.descent.rhs_all.solver_sub.aerodynamics
@@ -832,9 +835,7 @@ NL: Newton 0 ; 0.123936285 1
 +  NL: Newton 0 ; 2.49268862e-17 1
 +  NL: Newton Converged
 NL: Newton 1 ; 0.00368329355 0.0297192508
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+  
++  
 +  ===================================================
 +  traj.phases.descent.rhs_all.solver_sub.aerodynamics
 +  ===================================================

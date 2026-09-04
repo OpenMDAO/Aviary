@@ -302,6 +302,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Examples Outline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission.html">Running a Simple Mission</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/custom_optimization.html">Running a Custom Optimization</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../examples/reserve_mission.html">Running a Reserve Mission</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/off_design_missions.html">Off-Design Missions</a></li>
@@ -721,11 +722,11 @@ Total number of inequality constraints...............:       27
 
                                    (scaled)                 (unscaled)
 Objective...............:   2.5497020995242812e+00    2.5497020995242812e+00
-Dual infeasibility......:   1.7762095173698265e-08    1.7762095173698265e-08
-Constraint violation....:   7.9605171666993475e-15    7.9605171666993475e-15
+Dual infeasibility......:   1.7762093869186542e-08    1.7762093869186542e-08
+Constraint violation....:   4.8726806501420021e-15    4.8726806501420021e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0944744385303108e-08    9.0944744385303108e-08
-Overall NLP error.......:   9.0944744385303108e-08    9.0944744385303108e-08
+Complementarity.........:   9.0944744385294306e-08    9.0944744385294306e-08
+Overall NLP error.......:   9.0944744385294306e-08    9.0944744385294306e-08
 
 
 Number of objective function evaluations             = 28
@@ -735,7 +736,7 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 7.013
+Total seconds in IPOPT                               = 8.224
 
 EXIT: Optimal Solution Found.
 
@@ -791,7 +792,7 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.477071171934
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.477071171947
 </pre></div>
 </div>
 </div>
@@ -804,7 +805,7 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.020995242783
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.020995242812
 </pre></div>
 </div>
 </div>
@@ -900,12 +901,12 @@ Total number of inequality constraints...............:       27
 Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5637089674782128e+00    2.5637089674782128e+00
-Dual infeasibility......:   3.9054362334214945e-08    3.9054362334214945e-08
-Constraint violation....:   7.3362500582126873e-15    7.3362500582126873e-15
+Objective...............:   2.5637089674782065e+00    2.5637089674782065e+00
+Dual infeasibility......:   3.9054362695042033e-08    3.9054362695042033e-08
+Constraint violation....:   9.4439369852450809e-15    9.4439369852450809e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0971568541155291e-08    9.0971568541155291e-08
-Overall NLP error.......:   9.0971568541155291e-08    9.0971568541155291e-08
+Complementarity.........:   9.0971568541176282e-08    9.0971568541176282e-08
+Overall NLP error.......:   9.0971568541176282e-08    9.0971568541176282e-08
 
 
 Number of objective function evaluations             = 28
@@ -915,7 +916,8 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 6.722
+Total seconds in IPOPT       
+                        = 7.896
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -940,7 +942,7 @@ Let’s take a look at the fuel burn value:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.011155486953
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.011155486927
 </pre></div>
 </div>
 </div>
@@ -1044,7 +1046,7 @@ Number of inequality constraint evaluations          = 69
 Number of equality constraint Jacobian evaluations   = 51
 Number of inequality constraint Jacobian evaluations = 51
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 16.921
+Total seconds in IPOPT                               = 19.873
 
 EXIT: Maximum Number of Iterations Exceeded.
 </pre></div>

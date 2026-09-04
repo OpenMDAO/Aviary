@@ -302,6 +302,7 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Examples Outline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simple_mission.html">Running a Simple Mission</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_optimization.html">Running a Custom Optimization</a></li>
+
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Running a Reserve Mission</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="off_design_missions.html">Off-Design Missions</a></li>
@@ -729,12 +730,12 @@ Total number of inequality constraints...............:      105
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.9306770153230566e+00    1.9306770153230566e+00
-Dual infeasibility......:   3.9474231859382731e-08    3.9474231859382731e-08
-Constraint violation....:   1.9229436611402774e-11    1.9229436611402774e-11
+Objective...............:   1.9306323772517398e+00    1.9306323772517398e+00
+Dual infeasibility......:   3.9475756878363535e-08    3.9475756878363535e-08
+Constraint violation....:   1.9237241433270393e-11    1.9237241433270393e-11
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0961728239588560e-08    9.0961728239588560e-08
-Overall NLP error.......:   9.0961728239588560e-08    9.0961728239588560e-08
+Complementarity.........:   9.0961731257827996e-08    9.0961731257827996e-08
+Overall NLP error.......:   9.0961731257827996e-08    9.0961731257827996e-08
 
 
 Number of objective function evaluations             = 27
@@ -744,7 +745,7 @@ Number of inequality constraint evaluations          = 27
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 18.930
+Total seconds in IPOPT                               = 22.826
 
 EXIT: Optimal Solution Found.
 
@@ -756,7 +757,7 @@ Optimization Problem -- Optimization using pyOpt_sparse
 
    Objectives
       Index  Name                               Value
-          0  mission:objectives:fuel     1.930677E+00
+          0  mission:objectives:fuel     1.930632E+00
 
    Variables (c - continuous, i - integer, d - discrete)
       Index  Name                                                 Type      Lower Bound            Value      Upper Bound     Status
@@ -765,8 +766,8 @@ Optimization Problem -- Optimization using pyOpt_sparse
 
    Constraints (i - inequality, e - equality)
       Index  Name                                                                    Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-        275  traj.descent.throttle[path]                                                i   0.000000E+00    5.110334E-07    1.000000E+00         l    9.00000E+100
-        319  traj.reserve_descent.throttle[path]                                        i   0.000000E+00    1.452069E-07    1.000000E+00         l    9.00000E+100
+        275  traj.descent.throttle[path]                                                i   0.000000E+00    5.110463E-07    1.000000E+00         l    9.00000E+100
+        319  traj.reserve_descent.throttle[path]                                        i   0.000000E+00    1.452108E-07    1.000000E+00         l    9.00000E+100
 </pre></div>
 </div>
 <div class="output text_html">

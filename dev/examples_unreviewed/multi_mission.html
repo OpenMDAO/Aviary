@@ -302,6 +302,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Examples Outline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission.html">Running a Simple Mission</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/custom_optimization.html">Running a Custom Optimization</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="../examples/reserve_mission.html">Running a Reserve Mission</a></li>
 <li class="toctree-l1"><a class="reference internal" href="more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/off_design_missions.html">Off-Design Missions</a></li>
@@ -789,12 +790,12 @@ Total number of inequality constraints...............:      124
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 44
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.1871834676333940e+01    2.5517140455722929e+04
-Dual infeasibility......:   1.1101434018347949e-09    1.2951673021405938e-06
-Constraint violation....:   2.4130194634227659e-10    2.4130194634227659e-10
+Objective...............:   2.1871834676333840e+01    2.5517140455722812e+04
+Dual infeasibility......:   1.1101077220423393e-09    1.2951256757160623e-06
+Constraint violation....:   2.4130335036688672e-10    2.4130335036688672e-10
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   3.1624119734207279e-08    3.6894806356575156e-05
-Overall NLP error.......:   3.1624119734207279e-08    3.6894806356575156e-05
+Complementarity.........:   3.1624119734167012e-08    3.6894806356528176e-05
+Overall NLP error.......:   3.1624119734167012e-08    3.6894806356528176e-05
 
 
 Number of objective function evaluations             = 107
@@ -804,7 +805,7 @@ Number of inequality constraint evaluations          = 107
 Number of equality constraint Jacobian evaluations   = 48
 Number of inequality constraint Jacobian evaluations = 48
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 54.403
+Total seconds in IPOPT                               = 63.752
 
 EXIT: Optimal Solution Found.
 
@@ -1050,12 +1051,12 @@ Total number of inequality constraints...............:      124
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 44
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.1871834676333773e+01    2.5517140455722732e+04
-Dual infeasibility......:   1.1100888898842841e-09    1.2951037048649979e-06
-Constraint violation....:   2.4130617493404371e-10    2.4130617493404371e-10
+Objective...............:   2.1871834676333982e+01    2.5517140455722976e+04
+Dual infeasibility......:   1.1099802823169002e-09    1.2949769960363833e-06
+Constraint violation....:   2.4130482046324343e-10    2.4130482046324343e-10
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   3.1624119734246375e-08    3.6894806356620767e-05
-Overall NLP error.......:   3.1624119734246375e-08    3.6894806356620767e-05
+Complementarity.........:   3.1624119734217940e-08    3.6894806356587597e-05
+Overall NLP error.......:   3.1624119734217940e-08    3.6894806356587597e-05
 
 
 Number of objective function evaluations             = 107
@@ -1065,10 +1066,7 @@ Number of inequality constraint evaluations          = 107
 Number of equality constraint Jacobian evaluations   = 48
 Number of inequality constraint Jacobian evaluations = 48
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 54.619
-
-EXIT: Optimal Solution Found.
-
+Total seconds in IPOPT    
 
 Optimization Problem -- Optimization using pyOpt_sparse
 ================================================================================
@@ -1090,6 +1088,10 @@ Optimization Problem -- Optimization using pyOpt_sparse
    Constraints (i - inequality, e - equality)
       Index  Name                                                          Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
         186  mission1.gross_mass_resid                                        i   0.000000E+00    1.122580E-07    1.000000E+30         l    9.00000E+100
+
+                           = 63.386
+
+EXIT: Optimal Solution Found.
 </pre></div>
 </div>
 <div class="output text_html">
