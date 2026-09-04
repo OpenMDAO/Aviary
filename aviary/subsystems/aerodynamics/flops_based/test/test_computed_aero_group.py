@@ -9,7 +9,7 @@ from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options
-from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
@@ -34,10 +34,13 @@ class MissionDragTest(unittest.TestCase):
         engines = [build_engine_deck(flops_inputs)]
         preprocess_options(flops_inputs, engine_models=engines)
 
-        # don't need mass subsystem, so we skip it
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)[:-1]
+        # only want prop, geom, aero
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines)
         # we just want aero for mission, make a copy by itself
-        aero = default_premission_subsystems[-1]
+        aero = default_premission_subsystems['aerodynamics']
+        premission_subsystems = [
+            default_premission_subsystems[k] for k in ['propulsion', 'geometry', 'aerodynamics']
+        ]
 
         # Design conditions:
         # alt = 41000
@@ -73,7 +76,7 @@ class MissionDragTest(unittest.TestCase):
             'pre_mission',
             CorePreMission(
                 aviary_options=flops_inputs,
-                subsystems=default_premission_subsystems,
+                subsystems=premission_subsystems,
                 subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],
@@ -200,9 +203,12 @@ class MissionDragTest(unittest.TestCase):
         preprocess_options(flops_inputs, engine_models=engines)
 
         # don't need mass subsystem, so we skip it
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)[:-1]
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines)
         # we just want aero for mission, make a copy by itself
-        aero = default_premission_subsystems[-1]
+        aero = default_premission_subsystems['aerodynamics']
+        premission_subsystems = [
+            default_premission_subsystems[k] for k in ['propulsion', 'geometry', 'aerodynamics']
+        ]
 
         Sref = 1220.0
 
@@ -233,7 +239,7 @@ class MissionDragTest(unittest.TestCase):
             'pre_mission',
             CorePreMission(
                 aviary_options=flops_inputs,
-                subsystems=default_premission_subsystems,
+                subsystems=premission_subsystems,
                 subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],
@@ -357,9 +363,12 @@ class MissionDragTest(unittest.TestCase):
         preprocess_options(flops_inputs, engine_models=engines)
 
         # don't need mass subsystem, so we skip it
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)[:-1]
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines)
         # we just want aero for mission, make a copy by itself
-        aero = default_premission_subsystems[-1]
+        aero = default_premission_subsystems['aerodynamics']
+        premission_subsystems = [
+            default_premission_subsystems[k] for k in ['propulsion', 'geometry', 'aerodynamics']
+        ]
 
         Sref = 1341.0
 
@@ -390,7 +399,7 @@ class MissionDragTest(unittest.TestCase):
             'pre_mission',
             CorePreMission(
                 aviary_options=flops_inputs,
-                subsystems=default_premission_subsystems,
+                subsystems=premission_subsystems,
                 subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],
