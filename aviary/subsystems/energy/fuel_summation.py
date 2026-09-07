@@ -34,65 +34,70 @@ class FuelSummationGroup(om.Group):
         main_phases, reserve_phases = separate_reserve_phases(mission_info)
 
         # Check if main_phases[] is accessible
-        try:
-            main_phases[0]
-        except BaseException:
+        if len(main_phases) == 0:
             raise ValueError(
-                'main_phases[] dictionary is not accessible. For ENERGY_STATE and '
-                'SOLVED_2DOF missions, check_and_preprocess_inputs() must be called '
-                'before add_post_mission_systems().'
+                'main_phases dictionary is not accessible. For ENERGY_STATE and SOLVED_2DOF '
+                'missions, check_and_preprocess_inputs() must be called before '
+                'add_post_mission_systems().'
             )
 
-        # Fuel burn in taxi + takeoff + regular phases
+        # Fuel burn in taxi + takeoff + regular phases + landing
         self.add_subsystem(
-            'fuel_burned',
+            'main_mission_fuel',
             om.ExecComp(
-                'fuel_burned = mass_initial - mass_final',
-                mass_initial={'units': 'lbm'},
-                mass_final={
-                    'units': 'lbm'
-                },  # this final mass already includes fuel burned in taxi and takeoff
-                fuel_burned={'units': 'lbm'},
+                # mission fuel is currently negative
+                'fuel_burned = taxi_fuel - mission_fuel + takeoff_fuel',  # + landing_fuel',
+                taxi_fuel={'units': 'lbm', 'val': 0},
+                mission_fuel={'units': 'lbm', 'val': 0},
+                takeoff_fuel={'units': 'lbm', 'val': 0},
+                # landing_fuel={'units': 'lbm', 'val': 0},
+                fuel_burned={'units': 'lbm', 'val': 0},
             ),
-            promotes_inputs=[('mass_initial', Mission.GROSS_MASS)],
+            # NOTE taxi and takeoff fuel vars not used for 2DOF takeoff
+            promotes_inputs=[
+                ('taxi_fuel', Mission.Taxi.FUEL_MASS_TAXI_OUT),
+                ('takeoff_fuel', Mission.Takeoff.FUEL_MASS),
+                # no landing mass?
+                # ('landing_fuel', Mission.Landing.FUEL_MASS),
+            ],
             promotes_outputs=[('fuel_burned', Mission.FUEL_MASS)],
         )
 
         # Fuel burn in reserve phases
         if reserve_phases:
             ecomp = om.ExecComp(
-                'reserve_fuel_burned = mass_initial - mass_final',
-                mass_initial={'units': 'lbm'},
-                mass_final={'units': 'lbm'},
-                reserve_fuel_burned={'units': 'lbm'},
+                # fuel flow is currently always negative
+                'reserve_fuel = -(fuel_final - fuel_initial)',
+                fuel_initial={'units': 'lbm', 'val': 0},
+                fuel_final={'units': 'lbm', 'val': 0},
+                reserve_fuel={'units': 'lbm', 'val': 0},
             )
 
             self.add_subsystem(
-                'reserve_fuel_burned',
+                'reserve_mission_fuel',
                 ecomp,
-                promotes=[('reserve_fuel_burned', Mission.RESERVE_FUEL_MASS)],
+                promotes=[('reserve_fuel', Mission.RESERVE_FUEL_MASS)],
             )
 
         reserve_fuel_margin = self.options[Mission.RESERVE_FUEL_MARGIN]
         if reserve_fuel_margin != 0:
             # Originally tried to reference Mission.FUEL_MASS for fuel burn but in some tests this led to errors
             reserve_fuel_frac = om.ExecComp(
-                'reserve_fuel_margin_mass = reserve_fuel_margin / 100 * (mass_initial - final_mass)',
-                reserve_fuel_margin_mass={'units': 'lbm'},
+                'reserve_fuel_margin_mass = reserve_fuel_margin * mission_fuel',
+                reserve_fuel_margin_mass={'units': 'lbm', 'val': 0},
                 reserve_fuel_margin={
                     'units': 'unitless',
                     'val': reserve_fuel_margin,
                 },
-                mass_initial={'units': 'lbm'},
-                final_mass={'units': 'lbm'},
+                mission_fuel={'units': 'lbm', 'val': 0},
             )
 
             self.add_subsystem(
                 'reserve_fuel_frac',
                 reserve_fuel_frac,
                 promotes_inputs=[
-                    ('mass_initial', Mission.GROSS_MASS),
                     ('reserve_fuel_margin', Mission.RESERVE_FUEL_MARGIN),
+                    ('mission_fuel', Mission.FUEL_MASS),
                 ],
                 promotes_outputs=['reserve_fuel_margin_mass'],
             )
@@ -100,7 +105,7 @@ class FuelSummationGroup(om.Group):
         reserve_fuel_mass_additional, units = self.options[Mission.RESERVE_FUEL_MASS_ADDITIONAL]
         reserve_fuel_mass = om.ExecComp(
             'reserve_fuel_mass = reserve_fuel_margin_mass + reserve_fuel_mass_additional + reserve_fuel_burned',
-            reserve_fuel_mass={'units': 'lbm', 'shape': 1},
+            reserve_fuel_mass={'units': 'lbm', 'val': 0},
             reserve_fuel_margin_mass={'units': 'lbm', 'val': 0},
             reserve_fuel_mass_additional={'units': 'lbm', 'val': reserve_fuel_mass_additional},
             reserve_fuel_burned={'units': 'lbm', 'val': 0},
@@ -123,10 +128,10 @@ class FuelSummationGroup(om.Group):
             'total_fuel_mass_con',
             om.ExecComp(
                 'total_fuel_mass_constraint = total_fuel_mass - mission_fuel_burned - reserve_fuel_mass',
-                total_fuel_mass_constraint={'units': 'lbm'},
-                total_fuel_mass={'units': 'lbm'},
-                mission_fuel_burned={'units': 'lbm'},
-                reserve_fuel_mass={'units': 'lbm'},
+                total_fuel_mass_constraint={'units': 'lbm', 'val': 0},
+                total_fuel_mass={'units': 'lbm', 'val': 0},
+                mission_fuel_burned={'units': 'lbm', 'val': 0},
+                reserve_fuel_mass={'units': 'lbm', 'val': 0},
             ),
             promotes_inputs=[
                 ('total_fuel_mass', Mission.TOTAL_FUEL_MASS),
@@ -138,10 +143,10 @@ class FuelSummationGroup(om.Group):
 
         ecomp = om.ExecComp(
             'excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel',
-            total_fuel_capacity={'units': 'lbm'},
-            unusable_fuel={'units': 'lbm'},
-            overall_fuel={'units': 'lbm'},
-            excess_fuel_capacity={'units': 'lbm'},
+            total_fuel_capacity={'units': 'lbm', 'val': 0},
+            unusable_fuel={'units': 'lbm', 'val': 0},
+            overall_fuel={'units': 'lbm', 'val': 0},
+            excess_fuel_capacity={'units': 'lbm', 'val': 0},
         )
 
         self.add_subsystem(
@@ -176,8 +181,8 @@ class FuelSummationGroup(om.Group):
             om.ExecComp(
                 'block_fuel = mission_fuel_burned + fuel_burned_taxi_in',
                 block_fuel={'units': 'lbm'},
-                mission_fuel_burned={'units': 'lbm'},
-                fuel_burned_taxi_in={'units': 'lbm'},
+                mission_fuel_burned={'units': 'lbm', 'val': 0},
+                fuel_burned_taxi_in={'units': 'lbm', 'val': 0},
             ),
             promotes_inputs=[
                 ('mission_fuel_burned', Mission.FUEL_MASS),

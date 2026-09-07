@@ -10,7 +10,7 @@ from packaging import version
 from aviary.mission.two_dof.ode.flight_ode import FlightODE
 from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.enums import SpeedType, Verbosity
 from aviary.variable_info.functions import setup_model_options
@@ -29,9 +29,10 @@ class FlightODEClimbTestCase(unittest.TestCase):
         aviary_options.set_val('verbosity', Verbosity.QUIET)
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
 
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', [build_engine_deck(aviary_options)]
-        )
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [build_engine_deck(aviary_options)])[k]
+            for k in ['propulsion', 'aerodynamics']
+        ]
 
         self.sys = self.prob.model = FlightODE(
             num_nodes=1,
@@ -143,9 +144,10 @@ class FlightODEDescenTestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         aviary_options = get_option_defaults()
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', [build_engine_deck(aviary_options)]
-        )
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [build_engine_deck(aviary_options)])[k]
+            for k in ['propulsion', 'aerodynamics']
+        ]
 
         self.sys = self.prob.model = FlightODE(
             num_nodes=1,

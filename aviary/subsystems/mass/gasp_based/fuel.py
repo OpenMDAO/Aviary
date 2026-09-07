@@ -226,17 +226,24 @@ class TankCapacity(om.ExplicitComponent):
 
         # WFXTRA: extra amount of fuel that is required but does not fit in wings
         add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, units='lbm')
+
+        # NOTE this is not used in Aviary
         self.add_output(
             'extra_fuel_volume',
             units='ft**3',
             desc='FVOLXTRA: excess required design fuel volume (including fuel margin) greater than geometric fuel volume of wings',
         )  # there is no FVOLXTRA in GASP
+
+        # NOTE this is not used in Aviary
         self.add_output(
             'max_extra_fuel_mass',
             units='lbm',
             desc='WFXTRAMX: mass of fuel that fits in extra_fuel_volume',
         )  # there is no WFXTRAMX in GASP
+
         add_aviary_output(self, Aircraft.Fuel.MAX_CAPACITY_MASS, units='lbm', desc='WFAMAX')
+
+        # NOTE this is not used in Aviary
         self.add_output(
             'payload_mass_max_fuel',
             units='lbm',

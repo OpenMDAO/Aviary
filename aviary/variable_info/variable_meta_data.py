@@ -3,21 +3,23 @@ Define meta data associated with variables in the Aviary data hierarchy.
 """
 
 from copy import deepcopy
+
 import numpy as np
 
+import aviary.constants as Constants
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.enums import (
     AircraftTypes,
+    AtmosphereModel,
     EquationsOfMotion,
     FlapType,
+    FuelType,
     GASPEngineType,
     LegacyCode,
     ProblemType,
     Verbosity,
-    AtmosphereModel,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-import aviary.constants as Constants
 
 # ---------------------------
 # Meta data associated with variables in the aircraft data hierarchy.
@@ -1365,7 +1367,7 @@ add_meta_data(
         'FLOPS': None,  # 'DARM.WMARG',
     },
     units='lbm',
-    desc='empty mass margin',
+    desc='Fraction of calculated empty mass to be added as additional margin.',
     default_value=0.0,
 )
 
@@ -1379,7 +1381,7 @@ add_meta_data(
         'FLOPS': 'WTIN.EWMARG',  # ['&DEFINE.WTIN.EWMARG', 'DARM.EWMARG'],
     },
     units='unitless',
-    desc='empty mass margin scaler',
+    desc='Empty mass margin scaler',
     default_value=0.0,
 )
 
@@ -2949,6 +2951,20 @@ add_meta_data(
     types=int,
     option=True,
     default_value=7,
+)
+
+add_meta_data(
+    Aircraft.Fuel.TYPE,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,
+    },
+    units='unitless',
+    desc='Fuel types used on the aircraft. Fuel variables are assumed to be vectorized in order '
+    'corresponding to the order of fuel types specified here.',
+    default_value=FuelType.JET_A,
+    # multivalue=True,
 )
 
 add_meta_data(
@@ -6580,8 +6596,16 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='kJ',
-    desc='Total amount of electric energy consumed by the vehicle up until this point '
-    'in the mission',
+    desc='Total amount of electric energy consumed by the vehicle up until this point in the mission',
+    multivalue=True,
+)
+
+add_meta_data(
+    Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='Total amount of fuel consumed by the vehicle up until this point in the mission',
     multivalue=True,
 )
 
@@ -6907,22 +6931,20 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
-    desc='Fuel burned from taxi-out through all regular phases of the mission (e.g. takeoff, climb, '
+    desc='Fuel burned from taxi-out through all phases of the main mission (e.g. takeoff, climb, '
     'cruse, descent, landing). This does not include fuel burned in reserve phases or taxi-in. The '
     'only time taxi-in would be included in this is if the user specifies a taxi phase as part of '
-    'the regular mission phases.',
+    'the main mission phases.',
 )
 
 add_meta_data(
     Mission.GRAVITY,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
-    desc='Gravitational acceleration of the planet. This model is updated'
-    'in preprocess_options() based on which atmosphere is selected.'
-    'This ensures the gravity model matches the planet.',
+    desc='Gravitational acceleration of the planet. This model is updated in preprocess_options() '
+    'based on which atmosphere is selected. This ensures the gravity model matches the planet.',
     types=float,
     option=True,
-    #
     units=Constants.GRAV_EARTH[1],
     default_value=Constants.GRAV_EARTH[0],
 )
@@ -6984,8 +7006,8 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     option=True,
     units='unitless',
-    desc='Required fuel reserves, given as a precentage of mission fuel.'
-    'Mission fuel only includes normal phases and excludes reserve phases.',
+    desc='Required fuel reserves, given as a fraction of mission fuel. Mission fuel only includes '
+    'main phases and excludes reserve phases.',
     default_value=0.0,
 )
 

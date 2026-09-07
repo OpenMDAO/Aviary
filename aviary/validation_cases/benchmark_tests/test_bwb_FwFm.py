@@ -104,6 +104,8 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
             verbosity=1,
             max_iter=60,
         )
+        with open('temp_vars.txt', 'w') as f:
+            prob.model.list_vars(units=True, print_arrays=True, out_stream=f)
 
         rtol = 1e-3
 
@@ -167,7 +169,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
     # assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
 
-# @use_tempdirs
+@use_tempdirs
 class BWB300ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a BWB aircraft using FLOPS mass and aero method

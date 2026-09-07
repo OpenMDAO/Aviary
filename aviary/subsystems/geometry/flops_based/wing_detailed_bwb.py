@@ -173,13 +173,18 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             side_tc = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD][0]
             root_chord = inputs[Aircraft.Wing.ROOT_CHORD][0]
 
-            outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][1:] = inputs[
-                Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION
-            ]
-            idx = np.where(outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'] < 5.0)
-            outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][idx] *= rate_span
-            outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][0] = length
-            outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][1] = root_chord
+            chord_dist = inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION]
+            n_stations = len(outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'])
+
+            bwb_chord_dist = np.zeros(n_stations, dtype=chord_dist.dtype)
+            bwb_chord_dist[0] = length
+            bwb_chord_dist[1] = root_chord
+            bwb_chord_dist[2:] = chord_dist[1:]
+
+            idx = np.where(bwb_chord_dist < 5.0)
+            bwb_chord_dist[idx] *= rate_span
+
+            outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'] = bwb_chord_dist
 
             outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][0] = cl_tc
             outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][1] = side_tc

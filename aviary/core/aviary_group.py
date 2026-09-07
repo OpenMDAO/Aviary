@@ -48,7 +48,7 @@ from aviary.variable_info.enums import (
     Verbosity,
 )
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 ENERGY_STATE = EquationsOfMotion.ENERGY_STATE
@@ -1025,6 +1025,15 @@ class AviaryGroup(om.Group):
             common = vars1.intersection(vars2)
             upstream_analytic = [item for item in vars1 if item.startswith('initial_')]
             downstream_analytic = [item for item in vars2 if item.startswith('initial_')]
+
+            # TODO 2DOF simple cruise breaks this, so it currently can't support discontinuous reserves
+            if self.mission_method is ENERGY_STATE:
+                # If the user specifies a specific initial mach/altitude for the first reserve phase,
+                # allow discontinuities for those variables between the main and reserve mission
+                if self.reserve_phases and phase2 == self.reserve_phases[0]:
+                    for var in (Dynamic.Mission.ALTITUDE, Dynamic.Atmosphere.MACH):
+                        if phase_info2.get(f'{var}_initial', (None, None))[0]:
+                            common = common - {var}
 
             # Sort because of MPI
             for var in sorted(common):

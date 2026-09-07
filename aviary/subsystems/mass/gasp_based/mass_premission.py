@@ -127,12 +127,12 @@ class MassPremission(om.Group):
             promotes_outputs=['*'],
         )
 
-        self.add_subsystem(
-            'tank_capacity',
-            TankCapacity(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
+        # self.add_subsystem(
+        #     'tank_capacity',
+        #     TankCapacity(),
+        #     promotes_inputs=['*'],
+        #     promotes_outputs=['*'],
+        # )
 
         newton = self.nonlinear_solver = om.NewtonSolver()
         newton.options['atol'] = 1e-9

@@ -44,7 +44,7 @@ inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, np.zeros(2))
 inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_UPPER, np.zeros(2))
 
 
-@use_tempdirs
+# @use_tempdirs
 class ThrottleAllocationTestcase(unittest.TestCase):
     """Test the different throttle allocation methods for models with multiple, unique EngineModels."""
 
@@ -180,4 +180,7 @@ class ThrottleAllocationTestcase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = ThrottleAllocationTestcase()
+    test.setUp()
+    test.test_multiengine_dynamic()

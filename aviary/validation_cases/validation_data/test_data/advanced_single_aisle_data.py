@@ -34,10 +34,7 @@ from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
-from aviary.utils.test_utils.default_subsystems import (
-    get_default_mission_subsystems,
-    get_default_premission_subsystems,
-)
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
@@ -448,8 +445,10 @@ engines = [build_engine_deck(options=inputs)]
 # preprocess_options(inputs, engine_models=engine)
 
 # build subsystems
-default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
-default_mission_subsystems = get_default_mission_subsystems('FLOPS', engines)
+default_premission_subsystems = get_default_subsystems('FLOPS', engines).values()
+default_mission_subsystems = [
+    get_default_subsystems('FLOPS', engines)[k] for k in ['propulsion', 'aerodynamics']
+]
 
 # region - detailed takeoff
 takeoff_trajectory_builder = TakeoffTrajectory('detailed_takeoff')

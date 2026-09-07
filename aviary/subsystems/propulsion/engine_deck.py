@@ -29,7 +29,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
-from aviary.utils.utils import round_it
+from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.engine_scaling import EngineScaling
 from aviary.subsystems.propulsion.engine_sizing import SizeEngine
@@ -42,11 +42,10 @@ from aviary.subsystems.propulsion.utils import (
 )
 from aviary.utils.aviary_values import AviaryValues, NamedValues
 from aviary.utils.csv_data_file import read_data_file
+from aviary.utils.utils import round_it
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import CoreMetaData
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
-from aviary.variable_info.enums import AtmosphereModel
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 MACH = EngineModelVariables.MACH
 ALTITUDE = EngineModelVariables.ALTITUDE
@@ -148,10 +147,10 @@ class EngineDeck(EngineModel):
     def __init__(
         self,
         name='engine_deck',
+        meta_data: dict = CoreMetaData,
         options: AviaryValues = None,
         data: NamedValues = None,
         required_variables: set = default_required_variables,
-        meta_data: dict = CoreMetaData,
     ):
         if data is not None:
             self.read_from_file = False
@@ -160,7 +159,7 @@ class EngineDeck(EngineModel):
             # TODO update default name to be based on filename
 
         # also calls _preprocess_inputs() as part of EngineModel __init__
-        super().__init__(name, options, meta_data=meta_data)
+        super().__init__(name, options=options, meta_data=meta_data)
 
         # custom error messages depending on data type
         if self.read_from_file:

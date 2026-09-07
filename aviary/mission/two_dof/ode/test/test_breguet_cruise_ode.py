@@ -8,7 +8,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODE, ElectricBreguetCruiseODE
 from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -21,9 +21,10 @@ class CruiseODETestCase(unittest.TestCase):
 
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', [build_engine_deck(aviary_options)]
-        )
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [build_engine_deck(aviary_options)])[k]
+            for k in ['propulsion', 'aerodynamics']
+        ]
 
         self.prob.model = BreguetCruiseODE(
             num_nodes=2,
@@ -89,10 +90,10 @@ class ElectricCruiseODETestCase(unittest.TestCase):
             Aircraft.Engine.DATA_FILE,
             'mission/two_dof/ode/test/test_data/turbofan_23k_electrified.csv',
         )
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', build_engine_deck(aviary_options)
-        )
-
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [build_engine_deck(aviary_options)])[k]
+            for k in ['propulsion', 'aerodynamics']
+        ]
         self.prob.model = ElectricBreguetCruiseODE(
             num_nodes=2,
             aviary_options=aviary_options,
