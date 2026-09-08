@@ -125,7 +125,6 @@ class Dynamic(AviaryDynamic):
         class Propulsion(AviaryDynamic.Vehicle.Propulsion):
             CURRENT = 'current_flow'
             PROP_POWER = 'prop_power'
-            PROP_POWER_MAX = 'prop_power_max'
 
 
 class Settings(AviarySettings):
