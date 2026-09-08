@@ -46,6 +46,32 @@ def load_intensity_by_factor(load_dist_factor, intn_stations):
     return load_intensity
 
 
+def smooth_load_intensity_by_factor(load_dist_factor, intn_stations):
+    """
+    Calculate load intensity at wing integration stations for the given load_dist_factor.
+
+    Parameters:
+    load_dist_factor (float): 0 or 1 <= load_dist_factor <= 3.
+        1.0 : triangular distribution
+        2.0 : elliptical distribution (default)
+        3.0 : rectangular distribution
+        1.0-2.0 : blend of triangular and elliptical by quartic polynomial
+        2.0-3.0 : blend of elliptical and rectangular by quartic polynomial
+    intn_stations (array): integration stations
+
+    Note: In FLOPS, load_dist_factor can be 0 in which case load intensities are computed
+          based on input pressure distribution. This is NOT currently implemented in Aviary.
+    """
+    a = 1.0 - intn_stations
+    b = np.sqrt(1.0 - intn_stations**2)
+    c = np.ones(len(intn_stations))
+    t = load_dist_factor - 2.0
+    load_intensity = (
+        b + (c - a) / 2 * t + 7 * (a - 2 * b + c) / 6 * t**2 + 2 * (-a + 2 * b - c) / 3 * t**4
+    )
+    return load_intensity
+
+
 class DetailedWingBendingFact(om.ExplicitComponent):
     """
     Computation of wing bending factor and engine inertia relief factor
@@ -62,7 +88,6 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_WING_ENGINES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
         add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
-        add_aviary_option(self, Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL)
         add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
 
     def setup(self):
@@ -95,6 +120,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REFERENCE, units='unitless')
         add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL)
 
         if total_num_wing_engines > 1:
             add_aviary_input(
@@ -167,8 +193,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             (dy[1:] + 2.0 * integration_stations[1:-1]) * dy[1:] * sweep_int_stations[1:-1]
         )
 
-        load_distribution_factor = self.options[Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL]
-        load_intensity = load_intensity_by_factor(load_distribution_factor, integration_stations)
+        load_distrib_factor = inputs[Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL]
+        load_intensity = smooth_load_intensity_by_factor(load_distrib_factor, integration_stations)
 
         chord_interp = InterpND(
             method='slinear', points=(inp_stations), x_interp=integration_stations
@@ -308,7 +334,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_WING_ENGINES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
         add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
-        add_aviary_option(self, Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL)
         add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
         add_aviary_option(self, Aircraft.BWB.DETAILED_WING_PROVIDED)
         add_aviary_option(self, Settings.VERBOSITY)
@@ -340,6 +365,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
+        add_aviary_input(self, Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL)
 
         if total_num_wing_engines > 1:
             add_aviary_input(
@@ -460,8 +486,8 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             (dy[0:] + 2.0 * integration_stations[0:-1]) * dy[0:] * sweep_int_stations[0:-1]
         )
 
-        load_distribution_factor = self.options[Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL]
-        load_intensity = load_intensity_by_factor(load_distribution_factor, integration_stations)
+        load_distrib_factor = inputs[Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL]
+        load_intensity = smooth_load_intensity_by_factor(load_distrib_factor, integration_stations)
 
         chord_interp = InterpND(
             method='slinear', points=(inp_stations_mod), x_interp=integration_stations

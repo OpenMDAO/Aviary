@@ -7,7 +7,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import AircraftTypes
+from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import override_aviary_vars, setup_model_options
 from aviary.variable_info.variables import Aircraft, Settings
 
@@ -628,7 +628,8 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         """
-        Testing GASP data case:
+        Testing GASP data case.
+
         Aircraft.Fuselage.AVG_DIAMETER -- SWF = 38.00
         fuselage.cabin_height -- HC = 9.87
         fuselage.cabin_len -- LC = 43.8
