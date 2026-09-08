@@ -1,8 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from ambiance import Atmosphere
-
 from aviary.variable_info.functions import add_aviary_input
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.models.external_subsystems.UAV.aerodynamics.model.aero_OAS_analysis import OASAero
@@ -38,8 +36,26 @@ class WingTailAreaRatios(om.ExplicitComponent):
     def setup_partials(self):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
-        self.declare_partials('ht_area_ratio', [Aircraft.HorizontalTail.SPAN, Aircraft.HorizontalTail.ROOT_CHORD, Aircraft.Wing.SPAN, Aircraft.Wing.ROOT_CHORD], method='cs')
-        self.declare_partials('vt_area_ratio', [Aircraft.VerticalTail.SPAN, Aircraft.VerticalTail.ROOT_CHORD, Aircraft.Wing.SPAN, Aircraft.Wing.ROOT_CHORD], method='cs')
+        self.declare_partials(
+            'ht_area_ratio',
+            [
+                Aircraft.HorizontalTail.SPAN,
+                Aircraft.HorizontalTail.ROOT_CHORD,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.ROOT_CHORD,
+            ],
+            method='cs',
+        )
+        self.declare_partials(
+            'vt_area_ratio',
+            [
+                Aircraft.VerticalTail.SPAN,
+                Aircraft.VerticalTail.ROOT_CHORD,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.ROOT_CHORD,
+            ],
+            method='cs',
+        )
 
     def compute(self, inputs, outputs):
         wing_area = inputs[Aircraft.Wing.SPAN] * inputs[Aircraft.Wing.ROOT_CHORD]
@@ -84,24 +100,36 @@ class FuselageDrag(om.ExplicitComponent):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
         self.declare_partials(
-            'D_fus',[Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, 'Cf_fus', 'CD_L_fus', Aircraft.Fuselage.LENGTH, Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.MAX_WIDTH, Aircraft.Wing.AREA],
+            'D_fus',
+            [
+                Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
+                'Cf_fus',
+                'CD_L_fus',
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Fuselage.MAX_HEIGHT,
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.Wing.AREA,
+            ],
             method='cs',
         )
         self.declare_partials(
-                    'D_fus',Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                    rows=arange,
-                    cols=arange,
-                    method='cs',
+            'D_fus',
+            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            rows=arange,
+            cols=arange,
+            method='cs',
         )
         self.declare_partials(
             'CD_fus',
-            [Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
-            'Cf_fus',
-            'CD_L_fus',
-            Aircraft.Fuselage.LENGTH,
-            Aircraft.Fuselage.MAX_HEIGHT,
-            Aircraft.Fuselage.MAX_WIDTH,
-            Aircraft.Wing.AREA,],
+            [
+                Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR,
+                'Cf_fus',
+                'CD_L_fus',
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Fuselage.MAX_HEIGHT,
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.Wing.AREA,
+            ],
             method='cs',
         )
 
@@ -182,10 +210,25 @@ class VTailDrag(om.ExplicitComponent):
                 Aircraft.Wing.AREA,
                 Aircraft.VerticalTail.THICKNESS_TO_CHORD,
             ],
-            method='cs'
+            method='cs',
         )
-        self.declare_partials('D_vtail',['R_LS','Cf_vtail','L_prime',Aircraft.VerticalTail.THICKNESS_TO_CHORD,Aircraft.VerticalTail.ROOT_CHORD,Aircraft.VerticalTail.TAPER_RATIO,Aircraft.VerticalTail.SPAN,Aircraft.Wing.AREA], method='cs') # we have not calculated partials for this
-        self.declare_partials('D_vtail',Dynamic.Atmosphere.DYNAMIC_PRESSURE, rows=arange, cols=arange, method='cs') # has a different shape/size compared to other partials
+        self.declare_partials(
+            'D_vtail',
+            [
+                'R_LS',
+                'Cf_vtail',
+                'L_prime',
+                Aircraft.VerticalTail.THICKNESS_TO_CHORD,
+                Aircraft.VerticalTail.ROOT_CHORD,
+                Aircraft.VerticalTail.TAPER_RATIO,
+                Aircraft.VerticalTail.SPAN,
+                Aircraft.Wing.AREA,
+            ],
+            method='cs',
+        )  # we have not calculated partials for this
+        self.declare_partials(
+            'D_vtail', Dynamic.Atmosphere.DYNAMIC_PRESSURE, rows=arange, cols=arange, method='cs'
+        )  # has a different shape/size compared to other partials
 
     def compute(self, inputs, outputs):
         R_LS = inputs['R_LS']
@@ -213,6 +256,7 @@ class VTailDrag(om.ExplicitComponent):
         outputs['D_vtail'] = q * S_ref_vtail * CD0_vtail
         outputs['CD_vtail'] = CD0_vtail  # lift induced negligible
 
+
 class LandingGearDrag(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -229,8 +273,16 @@ class LandingGearDrag(om.ExplicitComponent):
     def setup_partials(self):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
-        self.declare_partials('D_gear',[Aircraft.LandingGear.DRAG_COEFFICIENT,Aircraft.Wing.AREA,])
-        self.declare_partials('D_gear',Dynamic.Atmosphere.DYNAMIC_PRESSURE,rows=arange,cols=arange)
+        self.declare_partials(
+            'D_gear',
+            [
+                Aircraft.LandingGear.DRAG_COEFFICIENT,
+                Aircraft.Wing.AREA,
+            ],
+        )
+        self.declare_partials(
+            'D_gear', Dynamic.Atmosphere.DYNAMIC_PRESSURE, rows=arange, cols=arange
+        )
 
     def compute(self, inputs, outputs):
         CD_gear = inputs[Aircraft.LandingGear.DRAG_COEFFICIENT]
@@ -352,7 +404,12 @@ class TotalAircraftAero(om.Group):
                 CD_gear={'val': 0.0, 'units': 'unitless'},
                 CD={'shape': (nn,), 'units': 'unitless'},
             ),
-            promotes_inputs=['CD_fus', 'CD_vtail', 'lifting_surface_CD', ('CD_gear',Aircraft.LandingGear.DRAG_COEFFICIENT)],
+            promotes_inputs=[
+                'CD_fus',
+                'CD_vtail',
+                'lifting_surface_CD',
+                ('CD_gear', Aircraft.LandingGear.DRAG_COEFFICIENT),
+            ],
             promotes_outputs=[('CD', Dynamic.Vehicle.DRAG_COEFFICIENT)],
         )
 

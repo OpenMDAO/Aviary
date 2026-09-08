@@ -1,6 +1,7 @@
 """
 Phase info for a simple UAV mission.
 """
+
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
     'climb': {
