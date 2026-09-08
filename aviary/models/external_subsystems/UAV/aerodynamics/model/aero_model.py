@@ -310,9 +310,8 @@ class Averages(om.ExplicitComponent):
         nn = self.options['num_nodes']
 
         self.add_input('CD', shape=nn, units='unitless')
-        self.add_output('avg_CD', units='unitless')
-
         self.add_input('lifting_surface_CL', shape=nn, units='unitless')
+        self.add_output('avg_CD', units='unitless')
         self.add_output('avg_CL', units='unitless')
 
     def setup_partials(self):
