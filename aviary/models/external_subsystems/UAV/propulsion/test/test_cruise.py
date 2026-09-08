@@ -26,6 +26,10 @@ def CruiseExample():
         'cruise': deepcopy(phase_info['cruise']),
         'post_mission': deepcopy(phase_info['post_mission']),
     }
+    # adjust phase info for the cruise example
+    cruise_phase_info['cruise']['user_options']['time_initial'] = (0.0, 's')
+    cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((0, 240), 's')
+    cruise_phase_info['cruise']['initial_guesses']['time'] = ([0, 55], 's')
 
     prob.load_inputs('aviary/models/aircraft/UAV/small_scale_uav.csv', cruise_phase_info)
 
