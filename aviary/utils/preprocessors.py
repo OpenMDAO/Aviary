@@ -1201,8 +1201,6 @@ def _get_engine_variables():
 
     excluded_names = [
         Aircraft.Nacelle.TOTAL_WETTED_AREA,
-        Aircraft.Nacelle.DRAG_FACTOR,
-        Aircraft.Nacelle.PYLON_DRAG_FACTOR,
     ]
     for item in get_names_from_hierarchy(Aircraft.Nacelle):
         if item not in excluded_names:
