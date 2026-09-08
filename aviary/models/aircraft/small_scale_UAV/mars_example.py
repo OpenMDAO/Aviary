@@ -25,7 +25,7 @@ cruise_phase_info = {
         'external_subsystems': [],
         'optimize_mass': False,
         'subsystem_options': {
-            'atmosphere': {'method': 'external'}, # TBD: This doesn't look right to me
+            'atmosphere': {'method': 'external'},  # TBD: This doesn't look right to me
             'aerodynamics': {'method': 'external'},
         },
     },

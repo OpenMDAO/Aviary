@@ -30,10 +30,10 @@ def CruiseExample():
     prob.options['group_by_pre_opt_post'] = True
     # just selecting cruise
     cruise_phase_info = {
-            'pre_mission': deepcopy(phase_info['pre_mission']),
-            'cruise': deepcopy(phase_info['cruise']),
-            'post_mission': deepcopy(phase_info['post_mission']),
-        }
+        'pre_mission': deepcopy(phase_info['pre_mission']),
+        'cruise': deepcopy(phase_info['cruise']),
+        'post_mission': deepcopy(phase_info['post_mission']),
+    }
     # adjust phase info for the cruise example
     cruise_phase_info['cruise']['user_options']['time_initial'] = (0.0, 's')
     cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((0, 240), 's')
