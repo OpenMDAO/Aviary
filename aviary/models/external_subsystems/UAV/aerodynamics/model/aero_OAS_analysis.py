@@ -166,6 +166,7 @@ class Broadcaster(om.ExplicitComponent):
 
     We may need to pass the Twist vars here to turn None into unitless.
     """
+
     # This number is the number of sections along half of the wing.
     num_sections = 12
 
@@ -372,14 +373,14 @@ class OASAero(om.Group):
         self.promotes(
             'wing',
             inputs=[('mesh.scale_x.chord', Aircraft.Wing.ROOT_CHORD)],
-            src_indices = np.zeros(shape, dtype=np.int64),
+            src_indices=np.zeros(shape, dtype=np.int64),
         )
 
         shape = self.htail.mesh.scale_x.get_io_metadata(iotypes=['input'])['chord']['shape']
         self.promotes(
             'htail',
             inputs=[('mesh.scale_x.chord', Aircraft.HorizontalTail.ROOT_CHORD)],
-            src_indices = np.zeros(shape, dtype=np.int64),
+            src_indices=np.zeros(shape, dtype=np.int64),
         )
 
         # OAS uses "None" instead of "unitless". Will need to add to broadcaster.
