@@ -716,16 +716,23 @@
             <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;!&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
             <span class="n">line</span><span class="p">,</span> <span class="n">comment</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># anything after the first ! is a comment</span>
 
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+            <span class="c1"># Track when namelists are opened and closed</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">current_tag</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">current_tag</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">current_namelist</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">current_tag</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># remove current_namelist from line (if any)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                    <span class="k">pass</span>
+
             <span class="c1"># remove all white space and trailing commas</span>
             <span class="n">line</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>  <span class="c1"># skip line if it contains only white space</span>
 
-            <span class="c1"># Track when namelists are opened and closed</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">])</span> <span class="ow">and</span> <span class="n">current_tag</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-                <span class="n">current_tag</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">current_namelist</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">current_tag</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">current_tag</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">current_tag</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span><span class="p">):</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
                 <span class="n">terminate_namelist</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -860,9 +867,9 @@
         <span class="n">vehicle_data</span><span class="p">[</span><span class="s1">&#39;input_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_value</span><span class="p">(</span>
             <span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">Gearbox</span><span class="o">.</span><span class="n">GEAR_RATIO</span><span class="p">,</span>
             <span class="n">var_values</span><span class="p">,</span>
+            <span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
             <span class="n">vehicle_data</span><span class="p">[</span><span class="s1">&#39;input_values&#39;</span><span class="p">],</span>
             <span class="n">var_ind</span><span class="o">=</span><span class="n">var_ind</span><span class="p">,</span>
-            <span class="n">units</span><span class="o">=</span><span class="n">data_units</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">list_of_equivalent_aviary_names</span><span class="p">:</span>
@@ -1339,11 +1346,12 @@
         <span class="n">input_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">TYPE</span><span class="p">,</span> <span class="s1">&#39;transport&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">TYPE</span> <span class="ow">in</span> <span class="n">input_values</span><span class="p">:</span>
         <span class="n">engine_type</span> <span class="o">=</span> <span class="n">input_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">TYPE</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Engine type </span><span class="si">{</span><span class="n">engine_type</span><span class="si">}</span><span class="s1"> was provided; currently only TURBOPROP(6) and &#39;</span>
-                <span class="s1">&#39;TURBOJET(7) are supported by Aviary&#39;</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">engine_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Engine type </span><span class="si">{</span><span class="n">engine_type</span><span class="si">}</span><span class="s1"> was provided; currently only TURBOPROP(6) and &#39;</span>
+                    <span class="s1">&#39;TURBOJET(7) are supported by Aviary&#39;</span>
+                <span class="p">)</span>
 
     <span class="c1"># FURNISHING</span>
     <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Furnishings</span><span class="o">.</span><span class="n">MASS</span> <span class="ow">in</span> <span class="n">input_values</span><span class="p">:</span>
@@ -1481,9 +1489,8 @@
     <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">VerticalTail</span><span class="o">.</span><span class="n">THICKNESS_TO_CHORD</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_values</span><span class="p">:</span>
         <span class="n">missing_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;TCVT&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Nacelle</span><span class="o">.</span><span class="n">MASS_SPECIFIC</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_values</span><span class="p">:</span>
-        <span class="n">missing_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;UWNAC&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_values</span><span class="p">:</span>
-        <span class="n">missing_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;UWPAX&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">knac</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">missing_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;UWNAC&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">MAX_STRUCTURAL_SPEED</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_values</span><span class="p">:</span>
         <span class="n">missing_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;VMLFSL&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">AISLE_WIDTH</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_values</span><span class="p">:</span>
@@ -1497,8 +1504,9 @@
     <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">HorizontalTail</span><span class="o">.</span><span class="n">VERTICAL_TAIL_MOUNT_LOCATION</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_values</span><span class="p">:</span>
         <span class="n">missing_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;SAH&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_vars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;The following variables are required but are not provided:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">missing_vars</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;The following variables are required but are not provided:</span><span class="se">\n</span><span class="s1"> </span><span class="si">{</span><span class="n">missing_vars</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;Default values are assumed if needed.&#39;</span>
         <span class="p">)</span>
 
     <span class="n">vehicle_data</span><span class="p">[</span><span class="s1">&#39;input_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_values</span>
