@@ -225,6 +225,23 @@ class FlightPhaseBase(PhaseBuilder):
         ##############
         # Add States #
         ##############
+
+        # Replace None upper bounds with aircraft-derived values so that
+        # Dymos doesn't set them to ~1e21, which creates scaled upper bounds
+        # of ~1e17 (mass) and ~1e15 (distance) and wrecks SNOPT conditioning.
+        # See https://github.com/OpenMDAO/Aviary/issues/607
+        if aviary_options is not None:
+            gross_mass = aviary_options.get_val(Aircraft.Design.GROSS_MASS, units='kg')
+            design_range = aviary_options.get_val(Aircraft.Design.RANGE, units='m')
+
+            mass_bounds, mass_units = user_options['mass_bounds']
+            if mass_bounds[1] is None:
+                user_options['mass_bounds'] = ((mass_bounds[0], 2.0 * gross_mass), mass_units)
+
+            dist_bounds, dist_units = user_options['distance_bounds']
+            if dist_bounds[1] is None:
+                user_options['distance_bounds'] = ((dist_bounds[0], 2.5 * design_range), dist_units)
+
         if phase_type is EquationsOfMotion.ENERGY_STATE:
             rate_source = Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL
         else:
