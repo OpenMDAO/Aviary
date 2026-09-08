@@ -19,7 +19,10 @@ from openmdao.utils.testing_utils import require_pyoptsparse
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.advanced_single_aisle.phase_info import phase_info
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
-from aviary.validation_cases.benchmark_utils import compare_against_expected_values
+from aviary.validation_cases.benchmark_utils import (
+    compare_against_expected_values,
+    print_benchmark_results,
+)
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -47,7 +50,7 @@ def run_trajectory(sim=True):
     prob.check_and_preprocess_inputs()
 
     prob.build_model()
-    prob.add_driver('SNOPT', max_iter=50, verbosity=1)
+    prob.add_driver('SNOPT', max_iter=50, verbosity=0)
 
     ##########################
     # Design Variables       #
@@ -79,6 +82,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_sizing_N3CC(self):
         prob = run_trajectory(sim=False)
 
+        print_benchmark_results(prob)
         # self.assertTrue(prob.result.success)
 
         times_climb = prob.get_val('traj.climb.timeseries.time', units='s')
@@ -515,7 +519,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )
 
         compare_against_expected_values(prob, self.expected_dict)
-        # self.assertTrue(prob.result.success)
 
 
 if __name__ == '__main__':

@@ -6,7 +6,8 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
 from aviary.models.missions.two_dof_default import phase_info
-from aviary.variable_info.enums import ProblemType, Verbosity
+from aviary.validation_cases.benchmark_utils import print_benchmark_results
+from aviary.variable_info.enums import ProblemType
 
 
 class TwoDOFTestCase(unittest.TestCase):
@@ -31,7 +32,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_off_design_max_range.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.BRIEF,
+            verbosity=0,
         )
 
         prob_off_design_max_range.problem_type = ProblemType.OFF_DESIGN_MAX_RANGE
@@ -62,7 +63,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_off_design_min_fuel.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.BRIEF,
+            verbosity=0,
         )
         prob_off_design_min_fuel.problem_type = ProblemType.OFF_DESIGN_MIN_FUEL
         prob_off_design_min_fuel.aviary_inputs.set_val(
@@ -96,7 +97,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_off_design_max_range.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.BRIEF,
+            verbosity=0,
         )
 
         prob_off_design_max_range.problem_type = ProblemType.OFF_DESIGN_MAX_RANGE
@@ -123,7 +124,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_off_design_min_fuel.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.BRIEF,
+            verbosity=0,
         )
         prob_off_design_min_fuel.problem_type = ProblemType.OFF_DESIGN_MIN_FUEL
         prob_off_design_min_fuel.aviary_inputs.set_val(
