@@ -94,7 +94,7 @@ class FuselageDrag(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
 
         self.add_output(name='D_fus', shape=(nn,), units='N')  # fuselage drag
-        self.add_output(name='CD_fus', shape=(nn,), units='unitless')  # fuselage CD0
+        self.add_output(name='CD_fus', shape=1, units='unitless')  # fuselage CD0
 
     def setup_partials(self):
         nn = self.options['num_nodes']
@@ -193,7 +193,7 @@ class VTailDrag(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD)
 
         self.add_output(name='D_vtail', shape=(nn,), units='N')  # vtail drag
-        self.add_output(name='CD_vtail', shape=(nn,), units='unitless')  # vtail CD0
+        self.add_output(name='CD_vtail', shape=1, units='unitless')  # vtail CD0
 
     def setup_partials(self):
         nn = self.options['num_nodes']
@@ -312,24 +312,17 @@ class Averages(om.ExplicitComponent):
         self.add_input('CD', shape=nn, units='unitless')
         self.add_output('avg_CD', units='unitless')
 
-        self.add_input('CD_fus', shape=nn, units='unitless')
-        self.add_output('avg_CD_fus', units='unitless')
-
         self.add_input('lifting_surface_CL', shape=nn, units='unitless')
         self.add_output('avg_CL', units='unitless')
 
     def setup_partials(self):
         nn = self.options['num_nodes']
         self.declare_partials('avg_CD', 'CD', val=np.ones(nn) / nn)
-        self.declare_partials('avg_CD_fus', 'CD_fus', val=np.ones(nn) / nn)
         self.declare_partials('avg_CL', 'lifting_surface_CL', val=np.ones(nn) / nn)
 
     def compute(self, inputs, outputs):
         total_CD = inputs['CD']
         outputs['avg_CD'] = np.mean(total_CD)
-
-        total_CD_fus = inputs['CD_fus']
-        outputs['avg_CD_fus'] = np.mean(total_CD_fus)
 
         total_CL = inputs['lifting_surface_CL']
         outputs['avg_CL'] = np.mean(total_CL)
@@ -405,8 +398,8 @@ class TotalAircraftAero(om.Group):
             'total_aircraft_CD',
             om.ExecComp(
                 'CD = CD_fus + CD_vtail + lifting_surface_CD + CD_gear',
-                CD_fus={'shape': (nn,), 'units': 'unitless'},
-                CD_vtail={'shape': (nn,), 'units': 'unitless'},
+                CD_fus={'shape': 1, 'units': 'unitless'},
+                CD_vtail={'shape': 1, 'units': 'unitless'},
                 lifting_surface_CD={'shape': (nn,), 'units': 'unitless'},
                 CD_gear={'val': 0.0, 'units': 'unitless'},
                 CD={'shape': (nn,), 'units': 'unitless'},
@@ -440,10 +433,9 @@ class TotalAircraftAero(om.Group):
             Averages(num_nodes=nn),
             promotes_inputs=[
                 ('CD', Dynamic.Vehicle.DRAG_COEFFICIENT),
-                'CD_fus',
                 'lifting_surface_CL',
             ],
-            promotes_outputs=['avg_CD', 'avg_CD_fus', 'avg_CL'],
+            promotes_outputs=['avg_CD', 'avg_CL'],
         )
 
         self.connect('OAS_aero.aero_point_0.wing.S_ref', 'aircraft:wing:area')

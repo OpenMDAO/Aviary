@@ -38,7 +38,7 @@ def CruiseExample():
 
     prob.build_model()
 
-    prob.add_driver('IPOPT', use_coloring=False, max_iter=15)
+    prob.add_driver('IPOPT', use_coloring=False, max_iter=150)
 
     prob.driver.opt_settings['print_level'] = 5
     prob.driver.opt_settings['mu_strategy'] = 'monotone'
@@ -60,7 +60,7 @@ def CruiseExample():
 
     # Add special rescaling for small aircraft
     prob.model.set_constraint_options(Mission.Constraints.MASS_RESIDUAL, ref=1)
-    prob.model.set_design_var_options(Aircraft.Design.GROSS_MASS, lower=2, upper=50, ref=1)
+    prob.model.set_design_var_options(Aircraft.Design.GROSS_MASS, lower=2, upper=100, ref=1)
     prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1)
     prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1)
     prob.model.traj.phases.cruise.rhs_all.set_constraint_options(

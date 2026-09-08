@@ -183,7 +183,6 @@ aircraft:horizontal_tail:airfoil_path,subsystems/mass/UAV/utils/n0012-il.csv,uni
 aircraft:horizontal_tail:airfoil_path,subsystems/mass/UAV/utils/n0012-il.csv,unitless
 aircraft:horizontal_tail:glue_factor,0.01,unitless
 aircraft:horizontal_tail:misc_mass,0,lbm
-aircraft:horizontal_tail:number_of_ribs,14,unitless
 aircraft:horizontal_tail:number_of_spars,2,unitless
 aircraft:horizontal_tail:number_of_stringers,10,unitless
 aircraft:horizontal_tail:rib_lightening_factor,0.65,unitless
@@ -207,7 +206,6 @@ aircraft:vertical_tail:airfoil_path,aviary/examples/external_subsystems/dbf_base
 aircraft:vertical_tail:airfoil_path,subsystems/mass/UAV/utils/n0012-il.csv,unitless
 aircraft:vertical_tail:glue_factor,0.01,unitless
 aircraft:vertical_tail:misc_mass,0,lbm
-aircraft:vertical_tail:number_of_ribs,12,unitless
 aircraft:vertical_tail:number_of_spars,2,unitless
 aircraft:vertical_tail:number_of_stringers,8,unitless
 aircraft:vertical_tail:rib_lightening_factor,0.65,unitless

@@ -15,7 +15,7 @@ from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_d
 from aviary.utils.functions import get_path
 
 
-class WingMass(om.JaxExplicitComponent):
+class WingMass(om.ExplicitComponent):
     def initialize(self):
         # simple wing options
         add_aviary_option(self, Aircraft.Wing.TYPE, units='unitless', meta_data=ExtendedMetaData)
@@ -81,7 +81,6 @@ class WingMass(om.JaxExplicitComponent):
         add_aviary_option(
             self, Aircraft.Wing.NUM_STRINGERS, units='unitless', meta_data=ExtendedMetaData
         )
-        add_aviary_option(self, Aircraft.Wing.MISC_MASS, units='kg', meta_data=ExtendedMetaData)
 
     def setup(self):
         add_aviary_input(
@@ -93,6 +92,12 @@ class WingMass(om.JaxExplicitComponent):
             units='m',
             meta_data=ExtendedMetaData,
             primal_name='root_chord',
+        )
+        add_aviary_input(
+            self,
+            Aircraft.Wing.MISC_MASS,
+            units='kg',
+            meta_data=ExtendedMetaData
         )
 
         add_aviary_output(
@@ -109,48 +114,17 @@ class WingMass(om.JaxExplicitComponent):
         else:
             self.rho_rib = np.array([0])
 
+    def setup_partials(self):
         # primal_name mismatch breaks jax dependency inference; declare explicitly
-        self.declare_partials(Aircraft.Wing.MASS, '*')
+        self.declare_partials(Aircraft.Wing.MASS, '*', method='cs')
 
-    def get_self_statics(self):
-        return hashable(
-            (
-                self.options[Aircraft.Wing.TYPE],
-                self.n_area,
-                # Simple wing options
-                self.options[Aircraft.Wing.FOAM_DENSITY],
-                self.options[Aircraft.Wing.ROD_DENSITY],
-                self.options[Aircraft.Wing.ROD_RADIUS],
-                self.options[Aircraft.Wing.ROD_THICKNESS],
-                # Medium wing options
-                self.rho_rib,
-                self.options[Aircraft.Wing.NUM_SPARS],
-                self.options[Aircraft.Wing.RIB_LIGHTENING_FACTOR],
-                self.options[Aircraft.Wing.RIB_THICKNESS],
-                self.options[Aircraft.Wing.AREAL_SKIN_DENSITY],
-                self.options[Aircraft.Wing.SPAR_OUTER_DIAMETER],
-                self.options[Aircraft.Wing.SPAR_DENSITY],
-                self.options[Aircraft.Wing.SPAR_WALL_THICKNESS],
-                self.options[Aircraft.Wing.GLUE_FACTOR],
-                self.options[Aircraft.Wing.STRINGER_THICKNESS],
-                self.options[Aircraft.Wing.STRINGER_DENSITY],
-                self.options[Aircraft.Wing.SHEETING_THICKNESS],
-                self.options[Aircraft.Wing.SHEETING_COVERAGE],
-                self.options[Aircraft.Wing.SHEETING_DENSITY],
-                self.options[Aircraft.Wing.SHEETING_LIGHTENING_FACTOR],
-                self.options[Aircraft.Wing.NUM_STRINGERS],
-                self.options[Aircraft.Wing.MISC_MASS],
-            )
-        )
+    def compute(self, inputs, outputs):
+        span = inputs[Aircraft.Wing.SPAN]
+        chord = inputs[Aircraft.Wing.ROOT_CHORD]
 
-    def compute_primal(self, span, root_chord):
-        chord = root_chord
-        # Wetted area is now derived from the same span x chord reference area the aero uses,
-        # so span/chord drive the skin & sheeting mass terms too (was a separate input/DV).
-        wetted_area = span * chord
-        type = self.options[Aircraft.Wing.TYPE]
+        wing_type = self.options[Aircraft.Wing.TYPE]
 
-        if type == WingType.SIMPLE:
+        if wing_type == WingType.SIMPLE:
             # Simple wing design mass calculation
             rod_thickness, units = self.options[Aircraft.Wing.ROD_THICKNESS]
             foam_density, units = self.options[Aircraft.Wing.FOAM_DENSITY]
@@ -170,9 +144,7 @@ class WingMass(om.JaxExplicitComponent):
 
             total_mass = foam_mass_final + rod_mass
 
-            return total_mass
-
-        if type == WingType.MEDIUM:
+        elif wing_type == WingType.MEDIUM:
             # medium wing design mass calculation
             num_spars = self.options[Aircraft.Wing.NUM_SPARS]
             rib_lightening_factor = self.options[Aircraft.Wing.RIB_LIGHTENING_FACTOR]
@@ -191,7 +163,12 @@ class WingMass(om.JaxExplicitComponent):
             sheeting_lightening_factor = self.options[Aircraft.Wing.SHEETING_LIGHTENING_FACTOR]
             num_stringer = self.options[Aircraft.Wing.NUM_STRINGERS]
             rib_materials = self.options[Aircraft.Wing.RIB_MATERIALS]
-            misc_mass, units = self.options[Aircraft.Wing.MISC_MASS]
+
+            misc_mass = inputs[Aircraft.Wing.MISC_MASS]
+
+            # Wetted area is now derived from the same span x chord reference area the aero uses,
+            # so span/chord drive the skin & sheeting mass terms too (was a separate input/DV).
+            wetted_area = span * chord
 
             if len(rib_materials) != len(rib_thickness):
                 raise ValueError(
@@ -222,4 +199,4 @@ class WingMass(om.JaxExplicitComponent):
             structural_mass = stringer_mass + sheeting_mass + rib_mass + spar_mass + skin_mass
             total_mass = (1 + glue_factor) * structural_mass + misc_mass
 
-            return total_mass
+        outputs[Aircraft.Wing.MASS] = total_mass

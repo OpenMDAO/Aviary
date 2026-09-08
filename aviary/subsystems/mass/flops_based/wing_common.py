@@ -57,16 +57,25 @@ class WingBendingMass(om.ExplicitComponent):
 
         # Note: Calculation requires weights prior to being scaled, so we need to divide
         # by the scale factor.
-        W2 = (
-            inputs[Aircraft.Wing.SHEAR_CONTROL_MASS]
-            / inputs[Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER]
-            * GRAV_ENGLISH_LBM
-        )
-        W3 = (
-            inputs[Aircraft.Wing.MISC_MASS]
-            / inputs[Aircraft.Wing.MISC_MASS_SCALER]
-            * GRAV_ENGLISH_LBM
-        )
+        shear_scale = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER]
+        if shear_scale != 0.0:
+            W2 = (
+                inputs[Aircraft.Wing.SHEAR_CONTROL_MASS]
+                / shear_scale
+                * GRAV_ENGLISH_LBM
+            )
+        else:
+            W2 = 0
+
+        misc_scale = inputs[Aircraft.Wing.MISC_MASS_SCALER]
+        if misc_scale != 0.0:
+            W3 = (
+                inputs[Aircraft.Wing.MISC_MASS]
+                / misc_scale
+                * GRAV_ENGLISH_LBM
+            )
+        else:
+            W3 = 0
 
         vfact = 1.0 + varswp * (0.96 / np.cos(np.pi / 180.0 * sweep) - 1.0)
         cayf = 0.5 if num_fuse > 1 else 1.0
@@ -107,6 +116,16 @@ class WingBendingMass(om.ExplicitComponent):
         W2scale = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER]
         W3scale = inputs[Aircraft.Wing.MISC_MASS_SCALER]
         scaler = inputs[Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER]
+
+        # Prevent division by 0.
+        if W2scale == 0.0:
+            W2 = 0
+            W2scale = 1
+
+        # Prevent division by 0.
+        if W3scale == 0.0:
+            W3 = 0
+            W3scale = 1
 
         num_fuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 

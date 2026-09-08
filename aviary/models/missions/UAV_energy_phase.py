@@ -37,7 +37,7 @@ phase_info = {
     'cruise': {
         'subsystem_options': {'aerodynamics': {'method': 'external'}},
         'user_options': {
-            'num_segments': 5,
+            'num_segments': 1,
             'order': 3,
             'mach_optimize': True,
             'mach_initial': (0.0538, 'unitless'),

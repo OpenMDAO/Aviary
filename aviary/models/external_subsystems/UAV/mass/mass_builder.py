@@ -32,7 +32,7 @@ class MassBuilder(SubsystemBuilder):
             Aircraft.Wing.SPAN: {
                 'units': 'm',
                 'lower': 1.0,
-                'upper': 10,
+                'upper': 3,
             },
             Aircraft.Wing.ROOT_CHORD: {
                 'units': 'm',

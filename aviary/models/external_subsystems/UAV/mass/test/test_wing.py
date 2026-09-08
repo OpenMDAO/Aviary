@@ -56,7 +56,6 @@ class TestWingMass(unittest.TestCase):
             wm.options[Aircraft.Wing.SHEETING_COVERAGE] = 0.4
             wm.options[Aircraft.Wing.SHEETING_LIGHTENING_FACTOR] = 1.0
             wm.options[Aircraft.Wing.AIRFOIL_PATH] = airfoil
-            wm.options[Aircraft.Wing.MISC_MASS] = (0.0, 'kg')
 
         # Inputs
         prob.setup(force_alloc_complex=True)
@@ -88,13 +87,13 @@ class TestWingMass(unittest.TestCase):
     def test_partials_1(self):
         prob = self.build_problem(WingType.MEDIUM)
         prob.run_model()
-        partials = prob.check_partials(compact_print=False, method='cs')
+        partials = prob.check_partials(compact_print=False, method='cs', step=1.1e-40)
         assert_check_partials(partials, atol=1e-6, rtol=1e-6)
 
     def test_partials_2(self):
         prob = self.build_problem(WingType.SIMPLE)
         prob.run_model()
-        partials = prob.check_partials(compact_print=False, method='cs')
+        partials = prob.check_partials(compact_print=False, method='cs', step=1.1e-40)
         assert_check_partials(partials, atol=1e-6, rtol=1e-6)
 
 
