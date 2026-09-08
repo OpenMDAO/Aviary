@@ -421,6 +421,7 @@ class TotalAircraftAero(om.Group):
                 lifting_surface_drag={'shape': (nn,), 'units': 'N'},
                 D_gear={'shape': (nn,), 'units': 'N'},
                 drag={'shape': (nn,), 'units': 'N'},
+                has_diag_partials=True
             ),
             promotes_inputs=['D_fus', 'D_vtail', 'lifting_surface_drag', 'D_gear'],
             promotes_outputs=[('drag', Dynamic.Vehicle.DRAG)],
@@ -440,9 +441,13 @@ class TotalAircraftAero(om.Group):
         self.connect('OAS_aero.aero_point_0.wing.S_ref', 'aircraft:wing:area')
         # self.connect('aircraft:wing:root_chord', 'OAS_aero.aero_point_0.wing.c_root') #removed this connection because the wing root chord is already changing the mesh through:
         #  broadcast_wing_chord connect to wing.mesh.scale_x.chord
-        #
-        #
+
+        # this is the lift balance constraint
+        # self.add_constraint(
+        #     'lift_balance_residual', upper=0.05, lower=-0.05, units='N', ref=0.05
+        # )
         self.add_constraint(
-            'lift_balance_residual', upper=0.05, lower=-0.05, units='N', ref=0.05
-        )  # this is the lift balance constraint
+            'lift_balance_residual', equals=0.0, units='N', ref=50.0,
+        )
+
         self.options['auto_order'] = True

@@ -42,7 +42,7 @@ def CruiseExample():
 
     prob.build_model()
 
-    prob.add_driver('IPOPT', use_coloring=False, max_iter=150)
+    prob.add_driver('IPOPT', use_coloring=True, max_iter=150)
 
     prob.driver.opt_settings['print_level'] = 5
     prob.driver.opt_settings['mu_strategy'] = 'monotone'
@@ -68,7 +68,7 @@ def CruiseExample():
     prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1)
     prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1)
     prob.model.traj.phases.cruise.rhs_all.set_constraint_options(
-        'thrust_residual', ref=0.01, upper=0.01, lower=-0.01
+        'thrust_residual', ref=1.0, equals=0.0,
     )
     reports_dir = prob.get_reports_dir()
     reports_dir.mkdir(parents=True, exist_ok=True)
