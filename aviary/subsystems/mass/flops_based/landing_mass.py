@@ -25,8 +25,8 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
         # cruise factor set by the cruise Mach number
         # (If statement replaced with expression to give continuous derivatives around
         # Mach=1.0)
-        #cruise_factor = 5e-5 / (1.0 + np.exp(-1000 * (cruise_mach - 1))) + 4e-5
-        cruise_factor = 4e-5 + 5e-5 * sigmoidX(cruise_mach, 1, .0001)
+        # cruise_factor = 5e-5 / (1.0 + np.exp(-1000 * (cruise_mach - 1))) + 4e-5
+        cruise_factor = 4e-5 + 5e-5 * sigmoidX(cruise_mach, 1, 0.0001)
 
         outputs[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO] = 1 - cruise_factor * des_range
 
@@ -36,9 +36,9 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
 
         den = 1.0 + np.exp(-1000 * (cruise_mach - 1))
         cruise_factor = 5e-5 / den + 4e-5
-        cruise_factor = 4e-5 + 5e-5 * sigmoidX(cruise_mach, 1, .0001)
+        cruise_factor = 4e-5 + 5e-5 * sigmoidX(cruise_mach, 1, 0.0001)
 
-        dfact_dmach = 5e-5 * dSigmoidXdx(cruise_mach, 1, .0001)
+        dfact_dmach = 5e-5 * dSigmoidXdx(cruise_mach, 1, 0.0001)
 
         J[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, Aircraft.Design.RANGE] = -cruise_factor
         J[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, Aircraft.Design.CRUISE_MACH] = (

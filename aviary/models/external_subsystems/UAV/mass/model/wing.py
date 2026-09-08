@@ -93,12 +93,7 @@ class WingMass(om.ExplicitComponent):
             meta_data=ExtendedMetaData,
             primal_name='root_chord',
         )
-        add_aviary_input(
-            self,
-            Aircraft.Wing.MISC_MASS,
-            units='kg',
-            meta_data=ExtendedMetaData
-        )
+        add_aviary_input(self, Aircraft.Wing.MISC_MASS, units='kg', meta_data=ExtendedMetaData)
 
         add_aviary_output(
             self, Aircraft.Wing.MASS, units='kg', meta_data=ExtendedMetaData, primal_name='mass'

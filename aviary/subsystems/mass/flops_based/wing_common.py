@@ -59,21 +59,13 @@ class WingBendingMass(om.ExplicitComponent):
         # by the scale factor.
         shear_scale = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER]
         if shear_scale != 0.0:
-            W2 = (
-                inputs[Aircraft.Wing.SHEAR_CONTROL_MASS]
-                / shear_scale
-                * GRAV_ENGLISH_LBM
-            )
+            W2 = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS] / shear_scale * GRAV_ENGLISH_LBM
         else:
             W2 = 0
 
         misc_scale = inputs[Aircraft.Wing.MISC_MASS_SCALER]
         if misc_scale != 0.0:
-            W3 = (
-                inputs[Aircraft.Wing.MISC_MASS]
-                / misc_scale
-                * GRAV_ENGLISH_LBM
-            )
+            W3 = inputs[Aircraft.Wing.MISC_MASS] / misc_scale * GRAV_ENGLISH_LBM
         else:
             W3 = 0
 
