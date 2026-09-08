@@ -7,11 +7,14 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.mission.solved_two_dof.ode.groundroll_ode import GroundrollODE
 from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import get_path
+from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
 @use_tempdirs
@@ -21,16 +24,33 @@ class GroundrollODETestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        aviary_options = get_option_defaults()
-        aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for GroundrollODE and its subsystems
+        # (GroundrollEOM, LowSpeedAero / AeroGeom / WingTailRatios / Xlifts / SIWB,
+        # PropulsionMission / EngineScaling / PropulsionSum).
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
+        aviary_options.set_val(Aircraft.Design.TYPE, val='transport', units='unitless')
+        aviary_options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
         aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', [build_engine_deck(aviary_options)]
+
+        # Engine deck build inputs (hardcoded, not read from _MetaData).
+        aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, val=True)
+        aviary_options.set_val(
+            Aircraft.Engine.DATA_FILE, val=get_path('models/engines/turbofan_23k_1.csv')
         )
+        aviary_options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, val=28690, units='lbf')
+
+        # Build the engine deck and vectorize engine variables in aviary_options.
+        engine_deck = build_engine_deck(aviary_options)
+        preprocess_propulsion(aviary_options, [engine_deck])
+
+        default_mission_subsystems = get_default_mission_subsystems('GASP', [engine_deck])
 
         self.prob.model = GroundrollODE(
             num_nodes=2,
-            aviary_options=get_option_defaults(),
+            aviary_options=aviary_options,
             subsystems=default_mission_subsystems,
         )
 

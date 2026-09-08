@@ -16,11 +16,9 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
-from aviary.subsystems.geometry.flops_based.nacelle import (
-    NacelleWettedArea,
-    NacelleTotalWettedArea,
-)
-from aviary.subsystems.geometry.flops_based.prep_geom import _FuselageRatios, PrepGeom
+from aviary.subsystems.geometry.flops_based.nacelle import NacelleTotalWettedArea, NacelleWettedArea
+from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom, _FuselageRatios
+from aviary.subsystems.geometry.flops_based.utils import Names
 from aviary.subsystems.geometry.flops_based.wetted_area_total import (
     BWBWingWettedArea,
     FuselageWettedArea,
@@ -28,7 +26,6 @@ from aviary.subsystems.geometry.flops_based.wetted_area_total import (
     TailWettedArea,
     WingWettedArea,
 )
-from aviary.subsystems.geometry.flops_based.utils import Names
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
@@ -42,7 +39,6 @@ from aviary.validation_cases.validation_tests import (
     print_case,
 )
 from aviary.variable_info.functions import override_aviary_vars, setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 unit_data_sets = get_flops_case_names(
@@ -684,7 +680,7 @@ Canard_test_data = AviaryValues(
 
 @use_tempdirs
 class BWBWingTest(unittest.TestCase):
-    "BWBWing computation test using detailed wing inputs"
+    """BWBWing computation test using detailed wing inputs."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -752,7 +748,7 @@ class BWBWingTest(unittest.TestCase):
         assert_near_equal(out1, exp1, tolerance=1e-8)
 
     def test_case2(self):
-        """Provided detailed wing case for bwb300_baseline"""
+        """Provided detailed wing case for bwb300_baseline."""
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(
@@ -792,7 +788,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
     """
 
     def setUp(self):
-        options = self.options = get_option_defaults()
+        options = self.options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=True, units='unitless')
         options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, val=False, units='unitless')
@@ -802,7 +798,8 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
-        options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, False, units='unitless')
+        # MainGearLength reads NUM_WING_ENGINES with sum(); must be iterable (multivalue).
+        options.set_val(Aircraft.Engine.NUM_WING_ENGINES, np.array([0]), units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('prep_geom', PrepGeom(), promotes=['*'])
@@ -864,7 +861,8 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
 
     def test_case1(self):
         """
-        Testing FLOPS data case:
+        Testing FLOPS data case:.
+
         Aircraft.BWB.NUM_BAYS -- NBAY = 5
         Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH -- XLP = 96.25
         Aircraft.Wing.ROOT_CHORD -- XLW = 63.960195184412598, ROOT_CHORD = XLW / 0.7
@@ -1033,7 +1031,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
     """
 
     def setUp(self):
-        options = self.options = get_option_defaults()
+        options = self.options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 100, units='unitless')
@@ -1055,6 +1053,8 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         )
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
+        # MainGearLength reads NUM_WING_ENGINES with sum(); must be iterable (multivalue).
+        options.set_val(Aircraft.Engine.NUM_WING_ENGINES, np.array([0]), units='unitless')
         options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
 
         prob = self.prob = om.Problem()
@@ -1163,7 +1163,8 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
 
     def test_case1(self):
         """
-        Testing FLOPS data case:
+        Testing FLOPS data case:.
+
         Aircraft.BWB.NUM_BAYS -- NBAY = 7
         Aircraft.Fuselage.LENGTH -- XL = 112.3
         Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH -- XLP = 78.61
@@ -1199,7 +1200,6 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         Aircraft.Nacelle.CHARACTERISTIC_LENGTH -- EL(5)-EL(7) = 15.686120387590995
         """
         prob = self.prob
-        options = self.options
 
         prob.run_model()
 

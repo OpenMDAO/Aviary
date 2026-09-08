@@ -128,7 +128,6 @@ class TestAverages(unittest.TestCase):
 
         # Provide distinct arrays so we know it's averaging actual data
         prob.set_val('CD', val=np.array([0.02, 0.025, 0.03, 0.035]))
-        prob.set_val('CD_fus', val=np.array([0.005, 0.006, 0.007, 0.008]))
         prob.set_val('lifting_surface_CL', val=np.array([0.3, 0.5, 0.8, 1.2]))
 
         prob.run_model()

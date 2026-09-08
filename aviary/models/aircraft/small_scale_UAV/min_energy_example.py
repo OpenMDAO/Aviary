@@ -31,50 +31,13 @@ def CruiseExample():
     # just selecting cruise
     cruise_phase_info = {
         'pre_mission': deepcopy(phase_info['pre_mission']),
-        'cruise': {
-            'subsystem_options': {'aerodynamics': {'method': 'external'}},
-            'user_options': {
-                'num_segments': 5,
-                'order': 3,
-                'mach_optimize': True,
-                'mach_initial': (0.07, 'unitless'),
-                'mach_bounds': ((0.05, 0.15), 'unitless'),
-                'mach_ref': (0.1, 'unitless'),
-                'mass_ref': (4.0, 'kg'),
-                'altitude_ref': (200, 'ft'),
-                # 'mach_final': (0.05, 'unitless'),
-                'altitude_optimize': True,
-                'altitude_initial': (-6900, 'm'),
-                'altitude_bounds': ((-6950, -6700), 'm'),
-                'altitude_final': (-6900, 'm'),
-                'distance_initial': (0.0, 'm'),
-                'distance_ref': (1000.0, 'm'),
-                # target_distance adds an equality constraint (in aviary_group.py)
-                # pinning final distance to this value. Commented out for the
-                # max-range objective below, since distance needs to be free to
-                # grow until the battery constraint binds. Uncomment to go back
-                # to the fixed-distance min-energy formulation.
-                # 'target_distance': (1000.0, 'm'),
-                'throttle_enforcement': 'control',
-                # 'throttle_polynomial_order': 1,
-                # Time
-                'time_initial': (0.0, 's'),
-                'time_duration_bounds': ((0, 180), 's'),
-                'constraints': {
-                    Dynamic.Vehicle.LIFT_COEFFICIENT: {
-                        'upper': 1.2,
-                        'units': 'unitless',
-                        'type': 'path',
-                    },
-                },
-            },
-            'initial_guesses': {
-                'distance': ([0, 1000], 'm'),
-                'time': ([0, 55], 's'),
-            },
-        },
+        'cruise': deepcopy(phase_info['cruise']),
         'post_mission': deepcopy(phase_info['post_mission']),
     }
+    # adjust phase info for the cruise example
+    cruise_phase_info['cruise']['user_options']['time_initial'] = (0.0, 's')
+    cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((0, 240), 's')
+    cruise_phase_info['cruise']['initial_guesses']['time'] = ([0, 55], 's')
 
     prob.load_inputs('aviary/models/aircraft/UAV/small_scale_uav.csv', cruise_phase_info)
 

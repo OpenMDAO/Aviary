@@ -181,6 +181,8 @@ class TotalWingMassTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below are the _MetaData defaults except where noted (marked "not actual GASP value").
+        self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1.0, units='unitless')
         self.prob.model.set_input_defaults('isolated_wing_mass', val=15830.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Wing.AREA, val=100, units='ft**2'
