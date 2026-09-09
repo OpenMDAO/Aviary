@@ -421,7 +421,7 @@ class TotalAircraftAero(om.Group):
                 lifting_surface_drag={'shape': (nn,), 'units': 'N'},
                 D_gear={'shape': (nn,), 'units': 'N'},
                 drag={'shape': (nn,), 'units': 'N'},
-                has_diag_partials=True
+                has_diag_partials=True,
             ),
             promotes_inputs=['D_fus', 'D_vtail', 'lifting_surface_drag', 'D_gear'],
             promotes_outputs=[('drag', Dynamic.Vehicle.DRAG)],
@@ -447,7 +447,10 @@ class TotalAircraftAero(om.Group):
         #     'lift_balance_residual', upper=0.05, lower=-0.05, units='N', ref=0.05
         # )
         self.add_constraint(
-            'lift_balance_residual', equals=0.0, units='N', ref=50.0,
+            'lift_balance_residual',
+            equals=0.0,
+            units='N',
+            ref=50.0,
         )
 
         self.options['auto_order'] = True

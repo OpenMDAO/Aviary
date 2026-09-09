@@ -111,11 +111,20 @@ class CollectLiftDrag(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         nn = self.options['num_nodes']
+        dtype = inputs['L_0'].dtype
 
-        outputs[Dynamic.Vehicle.LIFT] = np.array([inputs['L_' + str(i)] for i in range(nn)])
-        outputs['lifting_surface_drag'] = np.array([inputs['D_' + str(i)] for i in range(nn)])
-        outputs['lifting_surface_CL'] = np.array([inputs['CL_' + str(i)] for i in range(nn)])
-        outputs['lifting_surface_CD'] = np.array([inputs['CD_' + str(i)] for i in range(nn)])
+        outputs[Dynamic.Vehicle.LIFT] = np.array(
+            [inputs['L_' + str(i)] for i in range(nn)], dtype=dtype
+        )
+        outputs['lifting_surface_drag'] = np.array(
+            [inputs['D_' + str(i)] for i in range(nn)], dtype=dtype
+        )
+        outputs['lifting_surface_CL'] = np.array(
+            [inputs['CL_' + str(i)] for i in range(nn)], dtype=dtype
+        )
+        outputs['lifting_surface_CD'] = np.array(
+            [inputs['CD_' + str(i)] for i in range(nn)], dtype=dtype
+        )
 
 
 class LiftBalanceComp(om.ExplicitComponent):
@@ -152,6 +161,7 @@ class LiftBalanceComp(om.ExplicitComponent):
         m = inputs[Dynamic.Vehicle.MASS]
         g = self.options[Mission.GRAVITY][0]  # m/s**2
         outputs['lift_balance_residual'] = L - (m * g)
+
 
 class Broadcaster(om.ExplicitComponent):
     """

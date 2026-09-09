@@ -27,6 +27,8 @@ def CruiseExample():
         'post_mission': deepcopy(phase_info['post_mission']),
     }
     # adjust phase info for the cruise example
+    cruise_phase_info['cruise']['user_options']['distance_initial'] = (0.0, 'm')
+    cruise_phase_info['cruise']['user_options']['target_distance'] = (1000.0, 'm')
     cruise_phase_info['cruise']['user_options']['time_initial'] = (0.0, 's')
     cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((0, 240), 's')
     cruise_phase_info['cruise']['initial_guesses']['time'] = ([0, 55], 's')
@@ -43,8 +45,7 @@ def CruiseExample():
 
     prob.build_model()
 
-
-    driver = 'SNOPT' # set 'SNOPT' or 'IPOPT'
+    driver = 'SNOPT'  # set 'SNOPT' or 'IPOPT'
     prob.add_driver(driver, use_coloring=True, max_iter=150)
 
     if driver == 'SNOPT':
@@ -75,7 +76,9 @@ def CruiseExample():
     prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1)
     prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1)
     prob.model.traj.phases.cruise.rhs_all.set_constraint_options(
-        'thrust_residual', ref=1.0, equals=0.0,
+        'thrust_residual',
+        ref=1.0,
+        equals=0.0,
     )
     reports_dir = prob.get_reports_dir()
     reports_dir.mkdir(parents=True, exist_ok=True)

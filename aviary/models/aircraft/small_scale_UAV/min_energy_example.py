@@ -36,6 +36,7 @@ def CruiseExample():
         'post_mission': deepcopy(phase_info['post_mission']),
     }
     # adjust phase info for the cruise example
+    cruise_phase_info['cruise']['user_options']['distance_initial'] = (0.0, 'm')
     cruise_phase_info['cruise']['user_options']['time_initial'] = (0.0, 's')
     cruise_phase_info['cruise']['user_options']['distance_initial'] = (0, 'm')
     cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((None, None), 's')
@@ -63,7 +64,7 @@ def CruiseExample():
 
     cruise_phase.add_objective('distance', loc='final', ref=-10000, units='m')
 
-    driver = 'SNOPT' # set 'SNOPT' or 'IPOPT'
+    driver = 'SNOPT'  # set 'SNOPT' or 'IPOPT'
     prob.add_driver(driver, use_coloring=True, max_iter=100)
     if driver == 'SNOPT':
         prob.driver.opt_settings['Major optimality tolerance'] = 5e-5
@@ -123,8 +124,10 @@ def CruiseExample():
     # prob.model.set_constraint_options('cruise_duration_constraint.duration_resid', ref=10) # aviary_group.py
     # prob.model.set_constraint_options(Mission.Constraints.RANGE_RESIDUAL, ref=1) # aviary_group.py
     prob.model.traj.phases.cruise.rhs_all.set_constraint_options(
-        'thrust_residual', ref=1, equals=0.0
-    )  # energy_state_ODE.py
+        'thrust_residual',
+        ref=1.0,
+        equals=0.0,
+    )
 
     prob.set_solver_print(level=0)
     prob.set_initial_guesses()
@@ -172,7 +175,10 @@ def CruiseExample():
     print('time_duration (s)', prob.get_val('traj.cruise.t_duration', units='s'))
     print('mach', prob.get_val('traj.cruise.timeseries.mach'))
     print('Aircraft.Battery.MASS (kg)', prob.get_val(Aircraft.Battery.MASS, units='kg'))
-    print('Aircraft.Engine.Motor.IDLE_CURRENT (A)', prob.get_val(Aircraft.Engine.Motor.IDLE_CURRENT, units='A'))
+    print(
+        'Aircraft.Engine.Motor.IDLE_CURRENT (A)',
+        prob.get_val(Aircraft.Engine.Motor.IDLE_CURRENT, units='A'),
+    )
     print('Aircraft.Engine.Motor.MASS (kg)', prob.get_val(Aircraft.Engine.Motor.MASS, units='kg'))
 
     return prob
