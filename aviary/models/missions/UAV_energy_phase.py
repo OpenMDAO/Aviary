@@ -38,6 +38,7 @@ phase_info = {
             'mach_bounds': ((0.05, 0.3), 'unitless'),
             'mach_ref': (0.05, 'unitless'),
             'mass_ref': (4.0, 'kg'),
+            'mass_bounds': ((0, 20), 'lbm'),
             'altitude_optimize': True,
             'altitude_initial': (200.0, 'ft'),
             'altitude_bounds': ((100.0, 300.0), 'ft'),
