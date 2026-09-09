@@ -4,6 +4,7 @@ import aviary.api as av
 from aviary.variable_info.enums import AtmosphereModel
 import numpy as np
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder as DBFMassBuilder
