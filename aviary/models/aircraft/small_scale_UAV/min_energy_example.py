@@ -36,9 +36,11 @@ def CruiseExample():
         'post_mission': deepcopy(phase_info['post_mission']),
     }
     # adjust phase info for the cruise example
+    cruise_phase_info['cruise']['user_options']['distance_initial'] = (0.0, 'm')
     cruise_phase_info['cruise']['user_options']['time_initial'] = (0.0, 's')
     cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((0, 240), 's')
     cruise_phase_info['cruise']['initial_guesses']['time'] = ([0, 55], 's')
+
 
     prob.load_inputs('aviary/models/aircraft/UAV/small_scale_uav.csv', cruise_phase_info)
 
@@ -59,7 +61,7 @@ def CruiseExample():
 
     cruise_phase.add_objective('distance', loc='final', ref=-1000.0, units='m')
 
-    prob.add_driver('IPOPT', use_coloring=False, max_iter=100)
+    prob.add_driver('IPOPT', use_coloring=True, max_iter=100)
 
     prob.driver.opt_settings['print_level'] = 5
     prob.driver.opt_settings['mu_strategy'] = 'monotone'
@@ -115,8 +117,8 @@ def CruiseExample():
     # prob.model.set_constraint_options('cruise_duration_constraint.duration_resid', ref=10) # aviary_group.py
     # prob.model.set_constraint_options(Mission.Constraints.RANGE_RESIDUAL, ref=1) # aviary_group.py
     prob.model.traj.phases.cruise.rhs_all.set_constraint_options(
-        'thrust_residual', ref=0.01, upper=0.01, lower=-0.01
-    )  # energy_state_ODE.py
+        'thrust_residual', ref=1.0, equals=0.0,
+    )
 
     prob.set_solver_print(level=0)
     prob.set_initial_guesses()
