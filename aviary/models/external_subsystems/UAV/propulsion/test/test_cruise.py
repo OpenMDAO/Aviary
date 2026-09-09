@@ -42,17 +42,24 @@ def CruiseExample():
 
     prob.build_model()
 
-    prob.add_driver('IPOPT', use_coloring=True, max_iter=150)
 
-    prob.driver.opt_settings['print_level'] = 5
-    prob.driver.opt_settings['mu_strategy'] = 'monotone'
-    prob.driver.opt_settings['tol'] = 1e-5
-    prob.driver.opt_settings['mu_init'] = 1.0
-    prob.driver.opt_settings['limited_memory_max_history'] = 50
-    prob.driver.opt_settings['acceptable_tol'] = 5e-5
-    prob.driver.opt_settings['constr_viol_tol'] = 1e-5
-    prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-5
-    prob.driver.options['debug_print'] = ['desvars', 'objs', 'nl_cons', 'ln_cons']
+    driver = 'SNOPT' # set 'SNOPT' or 'IPOPT'
+    prob.add_driver(driver, use_coloring=True, max_iter=150)
+
+    if driver == 'SNOPT':
+        prob.driver.opt_settings['Major optimality tolerance'] = 5e-3
+        prob.driver.opt_settings['Major feasibility tolerance'] = 5e-5
+    elif driver == 'IPOPT':
+        prob.driver.opt_settings['mu_strategy'] = 'monotone'
+        prob.driver.opt_settings['tol'] = 1e-5
+        prob.driver.opt_settings['mu_init'] = 1.0
+        prob.driver.opt_settings['limited_memory_max_history'] = 50
+        prob.driver.opt_settings['acceptable_tol'] = 5e-5
+        prob.driver.opt_settings['constr_viol_tol'] = 1e-5
+        prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-5
+    # prob.driver.opt_settings['print_level'] = 5
+    
+    # prob.driver.options['debug_print'] = ['desvars', 'objs', 'nl_cons', 'ln_cons']
 
     prob.add_design_variables()
 
