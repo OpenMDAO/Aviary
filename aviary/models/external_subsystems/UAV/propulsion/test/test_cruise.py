@@ -27,6 +27,8 @@ def CruiseExample():
         'post_mission': deepcopy(phase_info['post_mission']),
     }
     # adjust phase info for the cruise example
+    cruise_phase_info['cruise']['user_options']['distance_initial'] = (0.0, 'm')
+    cruise_phase_info['cruise']['user_options']['target_distance'] = (1000.0, 'm')
     cruise_phase_info['cruise']['user_options']['time_initial'] = (0.0, 's')
     cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((0, 240), 's')
     cruise_phase_info['cruise']['initial_guesses']['time'] = ([0, 55], 's')
