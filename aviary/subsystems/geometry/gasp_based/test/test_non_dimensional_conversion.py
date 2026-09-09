@@ -7,18 +7,23 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import (
     DimensionalNonDimensionalInterchange,
 )
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 
 class FoldOnlyTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for DimensionalNonDimensionalInterchange
+        # and its StrutCalcs/FoldCalcs subsystems.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
+        options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -28,6 +33,7 @@ class FoldOnlyTestCase1(unittest.TestCase):
             promotes_outputs=['aircraft:*'],
         )
 
+        # Input values below (hardcoded, not read from _MetaData).
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN, val=180.0, units='ft'
         )  # not actual GASP value
@@ -52,11 +58,16 @@ class FoldOnlyTestCase1(unittest.TestCase):
 
 class FoldOnlyTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for DimensionalNonDimensionalInterchange
+        # and its StrutCalcs/FoldCalcs subsystems.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless'
         )
+        options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -66,6 +77,7 @@ class FoldOnlyTestCase2(unittest.TestCase):
             promotes_outputs=['aircraft:*'],
         )
 
+        # Input values below (hardcoded, not read from _MetaData).
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN, val=150.0, units='ft'
         )  # not actual GASP value
@@ -88,9 +100,16 @@ class FoldOnlyTestCase2(unittest.TestCase):
 
 class StrutOnlyTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for DimensionalNonDimensionalInterchange
+        # and its StrutCalcs/FoldCalcs subsystems.
+        options = AviaryValues()
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
+        options.set_val(
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless'
+        )
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -100,6 +119,7 @@ class StrutOnlyTestCase1(unittest.TestCase):
             promotes_outputs=['aircraft:*'],
         )
 
+        # Input values below (hardcoded, not read from _MetaData).
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN, val=180.0, units='ft'
         )  # not actual GASP value
@@ -124,9 +144,16 @@ class StrutOnlyTestCase1(unittest.TestCase):
 
 class StrutOnlyTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for DimensionalNonDimensionalInterchange
+        # and its StrutCalcs/FoldCalcs subsystems.
+        options = AviaryValues()
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless')
+        options.set_val(
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless'
+        )
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -136,6 +163,7 @@ class StrutOnlyTestCase2(unittest.TestCase):
             promotes_outputs=['aircraft:*'],
         )
 
+        # Input values below (hardcoded, not read from _MetaData).
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN, val=150.0, units='ft'
         )  # not actual GASP value
@@ -161,12 +189,15 @@ class StrutOnlyTestCase2(unittest.TestCase):
 @use_tempdirs
 class FoldAndStrutTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for DimensionalNonDimensionalInterchange
+        # and its StrutCalcs/FoldCalcs subsystems.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
-        options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless')
 
         self.prob = om.Problem()
@@ -177,6 +208,7 @@ class FoldAndStrutTestCase1(unittest.TestCase):
             promotes_outputs=['aircraft:*'],
         )
 
+        # Input values below (hardcoded, not read from _MetaData).
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN, val=180.0, units='ft'
         )  # not actual GASP value
@@ -208,12 +240,15 @@ class FoldAndStrutTestCase1(unittest.TestCase):
 @use_tempdirs
 class FoldAndStrutTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for DimensionalNonDimensionalInterchange
+        # and its StrutCalcs/FoldCalcs subsystems.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless'
         )
-        options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
 
         self.prob = om.Problem()
@@ -224,6 +259,7 @@ class FoldAndStrutTestCase2(unittest.TestCase):
             promotes_outputs=['aircraft:*'],
         )
 
+        # Input values below (hardcoded, not read from _MetaData).
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN, val=150.0, units='ft'
         )  # not actual GASP value
@@ -253,12 +289,15 @@ class FoldAndStrutTestCase2(unittest.TestCase):
 @use_tempdirs
 class FoldAndStrutTestCase3(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for DimensionalNonDimensionalInterchange
+        # and its StrutCalcs/FoldCalcs subsystems.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
-        options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
 
         self.prob = om.Problem()
@@ -269,6 +308,7 @@ class FoldAndStrutTestCase3(unittest.TestCase):
             promotes_outputs=['aircraft:*'],
         )
 
+        # Input values below (hardcoded, not read from _MetaData).
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN, val=180.0, units='ft'
         )  # not actual GASP value

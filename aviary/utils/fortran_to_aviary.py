@@ -208,16 +208,23 @@ def parse_input_file(
             tmp = [*line.split('!', 1), '']
             line, comment = tmp[0], tmp[1]  # anything after the first ! is a comment
 
+            line = line.lstrip()
+            # Track when namelists are opened and closed
+            if len(line.split()) > 0 and line[0] in ['$', '&'] and current_tag == '':
+                current_tag = line.lstrip()[0]
+                current_namelist = line.split(current_tag)[1].split()[0]
+                try:
+                    line = line.split(maxsplit=1)[1]  # remove current_namelist from line (if any)
+                except:
+                    line = ''
+                    pass
+
             # remove all white space and trailing commas
             line = ''.join(line.split()).rstrip(',')
             if len(line.split()) == 0:
                 continue  # skip line if it contains only white space
 
-            # Track when namelists are opened and closed
-            if (line.lstrip()[0] in ['$', '&']) and current_tag == '':
-                current_tag = line.lstrip()[0]
-                current_namelist = line.split(current_tag)[1].split()[0]
-            elif (line.lstrip()[0] == current_tag) or (line.rstrip()[-1] == '/'):
+            if (line.lstrip()[0] == current_tag) or (line.rstrip()[-1] == '/'):
                 line = line.replace('/', '')
                 terminate_namelist = True
 
@@ -349,9 +356,9 @@ def process_and_store_data(
         vehicle_data['input_values'] = set_value(
             Aircraft.Engine.Gearbox.GEAR_RATIO,
             var_values,
+            'unitless',
             vehicle_data['input_values'],
             var_ind=var_ind,
-            units=data_units,
         )
 
     for name in list_of_equivalent_aviary_names:
@@ -816,11 +823,12 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         input_values.set_val(Aircraft.Design.TYPE, 'transport')
     if Aircraft.Engine.TYPE in input_values:
         engine_type = input_values.get_val(Aircraft.Engine.TYPE, 'unitless')[0]
-        if verbosity > Verbosity.BRIEF:
-            warnings.warn(
-                f'Engine type {engine_type} was provided; currently only TURBOPROP(6) and '
-                'TURBOJET(7) are supported by Aviary'
-            )
+        if engine_type not in [6, 7]:
+            if verbosity > Verbosity.BRIEF:
+                warnings.warn(
+                    f'Engine type {engine_type} was provided; currently only TURBOPROP(6) and '
+                    'TURBOJET(7) are supported by Aviary'
+                )
 
     # FURNISHING
     if Aircraft.Furnishings.MASS in input_values:
@@ -958,9 +966,8 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     if Aircraft.VerticalTail.THICKNESS_TO_CHORD not in input_values:
         missing_vars.append('TCVT')
     if Aircraft.Nacelle.MASS_SPECIFIC not in input_values:
-        missing_vars.append('UWNAC')
-    if Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS not in input_values:
-        missing_vars.append('UWPAX')
+        if knac != 2:
+            missing_vars.append('UWNAC')
     if Aircraft.Design.MAX_STRUCTURAL_SPEED not in input_values:
         missing_vars.append('VMLFSL')
     if Aircraft.Fuselage.AISLE_WIDTH not in input_values:
@@ -974,8 +981,9 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in input_values:
         missing_vars.append('SAH')
     if len(missing_vars) > 0:
-        raise RuntimeError(
-            f'The following variables are required but are not provided:\n {missing_vars}'
+        warnings.warn(
+            f'The following variables are required but are not provided:\n {missing_vars}\n'
+            'Default values are assumed if needed.'
         )
 
     vehicle_data['input_values'] = input_values
