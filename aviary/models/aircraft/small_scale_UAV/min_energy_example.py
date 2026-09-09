@@ -4,6 +4,7 @@ import aviary.api as av
 from aviary.variable_info.enums import AtmosphereModel
 import numpy as np
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder as DBFMassBuilder
@@ -38,6 +39,7 @@ def CruiseExample():
     cruise_phase_info['cruise']['user_options']['time_initial'] = (0.0, 's')
     cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((0, 240), 's')
     cruise_phase_info['cruise']['initial_guesses']['time'] = ([0, 55], 's')
+    cruise_phase_info['cruise']['user_options']['distance_initial'] = (0, 'm')
 
     prob.load_inputs('aviary/models/aircraft/UAV/small_scale_uav.csv', cruise_phase_info)
 
@@ -56,25 +58,29 @@ def CruiseExample():
     """Objective: Minimize energy consumption during cruise flight. This is done by adding an objective to the cruise phase that minimizes the energy constraint at the final time step. The energy constraint is defined as the integral of the power required to maintain level flight over the duration of the cruise phase. By minimizing this objective, we can find the optimal flight profile that minimizes energy consumption while still meeting all other constraints and requirements."""
     cruise_phase = prob.model.traj.phases.cruise
 
-    cruise_phase.add_objective('distance', loc='final', ref=-1000.0, units='m')
+    cruise_phase.add_objective('distance', loc='final', ref=-1, units='m')
 
-    prob.add_driver('IPOPT', use_coloring=False, max_iter=100)
-
-    prob.driver.opt_settings['print_level'] = 5
-    prob.driver.opt_settings['mu_strategy'] = 'monotone'
-    prob.driver.opt_settings['tol'] = 1e-5
-    prob.driver.opt_settings['mu_init'] = 1.0
-    prob.driver.opt_settings['limited_memory_max_history'] = 50
-    prob.driver.opt_settings['acceptable_tol'] = 5e-5
-    prob.driver.opt_settings['constr_viol_tol'] = 1e-5
-    prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-5
-    # Report exactly which Jacobian entries go NaN/Inf instead of a bare EXIT message.
-    prob.driver.opt_settings['check_derivatives_for_naninf'] = 'yes'
-
-    prob.driver.opt_settings['recalc_y'] = 'yes'
-    prob.driver.opt_settings['recalc_y_feas_tol'] = 1e-2
+    driver = 'SNOPT' # set 'SNOPT' or 'IPOPT'
+    prob.add_driver(driver, use_coloring=True, max_iter=100)
+    if driver == 'SNOPT':
+        prob.driver.opt_settings['Major optimality tolerance'] = 5e-3
+        prob.driver.opt_settings['Major feasibility tolerance'] = 5e-5
+        prob.driver.opt_settings['Major step limit'] = 1.0
+    elif driver == 'IPOPT':
+        prob.driver.opt_settings['mu_strategy'] = 'monotone'
+        prob.driver.opt_settings['tol'] = 1e-5
+        prob.driver.opt_settings['mu_init'] = 1.0
+        prob.driver.opt_settings['limited_memory_max_history'] = 50
+        prob.driver.opt_settings['acceptable_tol'] = 5e-5
+        prob.driver.opt_settings['constr_viol_tol'] = 1e-5
+        prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-5
+        # Report exactly which Jacobian entries go NaN/Inf instead of a bare EXIT message.
+        prob.driver.opt_settings['check_derivatives_for_naninf'] = 'yes'
+        prob.driver.opt_settings['recalc_y'] = 'yes'
+        prob.driver.opt_settings['recalc_y_feas_tol'] = 1e-2
 
     # prob.driver.opt_settings['acceptable_iter'] = 0
+    # prob.driver.opt_settings['print_level'] = 5
     # prob.driver.options['debug_print'] = ['desvars', 'objs', 'nl_cons', 'ln_cons']
 
     prob.add_design_variables()
@@ -114,7 +120,7 @@ def CruiseExample():
     # prob.model.set_constraint_options('cruise_duration_constraint.duration_resid', ref=10) # aviary_group.py
     # prob.model.set_constraint_options(Mission.Constraints.RANGE_RESIDUAL, ref=1) # aviary_group.py
     prob.model.traj.phases.cruise.rhs_all.set_constraint_options(
-        'thrust_residual', ref=0.01, upper=0.01, lower=-0.01
+        'thrust_residual', ref=1, equals=0.0
     )  # energy_state_ODE.py
 
     prob.set_solver_print(level=0)
@@ -158,6 +164,11 @@ def CruiseExample():
     # print('settings:problem_type:', prob.aviary_inputs.get_val(Settings.PROBLEM_TYPE))
     # print('settings:equations_of_motion:', prob.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION))
     # print('settings:mass_method:', prob.aviary_inputs.get_val(Settings.MASS_METHOD))
+
+    print('mission:range (m): ', prob.get_val('mission:range', units='m'))
+    print('time_duration (s)', prob.get_val('traj.cruise.t_duration', units='s'))
+    print('mach', prob.get_val('traj.cruise.timeseries.mach'))
+
     return prob
 
 

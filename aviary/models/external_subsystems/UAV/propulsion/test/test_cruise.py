@@ -30,6 +30,7 @@ def CruiseExample():
     cruise_phase_info['cruise']['user_options']['time_initial'] = (0.0, 's')
     cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((0, 240), 's')
     cruise_phase_info['cruise']['initial_guesses']['time'] = ([0, 55], 's')
+    cruise_phase_info['cruise']['user_options']['target_distance'] = (1000, 'm')
 
     prob.load_inputs('aviary/models/aircraft/UAV/small_scale_uav.csv', cruise_phase_info)
 
@@ -58,7 +59,6 @@ def CruiseExample():
         prob.driver.opt_settings['constr_viol_tol'] = 1e-5
         prob.driver.opt_settings['acceptable_constr_viol_tol'] = 5e-5
     # prob.driver.opt_settings['print_level'] = 5
-    
     # prob.driver.options['debug_print'] = ['desvars', 'objs', 'nl_cons', 'ln_cons']
 
     prob.add_design_variables()
