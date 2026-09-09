@@ -696,15 +696,15 @@
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aircraft Sizing and Mission Performance
 ---------------
-Mission Zero Fuel Mass = 98739.8 lbm
-Mission Fuel Mass = 12668.9 lbm
-Takeoff Gross Weight = 111408.69 lbm
+Mission Zero Fuel Mass = 98702.89 lbm
+Mission Fuel Mass = 12668.98 lbm
+Takeoff Gross Weight = 111371.87 lbm
 
 Design Variables
 ---------------
 Wing Area (started at 1220) = 1160.33 ft^2
 Wing Span (started at 118.75) = 118.0 ft
-Engine Scale Factor (started at 1) = 0.764
+Engine Scale Factor (started at 1) = 0.762
 
 Constraints
 ---------------
@@ -749,6 +749,7 @@ Wing Aspect Ratio = 12.0
         <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
         <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span>
         <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;ft/min&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ref&#39;</span><span class="p">:</span> <span class="mf">600.0</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
@@ -769,7 +770,7 @@ Wing Aspect Ratio = 12.0
 <span class="n">prob2</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
 
 <span class="c1"># Selecting optimizer and iteration limit are optional</span>
-<span class="n">prob2</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
+<span class="n">prob2</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span>
 
 <span class="c1"># Add the default design variables needed to size the aircraft</span>
 <span class="n">prob2</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
@@ -777,7 +778,7 @@ Wing Aspect Ratio = 12.0
 <span class="c1"># Add wing area, span and engine scaling as additional design variables</span>
 <span class="n">prob2</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">AREA</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1800</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft**2&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1400</span><span class="p">)</span>
 <span class="c1"># upper value of span chosen as max for group C gate width.</span>
-<span class="n">prob2</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">SPAN</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">118</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">prob2</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">SPAN</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">119.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="n">prob2</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALE_FACTOR</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># Add the default objective function (minimum fuel burn)</span>
@@ -810,20 +811,20 @@ Wing Aspect Ratio = 12.0
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aircraft Sizing and Mission Performance
 ---------------
-Mission Zero Fuel Mass = 98809.08 lbm
-Mission Fuel Mass = 12669.19 lbm
-Takeoff Gross Weight = 111478.27 lbm
+Mission Zero Fuel Mass = 98805.97 lbm
+Mission Fuel Mass = 12669.27 lbm
+Takeoff Gross Weight = 111475.25 lbm
 
 Design Variables
 ---------------
-Wing Area (started at 1220) = 1160.33 ft^2
-Wing Span (started at 118.75) = 118.0 ft
+Wing Area (started at 1220) = 1159.85 ft^2
+Wing Span (started at 118.75) = 117.98 ft
 Engine Scale Factor (started at 1) = 0.769
 
 Constraints
 ---------------
 Wing Aspect Ratio = 12.0
-Cruise Altitude_Rate_Max = [652.04, 650.32, 647.88, 647.1, 647.1, 643.33, 637.86, 636.07, 636.07, 631.02, 623.68, 621.26, 621.26, 616.47, 609.58, 607.33, 607.33, 604.76, 601.16, 600.0]
+Cruise Altitude_Rate_Max = [652.04, 650.32, 647.88, 647.1, 647.1, 643.33, 637.86, 636.07, 636.07, 631.02, 623.68, 621.26, 621.26, 616.47, 609.58, 607.33, 607.33, 604.77, 601.16, 600.0]
 </pre></div>
 </div>
 </div>
