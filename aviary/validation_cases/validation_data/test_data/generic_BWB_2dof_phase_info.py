@@ -3,7 +3,7 @@ from aviary.variable_info.enums import PhaseType, SpeedType
 # 2DOF
 phase_info = {
     'groundroll': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'ground_roll': True,
@@ -31,7 +31,7 @@ phase_info = {
         },
     },
     'rotation': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'rotation': True,
@@ -61,7 +61,7 @@ phase_info = {
         },
     },
     'ascent': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,
@@ -101,7 +101,7 @@ phase_info = {
         },
     },
     'accel': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.ACCEL,
             'num_segments': 1,
@@ -127,7 +127,7 @@ phase_info = {
         },
     },
     'climb1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 2,
             'order': 3,
@@ -152,7 +152,7 @@ phase_info = {
         },
     },
     'climb2': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -178,7 +178,7 @@ phase_info = {
         },
     },
     'cruise': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (41_000, 'ft'),
@@ -193,7 +193,7 @@ phase_info = {
         },
     },
     'desc1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -222,7 +222,7 @@ phase_info = {
         },
     },
     'desc2': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 1,
             'order': 7,

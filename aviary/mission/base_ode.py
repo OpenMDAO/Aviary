@@ -1,6 +1,8 @@
 import openmdao.api as om
 
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import CoreMetaData
 
@@ -52,31 +54,36 @@ class BaseODE(om.Group):
             promotes=['*'],
         )
 
-    def add_subsystems(self, solver_group=None):
+    def add_subsystems_and_solver(
+        self, solver_sub=None, couple_propulsion=False, couple_aero=False, aero_solver_sub=False
+    ):
         """
-        Adds all specified subsystems to ODE in their own group.
+        Adds all specified subsystems to this ODE. Subsystems that need a solver due to coupling
+        are instead added to a group called "solver_sub".
 
         Parameters
         ----------
-        solver_group : om.Group
-            If not None, subsystems that require a solver (subsystem.needs_mission_solver() == True)
-            are placed inside solver_group.
-
-            If None, all subsystems are added to BaseODE regardless of if they request a solver.
-            TODO add solver compatibility to all ODEs
-
+        solver_sub: None or om.Group
+            Pre-created group to add the solver.
+        couple_propulsion : bool
+            When True, the ODE couples with any propulsion subsystems via a throttle to commanded
+            thrust balance.
+        couple_aero : bool
+            When True, the ODE couples with any aerodynamics subsystems via a force balance.
+        aero_solver_sub : None or om.Group
+            Some ODEs (like solved 2DOF) place the aerodynamics and propulsion cycles in separate
+            groups. When this is specified, the aerodynamics subsystem is placed in this sub.
         Returns
         -------
-        use_mission_solver : bool
-            Flag that communicates that one or more subsystem requests to be placed inside a solver
-            (independent of the needs of an individual ODE's setup)
+        om.Group
+            Target group for the ODE. This will be self unless a solver is needed, in which case it
+            will be solver_sub.
         """
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
         all_subsystems = self.options['subsystems']
         all_subsystem_options = self.options['subsystem_options']
         user_options = self.options['user_options']
-        use_mission_solver = False
 
         for subsystem in all_subsystems:
             # check if subsystem_options has entry for a subsystem of this name
@@ -100,9 +107,36 @@ class BaseODE(om.Group):
                     subsystem_options=subsystem_options,
                 )
 
-                if needs_solver and solver_group is not None:
-                    target = solver_group
-                    use_mission_solver = True
+                # ODE couples with propulsion.
+                if couple_propulsion and isinstance(subsystem, PropulsionBuilder):
+                    needs_solver = True
+                elif couple_aero and isinstance(subsystem, AerodynamicsBuilder):
+                    needs_solver = True
+
+                if needs_solver:
+                    if solver_sub is None:
+                        solver_sub = self.add_subsystem('solver_sub', om.Group(), promotes=['*'])
+                        solver_sub.options['auto_order'] = True
+
+                        solver_sub.nonlinear_solver = om.NewtonSolver(
+                            solve_subsystems=True,
+                            atol=1.0e-10,
+                            rtol=1.0e-10,
+                            err_on_non_converge=True,
+                            iprint=2,
+                        )
+                        solver_sub.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+
+                        solver_sub.linear_solver = om.DirectSolver(assemble_jac=True)
+
+                    if (
+                        aero_solver_sub
+                        and couple_aero
+                        and isinstance(subsystem, AerodynamicsBuilder)
+                    ):
+                        target = aero_solver_sub
+                    else:
+                        target = solver_sub
 
                 mission_in = subsystem.mission_inputs(
                     aviary_inputs=aviary_options,
@@ -121,4 +155,4 @@ class BaseODE(om.Group):
                     promotes_outputs=mission_out,
                 )
 
-        return use_mission_solver
+        return solver_sub if solver_sub else self

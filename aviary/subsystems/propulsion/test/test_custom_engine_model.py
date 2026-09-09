@@ -245,8 +245,7 @@ class CustomEngineTest(unittest.TestCase):
 
         prob.final_setup()
 
-        subsolver = prob.model.traj.phases.cruise.rhs_all.solver_sub.nonlinear_solver
-        self.assertTrue(isinstance(subsolver, om.NonlinearRunOnce))
+        self.assertFalse(hasattr(prob.model.traj.phases.cruise.rhs_all, 'solver_sub'))
 
 
 if __name__ == '__main__':

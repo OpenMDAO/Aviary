@@ -135,8 +135,8 @@ class MassPremission(om.Group):
         )
 
         newton = self.nonlinear_solver = om.NewtonSolver()
-        newton.options['atol'] = 1e-9
-        newton.options['rtol'] = 1e-9
+        newton.options['atol'] = 1e-10
+        newton.options['rtol'] = 1e-10
         newton.options['iprint'] = 2
         newton.options['maxiter'] = 10
         newton.options['solve_subsystems'] = True

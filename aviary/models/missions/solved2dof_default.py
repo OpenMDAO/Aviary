@@ -19,6 +19,7 @@ phase_info = {
         },
     },
     'rotate': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -58,6 +59,7 @@ phase_info = {
         },
     },
     'BC': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -87,6 +89,7 @@ phase_info = {
         },
     },
     'C_to_P2': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -115,6 +118,7 @@ phase_info = {
         },
     },
     'P2_to_D': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -143,6 +147,7 @@ phase_info = {
         },
     },
     'DE': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -178,6 +183,7 @@ phase_info = {
         },
     },
     'E_to_P1': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -220,6 +226,7 @@ phase_info = {
         },
     },
     'P1_to_F': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,

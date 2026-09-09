@@ -23,8 +23,8 @@ class TwoDOFODE(_BaseODE):
         target_tas_rate=0,
         # target_alt_rate=0,
         # target_flight_path_angle=0,
-        atol=1e-7,
-        rtol=1e-7,
+        atol=1e-10,
+        rtol=1e-10,
         add_default_solver=True,
         print_level=0,
     ):
