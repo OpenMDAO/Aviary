@@ -138,12 +138,13 @@ class LiftBalanceComp(om.ExplicitComponent):
 
     def setup_partials(self):
         nn = self.options['num_nodes']
+        g = self.options[Mission.GRAVITY][0]  # m/s**2
         rows_cols = np.arange(nn)
         self.declare_partials(
             'lift_balance_residual', Dynamic.Vehicle.LIFT, rows=rows_cols, cols=rows_cols, val=1.0
         )
         self.declare_partials(
-            'lift_balance_residual', Dynamic.Vehicle.MASS, rows=rows_cols, cols=rows_cols
+            'lift_balance_residual', Dynamic.Vehicle.MASS, rows=rows_cols, cols=rows_cols, val=-g
         )
 
     def compute(self, inputs, outputs):
@@ -151,11 +152,6 @@ class LiftBalanceComp(om.ExplicitComponent):
         m = inputs[Dynamic.Vehicle.MASS]
         g = self.options[Mission.GRAVITY][0]  # m/s**2
         outputs['lift_balance_residual'] = L - (m * g)
-
-    def compute_partials(self, inputs, partials):
-        g = self.options[Mission.GRAVITY][0]  # m/s**2
-        partials['lift_balance_residual', Dynamic.Vehicle.MASS] = -g
-
 
 class Broadcaster(om.ExplicitComponent):
     """

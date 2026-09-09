@@ -20,7 +20,7 @@ from aviary.models.external_subsystems.UAV.propulsion.prop_builder import PropBu
 from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
     ExtendedMetaData,
 )
-
+from aviary.variable_info.enums import Transcription
 
 UAV_Prop = PropBuilder()
 
@@ -37,9 +37,12 @@ def CruiseExample():
     }
     # adjust phase info for the cruise example
     cruise_phase_info['cruise']['user_options']['time_initial'] = (0.0, 's')
-    cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((0, 240), 's')
-    cruise_phase_info['cruise']['initial_guesses']['time'] = ([0, 55], 's')
     cruise_phase_info['cruise']['user_options']['distance_initial'] = (0, 'm')
+    cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((None, None), 's')
+    cruise_phase_info['cruise']['user_options']['mach_initial'] = (None, 'unitless')
+    cruise_phase_info['cruise']['initial_guesses']['time'] = ([0, 2000], 's')
+    cruise_phase_info['cruise']['initial_guesses']['distance'] = ([0, 30], 'km')
+    # cruise_phase_info['cruise']['user_options']['transcription'] = Transcription.COLLOCATION
 
     prob.load_inputs('aviary/models/aircraft/UAV/small_scale_uav.csv', cruise_phase_info)
 
@@ -58,13 +61,13 @@ def CruiseExample():
     """Objective: Minimize energy consumption during cruise flight. This is done by adding an objective to the cruise phase that minimizes the energy constraint at the final time step. The energy constraint is defined as the integral of the power required to maintain level flight over the duration of the cruise phase. By minimizing this objective, we can find the optimal flight profile that minimizes energy consumption while still meeting all other constraints and requirements."""
     cruise_phase = prob.model.traj.phases.cruise
 
-    cruise_phase.add_objective('distance', loc='final', ref=-1, units='m')
+    cruise_phase.add_objective('distance', loc='final', ref=-10000, units='m')
 
     driver = 'SNOPT' # set 'SNOPT' or 'IPOPT'
     prob.add_driver(driver, use_coloring=True, max_iter=100)
     if driver == 'SNOPT':
-        prob.driver.opt_settings['Major optimality tolerance'] = 5e-3
-        prob.driver.opt_settings['Major feasibility tolerance'] = 5e-5
+        prob.driver.opt_settings['Major optimality tolerance'] = 5e-5
+        prob.driver.opt_settings['Major feasibility tolerance'] = 1e-6
         prob.driver.opt_settings['Major step limit'] = 1.0
     elif driver == 'IPOPT':
         prob.driver.opt_settings['mu_strategy'] = 'monotone'
@@ -165,9 +168,12 @@ def CruiseExample():
     # print('settings:equations_of_motion:', prob.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION))
     # print('settings:mass_method:', prob.aviary_inputs.get_val(Settings.MASS_METHOD))
 
-    print('mission:range (m): ', prob.get_val('mission:range', units='m'))
+    print('mission:range (km): ', prob.get_val('mission:range', units='km'))
     print('time_duration (s)', prob.get_val('traj.cruise.t_duration', units='s'))
     print('mach', prob.get_val('traj.cruise.timeseries.mach'))
+    print('Aircraft.Battery.MASS (kg)', prob.get_val(Aircraft.Battery.MASS, units='kg'))
+    print('Aircraft.Engine.Motor.IDLE_CURRENT (A)', prob.get_val(Aircraft.Engine.Motor.IDLE_CURRENT, units='A'))
+    print('Aircraft.Engine.Motor.MASS (kg)', prob.get_val(Aircraft.Engine.Motor.MASS, units='kg'))
 
     return prob
 
