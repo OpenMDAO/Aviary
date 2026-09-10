@@ -294,7 +294,7 @@ def create_report_frame(documentation, format, text_filepath):
                 # need to deal with some encoding errors
                 file_text = file_text.decode('latin-1')
             if format == 'markdown':
-                report_pane = pn.pane.Markdown(file_text)
+                report_pane = pn.pane.Markdown(file_text, hard_line_break=True)
             elif format == 'text':
                 report_pane = pn.pane.Str(file_text)
             report_pane = pn.Column(

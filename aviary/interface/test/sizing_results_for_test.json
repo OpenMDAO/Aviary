@@ -210,6 +210,12 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:design:max_mach",
+        0.785,
+        "unitless",
+        "<class 'float'>"
+    ],
+    [
         "aircraft:design:subsonic_drag_coeff_factor",
         1.0,
         "unitless",
@@ -502,7 +508,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:fuel:total_capacity",
+        "aircraft:fuel:max_capacity_mass",
         45694.0,
         "lbm",
         "<class 'float'>"
@@ -975,12 +981,6 @@
         "<class 'float'>"
     ],
     [
-        "mission:constraints:max_mach",
-        0.785,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
         "aircraft:design:gross_mass",
         175399.99999999997,
         "lbm",
@@ -1125,6 +1125,12 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:design:type",
+        "TRANSPORT",
+        "unitless",
+        "<enum 'AircraftTypes'>"
+    ],
+    [
         "aircraft:fuselage:simple_layout",
         true,
         "unitless",
@@ -1159,11 +1165,5 @@
         1906.0,
         "NM",
         "<class 'float'>"
-    ],
-    [
-        "aircraft:fuel:ignore_fuel_capacity_constraint",
-        false,
-        "unitless",
-        "<class 'bool'>"
     ]
 ]

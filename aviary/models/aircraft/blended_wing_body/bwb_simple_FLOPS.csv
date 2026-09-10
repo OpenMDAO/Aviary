@@ -7,6 +7,7 @@ aircraft:anti_icing:mass_scaler,1.0,unitless
 aircraft:apu:mass_scaler,1.0,unitless
 aircraft:avionics:mass_scaler,1.0,unitless
 aircraft:blended_wing_body_design:detailed_wing_provided,False,unitless
+aircraft:blended_wing_body_design:max_bay_width,12.0,ft
 aircraft:blended_wing_body_design:passenger_leading_edge_sweep,45,deg
 aircraft:canard:area,0.0,ft**2
 aircraft:canard:aspect_ratio,0.0,unitless
@@ -135,7 +136,7 @@ aircraft:wing:control_surface_area_ratio,0.333,unitless
 aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:dihedral,3.0,deg
 aircraft:wing:glove_and_bat,121.05,ft**2
-aircraft:wing:input_station_distribution,0.0,0.5,1.0,unitless
+aircraft:wing:input_station_distribution,0.5,1.0,unitless
 aircraft:wing:load_distribution_control,2.0,unitless
 aircraft:wing:mass_scaler,1,unitless
 aircraft:wing:max_camber_at_70_semispan,2,unitless
@@ -155,7 +156,7 @@ aircraft:wing:thickness_to_chord_reference,0.11,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
-mission:constraints:max_mach,0.85,unitless
+aircraft:design:max_mach,0.85,unitless
 aircraft:design:gross_mass,874099,lbm
 aircraft:design:range,7750,NM
 mission:landing:initial_velocity,140,ft/s

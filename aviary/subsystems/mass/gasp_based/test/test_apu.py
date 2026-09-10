@@ -5,8 +5,8 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.apu import APUMass
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 
@@ -15,7 +15,7 @@ class ApuTestCase1(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless'
         )  # large_single_aisle_1_GASP.csv
@@ -45,7 +45,7 @@ class ApuTestCase2(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless'
         )  # large_single_aisle_1_GASP.csv
@@ -84,7 +84,7 @@ class ApuTestCase3(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=5, units='unitless'
         )  # large_single_aisle_1_GASP.csv

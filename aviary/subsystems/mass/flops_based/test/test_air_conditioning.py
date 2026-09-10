@@ -46,6 +46,7 @@ class TransportAirCondMassTest(unittest.TestCase):
                 Aircraft.Avionics.MASS,
                 Aircraft.Fuselage.MAX_HEIGHT,
                 Aircraft.Fuselage.PLANFORM_AREA,
+                Aircraft.Design.MAX_MACH,
             ],
             output_keys=Aircraft.AirConditioning.MASS,
             aviary_option_keys=[Aircraft.CrewPayload.Design.NUM_PASSENGERS],

@@ -49,13 +49,11 @@ class TransportUnusableFuelMassTest(unittest.TestCase):
             input_keys=[
                 Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER,
                 Aircraft.Fuel.DENSITY,
-                Aircraft.Fuel.TOTAL_CAPACITY,
+                Aircraft.Fuel.MAX_CAPACITY_MASS,
                 Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
                 Aircraft.Wing.AREA,
             ],
-            output_keys=[  # Aircraft.Fuel.TOTAL_VOLUME,
-                Aircraft.Fuel.UNUSABLE_FUEL_MASS
-            ],
+            output_keys=[Aircraft.Fuel.UNUSABLE_FUEL_MASS],
             version=Version.TRANSPORT_and_BWB,
             tol=5e-4,
             excludes=['size_prop.*'],
@@ -91,7 +89,7 @@ class TransportUnusableFuelMassTest2(unittest.TestCase):
         prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 30000.0, 'lbm')
+        prob.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 30000.0, 'lbm')
         prob.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 40000.0, 'lbf')
         prob.set_val(Aircraft.Wing.AREA, 1000.0, 'ft**2')
 
@@ -120,10 +118,8 @@ class AltUnusableFuelMassTest(unittest.TestCase):
             self,
             prob,
             case_name,
-            input_keys=[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],
-            output_keys=[  # Aircraft.Fuel.TOTAL_VOLUME,
-                Aircraft.Fuel.UNUSABLE_FUEL_MASS
-            ],
+            input_keys=[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, Aircraft.Fuel.MAX_CAPACITY_MASS],
+            output_keys=[Aircraft.Fuel.UNUSABLE_FUEL_MASS],
             version=Version.ALTERNATE,
         )
 
@@ -150,7 +146,7 @@ class AltUnusableFuelMassTest2(unittest.TestCase):
             'unusable_fuel', AltUnusableFuelMass(), promotes_outputs=['*'], promotes_inputs=['*']
         )
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 30000.0, 'lbm')
+        prob.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 30000.0, 'lbm')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

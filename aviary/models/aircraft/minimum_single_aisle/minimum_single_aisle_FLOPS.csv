@@ -1,0 +1,61 @@
+# Generic single-aisle transport using FLOPS mass and aerodynamics methods.
+# This deck intentionally omits calibration factors, derived outputs, and values that use safe
+# Aviary defaults. The remaining values define the payload, propulsion, geometry, and mission.
+
+# Payload
+aircraft:crew_and_payload:baggage_mass_per_passenger,35,lbm
+aircraft:crew_and_payload:design:num_passengers,154,unitless
+
+# Propulsion and fuel
+aircraft:engine:data_file,models/engines/turbofan_22k.csv,unitless
+aircraft:engine:num_engines,2,unitless
+aircraft:engine:reference_mass,6293.8,lbm
+aircraft:engine:wing_locations,0.289682918,unitless
+aircraft:fuel:wing_fuel_fraction,0.7752,unitless
+
+# Fuselage and nacelle geometry
+aircraft:fuselage:length,125,ft
+aircraft:fuselage:max_height,13,ft
+aircraft:fuselage:max_width,12.3,ft
+aircraft:nacelle:avg_diameter,7.2,ft
+aircraft:nacelle:avg_length,35,ft
+
+# Empennage geometry
+aircraft:horizontal_tail:area,349.522730527158,ft**2
+aircraft:horizontal_tail:aspect_ratio,5.22699386503068,unitless
+aircraft:horizontal_tail:sweep,30.5853213018973,deg
+aircraft:horizontal_tail:taper_ratio,0.2734375,unitless
+aircraft:horizontal_tail:thickness_to_chord,0.115,unitless
+aircraft:vertical_tail:area,227.184358191707,ft**2
+aircraft:vertical_tail:aspect_ratio,1.77777777777778,unitless
+aircraft:vertical_tail:sweep,39.735053245438,deg
+aircraft:vertical_tail:taper_ratio,0.25,unitless
+aircraft:vertical_tail:thickness_to_chord,0.1,unitless
+
+# Wing geometry
+aircraft:wing:area,1220,ft**2
+aircraft:wing:control_surface_area_ratio,0.333,unitless
+aircraft:wing:dihedral,6,deg
+aircraft:wing:height,8.6,ft
+aircraft:wing:max_camber_at_70_semispan,0.015,unitless
+aircraft:wing:span,118.7505278165,ft
+aircraft:wing:span_efficiency_factor,0.95,unitless
+aircraft:wing:sweep,23.6286942529271,deg
+aircraft:wing:taper_ratio,0.265189599754917,unitless
+aircraft:wing:thickness_to_chord,0.12233,unitless
+aircraft:wing:ultimate_load_factor,3.75,unitless
+
+# System assumptions that do not have physically useful zero defaults
+aircraft:hydraulics:system_pressure,5000,psi
+
+# Design mission
+aircraft:design:max_mach,0.785,unitless
+aircraft:design:gross_mass,130000,lbm
+aircraft:design:range,1906,NM
+aircraft:design:cruise_mach,0.72,unitless
+
+# Analysis methods
+settings:equations_of_motion,energy_state
+settings:aerodynamics_method,FLOPS
+settings:mass_method,FLOPS
+settings:problem_type,sizing

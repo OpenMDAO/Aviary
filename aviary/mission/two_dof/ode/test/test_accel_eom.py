@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.accel_eom import AccelerationRates
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 @use_tempdirs
@@ -19,7 +19,10 @@ class AccelerationTestCase(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group', AccelerationRates(num_nodes=2), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        self.prob.model.add_subsystem(
+            'group', AccelerationRates(num_nodes=2, **options), promotes=['*']
+        )
 
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, np.array([174878, 174878]), units='lbm'

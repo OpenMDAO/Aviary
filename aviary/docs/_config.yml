@@ -34,8 +34,10 @@ html:
   favicon : "aviary_logo.png"
   extra_css:
     - custom.css
+    - version_switcher.css
   extra_js:
     - collapsible_headers.js
+    - version_switcher.js
 
 
 launch_buttons:

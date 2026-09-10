@@ -8,13 +8,6 @@ from aviary.variable_info.variables import Aircraft
 class SizeBattery(om.ExplicitComponent):
     """Calculates battery mass from specific energy and additional mass."""
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_inputs',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
-
     def setup(self):
         add_aviary_input(
             self,

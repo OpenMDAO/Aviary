@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM
+from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -32,6 +32,7 @@ class GlideConditionComponent(om.ExplicitComponent):
     """Compute the initial conditions of the 2DOF glide phase."""
 
     def initialize(self):
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
         add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='slug/ft**3')
 
     def setup(self):
@@ -181,6 +182,7 @@ class GlideConditionComponent(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        grav_english = self.options[Mission.GRAVITY][0]
         (
             rho_app,
             rate_of_sink_max,
@@ -194,7 +196,7 @@ class GlideConditionComponent(om.ExplicitComponent):
             time_delay,
         ) = inputs.values()
         weight = mass * GRAV_ENGLISH_LBM
-        G = GRAV_ENGLISH_GASP
+        G = grav_english
 
         wing_loading_land = weight / wing_area
         TAS_stall = np.sqrt(2 * wing_loading_land / (CL_max * rho_app))
@@ -231,6 +233,7 @@ class GlideConditionComponent(om.ExplicitComponent):
         outputs['theta'] = theta
 
     def compute_partials(self, inputs, J):
+        grav_english = self.options[Mission.GRAVITY][0]
         (
             rho_app,
             rate_of_sink_max,
@@ -244,7 +247,7 @@ class GlideConditionComponent(om.ExplicitComponent):
             time_delay,
         ) = inputs.values()
         weight = mass * GRAV_ENGLISH_LBM
-        G = GRAV_ENGLISH_GASP
+        G = grav_english
 
         wing_loading_land = weight / wing_area
         TAS_stall = np.sqrt(2 * wing_loading_land / (CL_max * rho_app))
@@ -535,6 +538,9 @@ class GlideConditionComponent(om.ExplicitComponent):
 class LandingGroundRollComponent(om.ExplicitComponent):
     """Compute the groundroll distance and average acceleration/deceleration."""
 
+    def initialize(self):
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
+
     def setup(self):
         self.add_input('touchdown_CD', val=0.0, units='unitless', desc='CDRL: CD at touchdown')
         self.add_input('touchdown_CL', val=0.0, units='unitless', desc='CLRL: CL at touchdown')
@@ -649,6 +655,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        grav_english = self.options[Mission.GRAVITY][0]
         (
             touchdown_CD,
             touchdown_CL,
@@ -666,7 +673,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
         ) = inputs.values()
 
         weight = mass * GRAV_ENGLISH_LBM
-        G = GRAV_ENGLISH_GASP
+        G = grav_english
         MUB = mu_landing
 
         DLRL = touchdown_CD - (MUB * touchdown_CL)
@@ -684,6 +691,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
         outputs['average_acceleration'] = average_acceleration
 
     def compute_partials(self, inputs, J):
+        grav_english = self.options[Mission.GRAVITY][0]
         (
             touchdown_CD,
             touchdown_CL,
@@ -700,7 +708,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
             mu_landing,
         ) = inputs.values()
         weight = mass * GRAV_ENGLISH_LBM
-        G = GRAV_ENGLISH_GASP
+        G = grav_english
         MUB = mu_landing
 
         DLRL = touchdown_CD - (MUB * touchdown_CL)

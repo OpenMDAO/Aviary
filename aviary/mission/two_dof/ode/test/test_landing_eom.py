@@ -43,14 +43,12 @@ class GlideTestCase(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        opts = {
+
+        options = {
+            Mission.GRAVITY: (32.2, 'ft/s**2'),
             Mission.SEA_LEVEL_DENSITY: (0.0023769, 'slug/ft**3'),
         }
-        self.prob.model.add_subsystem(
-            'group',
-            GlideConditionComponent(**opts),
-            promotes=['*'],
-        )
+        self.prob.model.add_subsystem('group', GlideConditionComponent(**options), promotes=['*'])
 
         self.prob.model.set_input_defaults(
             Dynamic.Atmosphere.DENSITY, 0.0023769, units='slug/ft**3'
@@ -117,7 +115,9 @@ class GlideTestCase2(unittest.TestCase):
 
     def test_case1(self):
         prob = om.Problem()
-        prob.model.add_subsystem('group', GlideConditionComponent(), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+
+        prob.model.add_subsystem('group', GlideConditionComponent(**options), promotes=['*'])
         prob.model.set_input_defaults(Dynamic.Atmosphere.DENSITY, 0.0023769, units='slug/ft**3')
         prob.model.set_input_defaults(Mission.Landing.MAXIMUM_SINK_RATE, 900, units='ft/min')
         prob.model.set_input_defaults('mass', 165279, units='lbm')
@@ -144,7 +144,10 @@ class GroundRollTestCase(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group', LandingGroundRollComponent(), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        self.prob.model.add_subsystem(
+            'group', LandingGroundRollComponent(**options), promotes=['*']
+        )
 
         self.prob.model.set_input_defaults('touchdown_CD', val=0.07344)
         self.prob.model.set_input_defaults('touchdown_CL', val=1.18694)
@@ -201,7 +204,10 @@ class GroundRollTestCase2(unittest.TestCase):
 
     def test_case1(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group', LandingGroundRollComponent(), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        self.prob.model.add_subsystem(
+            'group', LandingGroundRollComponent(**options), promotes=['*']
+        )
 
         self.prob.model.set_input_defaults('touchdown_CD', val=0.07344)
         self.prob.model.set_input_defaults('touchdown_CL', val=1.18694)

@@ -57,6 +57,8 @@ class PreMissionTestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         input_options = setup_options(GASP_input, FLOPS_input)
+        # Note: if a parameter is not a GASP option but a FLOPS option, it is loaded in using default
+        # value in meta data (see V3_bug_fixed_options). So, its value in FLOPS option is never loaded in.
 
         # delete the options that would override values
         input_options.delete(Aircraft.Wing.AREA)
@@ -65,7 +67,7 @@ class PreMissionTestCase(unittest.TestCase):
         input_options.delete(Aircraft.Nacelle.AVG_DIAMETER)
         input_options.delete(Aircraft.Fuselage.WETTED_AREA)
         input_options.delete(Aircraft.Wing.ULTIMATE_LOAD_FACTOR)
-        input_options.delete(Aircraft.Fuel.TOTAL_CAPACITY)
+        input_options.delete(Aircraft.Fuel.MAX_CAPACITY_MASS)
         input_options.delete(Aircraft.Nacelle.AVG_LENGTH)
         input_options.delete(Aircraft.HorizontalTail.AREA)
         input_options.delete(Aircraft.VerticalTail.AREA)
@@ -117,6 +119,9 @@ class PreMissionTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, val=16.0, units='lbm'
         )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, val=20.2, units='inch'
+        )
 
         setup_model_options(self.prob, input_options)
 
@@ -134,8 +139,11 @@ class PreMissionTestCase(unittest.TestCase):
 
         # Adjust WETTED_AREA_SCALER such that WETTED_AREA = 4000.0
         self.prob.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, val=0.86215, units='unitless')
+        # Set LargeSingleAisle1FLOPS value
+        self.prob.set_val(Aircraft.Design.MAX_MACH, val=0.785, units='unitless')
 
     def test_GASP_mass_FLOPS_everything_else(self):
+        # Note: in geomtry subsystem, both GASP and FLOPS based subsystems are used
         self.prob.run_model()
 
         # Check the outputs from GASP mass and geometry (FLOPS outputs are not tested)

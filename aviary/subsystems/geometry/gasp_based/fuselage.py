@@ -12,31 +12,50 @@ class FuselageParameters(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
-        add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='inch')
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, units='inch')
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.DELTA_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
+        add_aviary_input(self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, units='inch')
+        add_aviary_input(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='inch')
 
         add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='inch')
         self.add_output('cabin_height', val=0, units='ft', desc='HC: height of cabin')
         self.add_output('cabin_len', val=0, units='ft', desc='LC: length of cabin')
         self.add_output('nose_height', val=0, units='ft', desc='HN: height of nose')
 
+    def setup_partials(self):
+        self.declare_partials(
+            Aircraft.Fuselage.AVG_DIAMETER,
+            [
+                Aircraft.Fuselage.AISLE_WIDTH,
+                Aircraft.Fuselage.SEAT_WIDTH_ECONOMY,
+            ],
+        )
+
         self.declare_partials(
             'cabin_height',
             [
                 Aircraft.Fuselage.DELTA_DIAMETER,
+                Aircraft.Fuselage.AISLE_WIDTH,
+                Aircraft.Fuselage.SEAT_WIDTH_ECONOMY,
             ],
         )
         self.declare_partials(
             'nose_height',
             [
                 Aircraft.Fuselage.DELTA_DIAMETER,
+                Aircraft.Fuselage.AISLE_WIDTH,
+                Aircraft.Fuselage.SEAT_WIDTH_ECONOMY,
+            ],
+        )
+        self.declare_partials(
+            'cabin_len',
+            [
+                Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY,
             ],
         )
 
@@ -44,11 +63,11 @@ class FuselageParameters(om.ExplicitComponent):
         options = self.options
         verbosity = options[Settings.VERBOSITY]
         seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY]
-        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY]
+        seat_width = inputs[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
-        aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
+        aisle_width = inputs[Aircraft.Fuselage.AISLE_WIDTH]
         PAX = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
-        seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY]
+        seat_pitch = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY]
 
         delta_diameter = inputs[Aircraft.Fuselage.DELTA_DIAMETER]
 
@@ -82,9 +101,33 @@ class FuselageParameters(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         options = self.options
         seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY]
+        num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
+        PAX = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+        sig1 = sigmoidX(seats_abreast, 1.5, -0.01)
+        sig2 = sigmoidX(seats_abreast, 1.5, 0.01)
 
-        J['nose_height', Aircraft.Fuselage.DELTA_DIAMETER] = -sigmoidX(seats_abreast, 1.5, 0.01)
-        J['cabin_height', Aircraft.Fuselage.DELTA_DIAMETER] = sigmoidX(seats_abreast, 1.5, -0.01)
+        J[Aircraft.Fuselage.AVG_DIAMETER, Aircraft.Fuselage.AISLE_WIDTH] = num_aisle
+        J[Aircraft.Fuselage.AVG_DIAMETER, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY] = seats_abreast
+
+        J['nose_height', Aircraft.Fuselage.DELTA_DIAMETER] = -sig2
+        J['nose_height', Aircraft.Fuselage.AISLE_WIDTH] = (
+            num_aisle / 12 * sig1 + num_aisle / 12 * sig2
+        )
+        J['nose_height', Aircraft.Fuselage.SEAT_WIDTH_ECONOMY] = (
+            seats_abreast / 12 * sig1 + seats_abreast / 12 * sig2
+        )
+
+        J['cabin_height', Aircraft.Fuselage.DELTA_DIAMETER] = sig1
+        J['cabin_height', Aircraft.Fuselage.AISLE_WIDTH] = (
+            num_aisle / 12 * sig1 + num_aisle / 12 * sig2
+        )
+        J['cabin_height', Aircraft.Fuselage.SEAT_WIDTH_ECONOMY] = (
+            seats_abreast / 12 * sig1 + seats_abreast / 12 * sig2
+        )
+
+        J['cabin_len', Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY] = (
+            PAX / 12 * sig1 + (PAX - 1) / (seats_abreast * 12) * sig2
+        )
 
 
 class FuselageSize(om.ExplicitComponent):
@@ -259,10 +302,8 @@ class BWBFuselageParameters1(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
-        add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY)
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, units='inch')
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
@@ -270,6 +311,8 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.NOSE_FINENESS, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
+        add_aviary_input(self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, units='inch')
 
         add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.HYDRAULIC_DIAMETER, units='ft', desc='DHYDRAL')
@@ -282,6 +325,8 @@ class BWBFuselageParameters1(om.ExplicitComponent):
             Aircraft.Fuselage.AVG_DIAMETER,
             [
                 Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL,
+                Aircraft.Fuselage.AISLE_WIDTH,
+                Aircraft.Fuselage.SEAT_WIDTH_ECONOMY,
             ],
         )
         self.declare_partials(
@@ -289,12 +334,16 @@ class BWBFuselageParameters1(om.ExplicitComponent):
             [
                 Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL,
                 Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
+                Aircraft.Fuselage.AISLE_WIDTH,
+                Aircraft.Fuselage.SEAT_WIDTH_ECONOMY,
             ],
         )
         self.declare_partials(
             'cabin_height',
             [
                 Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
+                Aircraft.Fuselage.AISLE_WIDTH,
+                Aircraft.Fuselage.SEAT_WIDTH_ECONOMY,
             ],
         )
         self.declare_partials(
@@ -302,6 +351,8 @@ class BWBFuselageParameters1(om.ExplicitComponent):
             [
                 Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
                 Aircraft.Fuselage.DELTA_DIAMETER,
+                Aircraft.Fuselage.AISLE_WIDTH,
+                Aircraft.Fuselage.SEAT_WIDTH_ECONOMY,
             ],
         )
         self.declare_partials(
@@ -310,6 +361,8 @@ class BWBFuselageParameters1(om.ExplicitComponent):
                 Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
                 Aircraft.Fuselage.DELTA_DIAMETER,
                 Aircraft.Fuselage.NOSE_FINENESS,
+                Aircraft.Fuselage.AISLE_WIDTH,
+                Aircraft.Fuselage.SEAT_WIDTH_ECONOMY,
             ],
         )
 
@@ -318,9 +371,9 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         verbosity = options[Settings.VERBOSITY]
 
         seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY]
-        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY]
+        seat_width = inputs[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
-        aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
+        aisle_width = inputs[Aircraft.Fuselage.AISLE_WIDTH]
         PAX = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         additional_width = inputs[Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL]
         cabin_width = (seats_abreast * seat_width + num_aisle * aisle_width) / 12.0 + 1.0
@@ -347,9 +400,9 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         options = self.options
 
         seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY]
-        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY]
+        seat_width = inputs[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
-        aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
+        aisle_width = inputs[Aircraft.Fuselage.AISLE_WIDTH]
         additional_width = inputs[Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL]
         cabin_width = (seats_abreast * seat_width + num_aisle * aisle_width) / 12.0 + 1.0
         body_width = cabin_width + additional_width
@@ -360,6 +413,8 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         hydraulic_diameter = np.sqrt(body_width * cabin_width * nose_height_to_length)
 
         J[Aircraft.Fuselage.AVG_DIAMETER, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = 1.0
+        J[Aircraft.Fuselage.AVG_DIAMETER, Aircraft.Fuselage.AISLE_WIDTH] = num_aisle / 12
+        J[Aircraft.Fuselage.AVG_DIAMETER, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY] = seats_abreast / 12
 
         J[Aircraft.Fuselage.HYDRAULIC_DIAMETER, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL] = (
             0.5 * cabin_width * nose_height_to_length / hydraulic_diameter
@@ -367,16 +422,36 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         J[Aircraft.Fuselage.HYDRAULIC_DIAMETER, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = (
             0.5 * body_width * cabin_width / hydraulic_diameter
         )
+        J[Aircraft.Fuselage.HYDRAULIC_DIAMETER, Aircraft.Fuselage.AISLE_WIDTH] = (
+            cabin_width * num_aisle * nose_height_to_length / hydraulic_diameter / 12
+        )
+        J[Aircraft.Fuselage.HYDRAULIC_DIAMETER, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY] = (
+            0.5 * seats_abreast / 12 * (cabin_width + body_width) * nose_height_to_length
+        ) / hydraulic_diameter
 
         J['cabin_height', Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = cabin_width
+        J['cabin_height', Aircraft.Fuselage.AISLE_WIDTH] = num_aisle / 12 * nose_height_to_length
+        J['cabin_height', Aircraft.Fuselage.SEAT_WIDTH_ECONOMY] = (
+            seats_abreast / 12 * nose_height_to_length
+        )
 
         J['nose_height', Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = cabin_width
         J['nose_height', Aircraft.Fuselage.DELTA_DIAMETER] = -1.0
+        J['nose_height', Aircraft.Fuselage.AISLE_WIDTH] = num_aisle / 12 * nose_height_to_length
+        J['nose_height', Aircraft.Fuselage.SEAT_WIDTH_ECONOMY] = (
+            seats_abreast / 12 * nose_height_to_length
+        )
 
         J['nose_length', Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = cabin_width * nose_fineness
         J['nose_length', Aircraft.Fuselage.DELTA_DIAMETER] = -nose_fineness
         J['nose_length', Aircraft.Fuselage.NOSE_FINENESS] = (
             cabin_width * nose_height_to_length - delta_diameter
+        )
+        J['nose_length', Aircraft.Fuselage.AISLE_WIDTH] = (
+            num_aisle / 12 * nose_height_to_length * nose_fineness
+        )
+        J['nose_length', Aircraft.Fuselage.SEAT_WIDTH_ECONOMY] = (
+            seats_abreast / 12 * nose_height_to_length * nose_fineness
         )
 
 
@@ -384,20 +459,7 @@ class BWBCabinLayout(om.ExplicitComponent):
     """layout of passenger cabin for BWB."""
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_FIRST, units='inch', desc='WS_FC')
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, units='inch')
-        add_aviary_option(
-            self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, units='inch', desc='INGASP.WS'
-        )
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES, units='unitless', desc='INGASP.AS')
-        add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch', desc='INGASP.WAS')
-        add_aviary_option(
-            self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, units='inch', desc='PS_FC'
-        )
-        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, units='inch')
-        add_aviary_option(
-            self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='inch', desc='INGASP.PS'
-        )
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS, desc='INGASP.PAX')
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, desc='INGASP.PCT_FC')
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
@@ -409,6 +471,16 @@ class BWBCabinLayout(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL, units='ft')
         self.add_input('nose_length', units='ft', desc='L_NOSE: nose length')
+        add_aviary_input(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
+        add_aviary_input(self, Aircraft.Fuselage.SEAT_WIDTH_FIRST, units='inch', desc='WS_FC')
+        add_aviary_input(self, Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, units='inch')
+        add_aviary_input(self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, units='inch')
+
+        add_aviary_input(
+            self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, units='inch', desc='PS_FC'
+        )
+        add_aviary_input(self, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, units='inch')
+        add_aviary_input(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='inch')
 
         self.add_output(
             'fuselage_station_aft',
@@ -427,23 +499,23 @@ class BWBCabinLayout(om.ExplicitComponent):
         FC_lav_galley_length = 8.0  # EL_FLGC: length of first class lavatory, galley & closet, ft
         FC_num_aisles = 2  # AS_FC: num of aisles in first class
         FC_aisle_width = 24.0  # WAS_FC: First class aisle width, inch
-        FC_seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_FIRST]
-        FC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST]
+        FC_seat_width = inputs[Aircraft.Fuselage.SEAT_WIDTH_FIRST][0]
+        FC_seat_pitch = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST][0]
 
         BC_lav_galley_length = 8.0
-        BC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS]
-        BC_seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_BUSINESS]
+        BC_seat_pitch = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS][0]
+        BC_seat_width = inputs[Aircraft.Fuselage.SEAT_WIDTH_BUSINESS][0]
 
         TC_num_pax_per_lav = 78  # NLAVTC: economy class passengers per lavatory
         TC_lav_width = 42.0  # WIDLAV: lavatory width, inches, in FLOPS, WIDTHL
         TC_galley_area_per_pax = 0.15  # AGAL_TC: economy class galley area per passenger, ft**2
         # If there is no first class cabin, please set NUM_FIRST_CLASS = 0.
 
-        TC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY]
-        TC_seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY]
+        TC_seat_pitch = inputs[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY][0]
+        TC_seat_width = inputs[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY][0]
         if TC_seat_width <= 0.0:
             raise ValueError(f'fuselage seat width must be positive, but it is {TC_seat_width}.')
-        aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
+        aisle_width = inputs[Aircraft.Fuselage.AISLE_WIDTH][0]
         num_aisles = options[Aircraft.Fuselage.NUM_AISLES]
 
         body_width = inputs[Aircraft.Fuselage.AVG_DIAMETER][0]

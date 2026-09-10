@@ -28,16 +28,19 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
-        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.MAX_CAPACITY_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, units='lbf')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
 
-        add_aviary_output(self, Aircraft.Fuel.TOTAL_VOLUME, units='galUS')  # not computed nor used
+        add_aviary_output(
+            self, Aircraft.Fuel.MAX_CAPACITY_VOLUME, units='galUS'
+        )  # not computed nor used
         add_aviary_output(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(
-            Aircraft.Fuel.TOTAL_VOLUME, [Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.DENSITY]
+            Aircraft.Fuel.MAX_CAPACITY_VOLUME,
+            [Aircraft.Fuel.MAX_CAPACITY_MASS, Aircraft.Fuel.DENSITY],
         )
 
         self.declare_partials(
@@ -46,7 +49,7 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
                 Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER,
                 Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
                 Aircraft.Wing.AREA,
-                Aircraft.Fuel.TOTAL_CAPACITY,
+                Aircraft.Fuel.MAX_CAPACITY_MASS,
                 Aircraft.Fuel.DENSITY,
             ],
         )
@@ -56,7 +59,7 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER]
         # Calculate fuel density ratio relative to Jet A: 6.7 lbm/galUS = 50.11948 lbm/ft**3
         density_ratio = inputs[Aircraft.Fuel.DENSITY] / 6.7
-        total_capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
+        total_capacity = inputs[Aircraft.Fuel.MAX_CAPACITY_MASS]
         num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
         max_sls_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
@@ -64,7 +67,7 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
 
         # This is a volume: lbm / (lbm/galUS)
-        # outputs[Aircraft.Fuel.TOTAL_VOLUME] = total_capacity / density_ratio
+        # outputs[Aircraft.Fuel.MAX_CAPACITY_VOLUME] = total_capacity / density_ratio
 
         outputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS] = (
             (
@@ -83,7 +86,7 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
         tank_count = self.options[Aircraft.Fuel.NUM_TANKS]
         scaler = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER]
         density_ratio = inputs[Aircraft.Fuel.DENSITY] / 6.7
-        total_capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
+        total_capacity = inputs[Aircraft.Fuel.MAX_CAPACITY_MASS]
         num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
         max_sls_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
@@ -93,10 +96,10 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
         term1 = thrust_factor**0.2
         term2 = total_capacity**0.28
 
-        # J[Aircraft.Fuel.TOTAL_VOLUME, Aircraft.Fuel.TOTAL_CAPACITY] = (
+        # J[Aircraft.Fuel.MAX_CAPACITY_VOLUME, Aircraft.Fuel.MAX_CAPACITY_MASS] = (
         #     1.0 / density_ratio)
 
-        # J[Aircraft.Fuel.TOTAL_VOLUME, Aircraft.Fuel.DENSITY_RATIO] = (
+        # J[Aircraft.Fuel.MAX_CAPACITY_VOLUME, Aircraft.Fuel.DENSITY_RATIO] = (
         #     -total_capacity / (density_ratio * density_ratio))
 
         J[Aircraft.Fuel.UNUSABLE_FUEL_MASS, Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER] = (
@@ -113,7 +116,7 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
             0.07 * density_ratio * scaler / GRAV_ENGLISH_LBM
         )
 
-        J[Aircraft.Fuel.UNUSABLE_FUEL_MASS, Aircraft.Fuel.TOTAL_CAPACITY] = (
+        J[Aircraft.Fuel.UNUSABLE_FUEL_MASS, Aircraft.Fuel.MAX_CAPACITY_MASS] = (
             0.448 * tank_count * total_capacity**-0.72 * density_ratio * scaler / GRAV_ENGLISH_LBM
         )
 
@@ -134,7 +137,7 @@ class AltUnusableFuelMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, units='unitless')
 
-        add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.MAX_CAPACITY_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
 
@@ -142,17 +145,17 @@ class AltUnusableFuelMass(om.ExplicitComponent):
         self.declare_partials(of='*', wrt='*')
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        total_fuel_capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
+        total_fuel_capacity = inputs[Aircraft.Fuel.MAX_CAPACITY_MASS]
         scaler = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER]
 
         outputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS] = 0.0084 * total_fuel_capacity * scaler
 
     def compute_partials(self, inputs, J):
-        total_fuel_capacity = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
+        total_fuel_capacity = inputs[Aircraft.Fuel.MAX_CAPACITY_MASS]
         scaler = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER]
 
         J[Aircraft.Fuel.UNUSABLE_FUEL_MASS, Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER] = (
             0.0084 * total_fuel_capacity
         )
 
-        J[Aircraft.Fuel.UNUSABLE_FUEL_MASS, Aircraft.Fuel.TOTAL_CAPACITY] = 0.0084 * scaler
+        J[Aircraft.Fuel.UNUSABLE_FUEL_MASS, Aircraft.Fuel.MAX_CAPACITY_MASS] = 0.0084 * scaler

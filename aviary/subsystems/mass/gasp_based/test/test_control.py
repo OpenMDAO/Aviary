@@ -7,8 +7,8 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary import constants
 from aviary.subsystems.mass.gasp_based.control import ControlMassGroup
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 
@@ -128,7 +128,7 @@ class BWBControlMassTestCase(unittest.TestCase):
 @use_tempdirs
 class ControlGroupTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -203,7 +203,7 @@ class ControlGroupTestCase2(unittest.TestCase):
         constants.GRAV_ENGLISH_LBM = 1.1
         control.GRAV_ENGLISH_LBM = 1.1
 
-        options = get_option_defaults()
+        options = AviaryValues()
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(

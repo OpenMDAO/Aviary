@@ -1,8 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -21,6 +21,8 @@ class FlightPathEOM(om.ExplicitComponent):
             desc='True if the aircraft is confined to the ground. Removes altitude rate as an '
             'output and adjust the TAS rate equation.',
         )
+
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -188,6 +190,7 @@ class FlightPathEOM(om.ExplicitComponent):
         self.declare_partials('fuselage_pitch', [Aircraft.Wing.INCIDENCE])
 
     def compute(self, inputs, outputs):
+        grav_english = self.options[Mission.GRAVITY][0]
         if self.options['ground_roll']:
             mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
         else:
@@ -216,14 +219,14 @@ class FlightPathEOM(om.ExplicitComponent):
                 - weight * np.sin(gamma)
                 - mu * normal_force
             )
-            * GRAV_ENGLISH_GASP
+            * grav_english
             / weight
         )
 
         if not self.options['ground_roll']:
             outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE] = (
                 (thrust_across_flightpath + incremented_lift - weight * np.cos(gamma))
-                * GRAV_ENGLISH_GASP
+                * grav_english
                 / (TAS * weight)
             )
             outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * np.sin(gamma)
@@ -239,6 +242,7 @@ class FlightPathEOM(om.ExplicitComponent):
         outputs['load_factor'] = load_factor
 
     def compute_partials(self, inputs, J):
+        grav_english = self.options[Mission.GRAVITY][0]
         if self.options['ground_roll']:
             mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
         else:
@@ -300,12 +304,12 @@ class FlightPathEOM(om.ExplicitComponent):
         # dNF_dIwing[normal_force1 < 0] = 0
 
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
-            (dTAlF_dThrust - mu * dNF_dThrust) * GRAV_ENGLISH_GASP / weight
+            (dTAlF_dThrust - mu * dNF_dThrust) * grav_english / weight
         )
 
-        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.DRAG] = -GRAV_ENGLISH_GASP / weight
+        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.DRAG] = -grav_english / weight
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.MASS] = (
-            GRAV_ENGLISH_GASP
+            grav_english
             * GRAV_ENGLISH_LBM
             * (
                 weight * (-np.sin(gamma) - mu * dNF_dWeight)
@@ -319,14 +323,14 @@ class FlightPathEOM(om.ExplicitComponent):
             / weight**2
         )
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
-            -np.cos(gamma) * GRAV_ENGLISH_GASP
+            -np.cos(gamma) * grav_english
         )
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.LIFT] = (
-            GRAV_ENGLISH_GASP * (-mu * dNF_dLift) / weight
+            grav_english * (-mu * dNF_dLift) / weight
         )
         if self.options['ground_roll']:
             J[Dynamic.Mission.VELOCITY_RATE, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT] = (
-                -normal_force * GRAV_ENGLISH_GASP / weight
+                -normal_force * grav_english / weight
             )
 
         # TODO: check partials, esp. for alphas
@@ -339,35 +343,35 @@ class FlightPathEOM(om.ExplicitComponent):
             J[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            ] = dTAcF_dThrust * GRAV_ENGLISH_GASP / (TAS * weight)
+            ] = dTAcF_dThrust * grav_english / (TAS * weight)
             J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.ANGLE_OF_ATTACK] = (
-                dTAcF_dAlpha * GRAV_ENGLISH_GASP / (TAS * weight)
+                dTAcF_dAlpha * grav_english / (TAS * weight)
             )
             J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Aircraft.Wing.INCIDENCE] = (
-                dTAcF_dIwing * GRAV_ENGLISH_GASP / (TAS * weight)
+                dTAcF_dIwing * grav_english / (TAS * weight)
             )
-            J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.LIFT] = GRAV_ENGLISH_GASP / (
+            J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.LIFT] = grav_english / (
                 TAS * weight
             )
             J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.MASS] = (
-                (GRAV_ENGLISH_GASP / TAS)
+                (grav_english / TAS)
                 * GRAV_ENGLISH_LBM
                 * (-thrust_across_flightpath / weight**2 - incremented_lift / weight**2)
             )
             J[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            ] = weight * np.sin(gamma) * GRAV_ENGLISH_GASP / (TAS * weight)
+            ] = weight * np.sin(gamma) * grav_english / (TAS * weight)
             J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Mission.VELOCITY] = -(
                 (thrust_across_flightpath + incremented_lift - weight * np.cos(gamma))
-                * GRAV_ENGLISH_GASP
+                * grav_english
                 / (TAS**2 * weight)
             )
 
             dNF_dAlpha = -np.ones(nn) * dTAcF_dAlpha
             # dNF_dAlpha[normal_force1 < 0] = 0
             J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.ANGLE_OF_ATTACK] = (
-                (dTAlF_dAlpha - mu * dNF_dAlpha) * GRAV_ENGLISH_GASP / weight
+                (dTAlF_dAlpha - mu * dNF_dAlpha) * grav_english / weight
             )
             J['normal_force', Dynamic.Vehicle.ANGLE_OF_ATTACK] = dNF_dAlpha
             J['fuselage_pitch', Dynamic.Vehicle.ANGLE_OF_ATTACK] = 1
@@ -375,7 +379,7 @@ class FlightPathEOM(om.ExplicitComponent):
                 weight * np.cos(gamma)
             )
             J[Dynamic.Mission.VELOCITY_RATE, Aircraft.Wing.INCIDENCE] = (
-                (dTAlF_dIwing - mu * dNF_dIwing) * GRAV_ENGLISH_GASP / weight
+                (dTAlF_dIwing - mu * dNF_dIwing) * grav_english / weight
             )
             J['normal_force', Aircraft.Wing.INCIDENCE] = dNF_dIwing
             J['fuselage_pitch', Aircraft.Wing.INCIDENCE] = -1

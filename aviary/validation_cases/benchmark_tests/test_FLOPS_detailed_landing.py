@@ -22,6 +22,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.validation_cases.benchmark_utils import print_benchmark_results
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -42,7 +43,8 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         driver.opt_settings['print_level'] = 4
         driver.opt_settings['mu_init'] = 1e-5
 
-        self._do_run(driver, optimizer)
+        prob = self._do_run(driver, optimizer)
+        print_benchmark_results(prob)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_SNOPT(self):
@@ -56,7 +58,8 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         driver.opt_settings['Major feasibility tolerance'] = 1e-6
         driver.opt_settings['iSumm'] = 6
 
-        self._do_run(driver, optimizer)
+        prob = self._do_run(driver, optimizer)
+        print_benchmark_results(prob)
 
     def _do_run(self, driver: Driver, optimizer, *args):
         aviary_options = _inputs.deepcopy()
@@ -151,6 +154,7 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         actual = landing.model.get_val('traj.landing_fullstop.t', units='s')[-1]
 
         assert_near_equal(actual, desired, 0.05)
+        return landing
 
 
 if __name__ == '__main__':

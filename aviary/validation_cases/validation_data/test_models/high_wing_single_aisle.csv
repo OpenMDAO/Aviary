@@ -21,6 +21,7 @@ aircraft:crew_and_payload:wing_cargo,0.01,lbm   #check
 aircraft:design:empty_mass_margin_scaler,0.01,unitless   #check
 aircraft:design:landing_to_takeoff_mass_ratio,0.95,unitless
 aircraft:design:use_alt_mass,False,unitless
+aircraft:design:max_mach,0.85,unitless
 aircraft:design:type,transport,unitless
 aircraft:electrical:mass_scaler,1.01,unitless   #check
 aircraft:engine:additional_mass_fraction,0.001,unitless
@@ -125,7 +126,6 @@ aircraft:wing:thickness_to_chord_distribution,0.1,0.1,0.1,unitless
 aircraft:wing:thickness_to_chord_reference,0.01,unitless   #check
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.01,unitless   #check
-mission:constraints:max_mach,0.85,unitless
 aircraft:design:cruise_altitude,38000,ft
 aircraft:design:gross_mass,150000.0,lbm
 aircraft:design:range,3500,NM

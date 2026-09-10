@@ -13,6 +13,7 @@ from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.utils.preprocessors import preprocess_options
 
 
 @use_tempdirs
@@ -23,6 +24,7 @@ class FlightPathODETestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         aviary_options = get_option_defaults()
+        aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', [build_engine_deck(aviary_options)]
@@ -30,7 +32,7 @@ class FlightPathODETestCase(unittest.TestCase):
 
         self.fp = self.prob.model = FlightPathODE(
             num_nodes=2,
-            aviary_options=get_option_defaults(),
+            aviary_options=aviary_options,
             subsystems=default_mission_subsystems,
         )
 
@@ -63,7 +65,7 @@ class FlightPathODETestCase(unittest.TestCase):
             'fuselage_pitch': [0.0, 0.0],
             'load_factor': [0.25086942, 0.25086942],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
-            Dynamic.Mission.ALTITUDE_RATE_MAX: [-0.01815763, -0.01815763],
+            Dynamic.Mission.ALTITUDE_RATE_MAX: [-0.018143, -0.018143],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -99,7 +101,7 @@ class FlightPathODETestCase(unittest.TestCase):
             'normal_force': [74913.05769336, 74913.05769336],
             'fuselage_pitch': [0.0, 0.0],
             'load_factor': [0.25086942, 0.25086942],
-            Dynamic.Mission.ALTITUDE_RATE_MAX: [0.75323619, 0.75323619],
+            Dynamic.Mission.ALTITUDE_RATE_MAX: [0.75262913, 0.75262913],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
