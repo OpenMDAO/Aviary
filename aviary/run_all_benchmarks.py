@@ -5,12 +5,12 @@ process = subprocess.Popen(
     stdout=subprocess.PIPE,
     stderr=subprocess.STDOUT,
     text=True,
-    bufsize=1
+    bufsize=1,
 )
 
 lines = []
 for line in process.stdout:
-    print(line, end="", flush=True)
+    print(line, end='', flush=True)
     lines.append(line)
 
 # Wait for the subprocess to finish and get the exit code
@@ -32,4 +32,3 @@ for j, line in enumerate(lines):
 for name, bench_data in sorted(results.items()):
     print(name)
     print(bench_data)
-
