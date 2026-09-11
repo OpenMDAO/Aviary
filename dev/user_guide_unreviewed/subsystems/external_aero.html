@@ -704,6 +704,13 @@ Angle of Attack (deg) [-2.  0.  2.  4.  6.  8. 10.]
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1789143159.687626] [runnervmlun5p:5756 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x561e65d7ffd0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1789143159.687920] [runnervmlun5p:5756 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervmlun5p:05756] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>================================
 pre_mission.core_subsystems.mass
 ================================
@@ -798,10 +805,10 @@ NL: Newton Converged in 0 iterations
 traj.phases.descent.rhs_all.aerodynamics
 ========================================
 NL: Newton 0 ; 2.88331882e-06 1
+NL: Newton 1 ; 2.76091002e-10 9.57545869e-05
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NL: Newton 1 ; 2.76091002e-10 9.57545869e-05
-NL: Newton 2 ; 2.49268862e-17 8.64520635e-12
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NL: Newton 2 ; 2.49268862e-17 8.64520635e-12
 NL: Newton Converged
 
 ======================================

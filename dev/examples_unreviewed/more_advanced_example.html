@@ -703,6 +703,13 @@ Later in this example, we increase this order which will allow the optimizer to 
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1789142741.516205] [runnervmlun5p:4775 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x562cdf1f6bc0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1789142741.516479] [runnervmlun5p:4775 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervmlun5p:04775] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       66
                      variables with only lower bounds:       57
                 variables with lower and upper bounds:        9
@@ -721,12 +728,12 @@ Total number of inequality constraints...............:       27
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5497020995242843e+00    2.5497020995242843e+00
-Dual infeasibility......:   1.7762095659418376e-08    1.7762095659418376e-08
-Constraint violation....:   1.5238110443678133e-14    1.5238110443678133e-14
+Objective...............:   2.5497020995242869e+00    2.5497020995242869e+00
+Dual infeasibility......:   1.7762094604711307e-08    1.7762094604711307e-08
+Constraint violation....:   6.1630215450967319e-15    6.1630215450967319e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0944744385282355e-08    9.0944744385282355e-08
-Overall NLP error.......:   9.0944744385282355e-08    9.0944744385282355e-08
+Complementarity.........:   9.0944744385278689e-08    9.0944744385278689e-08
+Overall NLP error.......:   9.0944744385278689e-08    9.0944744385278689e-08
 
 
 Number of objective function evaluations             = 28
@@ -736,7 +743,7 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 3.871
+Total seconds in IPOPT                               = 3.775
 
 EXIT: Optimal Solution Found.
 
@@ -792,7 +799,7 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.47707117196
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.477071171972
 </pre></div>
 </div>
 </div>
@@ -805,7 +812,7 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.02099524284
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.02099524287
 </pre></div>
 </div>
 </div>
@@ -884,12 +891,12 @@ Total number of inequality constraints...............:       27
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5637089674782185e+00    2.5637089674782185e+00
-Dual infeasibility......:   3.9054362570134770e-08    3.9054362570134770e-08
-Constraint violation....:   5.4452381539304810e-15    5.4452381539304810e-15
+Objective...............:   2.5637089674782243e+00    2.5637089674782243e+00
+Dual infeasibility......:   3.9054366608567395e-08    3.9054366608567395e-08
+Constraint violation....:   6.9153311257764159e-15    6.9153311257764159e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0971568541178267e-08    9.0971568541178267e-08
-Overall NLP error.......:   9.0971568541178267e-08    9.0971568541178267e-08
+Complementarity.........:   9.0971568541211063e-08    9.0971568541211063e-08
+Overall NLP error.......:   9.0971568541211063e-08    9.0971568541211063e-08
 
 
 Number of objective function evaluations             = 28
@@ -899,7 +906,7 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 3.648
+Total seconds in IPOPT                               = 3.543
 
 EXIT: Optimal Solution Found.
 
@@ -942,7 +949,7 @@ Let’s take a look at the fuel burn value:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.011155486967
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.011155486993
 </pre></div>
 </div>
 </div>
@@ -1046,8 +1053,7 @@ Number of inequality constraint evaluations          = 69
 Number of equality constraint Jacobian evaluations   = 51
 Number of inequality constraint Jacobian evaluations = 51
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT       
-                        = 8.980
+Total seconds in IPOPT                               = 8.681
 
 EXIT: Maximum Number of Iterations Exceeded.
 </pre></div>
