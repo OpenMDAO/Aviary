@@ -82,6 +82,7 @@ energy_phase_info = {
 # 2DOF
 two_dof_phase_info = {
     'groundroll': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'ground_roll': True,
@@ -108,6 +109,7 @@ two_dof_phase_info = {
         },
     },
     'rotation': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'rotation': True,
@@ -139,6 +141,7 @@ two_dof_phase_info = {
         },
     },
     'ascent': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,
@@ -178,6 +181,7 @@ two_dof_phase_info = {
         },
     },
     'accel': {
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.ACCEL,
             'num_segments': 1,
@@ -257,6 +261,7 @@ two_dof_phase_info = {
         },
     },
     'cruise': {
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (21_000, 'ft'),

@@ -35,12 +35,7 @@ class TestTypes(unittest.TestCase):
             self.fail('Expecting correct units and type to pass.')
 
         try:
-            vals.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=True, units='unitless')
-        except:
-            self.fail('Expecting correct units and type to pass.')
-
-        try:
-            vals.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=True, units='unitless')
+            vals.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
         except:
             self.fail('Expecting correct units and type to pass.')
 
@@ -56,22 +51,11 @@ class TestTypes(unittest.TestCase):
             self.fail('Expecting TypeError.')
 
         try:
-            vals.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val='five', units='unitless')
+            vals.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val='five', units='unitless')
         except TypeError as err:
             self.assertEqual(
                 str(err),
-                f'{Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF} is of type(s) <class'
-                " 'bool'> but you have provided a value of type <class 'str'>.",
-            )
-        else:
-            self.fail('Expecting TypeError.')
-
-        try:
-            vals.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val='five', units='unitless')
-        except TypeError as err:
-            self.assertEqual(
-                str(err),
-                f'{Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF} is of type(s) <class'
+                f'{Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES} is of type(s) <class'
                 " 'bool'> but you have provided a value of type <class 'str'>.",
             )
         else:

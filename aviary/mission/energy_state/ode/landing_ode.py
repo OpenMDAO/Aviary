@@ -51,7 +51,7 @@ class FlareODE(_BaseODE):
             promotes_outputs=[('stall_speed', 'v_stall')],
         )
 
-        self.add_subsystems()
+        self.add_subsystems_and_solver()
 
         self.add_subsystem(
             'landing_eom',

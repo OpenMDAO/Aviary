@@ -106,10 +106,9 @@ class TestExternalSubsystems(unittest.TestCase):
 
         prob.run_model()
 
-        # NOTE currently 2DOF ODEs do not use the solver subsystem
         self.assertTrue(
             hasattr(
-                prob.model.traj.phases.cruise.rhs_all,
+                prob.model.traj.phases.cruise.rhs_all.solver_sub,
                 'solve_me',
             )
         )

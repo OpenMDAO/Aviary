@@ -145,13 +145,6 @@ class TakeOffODE(TwoDOFODE):
 
             if isinstance(subsystem, AerodynamicsBuilder):
                 kwargs = {'method': 'low_speed'}
-                if self.options['clean']:
-                    kwargs['method'] = 'cruise'
-                    kwargs['output_alpha'] = False
-
-                if not (ground_roll or rotation):
-                    kwargs['retract_gear'] = True
-                    kwargs['retract_flaps'] = True
 
             if name in subsystem_options:
                 kwargs.update(subsystem_options[name])

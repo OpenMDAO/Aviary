@@ -4,13 +4,95 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.geometry.gasp_based.empennage import EmpennageSize, TailSize, TailVolCoef
-from aviary.variable_info.functions import setup_model_options
+from aviary.subsystems.geometry.gasp_based.empennage import (
+    EmpennageSize,
+    MomentRatio,
+    TailSize,
+    TailVolCoef,
+)
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.functions import override_aviary_vars, setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Settings
 
 tol = 5e-4
 partial_tols = {'atol': 1e-8, 'rtol': 1e-8}
+
+
+class PreMission(om.Group):
+    """a helper class for overriding"""
+
+    def initialize(self):
+        self.options.declare(
+            'aviary_options', types=AviaryValues, desc='Aircraft options dictionary'
+        )
+
+    def setup(self):
+        self.add_subsystem(
+            'emp',
+            EmpennageSize(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+    def configure(self):
+        aviary_options = self.options['aviary_options']
+
+        # Overrides
+        override_aviary_vars(self, aviary_options)
+
+
+class TestMomentRatio(unittest.TestCase):
+    def setUp(self):
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'hmr',
+            MomentRatio(orientation='horizontal'),
+            promotes=['aircraft:*'],
+        )
+        prob.model.add_subsystem(
+            'vmr',
+            MomentRatio(orientation='vertical'),
+            promotes=['aircraft:*'],
+        )
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless'
+        )
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case_1(self):
+        prob = self.prob
+        prob.run_model()
+
+        # These are not actual GASP values.
+        expected_values = {
+            Aircraft.HorizontalTail.MOMENT_RATIO: 0.271,
+            Aircraft.VerticalTail.MOMENT_RATIO: 1.862,
+        }
+
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob[var_name], expected, tol)
+
+    def test_case_2(self):
+        prob = self.prob
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 1, units='unitless')
+        prob.run_model()
+
+        # These are not actual GASP values.
+        expected_values = {
+            Aircraft.HorizontalTail.MOMENT_RATIO: 0.3665,
+            Aircraft.VerticalTail.MOMENT_RATIO: 2.2,
+        }
+
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob[var_name], expected, tol)
+
+        prob = self.prob
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, **partial_tols)
 
 
 class TestTailVolCoef(
@@ -130,46 +212,56 @@ class TestTailComp(
 
 
 @use_tempdirs
-class TestEmpennageGroup(
-    unittest.TestCase
-):  # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
-    def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('emp', EmpennageSize(), promotes=['*'])
+class TestEmpennageGroup1(unittest.TestCase):
+    """
+    this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
+    tail volume coefficients are given.
+    """
 
-        self.prob.model.set_input_defaults(
+    def setUp(self):
+        options = AviaryValues()
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 0.000001, units='unitless')
+        options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.015, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.2307, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
+        options.set_val(Settings.VERBOSITY, 0)
+
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'premission',
+            PreMission(aviary_options=options),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.615, units='ft')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.615, units='ft')
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units='unitless'
         )
 
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.VOLUME_COEFFICIENT, val=0.145, units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.MOMENT_RATIO, val=2.362, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
 
-    def test_large_sinle_aisle_1_defaults(self):
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.run_model()
+    def test_large_sinle_aisle_1_defaults(self):
+        prob = self.prob
+        prob.run_model()
 
         # Htail AVERAGE_CHORD potentially not actual GASP value, it is calculated twice in different places
         # note: MOMENT_ARM slightly different from GASP output value, likely numerical diff.s, this value is from Kenny
@@ -188,25 +280,65 @@ class TestEmpennageGroup(
 
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected, tol)
+                assert_near_equal(prob[var_name], expected, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, **partial_tols)
+
+
+@use_tempdirs
+class TestEmpennageGroup2(unittest.TestCase):
+    """
+    this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
+    tail volume coefficients are computed.
+    """
+
+    def setUp(self):
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem('emp', EmpennageSize(), promotes=['*'])
+
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=1.189, units='unitless'
+        )
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units='unitless'
+        )
+        prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.615, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units='unitless'
+        )
+
+        prob.model.set_input_defaults(
+            Aircraft.VerticalTail.VOLUME_COEFFICIENT, val=0.145, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.VerticalTail.MOMENT_RATIO, val=2.362, units='unitless'
+        )
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
+        prob.model.set_input_defaults(
+            Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
+        )
 
     def test_large_sinle_aisle_1_calc_volcoefs(self):
         options = get_option_defaults()
-        options.set_val(Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, val=True, units='unitless')
-        options.set_val(Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, val=True, units='unitless')
 
-        setup_model_options(self.prob, options)
+        prob = self.prob
+        setup_model_options(prob, options)
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless')
-        self.prob.set_val(Aircraft.Fuselage.LENGTH, 129.4, units='ft')
-        self.prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, 13.1, units='ft')
+        prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless')
+        prob.set_val(Aircraft.Fuselage.LENGTH, 129.4, units='ft')
+        prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, 13.1, units='ft')
 
-        self.prob.run_model()
+        prob.run_model()
 
         # not actual GASP values
         expected_values = {
@@ -216,53 +348,51 @@ class TestEmpennageGroup(
 
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected, tol)
+                assert_near_equal(prob[var_name], expected, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, **partial_tols)
 
 
 @use_tempdirs
 class BWBTestEmpennageGroup(unittest.TestCase):
-    """BWB model"""
+    """GASP BWB model does not compute volume coeffiients. So, override."""
 
-    def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('emp', EmpennageSize(), promotes=['*'])
+    def test_case(self):
+        options = AviaryValues()
+        options.set_val(Aircraft.HorizontalTail.VOLUME_COEFFICIENT, 0.000001, units='unitless')
+        options.set_val(Aircraft.VerticalTail.VOLUME_COEFFICIENT, 0.015, units='unitless')
+        options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, 0.5463, units='unitless')
+        options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 5.2615, units='unitless')
+        options.set_val(Settings.VERBOSITY, 0)
 
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VOLUME_COEFFICIENT, val=0.000001, units='unitless'
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            'premission',
+            PreMission(aviary_options=options),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=2142.85714286, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MOMENT_RATIO, val=0.5463, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=16.2200522, units='ft')
-        self.prob.model.set_input_defaults(
+
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=2142.85714286, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=16.2200522, units='ft')
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=1.705, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.HorizontalTail.TAPER_RATIO, val=0.366, units='unitless'
         )
-
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.VOLUME_COEFFICIENT, val=0.0150, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.MOMENT_RATIO, val=5.2615, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501094, units='ft')
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501094, units='ft')
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.705, units='unitless'
         )
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.366, units='unitless'
         )
 
-    def test_case1(self):
-        self.prob.setup(check=False, force_alloc_complex=True)
+        prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.run_model()
+        prob.run_model()
 
         expected_values = {
             Aircraft.HorizontalTail.AREA: 0.00117064,
@@ -279,9 +409,9 @@ class BWBTestEmpennageGroup(unittest.TestCase):
 
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected, tol)
+                assert_near_equal(prob[var_name], expected, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, **partial_tols)
 
 

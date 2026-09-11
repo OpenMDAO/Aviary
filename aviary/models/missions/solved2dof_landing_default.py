@@ -1,6 +1,7 @@
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
     'GH': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -40,6 +41,7 @@ phase_info = {
         },
     },
     'HI': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -79,6 +81,7 @@ phase_info = {
         },
     },
     'IJ': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,

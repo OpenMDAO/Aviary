@@ -34,10 +34,6 @@ class FlightODE(TwoDOFODE):
 
     def setup(self):
         nn = self.options['num_nodes']
-        aviary_options = self.options['aviary_options']
-        subsystems = self.options['subsystems']
-        subsystem_options = self.options['subsystem_options']
-        user_options = self.options['user_options']
         input_speed_type = self.options['input_speed_type']
 
         if input_speed_type is SpeedType.EAS:
@@ -74,8 +70,8 @@ class FlightODE(TwoDOFODE):
             mach_balance_group.nonlinear_solver = om.NewtonSolver()
             mach_balance_group.nonlinear_solver.options['solve_subsystems'] = True
             mach_balance_group.nonlinear_solver.options['iprint'] = 0
-            mach_balance_group.nonlinear_solver.options['atol'] = 1e-7
-            mach_balance_group.nonlinear_solver.options['rtol'] = 1e-7
+            mach_balance_group.nonlinear_solver.options['atol'] = 1e-10
+            mach_balance_group.nonlinear_solver.options['rtol'] = 1e-10
             mach_balance_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
             mach_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
@@ -133,8 +129,8 @@ class FlightODE(TwoDOFODE):
         lift_balance_group.nonlinear_solver = om.NewtonSolver()
         lift_balance_group.nonlinear_solver.options['solve_subsystems'] = True
         lift_balance_group.nonlinear_solver.options['iprint'] = 0
-        lift_balance_group.nonlinear_solver.options['atol'] = 1e-7
-        lift_balance_group.nonlinear_solver.options['rtol'] = 1e-7
+        lift_balance_group.nonlinear_solver.options['atol'] = 1e-10
+        lift_balance_group.nonlinear_solver.options['rtol'] = 1e-10
         lift_balance_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         lift_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
@@ -171,48 +167,11 @@ class FlightODE(TwoDOFODE):
             promotes_outputs=['theta', 'TAS_violation'],
         )
 
-        # collect the propulsion group names for later use
-        for subsystem in subsystems:
-            kwargs = {}
+        self.add_subsystems_and_solver(
+            solver_sub=lift_balance_group,
+            couple_aero=True,
+        )
 
-            # check if subsystem_options has entry for a subsystem of this name
-            if subsystem.name in subsystem_options:
-                kwargs = subsystem_options[subsystem.name]
-            if isinstance(subsystem, AerodynamicsBuilder):
-                # set default options for Aero if not specified by user
-                base_kwargs = {
-                    'method': 'cruise',
-                }
-                kwargs.update(base_kwargs)
-
-            system = subsystem.build_mission(
-                num_nodes=nn,
-                aviary_inputs=aviary_options,
-                user_options=user_options,
-                subsystem_options=kwargs,
-            )
-
-            if system is not None:
-                if isinstance(subsystem, AerodynamicsBuilder):
-                    target = lift_balance_group
-                else:
-                    target = self
-                mission_in = subsystem.mission_inputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                mission_out = subsystem.mission_outputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                target.add_subsystem(
-                    subsystem.name,
-                    system,
-                    promotes_inputs=mission_in,
-                    promotes_outputs=mission_out,
-                )
         self.add_alpha_control(
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,
