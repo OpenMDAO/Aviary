@@ -751,7 +751,7 @@ Number of inequality constraint evaluations          = 1
 Number of equality constraint Jacobian evaluations   = 1
 Number of inequality constraint Jacobian evaluations = 1
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 1.466
+Total seconds in IPOPT                               = 1.488
 
 EXIT: Maximum Number of Iterations Exceeded.
 
@@ -969,7 +969,7 @@ Optimization Problem -- Optimization using pyOpt_sparse
         218  traj.rotation.collocation_constraint.defects:distance                          e   0.000000E+00    1.251386E+00    0.000000E+00         E    9.00000E+100
         219  traj.rotation.collocation_constraint.defects:distance                          e   0.000000E+00    1.914830E-01    0.000000E+00         E    9.00000E+100
         220  traj.rotation.collocation_constraint.defects:distance                          e   0.000000E+00   -1.615733E-01    0.000000E+00         E    9.00000E+100
-        221  mission:constraints:excess_fuel_mass_capacity                                  i   0.000000E+00    2.182787E-16    1.000000E+30         l    9.00000E+100
+        221  mission:constraints:excess_fuel_mass_capacity                                  i   0.000000E+00    2.182787E-16    1.000000E+20         l    9.00000E+100
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 
@@ -1501,6 +1501,9 @@ done
   warnings.warn(&quot;matplotlib not found, plotting disabled.&quot;)
 </pre></div>
 </div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
                      variables with only lower bounds:       93
                 variables with lower and upper bounds:        3
@@ -1724,7 +1727,7 @@ Aviary run failed. See the dashboard for more details.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1907: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
   traj.cruise.t_initial, inds=[0]
 </pre></div>
 </div>

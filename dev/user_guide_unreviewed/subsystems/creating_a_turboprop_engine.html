@@ -655,6 +655,9 @@
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: As-flown payload (42673.0 lbm) is greater than maximum payload (31273.0 lbm). The aircraft will be undersized for this payload!
 </pre></div>
 </div>
@@ -662,7 +665,7 @@
 /home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1198: OMDeprecationWarning:&#39;pre_mission.core_subsystems.mass.fixed_mass.payload&#39; &lt;class PayloadGroup&gt;: d(payload_mass_max)/d(aircraft:crew_and_payload:mass_per_passenger_with_bags): Partial was declared to be exactly zero. This is inefficient and the declaration should be removed. In a future version of OpenMDAO this behavior will raise an error.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/driver.py:1414: DriverWarning:pyOptSparseDriver: constraint(s) [&#39;mission:constraints:excess_fuel_mass_capacity&#39;] do not depend on any design variables. Please check your problem formulation.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/driver.py:1454: DriverWarning:pyOptSparseDriver: constraint(s) [&#39;mission:constraints:excess_fuel_mass_capacity&#39;] do not depend on any design variables. Please check your problem formulation.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: divide by zero encountered in divide
@@ -674,7 +677,7 @@ Warning: invalid value encountered in divide
 req_fuel_mass &gt; max_wingfuel_mass, adding a body tank
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1879: DerivativesWarning:The following constraints or objectives cannot be impacted by the design variables of the problem at the current design point:
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1925: DerivativesWarning:The following constraints or objectives cannot be impacted by the design variables of the problem at the current design point:
   mission:constraints:excess_fuel_mass_capacity, inds=[0]
 </pre></div>
 </div>

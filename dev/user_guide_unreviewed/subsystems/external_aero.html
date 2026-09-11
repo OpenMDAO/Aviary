@@ -586,6 +586,9 @@
 <p>We start with the assumption that we have an external component called <code class="docutils literal notranslate"><span class="pre">ExternalAero</span></code> that can compute the lift and drag at any given altitude, Mach number, and angle of attack. The details of such a component may be highly complicated and not important for the purposes of this example. We will be using a structured grid, which assumes the data table is regularly spaced in all dimensions. We want to compute lift and drag over a grid of altitudes (in ‘ft’), Mach numbers, and angles of attack given by:</p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Altitude (ft) [    0.  3000.  6000.  9000. 12000. 15000. 18000. 21000. 24000. 27000.
  30000. 33000. 36000. 38000. 42000.]
 Mach [0.   0.2  0.4  0.5  0.6  0.7  0.75 0.8  0.85 0.9 ]
@@ -775,11 +778,12 @@ traj.phases.cruise.rhs_all.aerodynamics
 =======================================
 NL: Newton 0 ; 2.79973531e-06 1
 NL: Newton 1 ; 4.7494371e-10 0.00016963879
-NL: Newton 2 ; 1.63709129e-17 5.84730736e-12
-NL: Newton Converged
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=====================================
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NL: Newton 2 ; 1.63709129e-17 5.84730736e-12
+NL: Newton Converged
+
+=====================================
 traj.phases.cruise.rhs_all.solver_sub
 =====================================
 NL: Newton 0 ; 0.0114655688 1
