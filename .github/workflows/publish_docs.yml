@@ -1,0 +1,137 @@
+# Build and publish versioned docs for a release tag.
+#
+# Triggers:
+#   - push of a tag matching v*.*.*      -> publishes /<tag>/ (and /latest/ if
+#                                            the tag is the highest stable release)
+#   - workflow_dispatch with a tag input -> same thing, but for backfilling old tags
+#
+# Publishes to openmdao.github.io/Aviary via the gh-pages branch.
+#
+# Note: docs linting and the bandit security scan are deliberately NOT run
+# here. Those live in test_docs.yml, which gates every PR into main before a
+# release tag is cut. Re-running them at publish time can't stop a bad
+# release (the tag already exists), and would spuriously fail backfill runs
+# of historical tags against newer lint/bandit rules.
+
+name: Publish Versioned Docs
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build (e.g. v1.0.1). Must already exist.'
+        required: true
+
+concurrency:
+  group: publish-docs-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: write   # needed to push to gh-pages
+
+    steps:
+      - name: Resolve target tag
+        id: target
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Sparse-checkout the composite action into ./actions/. This gives us a
+      # stable path for `uses: ./actions/...` below that is independent of
+      # what the target tag contains — older tags predate this action, and
+      # the composite action's post-cleanup phase re-resolves its path, so
+      # ./actions/ must exist for the run to end green.
+      - name: Checkout actions
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .github/actions
+          path: actions
+
+      # prepare_docs_environment runs BEFORE the tag checkout because the
+      # composite action internally does its own `actions/checkout@v6` with
+      # no `path:` argument, which wipes the workspace root (including any
+      # ./src/ we'd have laid down). Running it first means it does its
+      # unqualified checkout of the workflow's ref into the root — we ignore
+      # that tree and overlay the tag we actually want into ./src/ in the
+      # next step. ./actions/ survives because actions/checkout only cleans
+      # the directory it owns.
+      - name: prepare_docs_environment
+        uses: ./actions/.github/actions/prepare_environment
+        with:
+          NAME: 'release-${{ steps.target.outputs.tag }}'
+          OPENMDAO_PIXI_ENVIRONMENT: 'py313'
+          OPENMDAO_INSTALL_FROM: 'pypi'
+          OPENMDAO: ''
+          SNOPT: '7.7'
+          DYMOS: 'latest'
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
+
+      # Check out the full repo at the target tag into ./src/. This runs
+      # AFTER prepare_docs_environment so the composite action's internal
+      # checkout can't wipe it (see comment on that step above).
+      - name: Checkout repository at target tag
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.target.outputs.tag }}
+          fetch-depth: 0    # full history so all commits are visible
+          fetch-tags: true  # tags are a separate refspec; without this
+                            # `git tag -l` on the runner returns nothing and
+                            # versions.json ends up empty.
+          path: src
+
+      - name: Build docs
+        id: build_docs
+        shell: bash -l {0}
+        working-directory: src
+        run: |
+          eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
+          pip install -U "jupyter-book<2"
+          cd aviary/docs
+          echo "============================================================="
+          echo "Build the docs for ${{ steps.target.outputs.tag }}"
+          echo "============================================================="
+          bash build_book.sh
+
+      - name: Display doc build reports
+        continue-on-error: True
+        shell: bash -l {0}
+        if: failure() && steps.build_docs.outcome == 'failure'
+        working-directory: src
+        run: |
+          eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
+          cd aviary/docs
+          find _build/html/reports/ -type f -name '*.log' \
+          -exec echo "#################################################################" \; \
+          -exec echo {} \; \
+          -exec echo "#################################################################" \; \
+          -exec cat {} \;
+
+      - name: Publish docs to gh-pages
+        shell: bash -l {0}
+        working-directory: src
+        run: |
+          eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
+          pip install packaging
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          echo "============================================================="
+          echo "Publishing docs for tag ${{ steps.target.outputs.tag }}"
+          echo "============================================================="
+          python aviary/docs/publish_docs.py \
+            --kind tag \
+            --tag "${{ steps.target.outputs.tag }}" \
+            --html-dir aviary/docs/_build/html

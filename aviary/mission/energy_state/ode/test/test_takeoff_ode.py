@@ -2,6 +2,7 @@ import unittest
 from copy import deepcopy
 
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.ode.takeoff_ode import TakeoffODE
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
@@ -22,6 +23,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 takeoff_subsystem_options = deepcopy(takeoff_subsystem_options)
 
 
+@use_tempdirs
 class TakeoffODETest(unittest.TestCase):
     """Test detailed takeoff ODE."""
 
@@ -92,6 +94,7 @@ class TakeoffODETest(unittest.TestCase):
         time, _ = detailed_takeoff_climbing.get_item('time')
         nn = len(time)
         aviary_options = inputs
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [2])
         engines = [build_engine_deck(aviary_options)]
 
         preprocess_options(aviary_options, engine_models=engines)
@@ -114,7 +117,7 @@ class TakeoffODETest(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
 
-        setup_model_options(prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+        setup_model_options(prob, AviaryValues(aviary_options))
 
         prob.setup(check=False, force_alloc_complex=True)
 

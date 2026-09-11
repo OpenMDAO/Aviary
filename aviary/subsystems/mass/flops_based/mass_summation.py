@@ -29,7 +29,9 @@ class MassSummation(om.Group):
         self.add_subsystem(
             'propulsion_mass', PropulsionMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
-
+        self.add_subsystem(
+            'controls_mass', FlightControls(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
         # Systems and equipment mass calculations are not combined into a single group to avoid an
         # additional layer of groups (standard is one component, alternate would be a group)
         if alt_mass:
@@ -117,14 +119,19 @@ class StructureMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
 
     def setup_partials(self):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        num_engine_type = len(num_engines)
 
         self.declare_partials(Aircraft.Design.STRUCTURE_MASS, '*', val=1)
         self.declare_partials(
-            Aircraft.Design.STRUCTURE_MASS, Aircraft.Nacelle.MASS, val=np.ones(num_engine_type)
+            Aircraft.Design.STRUCTURE_MASS,
+            Aircraft.Nacelle.MASS,
+            val=np.ones(num_engine_type) * num_engines,
         )
 
     def compute(self, inputs, outputs):
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+
         empennage_mass = inputs[Aircraft.Design.EMPENNAGE_MASS]
         fuselage_mass = inputs[Aircraft.Fuselage.MASS]
         landing_gear_mass = inputs[Aircraft.LandingGear.TOTAL_MASS]
@@ -137,7 +144,7 @@ class StructureMass(om.ExplicitComponent):
             + empennage_mass
             + fuselage_mass
             + landing_gear_mass
-            + np.sum(nacelle_mass)
+            + np.dot(nacelle_mass, num_engines)
             + paint_mass
         )
 
@@ -165,6 +172,20 @@ class PropulsionMass(om.ExplicitComponent):
         outputs[Aircraft.Propulsion.MASS] = (
             thrust_rev_mass + misc_prop_mass + fuel_sys_mass + total_eng_mass + battery_mass
         )
+
+
+# "compute" controls mass for reporting. FLOPS only computes one variable in this category
+class FlightControls(om.ExplicitComponent):
+    def setup(self):
+        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS)
+
+        add_aviary_output(self, Aircraft.Controls.MASS)
+
+    def setup_partials(self):
+        self.declare_partials(Aircraft.Controls.MASS, Aircraft.Wing.SURFACE_CONTROL_MASS, val=1)
+
+    def compute(self, inputs, outputs):
+        outputs[Aircraft.Controls.MASS] = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS]
 
 
 class SystemsEquipmentMass(om.ExplicitComponent):
@@ -376,6 +397,7 @@ class OperatingItemsMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, units='lbm')
+        add_aviary_input(self, Mission.OPERATING_ITEMS_MASS_ADDITIONAL, units='lbm')
 
         add_aviary_output(self, Mission.OPERATING_ITEMS_MASS, units='lbm')
 
@@ -389,6 +411,7 @@ class OperatingItemsMass(om.ExplicitComponent):
         oil_mass = inputs[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS]
         pass_service_mass = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS]
         unusable_fuel_mass = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
+        additional_operating_mass = inputs[Mission.OPERATING_ITEMS_MASS_ADDITIONAL]
 
         outputs[Mission.OPERATING_ITEMS_MASS] = (
             cabin_crew_mass
@@ -397,6 +420,7 @@ class OperatingItemsMass(om.ExplicitComponent):
             + oil_mass
             + pass_service_mass
             + cargo_container_mass
+            + additional_operating_mass
         )
 
 

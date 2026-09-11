@@ -26,6 +26,7 @@ aircraft:design:base_area,0.0,ft**2
 aircraft:design:cruise_mach,0.785,unitless
 aircraft:design:empty_mass_margin_scaler,0.00514,unitless
 aircraft:design:gross_mass,174200.0,lbm
+aircraft:design:max_mach,0.82,unitless
 aircraft:design:landing_to_takeoff_mass_ratio,0.84,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,1.0,unitless
 aircraft:design:range,2960.0,NM
@@ -36,7 +37,7 @@ aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.945,unitless
 aircraft:electrical:mass_scaler,1.0,unitless
 aircraft:engine:additional_mass_fraction,0.0,unitless
-aircraft:engine:constant_fuel_consumption,0.0,lbm/h
+aircraft:engine:constant_fuel_mass_consumption,0.0,lbm/h
 aircraft:engine:data_file,aviary/models/engines/turbofan_24k_1.csv,unitless
 aircraft:engine:flight_idle_max_fraction,1.0,unitless
 aircraft:engine:flight_idle_min_fraction,0.08,unitless
@@ -66,11 +67,11 @@ aircraft:fins:mass,1.0,lbm
 aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,10.0,unitless
-aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
+aircraft:fuel:auxiliary_fuel_mass_capacity,0.0,lbm
 aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
 aircraft:fuel:num_tanks,7,unitless
-aircraft:fuel:total_capacity,46063.0,lbm
+aircraft:fuel:max_capacity_mass,46063.0,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
 aircraft:furnishings:mass_scaler,1.0,unitless
 aircraft:fuselage:length,124.75,ft
@@ -148,9 +149,8 @@ aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area,2423.02,ft**2
 aircraft:wing:wetted_area_scaler,1.0,unitless
-mission:constraints:max_mach,0.82,unitless
 mission:landing:lift_coefficient_max,3.0,unitless
-mission:takeoff:fuel,577.0,lbm
+mission:takeoff:fuel_mass,577.0,lbm
 mission:takeoff:lift_coefficient_max,2.0,unitless
 mission:takeoff:lift_over_drag,17.35,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless

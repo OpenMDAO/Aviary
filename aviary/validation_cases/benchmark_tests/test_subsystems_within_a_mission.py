@@ -1,3 +1,4 @@
+from copy import deepcopy
 import unittest
 
 import numpy as np
@@ -127,9 +128,11 @@ class TestSubsystemsMission(unittest.TestCase):
     def test_subsystems_in_a_mission_2dof(self):
         prob = AviaryProblem(verbosity=0)
 
+        local_phase_info = deepcopy(two_dof_phase_info)
+
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
-            two_dof_phase_info,
+            local_phase_info,
         )
 
         prob.load_external_subsystems(

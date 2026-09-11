@@ -17,6 +17,7 @@ inputs.set_val(
     Aircraft.Design.GROSS_MASS, 600000.0, 'lbm'
 )  # DGW, value taken from GW which is not in Aviary
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
+inputs.set_val(Aircraft.Design.MAX_MACH, 0.9)  # VMMO
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)  # FCDI
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUB
 inputs.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUP
@@ -60,12 +61,12 @@ inputs.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 200)  # NPT
 inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 76)  # NPB
 inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 24)  # NPF
 inputs.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, 200)  # NPT
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 0)  # NBABR
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 0)  # NFABR
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 0)  # NTABR
-inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 0.0, 'inch')  # BPITCH
-inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 0.0, 'inch')  # FPITCH
-inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 0.0, 'inch')  # TPITCH
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 5)  # NBABR
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4)  # NFABR
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)  # NTABR
+inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, 'inch')  # BPITCH
+inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, 'inch')  # FPITCH
+inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, 'inch')  # TPITCH
 
 inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, 1.0)  # WCON
 inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 2)  # NFLCR
@@ -76,6 +77,7 @@ inputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER, 1.0)  # WSTUAB
 inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.0)  # WSRV
 inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 165.0, 'lbm')  # WPPASS
 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0.0, 'lbm')  # CARGOW
+inputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 44.0, 'lbm')
 
 # Electrical
 # ---------------------------
@@ -90,16 +92,13 @@ inputs.set_val(Aircraft.Fins.MASS_SCALER, 1.0)  # FRFIN
 
 # Fuel
 # ---------------------------
-inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')  # FULAUX
+inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')  # FULAUX
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0)  # WFSYS
-inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')  # FULFMX
+inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 0.0, 'lbm')  # FULFMX
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)  # NTANK
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)  # WUF
 inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, False)  # IFUFU
 inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6883549569366508, 'unitless')
-inputs.set_val(Aircraft.Fuel.WING_REF_CAPACITY, 0.0, 'lbm')  # FUELRF
-inputs.set_val(Aircraft.Fuel.WING_REF_CAPACITY_TERM_A, 0.0)  # FUSCLA
-inputs.set_val(Aircraft.Fuel.WING_REF_CAPACITY_TERM_B, 0.0)  # FUSCLB
 inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 
 # Furnishings
@@ -116,6 +115,7 @@ inputs.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, 0.1792)  # TCF
 inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)  # SWETF
 inputs.set_val(Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)  # TRLB
 inputs.set_val(Aircraft.Fuselage.LAMINAR_FLOW_UPPER, 0.0)  # TRUB
+inputs.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.1792)  # TCF
 
 # Horizontal Tail
 # ---------------------------
@@ -181,7 +181,7 @@ inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)  # FFFSUB
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)  # FFFSUP
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)  # DFFAC
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)  # FFFAC
-inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')  # FLEAK
+inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lbm/h')  # FLEAK
 inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)  # WPMISC
 inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)  # IDLE
 inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)  # NONEG
@@ -214,7 +214,7 @@ inputs.set_val(Aircraft.Wing.SPAN, 186.631829293424, 'ft')  # SPAN
 
 inputs.set_val(
     Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
-    np.array([-1.0, 48.25, 33.20, 18.97, 14.19, 10.20, 3.220]),
+    np.array([48.25, 33.20, 18.97, 14.19, 10.20, 3.220]),
 )  # CHD
 inputs.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.85)  # FCOMP
 inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.3)  # FLAPR
@@ -225,14 +225,14 @@ inputs.set_val(
 
 inputs.set_val(
     Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-    np.array([0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0]),  # ETAW
+    np.array([0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0]),  # ETAW
 )
 
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)  # PDIST
 
 inputs.set_val(
     Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
-    np.array([0.0, 0.0, 0.0, 17.0, 17.0, 17.0]),
+    np.array([0.0, 0.0, 17.0, 17.0, 17.0]),
     'deg',  # SWL
 )
 inputs.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 2.0)  # CAM
@@ -250,7 +250,7 @@ inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.0)  # TCREF
 
 inputs.set_val(
     Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
-    np.array([-1.0, 0.125, 0.125, 0.076, 0.076, 0.076, 0.06]),  # TOC
+    np.array([0.125, 0.125, 0.076, 0.076, 0.076, 0.06]),  # TOC
 )
 inputs.set_val(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.75)  # ULF
 inputs.set_val(Aircraft.Wing.VAR_SWEEP_MASS_PENALTY, 0.0)  # VARSWP
@@ -267,7 +267,6 @@ inputs.set_val(Aircraft.Wing.LAMINAR_FLOW_UPPER, 0.0)  # TRUW
 # ---------------------------
 inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.85)  # VCMN
 inputs.set_val(Aircraft.Design.RANGE, 7500.0, 'NM')  # DESRNG
-inputs.set_val(Mission.Constraints.MAX_MACH, 0.9)  # VMMO
 
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3.0)  # CLLDM
 inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 1.3)  # CLTOM
@@ -325,10 +324,10 @@ outputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, 2450.00190713, 'lbm')
 
 outputs.set_val(Aircraft.Electrical.MASS, 2646.5272348061812, 'lbm')  # WELEC
 
-outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 787493.65267017565, 'lbm')  # FMXTOT
+outputs.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 787493.65267017565, 'lbm')  # FMXTOT
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 3656.7260445688612, 'lbm')  # WFSYS
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 1314.83910317, 'lbm')  # WUF
-outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 787493.65267018, 'lbm')  # FULWMX
+outputs.set_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 787493.65267018, 'lbm')  # FULWMX
 
 outputs.set_val(Aircraft.Fins.MASS, 2822.1415450307886, 'lbm')  # WFIN
 outputs.set_val(Aircraft.Furnishings.MASS, 52096.553437128503, 'lbm')  # WFURN
@@ -414,7 +413,7 @@ outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 24461.161868706797, 'lbm')  # 
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 8093.1997108029764, 'lbm')  # WSC
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 4.84361005)  # AR
 outputs.set_val(Aircraft.Wing.MASS, 50145.60120438, 'lbm')  # WWING
-outputs.set_val(Aircraft.Wing.ROOT_CHORD, 38.5, 'ft')  # XLW
+outputs.set_val(Aircraft.Wing.ROOT_CHORD, 55.0, 'ft')  # XLOUT
 outputs.set_val(Aircraft.Wing.AREA, 8421.7146805052689, 'ft**2')  # SW
 outputs.set_val(Aircraft.Wing.WETTED_AREA, 17302.04910213, 'ft**2')  # SWET(1)
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 4.84361005)  # ARREF

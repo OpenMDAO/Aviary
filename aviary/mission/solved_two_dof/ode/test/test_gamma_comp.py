@@ -3,12 +3,14 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.solved_two_dof.ode.gamma_comp import GammaComp
 from aviary.mission.solved_two_dof.ode.unsteady_solved_eom import UnsteadySolvedEOM
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
+@use_tempdirs
 class TestUnsteadyFlightEOM(unittest.TestCase):
     """Test 2-degrees-of-freedom equations of motion for unsteady flight."""
 

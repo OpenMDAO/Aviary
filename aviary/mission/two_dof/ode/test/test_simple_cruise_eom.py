@@ -3,12 +3,14 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.mission.two_dof.ode.simple_cruise_eom import DistanceComp
 from aviary.variable_info.variables import Dynamic
 
 
+@use_tempdirs
 class TestSimpleCruiseResults(unittest.TestCase):
     """Test cruise with DistanceComp component."""
 
@@ -35,6 +37,7 @@ class TestSimpleCruiseResults(unittest.TestCase):
         assert_near_equal(distance[-1, ...], r_expected, tolerance=0.001)
 
 
+@use_tempdirs
 class TestDistanceCompPartials(unittest.TestCase):
     def setUp(self):
         nn = 10
@@ -67,7 +70,4 @@ class TestDistanceCompPartials(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestSimpleCruiseResults()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

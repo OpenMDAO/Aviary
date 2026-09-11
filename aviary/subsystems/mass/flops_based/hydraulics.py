@@ -3,7 +3,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import distributed_engine_count_factor
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class TransportHydraulicsGroupMass(om.ExplicitComponent):
@@ -18,7 +18,6 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
-        add_aviary_option(self, Mission.Constraints.MAX_MACH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
@@ -26,6 +25,7 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Hydraulics.MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.VAR_SWEEP_MASS_PENALTY, units='unitless')
+        add_aviary_input(self, Aircraft.Design.MAX_MACH, units='unitless')
 
         add_aviary_output(self, Aircraft.Hydraulics.MASS, units='lbm')
 
@@ -43,7 +43,12 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Hydraulics.MASS_SCALER]
         area = inputs[Aircraft.Wing.AREA]
         var_sweep = inputs[Aircraft.Wing.VAR_SWEEP_MASS_PENALTY]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = inputs[Aircraft.Design.MAX_MACH]
+
+        if sys_press <= 0:
+            # No hydraulic system (e.g. small electric UAVs): nothing to size.
+            outputs[Aircraft.Hydraulics.MASS] = 0.0
+            return
 
         outputs[Aircraft.Hydraulics.MASS] = (
             0.57
@@ -67,13 +72,22 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Hydraulics.MASS_SCALER]
         area = inputs[Aircraft.Wing.AREA]
         var_sweep = inputs[Aircraft.Wing.VAR_SWEEP_MASS_PENALTY]
-        max_mach = self.options[Mission.Constraints.MAX_MACH]
+        max_mach = inputs[Aircraft.Design.MAX_MACH]
 
         term1 = planform + 0.27 * area
         term2 = 1.0 + 0.03 * num_wing_eng_fact + 0.05 * num_fuse_eng_fact
         term3 = (3000.0 / sys_press) ** 0.35
         term4 = 1.0 + 0.04 * var_sweep
         term5 = max_mach**0.33
+
+        if sys_press <= 0:
+            # No hydraulic system (e.g. small electric UAVs): nothing to size.
+            J[Aircraft.Hydraulics.MASS, Aircraft.Fuselage.PLANFORM_AREA] = 0.0
+            J[Aircraft.Hydraulics.MASS, Aircraft.Wing.AREA] = 0.0
+            J[Aircraft.Hydraulics.MASS, Aircraft.Hydraulics.SYSTEM_PRESSURE] = 0.0
+            J[Aircraft.Hydraulics.MASS, Aircraft.Wing.VAR_SWEEP_MASS_PENALTY] = 0.0
+            J[Aircraft.Hydraulics.MASS, Aircraft.Hydraulics.MASS_SCALER] = 0.0
+            return
 
         J[Aircraft.Hydraulics.MASS, Aircraft.Fuselage.PLANFORM_AREA] = (
             0.57 * term2 * term3 * term4 * term5 * scaler / GRAV_ENGLISH_LBM
@@ -101,6 +115,10 @@ class TransportHydraulicsGroupMass(om.ExplicitComponent):
         J[Aircraft.Hydraulics.MASS, Aircraft.Hydraulics.MASS_SCALER] = (
             0.57 * term1 * term2 * term3 * term4 * term5 / GRAV_ENGLISH_LBM
         )
+
+        J[Aircraft.Hydraulics.MASS, Aircraft.Design.MAX_MACH] = (
+            0.57 * 0.33 * term1 * term2 * term3 * term4 * max_mach**-0.67 * scaler
+        ) / GRAV_ENGLISH_LBM
 
 
 class AltHydraulicsGroupMass(om.ExplicitComponent):

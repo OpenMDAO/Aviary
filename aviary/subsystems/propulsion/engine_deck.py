@@ -29,7 +29,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
-from aviary.interface.utils import round_it
+from aviary.utils.utils import round_it
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.engine_scaling import EngineScaling
 from aviary.subsystems.propulsion.engine_sizing import SizeEngine
@@ -45,6 +45,8 @@ from aviary.utils.csv_data_file import read_data_file
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
+from aviary.variable_info.enums import AtmosphereModel
 
 MACH = EngineModelVariables.MACH
 ALTITUDE = EngineModelVariables.ALTITUDE
@@ -310,7 +312,16 @@ class EngineDeck(EngineModel):
 
         # convert geopotential altitude to geometric if required
         if self.get_val(Aircraft.Engine.GEOPOTENTIAL_ALT):
-            self.data[ALTITUDE] = convert_geopotential_altitude(self.data[ALTITUDE])
+            # check which planet we are on
+            _, planet, _, _, _ = get_atmosphere_data(
+                self.options.get_val(Settings.ATMOSPHERE_MODEL)
+            )
+            if planet == 'Earth':
+                self.data[ALTITUDE] = convert_geopotential_altitude(self.data[ALTITUDE])
+            else:
+                warnings.warn(
+                    'convert_geopotential_altitude() is not calibrated to work for non-earth planets.'
+                )
 
         # sort and organize data
         self._pack_data()
@@ -835,6 +846,23 @@ class EngineDeck(EngineModel):
                 )
 
         return engine
+
+    def needs_mission_solver(self, aviary_inputs, user_options, subsystem_options):
+        """
+        Return True if the mission subsystem needs to be in the solver loop in mission, otherwise
+        return False. Aviary will only place it in the solver loop when True. The default is
+        True.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
+
+        """
+        # The engine is generally part of the throttle balance loop if throttle is being solved.
+        return True
 
     def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options) -> om.Group:
         """
@@ -1688,9 +1716,9 @@ class EngineDeck(EngineModel):
 # UTILITY FUNCTIONS #
 #####################
 """
-Functions that do not directly use attributes of EngineDeck (do not require self) are located here. 
-These functions are currently only used for EngineDecks and are not applicable to other 
-EngineModels. If any of these functions become useful to other EngineModels besides EngineDeck, move 
+Functions that do not directly use attributes of EngineDeck (do not require self) are located here.
+These functions are currently only used for EngineDecks and are not applicable to other
+EngineModels. If any of these functions become useful to other EngineModels besides EngineDeck, move
 them to propulsion utils.
 """
 

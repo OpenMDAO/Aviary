@@ -1,3 +1,4 @@
+import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
@@ -20,12 +21,13 @@ class EngineOilMass(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Engine.TYPE)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST)
+        num_engine_types = len(self.options[Aircraft.Engine.NUM_ENGINES])
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_types)
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, units='lbm')
 
@@ -34,37 +36,49 @@ class EngineOilMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
-        engine_type = self.options[Aircraft.Engine.TYPE][0]
-        num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
+        engine_type = self.options[Aircraft.Engine.TYPE]
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        num_engine_types = len(num_engines)
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
-        if engine_type is GASPEngineType.TURBOJET:
-            oil_per_eng_wt = 0.0054 * Fn_SLS + 12.0
-        elif engine_type is GASPEngineType.TURBOSHAFT or engine_type is GASPEngineType.TURBOPROP:
-            oil_per_eng_wt = 0.0214 * Fn_SLS + 14
-        else:
-            # Other engine types are currently not supported in Aviary
-            if verbosity > Verbosity.BRIEF:
-                print('This engine_type is not curretly supported in Aviary.')
-            oil_per_eng_wt = 0
+        oil_per_eng_wt = np.zeros(num_engine_types, dtype=Fn_SLS.dtype)
+
+        for i, etype in enumerate(engine_type):
+            if etype is GASPEngineType.TURBOJET:
+                oil_per_eng_wt[i] = 0.0054 * Fn_SLS[i] + 12.0
+            elif etype is GASPEngineType.TURBOSHAFT or etype is GASPEngineType.TURBOPROP:
+                oil_per_eng_wt[i] = 0.0214 * Fn_SLS[i] + 14
+            else:
+                # Other engine types are currently not supported in Aviary
+                if verbosity > Verbosity.BRIEF:
+                    print(
+                        f"Engine type {etype} is not supported by Aviary's implementation of GASP mass methodology."
+                    )
+                oil_per_eng_wt[i] = 0
 
         outputs[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS] = (
-            num_engines * oil_per_eng_wt / GRAV_ENGLISH_LBM
+            np.dot(oil_per_eng_wt, num_engines) / GRAV_ENGLISH_LBM
         )
 
     def compute_partials(self, inputs, J):
-        engine_type = self.options[Aircraft.Engine.TYPE][0]
-        num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
+        engine_type = self.options[Aircraft.Engine.TYPE]
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        num_engine_types = len(num_engines)
 
-        if engine_type is GASPEngineType.TURBOJET:
-            doil_per_eng_wt_dFn_SLS = 0.0054
-        elif engine_type is GASPEngineType.TURBOSHAFT or engine_type is GASPEngineType.TURBOPROP:
-            doil_per_eng_wt_dFn_SLS = 0.0214
-        # else:
-        #     doil_per_eng_wt_dFn_SLS = 0.062
-        else:
-            # Other engine types are currently not supported in Aviary
-            doil_per_eng_wt_dFn_SLS = 0.0
+        Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
+
+        doil_per_eng_wt_dFn_SLS = np.zeros(num_engine_types, dtype=Fn_SLS.dtype)
+
+        for i, etype in enumerate(engine_type):
+            if etype is GASPEngineType.TURBOJET:
+                doil_per_eng_wt_dFn_SLS[i] = 0.0054
+            elif etype is GASPEngineType.TURBOSHAFT or etype is GASPEngineType.TURBOPROP:
+                doil_per_eng_wt_dFn_SLS[i] = 0.0214
+            # else:
+            #     doil_per_eng_wt_dFn_SLS = 0.062
+            else:
+                # Other engine types are currently not supported in Aviary
+                doil_per_eng_wt_dFn_SLS[i] = 0.0
 
         J[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, Aircraft.Engine.SCALED_SLS_THRUST] = (
             doil_per_eng_wt_dFn_SLS * num_engines / GRAV_ENGLISH_LBM

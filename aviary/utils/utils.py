@@ -5,6 +5,7 @@ Helps to avoid circular imports. These functions do not rely on imports from oth
 
 from copy import deepcopy
 from enum import Enum
+from math import floor, log10
 
 import numpy as np
 from openmdao.utils.units import convert_units
@@ -256,3 +257,41 @@ def cast_type(key, val, meta_data=CoreMetaData):
                     break
 
     return cast_val
+
+
+def round_it(x, sig=None):
+    """
+    Round a float to a specified significance.
+    If the number is equal to zero, "0" will be returned, regardless of the number of significant digits specified
+    If the number is NaN, directly returns it (stays NaN).
+
+    Parameters
+    ----------
+    x : str or float
+        the float that needs to be rounded.
+    sig : int
+        the number of significant digits to include (If this is unspecified, the number will be rounded to two decimal places).
+
+    Returns
+    -------
+        The rounded number, or provided string if not convertible to float, or original
+        number if it is NaN
+    """
+    # default sig figs to 2 decimal places out
+    if isinstance(x, str):
+        try:
+            x = float(x)
+        except ValueError:
+            return x
+
+    if np.isnan(x):
+        # return NaNs directly back to markdown report
+        return x
+
+    if not sig:
+        sig = len(str(round(x))) + 2
+
+    if x != 0:
+        return round(x, sig - int(floor(log10(abs(x)))) - 1)
+    else:
+        return 0

@@ -3,19 +3,33 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.flight_path_eom import FlightPathEOM
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
 
 
+@use_tempdirs
 class FlightPathEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.ground_roll = False
         self.prob = om.Problem()
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         self.fp = self.prob.model.add_subsystem(
-            'group', FlightPathEOM(num_nodes=2, ground_roll=self.ground_roll), promotes=['*']
+            'group',
+            FlightPathEOM(num_nodes=2, ground_roll=self.ground_roll, **options),
+            promotes=['*'],
         )
+        self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
         self.prob.setup(check=False, force_alloc_complex=True)
+        self.prob.set_val(Dynamic.Vehicle.MASS, [1.0, 1.0], units='lbm')
+        self.prob.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, [1.0, 1.0], units='rad')
+        self.prob.set_val(Dynamic.Mission.VELOCITY_RATE, [1.0, 1.0], units='ft/s**2')
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [1.0, 1.0], units='ft/s')
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, [1.0, 1.0], units='lbf')
+        self.prob.set_val(Dynamic.Vehicle.LIFT, [1.0, 1.0], units='lbf')
+        self.prob.set_val(Dynamic.Vehicle.DRAG, [1.0, 1.0], units='lbf')
+        self.prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, [1.0, 1.0], units='deg')
 
     def test_case1(self):
         # ground_roll = False (the aircraft is not confined to the ground)
@@ -44,6 +58,13 @@ class FlightPathEOMTestCase(unittest.TestCase):
         """ground_roll = True (the aircraft is confined to the ground)."""
         self.fp.options['ground_roll'] = True
         self.prob.setup(force_alloc_complex=True)
+        self.prob.set_val(Dynamic.Vehicle.MASS, [1.0, 1.0], units='lbm')
+        self.prob.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, [1.0, 1.0], units='rad')
+        self.prob.set_val(Dynamic.Mission.VELOCITY_RATE, [1.0, 1.0], units='ft/s**2')
+        self.prob.set_val(Dynamic.Mission.VELOCITY, [1.0, 1.0], units='ft/s')
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, [1.0, 1.0], units='lbf')
+        self.prob.set_val(Dynamic.Vehicle.LIFT, [1.0, 1.0], units='lbf')
+        self.prob.set_val(Dynamic.Vehicle.DRAG, [1.0, 1.0], units='lbf')
 
         tol = 1e-6
         self.prob.run_model()
@@ -83,7 +104,16 @@ class FlightPathEOMTestCase2(unittest.TestCase):
         prob.model.add_subsystem(
             'group', FlightPathEOM(num_nodes=2, ground_roll=False), promotes=['*']
         )
+        prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
         prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Dynamic.Vehicle.MASS, [1.0, 1.0], units='lbm')
+        prob.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, [1.0, 1.0], units='rad')
+        prob.set_val(Dynamic.Mission.VELOCITY_RATE, [1.0, 1.0], units='ft/s**2')
+        prob.set_val(Dynamic.Mission.VELOCITY, [1.0, 1.0], units='ft/s')
+        prob.set_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, [1.0, 1.0], units='lbf')
+        prob.set_val(Dynamic.Vehicle.LIFT, [1.0, 1.0], units='lbf')
+        prob.set_val(Dynamic.Vehicle.DRAG, [1.0, 1.0], units='lbf')
+        prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, [1.0, 1.0], units='deg')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -96,6 +126,13 @@ class FlightPathEOMTestCase2(unittest.TestCase):
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.setup(force_alloc_complex=True)
+        prob.set_val(Dynamic.Vehicle.MASS, [1.0, 1.0], units='lbm')
+        prob.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, [1.0, 1.0], units='rad')
+        prob.set_val(Dynamic.Mission.VELOCITY_RATE, [1.0, 1.0], units='ft/s**2')
+        prob.set_val(Dynamic.Mission.VELOCITY, [1.0, 1.0], units='ft/s')
+        prob.set_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, [1.0, 1.0], units='lbf')
+        prob.set_val(Dynamic.Vehicle.LIFT, [1.0, 1.0], units='lbf')
+        prob.set_val(Dynamic.Vehicle.DRAG, [1.0, 1.0], units='lbf')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -103,3 +140,6 @@ class FlightPathEOMTestCase2(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = FlightPathEOMTestCase()
+    # test.setUp()
+    # test.test_case1()

@@ -20,6 +20,7 @@ aircraft:design:cruise_mach,0.85,unitless
 aircraft:design:gross_mass,874099,lbm
 aircraft:design:landing_to_takeoff_mass_ratio,0.8,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,1,unitless
+aircraft:design:max_mach,0.85,unitless
 aircraft:design:range,7750,NM
 aircraft:design:type,BWB,unitless
 aircraft:design:use_alt_mass,False,unitless
@@ -88,9 +89,9 @@ aircraft:wing:taper_ratio,0.311,unitless
 aircraft:wing:thickness_to_chord,0.11,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0,unitless
-mission:constraints:max_mach,0.85,unitless
-mission:landing:initial_velocity,140,ft/s
 mission:landing:lift_coefficient_max,3.0,unitless
+mission:takeoff:braking_friction_coefficient,0.3,unitless
+mission:takeoff:rolling_friction_coefficient,0.025,unitless
 settings:aerodynamics_method,FLOPS,unitless
 settings:equations_of_motion,energy_state,unitless
 settings:mass_method,FLOPS,unitless
@@ -101,6 +102,7 @@ AERIN.FLTO,11000
 AERIN.ITPAER,2
 AERIN.MYAERO,0
 AERIN.THROFF,0.25
+AERIN.VAPPR,140
 AERIN.XLLAM,0
 CONFIN.CH,39000
 CONFIN.GW,874099

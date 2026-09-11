@@ -16,6 +16,7 @@ class CargoContainerMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
+        # keep it as an option, otherwise we will face a scenario of many stairs
         add_aviary_option(self, Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER)
 
     def setup(self):
@@ -23,9 +24,11 @@ class CargoContainerMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+        # Some aircraft don’t use ULD’s, like the Boeing Max-8, so it can be 0.
         uld_per_pax = self.options[Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER][0]
         uld_per_pax = uld_per_pax.real
 
+        # weight of a single ULD (LD-3 type)
         unit_weight_cargo_handling = 165.0
 
         cargo_handling_wt = (int(PAX * uld_per_pax) + 1) * unit_weight_cargo_handling

@@ -144,9 +144,12 @@ class TestReports(unittest.TestCase):
 
     @set_env_vars(TESTFLO_RUNNING='0')
     def test_multiple_off_design_report_directories(self):
+        local_phase_info = deepcopy(phase_info)
+
         prob = av.AviaryProblem(verbosity=0)
         prob.load_inputs(
-            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
+            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
+            local_phase_info,
         )
         prob.check_and_preprocess_inputs()
         prob.build_model()

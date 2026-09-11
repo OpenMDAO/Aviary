@@ -17,6 +17,8 @@ flops_default_values = NamedValues(
         'AERIN.SWETF': (1, 'unitless'),
         'AERIN.SWETV': (1, 'unitless'),
         'FUSEIN.SWPLE': (45.0, 'deg'),
+        'TOLIN.ROLLMU': (0.025, 'unitless'),
+        'TOLIN.BRAKMU': (0.3, 'unitless'),
     }
 )
 
@@ -34,4 +36,12 @@ flops_deprecated_vars = [
     'OPTION.IPOLP',
     'OPTION.NOISE',
     'WTIN.CARBAS',
+    'WTIN.FUSCLA',
+    'WTIN.FUSCLB',
+    'WTIN.FSWREF',
+    'WTIN.FUELRF',
+    'WTIN.FUSCLB',
+    'WTIN.FUSCLA',
+    'WTIN.FSWREF',
+    'WTIN.FUELRF',
 ]

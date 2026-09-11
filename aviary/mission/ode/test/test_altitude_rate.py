@@ -1,23 +1,29 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_data.test_data.full_mission_test_data import data
 from aviary.validation_cases.validation_tests import do_validation_test
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
 
 
+@use_tempdirs
 class AltitudeRateTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = om.Problem()
 
         time, _ = data.get_item('time')
 
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+        }
+
         prob.model.add_subsystem(
             Dynamic.Mission.ALTITUDE_RATE,
-            AltitudeRate(num_nodes=len(time)),
+            AltitudeRate(num_nodes=len(time), **options),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

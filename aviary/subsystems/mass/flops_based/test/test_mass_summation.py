@@ -223,7 +223,7 @@ class StructureMassTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.MASS, val=30.0, units='lbm')
         prob.set_val(Aircraft.Design.EMPENNAGE_MASS, 150.0, units='lbm')
         prob.set_val(Aircraft.LandingGear.TOTAL_MASS, 110.0, units='lbm')
-        prob.set_val(Aircraft.Nacelle.MASS, val=np.array([1000.0, 500.0, 1500.0]), units='lbm')
+        prob.set_val(Aircraft.Nacelle.MASS, val=np.array([250.0, 250.0, 750.0]), units='lbm')
         prob.set_val(Aircraft.Paint.MASS, val=70.0, units='lbm')
         prob.set_val(Aircraft.Wing.MASS, val=90.0, units='lbm')
 

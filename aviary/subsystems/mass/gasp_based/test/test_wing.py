@@ -14,10 +14,10 @@ from aviary.subsystems.mass.gasp_based.wing import (
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class WingMassSolveTestCase(unittest.TestCase):
     """this is the large single aisle 1 V3 test case."""
 
@@ -38,7 +38,7 @@ class WingMassSolveTestCase(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR, val=1.2213063198183813, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.POSITION_FACTOR, val=0.98, units='unitless'
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR, val=0.98, units='unitless'
         )
         self.prob.model.set_input_defaults('c_gear_loc', val=1.0, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
@@ -102,7 +102,9 @@ class WingMassSolveTestCase2(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.MASS_COEFFICIENT, val=102.5, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.MATERIAL_FACTOR, val=1.2213, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Engine.POSITION_FACTOR, val=0.98, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR, val=0.98, units='unitless'
+        )
         prob.model.set_input_defaults('c_gear_loc', val=1.0, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
@@ -168,7 +170,7 @@ class TotalWingMassTestCase2(unittest.TestCase):
     """Has fold and no strut."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
 
         self.prob = om.Problem()
@@ -208,7 +210,7 @@ class TotalWingMassTestCase3(unittest.TestCase):
     """Has strut and no fold."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
 
         self.prob = om.Problem()
@@ -242,7 +244,7 @@ class TotalWingMassTestCase4(unittest.TestCase):
     """Has fold and strut."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
 
@@ -329,7 +331,7 @@ class TotalWingMassTestCase6(unittest.TestCase):
         wing.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -374,7 +376,7 @@ class TotalWingMassTestCase7(unittest.TestCase):
         wing.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         prob = om.Problem()
         prob.model.add_subsystem(
@@ -415,7 +417,7 @@ class TotalWingMassTestCase8(unittest.TestCase):
         wing.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         prob = om.Problem()
@@ -461,7 +463,7 @@ class WingMassGroupTestCase1(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR, val=1.2213063198183813, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.POSITION_FACTOR, val=0.98, units='unitless'
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR, val=0.98, units='unitless'
         )
         self.prob.model.set_input_defaults('c_gear_loc', val=1.0, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
@@ -490,8 +492,9 @@ class WingMassGroupTestCase1(unittest.TestCase):
 
 class WingMassGroupTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -513,7 +516,7 @@ class WingMassGroupTestCase2(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR, val=1.2213063198183813, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.POSITION_FACTOR, val=0.98, units='unitless'
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR, val=0.98, units='unitless'
         )
         self.prob.model.set_input_defaults('c_gear_loc', val=1.0, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
@@ -549,8 +552,9 @@ class WingMassGroupTestCase2(unittest.TestCase):
 
 class WingMassGroupTestCase3(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -572,7 +576,7 @@ class WingMassGroupTestCase3(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR, val=1.2213063198183813, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.POSITION_FACTOR, val=0.98, units='unitless'
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR, val=0.98, units='unitless'
         )
         self.prob.model.set_input_defaults('c_gear_loc', val=1.0, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
@@ -602,9 +606,10 @@ class WingMassGroupTestCase3(unittest.TestCase):
 
 class WingMassGroupTestCase4(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem('group', WingMassGroup(), promotes=['*'])
@@ -622,7 +627,7 @@ class WingMassGroupTestCase4(unittest.TestCase):
             Aircraft.Wing.MATERIAL_FACTOR, val=1.2213063198183813, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Engine.POSITION_FACTOR, val=0.98, units='unitless'
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR, val=0.98, units='unitless'
         )
         self.prob.model.set_input_defaults('c_gear_loc', val=1.0, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
@@ -674,7 +679,9 @@ class BWBWingMassSolveTestCase(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.MASS_COEFFICIENT, 75.78, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.MATERIAL_FACTOR, 1.19461189, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Engine.POSITION_FACTOR, 1.05, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR, 1.05, units='unitless'
+        )
         prob.model.set_input_defaults('c_gear_loc', 0.95, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
@@ -746,7 +753,9 @@ class BWBWingMassSolveTestCase2(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.MASS_COEFFICIENT, 75.78, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.MATERIAL_FACTOR, 1.19461189, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Engine.POSITION_FACTOR, 1.05, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR, 1.05, units='unitless'
+        )
         prob.model.set_input_defaults('c_gear_loc', 0.95, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
@@ -794,7 +803,7 @@ class BWBWingMassGroupTest(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
 
@@ -813,7 +822,9 @@ class BWBWingMassGroupTest(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.MASS_COEFFICIENT, 75.78, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.MATERIAL_FACTOR, 1.19461189, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Engine.POSITION_FACTOR, 1.05, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Propulsion.ENGINE_POSITION_FACTOR, 1.05, units='unitless'
+        )
         prob.model.set_input_defaults('c_gear_loc', 0.95, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
@@ -846,3 +857,6 @@ class BWBWingMassGroupTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    test = WingMassGroupTestCase2()
+    test.setUp()
+    # test.test_case1()

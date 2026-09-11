@@ -82,7 +82,7 @@ def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=Verbosity.
     # TODO setting defaults for variables needed outside OM problem during load_inputs()
     aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=0)
-    aircraft_values.set_val(Mission.RESERVE_FUEL_ADDITIONAL, val=0, units='lbm')
+    aircraft_values.set_val(Mission.RESERVE_FUEL_MASS_ADDITIONAL, val=0, units='lbm')
     aircraft_values.set_val(Mission.RESERVE_FUEL_MARGIN, val=0)
     # these are used in initialization_guessing()
     aircraft_values.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
@@ -107,11 +107,7 @@ def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=Verbosity.
                 initialization_guesses[key.removeprefix('initialization_guesses:')] = val
         aircraft_values.update(vehicle_deck)
     else:
-        if verbosity >= Verbosity.BRIEF:
-            verbose = True
-        else:
-            verbose = False
-        vehicle_deck = get_path(vehicle_deck, verbose)
+        vehicle_deck = get_path(vehicle_deck, verbosity)
         aircraft_values, initialization_guesses = parse_inputs(
             vehicle_deck=vehicle_deck,
             aircraft_values=aircraft_values,
@@ -328,7 +324,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
     """
     problem_type = aircraft_values.get_val(Settings.PROBLEM_TYPE)
     num_pax = aircraft_values.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
-    reserve_val = aircraft_values.get_val(Mission.RESERVE_FUEL_ADDITIONAL, units='lbm')
+    reserve_val = aircraft_values.get_val(Mission.RESERVE_FUEL_MASS_ADDITIONAL, units='lbm')
     reserve_frac = aircraft_values.get_val(Mission.RESERVE_FUEL_MARGIN, units='unitless')
     if initialization_guesses['fuel_burn_per_passenger_mile'] <= 0:
         initialization_guesses['fuel_burn_per_passenger_mile'] = 0.1
@@ -444,7 +440,10 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i]
         total_thrust += thrust * num_engines
 
-    gamma_guess = np.arcsin(0.5 * total_thrust / mission_mass)
+    # 0.5 * thrust/weight can exceed 1 for very high thrust-to-weight aircraft (e.g.
+    # small electric UAVs); clip to stay in arcsin's domain since this is only an
+    # initial-guess heuristic, not a hard constraint.
+    gamma_guess = np.arcsin(np.clip(0.5 * total_thrust / mission_mass, -1.0, 1.0))
     avg_speed_guess = 0.5 * 667 * cruise_mach  # kts
 
     if initialization_guesses['time_to_climb'] <= 0:  # no guess given

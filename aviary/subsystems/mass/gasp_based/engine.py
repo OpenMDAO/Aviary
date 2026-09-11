@@ -7,9 +7,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class TotalEngineMass(om.ExplicitComponent):
-    """
-    Computation of total engine mass, nacelle mass, pylon mass.
-    """
+    """Computation of total engine mass, nacelle mass, pylon mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -41,10 +39,8 @@ class TotalEngineMass(om.ExplicitComponent):
         add_aviary_input(
             self,
             Aircraft.Engine.Propeller.MASS,
-            # val=np.full(num_engine_type, 0.000000001),
-            val=np.zeros(num_engine_type),
+            shape=num_engine_type,
             units='lbm',
-            desc='WPROP1: mass of one propeller',
         )
 
         # add_aviary_output(self, Aircraft.Engine.MASS, units='lbm')
@@ -54,7 +50,7 @@ class TotalEngineMass(om.ExplicitComponent):
             'pylon_mass',
             units='lbm',
             desc='WPYLON: mass of each pylon',
-            val=np.zeros(num_engine_type),
+            shape=num_engine_type,
         )
 
     def setup_partials(self):
@@ -188,10 +184,8 @@ class TotalEngineMass(om.ExplicitComponent):
         ) / GRAV_ENGLISH_LBM
 
 
-class EnginePODMass(om.ExplicitComponent):
-    """
-    Computation of engine pod mass and total engine pod mass.
-    """
+class EnginePodMass(om.ExplicitComponent):
+    """Computation of engine pod mass and total engine pod mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -199,7 +193,7 @@ class EnginePODMass(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Aircraft.Engine.POD_MASS_SCALER)
+        add_aviary_input(self, Aircraft.Engine.POD_MASS_SCALER, shape=num_engine_type)
         add_aviary_input(self, Aircraft.Nacelle.MASS, shape=num_engine_type, units='lbm')
         self.add_input(
             'pylon_mass',
@@ -242,10 +236,10 @@ class EnginePODMass(om.ExplicitComponent):
         pylon_wt = inputs['pylon_mass'] * GRAV_ENGLISH_LBM
         pod_wt = nacelle_wt + pylon_wt
         outputs[Aircraft.Engine.POD_MASS] = pod_wt / GRAV_ENGLISH_LBM
-        # NOTE TOTAL_ENGINE_POD_MASS by definition includes everything *in* the pod too! This component
+        # TODO TOTAL_ENGINE_POD_MASS by definition includes everything *in* the pod too! This component
         #      should probably use a new/different variable name (same for pod mass scaler)
-        pod_wt_sum = sum(pod_wt * num_engines)
-        outputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS] = CK14 * pod_wt_sum / GRAV_ENGLISH_LBM
+        pod_wt_sum = np.dot(CK14 * pod_wt, num_engines)
+        outputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS] = pod_wt_sum / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
@@ -264,14 +258,12 @@ class EnginePODMass(om.ExplicitComponent):
         J[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, 'pylon_mass'] = CK14 * num_engines
 
         J[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, Aircraft.Engine.POD_MASS_SCALER] = (
-            sum(pod_wt * num_engines) / GRAV_ENGLISH_LBM
+            pod_wt * num_engines / GRAV_ENGLISH_LBM
         )
 
 
 class AdditionalEngineMass(om.ExplicitComponent):
-    """
-    Computation of additional engine mass.
-    """
+    """Computation of additional engine mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -381,7 +373,6 @@ class WingMountEngineMass(om.ExplicitComponent):
         if has_hybrid_system:
             self.add_input(
                 'aug_mass',
-                val=400,
                 units='lbm',
                 desc='WEAUG: mass of electrical augmentation system',
             )
@@ -390,29 +381,25 @@ class WingMountEngineMass(om.ExplicitComponent):
         add_aviary_input(
             self,
             Aircraft.Engine.Propeller.MASS,
-            # val=np.full(num_engine_type, 0.000000001),
-            val=np.zeros(num_engine_type),
+            shape=num_engine_type,
             units='lbm',
-            desc='WPROP1: mass of one propeller',
         )
         add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
         add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS, shape=num_engine_type, units='lbm')
 
         self.add_output(
             'eng_comb_mass',
-            val=0,
             units='lbm',
             desc='WPSTAR: combined mass of dry engine and engine installation,'
             ' includes mass of electrical augmentation system',
         )
         self.add_output(
             'wing_mounted_mass',
-            val=0,
             units='lbm',
             desc='WM: mass of gear and engine, basically everything mounted on the wing',
         )
 
-        self.add_output('prop_mass_sum', val=0, units='lbm', desc='WPROP: mass of all propellers')
+        self.add_output('prop_mass_sum', units='lbm', desc='WPROP: mass of all propellers')
 
     def setup_partials(self):
         has_hybrid_system = self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]
@@ -600,7 +587,7 @@ class EngineMassGroup(om.Group):
         )
         self.add_subsystem(
             'engine_pod',
-            EnginePODMass(),
+            EnginePodMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

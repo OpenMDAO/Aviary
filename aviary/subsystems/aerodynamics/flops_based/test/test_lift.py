@@ -12,7 +12,7 @@ from aviary.validation_cases.validation_tests import (
     get_flops_inputs,
     print_case,
 )
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 data_sets = get_flops_case_names(
     only=['LargeSingleAisle1FLOPS', 'LargeSingleAisle2FLOPS', 'advanced_single_aisle']
@@ -105,7 +105,12 @@ class LiftEqualsWeightTest(unittest.TestCase):
         q, _ = mission_data.get_item(Dynamic.Atmosphere.DYNAMIC_PRESSURE)
         nn = len(q)
 
-        model.add_subsystem('lift_equals_weight', LiftEqualsWeight(num_nodes=nn), promotes=['*'])
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+        }
+        model.add_subsystem(
+            'lift_equals_weight', LiftEqualsWeight(num_nodes=nn, **options), promotes=['*']
+        )
 
         prob.setup(force_alloc_complex=True)
 

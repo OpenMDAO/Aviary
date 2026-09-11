@@ -254,6 +254,7 @@ class MissionDragTest(unittest.TestCase):
         varnames = [
             Aircraft.Fuselage.WETTED_AREA,
             Aircraft.HorizontalTail.WETTED_AREA,
+            Aircraft.Nacelle.WETTED_AREA,
             Aircraft.VerticalTail.WETTED_AREA,
             Aircraft.Wing.AREA,
             Aircraft.Wing.ASPECT_RATIO,
@@ -504,4 +505,4 @@ class MissionDragTest(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
     # test = MissionDragTest()
-    # test.test_large_single_aisle_2_drag()
+    # test.test_basic_large_single_aisle_1()

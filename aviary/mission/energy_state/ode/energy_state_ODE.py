@@ -59,6 +59,7 @@ class EnergyStateODE(_BaseODE):
         throttle_enforcement = options['throttle_enforcement']
 
         sub1 = self.add_subsystem('solver_sub', om.Group(), promotes=['*'])
+        sub1.options['auto_order'] = True
 
         use_mission_solver = self.add_subsystems(solver_group=sub1)
 
@@ -175,5 +176,3 @@ class EnergyStateODE(_BaseODE):
             sub1.linear_solver = om.DirectSolver(assemble_jac=True)
             sub1.nonlinear_solver.options['err_on_non_converge'] = True
             sub1.nonlinear_solver.options['iprint'] = print_level
-
-        self.options['auto_order'] = True

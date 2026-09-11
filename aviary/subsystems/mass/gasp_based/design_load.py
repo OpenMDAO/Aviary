@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
+import warnings
 
-from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.utils.math import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
@@ -341,46 +341,44 @@ class LoadParameters(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.PART25_STRUCTURAL_CATEGORY)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
         add_aviary_option(self, Aircraft.Design.CRUISE_ALTITUDE, units='ft')
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         self.add_input(
             'vel_c',
-            val=100,
             units='kn',
             desc='VGC: Velocity used in Gust Load Factor calculation at cruise conditions.\
                        This is Minimum Design Cruise Speed for Part 23 aircraft and VM0 for Part 25 aircraft',
         )
         self.add_input(
             'max_airspeed',
-            val=200,
             units='kn',
             desc='VM0: maximum operating equivalent airspeed',
         )
 
-        self.add_output(
-            'max_mach',
-            val=0,
+        add_aviary_output(
+            self,
+            Aircraft.Design.MAX_MACH,
             units='unitless',
             desc='EMM0: maximum operating Mach number',
         )
         self.add_output(
             'density_ratio',
-            val=0,
             units='unitless',
             desc='SIGMA (in GASP): density ratio = density at Altitude / density at Sea level',
         )
         self.add_output(
             'V9',
-            val=0,
             units='kn',
             desc='V9: intermediate value. Typically it is maximum flight speed.',
         )
 
-        self.declare_partials('max_mach', 'max_airspeed')
+        self.declare_partials(Aircraft.Design.MAX_MACH, 'max_airspeed')
         self.declare_partials('density_ratio', 'max_airspeed')
         self.declare_partials('V9', '*')
 
     def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
         vel_c = inputs['vel_c']
         max_airspeed = inputs['max_airspeed']
 
@@ -389,19 +387,31 @@ class LoadParameters(om.ExplicitComponent):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         if cruise_alt <= 22500.0:
+            # 486.33 comes from the "average" altitude (roughly 16000 ft)
             max_mach = max_airspeed / 486.33
         if cruise_alt > 22500.0 and cruise_alt <= 36000.0:
+            # 424.73 comes from the "average" altitude (roughly 28000 ft)
             max_mach = max_airspeed / 424.73
         if cruise_alt > 36000.0:
             max_mach = max_airspeed / 372.34
 
         if smooth:
+            if max_mach > 0.90:
+                if verbosity > Verbosity.BRIEF:
+                    warnings.warn(
+                        f'Calculated Aircraft.Design.MAX_MACH = {max_mach}  '
+                        'GASP only models subsonic flight: Setting Aircraft.Design.MAX_MACH = 0.9.'
+                    )
             max_mach = max_mach * sigmoidX(max_mach / 0.9, 1, -0.01) + 0.9 * sigmoidX(
                 max_mach / 0.9, 1, 0.01
             )
-
         else:
-            if max_mach > 0.90:  # note: this creates a discontinuity
+            if max_mach > 0.90:
+                if verbosity > Verbosity.BRIEF:
+                    warnings.warn(
+                        f'Calculated Aircraft.Design.MAX_MACH = {max_mach}  '
+                        'GASP only models subsonic flight: Setting Aircraft.Design.MAX_MACH = 0.9.'
+                    )
                 max_mach = 0.90
 
         density_ratio = (max_airspeed / (661.7 * max_mach)) ** 1.61949
@@ -441,7 +451,7 @@ class LoadParameters(om.ExplicitComponent):
             if CATD < 3.0 and density_ratio <= 0.6820:  # note: this creates a discontinuity
                 density_ratio = 0.6820
 
-        outputs['max_mach'] = max_mach
+        outputs[Aircraft.Design.MAX_MACH] = max_mach
         outputs['density_ratio'] = density_ratio
         outputs['V9'] = V9
 
@@ -585,7 +595,7 @@ class LoadParameters(om.ExplicitComponent):
                 density_ratio = 0.6820
                 ddensity_ratio_dmax_airspeed = 0.0
 
-        partials['max_mach', 'max_airspeed'] = dmax_mach_dmax_airspeed
+        partials[Aircraft.Design.MAX_MACH, 'max_airspeed'] = dmax_mach_dmax_airspeed
         partials['density_ratio', 'max_airspeed'] = ddensity_ratio_dmax_airspeed
         partials['V9', 'max_airspeed'] = dV9_dmax_airspeed
         partials['V9', 'vel_c'] = dV9_dvel_c
@@ -615,9 +625,9 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
 
         if verbosity > Verbosity.BRIEF:
             if AR <= 0.0:
-                print('Aircraft.Wing.ASPECT_RATIO must be positive.')
+                warnings.warn('Aircraft.Wing.ASPECT_RATIO must be positive.')
             if DLMC4 == np.pi / 2.0:
-                print('Aircraft.Wing.SWEEP can not be 90 degrees.')
+                warnings.warn('Aircraft.Wing.SWEEP can not be 90 degrees.')
 
         outputs[Aircraft.Design.LIFT_CURVE_SLOPE] = (
             np.pi
@@ -661,26 +671,24 @@ class LoadFactors(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
         add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
+        add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='slug/ft**3')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.WING_LOADING, units='lbf/ft**2')
 
         self.add_input(
             'density_ratio',
-            val=0.5,
             units='unitless',
             desc='SIGMA (in GASP): density ratio = density at Altitude / density at Sea level',
         )
         self.add_input(
             'V9',
-            val=100,
             units='kn',
             desc='V9: intermediate value. Typically it is maximum flight speed.',
         )
-        self.add_input('min_dive_vel', val=250, units='kn', desc='VDMIN: dive velocity')
+        self.add_input('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
         self.add_input(
             'max_maneuver_factor',
-            val=0.72,
             units='unitless',
             desc='EMLF: maximum maneuver load factor, units are in g`s',
         )
@@ -703,11 +711,10 @@ class LoadFactors(om.ExplicitComponent):
 
         ULF_from_maneuver = self.options[Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+        rho_sea_level = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
         mass_ratio = (
-            2.0
-            * wing_loading
-            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+            2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
         )
         k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
         cruise_load_factor = 1.0 + ((k_load_factor * 50.0 * V9 * Cl_alpha) / (498.0 * wing_loading))
@@ -753,11 +760,10 @@ class LoadFactors(om.ExplicitComponent):
 
         ULF_from_maneuver = self.options[Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+        rho_sea_level = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
         mass_ratio = (
-            2.0
-            * wing_loading
-            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+            2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
         )
         k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
         cruise_load_factor = 1.0 + ((k_load_factor * 50.0 * V9 * Cl_alpha) / (498.0 * wing_loading))
@@ -767,22 +773,16 @@ class LoadFactors(om.ExplicitComponent):
         gust_load_factor = dive_load_factor
 
         dmass_ratio_dwing_loading = 2.0 / (
-            density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2
+            density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2
         )
         dmass_ratio_ddensity_ratio = (
-            -2.0
-            * wing_loading
-            / (density_ratio**2 * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+            -2.0 * wing_loading / (density_ratio**2 * rho_sea_level * avg_chord * Cl_alpha * 32.2)
         )
         dmass_ratio_davg_chord = (
-            -2.0
-            * wing_loading
-            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord**2 * Cl_alpha * 32.2)
+            -2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord**2 * Cl_alpha * 32.2)
         )
         dmass_ratio_dCl_alpha = (
-            -2.0
-            * wing_loading
-            / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha**2 * 32.2)
+            -2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord * Cl_alpha**2 * 32.2)
         )
 
         dk_load_factor_dwing_loading = dquotient(
@@ -1157,11 +1157,8 @@ class DesignLoadGroup(om.Group):
         self.add_subsystem(
             'params',
             LoadParameters(),
-            promotes_inputs=[
-                'max_airspeed',
-                'vel_c',
-            ],
-            promotes_outputs=['density_ratio', 'V9', 'max_mach'],
+            promotes_inputs=['max_airspeed', 'vel_c'],
+            promotes_outputs=['density_ratio', 'V9', Aircraft.Design.MAX_MACH],
         )
 
         self.add_subsystem(
@@ -1241,9 +1238,9 @@ class BWBLoadSpeeds(om.ExplicitComponent):
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             if verbosity > Verbosity.BRIEF:
                 if exp_wing_area <= 0.0:
-                    print('Aircraft.Wing.EXPOSED_AREA must be positive.')
+                    warnings.warn('Aircraft.Wing.EXPOSED_AREA must be positive.')
                 if gross_mass <= 0.0:
-                    print('Aircraft.Design.GROSS_MASS must be positive.')
+                    warnings.warn('Aircraft.Design.GROSS_MASS must be positive.')
             wing_loading = gross_mass / exp_wing_area
 
             VCMAX = 0.9 * max_struct_speed_kts
@@ -1591,6 +1588,7 @@ class BWBLoadFactors(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
         add_aviary_option(self, Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER)
         add_aviary_option(self, Settings.VERBOSITY)
+        add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='slug/ft**3')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
@@ -1631,9 +1629,9 @@ class BWBLoadFactors(om.ExplicitComponent):
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             if verbosity > Verbosity.BRIEF:
                 if exp_wing_area <= 0.0:
-                    print('Aircraft.Wing.EXPOSED_AREA must be positive.')
+                    warnings.warn('Aircraft.Wing.EXPOSED_AREA must be positive.')
                 if gross_mass <= 0.0:
-                    print('Aircraft.Design.GROSS_MASS must be positive.')
+                    warnings.warn('Aircraft.Design.GROSS_MASS must be positive.')
             wing_loading = gross_mass / exp_wing_area
 
             density_ratio = inputs['density_ratio']
@@ -1643,11 +1641,10 @@ class BWBLoadFactors(om.ExplicitComponent):
             Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
 
             smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+            rho_sea_level = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
             mass_ratio = (
-                2.0
-                * wing_loading
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+                2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
             )
             k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
             cruise_load_factor = 1.0 + (
@@ -1711,11 +1708,10 @@ class BWBLoadFactors(om.ExplicitComponent):
             Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
 
             smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
+            rho_sea_level = self.options[Mission.SEA_LEVEL_DENSITY][0]
 
             mass_ratio = (
-                2.0
-                * wing_loading
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+                2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
             )
             k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
             cruise_load_factor = 1.0 + (
@@ -1728,27 +1724,27 @@ class BWBLoadFactors(om.ExplicitComponent):
             dmass_ratio_dgross_mass = (
                 2.0
                 * dwing_loading_dgross_mass
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+                / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
             )
             dmass_ratio_dexp_wing_area = (
                 2.0
                 * dwing_loading_dexp_wing_area
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+                / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
             )
             dmass_ratio_ddensity_ratio = (
                 -2.0
                 * wing_loading
-                / (density_ratio**2 * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha * 32.2)
+                / (density_ratio**2 * rho_sea_level * avg_chord * Cl_alpha * 32.2)
             )
             dmass_ratio_davg_chord = (
                 -2.0
                 * wing_loading
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord**2 * Cl_alpha * 32.2)
+                / (density_ratio * rho_sea_level * avg_chord**2 * Cl_alpha * 32.2)
             )
             dmass_ratio_dCl_alpha = (
                 -2.0
                 * wing_loading
-                / (density_ratio * RHO_SEA_LEVEL_ENGLISH * avg_chord * Cl_alpha**2 * 32.2)
+                / (density_ratio * rho_sea_level * avg_chord * Cl_alpha**2 * 32.2)
             )
 
             dk_load_factor_dgross_mass = dquotient(
@@ -2212,7 +2208,7 @@ class BWBDesignLoadGroup(om.Group):
             'params',
             LoadParameters(),
             promotes_inputs=['max_airspeed', 'vel_c'],
-            promotes_outputs=['density_ratio', 'V9', 'max_mach'],
+            promotes_outputs=['density_ratio', 'V9', Aircraft.Design.MAX_MACH],
         )
 
         self.add_subsystem(

@@ -21,7 +21,7 @@ aircraft:design:drag_coefficient_increment, 0.0015, unitless
 aircraft:design:emergency_equipment_mass, 25, lbm
 aircraft:design:max_structural_speed, 320, mi/h
 aircraft:design:part25_structural_category, 3, unitless
-mission:reserve_fuel_additional, 0.667, lbm
+mission:reserve_fuel_mass_additional, 0.667, lbm
 aircraft:design:static_margin, 0.05, unitless
 aircraft:design:structural_mass_increment, 0, lbm
 aircraft:design:drag_divergence_shift, 0, unitless
@@ -96,7 +96,7 @@ aircraft:fuselage:nose_fineness, 1, unitless
 aircraft:fuselage:num_aisles, 1, unitless
 aircraft:fuselage:pilot_compartment_length, 10.6, ft
 aircraft:fuselage:pressure_differential, 6.55, psi
-aircraft:fuselage:seat_width, 18, inch
+aircraft:fuselage:seat_width_economy, 18, inch
 aircraft:fuselage:tail_fineness, 2.9, unitless
 aircraft:fuselage:wetted_area_scaler, 1, unitless
 
@@ -191,17 +191,20 @@ aircraft:furnishings:mass, 0, lbm
 aircraft:design:cruise_altitude, 21000, ft
 aircraft:design:gross_mass, 155000, lbm
 aircraft:design:mach, 0.475, unitless
+aircraft:design:percent_excrescence_drag,0.075,unitless
 aircraft:design:range, 2020, NM
 
 # Takeoff and Landing
 mission:landing:airport_altitude, 0, ft
 mission:landing:braking_delay, 2, s
+mission:landing:braking_friction_coefficient,0.4,unitless
 mission:landing:glide_to_stall_ratio, 1.3, unitless
 mission:landing:maximum_flare_load_factor, 1.15, unitless
 mission:landing:maximum_sink_rate, 900, ft/min
 mission:landing:obstacle_height, 50, ft
 mission:landing:touchdown_sink_rate, 5, ft/s
 mission:takeoff:decision_speed_increment, 5, kn
+mission:takeoff:rolling_friction_coefficient,0.02,unitless
 mission:takeoff:rotation_speed_increment, 5, kn
 mission:taxi:duration, 0.15, h
 

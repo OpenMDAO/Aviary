@@ -17,7 +17,7 @@ from aviary.validation_cases.validation_tests import (
     print_case,
     Version,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 @use_tempdirs
@@ -44,6 +44,7 @@ class SurfaceCtrlMassTest(unittest.TestCase):
                 Aircraft.Design.GROSS_MASS,
                 Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO,
                 Aircraft.Wing.AREA,
+                Aircraft.Design.MAX_MACH,
             ],
             output_keys=[Aircraft.Wing.SURFACE_CONTROL_MASS, Aircraft.Wing.CONTROL_SURFACE_AREA],
             version=Version.TRANSPORT_and_BWB,
@@ -79,6 +80,7 @@ class SurfaceCtrlMassTest2(unittest.TestCase):
         prob.set_val(Aircraft.Design.GROSS_MASS, 130000, 'lbm')
         prob.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 1, 'unitless')
         prob.set_val(Aircraft.Wing.AREA, 1000, 'ft**2')
+        prob.set_val(Aircraft.Design.MAX_MACH, 0.8, 'unitless')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

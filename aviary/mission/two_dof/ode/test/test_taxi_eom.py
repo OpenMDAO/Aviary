@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.taxi_eom import TaxiFuelComponent
 from aviary.utils.aviary_values import AviaryValues
@@ -9,6 +10,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Dynamic, Mission
 
 
+@use_tempdirs
 class TaxiFuelComponentTestCase(unittest.TestCase):
     """Test the computation of fuel consumed during taxi in TaxiFuelComponent component."""
 
@@ -26,7 +28,7 @@ class TaxiFuelComponentTestCase(unittest.TestCase):
         self.prob.setup(force_alloc_complex=True)
 
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -1512,
             units='lbm/h',
         )

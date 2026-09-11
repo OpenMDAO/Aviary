@@ -3,7 +3,6 @@ import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
-from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.two_dof.ode.v_rotate_comp import VRotateComp
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -23,7 +22,7 @@ class TestVRotateComp(unittest.TestCase):
         prob.set_val('dV1', val=10, units='kn')
         prob.set_val('dVR', val=5, units='kn')
         prob.set_val(Aircraft.Wing.AREA, val=1370, units='ft**2')
-        prob.set_val(Dynamic.Atmosphere.DENSITY, val=RHO_SEA_LEVEL_ENGLISH, units='slug/ft**3')
+        prob.set_val('density', val=0.0023769, units='slug/ft**3')
         prob.set_val('CL_max', val=2.1886, units='unitless')
         prob.set_val('mass', val=175_000, units='lbm')
 
@@ -56,7 +55,7 @@ class TestVRotateComp2(unittest.TestCase):
         prob.set_val('dV1', val=10, units='kn')
         prob.set_val('dVR', val=5, units='kn')
         prob.set_val(Aircraft.Wing.AREA, val=1370, units='ft**2')
-        prob.set_val(Dynamic.Atmosphere.DENSITY, val=RHO_SEA_LEVEL_ENGLISH, units='slug/ft**3')
+        prob.set_val('density', val=0.0023769, units='slug/ft**3')
         prob.set_val('CL_max', val=2.1886, units='unitless')
         prob.set_val('mass', val=175_000, units='lbm')
 

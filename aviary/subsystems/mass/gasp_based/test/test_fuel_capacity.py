@@ -5,8 +5,9 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.fuel_capacity import TrappedFuelCapacity
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
+from aviary.variable_info.options import AviaryValues
 from aviary.variable_info.variables import Aircraft
 
 
@@ -15,7 +16,7 @@ class TrappedFuelCapacityCase1(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
-        options = self.options = get_option_defaults()
+        options = self.options = AviaryValues()
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -66,7 +67,7 @@ class TrappedFuelCapacityCase2(unittest.TestCase):
     """Gravity Modification"""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -112,7 +113,7 @@ class TrappedFuelCapacityCase3(unittest.TestCase):
     """BWB Parameters"""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(

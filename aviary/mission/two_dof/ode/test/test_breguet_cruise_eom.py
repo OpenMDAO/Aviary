@@ -3,12 +3,14 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.mission.two_dof.ode.breguet_cruise_eom import ElectricRangeComp, RangeComp
 from aviary.variable_info.variables import Dynamic
 
 
+@use_tempdirs
 class TestBreguetResults(unittest.TestCase):
     """Test cruise range and time in RangeComp component."""
 
@@ -23,7 +25,7 @@ class TestBreguetResults(unittest.TestCase):
         self.prob.set_val('TAS_cruise', 458.8, units='kn')
         self.prob.set_val('mass', np.linspace(171481, 171481 - 10000, nn), units='lbm')
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -5870
             * np.ones(
                 nn,
@@ -50,6 +52,7 @@ class TestBreguetResults(unittest.TestCase):
         assert_check_partials(partial_data, atol=tol, rtol=tol)
 
 
+@use_tempdirs
 class TestBreguetPartials(unittest.TestCase):
     def setUp(self):
         nn = 10
@@ -70,7 +73,7 @@ class TestBreguetPartials(unittest.TestCase):
             'mass', np.linspace(171481, 171481 - 10000, nn), units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -5870
             * np.ones(
                 nn,
@@ -99,6 +102,7 @@ class TestBreguetPartials(unittest.TestCase):
         assert_check_partials(partial_data, atol=tol, rtol=tol)
 
 
+@use_tempdirs
 class TestBreguetPartials2(unittest.TestCase):
     """Test mass-weight conversion."""
 
@@ -127,7 +131,7 @@ class TestBreguetPartials2(unittest.TestCase):
         )
         prob.model.set_input_defaults('mass', np.linspace(171481, 171481 - 10000, nn), units='lbm')
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -5870
             * np.ones(
                 nn,
@@ -140,6 +144,7 @@ class TestBreguetPartials2(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-11, rtol=1e-11)
 
 
+@use_tempdirs
 class TestBreguetResults2(unittest.TestCase):
     def setUp(self):
         self.nn = nn = 100
@@ -152,7 +157,7 @@ class TestBreguetResults2(unittest.TestCase):
         self.prob.set_val('TAS_cruise', 458.8, units='kn')
         self.prob.set_val('mass', np.linspace(171481, 171481 - 10000, nn), units='lbm')
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -5870
             * np.ones(
                 nn,
@@ -168,7 +173,7 @@ class TestBreguetResults2(unittest.TestCase):
         r = self.prob.get_val('cruise_range', units='NM')
         t = self.prob.get_val('cruise_time', units='h')
         fuel_flow = -self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
         )
 
         v_avg = (V[:-1] + V[1:]) / 2
@@ -181,6 +186,7 @@ class TestBreguetResults2(unittest.TestCase):
         assert_near_equal(np.diff(t), -np.diff(W) / fuel_flow_avg, tolerance=1.0e-6)
 
 
+@use_tempdirs
 class TestElectricBreguetResults(unittest.TestCase):
     """Test cruise range and time in E_RangeComp component."""
 
@@ -231,7 +237,4 @@ class TestElectricBreguetResults(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestBreguetPartials2()
-    test.setUp()
-    test.test_partials()
+    unittest.main()

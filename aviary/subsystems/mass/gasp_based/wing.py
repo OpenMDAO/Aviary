@@ -22,30 +22,25 @@ class WingMassSolve(om.ImplicitComponent):
         add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS, units='lbm')
         self.add_input(
             'c_strut_braced',
-            val=1.00000001,
             units='unitless',
             desc='SKSTR: reduction in bending moment factor for strut braced wing',
         )
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Wing.MATERIAL_FACTOR, units='unitless')
-        add_aviary_input(self, Aircraft.Engine.POSITION_FACTOR, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Propulsion.ENGINE_POSITION_FACTOR)
         self.add_input(
             'c_gear_loc',
-            val=1.000000001,
             units='unitless',
             desc='SKGEAR: landing gear location factor',
         )
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
-        self.add_input(
-            'half_sweep', val=0.3947081519, units='rad', desc='SWC2: wing half-chord sweep angle'
-        )
+        self.add_input('half_sweep', units='rad', desc='SWC2: wing half-chord sweep angle')
 
         self.add_output(
             'isolated_wing_mass',
-            val=17670,
             units='lbm',
             desc='WW: wing mass including high lift devices (but excluding struts and fold effects)',
         )
@@ -59,7 +54,7 @@ class WingMassSolve(om.ImplicitComponent):
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
         c_material = inputs[Aircraft.Wing.MATERIAL_FACTOR]
-        c_eng_pos = inputs[Aircraft.Engine.POSITION_FACTOR]
+        c_eng_pos = inputs[Aircraft.Propulsion.ENGINE_POSITION_FACTOR]
         c_gear_loc = inputs['c_gear_loc']
         wingspan = inputs[Aircraft.Wing.SPAN]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
@@ -87,7 +82,7 @@ class WingMassSolve(om.ImplicitComponent):
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
         c_material = inputs[Aircraft.Wing.MATERIAL_FACTOR]
-        c_eng_pos = inputs[Aircraft.Engine.POSITION_FACTOR]
+        c_eng_pos = inputs[Aircraft.Propulsion.ENGINE_POSITION_FACTOR]
         c_gear_loc = inputs['c_gear_loc']
         wingspan = inputs[Aircraft.Wing.SPAN]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
@@ -164,7 +159,7 @@ class WingMassSolve(om.ImplicitComponent):
             * (1.0 + taper_ratio) ** 0.4
             / GRAV_ENGLISH_LBM
         ) / (100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535)
-        J['isolated_wing_mass', Aircraft.Engine.POSITION_FACTOR] = -(
+        J['isolated_wing_mass', Aircraft.Propulsion.ENGINE_POSITION_FACTOR] = -(
             c_wing_mass
             * c_material
             * c_gear_loc
@@ -268,7 +263,6 @@ class StrutAndFoldMass(om.ExplicitComponent):
     def setup(self):
         self.add_input(
             'isolated_wing_mass',
-            val=1500,
             units='lbm',
             desc='WW: wing mass including high lift devices (but excluding struts and fold effects)',
         )
@@ -363,7 +357,7 @@ class WingMassTotal(om.ExplicitComponent):
 
         self.add_input(
             'isolated_wing_mass',
-            val=1500,
+            # val=1500,
             units='lbm',
             desc='WW: wing mass including high lift devices (but excluding struts and fold effects)',
         )
@@ -408,27 +402,20 @@ class BWBWingMassSolve(om.ImplicitComponent):
     (but excluding struts and fold effects) using a nonlinear solver.
     """
 
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
-
     def setup(self):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS, units='lbm')
         self.add_input(
             'c_strut_braced',
-            val=1.00000001,
             units='unitless',
             desc='SKSTR: reduction in bending moment factor for strut braced wing',
         )
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Wing.MATERIAL_FACTOR, units='unitless')
-        add_aviary_input(self, Aircraft.Engine.POSITION_FACTOR, shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Propulsion.ENGINE_POSITION_FACTOR)
         self.add_input(
             'c_gear_loc',
-            val=1.000000001,
             units='unitless',
             desc='SKGEAR: landing gear location factor',
         )
@@ -436,16 +423,13 @@ class BWBWingMassSolve(om.ImplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
-        self.add_input(
-            'half_sweep', val=0.3947081519, units='rad', desc='SWC2: wing half-chord sweep angle'
-        )
+        self.add_input('half_sweep', units='rad', desc='SWC2: wing half-chord sweep angle')
         add_aviary_input(
             self, Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING, units='unitless'
         )
 
         self.add_output(
             'isolated_wing_mass',
-            val=12973.96759,
             units='lbm',
             desc='WW: wing mass including high lift devices (but excluding struts and fold effects)',
         )
@@ -459,7 +443,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
         c_material = inputs[Aircraft.Wing.MATERIAL_FACTOR]
-        c_eng_pos = inputs[Aircraft.Engine.POSITION_FACTOR]
+        c_eng_pos = inputs[Aircraft.Propulsion.ENGINE_POSITION_FACTOR]
         c_gear_loc = inputs['c_gear_loc']
         wingspan = inputs[Aircraft.Wing.SPAN]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
@@ -492,7 +476,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
         c_material = inputs[Aircraft.Wing.MATERIAL_FACTOR]
-        c_eng_pos = inputs[Aircraft.Engine.POSITION_FACTOR]
+        c_eng_pos = inputs[Aircraft.Propulsion.ENGINE_POSITION_FACTOR]
         c_gear_loc = inputs['c_gear_loc']
         wingspan = inputs[Aircraft.Wing.SPAN]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
@@ -593,7 +577,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
             * (1.0 + taper_ratio) ** 0.4
             / GRAV_ENGLISH_LBM
         ) / (100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535)
-        J['isolated_wing_mass', Aircraft.Engine.POSITION_FACTOR] = -(
+        J['isolated_wing_mass', Aircraft.Propulsion.ENGINE_POSITION_FACTOR] = -(
             c_wing_mass
             * c_material
             * c_gear_loc

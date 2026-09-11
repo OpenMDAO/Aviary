@@ -43,7 +43,7 @@ jobs:
             OS: ubuntu-24.04
             OPENMDAO_PIXI_ENVIRONMENT: 'py311'
             OPENMDAO_INSTALL_FROM: 'pypi'
-            OPENMDAO: '3.43.0'
+            OPENMDAO: '3.45.0'
             SNOPT: '7.7'
             DYMOS: '1.13.1'
             COVERAGE: true

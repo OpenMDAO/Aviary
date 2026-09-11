@@ -3,10 +3,9 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_METRIC_FLOPS as grav_metric
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class StallSpeed(om.ExplicitComponent):
@@ -16,26 +15,22 @@ class StallSpeed(om.ExplicitComponent):
     """
 
     def initialize(self):
-        options = self.options
-
-        options.declare('num_nodes', default=1, types=int, lower=0)
+        self.options.declare('num_nodes', default=1, types=int, lower=0)
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
 
     def setup(self):
-        options = self.options
+        nn = self.options['num_nodes']
 
-        nn = options['num_nodes']
-
-        self.add_input('mass', val=np.ones(nn), units='kg', desc='current mass of the aircraft')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
 
         add_aviary_input(
             self,
             Dynamic.Atmosphere.DENSITY,
-            val=np.ones(nn),
+            shape=nn,
             units='kg/m**3',
-            desc='current atmospheric density',
         )
 
-        self.add_input('area', val=1.0, units='m**2', desc='surface area contributing to lift')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
         self.add_input(
             'lift_coefficient_max', val=1.0, units='unitless', desc='maximum lift coefficient'
@@ -49,9 +44,7 @@ class StallSpeed(om.ExplicitComponent):
         )
 
     def setup_partials(self):
-        options = self.options
-
-        nn = options['num_nodes']
+        nn = self.options['num_nodes']
         rows_cols = np.arange(nn)
 
         self.declare_partials(
@@ -61,12 +54,13 @@ class StallSpeed(om.ExplicitComponent):
             cols=rows_cols,
         )
 
-        self.declare_partials('stall_speed', ['area', 'lift_coefficient_max'])
+        self.declare_partials('stall_speed', [Aircraft.Wing.AREA, 'lift_coefficient_max'])
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+        grav_metric = self.options[Mission.GRAVITY][0]
         mass = inputs['mass']
         density = inputs[Dynamic.Atmosphere.DENSITY]
-        area = inputs['area']
+        area = inputs[Aircraft.Wing.AREA]
         lift_coefficient_max = inputs['lift_coefficient_max']
 
         weight = mass * grav_metric
@@ -75,9 +69,10 @@ class StallSpeed(om.ExplicitComponent):
         outputs['stall_speed'] = stall_speed
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
+        grav_metric = self.options[Mission.GRAVITY][0]
         mass = inputs['mass']
         density = inputs[Dynamic.Atmosphere.DENSITY]
-        area = inputs['area']
+        area = inputs[Aircraft.Wing.AREA]
         lift_coefficient_max = inputs['lift_coefficient_max']
 
         weight = mass * grav_metric
@@ -92,7 +87,7 @@ class StallSpeed(om.ExplicitComponent):
             stall_speed * density**2 * area * lift_coefficient_max
         )
 
-        J['stall_speed', 'area'] = -weight / (
+        J['stall_speed', Aircraft.Wing.AREA] = -weight / (
             stall_speed * density * area**2 * lift_coefficient_max
         )
 
@@ -133,14 +128,12 @@ class TakeoffEOM(om.Group):
         aviary_options = options['aviary_options']
         mu = aviary_options.get_val(friction_key)
 
-        kwargs = {'num_nodes': nn, 'climbing': climbing}
-
         inputs = [Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.VELOCITY]
         outputs = [Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.ALTITUDE_RATE]
 
         self.add_subsystem(
             'distance_rates',
-            DistanceRates(**kwargs),
+            DistanceRates(num_nodes=nn, climbing=climbing),
             promotes_inputs=inputs,
             promotes_outputs=outputs,
         )
@@ -149,7 +142,6 @@ class TakeoffEOM(om.Group):
             'num_nodes': nn,
             'climbing': climbing,
             'friction_coefficient': mu,
-            'aviary_options': aviary_options,
         }
 
         self.add_subsystem(
@@ -182,7 +174,7 @@ class TakeoffEOM(om.Group):
 
         self.add_subsystem(
             'climb_gradient_forces',
-            ClimbGradientForces(num_nodes=nn, aviary_options=aviary_options),
+            ClimbGradientForces(num_nodes=nn),
             promotes=['*'],
         )
 
@@ -207,11 +199,11 @@ class DistanceRates(om.ExplicitComponent):
 
         nn = options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad')
-        add_aviary_input(self, Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='m/s')
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, shape=nn, units='m/s')
 
-        add_aviary_output(self, Dynamic.Mission.DISTANCE_RATE, val=np.zeros(nn), units='m/s')
-        add_aviary_output(self, Dynamic.Mission.ALTITUDE_RATE, val=np.zeros(nn), units='m/s')
+        add_aviary_output(self, Dynamic.Mission.DISTANCE_RATE, shape=nn, units='m/s')
+        add_aviary_output(self, Dynamic.Mission.ALTITUDE_RATE, shape=nn, units='m/s')
 
     def setup_partials(self):
         options = self.options
@@ -283,7 +275,7 @@ class Accelerations(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
 
         self.add_input(
             'forces_horizontal',
@@ -395,10 +387,10 @@ class VelocityRate(om.ExplicitComponent):
             units='m/s**2',
         )
 
-        add_aviary_input(self, Dynamic.Mission.DISTANCE_RATE, val=np.zeros(nn), units='m/s')
-        add_aviary_input(self, Dynamic.Mission.ALTITUDE_RATE, val=np.zeros(nn), units='m/s')
+        add_aviary_input(self, Dynamic.Mission.DISTANCE_RATE, shape=nn, units='m/s')
+        add_aviary_input(self, Dynamic.Mission.ALTITUDE_RATE, shape=nn, units='m/s')
 
-        add_aviary_output(self, Dynamic.Mission.VELOCITY_RATE, val=np.ones(nn), units='m/s**2')
+        add_aviary_output(self, Dynamic.Mission.VELOCITY_RATE, shape=nn, units='m/s**2')
 
         rows_cols = np.arange(nn)
 
@@ -446,8 +438,8 @@ class FlightPathAngleRate(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Mission.DISTANCE_RATE, val=np.zeros(nn), units='m/s')
-        add_aviary_input(self, Dynamic.Mission.ALTITUDE_RATE, val=np.zeros(nn), units='m/s')
+        add_aviary_input(self, Dynamic.Mission.DISTANCE_RATE, shape=nn, units='m/s')
+        add_aviary_input(self, Dynamic.Mission.ALTITUDE_RATE, shape=nn, units='m/s')
 
         self.add_input(
             'acceleration_horizontal',
@@ -466,7 +458,7 @@ class FlightPathAngleRate(om.ExplicitComponent):
         add_aviary_output(
             self,
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
-            val=np.zeros(nn),
+            shape=nn,
             units='rad/s',
         )
 
@@ -528,25 +520,23 @@ class SumForces(om.ExplicitComponent):
             desc='current friction coefficient, either rolling friction or braking friction',
         )
 
-        options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
+        add_aviary_option(self, Mission.Takeoff.THRUST_INCIDENCE, units='rad')
+        add_aviary_option(self, Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, units='rad')
 
     def setup(self):
         options = self.options
 
         nn = options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
-        add_aviary_input(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='N')
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.ones(nn), units='N')
-        add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
+        add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=nn, units='N')
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, units='N')
 
-        self.add_input(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
+        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='rad')
 
-        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad')
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
 
         self.add_output(
             'forces_horizontal',
@@ -567,6 +557,9 @@ class SumForces(om.ExplicitComponent):
 
         nn = options['num_nodes']
         climbing = options['climbing']
+        grav_metric = options[Mission.GRAVITY][0]
+        t_inc = options[Mission.Takeoff.THRUST_INCIDENCE][0]
+        mu = options['friction_coefficient']
 
         rows_cols = np.arange(nn)
 
@@ -592,9 +585,6 @@ class SumForces(om.ExplicitComponent):
             self.declare_partials('*', wrt, rows=rows_cols, cols=rows_cols)
 
         else:
-            aviary_options: AviaryValues = options['aviary_options']
-
-            mu = options['friction_coefficient']
             val = -grav_metric * mu
 
             self.declare_partials(
@@ -613,7 +603,6 @@ class SumForces(om.ExplicitComponent):
                 cols=rows_cols,
             )
 
-            t_inc = aviary_options.get_val(Mission.Takeoff.THRUST_INCIDENCE, 'rad')
             val = np.cos(t_inc) + np.sin(t_inc) * mu
 
             self.declare_partials(
@@ -644,9 +633,9 @@ class SumForces(om.ExplicitComponent):
         options = self.options
 
         climbing = options['climbing']
-        aviary_options: AviaryValues = options['aviary_options']
-
-        t_inc = aviary_options.get_val(Mission.Takeoff.THRUST_INCIDENCE, 'rad')
+        grav_metric = options[Mission.GRAVITY][0]
+        t_inc = options[Mission.Takeoff.THRUST_INCIDENCE][0]
+        alpha0 = options[Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY][0]
 
         mass = inputs[Dynamic.Vehicle.MASS]
         lift = inputs[Dynamic.Vehicle.LIFT]
@@ -660,7 +649,6 @@ class SumForces(om.ExplicitComponent):
             #    - section: "COMPUTE TRAJECTORY FROM LIFTOFF UNTIL OBSTACLE HEIGHT IS
             #      REACHED"
             #    - variables: FORCH, FORCV
-            alpha0 = aviary_options.get_val(Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, 'rad')
 
             alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
             gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
@@ -697,15 +685,12 @@ class SumForces(om.ExplicitComponent):
         options = self.options
 
         climbing = options['climbing']
+        t_inc = options[Mission.Takeoff.THRUST_INCIDENCE][0]
+        alpha0 = options[Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY][0]
 
         if not climbing:
             # see setup_partials()
             return
-
-        aviary_options: AviaryValues = options['aviary_options']
-
-        alpha0 = aviary_options.get_val(Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, 'rad')
-        t_inc = aviary_options.get_val(Mission.Takeoff.THRUST_INCIDENCE, 'rad')
 
         lift = inputs[Dynamic.Vehicle.LIFT]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
@@ -750,29 +735,23 @@ class ClimbGradientForces(om.ExplicitComponent):
     """
 
     def initialize(self):
-        options = self.options
+        self.options.declare('num_nodes', default=1, types=int, lower=0)
 
-        options.declare('num_nodes', default=1, types=int, lower=0)
-
-        options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
+        add_aviary_option(self, Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, units='rad')
+        add_aviary_option(self, Mission.Takeoff.THRUST_INCIDENCE, units='rad')
 
     def setup(self):
-        options = self.options
+        nn = self.options['num_nodes']
 
-        nn = options['num_nodes']
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
+        add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=nn, units='N')
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, units='N')
 
-        add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
-        add_aviary_input(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='N')
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.ones(nn), units='N')
-        add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N')
+        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='rad')
 
-        self.add_input(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
-
-        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad')
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
 
         self.add_output(
             'climb_gradient_forces_horizontal',
@@ -790,9 +769,7 @@ class ClimbGradientForces(om.ExplicitComponent):
         )
 
     def setup_partials(self):
-        options = self.options
-
-        nn = options['num_nodes']
+        nn = self.options['num_nodes']
 
         rows_cols = np.arange(nn)
 
@@ -833,12 +810,9 @@ class ClimbGradientForces(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        options = self.options
-
-        aviary_options: AviaryValues = options['aviary_options']
-
-        alpha0 = aviary_options.get_val(Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, 'rad')
-        t_inc = aviary_options.get_val(Mission.Takeoff.THRUST_INCIDENCE, 'rad')
+        alpha0 = self.options[Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY][0]
+        t_inc = self.options[Mission.Takeoff.THRUST_INCIDENCE][0]
+        grav_metric = self.options[Mission.GRAVITY][0]
 
         mass = inputs[Dynamic.Vehicle.MASS]
         lift = inputs[Dynamic.Vehicle.LIFT]
@@ -867,12 +841,9 @@ class ClimbGradientForces(om.ExplicitComponent):
         outputs['climb_gradient_forces_vertical'] = f_v
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        options = self.options
-
-        aviary_options: AviaryValues = options['aviary_options']
-
-        alpha0 = aviary_options.get_val(Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, 'rad')
-        t_inc = aviary_options.get_val(Mission.Takeoff.THRUST_INCIDENCE, 'rad')
+        alpha0 = self.options[Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY][0]
+        t_inc = self.options[Mission.Takeoff.THRUST_INCIDENCE][0]
+        grav_metric = self.options[Mission.GRAVITY][0]
 
         mass = inputs[Dynamic.Vehicle.MASS]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]

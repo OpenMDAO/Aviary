@@ -92,7 +92,7 @@ class LargeElectricTurbopropFreighterBenchmark(unittest.TestCase):
             Aircraft.Battery.PACK_MASS, units='lbm', lower=10_000, upper=75_000, ref=10_000
         )
 
-        final_phase_name = prob.model.regular_phases[-1]
+        final_phase_name = prob.model.main_phases[-1]
         prob.model.add_objective(
             f'traj.{final_phase_name}.timeseries.cumulative_electric_energy_used',
             index=-1,

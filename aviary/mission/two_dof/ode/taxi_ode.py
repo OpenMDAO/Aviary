@@ -5,7 +5,6 @@ from aviary.mission.two_dof.ode.taxi_eom import TaxiFuelComponent
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.option_to_var import add_opts2vals, create_opts2vals
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
@@ -18,16 +17,6 @@ class TaxiSegment(TwoDOFODE):
         options: AviaryValues = self.options['aviary_options']
         subsystems = self.options['subsystems']
         user_options = self.options['user_options']
-
-        # NOTE calling add_opts2vals in this way makes Mission.Taxi.MACH a required variable.
-        # This is because ODE was relying on old behavior of NamedValues.get_item() which returns
-        # (None, None) in option_to_var.py to avoid errors.
-        # Pulling the default from the MetaData if it does not exist instead.
-        # TODO find a better way to handle this
-        if Mission.Taxi.MACH not in options:
-            default_val = CoreMetaData[Mission.Taxi.MACH]['default_value']
-            options.set_val(Mission.Taxi.MACH, default_val, 'unitless')
-        add_opts2vals(self, create_opts2vals([Mission.Taxi.MACH]), options)
 
         alias_comp = om.ExecComp(
             'alt=airport_alt',
@@ -77,8 +66,6 @@ class TaxiSegment(TwoDOFODE):
                 )
 
         self.add_subsystem('taxifuel', TaxiFuelComponent(), promotes=['*'])
-
-        self.set_input_defaults(Mission.Taxi.MACH, 0)
 
         # Throttle Idle
         num_engine_types = len(options.get_val(Aircraft.Engine.NUM_ENGINES))

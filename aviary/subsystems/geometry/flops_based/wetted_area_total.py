@@ -3,7 +3,10 @@ import openmdao.api as om
 from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.canard import CanardWettedArea
-from aviary.subsystems.geometry.flops_based.nacelle import NacelleWettedArea
+from aviary.subsystems.geometry.flops_based.nacelle import (
+    NacelleWettedArea,
+    NacelleTotalWettedArea,
+)
 from aviary.subsystems.geometry.flops_based.utils import (
     Names,
     calc_fuselage_adjustment,
@@ -73,6 +76,13 @@ class WettedAreaGroup(om.Group):
             'nacelles_swet',
             NacelleWettedArea(),
             promotes_inputs=['aircraft*'],
+            promotes_outputs=['*'],
+        )
+
+        self.add_subsystem(
+            'nacelles_total_swet',
+            NacelleTotalWettedArea(),
+            promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
 
@@ -543,11 +553,16 @@ class BWBWingWettedArea(om.ExplicitComponent):
     """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
+        add_aviary_option(self, Aircraft.BWB.WING_ROOT_INDEX)
         add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
+        root = self.options[Aircraft.BWB.WING_ROOT_INDEX]
+        if root < 1:
+            # Automatically add the centerline.
+            num_inp_stations += 1
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
@@ -564,7 +579,8 @@ class BWBWingWettedArea(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
+        root = self.options[Aircraft.BWB.WING_ROOT_INDEX]
+
         width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         wingspan = inputs[Aircraft.Wing.SPAN][0]
         if wingspan <= 0.0:
@@ -573,16 +589,27 @@ class BWBWingWettedArea(om.ExplicitComponent):
 
         # This part is repeated in BWBWingPrelim()
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
-        bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float
-        )
+        if root < 1:
+            # Automatically add the centerline.
+            num_inp_stations += 1
+
+        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
+        bwb_input_station_dist = np.zeros(num_inp_stations, dtype=width.dtype)
+
+        if root < 1:
+            bwb_input_station_dist[1:] = input_station_dist
+        else:
+            bwb_input_station_dist[:] = input_station_dist
+
         bwb_input_station_dist = np.where(
             bwb_input_station_dist <= 1.0,
             bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
             bwb_input_station_dist + width / 2.0,  # else
         )
-        bwb_input_station_dist[0] = 0.0
-        bwb_input_station_dist[1] = width / 2.0
+
+        if root < 1:
+            bwb_input_station_dist[0] = 0.0
+            bwb_input_station_dist[1] = width / 2.0
 
         ssmw = 0.0
         bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']

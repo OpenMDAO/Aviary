@@ -1,12 +1,62 @@
 import openmdao.api as om
 import numpy as np
 
-from aviary.utils.functions import promote_aircraft_and_mission_vars
 
+def separate_reserve_phases(mission_info: dict):
+    """
+    Separates out phases that are part of the main mission and reserve mission.
 
-class ExternalSubsystemGroup(om.Group):
-    def configure(self):
-        promote_aircraft_and_mission_vars(self)
+    Parameters
+    ----------
+    mission_info: dict
+        Mission information dictionary containing phases for main and/or reserve missions
+
+    Returns
+    -------
+    main_phases: list
+        Names of all phases that are part of the main mission
+    reserve_phases: list
+        Names of all phases that are part of the reserve mission
+
+    Raises
+    ------
+    ValueError
+        If any main mission phases are specified after a reserve mission phase
+    """
+    # Check to ensure no main mission phases are specified after reserve phases
+    start_reserve = False
+    raise_error = False
+    main_phases = []
+    reserve_phases = []
+    for idx, phase_name in enumerate(mission_info):
+        if 'user_options' in mission_info[phase_name]:
+            if 'reserve' in mission_info[phase_name]['user_options']:
+                if mission_info[phase_name]['user_options']['reserve'] is False:
+                    # This is a main mission phase
+                    main_phases.append(phase_name)
+                    if start_reserve is True:
+                        raise_error = True
+                else:
+                    # This is a reserve mission phase
+                    reserve_phases.append(phase_name)
+                    start_reserve = True
+            else:
+                # Phases are part of main mission by default
+                main_phases.append(phase_name)
+                if start_reserve is True:
+                    raise_error = True
+
+    if raise_error is True:
+        raise ValueError(
+            'A main mission phase was specified after a reserve mission phase - all main mission '
+            "phases must occur before any reserve mission phases (reserve=True in phase's "
+            'user_options)'
+            # TODO: will need to pre-pend current group level to all error messages!!
+            f'Main Phases : {main_phases} | '
+            f'Reserve Phases : {reserve_phases}'
+        )
+
+    return [main_phases, reserve_phases]
 
 
 def get_phase_mission_bus_lengths(traj):

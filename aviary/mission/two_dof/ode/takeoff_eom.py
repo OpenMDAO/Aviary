@@ -1,9 +1,9 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_TAKEOFF
-from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 DEG2RAD = np.pi / 180.0
 RAD2DEG = 1.0 / DEG2RAD
@@ -22,8 +22,6 @@ class TakeoffEOM(om.ExplicitComponent):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        self._mu = MU_TAKEOFF
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -52,86 +50,47 @@ class TakeoffEOM(om.ExplicitComponent):
             desc='Pitch rate during rotation in degrees/second.',
         )
 
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
+
     def setup(self):
         nn = self.options['num_nodes']
         ground_roll = self.options['ground_roll']
 
-        self.add_input(Dynamic.Vehicle.MASS, val=np.ones(nn), desc='aircraft mass', units='lbm')
-        self.add_input(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            val=np.ones(nn),
-            desc=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
-        self.add_input(
-            Dynamic.Vehicle.LIFT,
-            val=np.ones(nn),
-            desc=Dynamic.Vehicle.LIFT,
-            units='lbf',
-        )
-        self.add_input(
-            Dynamic.Vehicle.DRAG,
-            val=np.ones(nn),
-            desc=Dynamic.Vehicle.DRAG,
-            units='lbf',
-        )
-        self.add_input(
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='lbm')
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=nn, units='lbf')
+        add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=nn, units='lbf')
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, units='lbf')
+        add_aviary_input(
+            self,
             Dynamic.Mission.VELOCITY,
-            val=np.ones(nn),
+            shape=nn,
             desc='true air speed',
             units='ft/s',
         )
-        self.add_input(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            val=np.ones(nn),
-            desc='flight path angle',
-            units='rad',
-        )
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
+        add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='deg')
+        add_aviary_input(self, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, units='unitless')
 
-        add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=0)
-
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.VELOCITY_RATE,
-            val=np.ones(nn),
+            shape=nn,
             desc='TAS rate',
             units='ft/s**2',
         )
 
-        self.add_output(
-            Dynamic.Mission.ALTITUDE_RATE,
-            val=np.ones(nn),
-            desc='altitude rate',
-            units='ft/s',
-        )
-
-        self.add_output(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
-            val=np.ones(nn),
-            desc='flight path angle rate',
-            units='rad/s',
-        )
+        add_aviary_output(self, Dynamic.Mission.ALTITUDE_RATE, shape=nn, units='ft/s')
+        add_aviary_output(self, Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, shape=nn, units='rad/s')
 
         if not ground_roll:
-            self.add_input(
-                Dynamic.Vehicle.ANGLE_OF_ATTACK,
-                val=np.ones(nn),
-                desc='angle of attack',
-                units='deg',
-            )
+            add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='deg')
 
-        self.add_output(
-            Dynamic.Mission.DISTANCE_RATE,
-            val=np.ones(nn),
-            desc='distance rate',
-            units='ft/s',
-        )
+        add_aviary_output(self, Dynamic.Mission.DISTANCE_RATE, shape=nn, units='ft/s')
 
         self.add_output('normal_force', val=np.ones(nn), desc='normal forces', units='lbf')
         self.add_output('fuselage_pitch', val=np.ones(nn), desc='fuselage pitch angle', units='deg')
         self.add_output('load_factor', val=np.ones(nn), desc='load factor', units='unitless')
-        self.add_output(
-            'angle_of_attack_rate', val=np.ones(nn), desc='angle of attack rate', units='deg/s'
-        )
+        self.add_output('angle_of_attack_rate', val=np.ones(nn), units='deg/s')
 
     def setup_partials(self):
         ground_roll = self.options['ground_roll']
@@ -163,7 +122,13 @@ class TakeoffEOM(om.ExplicitComponent):
             rows=arange,
             cols=arange,
         )
-        self.declare_partials(Dynamic.Mission.VELOCITY_RATE, [Aircraft.Wing.INCIDENCE])
+        self.declare_partials(
+            Dynamic.Mission.VELOCITY_RATE,
+            [
+                Aircraft.Wing.INCIDENCE,
+                Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
+            ],
+        )
 
         self.declare_partials(
             Dynamic.Mission.ALTITUDE_RATE,
@@ -250,6 +215,7 @@ class TakeoffEOM(om.ExplicitComponent):
         self.declare_partials('angle_of_attack_rate', ['*'], 0.0)
 
     def compute(self, inputs, outputs):
+        grav_english = self.options[Mission.GRAVITY][0]
         ground_roll = self.options['ground_roll']
         rotation = self.options['rotation']
 
@@ -270,7 +236,7 @@ class TakeoffEOM(om.ExplicitComponent):
         thrust_across_flightpath = thrust * np.sin((alpha - i_wing) * DEG2RAD)
 
         if ground_roll or rotation:
-            mu = MU_TAKEOFF
+            mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
             normal_force = weight - incremented_lift - thrust_across_flightpath
             normal_force[normal_force < 0] = 0.0
             outputs['normal_force'] = normal_force
@@ -285,7 +251,7 @@ class TakeoffEOM(om.ExplicitComponent):
 
         outputs[Dynamic.Mission.VELOCITY_RATE] = (
             (thrust_along_flightpath - incremented_drag - weight * sin_gamma - mu * normal_force)
-            * GRAV_ENGLISH_GASP
+            * grav_english
             / weight
         )
 
@@ -294,7 +260,7 @@ class TakeoffEOM(om.ExplicitComponent):
         else:
             outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE] = (
                 (thrust_across_flightpath + incremented_lift - weight * cos_gamma)
-                * GRAV_ENGLISH_GASP
+                * grav_english
                 / (TAS * weight)
             )
 
@@ -312,11 +278,15 @@ class TakeoffEOM(om.ExplicitComponent):
             outputs['angle_of_attack_rate'][:] = 0.0
 
     def compute_partials(self, inputs, J):
+        grav_english = self.options[Mission.GRAVITY][0]
         ground_roll = self.options['ground_roll']
         rotation = self.options['rotation']
         nn = self.options['num_nodes']
 
-        mu = MU_TAKEOFF if (ground_roll or rotation) else 0.0
+        if ground_roll or rotation:
+            mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
+        else:
+            mu = 0.0
 
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
@@ -383,12 +353,12 @@ class TakeoffEOM(om.ExplicitComponent):
         dNF_dIwing[idx] = 0
 
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
-            (dTAlF_dThrust - mu * dNF_dThrust) * GRAV_ENGLISH_GASP / weight
+            (dTAlF_dThrust - mu * dNF_dThrust) * grav_english / weight
         )
 
-        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.DRAG] = -GRAV_ENGLISH_GASP / weight
+        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.DRAG] = -grav_english / weight
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.MASS] = (
-            GRAV_ENGLISH_GASP
+            grav_english
             * GRAV_ENGLISH_LBM
             * (
                 weight * (-sin_gamma - mu * dNF_dWeight)
@@ -402,10 +372,13 @@ class TakeoffEOM(om.ExplicitComponent):
             / weight**2
         )
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
-            -cos_gamma * GRAV_ENGLISH_GASP
+            -cos_gamma * grav_english
         )
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.LIFT] = (
-            GRAV_ENGLISH_GASP * (-mu * dNF_dLift) / weight
+            grav_english * (-mu * dNF_dLift) / weight
+        )
+        J[Dynamic.Mission.VELOCITY_RATE, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT] = (
+            -normal_force * grav_english / weight
         )
 
         J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY] = sin_gamma
@@ -416,35 +389,35 @@ class TakeoffEOM(om.ExplicitComponent):
             J[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            ] = dTAcF_dThrust * GRAV_ENGLISH_GASP / (TAS * weight)
+            ] = dTAcF_dThrust * grav_english / (TAS * weight)
             J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.ANGLE_OF_ATTACK] = (
-                dTAcF_dAlpha * GRAV_ENGLISH_GASP / (TAS * weight)
+                dTAcF_dAlpha * grav_english / (TAS * weight)
             )
             J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Aircraft.Wing.INCIDENCE] = (
-                dTAcF_dIwing * GRAV_ENGLISH_GASP / (TAS * weight)
+                dTAcF_dIwing * grav_english / (TAS * weight)
             )
-            J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.LIFT] = GRAV_ENGLISH_GASP / (
+            J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.LIFT] = grav_english / (
                 TAS * weight
             )
             J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.MASS] = (
-                (GRAV_ENGLISH_GASP / TAS)
+                (grav_english / TAS)
                 * GRAV_ENGLISH_LBM
                 * (-thrust_across_flightpath / weight**2 - incremented_lift / weight**2)
             )
             J[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            ] = weight * sin_gamma * GRAV_ENGLISH_GASP / (TAS * weight)
+            ] = weight * sin_gamma * grav_english / (TAS * weight)
             J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Mission.VELOCITY] = -(
                 (thrust_across_flightpath + incremented_lift - weight * cos_gamma)
-                * GRAV_ENGLISH_GASP
+                * grav_english
                 / (TAS**2 * weight)
             )
 
         if not ground_roll:
             # WRT incidence angle
             J[Dynamic.Mission.VELOCITY_RATE, Aircraft.Wing.INCIDENCE] = (
-                (dTAlF_dIwing - mu * dNF_dIwing) * GRAV_ENGLISH_GASP / weight
+                (dTAlF_dIwing - mu * dNF_dIwing) * grav_english / weight
             )
             if rotation:
                 J['normal_force', Aircraft.Wing.INCIDENCE] = dNF_dIwing
@@ -456,7 +429,7 @@ class TakeoffEOM(om.ExplicitComponent):
             dNF_dAlpha[idx] = 0
 
             J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.ANGLE_OF_ATTACK] = (
-                (dTAlF_dAlpha - mu * dNF_dAlpha) * GRAV_ENGLISH_GASP / weight
+                (dTAlF_dAlpha - mu * dNF_dAlpha) * grav_english / weight
             )
             if rotation:
                 J['normal_force', Dynamic.Vehicle.ANGLE_OF_ATTACK] = dNF_dAlpha

@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 
 from aviary.variable_info.variables import Dynamic
 
@@ -16,21 +17,24 @@ class RangeRate(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.ALTITUDE_RATE,
-            val=np.ones(nn),
+            shape=nn,
             desc='climb rate',
             units='m/s',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.VELOCITY,
-            val=np.ones(nn),
+            shape=nn,
             desc='current velocity',
             units='m/s',
         )
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.DISTANCE_RATE,
-            val=np.ones(nn),
+            shape=nn,
             desc='current horizontal velocity (assumed no wind)',
             units='m/s',
         )

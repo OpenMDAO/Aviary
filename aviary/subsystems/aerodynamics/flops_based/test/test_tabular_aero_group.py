@@ -636,6 +636,7 @@ def _run_computed_aero_harness(flops_inputs, dynamic_inputs, num_nodes):
     varnames = [
         Aircraft.Fuselage.WETTED_AREA,
         Aircraft.HorizontalTail.WETTED_AREA,
+        Aircraft.Nacelle.WETTED_AREA,
         Aircraft.VerticalTail.WETTED_AREA,
         Aircraft.Wing.AREA,
         Aircraft.Wing.ASPECT_RATIO,

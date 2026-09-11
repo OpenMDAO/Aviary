@@ -17,7 +17,7 @@ from aviary.validation_cases.validation_tests import (
     print_case,
     Version,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS', 'BWB300FLOPS']
 
@@ -42,7 +42,6 @@ class TransportHydraulicsGroupMassTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
         }
 
         prob.model.add_subsystem(
@@ -64,6 +63,7 @@ class TransportHydraulicsGroupMassTest(unittest.TestCase):
                 Aircraft.Hydraulics.MASS_SCALER,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.VAR_SWEEP_MASS_PENALTY,
+                Aircraft.Design.MAX_MACH,
             ],
             output_keys=Aircraft.Hydraulics.MASS,
             version=Version.TRANSPORT_and_BWB,
@@ -99,7 +99,6 @@ class TransportHydraulicsGroupMassTest2(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
         }
 
         prob.model.add_subsystem(
@@ -112,6 +111,7 @@ class TransportHydraulicsGroupMassTest2(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.PLANFORM_AREA, 1500.0, 'ft**2')
         prob.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 5000.0, 'psi')
         prob.set_val(Aircraft.Wing.AREA, 1000.0, 'ft**2')
+        prob.set_val(Aircraft.Design.MAX_MACH, 0.9, 'unitless')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -201,7 +201,6 @@ class BWBTransportHydraulicsGroupMassTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
         }
 
         prob.model.add_subsystem(
@@ -223,6 +222,7 @@ class BWBTransportHydraulicsGroupMassTest(unittest.TestCase):
                 Aircraft.Hydraulics.MASS_SCALER,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.VAR_SWEEP_MASS_PENALTY,
+                Aircraft.Design.MAX_MACH,
             ],
             output_keys=Aircraft.Hydraulics.MASS,
             version=Version.BWB,

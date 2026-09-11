@@ -4,7 +4,6 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.subsystems.propulsion.propeller.hamilton_standard import (
     HamiltonStandard,
     PostHamiltonStandard,
@@ -162,7 +161,7 @@ class PostHamiltonStandardTest(unittest.TestCase):
         )
         prob.set_val(
             Dynamic.Atmosphere.DENSITY,
-            np.array([1.0001, 1.0001, 0.4482]) * RHO_SEA_LEVEL_ENGLISH,
+            np.array([1.0001, 1.0001, 0.4482]) * 0.0023769,  # Sea level
             units='slug/ft**3',
         )
         prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.0, units='ft')

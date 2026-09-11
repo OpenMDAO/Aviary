@@ -289,6 +289,18 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             desc=desc,
         )
 
+        name = f'{state_name}_direct_link'
+        default = defaults.get(name, True)
+        desc = 'When True, directly connect the initial state to the upstream phase.\n'
+        desc += 'When False, use a constraint.\n'
+        desc += f'Only valid when {state_name}_optimize is set to True.'
+        self.declare(
+            name=name,
+            default=default,
+            types=bool,
+            desc=desc,
+        )
+
     def add_control_options(self, ctrl_name: str, units: str = None, defaults=None):
         """
         Adds all options needed for a control variable.
@@ -399,6 +411,18 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             desc=desc,
         )
 
+        name = f'{ctrl_name}_direct_link'
+        default = defaults.get(name, True)
+        desc = 'When True, directly connect the first control point to the upstream phase.\n'
+        desc += 'When False, use a constraint.\n'
+        desc += f'Only valid when {ctrl_name}_optimize is set to True.'
+        self.declare(
+            name=name,
+            default=default,
+            types=bool,
+            desc=desc,
+        )
+
     def add_time_options(self, units: str = None, defaults=None):
         """
         Adds all options for controlling time initial and duration.
@@ -456,3 +480,14 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
                 units=units,
                 desc=desc,
             )
+
+        name = 'time_initial_direct_link'
+        default = defaults.get(name, True)
+        desc = f'When True, directly connect the initial_time to the upstream phase.\n'
+        desc += 'When False, use a constraint.'
+        self.declare(
+            name=name,
+            default=default,
+            types=bool,
+            desc=desc,
+        )

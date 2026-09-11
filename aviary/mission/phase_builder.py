@@ -498,8 +498,10 @@ class PhaseBuilder(ABC):
             extra_options['ref0'] = ref0
             extra_options['continuity_ref'] = ref
 
-            # TODO: We may want to consider letting the user setting this.
-            # extra_options['rate_continuity_ref'] = ref
+            # Without this, rate-continuity defects default to ref=1 while living
+            # at control-magnitude/segment-time scale; scaled jacobian rows were
+            # 1e2-1e4 (altitude 1.1e4, alpha 1.4e2), pinning IPOPT's inf_du.
+            extra_options['rate_continuity_ref'] = ref
 
         if units not in ['unitless', None]:
             extra_options['units'] = units
@@ -628,6 +630,21 @@ class PhaseBuilder(ABC):
             - any additional keyword arguments required by OpenMDAO for the fixed variable.
         """
         return {}
+
+    def get_linked_variables(self):
+        """
+        Return a list of variable names that will be linked when this phase is connected to another
+        phase that shares the variable.
+
+        If you have an analytic phase, and you need to link an input parameter to the upstream
+        phase, prepend the name with _initial. For example, if you need to connect to mass, name
+        your parameter 'initial_mass'.
+
+        Returns
+        -------
+        linked_vars : list of variables to link between phases
+        """
+        return []
 
 
 _registered_phase_builder_types = []

@@ -36,7 +36,7 @@
         "<class 'int'>"
     ],
     [
-        "mission:reserve_fuel_additional",
+        "mission:reserve_fuel_mass_additional",
         3000.0,
         "lbm",
         "<class 'float'>"
@@ -210,6 +210,12 @@
         "<class 'float'>"
     ],
     [
+        "aircraft:design:max_mach",
+        0.785,
+        "unitless",
+        "<class 'float'>"
+    ],
+    [
         "aircraft:design:subsonic_drag_coeff_factor",
         1.0,
         "unitless",
@@ -248,7 +254,7 @@
         "<class 'numpy.ndarray'>"
     ],
     [
-        "aircraft:engine:constant_fuel_consumption",
+        "aircraft:engine:constant_fuel_mass_consumption",
         [
             0.0
         ],
@@ -478,7 +484,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:fuel:auxiliary_fuel_capacity",
+        "aircraft:fuel:auxiliary_fuel_mass_capacity",
         0.0,
         "lbm",
         "<class 'float'>"
@@ -490,7 +496,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:fuel:fuselage_fuel_capacity",
+        "aircraft:fuel:fuselage_fuel_mass_capacity",
         0.0,
         "lbm",
         "<class 'float'>"
@@ -502,7 +508,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:fuel:total_capacity",
+        "aircraft:fuel:max_capacity_mass",
         45694.0,
         "lbm",
         "<class 'float'>"
@@ -975,14 +981,8 @@
         "<class 'float'>"
     ],
     [
-        "mission:constraints:max_mach",
-        0.785,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
         "aircraft:design:gross_mass",
-        175400.0,
+        175399.99999999997,
         "lbm",
         "<class 'float'>"
     ],
@@ -1005,7 +1005,7 @@
         "<class 'float'>"
     ],
     [
-        "mission:takeoff:fuel",
+        "mission:takeoff:fuel_mass",
         577.0,
         "lbm",
         "<class 'float'>"
@@ -1119,8 +1119,44 @@
         "<class 'int'>"
     ],
     [
+        "aircraft:design:percent_excrescence_drag",
+        0.06,
+        "unitless",
+        "<class 'float'>"
+    ],
+    [
+        "aircraft:design:type",
+        "TRANSPORT",
+        "unitless",
+        "<enum 'AircraftTypes'>"
+    ],
+    [
+        "aircraft:fuselage:simple_layout",
+        true,
+        "unitless",
+        "<class 'bool'>"
+    ],
+    [
+        "settings:atmosphere_model",
+        "STANDARD",
+        "unitless",
+        "<enum 'AtmosphereModel'>"
+    ],
+    [
+        "mission:gravity",
+        9.80665,
+        "m/s**2",
+        "<class 'float'>"
+    ],
+    [
+        "mission:sea_level_density",
+        0.0023769,
+        "slug/ft**3",
+        "<class 'float'>"
+    ],
+    [
         "mission:gross_mass",
-        175400.0,
+        175399.99999999997,
         "lbm",
         "<class 'float'>"
     ],
@@ -1129,11 +1165,5 @@
         1906.0,
         "NM",
         "<class 'float'>"
-    ],
-    [
-        "aircraft:fuel:ignore_fuel_capacity_constraint",
-        false,
-        "unitless",
-        "<class 'bool'>"
     ]
 ]

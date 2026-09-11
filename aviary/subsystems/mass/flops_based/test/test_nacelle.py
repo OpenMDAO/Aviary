@@ -95,7 +95,7 @@ class NacelleMassTest(unittest.TestCase):
         prob.run_model()
 
         nacelle_mass = prob.get_val(Aircraft.Nacelle.MASS, 'lbm')
-        nacelle_mass_expected = np.array([2793.02569, 778.05716, 1915.21762])
+        nacelle_mass_expected = np.array([698.25642407, 389.02857912, 957.60881015])
         assert_near_equal(nacelle_mass, nacelle_mass_expected, tolerance=1e-8)
 
         partial_data = prob.check_partials(

@@ -16,7 +16,7 @@ from aviary.validation_cases.validation_tests import (
     print_case,
     Version,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 @use_tempdirs
@@ -45,7 +45,11 @@ class TransportStarterMassTest(unittest.TestCase):
             self,
             prob,
             case_name,
-            input_keys=[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALE_FACTOR],
+            input_keys=[
+                Aircraft.Nacelle.AVG_DIAMETER,
+                Aircraft.Engine.SCALE_FACTOR,
+                Aircraft.Design.MAX_MACH,
+            ],
             output_keys=Aircraft.Propulsion.TOTAL_STARTER_MASS,
             version=Version.TRANSPORT_and_BWB,
         )
@@ -57,7 +61,6 @@ class TransportStarterMassTest(unittest.TestCase):
         options = {
             Aircraft.Engine.NUM_ENGINES: np.array([5]),
             Aircraft.Propulsion.TOTAL_NUM_ENGINES: 5,
-            Mission.Constraints.MAX_MACH: 0.785,
         }
 
         prob.model.add_subsystem(
@@ -71,6 +74,7 @@ class TransportStarterMassTest(unittest.TestCase):
 
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
         prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, 'unitless')
+        prob.set_val(Aircraft.Design.MAX_MACH, 0.785, 'unitless')
 
         prob.run_model()
 
@@ -102,12 +106,6 @@ class TransportStarterMassTest2(unittest.TestCase):
     def test_case_2(self):
         prob = om.Problem()
 
-        options = {
-            Aircraft.Engine.NUM_ENGINES: np.array([5]),
-            Aircraft.Propulsion.TOTAL_NUM_ENGINES: 5,
-            Mission.Constraints.MAX_MACH: 0.785,
-        }
-
         prob.model.add_subsystem(
             'starter_test',
             TransportStarterMass(),
@@ -118,11 +116,11 @@ class TransportStarterMassTest2(unittest.TestCase):
         prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
         prob.model_options[Aircraft.Engine.NUM_ENGINES] = np.array([5])
         prob.model_options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 5
-        prob.model_options[Mission.Constraints.MAX_MACH] = 0.875
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
         prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, 'unitless')
+        prob.set_val(Aircraft.Design.MAX_MACH, 0.875, 'unitless')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

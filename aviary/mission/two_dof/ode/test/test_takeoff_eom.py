@@ -3,16 +3,19 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.takeoff_eom import TakeoffEOM
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
+@use_tempdirs
 class GroundrollEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         self.prob.model.add_subsystem(
-            'group', TakeoffEOM(num_nodes=2, ground_roll=True), promotes=['*']
+            'group', TakeoffEOM(num_nodes=2, ground_roll=True, **options), promotes=['*']
         )
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm'
@@ -31,6 +34,7 @@ class GroundrollEOMTestCase(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units='rad'
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units='deg')
+        self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -69,7 +73,10 @@ class GroundrollEOMTestCase2(unittest.TestCase):
 
     def test_case1(self):
         prob = om.Problem()
-        prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2, ground_roll=True), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        prob.model.add_subsystem(
+            'group', TakeoffEOM(num_nodes=2, ground_roll=True, **options), promotes=['*']
+        )
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm')
         prob.model.set_input_defaults(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units='lbf'
@@ -81,6 +88,7 @@ class GroundrollEOMTestCase2(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units='rad'
         )
         prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units='deg')
+        prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -91,8 +99,9 @@ class GroundrollEOMTestCase2(unittest.TestCase):
 class RotationEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         self.prob.model.add_subsystem(
-            'group', TakeoffEOM(num_nodes=2, rotation=True), promotes=['*']
+            'group', TakeoffEOM(num_nodes=2, rotation=True, **options), promotes=['*']
         )
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm'
@@ -114,6 +123,7 @@ class RotationEOMTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg'
         )
+        self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -153,7 +163,10 @@ class RotationEOMTestCase2(unittest.TestCase):
 
     def test_case1(self):
         prob = om.Problem()
-        prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2, rotation=True), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        prob.model.add_subsystem(
+            'group', TakeoffEOM(num_nodes=2, rotation=True, **options), promotes=['*']
+        )
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm')
         prob.model.set_input_defaults(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units='lbf'
@@ -166,16 +179,19 @@ class RotationEOMTestCase2(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units='deg')
         prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg')
+        prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class AscentEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        self.prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2, **options), promotes=['*'])
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm'
         )
@@ -196,6 +212,7 @@ class AscentEOMTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg'
         )
+        self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -233,7 +250,8 @@ class AscentEOMTestCase2(unittest.TestCase):
 
     def test_case1(self):
         prob = om.Problem()
-        prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2, **options), promotes=['*'])
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm')
         prob.model.set_input_defaults(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units='lbf'
@@ -245,6 +263,7 @@ class AscentEOMTestCase2(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units='rad'
         )
         prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg')
+        prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')

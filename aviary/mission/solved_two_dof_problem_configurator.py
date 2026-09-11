@@ -59,14 +59,9 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         raise RuntimeError('Solved 2DOF requires that a phase_info is specified.')
 
-    def get_code_origin(self, aviary_group):
+    def get_code_origin(self):
         """
         Return the legacy of this problem configurator.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -173,81 +168,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             duration_ref=duration_ref,
             **extra_options,
         )
-
-    def link_phases(self, aviary_group, phases, connect_directly=True):
-        """
-        Apply any additional phase linking.
-
-        Note that some phase variables are handled in the AviaryProblem. Only
-        problem-specific ones need to be linked here.
-
-        This is called from AviaryProblem.link_phases
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
-        phases : Phase
-            Phases to be linked.
-        connect_directly : bool
-            When True, then connected=True. This allows the connections to be
-            handled by constraints if `phases` is a parallel group under MPI.
-        """
-        # connect regular_phases with each other if you are optimizing alt or mach
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.regular_phases,
-            'altitude_optimize',
-            Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
-        )
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.regular_phases,
-            'mach_optimize',
-            Dynamic.Atmosphere.MACH,
-        )
-
-        # connect reserve phases with each other if you are optimizing alt or mach
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.reserve_phases,
-            'altitude_optimize',
-            Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
-        )
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.reserve_phases,
-            'mach_optimize',
-            Dynamic.Atmosphere.MACH,
-        )
-
-        aviary_group.traj.link_phases(phases, [Dynamic.Vehicle.MASS], connected=True)
-        aviary_group.traj.link_phases(
-            phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.0e3, connected=False
-        )
-        aviary_group.traj.link_phases(phases, ['time'], connected=False)
-
-        if len(phases) > 2:
-            aviary_group.traj.link_phases(
-                phases[1:],
-                [Dynamic.Vehicle.ANGLE_OF_ATTACK],
-                units='deg',
-                ref=15.0,
-                connected=False,
-            )
-
-    def check_trajectory(self, aviary_group):
-        """
-        Checks the phase_info user options for any inconsistency.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
-        """
-        pass
 
     def add_post_mission_systems(self, aviary_group):
         """

@@ -7,14 +7,14 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.missions.energy_state_default import phase_info
 from aviary.core.aviary_problem import AviaryProblem
+from aviary.models.missions.energy_state_default import phase_info
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.validation_cases.validation_data.test_data.multi_engine_single_aisle_data import (
     engine_1_inputs,
     engine_2_inputs,
     inputs,
 )
-from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.variable_info.enums import ThrottleAllocation
 from aviary.variable_info.variables import Aircraft
 
@@ -45,7 +45,7 @@ inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_UPPER, np.zeros(2))
 
 
 @use_tempdirs
-class MultiengineTestcase(unittest.TestCase):
+class ThrottleAllocationTestcase(unittest.TestCase):
     """Test the different throttle allocation methods for models with multiple, unique EngineModels."""
 
     def setUp(self):
@@ -126,14 +126,16 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.run_aviary_problem(suppress_solver_print=True)
 
+        self.assertTrue(prob.result.success)
+
         alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
         alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
 
         with self.subTest('climb_allocation'):
-            assert_near_equal(alloc_climb[0], 0.5, tolerance=1e-2)
+            assert_near_equal(alloc_climb[0], 0.48777445, tolerance=1e-2)
         with self.subTest('cruise_allocation'):
-            assert_near_equal(alloc_cruise[0], 0.64523, tolerance=1e-2)
+            assert_near_equal(alloc_cruise[0], 0.34035731, tolerance=1e-2)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_multiengine_dynamic(self):
@@ -166,17 +168,19 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.run_aviary_problem(suppress_solver_print=True)
 
+        self.assertTrue(prob.result.success)
+
         alloc_climb = prob.get_val('traj.climb.controls:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.controls:throttle_allocations')
         alloc_descent = prob.get_val('traj.descent.controls:throttle_allocations')
 
         with self.subTest('cruise_allocation'):
             # Cruise is pretty constant, check exact value.
-            assert_near_equal(alloc_cruise[0], 0.6452, tolerance=1e-2)
+            assert_near_equal(alloc_cruise[0], 0.33626162, tolerance=1e-2)
 
         with self.subTest('climb_allocation'):
-            # Check general trend: favors engine 1.
-            self.assertGreater(alloc_climb[2], 0.55)
+            # Check general trend: favors engine 2.
+            self.assertLesser(alloc_climb[2], 0.22)
 
 
 if __name__ == '__main__':

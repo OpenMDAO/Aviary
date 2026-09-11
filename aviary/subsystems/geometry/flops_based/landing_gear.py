@@ -38,7 +38,7 @@ class MainGearLength(om.ExplicitComponent):
     """
     Computation of main gear length.
 
-    TODO does not support more than two wing engines, or more than one engine model
+    See issue #1183 does not support more than two wing engines, or more than one engine model
     """
 
     def initialize(self):
@@ -76,10 +76,10 @@ class MainGearLength(om.ExplicitComponent):
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         num_eng = self.options[Aircraft.Engine.NUM_ENGINES][0]
 
-        # TODO temp using first engine, heterogeneous engines not supported
+        # See issue #1183. temp using first engine, heterogeneous engines not supported
         num_wing_eng = self.options[Aircraft.Engine.NUM_WING_ENGINES][0]
 
-        # TODO: high engine-count configuration.
+        # See issue #1183. high engine-count configuration.
         y_eng_aft = 0
 
         if num_wing_eng > 0:
@@ -114,7 +114,7 @@ class MainGearLength(om.ExplicitComponent):
         outputs[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH] = cmlg
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        # TODO temp using first engine, heterogeneous engines not supported
+        # See issue #1183. temp using first engine, heterogeneous engines not supported
         num_eng = self.options[Aircraft.Engine.NUM_ENGINES][0]
         num_wing_eng = self.options[Aircraft.Engine.NUM_WING_ENGINES][0]
 

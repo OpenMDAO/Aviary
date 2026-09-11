@@ -8,43 +8,30 @@ from aviary.variable_info.variables import Aircraft
 class SizeBattery(om.ExplicitComponent):
     """Calculates battery mass from specific energy and additional mass."""
 
-    def initialize(self):
-        self.options.declare(
-            'aviary_inputs',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
-
     def setup(self):
         add_aviary_input(
             self,
             Aircraft.Battery.PACK_MASS,
-            val=0.0,
             units='kg',
             desc='mass of energy-storing components of battery',
         )
         add_aviary_input(
             self,
             Aircraft.Battery.ADDITIONAL_MASS,
-            val=0.0,
             units='kg',
             desc='mass of non energy-storing components of battery',
         )
         add_aviary_input(
             self,
             Aircraft.Battery.PACK_ENERGY_DENSITY,
-            val=0.0,
             units='kJ/kg',
             desc='energy density of battery pack',
         )
 
-        add_aviary_output(
-            self, Aircraft.Battery.MASS, val=0.0, units='kg', desc='total battery mass'
-        )
+        add_aviary_output(self, Aircraft.Battery.MASS, units='kg', desc='total battery mass')
         add_aviary_output(
             self,
             Aircraft.Battery.ENERGY_CAPACITY,
-            val=0.0,
             units='kJ',
             desc='total battery energy storage',
         )

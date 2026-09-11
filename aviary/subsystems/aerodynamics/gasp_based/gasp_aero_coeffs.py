@@ -12,7 +12,12 @@ SWETFCT = 1.02
 class AeroFormfactors(om.ExplicitComponent):
     """Compute aero form factors."""
 
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+
     def setup(self):
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, units='unitless')
         # add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP)
         add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
@@ -25,16 +30,22 @@ class AeroFormfactors(om.ExplicitComponent):
             self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless'
         )
         add_aviary_input(self, Aircraft.Design.MACH, units='unitless')
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, units='ft')
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, units='ft', shape=num_engine_type)
+        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, units='ft', shape=num_engine_type)
 
         add_aviary_output(self, Aircraft.Wing.FORM_FACTOR, units='unitless')
         add_aviary_output(self, Aircraft.VerticalTail.FORM_FACTOR, units='unitless')
         add_aviary_output(self, Aircraft.HorizontalTail.FORM_FACTOR, units='unitless')
         add_aviary_output(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, units='unitless')
-        add_aviary_output(self, Aircraft.Nacelle.FORM_FACTOR, units='unitless')
+        add_aviary_output(
+            self, Aircraft.Nacelle.FORM_FACTOR, units='unitless', shape=num_engine_type
+        )
 
     def setup_partials(self):
+        # derivatives w.r.t vectorized engine inputs have known sparsity pattern
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+        shape = np.arange(num_engine_type)
+
         self.declare_partials(
             Aircraft.Wing.FORM_FACTOR,
             [
@@ -67,6 +78,8 @@ class AeroFormfactors(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Nacelle.FORM_FACTOR,
             [Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Nacelle.AVG_LENGTH],
+            rows=shape,
+            cols=shape,
         )
 
     def compute(self, inputs, outputs):

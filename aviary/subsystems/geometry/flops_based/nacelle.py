@@ -25,23 +25,12 @@ class NacelleWettedArea(om.ExplicitComponent):
             self, Aircraft.Engine.SCALE_FACTOR, shape=num_engine_type, units='unitless'
         )
 
-        add_aviary_output(self, Aircraft.Nacelle.TOTAL_WETTED_AREA, units='ft**2')
         add_aviary_output(self, Aircraft.Nacelle.WETTED_AREA, shape=num_engine_type, units='ft**2')
 
     def setup_partials(self):
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
         shape = np.arange(num_engine_type)
-
-        self.declare_partials(
-            Aircraft.Nacelle.TOTAL_WETTED_AREA,
-            [
-                Aircraft.Nacelle.AVG_DIAMETER,
-                Aircraft.Nacelle.AVG_LENGTH,
-                Aircraft.Nacelle.WETTED_AREA_SCALER,
-                Aircraft.Engine.SCALE_FACTOR,
-            ],
-        )
 
         self.declare_partials(
             Aircraft.Nacelle.WETTED_AREA,
@@ -80,10 +69,6 @@ class NacelleWettedArea(om.ExplicitComponent):
         )
 
         outputs[Aircraft.Nacelle.WETTED_AREA] = wetted_area
-
-        total_wetted_area = sum(num_engines * wetted_area)
-
-        outputs[Aircraft.Nacelle.TOTAL_WETTED_AREA] = total_wetted_area
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
@@ -133,12 +118,36 @@ class NacelleWettedArea(om.ExplicitComponent):
 
         J[Aircraft.Nacelle.WETTED_AREA, Aircraft.Engine.SCALE_FACTOR] = deriv_area_thrust
 
-        J[Aircraft.Nacelle.TOTAL_WETTED_AREA, Aircraft.Nacelle.AVG_LENGTH] = deriv_total_len
 
-        J[Aircraft.Nacelle.TOTAL_WETTED_AREA, Aircraft.Nacelle.AVG_DIAMETER] = deriv_total_diam
+class NacelleTotalWettedArea(om.ExplicitComponent):
+    """
+    Sums the wetted area of all Nacelles.
 
-        J[Aircraft.Nacelle.TOTAL_WETTED_AREA, Aircraft.Nacelle.WETTED_AREA_SCALER] = (
-            deriv_total_scaler
+    This is separated so that individual nacelle areas can be overrriden without breaking the
+    summation. Note that this contributes to the total wetted area, which is used by the mass
+    subsystem to calculate the weight of the paint.
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+
+    def setup(self):
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+        add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA, shape=num_engine_type, units='ft**2')
+        add_aviary_output(self, Aircraft.Nacelle.TOTAL_WETTED_AREA, units='ft**2')
+
+    def setup_partials(self):
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+
+        self.declare_partials(
+            Aircraft.Nacelle.TOTAL_WETTED_AREA,
+            Aircraft.Nacelle.WETTED_AREA,
+            val=num_engines,
         )
 
-        J[Aircraft.Nacelle.TOTAL_WETTED_AREA, Aircraft.Engine.SCALE_FACTOR] = deriv_total_thrust
+    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        wetted_area = inputs[Aircraft.Nacelle.WETTED_AREA]
+
+        total_wetted_area = sum(num_engines * wetted_area)
+        outputs[Aircraft.Nacelle.TOTAL_WETTED_AREA] = total_wetted_area

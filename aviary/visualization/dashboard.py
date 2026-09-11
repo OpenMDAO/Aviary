@@ -294,7 +294,7 @@ def create_report_frame(documentation, format, text_filepath):
                 # need to deal with some encoding errors
                 file_text = file_text.decode('latin-1')
             if format == 'markdown':
-                report_pane = pn.pane.Markdown(file_text)
+                report_pane = pn.pane.Markdown(file_text, hard_line_break=True)
             elif format == 'text':
                 report_pane = pn.pane.Str(file_text)
             report_pane = pn.Column(
@@ -1025,7 +1025,7 @@ def dashboard(script_name, port=0, run_in_background=False):
     if not os.path.isfile(problem_recorder_path):
         issue_warning(f'Problem case recorder file {problem_recorder_path} does not exist.')
 
-    # TODO - use lists and functions to do this with a lot less code
+    # See issue #1174. Use lists and functions to do this with a lot less code
     ####### Model Tab #######
     model_tabs_list = []
 
@@ -1133,6 +1133,17 @@ def dashboard(script_name, port=0, run_in_background=False):
         """,
         'html',
         reports_dir / 'driver_scaling_report.html',
+    )
+
+    #  Options List
+    create_report_frame(
+        'Model Options List',
+        model_tabs_list,
+        """
+        A plain text display of the options for the Problem.
+        """,
+        'text',
+        reports_dir / 'options.txt',
     )
 
     ####### Optimization Tab #######

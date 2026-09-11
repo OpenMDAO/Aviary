@@ -3,18 +3,25 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.ode.required_thrust import RequiredThrust
 from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
 
 
+@use_tempdirs
 class RequiredThrustTest(unittest.TestCase):
     """Test required thrust."""
 
     def setUp(self):
         prob = self.prob = om.Problem()
-        prob.model.add_subsystem('req_thrust', RequiredThrust(num_nodes=2), promotes=['*'])
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+        }
+        prob.model.add_subsystem(
+            'req_thrust', RequiredThrust(num_nodes=2, **options), promotes=['*']
+        )
         prob.model.set_input_defaults(
             Dynamic.Vehicle.DRAG, np.array([47447.13138523, 44343.01567596]), units='N'
         )

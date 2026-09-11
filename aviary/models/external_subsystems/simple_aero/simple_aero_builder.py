@@ -84,7 +84,7 @@ class SimpleAeroBuilder(SubsystemBuilder):
         }
         return params
 
-    def needs_mission_solver(self, aviary_inputs, subsystem_options):
+    def needs_mission_solver(self, aviary_inputs, user_options, subsystem_options):
         """
         Return True if the mission subsystem needs to be in the solver loop in mission, otherwise
         return False. Aviary will only place it in the solver loop when True. The default is

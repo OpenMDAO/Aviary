@@ -32,7 +32,7 @@ class MetaDataTest(unittest.TestCase):
         assert_no_duplicates(flops_names)
 
     def test_alphabetization(self):
-        # TODO currently excluding Dynamic variables that do not have proper full
+        # See issue #1181. currently excluding Dynamic variables that do not have proper full
         #      names mirroring the hierarchy
         metadata_var_names = [key for key in CoreMetaData if ':' in key]
 
@@ -175,7 +175,7 @@ class VariableStructureTest(unittest.TestCase):
         # Note: Dynamic variables don't have the full path prefix, they're just the variable name
         # Pass empty hierarchy_name to indicate no prefix should be used
 
-        # TODO: Should dynamic variables be updated to match hierarchy names?
+        # See issue #1181. Should dynamic variables be updated to match hierarchy names?
         # dynamic_mismatches = check_hierarchy(Dynamic, '', '', 'Dynamic')
         # all_mismatches.extend(dynamic_mismatches)
 

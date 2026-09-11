@@ -257,7 +257,7 @@ class LandingApproachToMicP3(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -575,7 +575,7 @@ class LandingObstacleToFlare(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -836,7 +836,7 @@ class LandingFlareToTouchdown(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1069,7 +1069,7 @@ class LandingTouchdownToNoseDown(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1273,7 +1273,7 @@ class LandingNoseDownToStop(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 

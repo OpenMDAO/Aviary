@@ -17,6 +17,8 @@ from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import isiterable
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+import warnings
+from openmdao.utils.units import convert_units
 
 
 class EngineModelVariables(Enum):
@@ -33,7 +35,7 @@ class EngineModelVariables(Enum):
     SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
     RAM_DRAG = 'ram_drag'
     RPM = Dynamic.Vehicle.Propulsion.RPM
-    FUEL_FLOW = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE
+    FUEL_FLOW = Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE
     ELECTRIC_POWER_IN = Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN
     NOX_RATE = Dynamic.Vehicle.Propulsion.NOX_RATE
     TEMPERATURE_T4 = Dynamic.Vehicle.Propulsion.TEMPERATURE_T4
@@ -97,11 +99,13 @@ def convert_geopotential_altitude(altitude):
     except TypeError:
         altitude = [altitude]
 
-    g = constants.GRAV_METRIC_FLOPS
-    radius_earth = constants.RADIUS_EARTH_METRIC
-    CM1 = 0.99850  # Center of mass (Earth)? Unknown
-    OC2 = 26.76566e-10  # Unknown
-    GNS = 9.8236930  # grav_accel_at_surface_earth?
+    # ensure gravity is in correct units
+    g_m_per_s2 = convert_units(constants.GRAV_EARTH[0], constants.GRAV_EARTH[1], 'm/s**2')
+    radius_earth_meters = convert_units(constants.RADIUS_EARTH[0], constants.RADIUS_EARTH[1], 'm')
+
+    CM1 = 0.99850  # Oblateness/Gravity exponent (accounts for earth not being perfect sphere)
+    OC2 = 26.76566e-10  # Accounts for centrifugal acceleration due to Earth's rotation
+    GNS = 9.8236930  # grav_accel_at_surface_earth? This may or may not account for the rotation rate of the earth as well.
 
     for i, alt in enumerate(altitude):
         HFT = alt
@@ -111,9 +115,11 @@ def convert_geopotential_altitude(altitude):
         DH = float('inf')
 
         while abs(DH) > 1.0:
-            R = radius_earth + Z
-            GN = GNS * (radius_earth / R) ** (CM1 + 1.0)
-            H = (R * GN * ((R / radius_earth) ** CM1 - 1.0) / CM1 - Z * (R - Z / 2.0) * OC2) / g
+            R = radius_earth_meters + Z
+            GN = GNS * (radius_earth_meters / R) ** (CM1 + 1.0)
+            H = (
+                R * GN * ((R / radius_earth_meters) ** CM1 - 1.0) / CM1 - Z * (R - Z / 2.0) * OC2
+            ) / g_m_per_s2
 
             DH = HO - H
             Z += DH

@@ -118,7 +118,7 @@ class BreguetCruiseODE(TwoDOFODE):
                 ('cruise_distance_initial', 'initial_distance'),
                 ('cruise_time_initial', 'initial_time'),
                 'mass',
-                Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+                Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
                 ('TAS_cruise', Dynamic.Mission.VELOCITY),
             ],
             promotes_outputs=[

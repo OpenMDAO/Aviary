@@ -15,6 +15,7 @@ inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.00514)
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.84)
 inputs.set_val(Aircraft.Design.GROSS_MASS, 174200.0, 'lbm')
+inputs.set_val(Aircraft.Design.MAX_MACH, 0.82)
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)
@@ -80,11 +81,11 @@ inputs.set_val(Aircraft.Fins.MASS_SCALER, 1.0)
 
 # Fuel
 # ---------------------------
-inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)
-inputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 46063.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 46063.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)
 
 # Furnishings
@@ -168,7 +169,7 @@ engine_1_inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 engine_1_inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
 engine_1_inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
 engine_1_inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)
-engine_1_inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
+engine_1_inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lbm/h')
 engine_1_inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
 engine_1_inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
 engine_1_inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
@@ -198,8 +199,8 @@ engine_2_inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
 engine_2_inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 engine_2_inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
 engine_2_inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
-engine_2_inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
-engine_2_inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lb/h')
+engine_2_inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)
+engine_2_inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lb/h')
 engine_2_inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
 engine_2_inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
 engine_2_inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
@@ -260,10 +261,9 @@ inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
 # ---------------------------
 inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.785)  # was 0.82
 inputs.set_val(Aircraft.Design.RANGE, 2960.0, 'NM')
-inputs.set_val(Mission.Constraints.MAX_MACH, 0.82)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
-inputs.set_val(Mission.Takeoff.FUEL, 577, 'lbm')
+inputs.set_val(Mission.Takeoff.FUEL_MASS, 577, 'lbm')
 
 # region TODO: should this come from aero?
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3)

@@ -2,9 +2,6 @@ import importlib.util  # used for opening existing phase info file
 import json
 import os
 import platform
-import pprint
-import shutil
-import subprocess
 import tkinter as tk  # base tkinter
 import tkinter.ttk as ttk  # used for combobox
 from tkinter import filedialog, font, messagebox
@@ -22,6 +19,32 @@ try:
 except ImportError:
     # Trapz is deprecated in the latest numpy
     from numpy import trapezoid as trapz
+
+
+def _format_phase_info_value(value, indent_level):
+    indent = '    ' * indent_level
+    inner = '    ' * (indent_level + 1)
+
+    if isinstance(value, dict):
+        if not value:
+            return '{}'
+        lines = ['{\n']
+        for k, v in value.items():
+            lines.append(f'{inner}{k!r}: {_format_phase_info_value(v, indent_level + 1)},\n')
+        lines.append(f'{indent}}}')
+        return ''.join(lines)
+
+    if isinstance(value, (list, tuple)):
+        open_b, close_b = ('[', ']') if isinstance(value, list) else ('(', ')')
+        if not value:
+            return open_b + close_b
+        items = [_format_phase_info_value(item, indent_level + 1) for item in value]
+        one_line = open_b + ', '.join(items) + close_b
+        if len(one_line) <= 60:
+            return one_line
+        return open_b + '\n' + ''.join(f'{inner}{item},\n' for item in items) + f'{indent}{close_b}'
+
+    return repr(value)
 
 
 def get_screen_geometry():
@@ -1701,21 +1724,8 @@ def create_phase_info(
     # write a python file with the phase information
     with open(filename, 'w') as f:
         f.write('phase_info = ')
-        pp = pprint.PrettyPrinter(indent=4, stream=f, sort_dicts=False)
-        pp.pprint(phase_info)
-
-    # Check for 'ruff' and format the file
-    if shutil.which('ruff'):
-        subprocess.run(['ruff', filename])
-    else:
-        if shutil.which('autopep8'):
-            subprocess.run(['autopep8', '--in-place', '--aggressive', filename])
-            print("File formatted using 'autopep8'")
-        else:
-            print(
-                "'ruff' or 'autopep8' are not installed. Please consider installing one of them "
-                'for better formatting.'
-            )
+        f.write(_format_phase_info_value(phase_info, 0))
+        f.write('\n')
 
     print(f'Phase info has been saved and formatted in {filename}')
 

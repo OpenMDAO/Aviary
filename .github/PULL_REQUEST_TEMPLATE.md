@@ -10,6 +10,6 @@ Summary of PR.
 
 None
 
-### New Dependencies
+### AI Usage
 
-None
+Disclose any AI usage in this PR, including models used and files affected.
