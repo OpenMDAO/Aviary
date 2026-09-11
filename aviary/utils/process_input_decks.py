@@ -551,24 +551,4 @@ dependent_options = [
             'alternate': False,
         },
     ],
-    [
-        Aircraft.HorizontalTail.VOLUME_COEFFICIENT,
-        {
-            'val': 0,
-            'relation': '==',
-            'target': Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
-            'result': True,
-            'alternate': False,
-        },
-    ],
-    [
-        Aircraft.VerticalTail.VOLUME_COEFFICIENT,
-        {
-            'val': 0,
-            'relation': '==',
-            'target': Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
-            'result': True,
-            'alternate': False,
-        },
-    ],
 ]
