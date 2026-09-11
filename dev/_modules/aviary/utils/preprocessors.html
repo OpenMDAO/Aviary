@@ -1717,8 +1717,12 @@
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">get_names_from_hierarchy</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="p">):</span>
         <span class="k">yield</span> <span class="n">item</span>
 
+    <span class="n">excluded_names</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">Nacelle</span><span class="o">.</span><span class="n">TOTAL_WETTED_AREA</span><span class="p">,</span>
+    <span class="p">]</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">get_names_from_hierarchy</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Nacelle</span><span class="p">):</span>
-        <span class="k">yield</span> <span class="n">item</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">excluded_names</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">item</span>
 </pre></div>
 
                 </article>
