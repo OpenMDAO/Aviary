@@ -324,7 +324,7 @@ nacelle_wetted_area = np.array([228.34])
 nacelle_wetted_area_units = 'ft**2'
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wetted_area_units)
 outputs.set_val(
-    Aircraft.Nacelle.TOTAL_WETTED_AREA, 2 * nacelle_wetted_area, nacelle_wetted_area_units
+    Aircraft.Nacelle.TOTAL_WETTED_AREA, 2 * nacelle_wetted_area[0], nacelle_wetted_area_units
 )
 
 outputs.set_val(Aircraft.Paint.MASS, 582.3, 'lbm')

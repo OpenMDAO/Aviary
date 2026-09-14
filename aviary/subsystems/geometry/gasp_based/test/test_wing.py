@@ -16,9 +16,10 @@ from aviary.subsystems.geometry.gasp_based.wing import (
     WingSize,
     WingVolume,
 )
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class WingSizeTestCase1(
@@ -136,10 +137,10 @@ class WingParametersTestCase1(
 
 class WingParametersTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
         self.prob = om.Problem()
         self.prob.model.add_subsystem('parameters', WingParameters(), promotes=['*'])
 
+        # Input values below match the "large single aisle 1" GASP reference case used elsewhere in this file; no _MetaData defaults are relied on.
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.13, units='unitless')
@@ -152,8 +153,6 @@ class WingParametersTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless'
         )
-
-        setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -210,11 +209,14 @@ class WingVolumeTestCase1(
     unittest.TestCase
 ):  # actual GASP test case, input and output values based on large single aisle 1 v3 without bug fix
     def setUp(self):
-        options = get_option_defaults()
+        # Option values below are the _MetaData defaults except where noted.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
+
         self.prob = om.Problem()
         self.prob.model.add_subsystem('wing_vol', WingVolume(), promotes=['*'])
 
+        # Input values below match the "large single aisle 1" GASP reference case used elsewhere in this file; no _MetaData defaults are relied on.
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.13, units='unitless')
@@ -246,11 +248,16 @@ class BWBWingVolumeTestCase(unittest.TestCase):
     """Test BWB data for BWBWingVolume"""
 
     def setUp(self):
-        options = get_option_defaults()
+        # Option values below are the _MetaData defaults except where noted.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless')
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
+
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('wing_vol', BWBWingVolume(), promotes=['*'])
 
+        # Input values below are BWB-specific test values; no _MetaData defaults are relied on.
         prob.model.set_input_defaults(
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0.0, units='unitless'
         )
@@ -281,8 +288,11 @@ class BWBWingVolumeTestCase(unittest.TestCase):
 
 class WingFoldAreaTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
+        # Option values below are the _MetaData defaults except where noted.
+        options = AviaryValues()
+        options.set_val(
+            Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless'
+        )  # toggled OFF for this test
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -291,6 +301,7 @@ class WingFoldAreaTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below match the "large single aisle 1" GASP reference case used elsewhere in this file; no _MetaData defaults are relied on.
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
         self.prob.model.set_input_defaults('strut_y', val=25, units='ft')  # not actual GASP value
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
@@ -315,8 +326,11 @@ class WingFoldAreaTestCase1(unittest.TestCase):
 
 class WingFoldVolumeTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
+        # Option values below are the _MetaData defaults except where noted.
+        options = AviaryValues()
+        options.set_val(
+            Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless'
+        )  # toggled OFF for this test
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -325,6 +339,7 @@ class WingFoldVolumeTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below match the "large single aisle 1" GASP reference case used elsewhere in this file; no _MetaData defaults are relied on.
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.15, units='unitless'
@@ -367,7 +382,9 @@ class WingFoldVolumeTestCase1(unittest.TestCase):
 
 class WingFoldAreaTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Option values below are the _MetaData defaults except where noted.
+        options = AviaryValues()
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -376,6 +393,7 @@ class WingFoldAreaTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below match the "large single aisle 1" GASP reference case used elsewhere in this file; no _MetaData defaults are relied on.
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Wing.FOLDED_SPAN, val=25, units='ft'
@@ -402,7 +420,9 @@ class WingFoldAreaTestCase2(unittest.TestCase):
 
 class BWBWingFoldAreaTestCase1(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Option values below are the _MetaData defaults except where noted.
+        options = AviaryValues()
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -411,6 +431,7 @@ class BWBWingFoldAreaTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below are BWB-specific test values; no _MetaData defaults are relied on.
         prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, 118, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
@@ -432,61 +453,11 @@ class BWBWingFoldAreaTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
-class WingFoldVolumeTestCase1(unittest.TestCase):
-    def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'group',
-            WingFoldVolume(),
-            promotes=['*'],
-        )
-
-        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.15, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='unitless'
-        )
-        self.prob.model.set_input_defaults('strut_y', val=25, units='ft')  # not actual GASP value
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.FOLDING_AREA, val=620.0435, units='ft**2')
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        tol = 1e-4
-
-        assert_near_equal(
-            self.prob['nonfolded_taper_ratio'], 0.71561969, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob['nonfolded_wing_area'], 750.25647754, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob['tc_ratio_mean_folded'], 0.14363328, tol
-        )  # not actual GASP value
-        assert_near_equal(self.prob['nonfolded_AR'], 3.33219382, tol)  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 712.3428037422319, tol
-        )  # not actual GASP value
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
-
-
 class WingFoldVolumeTestCase2(unittest.TestCase):
     def setUp(self):
-        options = get_option_defaults()
+        # Option values below are the _MetaData defaults except where noted.
+        options = AviaryValues()
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -495,6 +466,7 @@ class WingFoldVolumeTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below match the "large single aisle 1" GASP reference case used elsewhere in this file; no _MetaData defaults are relied on.
         self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.33, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.15, units='unitless'
@@ -545,8 +517,11 @@ class BWBWingFoldVolumeTestCase1(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
+        # Option values below are the _MetaData defaults except where noted.
+        options = AviaryValues()
+        options.set_val(
+            Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless'
+        )  # toggled OFF for this test
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -555,6 +530,7 @@ class BWBWingFoldVolumeTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below are BWB-specific test values; no _MetaData defaults are relied on.
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
         )
@@ -587,7 +563,8 @@ class BWBWingFoldVolumeTestCase2(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        # Option values below are the _MetaData defaults except where noted.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
 
         prob = self.prob = om.Problem()
@@ -597,6 +574,7 @@ class BWBWingFoldVolumeTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below are BWB-specific test values; no _MetaData defaults are relied on.
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
         )
@@ -688,11 +666,16 @@ class WingGroupTestCase2(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the full WingGroup subsystem hierarchy.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
+        options.set_val(
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless'
+        )
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -701,6 +684,7 @@ class WingGroupTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below match the "large single aisle 1" GASP reference case used elsewhere in this file; no _MetaData defaults are relied on.
         self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 128, units='lbf/ft**2')
 
@@ -781,8 +765,12 @@ class WingGroupTestCase3(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the full WingGroup subsystem hierarchy.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
@@ -794,6 +782,7 @@ class WingGroupTestCase3(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below match the "large single aisle 1" GASP reference case used elsewhere in this file; no _MetaData defaults are relied on.
         self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 128, units='lbf/ft**2')
 
@@ -865,9 +854,12 @@ class WingGroupTestCase4(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the full WingGroup subsystem hierarchy.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
@@ -880,6 +872,7 @@ class WingGroupTestCase4(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below match the "large single aisle 1" GASP reference case used elsewhere in this file; no _MetaData defaults are relied on.
         self.prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, val=1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Strut.ATTACHMENT_LOCATION, val=0, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Strut.AREA_RATIO, val=0.2, units='unitless')
@@ -938,10 +931,16 @@ class WingGroupTestCase5(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the full WingGroup subsystem hierarchy.
+        options = AviaryValues()
+        options.set_val(Aircraft.Wing.HAS_FOLD, val=False, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
-        options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
+        options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
+        options.set_val(
+            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless'
+        )
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -950,6 +949,7 @@ class WingGroupTestCase5(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below match the "large single aisle 1" GASP reference case used elsewhere in this file; no _MetaData defaults are relied on.
         self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 128, units='lbf/ft**2')
 
@@ -1018,14 +1018,22 @@ class BWBWingGroupTestCase1(unittest.TestCase):
     """
 
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the full BWBWingGroup subsystem hierarchy.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
+        options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless')
+        options.set_val(Aircraft.Design.TYPE, val='transport', units='unitless')
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('group', BWBWingGroup(), promotes=['*'])
+
+        # Input values below match the "large single aisle 1" GASP reference case used elsewhere in this file; no _MetaData defaults are relied on.
 
         prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 70.0, units='lbf/ft**2')
@@ -1097,8 +1105,11 @@ class BWBExposedWingTestCase(unittest.TestCase):
     """BWB case."""
 
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the ExposedWing component.
+        options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -1107,6 +1118,7 @@ class BWBExposedWingTestCase(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below (hardcoded, not read from _MetaData).
         prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         prob.model.set_input_defaults(
@@ -1136,8 +1148,11 @@ class ExposedWingTestCase(unittest.TestCase):
     """Tube + Wing case."""
 
     def setUp(self):
-        options = get_option_defaults()
+        # Options below are set explicitly (hardcoded from _MetaData defaults) so this test
+        # does not depend on any _MetaData drift for the ExposedWing component.
+        options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='transport', units='unitless')
+        options.set_val(Settings.VERBOSITY, val=Verbosity.BRIEF)
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
@@ -1146,6 +1161,7 @@ class ExposedWingTestCase(unittest.TestCase):
             promotes=['*'],
         )
 
+        # Input values below (hardcoded, not read from _MetaData).
         prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, 38.0, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         prob.model.set_input_defaults(

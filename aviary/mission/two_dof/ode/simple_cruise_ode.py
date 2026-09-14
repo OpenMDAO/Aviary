@@ -17,10 +17,6 @@ class SimpleCruiseODE(TwoDOFODE):
 
     def setup(self):
         nn = self.options['num_nodes']
-        aviary_options = self.options['aviary_options']
-        subsystems = self.options['subsystems']
-        subsystem_options = self.options['subsystem_options']
-        user_options = self.options['user_options']
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
@@ -31,51 +27,7 @@ class SimpleCruiseODE(TwoDOFODE):
             promotes_outputs=['weight'],
         )
 
-        prop_group = om.Group()
-
-        for subsystem in subsystems:
-            kwargs = {}
-
-            # check if subsystem_options has entry for a subsystem of this name
-            if subsystem.name in subsystem_options:
-                kwargs = subsystem_options[subsystem.name]
-            if isinstance(subsystem, AerodynamicsBuilder):
-                # set default options for Aero if not specified by user
-                base_kwargs = {'method': 'cruise', 'output_alpha': True}
-                kwargs.update(base_kwargs)
-
-            system = subsystem.build_mission(
-                num_nodes=nn,
-                aviary_inputs=aviary_options,
-                user_options=user_options,
-                subsystem_options=kwargs,
-            )
-
-            if system is not None:
-                mission_in = subsystem.mission_inputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                mission_out = subsystem.mission_outputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                if isinstance(subsystem, PropulsionBuilder):
-                    prop_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=mission_in,
-                        promotes_outputs=mission_out,
-                    )
-                else:
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=mission_in,
-                        promotes_outputs=mission_out,
-                    )
+        prop_group = self.add_subsystems_and_solver(couple_propulsion=True)
 
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -92,27 +44,14 @@ class SimpleCruiseODE(TwoDOFODE):
             'thrust_balance', subsys=bal, promotes_inputs=['*'], promotes_outputs=['*']
         )
 
+        # Preserving original options.
+        prop_group.nonlinear_solver.options['rtol'] = 1e-12
+        prop_group.nonlinear_solver.options['atol'] = 1e-12
+        prop_group.nonlinear_solver.options['maxiter'] = 20
+        prop_group.nonlinear_solver.options['err_on_non_converge'] = False
         prop_group.linear_solver = om.DirectSolver()
 
-        prop_group.nonlinear_solver = om.NewtonSolver(
-            solve_subsystems=True,
-            maxiter=20,
-            rtol=1e-12,
-            atol=1e-12,
-            err_on_non_converge=False,
-        )
-        prop_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-
-        prop_group.nonlinear_solver.options['iprint'] = 2
-        prop_group.linear_solver.options['iprint'] = 2
-
-        self.add_subsystem(
-            'prop_group', subsys=prop_group, promotes_inputs=['*'], promotes_outputs=['*']
-        )
-
-        #
         # collect initial/final outputs
-        #
         self.add_subsystem(
             'distance_eom',
             DistanceComp(num_nodes=nn),
