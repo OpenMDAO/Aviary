@@ -6,11 +6,11 @@ import warnings
 from openmdao.utils.assert_utils import assert_near_equal, assert_warning
 from openmdao.utils.testing_utils import use_tempdirs
 
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.csv_data_file import read_data_file, write_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 from aviary.utils.process_input_decks import parse_inputs
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variable_meta_data import CoreMetaData, add_meta_data
 
 
@@ -95,7 +95,9 @@ class TestAviaryCSV(unittest.TestCase):
 
     @use_tempdirs
     def test_parse_input(self):
-        aircraft_values = get_option_defaults(engine=False)
+        # parse_inputs only writes to aircraft_values (never reads pre-existing options),
+        # so an empty AviaryValues is sufficient here.
+        aircraft_values = AviaryValues()
         # create a temporary csv file for testing non-existing variable name
         file_name = 'aircraft_for_invalid_var.csv'
         with open(file_name, 'w') as file:

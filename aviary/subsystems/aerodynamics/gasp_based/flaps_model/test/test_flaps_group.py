@@ -3,13 +3,13 @@ import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.aerodynamics.gasp_based.flaps_model.flaps_model import FlapsGroup
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
     BasicFlapsGeometry,
 )
+from aviary.subsystems.aerodynamics.gasp_based.flaps_model.flaps_model import FlapsGroup
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 """
@@ -21,7 +21,10 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # Only FlapsGroup and MetaModelGroup declare an aviary option, both Aircraft.Wing.FLAP_TYPE.
+        # BasicFlapsGeometry, CLmaxCalculation, LiftAndDragIncrements, FlapsDeflectionRatios
+        # declare no aviary options.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.TRIPLE_SLOTTED, units='unitless')
 
         self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
@@ -122,7 +125,8 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # FlapsGroup/MetaModelGroup declare only Aircraft.Wing.FLAP_TYPE.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.SPLIT, units='unitless')
 
         self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
@@ -223,7 +227,8 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # FlapsGroup/MetaModelGroup declare only Aircraft.Wing.FLAP_TYPE.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.SINGLE_SLOTTED, units='unitless')
 
         self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
@@ -325,7 +330,8 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # FlapsGroup/MetaModelGroup declare only Aircraft.Wing.FLAP_TYPE.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.PLAIN, units='unitless')
 
         self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
@@ -426,7 +432,8 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # FlapsGroup/MetaModelGroup declare only Aircraft.Wing.FLAP_TYPE.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.FOWLER, units='unitless')
 
         self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
@@ -527,7 +534,8 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # FlapsGroup/MetaModelGroup declare only Aircraft.Wing.FLAP_TYPE.
+        options = AviaryValues()
         options.set_val(
             Aircraft.Wing.FLAP_TYPE, val=FlapType.DOUBLE_SLOTTED_FOWLER, units='unitless'
         )

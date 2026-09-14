@@ -93,6 +93,20 @@ jobs:
                             # versions.json ends up empty.
           path: src
 
+      # Re-install Aviary from the tag checkout in ./src/. prepare_docs_environment
+      # already did `pip install -e .` at the workspace root, but that installed
+      # whatever ref its own internal actions/checkout landed there (the workflow
+      # ref, typically main) -- NOT the tag we're publishing. Without this
+      # override, Sphinx autodoc imports resolve against the wrong version and
+      # any modules that were renamed/moved between the tag and main fail to
+      # import, filling the build with "no module named ..." warnings.
+      - name: Reinstall Aviary from target tag
+        shell: bash -l {0}
+        working-directory: src
+        run: |
+          eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
+          pip install -e .[all]
+
       - name: Build docs
         id: build_docs
         shell: bash -l {0}

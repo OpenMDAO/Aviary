@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import (
     AeroFormfactors,
@@ -15,6 +16,7 @@ from aviary.variable_info.variables import Aircraft
 tol = 1e-8
 
 
+@use_tempdirs
 class TestAeroCoeffs(unittest.TestCase):
     def test_aero_coeffs(self):
         aero_coeffs = AeroFormfactors()
@@ -87,6 +89,7 @@ class TestAeroCoeffs(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
 
 
+@use_tempdirs
 class FormFactorTest(unittest.TestCase):
     """Test fuselage form factor computation and SIWB computation."""
 
@@ -112,6 +115,7 @@ class FormFactorTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
 
 
+@use_tempdirs
 class BWBFormFactorTest(unittest.TestCase):
     """Test fuselage form factor computation and SIWB computation"""
 
