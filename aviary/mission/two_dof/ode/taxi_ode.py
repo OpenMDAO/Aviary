@@ -49,6 +49,7 @@ class TaxiSegment(TwoDOFODE):
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
+        # Taxi only supports propulsion.
         for subsystem in subsystems:
             if isinstance(subsystem, PropulsionBuilder):
                 system = subsystem.build_mission(
