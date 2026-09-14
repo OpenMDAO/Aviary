@@ -1,3 +1,4 @@
+from copy import deepcopy
 import unittest
 
 import openmdao.api as om
@@ -6,6 +7,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.core.aviary_problem import AviaryProblem
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values
@@ -488,6 +490,99 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             excludes=['*detailed_wing.*'],  # does not work?
         )
 
+    def test_case_root_chord_idx_1(self):
+        # Test detailed wing where root chord starts at index 1.
+        # Truth values come from FLOPS case.
+        local_phase_info = deepcopy(phase_info)
+        prob = AviaryProblem()
+
+        prob.load_inputs(
+            'validation_cases/validation_data/test_models/bwb_root_chord1.csv',
+            local_phase_info,
+            verbosity=0,
+        )
+        prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, 156019.0, units='lbm')
+
+        prob.check_and_preprocess_inputs()
+        prob.build_model()
+
+        prob.add_design_variables()
+        prob.add_objective(objective_type='fuel_burned')
+
+        prob.setup()
+
+        prob.set_initial_guesses()
+
+        prob.final_setup()
+        prob.run_model()
+
+        rtol = 1e-3
+        val = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_MASS, units='lbm')
+        assert_near_equal(val, 2394.3, rtol)  # 2406 FLOPS
+
+        val = prob.get_val(Aircraft.Wing.SHEAR_CONTROL_MASS, units='lbm')
+        assert_near_equal(val, 6017.4, rtol)
+
+        val = prob.get_val(Aircraft.Wing.MISC_MASS, units='lbm')
+        assert_near_equal(val, 2236.5, rtol)
+
+        val = prob.get_val(Aircraft.Wing.BWB_AFTBODY_MASS, units='lbm')
+        assert_near_equal(val, 2476.2, rtol)  # 2504 FLOPS
+
+        val = prob.get_val(Aircraft.Fuselage.MASS, units='lbm')
+        assert_near_equal(val, 26965.0, rtol)
+
+        val = prob.get_val(Aircraft.Design.EMPTY_MASS, units='lbm')
+        assert_near_equal(val, 91641.0, rtol)  # 91688 FLOPS
+
+    def test_case_root_chord_idx_2(self):
+        # Test detailed wing where root chord starts at index 1.
+        # Truth values come from FLOPS case.
+        local_phase_info = deepcopy(phase_info)
+        prob = AviaryProblem()
+
+        prob.load_inputs(
+            'validation_cases/validation_data/test_models/bwb_root_chord2.csv',
+            local_phase_info,
+            verbosity=0,
+        )
+        prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, 156019.0, units='lbm')
+
+        prob.check_and_preprocess_inputs()
+        prob.build_model()
+
+        prob.add_design_variables()
+        prob.add_objective(objective_type='fuel_burned')
+
+        prob.setup()
+
+        prob.set_initial_guesses()
+
+        prob.final_setup()
+        prob.run_model()
+
+        rtol = 1e-3
+        val = prob.get_val(Aircraft.Wing.AREA, units='ft**2')
+        assert_near_equal(val, 3715.5, rtol)  # 3715 FLOPS
+
+        val = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_MASS, units='lbm')
+        assert_near_equal(val, 2394.8, rtol)  # 2406 FLOPS
+
+        val = prob.get_val(Aircraft.Wing.SHEAR_CONTROL_MASS, units='lbm')
+        assert_near_equal(val, 5994.2, rtol)
+
+        val = prob.get_val(Aircraft.Wing.MISC_MASS, units='lbm')
+        assert_near_equal(val, 2236.5, rtol)
+
+        val = prob.get_val(Aircraft.Wing.BWB_AFTBODY_MASS, units='lbm')
+        assert_near_equal(val, 2476.2, rtol)  # 2504 FLOPS
+
+        val = prob.get_val(Aircraft.Fuselage.MASS, units='lbm')
+        assert_near_equal(val, 26964.0, rtol)
+
+        val = prob.get_val(Aircraft.Design.EMPTY_MASS, units='lbm')
+        assert_near_equal(val, 91585.2, rtol)  # 91611 FLOPS
+
 
 @use_tempdirs
 class BWBPreMissionGroupCSVTest1(unittest.TestCase):
@@ -534,10 +629,10 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.SPAN], 238.08, tol)
         # BWBSimpleCabinLayout
         assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 96.25, tol)
-        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 63.96, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 63.96 / 0.7, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 5173.187202504683, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 15.125, tol)
-        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, 1e-4)
+        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 6.0, 1e-4)
         # BWBFuselagePrelim
         assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 39.8525, tol)
         assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 7390.267432149546, tol)
@@ -630,7 +725,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # TransportEngineOilMass
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS], 346.93557352, tol)
         # BWBFurnishingsGroupMass
-        assert_near_equal(prob[Aircraft.Furnishings.MASS], 61482.097969438299, tol)
+        assert_near_equal(prob[Aircraft.Furnishings.MASS], 64632.2417937, tol)
         # TransportHydraulicsGroupMass
         assert_near_equal(prob[Aircraft.Hydraulics.MASS], 7368.5077321194321, tol)
         # PassengerServiceMass
@@ -692,15 +787,13 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # PropulsionMass
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 61597.102467771889, tol)
         # SystemsEquipMass
-        assert_near_equal(
-            prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 98848.9061107412710, tol
-        )
+        assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 101999.04844105, tol)
         # EmptyMass
-        assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 434037.32820147, tol)
+        assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 437187.15893079, tol)
         # OperatingMass
-        assert_near_equal(prob[Mission.OPERATING_MASS], 455464.65969526308, tol)
+        assert_near_equal(prob[Mission.OPERATING_MASS], 458614.76964429, tol)
         # ZeroFuelMass
-        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 553276.65969526302, tol)
+        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 556426.76964429, tol)
 
     def test_case_all_subsystems(self):
         """
@@ -782,7 +875,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.SPAN], 253.720756, tol)
         # DetailedCabinLayout
         assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 78.61013558, tol)
-        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5 / 0.7, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 4697.33181006, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 12.35302131, tol)
         assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 7.0, tol)
@@ -1031,7 +1124,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         # DetailedCabinLayout
         assert_near_equal(prob[Aircraft.Fuselage.MAX_WIDTH], 49.77182929, tolerance=1e-9)
         assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 81.60326742, tol)
-        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5 / 0.7, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 2988.879661796, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 20.89043646, tol)
         assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 4.0, tol)
@@ -1234,3 +1327,6 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # z = BWBPreMissionGroupTest()
+    # z.setUp()
+    # z.test_case_all_subsystems()

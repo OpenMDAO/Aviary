@@ -861,8 +861,7 @@ class EngineDeck(EngineModel):
             Dictionary of optional arguments for this subsystem in this phase.
 
         """
-        # The engine is generally part of the throttle balance loop if throttle is being solved.
-        return True
+        return False
 
     def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options) -> om.Group:
         """

@@ -18,7 +18,6 @@ class DesignMCLTest(unittest.TestCase):
 
         options = {}
         options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
-        options[Mission.Constraints.MAX_MACH] = 1.2
 
         model.add_subsystem(
             'design',
@@ -28,6 +27,7 @@ class DesignMCLTest(unittest.TestCase):
         )
         prob.setup(force_alloc_complex=True)
 
+        prob.set_val(Aircraft.Design.MAX_MACH, val=1.2)
         prob.set_val(Aircraft.Wing.ASPECT_RATIO, val=11.05)
         prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, val=1.0)
         prob.set_val(Aircraft.Wing.SWEEP, val=2.0191)
@@ -49,7 +49,6 @@ class DesignMCLTest(unittest.TestCase):
 
         options = {}
         options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
-        options[Mission.Constraints.MAX_MACH] = 0.9
 
         model.add_subsystem(
             'design',
@@ -59,6 +58,7 @@ class DesignMCLTest(unittest.TestCase):
         )
         prob.setup(force_alloc_complex=True)
 
+        prob.set_val(Aircraft.Design.MAX_MACH, val=0.9)
         prob.set_val(Aircraft.Wing.ASPECT_RATIO, val=11.05)
         prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, val=1.0)
         prob.set_val(Aircraft.Wing.SWEEP, val=2.191)
@@ -80,7 +80,6 @@ class DesignMCLTest(unittest.TestCase):
 
         options = {}
         options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
-        options[Mission.Constraints.MAX_MACH] = 1.2
 
         model.add_subsystem(
             'design',
@@ -90,6 +89,7 @@ class DesignMCLTest(unittest.TestCase):
         )
         prob.setup(force_alloc_complex=True)
 
+        prob.set_val(Aircraft.Design.MAX_MACH, val=1.2)
         prob.set_val(Aircraft.Wing.ASPECT_RATIO, val=11.05)
         prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, val=1.0)
         prob.set_val(Aircraft.Wing.SWEEP, val=2.191)
@@ -111,7 +111,6 @@ class DesignMCLTest(unittest.TestCase):
 
         options = {}
         options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
-        options[Mission.Constraints.MAX_MACH] = 0.9
 
         model.add_subsystem(
             'design',
@@ -121,6 +120,7 @@ class DesignMCLTest(unittest.TestCase):
         )
         prob.setup(force_alloc_complex=True)
 
+        prob.set_val(Aircraft.Design.MAX_MACH, val=0.9)
         prob.set_val(Aircraft.Wing.ASPECT_RATIO, val=11.05)
         prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, val=1.0)
         prob.set_val(Aircraft.Wing.SWEEP, val=2.191)

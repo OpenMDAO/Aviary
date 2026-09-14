@@ -49,7 +49,7 @@ aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:hydraulics:system_pressure,5000,psi
 
 # Design mission
-mission:constraints:max_mach,0.785,unitless
+aircraft:design:max_mach,0.785,unitless
 aircraft:design:gross_mass,130000,lbm
 aircraft:design:range,1906,NM
 aircraft:design:cruise_mach,0.72,unitless

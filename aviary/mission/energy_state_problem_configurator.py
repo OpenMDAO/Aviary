@@ -493,11 +493,16 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             altitude_final = wrapped_convert_units(options['altitude_final'], 'ft')
 
             if altitude_initial is None:
-                # TODO: Pull from downstream phase.
+                # TODO: Pull from upstream phase.
                 altitude_initial = wrapped_convert_units(options['altitude_bounds'], 'ft')[0]
 
-            if altitude_final is None:
-                # TODO: Pull from downstream phase.
+            if altitude_initial is None and altitude_final is None:
+                # No way to get an IC, so just some nominal values.
+                altitude_initial = 0.0
+                altitude_final = 0.0
+            elif altitude_initial is None:
+                altitude_initial = altitude_final
+            elif altitude_final is None:
                 altitude_final = altitude_initial
 
             guess_dict['altitude'] = ([altitude_initial, altitude_final], 'ft')
@@ -508,11 +513,16 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             mach_final = wrapped_convert_units(options['mach_final'], 'unitless')
 
             if mach_initial is None:
-                # TODO: Pull from downstream phase.
+                # TODO: Pull from upstream phase.
                 mach_initial = wrapped_convert_units(options['mach_bounds'], 'unitless')[0]
 
-            if mach_final is None:
-                # TODO: Pull from downstream phase.
+            if mach_initial is None and mach_final is None:
+                # No way to get an IC, so just some nominal values.
+                mach_initial = 0.1
+                mach_final = 0.1
+            elif mach_initial is None:
+                mach_initial = mach_final
+            elif mach_final is None:
                 mach_final = mach_initial
 
             guess_dict['mach'] = ([mach_initial, mach_final], 'unitless')

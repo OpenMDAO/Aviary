@@ -394,7 +394,7 @@ class LoadParametersTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 4e-4
-        assert_near_equal(self.prob['max_mach'], 0.9, tol)  # bug fixed value
+        assert_near_equal(self.prob[Aircraft.Design.MAX_MACH], 0.9, tol)  # bug fixed value
         assert_near_equal(self.prob['density_ratio'], 0.533, tol)  # bug fixed value
         assert_near_equal(self.prob['V9'], 350, tol)  # bug fixed value
 
@@ -422,7 +422,7 @@ class LoadParametersTestCase2(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(self.prob['max_mach'], 0.824, tol)  # not actual GASP value
+        assert_near_equal(self.prob[Aircraft.Design.MAX_MACH], 0.824, tol)  # not actual GASP value
         assert_near_equal(self.prob['density_ratio'], 0.682, tol)  # not actual GASP value
         assert_near_equal(self.prob['V9'], 304.14, tol)  # not actual GASP value
 
@@ -450,7 +450,7 @@ class LoadParametersTestCase3(unittest.TestCase):
         self.prob.run_model()
 
         tol = 2e-4
-        assert_near_equal(self.prob['max_mach'], 0.7197, tol)  # not actual GASP value
+        assert_near_equal(self.prob[Aircraft.Design.MAX_MACH], 0.7197, tol)  # not actual GASP value
         assert_near_equal(self.prob['density_ratio'], 0.6073, tol)  # not actual GASP value
         assert_near_equal(self.prob['V9'], 304.14, tol)  # not actual GASP value
 
@@ -483,7 +483,7 @@ class LoadParametersTestCase4smooth(unittest.TestCase):
         self.prob.run_model()
 
         tol = 6e-4
-        assert_near_equal(self.prob['max_mach'], 0.9, tol)  # bug fixed value
+        assert_near_equal(self.prob[Aircraft.Design.MAX_MACH], 0.9, tol)  # bug fixed value
         assert_near_equal(self.prob['density_ratio'], 0.533, tol)  # bug fixed value
         assert_near_equal(self.prob['V9'], 350, tol)  # bug fixed value
 
@@ -516,7 +516,7 @@ class LoadParametersTestCase5smooth(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(self.prob['max_mach'], 0.824, tol)  # not actual GASP value
+        assert_near_equal(self.prob[Aircraft.Design.MAX_MACH], 0.824, tol)  # not actual GASP value
         assert_near_equal(self.prob['density_ratio'], 0.682, tol)  # not actual GASP value
         assert_near_equal(self.prob['V9'], 304.14, tol)  # not actual GASP value
 
@@ -549,7 +549,7 @@ class LoadParametersTestCase6smooth(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(self.prob['max_mach'], 0.7197, tol)  # not actual GASP value
+        assert_near_equal(self.prob[Aircraft.Design.MAX_MACH], 0.7197, tol)  # not actual GASP value
         assert_near_equal(self.prob['density_ratio'], 0.6073, tol)  # not actual GASP value
         assert_near_equal(self.prob['V9'], 304.14, tol)  # not actual GASP value
 
@@ -779,7 +779,7 @@ class DesignLoadGroupTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(self.prob['max_mach'], 0.9, tol)  # bug fixed value
+        assert_near_equal(self.prob[Aircraft.Design.MAX_MACH], 0.9, tol)  # bug fixed value
         # bug fixed value
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
 
@@ -824,7 +824,7 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
         self.prob.run_model()
 
         tol = 6e-4
-        assert_near_equal(self.prob['max_mach'], 0.9, tol)  # bug fixed value
+        assert_near_equal(self.prob[Aircraft.Design.MAX_MACH], 0.9, tol)  # bug fixed value
         # bug fixed value
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.7397, tol)
 
@@ -1459,7 +1459,7 @@ class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob['max_mach'], 0.9, tol)
+        assert_near_equal(self.prob[Aircraft.Design.MAX_MACH], 0.9, tol)
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -1498,7 +1498,7 @@ class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob['max_mach'], 0.90046425, tol)
+        assert_near_equal(self.prob[Aircraft.Design.MAX_MACH], 0.90046425, tol)
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.97744787, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')

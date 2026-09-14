@@ -11,7 +11,6 @@ from aviary.variable_info.variables import Aircraft, Mission
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
     'climb': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': 'true'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -33,7 +32,6 @@ phase_info = {
         },
     },
     'cruise': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': 'true'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -55,7 +53,6 @@ phase_info = {
         },
     },
     'descent': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': 'true'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -110,19 +107,19 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
-            782430.3,
+            787036.9,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.OPERATING_MASS, units='lbm'),
-            445429.9,
+            449095.9,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
-            239188.4,
+            240128.9,
             tolerance=rtol,
         )
 
@@ -198,7 +195,7 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.GROSS_MASS, units='lbm'),
-            564852.60335347,
+            564856.71154669,
             tolerance=rtol,
         )
 
@@ -219,6 +216,6 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = BWB300ProblemPhaseTestCase()
+    test = BWBProblemPhaseTestCase()
     test.setUp()
-    test.test_bench_bwb300_FwFm_SNOPT()
+    test.test_bench_bwb_FwFm_SNOPT()

@@ -6,12 +6,13 @@ from aviary.subsystems.mass.gasp_based.equipment_and_operating_items import (
 )
 from aviary.subsystems.mass.gasp_based.fixed import FixedMassGroup
 from aviary.subsystems.mass.gasp_based.fuel import (
-    BodyTankCalculations,
     BWBFuselageMass,
     FuelComponents,
     FuelMass,
     FuelSysAndFullFuselageMass,
     FuselageMass,
+    TankCapacity,
+    WingFuelMin,
 )
 from aviary.subsystems.mass.gasp_based.mass_summation import MassSummation
 from aviary.subsystems.mass.gasp_based.wing import BWBWingMassGroup, WingMassGroup
@@ -110,9 +111,11 @@ class MassPremission(om.Group):
             promotes_outputs=['*'],
         )
 
+        # wingfuel_mass_min feeds the mass solver loop (FuelSysAndFullFuselageMass ->
+        # OPERATING_MASS -> FuelMass).
         self.add_subsystem(
-            'body_tank',
-            BodyTankCalculations(),
+            'wing_fuel_min',
+            WingFuelMin(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -124,9 +127,16 @@ class MassPremission(om.Group):
             promotes_outputs=['*'],
         )
 
+        self.add_subsystem(
+            'tank_capacity',
+            TankCapacity(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
         newton = self.nonlinear_solver = om.NewtonSolver()
-        newton.options['atol'] = 1e-9
-        newton.options['rtol'] = 1e-9
+        newton.options['atol'] = 1e-10
+        newton.options['rtol'] = 1e-10
         newton.options['iprint'] = 2
         newton.options['maxiter'] = 10
         newton.options['solve_subsystems'] = True

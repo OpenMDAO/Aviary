@@ -383,6 +383,37 @@ add_meta_data(
     default_value=0.0,
 )
 
+add_meta_data(
+    Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.RSPCHD'},
+    units='unitless',
+    desc='BWB rear spar percent chord at the centerline. The cabin generally ends here.',
+    default_value=0.7,
+)
+
+add_meta_data(
+    Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.RSPSOB'},
+    units='unitless',
+    desc='BWB rear spar percent chord at the wing root. The cabin generally ends here.',
+    default_value=0.7,
+)
+
+add_meta_data(
+    Aircraft.BWB.WING_ROOT_INDEX,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NESOB'},
+    desc='When using the detailed wing definition, the index where that defines the location of '
+    'the wing root. When this is 0, the wing definition starts at the root. When it is greater '
+    'than 0, the wing definition should start at the centerline, and the root chord is defined at '
+    'this index. NOTE: index started at 1 in FLOPS, but starts at 0 in Aviary.',
+    option=True,
+    types=int,
+    default_value=0,
+)
+
 #   _____                                      _
 #  / ____|                                    | |
 # | |        __ _   _ __     __ _   _ __    __| |
@@ -1119,7 +1150,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH'},
     units='inch',
     desc='pitch of the business class seats.',
-    option=True,
     default_value=39.0,
 )
 
@@ -1129,7 +1159,6 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH'},
     units='inch',
     desc='pitch of the economy class seats.',
-    option=True,
     default_value=32.0,
 )
 
@@ -1139,7 +1168,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH'},
     units='inch',
     desc='pitch of the first class seats.',
-    option=True,
     default_value=61.0,
 )
 
@@ -1210,32 +1238,9 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='unitless',
-    option=True,
-    default_value=False,
-    types=bool,
-    desc='if true, use empirical tail volume coefficient equation. This is '
-    'true if VBARHX is 0 in GASP.',
-)
-
-add_meta_data(
-    Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='unitless',
-    option=True,
-    default_value=False,
-    types=bool,
-    desc='if true, use empirical tail volume coefficient equation. This is '
-    'true if VBARVX is 0 in GASP.',
-)
-
-add_meta_data(
     Aircraft.Design.CRUISE_ALTITUDE,
     meta_data=_MetaData,
+    # In GASP, it is HNCRU, not CRALT
     historical_name={'GASP': 'INGASP.CRALT', 'FLOPS': None},
     units='ft',
     option=True,
@@ -1564,6 +1569,24 @@ add_meta_data(
     units='deg',
     desc='maximum fuselage pitch allowed',
     default_value=15,
+)
+
+add_meta_data(
+    Aircraft.Design.MAX_MACH,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.VMMO',
+        #  [  # inputs
+        #      '&DEFINE.WTIN.VMMO', 'VLIMIT.VMMO',
+        #      # outputs
+        #      'VLIMIT.VMAX',
+        #  ],
+    },
+    units='unitless',
+    desc='aircraft cruise Mach number',
+    # TODO: derived default value: Aircraft.Design.CRUISE_MACH ???
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -3113,8 +3136,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WAS', 'FLOPS': None},
     units='inch',
-    desc='Width of the aisles in the passenger cabin. In FLOPS, aisle width is hardcoded per '
-    'passenger class.',
+    desc='width of the aisles in the passenger cabin',
     default_value=24,
 )
 
@@ -3141,6 +3163,22 @@ add_meta_data(
     units='ft**2',
     desc='fixed area of passenger cabin for blended wing body transports',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.CABIN_SIDEWALL_LENGTH_MIN,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.XLWMIN',
+    },
+    units='ft',
+    option=True,
+    types=float,
+    desc='Minimum outboard wall of the passenger cabin in a BWB. The default value is based on a '
+    'required maximum depth at the side wall of 8.25 ft divided by a fuselage thickness/chord '
+    'ratio of 0.15 and 70 percent of the resulting wing root chord of 55 ft.',
+    default_value=38.5,
 )
 
 add_meta_data(
@@ -4361,7 +4399,6 @@ add_meta_data(
     units='ft**2',
     desc='total nacelles wetted area',
     default_value=0.0,
-    multivalue=True,
 )
 
 add_meta_data(
@@ -5907,7 +5944,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CROOTW',
-        'FLOPS': 'WTIN.XLW',
+        'FLOPS': None,  # 'XLOUT',
     },
     units='ft',
     desc='wing chord length at at the wing/fuselage intersection',
@@ -7024,25 +7061,6 @@ add_meta_data(
     desc='residual to make sure aircraft mass closes on actual '
     'gross takeoff mass, value should be zero at convergence '
     '(within acceptable tolerance)',
-)
-
-add_meta_data(
-    Mission.Constraints.MAX_MACH,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.VMMO',
-        #  [  # inputs
-        #      '&DEFINE.WTIN.VMMO', 'VLIMIT.VMMO',
-        #      # outputs
-        #      'VLIMIT.VMAX',
-        #  ],
-    },
-    units='unitless',
-    desc='aircraft cruise Mach number',
-    # TODO: derived default value: Aircraft.Design.CRUISE_MACH ???
-    default_value=0.0,
-    option=True,
 )
 
 add_meta_data(

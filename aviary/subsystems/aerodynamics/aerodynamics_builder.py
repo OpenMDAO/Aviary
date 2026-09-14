@@ -212,7 +212,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                 aero_supergroup.linear_solver = om.DirectSolver()
                 newton = aero_supergroup.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
                 newton.options['iprint'] = 2
-                newton.options['atol'] = 1e-9
+                newton.options['atol'] = 1e-12
                 newton.options['rtol'] = 1e-12
 
                 # return the supergroup instead of the individual aero method group
@@ -713,10 +713,22 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
     def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_timeseries() on all engine models and return combined result."""
-        timeseries_vars = [
-            Dynamic.Vehicle.DRAG_COEFFICIENT,
-            Dynamic.Vehicle.LIFT_COEFFICIENT,
-        ]
+        if subsystem_options is None:
+            subsystem_options = {}
+
+        timeseries_vars = []
+
+        try:
+            method = subsystem_options['method']
+        except KeyError:
+            method = None
+
+        if method != 'external':
+            timeseries_vars = [
+                Dynamic.Vehicle.DRAG_COEFFICIENT,
+                Dynamic.Vehicle.LIFT_COEFFICIENT,
+            ]
+
         return timeseries_vars
 
     def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
@@ -771,16 +783,6 @@ COMPUTED_CORE_INPUTS = [
     Aircraft.Fuselage.LAMINAR_FLOW_UPPER,
     Aircraft.Fuselage.LENGTH_TO_DIAMETER,
     Aircraft.Fuselage.WETTED_AREA,
-    # Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
-    # Aircraft.HorizontalTail.FINENESS,
-    # Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER,
-    # Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER,
-    # Aircraft.HorizontalTail.WETTED_AREA,
-    # Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
-    # Aircraft.VerticalTail.FINENESS,
-    # Aircraft.VerticalTail.LAMINAR_FLOW_LOWER,
-    # Aircraft.VerticalTail.LAMINAR_FLOW_UPPER,
-    # Aircraft.VerticalTail.WETTED_AREA,
     Aircraft.Wing.AREA,
     Aircraft.Wing.ASPECT_RATIO,
     Aircraft.Wing.CHARACTERISTIC_LENGTH,

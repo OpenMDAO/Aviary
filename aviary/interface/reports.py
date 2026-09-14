@@ -4,6 +4,7 @@ import sys
 import time
 from pathlib import Path
 
+import networkx as nx
 import numpy as np
 import pandas as pd
 from openmdao.utils.mpi import MPI
@@ -80,11 +81,29 @@ def register_custom_reports():
     )
 
     register_report(
-        name='overridden_variables',
+        name='overridden_variables_setup',
         func=overridden_variables_report,
         desc='Generates a report on the overridden variables',
         class_name='AviaryProblem',
         method='final_setup',
+        pre_or_post='post',
+    )
+
+    register_report(
+        name='overridden_variables_run_model',
+        func=overridden_variables_report,
+        desc='Generates a report on the overridden variables',
+        class_name='AviaryProblem',
+        method='run_model',
+        pre_or_post='post',
+    )
+
+    register_report(
+        name='overridden_variables_run_driver',
+        func=overridden_variables_report,
+        desc='Generates a report on the overridden variables',
+        class_name='AviaryProblem',
+        method='run_driver',
         pre_or_post='post',
     )
 
@@ -675,6 +694,31 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
             val = group.aviary_inputs.get_val(aircraft_variable_name, units=units)
             non_external_overridden_variables.append((aircraft_variable_name, val, units))
 
+    var_abs = group.list_outputs(out_stream=None, val=False)
+    var_prom = [v['prom_name'] for k, v in var_abs]
+    prom2abs = prob.model._resolver.absnames
+    abs2prom = prob.model._resolver.abs2prom
+    graph = prob.model._relevance._graph
+    all_desvars = prob.driver._designvars
+    all_responses = [z['source'] for z in prob.driver._responses.values()]
+
+    overridden_prom = [v for v in var_prom if 'OVERRIDE' in v]
+
+    overriding_abs = {}
+    for prom_name in overridden_prom:
+        adh_prom = prom_name.partition(':')[-1]
+
+        try:
+            targets = prom2abs(adh_prom, 'input')
+        except:
+            continue
+        try:
+            srcs = prom2abs(prom_name, 'output')
+        except:
+            continue
+
+        overriding_abs[adh_prom] = (srcs, targets)
+
     if MPI and prob.comm.rank != 0:
         # All collective calls are completed. Reports only generated on rank 0.
         return
@@ -682,6 +726,64 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
     # Now that we have collected all overridden variables, write the report
     if mission_name:
         f.write(f'# MULTIMISSION: {mission_name}\n\n')
+
+    f.write('## Potential Problems\n')
+    problems_found = False
+    for name, data in overriding_abs.items():
+        srcs, targets = data
+        src = srcs[0]
+
+        relevant_targets = [t.rpartition('.')[0] for t in targets]
+
+        if relevant_targets:
+            # True variable relevancy check for design vars.
+            upstream_nodes = nx.ancestors(graph, src)
+            up_leaves = [abs2prom(node) for node in upstream_nodes if '_auto_ivc.' in node]
+            up_leaves = [node for node in up_leaves if node in all_desvars]
+
+            if len(up_leaves) < 1:
+                continue
+
+            # True variable relevancy check for responses.
+            abs_names = prom2abs(name)
+            downstream_nodes = set()
+            for abs_name in abs_names:
+                downstream_nodes.update(nx.descendants(graph, abs_name))
+
+            down_leaves = [node for node in downstream_nodes if node in all_responses]
+
+            if len(down_leaves) < 1:
+                continue
+
+            v1 = prob.get_val(name)
+            v2 = prob.get_val(src)
+            problems_found = True
+
+            f.write('\n')
+            f.write(f'Override: **{name}**\n')
+            f.write('```\n')
+            f.write(f'  Override Value:{v1},  Computed Value:{v2}\n')
+            f.write('\n')
+
+            f.write('  depends on:\n')
+            for leaf in sorted(up_leaves):
+                f.write(f'    {leaf}\n')
+            f.write('\n')
+
+            f.write('  feeds:\n')
+            for target in sorted(relevant_targets):
+                f.write(f'    {target}\n')
+            f.write('\n')
+
+            f.write('  impacts:\n')
+            for leaf in sorted(down_leaves):
+                f.write(f'    {leaf}\n')
+            f.write('```\n')
+
+    if not problems_found:
+        f.write('  None\n\n')
+    else:
+        f.write('\n\n')
 
     f.write('## Internal Overrides\n')
     if non_external_overridden_variables:
