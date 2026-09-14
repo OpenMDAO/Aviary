@@ -133,7 +133,7 @@ def preprocess_options(
 
 def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
     """
-    Set option values that are needed for fuselage layout computationbut are not direct inputs.
+    Set default values that are needed for fuselage layout computation but not provided by the user.
 
     Parameters
     ----------
@@ -160,32 +160,43 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
     else:
         simple_layout = aviary_options.get_val(Aircraft.Fuselage.SIMPLE_LAYOUT)
 
-    if simple_layout == False:
-        # Set correct default values for
-        if mass_method == LegacyCode.FLOPS:
+    if not simple_layout:
+        if Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS in aviary_options:
             num_economy_class_pax = aviary_options.get_val(
                 Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS
             )
+        else:
+            num_economy_class_pax = 0
+
+        if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in aviary_options:
             num_business_class_pax = aviary_options.get_val(
                 Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS
             )
+        else:
+            num_business_class_pax = 0
+
+        if Aircraft.CrewPayload.Design.NUM_FIRST_CLASS in aviary_options:
             num_first_class_pax = aviary_options.get_val(
                 Aircraft.CrewPayload.Design.NUM_FIRST_CLASS
             )
+        else:
+            num_first_class_pax = 0
 
-            # flags for whether values were user inputs.
-            num_seat_abreast_economy_set_user = False
-            num_seat_abreast_business_set_user = False
-            num_seat_abreast_first_set_user = False
-            seat_width_economy_set_user = False
-            seat_width_business_set_user = False
-            seat_width_first_set_user = False
-            seat_pitch_economy_set_user = False
-            seat_pitch_business_set_user = False
-            seat_pitch_first_set_user = False
+        # flags for whether values were user inputs.
+        num_seat_abreast_economy_set_user = False
+        num_seat_abreast_business_set_user = False
+        num_seat_abreast_first_set_user = False
+        seat_width_economy_set_user = False
+        seat_width_business_set_user = False
+        seat_width_first_set_user = False
+        seat_pitch_economy_set_user = False
+        seat_pitch_business_set_user = False
+        seat_pitch_first_set_user = False
 
-            # Consistency check based on number of passengers in each class
-            # Set default if not input
+        # Sanity check on provided values #
+
+        # Only FLOPS cares about seats abreast
+        if mass_method is LegacyCode.FLOPS:
             if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY in aviary_options:
                 num_seat_abreast_economy_set_user = True
                 num_seat_abreast_economy = aviary_options.get_val(
@@ -193,7 +204,8 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 )
                 if num_economy_class_pax > 0 and num_seat_abreast_economy <= 0:
                     raise ValueError(
-                        f'Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS = {num_economy_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY ({num_seat_abreast_economy}) must be greater than 0.'
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY ('
+                        f'{num_seat_abreast_economy}) must be greater than 0.'
                     )
             if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS in aviary_options:
                 num_seat_abreast_business_set_user = True
@@ -202,7 +214,8 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 )
                 if num_business_class_pax > 0 and num_seat_abreast_business <= 0:
                     raise ValueError(
-                        f'Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS = {num_business_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS ({num_seat_abreast_business}) must be greater than 0.'
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS ('
+                        f'{num_seat_abreast_business}) must be greater than 0.'
                     )
             if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST in aviary_options:
                 num_seat_abreast_first_set_user = True
@@ -211,110 +224,127 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 )
                 if num_first_class_pax > 0 and num_seat_abreast_first <= 0:
                     raise ValueError(
-                        f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST ({num_seat_abreast_first}) must be greater than 0.'
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST ('
+                        f'{num_seat_abreast_first}) must be greater than 0.'
                     )
 
-            # Seat Widths
-            if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY in aviary_options:
-                seat_width_economy_set_user = True
-                seat_width_economy = aviary_options.get_val(
-                    Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 'inch'
+        # Seat Widths
+        if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY in aviary_options:
+            seat_width_economy_set_user = True
+            seat_width_economy = aviary_options.get_val(
+                Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 'inch'
+            )
+            if num_economy_class_pax > 0 and seat_width_economy <= 0:
+                raise ValueError(
+                    f'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY ({seat_width_economy}) must be '
+                    'greater than 0.'
                 )
-                if num_economy_class_pax > 0 and seat_width_economy <= 0:
-                    raise ValueError(
-                        f'Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS = {num_economy_class_pax}, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY ({seat_width_economy}) should be greater than 0.'
-                    )
-            if Aircraft.Fuselage.SEAT_WIDTH_BUSINESS in aviary_options:
-                seat_width_business_set_user = True
-                seat_width_business = aviary_options.get_val(
-                    Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 'inch'
+        if Aircraft.Fuselage.SEAT_WIDTH_BUSINESS in aviary_options:
+            seat_width_business_set_user = True
+            seat_width_business = aviary_options.get_val(
+                Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 'inch'
+            )
+            if num_business_class_pax > 0 and seat_width_business <= 0:
+                raise ValueError(
+                    f'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS ({seat_width_business}) must be '
+                    'greater than 0.'
                 )
-                if num_business_class_pax > 0 and seat_width_business <= 0:
-                    raise ValueError(
-                        f'Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS = {num_business_class_pax}, Aircraft.Fuselage.SEAT_WIDTH_BUSINESS ({seat_width_business}) should be greater than 0.'
-                    )
-            if Aircraft.Fuselage.SEAT_WIDTH_FIRST in aviary_options:
-                seat_width_first_set_user = True
-                seat_width_first = aviary_options.get_val(
-                    Aircraft.Fuselage.SEAT_WIDTH_FIRST, 'inch'
+        if Aircraft.Fuselage.SEAT_WIDTH_FIRST in aviary_options:
+            seat_width_first_set_user = True
+            seat_width_first = aviary_options.get_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 'inch')
+            if num_first_class_pax > 0 and seat_width_first <= 0:
+                raise ValueError(
+                    f'Aircraft.Fuselage.SEAT_WIDTH_FIRST ({seat_width_first}) must be greater '
+                    f'than 0.'
                 )
-                if num_first_class_pax > 0 and seat_width_first <= 0:
-                    raise ValueError(
-                        f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.Fuselage.SEAT_WIDTH_FIRST ({seat_width_first}) should be greater than 0.'
-                    )
 
-            # Seat Pitches
-            if Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY in aviary_options:
-                seat_pitch_economy_set_user = True
-                seat_pitch_economy = aviary_options.get_val(
-                    Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 'inch'
+        # Seat Pitches
+        if Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY in aviary_options:
+            seat_pitch_economy_set_user = True
+            seat_pitch_economy = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 'inch'
+            )
+            if num_economy_class_pax > 0 and seat_pitch_economy <= 0:
+                raise ValueError(
+                    f'Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY ({seat_pitch_economy}) '
+                    'must be greater than 0.'
                 )
-                if num_economy_class_pax > 0 and seat_pitch_economy <= 0:
-                    raise ValueError(
-                        f'Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS = {num_economy_class_pax}, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY ({seat_pitch_economy}) should be greater than 0.'
-                    )
-            if Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS in aviary_options:
-                seat_pitch_business_set_user = True
-                seat_pitch_business = aviary_options.get_val(
-                    Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 'inch'
+        if Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS in aviary_options:
+            seat_pitch_business_set_user = True
+            seat_pitch_business = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 'inch'
+            )
+            if num_business_class_pax > 0 and seat_pitch_business <= 0:
+                raise ValueError(
+                    f'Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS ({seat_pitch_business}) '
+                    'must be greater than 0.'
                 )
-                if num_business_class_pax > 0 and seat_pitch_business <= 0:
-                    raise ValueError(
-                        f'Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS = {num_business_class_pax}, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS ({seat_pitch_business}) should be greater than 0.'
-                    )
-            if Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST in aviary_options:
-                seat_pitch_first_set_user = True
-                seat_pitch_first = aviary_options.get_val(
-                    Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 'inch'
+        if Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST in aviary_options:
+            seat_pitch_first_set_user = True
+            seat_pitch_first = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 'inch'
+            )
+            if num_first_class_pax > 0 and seat_pitch_first <= 0:
+                raise ValueError(
+                    f'Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST ({seat_pitch_first}) must '
+                    'be greater than 0.'
                 )
-                if num_first_class_pax > 0 and seat_pitch_first <= 0:
-                    raise ValueError(
-                        f'Aircraft.CrewPayload.Design.NUM_FIRST_CLASS = {num_first_class_pax}, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST ({seat_pitch_first}) should be greater than 0.'
-                    )
 
-            # Now adjust the above defaults based on aircraft type and size:
+        # Set correct default values for each legacy code
+        if mass_method == LegacyCode.FLOPS:
+            # Defaults based on aircraft type and size:
             if design_type == AircraftTypes.TRANSPORT:
                 # Set defaults for seats abreast:
+                # Less than 60 pax
                 if num_economy_class_pax < 60:
                     num_seat_abreast_economy = 5
                     num_seat_abreast_business = 4
                     num_seat_abreast_first = 4
+                # 60-200 pax
                 elif num_economy_class_pax <= 200:
                     num_seat_abreast_economy = 6
                     num_seat_abreast_business = 5
                     num_seat_abreast_first = 4
+                # Greater than 200 pax
                 else:
                     num_seat_abreast_economy = 8
-                    num_seat_abreast_business = 6
-                    num_seat_abreast_first = 6
+                    if num_seat_abreast_economy_set_user:
+                        num_seat_abreast_economy = aviary_options.get_val(
+                            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY
+                        )
+                    # Default is num_abreast_economy - 2
+                    num_seat_abreast_first = num_seat_abreast_economy - 2
 
-                # set defaults for seat width
-                seat_width_economy = 20
-                seat_width_business = 22
-                seat_width_first = 25
+                    # Business class not originally modeled in FLOPS fuselage (oversight?), assuming
+                    # same as first class
+                    num_seat_abreast_business = num_seat_abreast_economy - 2
 
                 # set defaults for seat pitch
                 seat_pitch_economy = 34
-                seat_pitch_business = 36
                 seat_pitch_first = 38
+                # Not modeled in FLOPS, assuming in-between economy and first
+                seat_pitch_business = 36
 
-            if design_type == AircraftTypes.BLENDED_WING_BODY:
-                # Set defaults for seats abreast:
+                # set defaults for seat width
+                seat_width_economy = 20
+                seat_width_first = 25
+                # Not modeled in FLOPS, assuming in-between economy and first
+                seat_width_business = 22
+
+            elif design_type == AircraftTypes.BLENDED_WING_BODY:
+                # BWB defaults for seats abreast:
                 num_seat_abreast_economy = 6
                 num_seat_abreast_business = 5
                 num_seat_abreast_first = 4
 
-                # set defaults for seat width
-                seat_width_economy = 20
-                seat_width_business = 22
-                seat_width_first = 25
-
-                # set defaults for seat pitch
+                # BWB defaults for seat pitch
                 seat_pitch_economy = 32
                 seat_pitch_business = 39
                 seat_pitch_first = 61
 
-            # Now set the defaults if the user didn't provide anything:
+                # FLOPS BWB does not use seat width
+
+            # Set default values and warn user
             if not num_seat_abreast_economy_set_user:
                 aviary_options.set_val(
                     Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY,
@@ -323,7 +353,8 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 )
                 if verbosity >= Verbosity.BRIEF:
                     warnings.warn(
-                        f'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY not set, using default of {num_seat_abreast_economy}.'
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY not set, using FLOPS '
+                        f'default of {num_seat_abreast_economy}.'
                     )
             if not num_seat_abreast_business_set_user:
                 aviary_options.set_val(
@@ -333,7 +364,8 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 )
                 if verbosity >= Verbosity.BRIEF:
                     warnings.warn(
-                        f'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS not set, using default of {num_seat_abreast_business}.'
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS not set, using FLOPS '
+                        f'default of {num_seat_abreast_business}.'
                     )
             if not num_seat_abreast_first_set_user:
                 aviary_options.set_val(
@@ -343,40 +375,47 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 )
                 if verbosity >= Verbosity.BRIEF:
                     warnings.warn(
-                        f'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST not set, using default of {num_seat_abreast_first}.'
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST not set, using FLOPS '
+                        f'default of {num_seat_abreast_first}.'
                     )
 
-            if not seat_width_economy_set_user:
-                aviary_options.set_val(
-                    Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, seat_width_economy, units='inch'
-                )
-                if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        f'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, using default of {seat_width_economy} inches.'
+            if design_type is not AircraftTypes.BLENDED_WING_BODY:
+                if not seat_width_economy_set_user:
+                    aviary_options.set_val(
+                        Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, seat_width_economy, units='inch'
                     )
-            if not seat_width_business_set_user:
-                aviary_options.set_val(
-                    Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, seat_width_business, units='inch'
-                )
-                if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        f'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, using default of {seat_width_business} inches.'
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, using FLOPS default of '
+                            f'{seat_width_economy} inches.'
+                        )
+                if not seat_width_business_set_user:
+                    aviary_options.set_val(
+                        Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, seat_width_business, units='inch'
                     )
-            if not seat_width_first_set_user:
-                aviary_options.set_val(
-                    Aircraft.Fuselage.SEAT_WIDTH_FIRST, seat_width_first, units='inch'
-                )
-                if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        f'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, using default of {seat_width_first} inches.'
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, using FLOPS default of '
+                            f'{seat_width_business} inches.'
+                        )
+                if not seat_width_first_set_user:
+                    aviary_options.set_val(
+                        Aircraft.Fuselage.SEAT_WIDTH_FIRST, seat_width_first, units='inch'
                     )
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, using FLOPS default of '
+                            f'{seat_width_first} inches.'
+                        )
+
             if not seat_pitch_economy_set_user:
                 aviary_options.set_val(
                     Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, seat_pitch_economy, units='inch'
                 )
                 if verbosity >= Verbosity.BRIEF:
                     warnings.warn(
-                        f'Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY not set, using default of {seat_pitch_economy} inches.'
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY not set, using FLOPS default '
+                        f'of {seat_pitch_economy} inches.'
                     )
             if not seat_pitch_business_set_user:
                 aviary_options.set_val(
@@ -386,7 +425,8 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 )
                 if verbosity >= Verbosity.BRIEF:
                     warnings.warn(
-                        f'Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS not set, using default of {seat_pitch_business} inches.'
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS not set, using FLOPS '
+                        f'default of {seat_pitch_business} inches.'
                     )
             if not seat_pitch_first_set_user:
                 aviary_options.set_val(
@@ -394,32 +434,121 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                 )
                 if verbosity >= Verbosity.BRIEF:
                     warnings.warn(
-                        f'Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST not set, using default of {seat_pitch_first} inches.'
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST not set, using FLOPS default '
+                        f'of {seat_pitch_first} inches.'
                     )
 
         elif mass_method == LegacyCode.GASP:
-            if design_type == AircraftTypes.BLENDED_WING_BODY:
-                if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not in aviary_options:
-                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.0, 'inch')
-                    if verbosity >= Verbosity.BRIEF:
-                        warnings.warn(
-                            'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, '
-                            'assuming default 20.0 inches.'
-                        )
-                if Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not in aviary_options:
-                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 22.0, 'inch')
-                    if verbosity >= Verbosity.BRIEF:
-                        warnings.warn(
-                            'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, '
-                            'assuming default 22.0 inches.'
-                        )
-                if Aircraft.Fuselage.SEAT_WIDTH_FIRST not in aviary_options:
-                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28.0, 'inch')
-                    if verbosity >= Verbosity.BRIEF:
-                        warnings.warn(
-                            'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, '
-                            'assuming default 28.0 inches.'
-                        )
+            # Defaults based on aircraft type and size:
+            if design_type == AircraftTypes.TRANSPORT:
+                # Transport defaults for seat pitch
+                # Required input in GASP, here we default to FLOPS value
+                seat_pitch_economy = 34
+                if seat_pitch_economy_set_user:
+                    seat_pitch_economy = aviary_options.get_val(
+                        Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY
+                    )
+
+                # Default is seat_pitch_economy * 1.25
+                seat_pitch_first = round(seat_pitch_economy * 1.25)
+
+                # GASP doesn't model separately, assume same as first
+                seat_pitch_business = round(seat_pitch_economy * 1.25)
+
+                # Transport defaults for seat width
+                # Required input in GASP, here we default to FLOPS value
+                seat_width_economy = 20
+                if seat_width_economy_set_user:
+                    seat_width_economy = aviary_options.get_val(
+                        Aircraft.Fuselage.SEAT_WIDTH_ECONOMY
+                    )
+
+                # GASP uses same value as economy
+                seat_width_first = seat_width_economy
+
+                # GASP doesn't model separately, assume same as first
+                seat_width_business = seat_width_economy
+
+            elif design_type == AircraftTypes.BLENDED_WING_BODY:
+                # BWB defaults for seat pitch
+                # Required input in GASP, here we default to FLOPS value
+                seat_pitch_economy = 32
+                # Not modeled in GASP, here we use FLOPS economy value (FLOPS BWB business pitch
+                # greater than GASP BWB first class)
+                seat_pitch_business = 32
+
+                # Hardcoded GASP default
+                seat_pitch_first = 36
+
+                # BWB defaults for seat width
+                # Required input in GASP, here we default to FLOPS transport value
+                seat_width_economy = 20
+
+                # Not modeled in GASP, here we use FLOPS transport economy value (FLOPS BWB business
+                # width greater than GASP BWB first class)
+                seat_width_business = 22
+
+                # Hardcoded GASP default
+                seat_width_first = 28
+
+            # Set default values and warn user
+            if not seat_width_economy_set_user:
+                aviary_options.set_val(
+                    Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, seat_width_economy, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, using GASP default of '
+                        f'{seat_width_economy} inches.'
+                    )
+            if not seat_width_business_set_user:
+                aviary_options.set_val(
+                    Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, seat_width_business, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, using GASP default of '
+                        f'{seat_width_business} inches.'
+                    )
+            if not seat_width_first_set_user:
+                aviary_options.set_val(
+                    Aircraft.Fuselage.SEAT_WIDTH_FIRST, seat_width_first, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, using GASP default of '
+                        f'{seat_width_first} inches.'
+                    )
+
+            if not seat_pitch_economy_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, seat_pitch_economy, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY not set, using GASP default '
+                        f'of {seat_pitch_economy} inches.'
+                    )
+            if not seat_pitch_business_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS,
+                    seat_pitch_business,
+                    units='inch',
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS not set, using GASP '
+                        f'default of {seat_pitch_business} inches.'
+                    )
+            if not seat_pitch_first_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, seat_pitch_first, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST not set, using GASP default '
+                        f'of {seat_pitch_first} inches.'
+                    )
 
 
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
