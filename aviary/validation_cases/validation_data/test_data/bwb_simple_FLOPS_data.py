@@ -318,7 +318,7 @@ outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.38269353]))  # FR(5)
 outputs.set_val(Aircraft.Nacelle.MASS, 0.0, 'lbm')  # WNAC
 nacelle_wetted_area = np.array([498.26822066])  # SWET(5)
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, 'ft**2')
-outputs.set_val(Aircraft.Nacelle.TOTAL_WETTED_AREA, 3 * nacelle_wetted_area, 'ft**2')
+outputs.set_val(Aircraft.Nacelle.TOTAL_WETTED_AREA, 3 * nacelle_wetted_area[0], 'ft**2')
 
 outputs.set_val(Aircraft.Paint.MASS, 0.0, 'lbm')  # WPAINT, WTPNT
 

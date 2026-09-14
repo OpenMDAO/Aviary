@@ -361,7 +361,7 @@ outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wette
 
 outputs.set_val(
     Aircraft.Nacelle.TOTAL_WETTED_AREA,
-    2 * nacelle_wetted_area,
+    2 * nacelle_wetted_area[0],
     nacelle_wetted_area_units,
 )
 

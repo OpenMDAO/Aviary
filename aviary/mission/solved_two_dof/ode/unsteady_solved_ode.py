@@ -77,10 +77,6 @@ class UnsteadySolvedODE(TwoDOFODE):
         nn = self.options['num_nodes']
         ground_roll = self.options['ground_roll']
         input_speed_type = self.options['input_speed_type']
-        aviary_options = self.options['aviary_options']
-        subsystem_options = self.options['subsystem_options']
-        user_options = self.options['user_options']
-        subsystems = self.options['subsystems']
         throttle_enforcement = self.options['throttle_enforcement']
 
         self.add_subsystem(
@@ -154,60 +150,12 @@ class UnsteadySolvedODE(TwoDOFODE):
         throttle_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
         throttle_balance_group.nonlinear_solver.options['err_on_non_converge'] = True
 
-        kwargs = {
-            'method': 'low_speed',
-        }
-        if self.options['clean']:
-            kwargs['method'] = 'cruise'
-        for subsystem in subsystems:
-            # check if subsystem_options has entry for a subsystem of this name
-            if subsystem.name in subsystem_options:
-                kwargs.update(subsystem_options[subsystem.name])
-            system = subsystem.build_mission(
-                num_nodes=nn,
-                aviary_inputs=aviary_options,
-                user_options=user_options,
-                subsystem_options=kwargs,
-            )
-            if system is not None:
-                mission_in = subsystem.mission_inputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                mission_out = subsystem.mission_outputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                if isinstance(subsystem, AerodynamicsBuilder):
-                    mission_inputs = mission_in.copy()
-                    if (
-                        subsystem.code_origin is LegacyCode.FLOPS
-                        and 'angle_of_attack' in mission_inputs
-                    ):
-                        mission_inputs.remove('angle_of_attack')
-                        mission_inputs.append(('angle_of_attack', Dynamic.Vehicle.ANGLE_OF_ATTACK))
-                    control_iter_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=mission_inputs,
-                        promotes_outputs=mission_out,
-                    )
-                elif isinstance(subsystem, PropulsionBuilder):
-                    throttle_balance_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=mission_in,
-                        promotes_outputs=mission_out,
-                    )
-                else:
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=mission_in,
-                        promotes_outputs=mission_out,
-                    )
+        self.add_subsystems_and_solver(
+            solver_sub=throttle_balance_group,
+            couple_propulsion=True,
+            couple_aero=True,
+            aero_solver_sub=control_iter_group,
+        )
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
