@@ -1998,8 +1998,9 @@ class BWBCTabularAeroTest(unittest.TestCase):
         prob.check_and_preprocess_inputs()
         prob.build_model()
 
-        # Setup without error.
         prob.setup()
+        prob.set_initial_guesses()
+        prob.run_model()
 
 
 if __name__ == '__main__':

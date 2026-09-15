@@ -490,18 +490,22 @@ class AviaryGroup(om.Group):
         energy = CoreEnergyBuilder('energy', meta_data=self.meta_data)
 
         # If all phases ask for tabular aero, we can skip pre-mission. Check phase_info
-        tabular = False
+        tabular = []
         for phase in self.mission_info:
             if phase not in ('pre_mission', 'post_mission'):
                 try:
                     if (
-                        'tabular'
+                        'tabular_cruise'
                         in self.mission_info[phase]['subsystem_options']['aerodynamics']['method']
                     ):
-                        tabular = True
-                except KeyError:
-                    tabular = False
+                        tabular.append(True)
+                    else:
+                        tabular.append(False)
 
+                except KeyError:
+                    tabular.append(False)
+
+        tabular = any(tabular)
         aero = CoreAerodynamicsBuilder(
             'aerodynamics', code_origin=self.aero_method, tabular=tabular, meta_data=self.meta_data
         )
@@ -513,6 +517,9 @@ class AviaryGroup(om.Group):
             geom_code_origin = FLOPS
         elif (self.aero_method is GASP) and (self.mass_method is GASP):
             geom_code_origin = GASP
+        elif (self.aero_method is GASP) and (self.mass_method is FLOPS) and tabular is True:
+            # Don't add the GASP geometry for FLOPS models that are just using tabular cruise.
+            geom_code_origin = FLOPS
         else:
             geom_code_origin = (FLOPS, GASP)
 
