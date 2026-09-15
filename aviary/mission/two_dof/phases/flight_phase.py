@@ -1,13 +1,13 @@
-from aviary.mission.two_dof.ode.flight_ode import FlightODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessIntegrationVariable,
     InitialGuessState,
 )
 from aviary.mission.phase_builder import PhaseBuilder
+from aviary.mission.two_dof.ode.flight_ode import FlightODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import SpeedType, ThrottleAllocation
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -108,6 +108,19 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
             "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
             '_add_user_defined_constraints().',
+        )
+
+        self.declare(
+            name='throttle_allocation',
+            default=ThrottleAllocation.FIXED,
+            values=[
+                ThrottleAllocation.FIXED,
+                ThrottleAllocation.STATIC,
+                ThrottleAllocation.DYNAMIC,
+            ],
+            desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
+            'user-specified value. STATIC is specified by the optimizer as one value for the '
+            'whole phase. DYNAMIC is specified by the optimizer at each point in the phase.',
         )
 
 

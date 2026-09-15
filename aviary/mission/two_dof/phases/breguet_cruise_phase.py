@@ -1,11 +1,9 @@
-from aviary.mission.two_dof.ode.breguet_cruise_ode import (
-    BreguetCruiseODE,
-    ElectricBreguetCruiseODE,
-)
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 from aviary.mission.phase_builder import PhaseBuilder
+from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODE, ElectricBreguetCruiseODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import ThrottleAllocation
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -87,6 +85,19 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
             default=False,
             types=bool,
             desc='Because mass is output, this should always be false..',
+        )
+
+        self.declare(
+            name='throttle_allocation',
+            default=ThrottleAllocation.FIXED,
+            values=[
+                ThrottleAllocation.FIXED,
+                ThrottleAllocation.STATIC,
+                ThrottleAllocation.DYNAMIC,
+            ],
+            desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
+            'user-specified value. STATIC is specified by the optimizer as one value for the '
+            'whole phase. DYNAMIC is specified by the optimizer at each point in the phase.',
         )
 
 

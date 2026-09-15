@@ -9,6 +9,7 @@ from aviary.mission.phase_builder import PhaseBuilder, register
 from aviary.mission.solved_two_dof.ode.groundroll_ode import GroundrollODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import ThrottleAllocation
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -79,6 +80,19 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             default=False,
             desc='Set to True only for phases where the aircraft is rolling on the ground. '
             'All other phases of flight (climb, cruise, descent) this must be set to False.',
+        )
+
+        self.declare(
+            name='throttle_allocation',
+            default=ThrottleAllocation.FIXED,
+            values=[
+                ThrottleAllocation.FIXED,
+                ThrottleAllocation.STATIC,
+                ThrottleAllocation.DYNAMIC,
+            ],
+            desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
+            'user-specified value. STATIC is specified by the optimizer as one value for the '
+            'whole phase. DYNAMIC is specified by the optimizer at each point in the phase.',
         )
 
 

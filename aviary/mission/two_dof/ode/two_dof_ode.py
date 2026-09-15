@@ -6,6 +6,8 @@ from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.variable_info.enums import AlphaModes
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.enums import SpeedType, ThrottleAllocation
+from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
 
 
 class TwoDOFODE(_BaseODE):
@@ -13,6 +15,20 @@ class TwoDOFODE(_BaseODE):
 
     def initialize(self):
         super().initialize()
+        self.options.declare(
+            'throttle_enforcement',
+            default='path_constraint',
+            values=['path_constraint', 'boundary_constraint', 'bounded', 'control', None],
+            desc='Flag to enforce engine throttle bounds as path constraints, boundary '
+            'constraints, solver bounds. You can also select "control" to turn throttle into a '
+            'control, which allows you to assign a value or let the optimizer choose it.',
+        )
+        self.options.declare(
+            'throttle_allocation',
+            default=ThrottleAllocation.FIXED,
+            types=ThrottleAllocation,
+            desc='Flag that determines how to handle throttles for multiple engines.',
+        )
 
     def add_alpha_control(
         self,
@@ -167,6 +183,114 @@ class TwoDOFODE(_BaseODE):
                 alpha_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
     def add_throttle_control(
+        self,
+        propulsion_group: om.Group | None = None,
+        use_mission_solver: bool = False,
+        atol=1e-12,
+        rtol=1e-12,
+    ):
+        if propulsion_group is None:
+            propulsion_group = om.Group()
+
+        options = self.options
+        nn = options['num_nodes']
+        aviary_options = options['aviary_options']
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        throttle_enforcement = options['throttle_enforcement']
+
+        thrust_res_ref = 1.0e6
+        if num_engine_type > 1:
+            # Multi Engine
+
+            propulsion_group.add_subsystem(
+                name='throttle_balance',
+                subsys=om.BalanceComp(
+                    name='aggregate_throttle',
+                    units='unitless',
+                    val=np.ones((nn,)),
+                    lhs_name='thrust_required',
+                    rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                    eq_units='lbf',
+                    normalize=False,
+                    res_ref=thrust_res_ref,
+                ),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
+
+            propulsion_group.add_subsystem(
+                'throttle_allocator',
+                ThrottleAllocator(
+                    num_nodes=nn, throttle_allocation=self.options['throttle_allocation']
+                ),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
+
+        else:
+            # Single Engine
+            if throttle_enforcement == 'control':
+                self.add_subsystem(
+                    'throttle_balance',
+                    om.ExecComp(
+                        'thrust_residual=thrust_required-thrust',
+                        thrust={'val': np.ones((nn,)), 'units': 'lbf'},
+                        thrust_required={'val': np.ones((nn,)), 'units': 'lbf'},
+                        thrust_residual={'val': np.ones((nn,)), 'units': 'lbf'},
+                        has_diag_partials=True,
+                    ),
+                    promotes_inputs=[
+                        ('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL),
+                        'thrust_required',
+                    ],
+                    promotes_outputs=['*'],
+                )
+                self.add_constraint('thrust_residual', ref=thrust_res_ref, equals=0.0)
+            else:
+                # Add a balance comp to compute throttle based on the required thrust.
+                propulsion_group.add_subsystem(
+                    name='throttle_balance',
+                    subsys=om.BalanceComp(
+                        name=Dynamic.Vehicle.Propulsion.THROTTLE,
+                        units='unitless',
+                        val=np.ones((nn,)),
+                        lhs_name='thrust_required',
+                        rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                        eq_units='lbf',
+                        normalize=False,
+                        lower=0.0 if throttle_enforcement == 'bounded' else None,
+                        upper=1.0 if throttle_enforcement == 'bounded' else None,
+                        res_ref=thrust_res_ref,
+                    ),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+
+            self.set_input_defaults(
+                Dynamic.Vehicle.Propulsion.THROTTLE, val=np.ones(nn), units='unitless'
+            )
+
+        if use_mission_solver or throttle_enforcement != 'control':
+            # TODO tie to verbosity
+            print_level = 2
+
+            propulsion_group.linear_solver = om.DirectSolver()
+            propulsion_group.linear_solver.options['iprint'] = print_level
+
+            propulsion_group.nonlinear_solver = om.NewtonSolver()
+            propulsion_group.nonlinear_solver.options['err_on_non_converge'] = False
+            propulsion_group.nonlinear_solver.options['solve_subsystems'] = True
+            propulsion_group.nonlinear_solver.options['maxiter'] = 20
+            propulsion_group.nonlinear_solver.options['iprint'] = print_level
+            propulsion_group.nonlinear_solver.options['atol'] = atol
+            propulsion_group.nonlinear_solver.options['rtol'] = rtol
+            propulsion_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
+            propulsion_group.linear_solver = om.DirectSolver(assemble_jac=True)
+
+        if propulsion_group is not self:
+            self.add_subsystem('prop_group', propulsion_group, promotes=['*'])
+
+    def add_throttle_control_old(
         self,
         prop_group=om.Group(),
         num_nodes=1,
