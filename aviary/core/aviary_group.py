@@ -505,7 +505,7 @@ class AviaryGroup(om.Group):
                 except KeyError:
                     tabular.append(False)
 
-        tabular = any(tabular)
+        tabular = all(tabular)
         aero = CoreAerodynamicsBuilder(
             'aerodynamics', code_origin=self.aero_method, tabular=tabular, meta_data=self.meta_data
         )
