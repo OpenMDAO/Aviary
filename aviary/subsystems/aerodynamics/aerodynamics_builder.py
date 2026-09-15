@@ -671,9 +671,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
             elif method == 'cruise':
                 all_vars = set(AERO_2DOF_INPUTS + AERO_CLEAN_2DOF_INPUTS)
             elif method == 'tabular_low_speed':
-                all_vars = AERO_2DOF_TABULAR_LS_INPUTS
+                all_vars = set(AERO_2DOF_TABULAR_LS_INPUTS)
             elif method == 'tabular_cruise':
-                all_vars = TABULAR_CORE_INPUTS
+                all_vars = set(TABULAR_CORE_INPUTS)
             else:
                 raise ValueError(
                     'GASP-based aero method is not one of the following: (cruise, '
@@ -685,7 +685,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
             except KeyError:
                 design_type = AircraftTypes.TRANSPORT
 
-            if design_type is AircraftTypes.BLENDED_WING_BODY:
+            if design_type is AircraftTypes.BLENDED_WING_BODY and method != 'tabular_cruise':
                 all_vars.add(Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0)
                 all_vars.add(Aircraft.Fuselage.HYDRAULIC_DIAMETER)
                 all_vars.add(Aircraft.Fuselage.PLANFORM_AREA)
