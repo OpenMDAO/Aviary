@@ -187,6 +187,40 @@ class FlightPhase(PhaseBuilder):
         if input_speed_type == SpeedType.EAS:
             phase.add_parameter('EAS', opt=False, units='kn', val=EAS_target)
 
+        # TODO throttle currently comes from phase_info initial conditions, not a true control.
+        #      If in the future we make it a real control, it can use existing code.
+        # num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        # if num_engine_type > 1:
+        #     allocation = user_options['throttle_allocation']
+        #     val = np.ones(num_engine_type - 1) * (1.0 / num_engine_type)
+        #
+        #     if allocation == ThrottleAllocation.DYNAMIC:
+        #         phase.add_control(
+        #             'throttle_allocations',
+        #             shape=(num_engine_type - 1,),
+        #             val=val,
+        #             targets='throttle_allocations',
+        #             units='unitless',
+        #             opt=True,
+        #             lower=0.0,
+        #             upper=1.0,
+        #         )
+        #     else:
+        #         opt = allocation == ThrottleAllocation.STATIC
+        #         kwargs = {}
+        #         if opt:
+        #             kwargs['lower'] = 0.0
+        #             kwargs['upper'] = 1.0
+        #
+        #         phase.add_parameter(
+        #             'throttle_allocations',
+        #             units='unitless',
+        #             val=val,
+        #             shape=(num_engine_type - 1,),
+        #             opt=opt,
+        #             **kwargs,
+        #         )
+
         # Add timeseries outputs
         phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
@@ -211,6 +245,8 @@ class FlightPhase(PhaseBuilder):
             'input_speed_type': self.user_options.get_val('input_speed_type'),
             'mach_target': self.user_options.get_val('mach_target'),
             'EAS_target': self.user_options.get_val('EAS_target', 'kn'),
+            # TODO Enable along with add_throttle_control in FlightODE.
+            # 'throttle_allocation': self.user_options.get_val('throttle_allocation'),
         }
 
     def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):

@@ -179,6 +179,10 @@ class FlightODE(TwoDOFODE):
             num_nodes=nn,
         )
 
+        # TODO throttle currently comes from phase_info initial conditions, not a true control.
+        #      If in the future we make it a real control, it can use existing code.
+        # self.add_throttle_control(propulsion_group=lift_balance_group)
+
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
 

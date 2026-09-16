@@ -7,7 +7,6 @@ from aviary.mission.phase_builder import PhaseBuilder, register
 from aviary.mission.two_dof.ode.accel_ode import AccelODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import ThrottleAllocation
 from aviary.variable_info.variables import Dynamic
 
 
@@ -81,19 +80,6 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
 
         self.declare(
             name='alt', default=500.0, units='ft', desc='Constant altitude for this phase.'
-        )
-
-        self.declare(
-            name='throttle_allocation',
-            default=ThrottleAllocation.FIXED,
-            values=[
-                ThrottleAllocation.FIXED,
-                ThrottleAllocation.STATIC,
-                ThrottleAllocation.DYNAMIC,
-            ],
-            desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
-            'user-specified value. STATIC is specified by the optimizer as one value for the '
-            'whole phase. DYNAMIC is specified by the optimizer at each point in the phase.',
         )
 
 

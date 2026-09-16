@@ -188,9 +188,10 @@ class TwoDOFODE(_BaseODE):
         use_mission_solver: bool = False,
         atol=1e-12,
         rtol=1e-12,
+        lhs_name='thrust_required',
     ):
         if propulsion_group is None:
-            propulsion_group = om.Group()
+            propulsion_group = self
 
         options = self.options
         nn = options['num_nodes']
@@ -208,7 +209,7 @@ class TwoDOFODE(_BaseODE):
                     name='aggregate_throttle',
                     units='unitless',
                     val=np.ones((nn,)),
-                    lhs_name='thrust_required',
+                    lhs_name=lhs_name,
                     rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                     eq_units='lbf',
                     normalize=False,
@@ -254,7 +255,7 @@ class TwoDOFODE(_BaseODE):
                         name=Dynamic.Vehicle.Propulsion.THROTTLE,
                         units='unitless',
                         val=np.ones((nn,)),
-                        lhs_name='thrust_required',
+                        lhs_name=lhs_name,
                         rhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                         eq_units='lbf',
                         normalize=False,
@@ -286,9 +287,6 @@ class TwoDOFODE(_BaseODE):
             propulsion_group.nonlinear_solver.options['rtol'] = rtol
             propulsion_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
             propulsion_group.linear_solver = om.DirectSolver(assemble_jac=True)
-
-        if propulsion_group is not self:
-            self.add_subsystem('prop_group', propulsion_group, promotes=['*'])
 
     def add_throttle_control_old(
         self,

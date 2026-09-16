@@ -9,7 +9,6 @@ from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.two_dof.ode.takeoff_ode import TakeOffODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import ThrottleAllocation
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -150,19 +149,6 @@ class TakeoffPhaseOptions(AviaryOptionsDictionary):
             default=1.0,
             units='deg',
             desc='Scale factor ref for the pitch constraint.',
-        )
-
-        self.declare(
-            name='throttle_allocation',
-            default=ThrottleAllocation.FIXED,
-            values=[
-                ThrottleAllocation.FIXED,
-                ThrottleAllocation.STATIC,
-                ThrottleAllocation.DYNAMIC,
-            ],
-            desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
-            'user-specified value. STATIC is specified by the optimizer as one value for the '
-            'whole phase. DYNAMIC is specified by the optimizer at each point in the phase.',
         )
 
 
