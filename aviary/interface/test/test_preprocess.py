@@ -37,8 +37,9 @@ class TestPrePreprocessing(unittest.TestCase):
         num_galley_crew = aviary_inputs.get_val(Aircraft.CrewPayload.NUM_GALLEY_CREW)
         self.assertEqual(num_galley_crew, 1)
 
-    def test_missing_pass_error(self):
-        # Test that cases with missing data raise errors.
+    def test_missing_passengers_warnings(self):
+        # Test that verifies Aviary's behavior when the number of passengers in each clase are
+        # not consistent with given totals.
         local_phase_info = deepcopy(phase_info)
 
         prob = AviaryProblem()
