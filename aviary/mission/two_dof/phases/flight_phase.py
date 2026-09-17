@@ -188,7 +188,7 @@ class FlightPhase(PhaseBuilder):
             phase.add_parameter('EAS', opt=False, units='kn', val=EAS_target)
 
         # TODO throttle currently comes from phase_info initial conditions, not a true control.
-        #      If in the future we make it a real control, it can use existing code.
+        #      If in the future we make it a real control, we can use this code.
         # num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
         # if num_engine_type > 1:
         #     allocation = user_options['throttle_allocation']

@@ -36,13 +36,6 @@ class FlightODE(TwoDOFODE):
         nn = self.options['num_nodes']
         input_speed_type = self.options['input_speed_type']
 
-        # if input_speed_type is SpeedType.EAS:
-        #     speed_inputs = ['EAS']
-        #     speed_outputs = ['mach', Dynamic.Mission.VELOCITY]
-        # elif input_speed_type is SpeedType.MACH:
-        #     speed_inputs = ['mach']
-        #     speed_outputs = ['EAS', Dynamic.Mission.VELOCITY]
-
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=nn),
