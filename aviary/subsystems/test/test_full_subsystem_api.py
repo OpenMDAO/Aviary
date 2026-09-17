@@ -1,19 +1,15 @@
 import unittest
-
-from aviary.models.missions.energy_state_default import phase_info
-import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal
 from pathlib import Path
 
 from aviary.api import AviaryProblem
-from aviary.subsystems.test.test_dummy_subsystem import FullSubsystemBuilder, ExtendedMetaData
+from aviary.models.missions.energy_state_default import phase_info
+from aviary.subsystems.test.dummy_subsystem import ExtendedMetaData, FullSubsystemBuilder
 
 
-# @use_tempdirs
+@use_tempdirs
 class FullSubsystemBuilderTestSuite(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.prob = prob = AviaryProblem(verbosity=0, meta_data=ExtendedMetaData)
+    def setUp(self):
+        self.prob = prob = AviaryProblem(verbosity=0, meta_data=ExtendedMetaData)
 
         prob.load_inputs(
             'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
@@ -67,7 +63,7 @@ class FullSubsystemBuilderTestSuite(unittest.TestCase):
 
     def test_get_constraints(self):
         prob = self.prob
-        driver_vars = prob.list_driver_vars(self)
+        driver_vars = prob.list_driver_vars(out_stream=None)
         constraints = driver_vars.get('constraints')
 
         # Check that the dummy constraint variable from the FullSubsystemBuilder propagated through to phase constraints
@@ -90,6 +86,15 @@ class FullSubsystemBuilderTestSuite(unittest.TestCase):
         pred = prob.model._dataflow_graph.pred['traj.param_comp.parameters:dummy_pre_mission_bus']
         self.assertTrue(
             'pre_mission.full_suite.dummy_pre_mission_bus' in [z for z in pred.keys()][0]
+        )
+
+    def test_build_mission(self):
+        prob = self.prob
+        self.assertTrue(
+            hasattr(
+                prob.model.traj.phases.climb.rhs_all.solver_sub,
+                'full_suite',
+            )
         )
 
     def test_mission_inputs(self):
@@ -117,7 +122,7 @@ class FullSubsystemBuilderTestSuite(unittest.TestCase):
 
     def test_get_design_vars(self):
         prob = self.prob
-        driver_vars = prob.list_driver_vars(self)
+        driver_vars = prob.list_driver_vars(out_stream=None)
         design_vars = driver_vars.get('design_vars')
 
         # Check that the dummy constraint variable from the FullSubsystemBuilder propagated through to phase constraints
@@ -171,10 +176,13 @@ class FullSubsystemBuilderTestSuite(unittest.TestCase):
 
     def test_report(self):
         prob = self.prob
-        prob.run_driver(None, 0)
+        prob.run_aviary_problem(suppress_solver_print=True, verbosity=0)
 
         self.assertTrue(Path('FullSubsystemTest.md').exists())
 
 
 if __name__ == '__main__':
     unittest.main()
+    # test = FullSubsystemBuilderTestSuite()
+    # test.setUp()
+    # test.test_get_constraints()
