@@ -85,6 +85,18 @@ class TestPrePreprocessing(unittest.TestCase):
         num_pass = prob.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         self.assertEqual(num_pass, 138)
 
+    def test_simple_cabin_layout(self):
+        local_phase_info = deepcopy(phase_info)
+
+        prob = AviaryProblem()
+        prob.load_inputs(
+            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
+            local_phase_info,
+        )
+        prob.aviary_inputs.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, False)
+
+        prob.check_and_preprocess_inputs()
+
 
 if __name__ == '__main__':
     unittest.main()
