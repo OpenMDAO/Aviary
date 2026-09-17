@@ -225,8 +225,12 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                         )
 
                 # These are required for detailed fuselage layout.
-                num_economy_class_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS)
-                num_business_class_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS)
+                num_economy_class_pax = aviary_options.get_val(
+                    Aircraft.CrewPayload.NUM_ECONOMY_CLASS
+                )
+                num_business_class_pax = aviary_options.get_val(
+                    Aircraft.CrewPayload.NUM_BUSINESS_CLASS
+                )
                 num_first_class_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)
 
                 # set number of seat abreast
