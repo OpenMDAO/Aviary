@@ -1,20 +1,19 @@
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 import numpy as np
 from numpy.testing import assert_almost_equal, assert_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.subsystems.test.test_dummy_subsystem import (
+from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
+from aviary.subsystems.test.dummy_subsystem import (
     AdditionalArrayGuessSubsystemBuilder,
-    Aircraft,
     ArrayGuessSubsystemBuilder,
     Mission,
     MoreMission,
     PostOnlyBuilder,
 )
-from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 
 
 @use_tempdirs
