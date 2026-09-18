@@ -1116,10 +1116,11 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NBABR'},
     units='unitless',
-    desc='Number of business class seats abreast.',
+    desc='Number of business class seats abreast. For FLOPS-based mass, the default value varies'
+    'based on aircraft type and total number of passengers.',
     types=int,
     option=True,
-    default_value=5,
+    default_value=0,
 )
 
 add_meta_data(
@@ -1127,10 +1128,11 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SAB', 'FLOPS': 'FUSEIN.NTABR'},
     units='unitless',
-    desc='Number of economy class seats abreast.',
+    desc='Number of economy class seats abreast. For FLOPS-based mass, the default value varies'
+    'based on aircraft type and total number of passengers.',
     types=int,
     option=True,
-    default_value=6,
+    default_value=0,
 )
 
 add_meta_data(
@@ -1138,10 +1140,11 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NFABR'},
     units='unitless',
-    desc='Number of first class seats abreast.',
+    desc='Number of first class seats abreast. For FLOPS-based mass, the default value varies'
+    'based on aircraft type and total number of passengers.',
     types=int,
     option=True,
-    default_value=4,
+    default_value=0,
 )
 
 add_meta_data(
@@ -1149,8 +1152,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH'},
     units='inch',
-    desc='pitch of the business class seats.',
-    default_value=39.0,
+    desc='Pitch of the business class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1158,8 +1162,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH'},
     units='inch',
-    desc='pitch of the economy class seats.',
-    default_value=32.0,
+    desc='Pitch of the economy class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1167,8 +1172,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH'},
     units='inch',
-    desc='pitch of the first class seats.',
-    default_value=61.0,
+    desc='Pitch of the first class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
+    default_value=0.0,
 )
 
 #  _____                 _
@@ -3561,7 +3567,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
-    desc='width of the business class seats',
+    desc='Width of the business class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
     default_value=0.0,
 )
 
@@ -3570,7 +3577,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WS', 'FLOPS': None},
     units='inch',
-    desc='width of the economy class seats',
+    desc='Width of the economy class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
     default_value=0.0,
 )
 
@@ -3579,7 +3587,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
-    desc='width of the first class seats',
+    desc='Width of the first class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
     default_value=0.0,
 )
 

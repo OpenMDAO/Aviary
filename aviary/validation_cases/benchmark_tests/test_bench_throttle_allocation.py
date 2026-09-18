@@ -180,7 +180,7 @@ class ThrottleAllocationTestcase(unittest.TestCase):
 
         with self.subTest('climb_allocation'):
             # Check general trend: favors engine 2.
-            self.assertLesser(alloc_climb[2], 0.22)
+            self.assertGreater(alloc_climb[1], 0.21)
 
 
 if __name__ == '__main__':
