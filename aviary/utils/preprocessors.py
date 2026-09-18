@@ -682,7 +682,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
             if design_pax_sum_provided and verbosity >= Verbosity.BRIEF:
                 warnings.warn(
                     f'Sum of all passenger classes ({design_sum}) does not equal total number of '
-                    f'passengers provided for aircraft design {design_pax}. Overriding '
+                    f'passengers provided for aircraft design ({design_pax}). Overriding '
                     'Aircraft.CrewPayload.Design.NUM_PASSENGERS with the sum of '
                     f'passenger classes for design ({design_sum}).'
                 )
