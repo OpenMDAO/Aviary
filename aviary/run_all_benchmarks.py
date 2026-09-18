@@ -1,16 +1,20 @@
 import subprocess
 
-returns = subprocess.run(
+process = subprocess.Popen(
     ['testflo', '--nocapture', '--testmatch=bench_test*'],
-    capture_output=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.STDOUT,
     text=True,
+    bufsize=1,
 )
 
-DEBUG = False
-if DEBUG:
-    print(returns.stdout)
+lines = []
+for line in process.stdout:
+    print(line, end='', flush=True)
+    lines.append(line)
 
-lines = returns.stdout.split('\n')
+# Wait for the subprocess to finish and get the exit code
+return_code = process.wait()
 
 print('\n\n')
 print('Benchmark Results')
@@ -28,12 +32,3 @@ for j, line in enumerate(lines):
 for name, bench_data in sorted(results.items()):
     print(name)
     print(bench_data)
-    print('\n')
-
-# Summary
-print('\n')
-print('Testflo Summary')
-print('\n')
-
-for line in lines[-11:]:
-    print(line)

@@ -36,7 +36,7 @@ class TurbopropMissionTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
-        options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
+        options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)
         options.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lbm/h')
         options.set_val(Aircraft.Engine.SCALE_FACTOR, 1)
         options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)

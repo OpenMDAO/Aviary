@@ -1238,30 +1238,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='unitless',
-    option=True,
-    default_value=False,
-    types=bool,
-    desc='if true, use empirical tail volume coefficient equation. This is '
-    'true if VBARHX is 0 in GASP.',
-)
-
-add_meta_data(
-    Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='unitless',
-    option=True,
-    default_value=False,
-    types=bool,
-    desc='if true, use empirical tail volume coefficient equation. This is '
-    'true if VBARVX is 0 in GASP.',
-)
-
-add_meta_data(
     Aircraft.Design.CRUISE_ALTITUDE,
     meta_data=_MetaData,
     # In GASP, it is HNCRU, not CRALT
@@ -2084,7 +2060,9 @@ add_meta_data(
     },
     units='unitless',
     option=True,
-    desc='Constant term in fuel flow scaling equation',
+    desc='Constant term in fuel flow scaling equation. Directly added to the overall fuel flow '
+    'scaling (so a constant term of 0.01 increases the overall fuel flow multiplier from 1.0 to '
+    '1.01)',
     default_value=0.0,
     multivalue=True,
 )
@@ -2097,7 +2075,13 @@ add_meta_data(
         'FLOPS': 'ENGDIN.FFFAC',
     },
     units='unitless',
-    desc='Linear term in fuel flow scaling equation',
+    desc='Linear term in fuel flow scaling equation. Accounts for how fuel flow changes '
+    'with engine size, penalizing smaller engines and benefiting larger ones. This term sets '
+    'the rate that fuel flow changes with Aircraft.Engine.SCALE_FACTOR - for every percent the '
+    'engine is scaled up or down, this sets how much of a percent is fuel flow adjusted. For '
+    'example, a linear term of 0.1 means for every percent the engine is scaled up (such as from '
+    '1.0 to 1.01), the overall fuel flow multiplier is increased by 0.1, and similarly decreases '
+    'by 0.1 for every percent the engine is scaled down.',
     default_value=0.0,
     option=True,
     multivalue=True,
@@ -4423,7 +4407,6 @@ add_meta_data(
     units='ft**2',
     desc='total nacelles wetted area',
     default_value=0.0,
-    multivalue=True,
 )
 
 add_meta_data(
