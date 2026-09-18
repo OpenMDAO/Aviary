@@ -73,10 +73,10 @@ class TestPrePreprocessing(unittest.TestCase):
         prob.aviary_inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 154)
 
         msg = (
-            f'Sum of all passenger classes (138) does not equal total number of '
-            f'passengers provided for aircraft design 154. Overriding '
+            'Sum of all passenger classes (138) does not equal total number of '
+            'passengers provided for aircraft design (154). Overriding '
             'Aircraft.CrewPayload.Design.NUM_PASSENGERS with the sum of '
-            f'passenger classes for design (138).'
+            'passenger classes for design (138).'
         )
 
         with assert_warning(UserWarning, msg):
@@ -99,4 +99,7 @@ class TestPrePreprocessing(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TestPrePreprocessing()
+    test.setUp()
+    test.test_missing_passengers_warnings()
