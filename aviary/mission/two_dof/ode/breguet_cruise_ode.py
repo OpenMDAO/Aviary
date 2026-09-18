@@ -1,5 +1,4 @@
 import numpy as np
-import openmdao.api as om
 
 from aviary.mission.two_dof.ode.breguet_cruise_eom import ElectricRangeComp, RangeComp
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
@@ -29,20 +28,7 @@ class BreguetCruiseODE(TwoDOFODE):
 
         prop_group = self.add_subsystems_and_solver(couple_propulsion=True)
 
-        bal = om.BalanceComp(
-            name=Dynamic.Vehicle.Propulsion.THROTTLE,
-            val=np.ones(nn),
-            upper=1.0,
-            lower=0.0,
-            units='unitless',
-            lhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            rhs_name=Dynamic.Vehicle.DRAG,
-            eq_units='lbf',
-        )
-
-        prop_group.add_subsystem(
-            'thrust_balance', subsys=bal, promotes_inputs=['*'], promotes_outputs=['*']
-        )
+        self.add_throttle_control(propulsion_group=prop_group, lhs_name=Dynamic.Vehicle.DRAG)
 
         # Preserving original options.
         prop_group.nonlinear_solver.options['rtol'] = 1e-12
@@ -122,20 +108,7 @@ class ElectricBreguetCruiseODE(TwoDOFODE):
 
         prop_group = self.add_subsystems_and_solver(couple_propulsion=True)
 
-        bal = om.BalanceComp(
-            name=Dynamic.Vehicle.Propulsion.THROTTLE,
-            val=np.ones(nn),
-            upper=1.0,
-            lower=0.0,
-            units='unitless',
-            lhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            rhs_name=Dynamic.Vehicle.DRAG,
-            eq_units='lbf',
-        )
-
-        prop_group.add_subsystem(
-            'thrust_balance', subsys=bal, promotes_inputs=['*'], promotes_outputs=['*']
-        )
+        self.add_throttle_control(propulsion_group=prop_group, lhs_name=Dynamic.Vehicle.DRAG)
 
         # Preserving original options.
         prop_group.nonlinear_solver.options['rtol'] = 1e-12
