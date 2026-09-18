@@ -128,33 +128,36 @@ class PercentNotInFuselage(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         x = inputs[Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE]
-        if x >= epsilon and x <= 1 - epsilon:
-            diff = 0.5 - x
-            pct_swn = 1.0 - np.arccos(2.0 * diff) / np.pi
-        elif x >= 0.0 and x < epsilon:
-            pct_swn = g1(x)
-        elif x <= 1.0 and x > 1 - epsilon:
-            pct_swn = g2(x)
-        else:
+
+        if np.any(x < 0.0) or np.any(x > 1.0):
             raise om.AnalysisError(
                 'The parameter Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE is out of range.'
             )
+
+        mid = (x >= epsilon) & (x <= 1 - epsilon)
+        low = x < epsilon
+        high = x > 1 - epsilon
+
+        diff = 0.5 - x
+        pct_swn = np.empty_like(x)
+        pct_swn[mid] = 1.0 - np.arccos(2.0 * diff[mid]) / np.pi
+        pct_swn[low] = g1(x[low])
+        pct_swn[high] = g2(x[high])
 
         outputs['percent_exposed'] = pct_swn
 
     def compute_partials(self, inputs, J):
         x = inputs[Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE]
-        if x >= epsilon and x <= 1 - epsilon:
-            diff = 0.5 - x
-            d_pct_swn = -2.0 / np.sqrt(1.0 - 4 * diff * diff) / np.pi
-        elif x >= 0.0 and x < epsilon:
-            d_pct_swn = dg1(x)
-        elif x <= 1.0 and x > 1 - epsilon:
-            d_pct_swn = dg2(x)
-        else:
-            raise om.AnalysisError(
-                'The parameter Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE is out of range.'
-            )
+
+        mid = (x >= epsilon) & (x <= 1 - epsilon)
+        low = x < epsilon
+        high = x > 1 - epsilon
+
+        diff = 0.5 - x
+        d_pct_swn = np.empty_like(x)
+        d_pct_swn[mid] = -2.0 / np.sqrt(1.0 - 4 * diff[mid] * diff[mid]) / np.pi
+        d_pct_swn[low] = dg1(x[low])
+        d_pct_swn[high] = dg2(x[high])
 
         J['percent_exposed', Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE] = d_pct_swn
 

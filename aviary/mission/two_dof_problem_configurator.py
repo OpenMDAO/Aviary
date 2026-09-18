@@ -288,10 +288,12 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         )
 
         if phase_builder is not PhaseType.SIMPLE_CRUISE:
+            num_engine_type = len(aviary_group.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
             phase.add_control(
                 Dynamic.Vehicle.Propulsion.THROTTLE,
                 targets=Dynamic.Vehicle.Propulsion.THROTTLE,
                 units='unitless',
+                shape=(num_engine_type,),
                 opt=False,
             )
 

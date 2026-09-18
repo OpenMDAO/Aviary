@@ -97,12 +97,12 @@ def process_guess_var(val, key, phase):
     if not isinstance(val, float):
         # If val is an array of values
         if len(val) > 1:
-            # Get the shape of the val array
-            shape = np.shape(val)
-
             # Generate an array of evenly spaced values between -1 and 1,
             # reshaping to match the shape of the val array
-            xs = np.linspace(-1, 1, num=np.prod(shape)).reshape(shape)
+
+            # Only the first axis holds the interpolation nodes; any remaining axes
+            # are the variable's own shape, such as one throttle per engine type.
+            xs = np.linspace(-1, 1, num=np.shape(val)[0])
 
             # Check if the key indicates a control or state variable
             if 'controls:' in key or 'states:' in key:
