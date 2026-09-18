@@ -20,7 +20,7 @@ orphan: true
 - [engine_deck_conversion_cmd](utils/engine_deck_conversion_cmd.md)
 - [fortran_to_aviary](utils/fortran_to_aviary.md)
 - [functions](utils/functions.md)
-- [math](utils/math.md)
+- [math_utils](utils/math_utils.md)
 - [merge_hierarchies](utils/merge_hierarchies.md)
 - [merge_variable_metadata](utils/merge_variable_metadata.md)
 - [named_values](utils/named_values.md)

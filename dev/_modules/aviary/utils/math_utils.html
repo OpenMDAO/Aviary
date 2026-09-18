@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>aviary.utils.math</title>
+    <title>aviary.utils.math_utils</title>
   
   
   
@@ -61,7 +61,7 @@
     <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/aviary/utils/math';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/aviary/utils/math_utils';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <script src="../../../_static/version_switcher.js?v=ec96bb6f"></script>
     <script src="../../../_static/collapsible_headers.js?v=13c9d35c"></script>
@@ -430,7 +430,7 @@
       
       
       
-      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2F_modules/aviary/utils/math.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2F_modules/aviary/utils/math_utils.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -500,7 +500,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for aviary.utils.math</h1><div class="highlight"><pre>
+  <h1>Source code for aviary.utils.math_utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Smooth functions and their derivatives.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -509,7 +509,7 @@
 
 
 <div class="viewcode-block" id="sigmoidX">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.sigmoidX">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.sigmoidX">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sigmoidX</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sigmoid used to smoothly transition between piecewise functions.</span>
@@ -560,7 +560,7 @@
 
 
 <div class="viewcode-block" id="dSigmoidXdx">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.dSigmoidXdx">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.dSigmoidXdx">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">dSigmoidXdx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Derivative of sigmoid function.</span>
@@ -609,7 +609,7 @@
 
 
 <div class="viewcode-block" id="smooth_min">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.smooth_min">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.smooth_min">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">smooth_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">100.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Smooth approximation of the min function using the log-sum-exp trick.</span>
@@ -629,7 +629,7 @@
 
 
 <div class="viewcode-block" id="d_smooth_min">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.d_smooth_min">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.d_smooth_min">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">d_smooth_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">100.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Derivative of function smooth_min(x)</span>
@@ -650,7 +650,7 @@
 
 
 <div class="viewcode-block" id="smooth_max">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.smooth_max">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.smooth_max">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">smooth_max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Smooth approximation of the min function using the log-sum-exp trick.</span>
@@ -673,7 +673,7 @@
 
 
 <div class="viewcode-block" id="d_smooth_max">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.d_smooth_max">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.d_smooth_max">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">d_smooth_max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Derivative of function smooth_min(x)</span>
@@ -697,7 +697,7 @@
 
 
 <div class="viewcode-block" id="sin_int4">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.sin_int4">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.sin_int4">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sin_int4</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Define a smooth, differentialbe approximation to the &#39;int&#39; function.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">sin_int</span><span class="p">(</span><span class="n">sin_int</span><span class="p">(</span><span class="n">sin_int</span><span class="p">(</span><span class="n">sin_int</span><span class="p">(</span><span class="n">val</span><span class="p">))))</span> <span class="o">-</span> <span class="mf">0.5</span></div>
@@ -705,7 +705,7 @@
 
 
 <div class="viewcode-block" id="dydx_sin_int4">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.dydx_sin_int4">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.dydx_sin_int4">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">dydx_sin_int4</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Define the derivative (dy/dx) of sin_int4, at x = val.&quot;&quot;&quot;</span>
     <span class="n">y0</span> <span class="o">=</span> <span class="n">sin_int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
@@ -726,7 +726,7 @@
 <span class="c1"># &#39;int&#39; function can be approximated by recursively applying this sin function</span>
 <span class="c1"># which makes a smooth, differentialbe function (is there a good one?)</span>
 <div class="viewcode-block" id="sin_int">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.sin_int">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.sin_int">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sin_int</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Define one step in approximating the &#39;int&#39; function with a smooth,</span>
@@ -739,7 +739,7 @@
 
 
 <div class="viewcode-block" id="dydx_sin_int">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.dydx_sin_int">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.dydx_sin_int">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">dydx_sin_int</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Define the derivative (dy/dx) of sin_int, at x = val.&quot;&quot;&quot;</span>
     <span class="n">dydx</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">val</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">))</span>
@@ -749,7 +749,7 @@
 
 
 <div class="viewcode-block" id="smooth_int_tanh">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.smooth_int_tanh">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.smooth_int_tanh">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">smooth_int_tanh</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Smooth approximation of int(x) using tanh.</span>
@@ -764,7 +764,7 @@
 
 
 <div class="viewcode-block" id="d_smooth_int_tanh">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math.html#aviary.utils.math.d_smooth_int_tanh">[docs]</a>
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.d_smooth_int_tanh">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">d_smooth_int_tanh</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Smooth approximation of int(x) using tanh.</span>

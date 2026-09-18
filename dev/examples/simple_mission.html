@@ -652,11 +652,6 @@ This command normally needs the name of the aircraft csv file and phase_info fil
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1789413924.280124] [runnervmlun5p:5051 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55db1facba80 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1789413924.280477] [runnervmlun5p:5051 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-[runnervmlun5p:05051] pml_ucx.c:313  Error: Failed to create UCP worker
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
                      variables with only lower bounds:       93
                 variables with lower and upper bounds:        3
@@ -671,12 +666,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813638330255200e+00    1.3813638330255200e+00
-Dual infeasibility......:   3.1079969232322004e-08    3.1079969232322004e-08
-Constraint violation....:   6.2708775382826036e-15    6.2708775382826036e-15
+Objective...............:   1.3813638330255271e+00    1.3813638330255271e+00
+Dual infeasibility......:   3.1079970516017429e-08    3.1079970516017429e-08
+Constraint violation....:   5.1050925691974924e-15    5.1050925691974924e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433395960e-08    9.0922310433395960e-08
-Overall NLP error.......:   9.0922310433395960e-08    9.0922310433395960e-08
+Complementarity.........:   9.0922310433395629e-08    9.0922310433395629e-08
+Overall NLP error.......:   9.0922310433395629e-08    9.0922310433395629e-08
 
 
 Number of objective function evaluations             = 16
@@ -686,7 +681,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 3.805
+Total seconds in IPOPT                               = 4.506
 
 EXIT: Optimal Solution Found.
 
@@ -727,11 +722,6 @@ The following command explicitly points to the files used in the above run of th
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1789413939.100718] [runnervmlun5p:5062 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x564c87532d30 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1789413939.101064] [runnervmlun5p:5062 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-[runnervmlun5p:05062] pml_ucx.c:313  Error: Failed to create UCP worker
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
                      variables with only lower bounds:       93
                 variables with lower and upper bounds:        3
@@ -747,11 +737,11 @@ Total number of inequality constraints...............:       61
 
                                    (scaled)                 (unscaled)
 Objective...............:   1.3813638330255200e+00    1.3813638330255200e+00
-Dual infeasibility......:   3.1079969655594532e-08    3.1079969655594532e-08
-Constraint violation....:   6.2708775382826036e-15    6.2708775382826036e-15
+Dual infeasibility......:   3.1079968878438415e-08    3.1079968878438415e-08
+Constraint violation....:   4.8399968501611954e-15    4.8399968501611954e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433395377e-08    9.0922310433395377e-08
-Overall NLP error.......:   9.0922310433395377e-08    9.0922310433395377e-08
+Complementarity.........:   9.0922310433402048e-08    9.0922310433402048e-08
+Overall NLP error.......:   9.0922310433402048e-08    9.0922310433402048e-08
 
 
 Number of objective function evaluations             = 16
@@ -761,7 +751,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 3.723
+Total seconds in IPOPT                               = 4.468
 
 EXIT: Optimal Solution Found.
 
@@ -802,13 +792,6 @@ Optimization Problem -- Optimization using pyOpt_sparse
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1789413952.257962] [runnervmlun5p:5032 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x5634c29ce770 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1789413952.258307] [runnervmlun5p:5032 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervmlun5p:05032] pml_ucx.c:313  Error: Failed to create UCP worker
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
                      variables with only lower bounds:       93
                 variables with lower and upper bounds:        3
@@ -823,12 +806,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813638330255229e+00    1.3813638330255229e+00
-Dual infeasibility......:   3.1079967331065127e-08    3.1079967331065127e-08
-Constraint violation....:   5.7169573576921805e-15    5.7169573576921805e-15
+Objective...............:   1.3813638330255185e+00    1.3813638330255185e+00
+Dual infeasibility......:   3.1079968753538325e-08    3.1079968753538325e-08
+Constraint violation....:   4.8399968501611954e-15    4.8399968501611954e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433408572e-08    9.0922310433408572e-08
-Overall NLP error.......:   9.0922310433408572e-08    9.0922310433408572e-08
+Complementarity.........:   9.0922310433402484e-08    9.0922310433402484e-08
+Overall NLP error.......:   9.0922310433402484e-08    9.0922310433402484e-08
 
 
 Number of objective function evaluations             = 16
@@ -838,7 +821,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 3.696
+Total seconds in IPOPT                               = 4.524
 
 EXIT: Optimal Solution Found.
 

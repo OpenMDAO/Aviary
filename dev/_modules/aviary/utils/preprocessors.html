@@ -641,7 +641,7 @@
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/preprocessors.html#aviary.utils.preprocessors.preprocess_fuselage_layout">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">preprocess_fuselage_layout</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set option values that are needed for fuselage layout computationbut are not direct inputs.</span>
+<span class="sd">    Set default values that are needed for fuselage layout computation but not provided by the user.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -668,260 +668,395 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">simple_layout</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SIMPLE_LAYOUT</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">simple_layout</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-        <span class="c1"># Check seat widths are set</span>
-        <span class="k">if</span> <span class="n">mass_method</span> <span class="o">==</span> <span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">:</span>
-            <span class="c1"># initialize number of seat abreast</span>
-            <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_BUSINESS</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                <span class="n">num_seat_abreast_business</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
-                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_BUSINESS</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">num_seat_abreast_business</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_BUSINESS</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                        <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS not &#39;</span>
-                        <span class="s1">&#39;set, assuming default 0.&#39;</span>
-                    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">simple_layout</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">num_economy_class_pax</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num_economy_class_pax</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_BUSINESS_CLASS</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">num_business_class_pax</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_BUSINESS_CLASS</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num_business_class_pax</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_FIRST_CLASS</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">num_first_class_pax</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_FIRST_CLASS</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num_first_class_pax</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># flags for whether values were user inputs.</span>
+        <span class="n">num_seat_abreast_economy_set_user</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">num_seat_abreast_business_set_user</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">num_seat_abreast_first_set_user</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">seat_width_economy_set_user</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">seat_width_business_set_user</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">seat_width_first_set_user</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">seat_pitch_economy_set_user</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">seat_pitch_business_set_user</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">seat_pitch_first_set_user</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Sanity check on provided values #</span>
+
+        <span class="c1"># Only FLOPS cares about seats abreast</span>
+        <span class="k">if</span> <span class="n">mass_method</span> <span class="ow">is</span> <span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_ECONOMY</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+                <span class="n">num_seat_abreast_economy_set_user</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
                     <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_ECONOMY</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span>
                 <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_ECONOMY</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                        <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY not &#39;</span>
-                        <span class="s1">&#39;set, assuming default 0.&#39;</span>
+                <span class="k">if</span> <span class="n">num_economy_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num_seat_abreast_economy</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY (&#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">num_seat_abreast_economy</span><span class="si">}</span><span class="s1">) must be greater than 0.&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_BUSINESS</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+                <span class="n">num_seat_abreast_business_set_user</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">num_seat_abreast_business</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_BUSINESS</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">num_business_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num_seat_abreast_business</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS (&#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">num_seat_abreast_business</span><span class="si">}</span><span class="s1">) must be greater than 0.&#39;</span>
                     <span class="p">)</span>
             <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_FIRST</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+                <span class="n">num_seat_abreast_first_set_user</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="n">num_seat_abreast_first</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
                     <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_FIRST</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span>
                 <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">num_seat_abreast_first</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_FIRST</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">num_first_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num_seat_abreast_first</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST (&#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">num_seat_abreast_first</span><span class="si">}</span><span class="s1">) must be greater than 0.&#39;</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># Seat Widths</span>
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_ECONOMY</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">seat_width_economy_set_user</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">seat_width_economy</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_ECONOMY</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">num_economy_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">seat_width_economy</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_ECONOMY (</span><span class="si">{</span><span class="n">seat_width_economy</span><span class="si">}</span><span class="s1">) must be &#39;</span>
+                    <span class="s1">&#39;greater than 0.&#39;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_BUSINESS</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">seat_width_business_set_user</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">seat_width_business</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_BUSINESS</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">num_business_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">seat_width_business</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_BUSINESS (</span><span class="si">{</span><span class="n">seat_width_business</span><span class="si">}</span><span class="s1">) must be &#39;</span>
+                    <span class="s1">&#39;greater than 0.&#39;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_FIRST</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">seat_width_first_set_user</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">seat_width_first</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_FIRST</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">num_first_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">seat_width_first</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_FIRST (</span><span class="si">{</span><span class="n">seat_width_first</span><span class="si">}</span><span class="s1">) must be greater &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;than 0.&#39;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Seat Pitches</span>
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_ECONOMY</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">seat_pitch_economy_set_user</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">seat_pitch_economy</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_ECONOMY</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">num_economy_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">seat_pitch_economy</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY (</span><span class="si">{</span><span class="n">seat_pitch_economy</span><span class="si">}</span><span class="s1">) &#39;</span>
+                    <span class="s1">&#39;must be greater than 0.&#39;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_BUSINESS</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">seat_pitch_business_set_user</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">seat_pitch_business</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_BUSINESS</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">num_business_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">seat_pitch_business</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS (</span><span class="si">{</span><span class="n">seat_pitch_business</span><span class="si">}</span><span class="s1">) &#39;</span>
+                    <span class="s1">&#39;must be greater than 0.&#39;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_FIRST</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">seat_pitch_first_set_user</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">seat_pitch_first</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_FIRST</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">num_first_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">seat_pitch_first</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST (</span><span class="si">{</span><span class="n">seat_pitch_first</span><span class="si">}</span><span class="s1">) must &#39;</span>
+                    <span class="s1">&#39;be greater than 0.&#39;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Set correct default values for each legacy code</span>
+        <span class="k">if</span> <span class="n">mass_method</span> <span class="o">==</span> <span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">:</span>
+            <span class="c1"># Defaults based on aircraft type and size:</span>
+            <span class="k">if</span> <span class="n">design_type</span> <span class="o">==</span> <span class="n">AircraftTypes</span><span class="o">.</span><span class="n">TRANSPORT</span><span class="p">:</span>
+                <span class="c1"># Set defaults for seats abreast:</span>
+                <span class="c1"># Less than 60 pax</span>
+                <span class="k">if</span> <span class="n">num_economy_class_pax</span> <span class="o">&lt;</span> <span class="mi">60</span><span class="p">:</span>
+                    <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="mi">5</span>
+                    <span class="n">num_seat_abreast_business</span> <span class="o">=</span> <span class="mi">4</span>
+                    <span class="n">num_seat_abreast_first</span> <span class="o">=</span> <span class="mi">4</span>
+                <span class="c1"># 60-200 pax</span>
+                <span class="k">elif</span> <span class="n">num_economy_class_pax</span> <span class="o">&lt;=</span> <span class="mi">200</span><span class="p">:</span>
+                    <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="mi">6</span>
+                    <span class="n">num_seat_abreast_business</span> <span class="o">=</span> <span class="mi">5</span>
+                    <span class="n">num_seat_abreast_first</span> <span class="o">=</span> <span class="mi">4</span>
+                <span class="c1"># Greater than 200 pax</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="mi">8</span>
+                    <span class="k">if</span> <span class="n">num_seat_abreast_economy_set_user</span><span class="p">:</span>
+                        <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_ECONOMY</span>
+                        <span class="p">)</span>
+                    <span class="c1"># Default is num_abreast_economy - 2</span>
+                    <span class="n">num_seat_abreast_first</span> <span class="o">=</span> <span class="n">num_seat_abreast_economy</span> <span class="o">-</span> <span class="mi">2</span>
+
+                    <span class="c1"># Business class not originally modeled in FLOPS fuselage (oversight?), assuming</span>
+                    <span class="c1"># same as first class</span>
+                    <span class="n">num_seat_abreast_business</span> <span class="o">=</span> <span class="n">num_seat_abreast_economy</span> <span class="o">-</span> <span class="mi">2</span>
+
+                <span class="c1"># set defaults for seat pitch</span>
+                <span class="n">seat_pitch_economy</span> <span class="o">=</span> <span class="mi">34</span>
+                <span class="n">seat_pitch_first</span> <span class="o">=</span> <span class="mi">38</span>
+                <span class="c1"># Not modeled in FLOPS, assuming in-between economy and first</span>
+                <span class="n">seat_pitch_business</span> <span class="o">=</span> <span class="mi">36</span>
+
+                <span class="c1"># set defaults for seat width</span>
+                <span class="n">seat_width_economy</span> <span class="o">=</span> <span class="mi">20</span>
+                <span class="n">seat_width_first</span> <span class="o">=</span> <span class="mi">25</span>
+                <span class="c1"># Not modeled in FLOPS, assuming in-between economy and first</span>
+                <span class="n">seat_width_business</span> <span class="o">=</span> <span class="mi">22</span>
+
+            <span class="k">elif</span> <span class="n">design_type</span> <span class="o">==</span> <span class="n">AircraftTypes</span><span class="o">.</span><span class="n">BLENDED_WING_BODY</span><span class="p">:</span>
+                <span class="c1"># BWB defaults for seats abreast:</span>
+                <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="mi">6</span>
+                <span class="n">num_seat_abreast_business</span> <span class="o">=</span> <span class="mi">5</span>
+                <span class="n">num_seat_abreast_first</span> <span class="o">=</span> <span class="mi">4</span>
+
+                <span class="c1"># BWB defaults for seat pitch</span>
+                <span class="n">seat_pitch_economy</span> <span class="o">=</span> <span class="mi">32</span>
+                <span class="n">seat_pitch_business</span> <span class="o">=</span> <span class="mi">39</span>
+                <span class="n">seat_pitch_first</span> <span class="o">=</span> <span class="mi">61</span>
+
+                <span class="c1"># FLOPS BWB does not use seat width</span>
+
+            <span class="c1"># Set default values and warn user</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">num_seat_abreast_economy_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_ECONOMY</span><span class="p">,</span>
+                    <span class="n">num_seat_abreast_economy</span><span class="p">,</span>
+                    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
                 <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
                     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                        <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST &#39;</span>
-                        <span class="s1">&#39;not set, assuming default 0.&#39;</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY not set, using FLOPS &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;default of </span><span class="si">{</span><span class="n">num_seat_abreast_economy</span><span class="si">}</span><span class="s1">.&#39;</span>
                     <span class="p">)</span>
-            <span class="k">if</span> <span class="n">design_type</span> <span class="o">==</span> <span class="n">AircraftTypes</span><span class="o">.</span><span class="n">TRANSPORT</span><span class="p">:</span>
-                <span class="c1"># initialize seat width</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_BUSINESS</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_BUSINESS</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, &#39;</span>
-                            <span class="s1">&#39;assuming default 22.0 inches.&#39;</span>
-                        <span class="p">)</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_ECONOMY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_ECONOMY</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, &#39;</span>
-                            <span class="s1">&#39;assuming default 20.0 inches.&#39;</span>
-                        <span class="p">)</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_FIRST</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_FIRST</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, &#39;</span>
-                            <span class="s1">&#39;assuming default 25.0 inches.&#39;</span>
-                        <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">num_seat_abreast_business_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_BUSINESS</span><span class="p">,</span>
+                    <span class="n">num_seat_abreast_business</span><span class="p">,</span>
+                    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS not set, using FLOPS &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;default of </span><span class="si">{</span><span class="n">num_seat_abreast_business</span><span class="si">}</span><span class="s1">.&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">num_seat_abreast_first_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_FIRST</span><span class="p">,</span>
+                    <span class="n">num_seat_abreast_first</span><span class="p">,</span>
+                    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST not set, using FLOPS &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;default of </span><span class="si">{</span><span class="n">num_seat_abreast_first</span><span class="si">}</span><span class="s1">.&#39;</span>
+                    <span class="p">)</span>
 
-                <span class="c1"># set number of seat abreast</span>
-                <span class="k">if</span> <span class="n">num_economy_class_pax</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">num_seat_abreast_economy</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_ECONOMY</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span>
-                        <span class="p">)</span>
-                        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY &#39;</span>
-                                <span class="s1">&#39;not set, assuming default 8.&#39;</span>
-                            <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">num_seat_abreast_first</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
-                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_ECONOMY</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span>
-                        <span class="p">)</span>
-                        <span class="n">num_seat_abreast_first</span> <span class="o">=</span> <span class="n">num_seat_abreast_economy</span> <span class="o">-</span> <span class="mi">2</span>
-                        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_FIRST</span><span class="p">,</span>
-                            <span class="n">num_seat_abreast_first</span><span class="p">,</span>
-                        <span class="p">)</span>
-                        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST &#39;</span>
-                                <span class="sa">f</span><span class="s1">&#39;not set, assuming </span><span class="si">{</span><span class="n">num_seat_abreast_first</span><span class="si">}</span><span class="s1">.&#39;</span>
-                            <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_BUSINESS</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                        <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
-                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_ECONOMY</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span>
-                        <span class="p">)</span>
-                        <span class="n">num_seat_abreast_business</span> <span class="o">=</span> <span class="n">num_seat_abreast_economy</span> <span class="o">-</span> <span class="mi">2</span>
-                        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_BUSINESS</span><span class="p">,</span>
-                            <span class="n">num_seat_abreast_business</span><span class="p">,</span>
-                        <span class="p">)</span>
-                        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS &#39;</span>
-                                <span class="sa">f</span><span class="s1">&#39;not set, assuming </span><span class="si">{</span><span class="n">num_seat_abreast_business</span><span class="si">}</span><span class="s1">.&#39;</span>
-                            <span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">num_seat_abreast_business</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num_business_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">num_seat_abreast_business</span> <span class="o">=</span> <span class="mi">5</span>
+            <span class="k">if</span> <span class="n">design_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">AircraftTypes</span><span class="o">.</span><span class="n">BLENDED_WING_BODY</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_width_economy_set_user</span><span class="p">:</span>
                     <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-                        <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_BUSINESS</span><span class="p">,</span> <span class="mi">5</span>
+                        <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_ECONOMY</span><span class="p">,</span> <span class="n">seat_width_economy</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span>
                     <span class="p">)</span>
                     <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
                         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS &#39;</span>
-                            <span class="sa">f</span><span class="s1">&#39;not set, assuming 5.&#39;</span>
+                            <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, using FLOPS default of &#39;</span>
+                            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">seat_width_economy</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
                         <span class="p">)</span>
-                <span class="k">if</span> <span class="n">num_seat_abreast_economy</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">num_economy_class_pax</span> <span class="o">&lt;</span> <span class="mi">60</span><span class="p">:</span>
-                    <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="mi">5</span>
-                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_ECONOMY</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY &#39;</span>
-                            <span class="sa">f</span><span class="s1">&#39;not set, assuming 5.&#39;</span>
-                        <span class="p">)</span>
-                <span class="k">elif</span> <span class="n">num_seat_abreast_economy</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num_economy_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="mi">6</span>
-                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_ECONOMY</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY &#39;</span>
-                            <span class="sa">f</span><span class="s1">&#39;not set, assuming 6.&#39;</span>
-                        <span class="p">)</span>
-                <span class="k">if</span> <span class="n">num_seat_abreast_first</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num_first_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">num_seat_abreast_first</span> <span class="o">=</span> <span class="mi">4</span>
-                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_FIRST</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST &#39;</span>
-                            <span class="sa">f</span><span class="s1">&#39;not set, assuming 4.&#39;</span>
-                        <span class="p">)</span>
-
-                <span class="c1"># set seat pitch</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_BUSINESS</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">num_business_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_BUSINESS</span><span class="p">,</span> <span class="mf">36.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span>
-                        <span class="p">)</span>
-                        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS &#39;</span>
-                                <span class="sa">f</span><span class="s1">&#39;not set, assuming 36 inches.&#39;</span>
-                            <span class="p">)</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_ECONOMY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">num_economy_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_ECONOMY</span><span class="p">,</span> <span class="mf">34.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span>
-                        <span class="p">)</span>
-                        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY &#39;</span>
-                                <span class="sa">f</span><span class="s1">&#39;not set, assuming 34 inches.&#39;</span>
-                            <span class="p">)</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_FIRST</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">num_first_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_FIRST</span><span class="p">,</span> <span class="mf">38.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span>
-                        <span class="p">)</span>
-                        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST &#39;</span>
-                                <span class="sa">f</span><span class="s1">&#39;not set, assuming 38 inches.&#39;</span>
-                            <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">design_type</span> <span class="o">==</span> <span class="n">AircraftTypes</span><span class="o">.</span><span class="n">BLENDED_WING_BODY</span><span class="p">:</span>
-                <span class="c1"># set number of seat abreast</span>
-                <span class="k">if</span> <span class="n">num_seat_abreast_business</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">num_seat_abreast_business</span> <span class="o">=</span> <span class="mi">5</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_width_business_set_user</span><span class="p">:</span>
                     <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-                        <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_BUSINESS</span><span class="p">,</span> <span class="mi">5</span>
+                        <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_BUSINESS</span><span class="p">,</span> <span class="n">seat_width_business</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span>
                     <span class="p">)</span>
                     <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
                         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS &#39;</span>
-                            <span class="sa">f</span><span class="s1">&#39;not set, assuming 5.&#39;</span>
+                            <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, using FLOPS default of &#39;</span>
+                            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">seat_width_business</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
                         <span class="p">)</span>
-                <span class="k">if</span> <span class="n">num_seat_abreast_economy</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">num_seat_abreast_economy</span> <span class="o">=</span> <span class="mi">6</span>
-                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_ECONOMY</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_width_first_set_user</span><span class="p">:</span>
+                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                        <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_FIRST</span><span class="p">,</span> <span class="n">seat_width_first</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span>
+                    <span class="p">)</span>
                     <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
                         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY &#39;</span>
-                            <span class="sa">f</span><span class="s1">&#39;not set, assuming 6.&#39;</span>
-                        <span class="p">)</span>
-                <span class="k">if</span> <span class="n">num_seat_abreast_first</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">num_seat_abreast_first</span> <span class="o">=</span> <span class="mi">4</span>
-                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_SEATS_ABREAST_FIRST</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST &#39;</span>
-                            <span class="sa">f</span><span class="s1">&#39;not set, assuming 4.&#39;</span>
+                            <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, using FLOPS default of &#39;</span>
+                            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">seat_width_first</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
                         <span class="p">)</span>
 
-                <span class="c1"># set seat pitch</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_BUSINESS</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">num_business_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_BUSINESS</span><span class="p">,</span> <span class="mf">39.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span>
-                        <span class="p">)</span>
-                        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS &#39;</span>
-                                <span class="sa">f</span><span class="s1">&#39;not set, assuming 39 inches.&#39;</span>
-                            <span class="p">)</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_ECONOMY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">num_economy_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_ECONOMY</span><span class="p">,</span> <span class="mf">32.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span>
-                        <span class="p">)</span>
-                        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY &#39;</span>
-                                <span class="sa">f</span><span class="s1">&#39;not set, assuming 32 inches.&#39;</span>
-                            <span class="p">)</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_FIRST</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">num_first_class_pax</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-                            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_FIRST</span><span class="p">,</span> <span class="mf">61.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span>
-                        <span class="p">)</span>
-                        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST &#39;</span>
-                                <span class="sa">f</span><span class="s1">&#39;not set, assuming 61 inches.&#39;</span>
-                            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_pitch_economy_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_ECONOMY</span><span class="p">,</span> <span class="n">seat_pitch_economy</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY not set, using FLOPS default &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;of </span><span class="si">{</span><span class="n">seat_pitch_economy</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_pitch_business_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_BUSINESS</span><span class="p">,</span>
+                    <span class="n">seat_pitch_business</span><span class="p">,</span>
+                    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS not set, using FLOPS &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;default of </span><span class="si">{</span><span class="n">seat_pitch_business</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_pitch_first_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_FIRST</span><span class="p">,</span> <span class="n">seat_pitch_first</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST not set, using FLOPS default &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;of </span><span class="si">{</span><span class="n">seat_pitch_first</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
+                    <span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">mass_method</span> <span class="o">==</span> <span class="n">LegacyCode</span><span class="o">.</span><span class="n">GASP</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">design_type</span> <span class="o">==</span> <span class="n">AircraftTypes</span><span class="o">.</span><span class="n">BLENDED_WING_BODY</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_ECONOMY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_ECONOMY</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, &#39;</span>
-                            <span class="s1">&#39;assuming default 20.0 inches.&#39;</span>
-                        <span class="p">)</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_BUSINESS</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_BUSINESS</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, &#39;</span>
-                            <span class="s1">&#39;assuming default 22.0 inches.&#39;</span>
-                        <span class="p">)</span>
-                <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_FIRST</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
-                    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_FIRST</span><span class="p">,</span> <span class="mf">28.0</span><span class="p">,</span> <span class="s1">&#39;inch&#39;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, &#39;</span>
-                            <span class="s1">&#39;assuming default 28.0 inches.&#39;</span>
-                        <span class="p">)</span></div>
+            <span class="c1"># Defaults based on aircraft type and size:</span>
+            <span class="k">if</span> <span class="n">design_type</span> <span class="o">==</span> <span class="n">AircraftTypes</span><span class="o">.</span><span class="n">TRANSPORT</span><span class="p">:</span>
+                <span class="c1"># Transport defaults for seat pitch</span>
+                <span class="c1"># Required input in GASP, here we default to FLOPS value</span>
+                <span class="n">seat_pitch_economy</span> <span class="o">=</span> <span class="mi">34</span>
+                <span class="k">if</span> <span class="n">seat_pitch_economy_set_user</span><span class="p">:</span>
+                    <span class="n">seat_pitch_economy</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                        <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_ECONOMY</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># Default is seat_pitch_economy * 1.25</span>
+                <span class="n">seat_pitch_first</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">seat_pitch_economy</span> <span class="o">*</span> <span class="mf">1.25</span><span class="p">)</span>
+
+                <span class="c1"># GASP doesn&#39;t model separately, assume same as first</span>
+                <span class="n">seat_pitch_business</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">seat_pitch_economy</span> <span class="o">*</span> <span class="mf">1.25</span><span class="p">)</span>
+
+                <span class="c1"># Transport defaults for seat width</span>
+                <span class="c1"># Required input in GASP, here we default to FLOPS value</span>
+                <span class="n">seat_width_economy</span> <span class="o">=</span> <span class="mi">20</span>
+                <span class="k">if</span> <span class="n">seat_width_economy_set_user</span><span class="p">:</span>
+                    <span class="n">seat_width_economy</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                        <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_ECONOMY</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># GASP uses same value as economy</span>
+                <span class="n">seat_width_first</span> <span class="o">=</span> <span class="n">seat_width_economy</span>
+
+                <span class="c1"># GASP doesn&#39;t model separately, assume same as first</span>
+                <span class="n">seat_width_business</span> <span class="o">=</span> <span class="n">seat_width_economy</span>
+
+            <span class="k">elif</span> <span class="n">design_type</span> <span class="o">==</span> <span class="n">AircraftTypes</span><span class="o">.</span><span class="n">BLENDED_WING_BODY</span><span class="p">:</span>
+                <span class="c1"># BWB defaults for seat pitch</span>
+                <span class="c1"># Required input in GASP, here we default to FLOPS value</span>
+                <span class="n">seat_pitch_economy</span> <span class="o">=</span> <span class="mi">32</span>
+                <span class="c1"># Not modeled in GASP, here we use FLOPS economy value (FLOPS BWB business pitch</span>
+                <span class="c1"># greater than GASP BWB first class)</span>
+                <span class="n">seat_pitch_business</span> <span class="o">=</span> <span class="mi">32</span>
+
+                <span class="c1"># Hardcoded GASP default</span>
+                <span class="n">seat_pitch_first</span> <span class="o">=</span> <span class="mi">36</span>
+
+                <span class="c1"># BWB defaults for seat width</span>
+                <span class="c1"># Required input in GASP, here we default to FLOPS transport value</span>
+                <span class="n">seat_width_economy</span> <span class="o">=</span> <span class="mi">20</span>
+
+                <span class="c1"># Not modeled in GASP, here we use FLOPS transport economy value (FLOPS BWB business</span>
+                <span class="c1"># width greater than GASP BWB first class)</span>
+                <span class="n">seat_width_business</span> <span class="o">=</span> <span class="mi">22</span>
+
+                <span class="c1"># Hardcoded GASP default</span>
+                <span class="n">seat_width_first</span> <span class="o">=</span> <span class="mi">28</span>
+
+            <span class="c1"># Set default values and warn user</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_width_economy_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_ECONOMY</span><span class="p">,</span> <span class="n">seat_width_economy</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, using GASP default of &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">seat_width_economy</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_width_business_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_BUSINESS</span><span class="p">,</span> <span class="n">seat_width_business</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, using GASP default of &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">seat_width_business</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_width_first_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuselage</span><span class="o">.</span><span class="n">SEAT_WIDTH_FIRST</span><span class="p">,</span> <span class="n">seat_width_first</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, using GASP default of &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">seat_width_first</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_pitch_economy_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_ECONOMY</span><span class="p">,</span> <span class="n">seat_pitch_economy</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY not set, using GASP default &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;of </span><span class="si">{</span><span class="n">seat_pitch_economy</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_pitch_business_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_BUSINESS</span><span class="p">,</span>
+                    <span class="n">seat_pitch_business</span><span class="p">,</span>
+                    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS not set, using GASP &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;default of </span><span class="si">{</span><span class="n">seat_pitch_business</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">seat_pitch_first_set_user</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">SEAT_PITCH_FIRST</span><span class="p">,</span> <span class="n">seat_pitch_first</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;inch&#39;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST not set, using GASP default &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;of </span><span class="si">{</span><span class="n">seat_pitch_first</span><span class="si">}</span><span class="s1"> inches.&#39;</span>
+                    <span class="p">)</span></div>
 
 
 
@@ -993,7 +1128,7 @@
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
             <span class="c1"># mark that the user provided any information on design passenger count</span>
             <span class="n">design_pax_provided</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">:</span>
                 <span class="n">design_pax_sum_provided</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># default all non-provided passenger info to 0</span>

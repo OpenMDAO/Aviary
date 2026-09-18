@@ -703,13 +703,6 @@ Later in this example, we increase this order which will allow the optimizer to 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1789414082.293536] [runnervmlun5p:5159 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55a15421f8b0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1789414082.293906] [runnervmlun5p:5159 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervmlun5p:05159] pml_ucx.c:313  Error: Failed to create UCP worker
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
   traj.climb_1.t_initial, inds=[0]
 </pre></div>
@@ -729,11 +722,11 @@ Total number of inequality constraints...............:       27
 
                                    (scaled)                 (unscaled)
 Objective...............:   2.5497020995242843e+00    2.5497020995242843e+00
-Dual infeasibility......:   1.7762095520641359e-08    1.7762095520641359e-08
-Constraint violation....:   9.4273189124470108e-15    9.4273189124470108e-15
+Dual infeasibility......:   1.7762093355706143e-08    1.7762093355706143e-08
+Constraint violation....:   1.2580757368254567e-14    1.2580757368254567e-14
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0944744385297456e-08    9.0944744385297456e-08
-Overall NLP error.......:   9.0944744385297456e-08    9.0944744385297456e-08
+Complementarity.........:   9.0944744385311393e-08    9.0944744385311393e-08
+Overall NLP error.......:   9.0944744385311393e-08    9.0944744385311393e-08
 
 
 Number of objective function evaluations             = 28
@@ -743,7 +736,7 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.501
+Total seconds in IPOPT                               = 5.600
 
 EXIT: Optimal Solution Found.
 
@@ -891,12 +884,12 @@ Total number of inequality constraints...............:       27
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5637089674782185e+00    2.5637089674782185e+00
-Dual infeasibility......:   3.9054363624855113e-08    3.9054363624855113e-08
-Constraint violation....:   9.4559636480725139e-15    9.4559636480725139e-15
+Objective...............:   2.5637089674782008e+00    2.5637089674782008e+00
+Dual infeasibility......:   3.9054361862378100e-08    3.9054361862378100e-08
+Constraint violation....:   9.6814635760869607e-15    9.6814635760869607e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0971568541191462e-08    9.0971568541191462e-08
-Overall NLP error.......:   9.0971568541191462e-08    9.0971568541191462e-08
+Complementarity.........:   9.0971568541221095e-08    9.0971568541221095e-08
+Overall NLP error.......:   9.0971568541221095e-08    9.0971568541221095e-08
 
 
 Number of objective function evaluations             = 28
@@ -906,7 +899,7 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.210
+Total seconds in IPOPT                               = 5.266
 
 EXIT: Optimal Solution Found.
 
@@ -949,7 +942,7 @@ Let’s take a look at the fuel burn value:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.01115548698
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.0111554869
 </pre></div>
 </div>
 </div>
@@ -999,12 +992,12 @@ Total number of inequality constraints...............:       27
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 50
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5117428911844155e+00    2.5117428911844155e+00
-Dual infeasibility......:   2.9540184680237791e-03    2.9540184680237791e-03
-Constraint violation....:   8.3009803998989175e-04    8.3009803998989175e-04
+Objective...............:   2.5117428911862052e+00    2.5117428911862052e+00
+Dual infeasibility......:   2.9540184726225176e-03    2.9540184726225176e-03
+Constraint violation....:   8.3009804018810559e-04    8.3009804018810559e-04
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   1.0002893841313072e-05    1.0002893841313072e-05
-Overall NLP error.......:   2.9540184680237791e-03    2.9540184680237791e-03
+Complementarity.........:   1.0002893841386246e-05    1.0002893841386246e-05
+Overall NLP error.......:   2.9540184726225176e-03    2.9540184726225176e-03
 
 
 Number of objective function evaluations             = 69
@@ -1014,10 +1007,7 @@ Number of inequality constraint evaluations          = 69
 Number of equality constraint Jacobian evaluations   = 51
 Number of inequality constraint Jacobian evaluations = 51
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 10.327
-
-EXIT: Maximum Number of Iterations Exceeded.
-
+Total seconds in IPOPT       
 
 Optimization Problem -- Optimization using pyOpt_sparse
 ================================================================================
@@ -1036,7 +1026,7 @@ Optimization Problem -- Optimization using pyOpt_sparse
       Index  Name                                                   Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
           7  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00    4.624204E-05    0.000000E+00         E    9.00000E+100
           8  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00    4.250165E-05    0.000000E+00         E    9.00000E+100
-          9  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00    1.314142E-04    0.000000E+00         E    9.00000E+100
+          9  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00    1.314141E-04    0.000000E+00         E    9.00000E+100
          10  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00    3.006290E-05    0.000000E+00         E    9.00000E+100
          11  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00   -2.171195E-06    0.000000E+00         E    9.00000E+100
          12  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00   -2.167604E-06    0.000000E+00         E    9.00000E+100
@@ -1057,6 +1047,10 @@ Optimization Problem -- Optimization using pyOpt_sparse
          61  traj.descent_1.collocation_constraint.defects:distance    e   0.000000E+00   -7.332919E-05    0.000000E+00         E    9.00000E+100
          62  traj.descent_1.collocation_constraint.defects:distance    e   0.000000E+00   -4.262566E-05    0.000000E+00         E    9.00000E+100
          63  traj.descent_1.collocation_constraint.defects:distance    e   0.000000E+00   -7.515343E-06    0.000000E+00         E    9.00000E+100
+
+                        = 12.885
+
+EXIT: Maximum Number of Iterations Exceeded.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 
@@ -1082,7 +1076,7 @@ Aviary run failed. See the dashboard for more details.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10032.2969848969
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10032.296984905006
 </pre></div>
 </div>
 </div>
