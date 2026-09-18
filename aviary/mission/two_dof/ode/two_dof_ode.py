@@ -286,4 +286,39 @@ class TwoDOFODE(_BaseODE):
             propulsion_group.nonlinear_solver.options['atol'] = atol
             propulsion_group.nonlinear_solver.options['rtol'] = rtol
             propulsion_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-            propulsion_group.linear_solver = om.DirectSolver(assemble_jac=True)
+
+    def add_excess_rate_comps(self, nn):
+        """Add SpecificEnergyRate and AltitudeRate components."""
+        self.add_subsystem(
+            name='SPECIFIC_ENERGY_RATE_EXCESS',
+            subsys=SpecificEnergyRate(num_nodes=nn),
+            promotes_inputs=[
+                Dynamic.Mission.VELOCITY,
+                Dynamic.Vehicle.MASS,
+                (
+                    Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                    Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
+                ),
+                Dynamic.Vehicle.DRAG,
+            ],
+            promotes_outputs=[
+                (
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+                )
+            ],
+        )
+
+        self.add_subsystem(
+            name='ALTITUDE_RATE_MAX',
+            subsys=AltitudeRate(num_nodes=nn),
+            promotes_inputs=[
+                (
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE,
+                    Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+                ),
+                Dynamic.Mission.VELOCITY_RATE,
+                Dynamic.Mission.VELOCITY,
+            ],
+            promotes_outputs=[(Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)],
+        )
