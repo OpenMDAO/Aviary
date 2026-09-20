@@ -9,11 +9,12 @@ from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.mission.solved_two_dof.ode.unsteady_solved_ode import UnsteadySolvedODE
 from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import get_path
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import SpeedType, Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
 @use_tempdirs
@@ -27,7 +28,16 @@ class TestUnsteadySolvedODE(unittest.TestCase):
 
         p = om.Problem()
 
-        aviary_options = get_option_defaults()
+        # Explicit options for the GASP-based unsteady solved ODE.
+        aviary_options = AviaryValues()
+        aviary_options.set_val(
+            Aircraft.Engine.DATA_FILE, get_path('models/engines/turbofan_23k_1.csv')
+        )
+        aviary_options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 28690.0, units='lbf')
+        aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+        aviary_options.set_val(Settings.VERBOSITY, Verbosity.QUIET)
+
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', [build_engine_deck(aviary_options)]
         )

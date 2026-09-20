@@ -5,8 +5,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.phases.build_landing import Landing
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -27,7 +27,7 @@ class LandingPhaseTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.0, units='ft**2')
         prob.model.set_input_defaults(Mission.Landing.LIFT_COEFFICIENT_MAX, val=3, units='unitless')
 
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         setup_model_options(prob, options)
         prob.setup(force_alloc_complex=True)

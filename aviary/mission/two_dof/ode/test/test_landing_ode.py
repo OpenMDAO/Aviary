@@ -27,7 +27,6 @@ class DLandTestCase(unittest.TestCase):
         self.prob = om.Problem()
 
         # Explicit options for the GASP-based landing ODE.
-        # Replaces get_option_defaults() so this test's dependencies are visible.
         options = AviaryValues()
         options.set_val(Aircraft.Engine.DATA_FILE, get_path('models/engines/turbofan_23k_1.csv'))
         options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 28690.0, units='lbf')
