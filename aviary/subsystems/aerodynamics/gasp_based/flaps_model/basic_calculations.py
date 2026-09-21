@@ -77,7 +77,10 @@ class BasicFlapsGeometry(om.ExplicitComponent):
     def setup_partials(self):
         # output partials
         self.declare_partials(
-            'VLAM8', [Aircraft.Wing.SWEEP], dependent=True, method='cs', step=1e-8
+            'VLAM8',
+            [Aircraft.Wing.SWEEP],
+            dependent=True,
+            method='cs',
         )
         self.declare_partials(
             'VDEL4',
@@ -89,7 +92,6 @@ class BasicFlapsGeometry(om.ExplicitComponent):
             ],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
         self.declare_partials(
             'VDEL5',
@@ -101,10 +103,12 @@ class BasicFlapsGeometry(om.ExplicitComponent):
             ],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
         self.declare_partials(
-            'VLAM9', [Aircraft.Wing.SLAT_CHORD_RATIO], dependent=True, method='cs', step=1e-8
+            'VLAM9',
+            [Aircraft.Wing.SLAT_CHORD_RATIO],
+            dependent=True,
+            method='cs',
         )
         self.declare_partials(
             Aircraft.Wing.SLAT_SPAN_RATIO,
@@ -116,14 +120,12 @@ class BasicFlapsGeometry(om.ExplicitComponent):
             ],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
         self.declare_partials(
             'chord_to_body_ratio',
             [Aircraft.Wing.ROOT_CHORD, Aircraft.Fuselage.LENGTH],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
         self.declare_partials(
             'body_to_span_ratio',
@@ -135,14 +137,12 @@ class BasicFlapsGeometry(om.ExplicitComponent):
             ],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
         self.declare_partials(
             'VLAM12',
             [Aircraft.Wing.LEADING_EDGE_SWEEP],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
 
     def compute(self, inputs, outputs):
@@ -228,7 +228,6 @@ class FlapsDeflectionRatios(om.ExplicitComponent):
             ['slat_defl', Aircraft.Wing.OPTIMUM_SLAT_DEFLECTION],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
         self.declare_partials(
             'flap_defl_ratio', ['flap_defl', Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION], method='cs'

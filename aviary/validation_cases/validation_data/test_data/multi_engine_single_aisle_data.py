@@ -199,7 +199,7 @@ engine_2_inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
 engine_2_inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 engine_2_inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
 engine_2_inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
-engine_2_inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
+engine_2_inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)
 engine_2_inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lb/h')
 engine_2_inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
 engine_2_inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
@@ -361,7 +361,7 @@ outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wette
 
 outputs.set_val(
     Aircraft.Nacelle.TOTAL_WETTED_AREA,
-    2 * nacelle_wetted_area,
+    2 * nacelle_wetted_area[0],
     nacelle_wetted_area_units,
 )
 

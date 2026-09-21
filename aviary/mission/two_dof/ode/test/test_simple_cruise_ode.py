@@ -26,10 +26,13 @@ class CruiseODETestCase(unittest.TestCase):
             for k in ['propulsion', 'aerodynamics']
         ]
 
+        subsystem_options = {'aerodynamics': {'method': 'cruise', 'output_alpha': True}}
+
         self.prob.model = SimpleCruiseODE(
             num_nodes=2,
             aviary_options=aviary_options,
             subsystems=default_mission_subsystems,
+            subsystem_options=subsystem_options,
         )
 
         self.prob.model.set_input_defaults(

@@ -29,8 +29,13 @@ class AccelerationODETestCase(unittest.TestCase):
             for k in ['propulsion', 'aerodynamics']
         ]
 
+        subsystem_options = {'aerodynamics': {'method': 'cruise', 'output_alpha': True}}
+
         self.sys = self.prob.model = AccelODE(
-            num_nodes=2, aviary_options=aviary_options, subsystems=default_mission_subsystems
+            num_nodes=2,
+            aviary_options=aviary_options,
+            subsystems=default_mission_subsystems,
+            subsystem_options=subsystem_options,
         )
 
     def test_accel(self):

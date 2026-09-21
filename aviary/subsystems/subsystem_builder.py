@@ -43,9 +43,9 @@ class SubsystemBuilder(ABC):
         self, aviary_inputs: AviaryValues, user_options: dict, subsystem_options: dict
     ) -> bool:
         """
-        Return True if the mission subsystem needs to be in the solver loop in mission, otherwise
-        return False. Aviary will only place it in the solver loop when True. The default is
-        True.
+        Return True if the mission subsystem needs to be in the solver loop in the mission ODE,
+        otherwise return False. Aviary will only place it in the solver loop when True. The default
+        is False.
 
         Parameters
         ----------
@@ -57,7 +57,7 @@ class SubsystemBuilder(ABC):
             Dictionary of optional arguments for this subsystem in this phase.
 
         """
-        return True
+        return False
 
     def build_pre_mission(
         self, aviary_inputs: AviaryValues | None = None, subsystem_options: dict | None = None
