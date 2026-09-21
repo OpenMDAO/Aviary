@@ -496,7 +496,7 @@ class AviaryGroup(om.Group):
             if phase not in ('pre_mission', 'post_mission'):
                 try:
                     method = mission[phase]['subsystem_options']['aerodynamics']['method']
-                    # This catches "tabular", "tabular_cruise", and "tabular_low_speed".
+                    # Tabular includes "tabular", "tabular_cruise", and "tabular_low_speed".
                     if 'tabular' not in method:
                         all_tabular = False
                         break
