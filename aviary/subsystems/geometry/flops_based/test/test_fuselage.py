@@ -52,6 +52,8 @@ class DetailedCabinLayoutTest(unittest.TestCase):
 
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 158, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4)
         options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
 
         prob.model.add_subsystem(
@@ -59,6 +61,8 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 25, units='inch')
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20, units='inch')
+        prob.model.set_input_defaults(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, 'inch')
+        prob.model.set_input_defaults(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61, 'inch')
         setup_model_options(prob, options)
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
@@ -75,7 +79,7 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         assert_near_equal(fuselage_height, 13.09, tolerance=1e-9)
 
     def test_case2(self):
-        """with business class (modeled from Boeing 777-300ER)"""
+        """With business class (modeled from Boeing 777-300ER)."""
         prob = self.prob
         options = self.aviary_options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -93,8 +97,8 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         )
         setup_model_options(prob, options)
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 83, units='inch')
         prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 62, units='inch')
+        prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39, units='inch')
         prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
         prob.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 22, units='inch')
         prob.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 21, units='inch')
@@ -215,7 +219,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         assert_near_equal(root_chord, 38.5 / 0.7, tolerance=1e-9)
 
     def test_case2(self):
-        """bwb300_baseline"""
+        """bwb300_baseline."""
         prob = self.prob
         options = self.aviary_options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -266,7 +270,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         assert_near_equal(root_chord, 38.5 / 0.7, tolerance=1e-9)
 
     def test_case3(self):
-        """bwb300_baseline, MAX_NUM_BAYS=4, MAX_BAY_WIDTH=10.0"""
+        """bwb300_baseline, MAX_NUM_BAYS=4, MAX_BAY_WIDTH=10.0."""
         prob = self.prob
         options = self.aviary_options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -354,3 +358,6 @@ class BWBFuselagePrelimTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = DetailedCabinLayoutTest()
+    # test.setUp()
+    # test.test_case1()

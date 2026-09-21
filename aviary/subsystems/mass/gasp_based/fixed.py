@@ -6,7 +6,7 @@ from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.gasp_based.control import ControlMassGroup
 from aviary.subsystems.mass.gasp_based.engine import EngineMassGroup
 from aviary.subsystems.mass.gasp_based.landing import LandingGearMassGroup
-from aviary.utils.math import dSigmoidXdx, sigmoidX
+from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import FlapType, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
