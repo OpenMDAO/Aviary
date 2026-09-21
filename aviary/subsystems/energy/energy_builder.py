@@ -11,14 +11,16 @@ CoreEnergyBuilder : the interface for Aviary's core energy subsystem builder
 # import warnings
 
 import openmdao.api as om
+from openmdao.core.system import System
 
 from aviary.mission.utils import separate_reserve_phases
+from aviary.subsystems.energy.flops_based.flops_tank import FuelTankFLOPS
 from aviary.subsystems.energy.fuel_summation import FuelSummationGroup
+from aviary.subsystems.energy.gasp_based.gasp_tank import FuelTankGASP
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
-
-# from aviary.utils.aviary_values import AviaryValues
-# from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.variables import Mission
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.variables import Dynamic, Mission, Settings
 
 
 class EnergyBuilder(SubsystemBuilder):
@@ -37,13 +39,29 @@ class EnergyBuilder(SubsystemBuilder):
 class CoreEnergyBuilder(EnergyBuilder):
     """Core energy subsystem builder."""
 
+    def build_pre_mission(
+        self, aviary_inputs: AviaryValues | None = None, subsystem_options: dict | None = None
+    ) -> None | System:
+        if aviary_inputs.get_val(Settings.MASS_METHOD) is LegacyCode.FLOPS:
+            tank = FuelTankFLOPS(meta_data=self.meta_data)
+            # TODO subsystem options needs sub-dict like propulsion
+            return tank.build_pre_mission(
+                aviary_inputs=aviary_inputs, subsystem_options=subsystem_options
+            )
+        if aviary_inputs.get_val(Settings.MASS_METHOD) is LegacyCode.GASP:
+            tank = FuelTankGASP(meta_data=self.meta_data)
+            # TODO subsystem options needs sub-dict like propulsion
+            return tank.build_pre_mission(
+                aviary_inputs=aviary_inputs, subsystem_options=subsystem_options
+            )
+
     def build_post_mission(
         self,
-        aviary_inputs=None,
+        aviary_inputs: AviaryValues | None = None,
         mission_info=None,
-        subsystem_options=None,
-        phase_mission_bus_lengths=None,
-    ):
+        subsystem_options: dict | None = None,
+        phase_mission_bus_lengths: dict | None = None,
+    ) -> None | System:
         energy_group = om.Group()
         fuelgroup = FuelSummationGroup(mission_info=mission_info)
 
@@ -63,33 +81,30 @@ class CoreEnergyBuilder(EnergyBuilder):
         #         Location of the subsystems_report folder this report will be placed in
         #     """
 
-    def get_post_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
+    def get_post_mission_bus_variables(
+        self, aviary_inputs: AviaryValues | None = None, mission_info: dict | None = None
+    ) -> dict:
         post_mission_bus = {}
         main_phases, reserve_phases = separate_reserve_phases(mission_info)
 
-        post_mission_names = [
-            f'{self.name}.fuel_burned.mass_final',
-        ]
-        if aviary_inputs.get_val(Mission.RESERVE_FUEL_MARGIN) != 0:
-            post_mission_names.append(f'{self.name}.reserve_fuel_frac.final_mass')
-
         post_mission_bus[main_phases[-1]] = {
-            f'mass': {
-                'post_mission_name': post_mission_names,
+            Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED: {
+                'post_mission_name': f'{self.name}.main_mission_fuel.mission_fuel',
                 'src_indices': [-1],
             }
         }
 
         if reserve_phases:
             post_mission_bus[reserve_phases[0]] = {
-                f'mass': {
-                    'post_mission_name': f'{self.name}.reserve_fuel_burned.mass_initial',
+                Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED: {
+                    'post_mission_name': f'{self.name}.reserve_mission_fuel.fuel_initial',
                     'src_indices': [0],
                 }
             }
+
             post_mission_bus[reserve_phases[-1]] = {
-                f'mass': {
-                    'post_mission_name': f'{self.name}.reserve_fuel_burned.mass_final',
+                Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED: {
+                    'post_mission_name': f'{self.name}.reserve_mission_fuel.fuel_final',
                     'src_indices': [-1],
                 }
             }
@@ -151,3 +166,32 @@ class CoreEnergyBuilder(EnergyBuilder):
     #     #     )
 
     #     return constraints
+
+    ### TODO ###
+    ### v-- The following should only happen when fuel is actually present on the aircraft!! --v ###
+
+    def get_states(
+        self,
+        aviary_inputs: AviaryValues | None = None,
+        user_options: dict | None = None,
+        subsystem_options: dict | None = None,
+    ) -> dict:
+        state_dict = {
+            Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED: {
+                'fix_initial': True,
+                'fix_final': False,
+                'lower': 0.0,
+                'ref': -1e4,
+                'defect_ref': 1e6,
+                'units': 'lbm',
+                'rate_source': Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
+                'input_initial': 0.0,
+                # 'targets': Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED,
+            }
+        }
+
+        return state_dict
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        # link cumulative fuel burn between phases
+        return [Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED]

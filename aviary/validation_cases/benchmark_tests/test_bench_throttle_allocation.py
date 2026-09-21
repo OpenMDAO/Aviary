@@ -184,4 +184,7 @@ class ThrottleAllocationTestcase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = ThrottleAllocationTestcase()
+    test.setUp()
+    test.test_multiengine_dynamic()

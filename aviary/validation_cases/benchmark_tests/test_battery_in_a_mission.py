@@ -101,8 +101,8 @@ class TestBatteryMission(unittest.TestCase):
             f'traj.cruise2.timeseries.{av.Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}'
         )
         expected_scalar_values = {
-            cumulative_energy_var: (38.61409156, 'kW*h'),
-            av.Mission.FUEL_MASS: (1254.14061154, 'lbm'),
+            cumulative_energy_var: (38.61396066, 'kW*h'),
+            av.Mission.FUEL_MASS: (1253.1365799, 'lbm'),
         }
 
         for var_name, (expected, units) in expected_scalar_values.items():
@@ -120,50 +120,50 @@ class TestBatteryMission(unittest.TestCase):
             soc_cruise1_var: (
                 [
                     0.99999578,
-                    0.98775148,
-                    0.97085772,
-                    0.96551112,
-                    0.96551112,
-                    0.94050842,
-                    0.90601345,
-                    0.8950968,
-                    0.8950968,
-                    0.86537877,
-                    0.82437912,
-                    0.81140412,
-                    0.81140412,
-                    0.78641514,
-                    0.75193911,
-                    0.74102844,
-                    0.74102844,
-                    0.72879544,
-                    0.71191726,
-                    0.70657558,
+                    0.98775152,
+                    0.97085782,
+                    0.96551124,
+                    0.96551124,
+                    0.94050862,
+                    0.90601377,
+                    0.89509716,
+                    0.89509716,
+                    0.86537923,
+                    0.82437972,
+                    0.81140476,
+                    0.81140476,
+                    0.78641587,
+                    0.75193995,
+                    0.74102932,
+                    0.74102932,
+                    0.72879636,
+                    0.71191823,
+                    0.70657658,
                 ],
                 None,
             ),
             soc_cruise2_var: (
                 [
-                    0.70657558,
-                    0.69434408,
-                    0.67746797,
-                    0.67212695,
-                    0.67212695,
-                    0.64715037,
-                    0.61269144,
-                    0.60178619,
-                    0.60178619,
-                    0.5720992,
-                    0.53114236,
-                    0.51818091,
-                    0.51818091,
-                    0.49321803,
-                    0.45877799,
-                    0.44787871,
-                    0.44787871,
-                    0.43565848,
-                    0.41879792,
-                    0.41346182,
+                    0.70657658,
+                    0.69434511,
+                    0.67746906,
+                    0.67212806,
+                    0.67212806,
+                    0.64715157,
+                    0.61269275,
+                    0.60178754,
+                    0.60178754,
+                    0.57210065,
+                    0.53114395,
+                    0.51818254,
+                    0.51818254,
+                    0.49321974,
+                    0.45877982,
+                    0.44788059,
+                    0.44788059,
+                    0.43566039,
+                    0.41879989,
+                    0.41346381,
                 ],
                 None,
             ),
@@ -214,7 +214,7 @@ class TestBatteryMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestBatteryMission()
-    test.setUp()
-    test.test_subsystems_in_a_mission()
+    unittest.main()
+    # test = TestBatteryMission()
+    # test.setUp()
+    # test.test_subsystems_in_a_mission()

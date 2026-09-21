@@ -1,11 +1,9 @@
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
-import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-import aviary.api as av
 from aviary.models.missions.energy_state_default import phase_info
 from aviary.subsystems.energy.fuel_summation import FuelSummationGroup
 from aviary.utils.aviary_values import AviaryValues
@@ -27,7 +25,7 @@ class TestFuelSummation(unittest.TestCase):
             prob,
             AviaryValues(
                 {
-                    Mission.RESERVE_FUEL_MARGIN: (0.2, 'unitless'),
+                    Mission.RESERVE_FUEL_MARGIN: (0.02, 'unitless'),
                     Mission.RESERVE_FUEL_MASS_ADDITIONAL: (300, 'lbm'),
                     Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT: (False, 'unitless'),
                 }
@@ -36,20 +34,19 @@ class TestFuelSummation(unittest.TestCase):
 
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Mission.GROSS_MASS, 140_000, units='lbm')
-        prob.set_val('fuel_burned.mass_final', 120_000, units='lbm')
-        prob.set_val('reserve_fuel_burned.mass_initial', 120_000, 'lbm')
-        prob.set_val('reserve_fuel_burned.mass_final', 110_000, 'lbm')
-        prob.set_val('reserve_fuel_frac.final_mass', 110_000, 'lbm')
+        # prob.set_val(Mission.GROSS_MASS, 140_000, units='lbm')
+        prob.set_val('main_mission_fuel.mission_fuel', -20_000, units='lbm')
+        prob.set_val('reserve_mission_fuel.fuel_initial', -20_000, 'lbm')
+        prob.set_val('reserve_mission_fuel.fuel_final', -30_000, 'lbm')
         prob.set_val(Mission.TOTAL_FUEL_MASS, 30_000, 'lbm')
         prob.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 20_000, units='lbm')
         prob.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 750, units='lbm')
-        prob.set_val(Mission.Taxi.FUEL_MASS_TAXI_IN, 20, units='lbm')
+        prob.set_val(Mission.Taxi.FUEL_MASS_TAXI_OUT, 20, units='lbm')
 
         prob.run_model()
 
         expected_values = {
-            Mission.Constraints.MASS_RESIDUAL: (-360, 'lbm'),
+            Mission.Constraints.MASS_RESIDUAL: (-720.4, 'lbm'),
             Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY: (-10750, 'lbm'),
             Mission.BLOCK_FUEL_MASS: (20020, 'lbm'),
         }

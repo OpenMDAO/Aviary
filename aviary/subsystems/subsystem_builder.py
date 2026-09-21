@@ -24,7 +24,7 @@ class SubsystemBuilder(ABC):
         Dictionary containing the variable metadata used by this Aviary problem
     """
 
-    __slots__ = ('name', 'meta_data')
+    __slots__ = ('meta_data', 'name')
 
     # derived type customization point
     _default_name = 'default_subsystem_name'

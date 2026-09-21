@@ -11,6 +11,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
@@ -46,7 +47,9 @@ class GroundrollODETestCase(unittest.TestCase):
         engine_deck = build_engine_deck(aviary_options)
         preprocess_propulsion(aviary_options, [engine_deck])
 
-        default_mission_subsystems = get_default_mission_subsystems('GASP', [engine_deck])
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [engine_deck])[k] for k in ['propulsion', 'aerodynamics']
+        ]
 
         subsystem_options = {'aerodynamics': {'method': 'low_speed'}}
 

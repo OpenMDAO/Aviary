@@ -12,7 +12,8 @@ from aviary.subsystems.mass.flops_based.engine import EngineMass
 from aviary.subsystems.mass.flops_based.engine_controls import TransportEngineCtrlsMass
 from aviary.subsystems.mass.flops_based.engine_oil import AltEngineOilMass, TransportEngineOilMass
 from aviary.subsystems.mass.flops_based.fin import FinMass
-from aviary.subsystems.mass.flops_based.fuel_capacity import FuelCapacityGroup
+
+# from aviary.subsystems.mass.flops_based.fuel_capacity import FuelCapacityGroup
 from aviary.subsystems.mass.flops_based.fuel_system import (
     AltFuelSystemMass,
     TransportFuelSystemMass,
@@ -99,12 +100,12 @@ class MassPremission(om.Group):
             'avionics', TransportAvionicsMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
-        self.add_subsystem(
-            'fuel_capacity_group',
-            FuelCapacityGroup(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
+        # self.add_subsystem(
+        #     'fuel_capacity_group',
+        #     FuelCapacityGroup(),
+        #     promotes_inputs=['*'],
+        #     promotes_outputs=['*'],
+        # )
 
         self.add_subsystem(
             'engine_mass', EngineMass(), promotes_inputs=['*'], promotes_outputs=['*']
@@ -325,5 +326,3 @@ class MassPremission(om.Group):
         self.add_subsystem(
             'mass_summation', MassSummation(), promotes_inputs=['*'], promotes_outputs=['*']
         )
-
-        self.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')

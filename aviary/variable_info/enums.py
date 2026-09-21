@@ -163,6 +163,14 @@ class FlapType(Enum):
         return next((c for c in cls if c.name == val), None)
 
 
+class FuelType(Enum):
+    HYDROGEN_GASEOUS = 'hydrogen_liquid'
+    HYDROGEN_LIQUID = 'hydrogen_gaseous'
+    JET_A = 'jet_a'
+    METHANE_GASEOUS = 'methane_gaseous'
+    METHANE_LIQUID = 'methane_liquid'  # LNG
+
+
 class LegacyCode(Enum):
     """Flag for legacy codebases."""
 

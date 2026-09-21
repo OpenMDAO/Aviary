@@ -47,6 +47,8 @@ def preprocess_options(
             verbosity = meta_data[Settings.VERBOSITY]['default_value']
             aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
+    preprocess_deprecated(aviary_options)
+
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
     preprocess_fuel_capacities(aviary_options, verbosity)
 
@@ -129,6 +131,18 @@ def preprocess_options(
         aviary_options.set_val(
             Mission.SEA_LEVEL_DENSITY, val=sea_level_density[0], units=sea_level_density[1]
         )
+
+
+def preprocess_deprecated(aviary_options: AviaryValues):
+    if Mission.RESERVE_FUEL_MARGIN in aviary_options:
+        margin = aviary_options.get_val(Mission.RESERVE_FUEL_MARGIN)
+        if margin > 1:
+            raise DeprecationWarning(
+                'For consistency with all other Aviary variables that define percentages/fractions, '
+                'Mission.RESERVE_FUEL_MARGIN was changed to directly define the multiplicative '
+                f'factor (and not percentage points). Currently reserve margin is defined as '
+                f'{margin}, or {margin * 100} percentage points of main mission fuel.'
+            )
 
 
 def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):

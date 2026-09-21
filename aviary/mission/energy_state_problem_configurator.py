@@ -280,6 +280,10 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
                     continue
 
                 if initial != final:
+                    # the first reserve mission phase is allowed to have discontinuous mach and alt
+                    if aviary_group.reserve_phases and right_name == aviary_group.reserve_phases[0]:
+                        if stem in (Dynamic.Atmosphere.MACH, Dynamic.Mission.ALTITUDE):
+                            continue
                     msg += '  Constraint mismatch across phase boundary:\n'
                     msg += f'    {left_name} {stem}_final: {final}\n'
                     msg += f'    {right_name} {stem}_initial: {initial}\n'

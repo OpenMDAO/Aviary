@@ -4,11 +4,8 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.validation_cases.validation_data.test_data.V3_bug_fixed_IO import (
-    V3_bug_fixed_non_metadata,
-    V3_bug_fixed_options,
-)
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.subsystems.energy.energy_builder import CoreEnergyBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.premission import CorePreMission
@@ -16,11 +13,15 @@ from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilde
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
+from aviary.validation_cases.validation_data.test_data.V3_bug_fixed_IO import (
+    V3_bug_fixed_non_metadata,
+    V3_bug_fixed_options,
+)
 from aviary.validation_cases.validation_tests import get_flops_case_names, get_flops_inputs
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import CoreMetaData
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -56,9 +57,14 @@ class PreMissionTestCase(unittest.TestCase):
 
         self.prob = om.Problem()
 
+        # TODO setup_options causes problems (lots of manual manipulation of variables needed
+        # aferwords and fragile to changes in variables or subsystems - we should transition away from it)
         input_options = setup_options(GASP_input, FLOPS_input)
         # Note: if a parameter is not a GASP option but a FLOPS option, it is loaded in using default
         # value in meta data (see V3_bug_fixed_options). So, its value in FLOPS option is never loaded in.
+
+        # manually set values
+        input_options.set_val(Settings.MASS_METHOD, 'GASP')
 
         # delete the options that would override values
         input_options.delete(Aircraft.Wing.AREA)
@@ -83,8 +89,9 @@ class PreMissionTestCase(unittest.TestCase):
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=GASP,
         )
+        energy = CoreEnergyBuilder('energy', CoreMetaData)
 
-        subsystems = [prop, geom, mass, aero]
+        subsystems = [prop, geom, mass, energy, aero]
 
         self.prob.model.add_subsystem(
             'pre_mission',
@@ -241,8 +248,9 @@ class PreMissionTestCase(unittest.TestCase):
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=FLOPS,
         )
+        energy = CoreEnergyBuilder('energy', CoreMetaData)
 
-        subsystems = [prop, geom, mass, aero]
+        subsystems = [prop, geom, mass, energy, aero]
 
         model.add_subsystem(
             'pre_mission',
@@ -296,4 +304,7 @@ class PreMissionTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = PreMissionTestCase()
+    test.setUp()
+    test.test_GASP_mass_FLOPS_everything_else()
