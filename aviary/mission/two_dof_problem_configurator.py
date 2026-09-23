@@ -452,24 +452,23 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
                 if 'mass' == guess_key:
                     phase.set_state_val(
-                            guess_key,
-                            vals=process_guess_var(val, guess_key, phase),
-                            units=units,
-                        )
+                        guess_key,
+                        vals=process_guess_var(val, guess_key, phase),
+                        units=units,
+                    )
                 elif 'time' == guess_key:
                     phase.set_time_val(initial=val[0], duration=val[1], units=units)
                 else:
                     # Otherwise, set the value of the parameter in the trajectory
                     # phase
                     target_prob.set_val(
-                            parent_prefix + f'traj.{phase_name}.parameters:{guess_key}',
-                            val,
-                            units=units,
-                        )
+                        parent_prefix + f'traj.{phase_name}.parameters:{guess_key}',
+                        val,
+                        units=units,
+                    )
 
             # Breguet phase should have nothing else to set.
             return
-
 
         control_keys = ['velocity_rate', 'throttle']
         state_keys = [

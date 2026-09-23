@@ -53,7 +53,7 @@ class TestTwoDOFPhases(unittest.TestCase):
                 'time': ([1504.0, 26500.0], 's'),
                 'altitude': (37.5e3, 'ft'),
                 'mach': (0.8, 'unitless'),
-            }
+            },
         }
 
         prob = AviaryProblem()

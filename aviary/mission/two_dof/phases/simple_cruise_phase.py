@@ -12,7 +12,7 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
             name='num_segments',
             types=int,
             default=5,
-            desc='The number of segments in transcription creation in Dymos. '
+            desc='The number of segments in transcription creation in Dymos. ',
         )
 
         self.declare(
