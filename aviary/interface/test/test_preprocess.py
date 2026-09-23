@@ -97,7 +97,7 @@ class TestPrePreprocessing(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestPrePreprocessing()
-    test.setUp()
-    test.test_missing_passengers_warnings()
+    unittest.main()
+    # test = TestPrePreprocessing()
+    # test.setUp()
+    # test.test_missing_passengers_warnings()

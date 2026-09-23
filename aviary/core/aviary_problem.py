@@ -563,7 +563,7 @@ class AviaryProblem(om.Problem):
                 print_level = 0
                 driver.opt_settings.setdefault('print_user_options', 'no')
             elif verbosity == Verbosity.BRIEF:
-                print_level = 3  # minimum to get exit status
+                print_level = 3
                 driver.opt_settings.setdefault('print_user_options', 'no')
                 driver.opt_settings.setdefault('print_frequency_iter', 10)
             elif verbosity == Verbosity.VERBOSE:
@@ -597,11 +597,11 @@ class AviaryProblem(om.Problem):
 
         # pyoptsparse print settings for both SNOPT, IPOPT
         if optimizer in ('SNOPT', 'IPOPT'):
-            if verbosity == Verbosity.QUIET:
+            if verbosity <= Verbosity.BRIEF:  # QUIET, BRIEF
                 driver.options['print_results'] = False
-            elif verbosity < Verbosity.DEBUG:  # QUIET, BRIEF, VERBOSE
+            elif verbosity > Verbosity.BRIEF:  # VERBOSE
                 driver.options['print_results'] = 'minimal'
-            elif verbosity >= Verbosity.DEBUG:
+            elif verbosity >= Verbosity.DEBUG:  # DEBUG
                 driver.options['print_opt_prob'] = True
 
         # optimizer agnostic settings
@@ -1336,6 +1336,8 @@ class AviaryProblem(om.Problem):
                 not self.result.success and verbosity <= Verbosity.BRIEF  # QUIET, BRIEF
             ):
                 warnings.warn('\nAviary run failed. See the dashboard for more details.\n')
+            elif self.result.success and verbosity > Verbosity.QUIET:  # BRIEF, VERBOSE, DEBUG
+                print('\nAviary run successful.\n')
         else:
             self.run_model()
             self.result = self.driver.result

@@ -379,18 +379,29 @@ def override_aviary_vars(
             group.promotes(comp.name, inputs=in_var_names, outputs=comp_promoted_outputs)
 
     if overridden_outputs:
-        if aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-            print('\nThe following variables have been overridden in the aircraft definition:')
+        if (
+            aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.BRIEF
+        ):  # BRIEF, VERBOSE, DEBUG
+            print('The following variables have been overridden by the aircraft definition:')
             for prom_name in sorted(overridden_outputs):
                 val, units = aviary_inputs.get_item(prom_name)
                 print(f"  '{prom_name}  {val}  {units}")
+            print('\n')
 
     if external_overridden_outputs:
-        if aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-            print('\nThe following variables have been overridden by an external subsystem:')
+        if (
+            aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE
+        ):  # BRIEF, VERBOSE, DEBUG
+            newline = ''
+            if overridden_outputs:
+                newline = '\n'
+            print(
+                f'{newline}The following variables have been overridden by an external subsystem:'
+            )
             for prom_name in sorted(external_overridden_outputs):
                 # do not print values because they will be updated by an external subsystem later.
                 print(f"  '{prom_name}")
+            print('\n')
 
     return overridden_outputs
 

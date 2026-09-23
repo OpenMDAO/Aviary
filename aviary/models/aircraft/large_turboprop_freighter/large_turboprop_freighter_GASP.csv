@@ -70,6 +70,7 @@ aircraft:engine:pylon_factor, 0.7, unitless
 aircraft:engine:reference_sls_thrust, 5000, lbf
 aircraft:engine:rpm_design, 13820, rpm
 aircraft:engine:fixed_rpm, 13820, rpm
+aircraft:engine:scaled_sls_thrust, 5000, lbf
 aircraft:engine:type, 6, unitless
 aircraft:engine:wing_locations, [0.385, 0.385], unitless
 aircraft:engine:gearbox:gear_ratio, 13.550135501355014, unitless

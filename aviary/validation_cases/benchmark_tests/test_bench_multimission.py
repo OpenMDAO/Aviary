@@ -39,7 +39,7 @@ def multi_mission_example():
     # merged_meta_data = av.merge_hierarchies(meta_data1, meta_data2)
     # merge all metata data hierarchies here
 
-    prob = av.AviaryProblem(problem_type=ProblemType.MULTI_MISSION)
+    prob = av.AviaryProblem(problem_type=ProblemType.MULTI_MISSION, verbosity=0)
     # set constraints in the background. Currently works with every objective type except Range.
     # can accept meta_data = merged_meta_data
 
