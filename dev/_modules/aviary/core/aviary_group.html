@@ -1009,20 +1009,26 @@
         <span class="n">energy</span> <span class="o">=</span> <span class="n">CoreEnergyBuilder</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_data</span><span class="p">)</span>
 
         <span class="c1"># If all phases ask for tabular aero, we can skip pre-mission. Check phase_info</span>
-        <span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_info</span><span class="p">:</span>
+        <span class="n">all_tabular</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">mission</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_info</span>
+        <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">mission</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">phase</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;pre_mission&#39;</span><span class="p">,</span> <span class="s1">&#39;post_mission&#39;</span><span class="p">):</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="s1">&#39;tabular&#39;</span>
-                        <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_info</span><span class="p">[</span><span class="n">phase</span><span class="p">][</span><span class="s1">&#39;subsystem_options&#39;</span><span class="p">][</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">][</span><span class="s1">&#39;method&#39;</span><span class="p">]</span>
-                    <span class="p">):</span>
-                        <span class="n">tabular</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">method</span> <span class="o">=</span> <span class="n">mission</span><span class="p">[</span><span class="n">phase</span><span class="p">][</span><span class="s1">&#39;subsystem_options&#39;</span><span class="p">][</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">][</span><span class="s1">&#39;method&#39;</span><span class="p">]</span>
+                    <span class="c1"># Tabular includes &quot;tabular&quot;, &quot;tabular_cruise&quot;, and &quot;tabular_low_speed&quot;.</span>
+                    <span class="k">if</span> <span class="s1">&#39;tabular&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">method</span><span class="p">:</span>
+                        <span class="n">all_tabular</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">break</span>
+
                 <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">all_tabular</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
 
         <span class="n">aero</span> <span class="o">=</span> <span class="n">CoreAerodynamicsBuilder</span><span class="p">(</span>
-            <span class="s1">&#39;aerodynamics&#39;</span><span class="p">,</span> <span class="n">code_origin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aero_method</span><span class="p">,</span> <span class="n">tabular</span><span class="o">=</span><span class="n">tabular</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_data</span>
+            <span class="s1">&#39;aerodynamics&#39;</span><span class="p">,</span>
+            <span class="n">code_origin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aero_method</span><span class="p">,</span>
+            <span class="n">all_tabular</span><span class="o">=</span><span class="n">all_tabular</span><span class="p">,</span>
+            <span class="n">meta_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_data</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># which geometry methods should be used?</span>
@@ -1032,6 +1038,9 @@
             <span class="n">geom_code_origin</span> <span class="o">=</span> <span class="n">FLOPS</span>
         <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aero_method</span> <span class="ow">is</span> <span class="n">GASP</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_method</span> <span class="ow">is</span> <span class="n">GASP</span><span class="p">):</span>
             <span class="n">geom_code_origin</span> <span class="o">=</span> <span class="n">GASP</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aero_method</span> <span class="ow">is</span> <span class="n">GASP</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_method</span> <span class="ow">is</span> <span class="n">FLOPS</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_tabular</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="c1"># Don&#39;t add the GASP geometry for FLOPS models that are just using tabular cruise.</span>
+            <span class="n">geom_code_origin</span> <span class="o">=</span> <span class="n">FLOPS</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">geom_code_origin</span> <span class="o">=</span> <span class="p">(</span><span class="n">FLOPS</span><span class="p">,</span> <span class="n">GASP</span><span class="p">)</span>
 
