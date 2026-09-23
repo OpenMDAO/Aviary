@@ -400,19 +400,14 @@ def setup_trajectory_params(
     traj: dm.Trajectory,
     aviary_variables: AviaryValues,
     phases=['climb', 'cruise', 'descent'],
-    variables_to_add=None,
     meta_data=CoreMetaData,
     external_parameters={},
 ):
     """
-    This function smoothly sorts through the aviary variables which
-    are being used in the trajectory, and for the variables which are
-    not options it adds them as a parameter of the trajectory.
+    This function smoothly sorts through the aviary variables which are being used in the
+    trajectory, and for the variables which are not options it adds them as a parameter of the
+    trajectory.
     """
-    # See note # 1178: variables_to_add is required, so should be an arg, not a kwarg.
-    if variables_to_add is None:
-        variables_to_add = []
-
     # Step 1: Initialize a dictionary to hold parameters and their associated phases
     parameters_with_phases = {}
 
@@ -433,44 +428,6 @@ def setup_trajectory_params(
 
         model.promotes('traj', inputs=[(f'parameters:{key}', key)])
         already_added.append(key)
-
-    # Process the core mission inputs last, because some of them might have already
-    # been covered by the phase builders.
-    # See issue #1179: As we use more builders, we may reach the point where we don't need
-    # to do these anymore.
-    for key in sorted(variables_to_add):
-        if key in already_added:
-            continue
-
-        meta = meta_data[key]
-
-        if not meta['option']:
-            val = meta['default_value']
-            if val is None:
-                val = _unspecified
-            units = meta['units']
-
-            if key in aviary_variables:
-                try:
-                    val = aviary_variables.get_val(key, units)
-                except TypeError:
-                    val = aviary_variables.get_val(key)
-
-            # See note #1180 temp line to ignore dynamic mission variables, will not work
-            #      if names change to 'dynamic:mission:*'
-            if ':' not in key:
-                continue
-
-            traj.add_parameter(
-                key,
-                opt=False,
-                units=units,
-                val=val,
-                static_target=True,
-                targets={phase_name: [key] for phase_name in phases},
-            )
-
-            model.promotes('traj', inputs=[(f'parameters:{key}', key)])
 
     return traj
 

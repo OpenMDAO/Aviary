@@ -135,7 +135,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
     def test_case2(self):
-        """bwb300_baseline"""
+        """bwb300_baseline."""
         prob = self.prob
         options = self.aviary_options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -182,7 +182,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         exp3 = [0.0, 0.0, 10.0, 17.0, 17.0, 17.0]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        partial_data = self.prob.check_partials(out_stream=None, method='fd')
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
     def test_case3(self):
@@ -361,7 +361,7 @@ class BWBWingPrelimTest(unittest.TestCase):
         )
 
     def test_case2(self):
-        """Provided detailed wing case"""
+        """Provided detailed wing case."""
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')

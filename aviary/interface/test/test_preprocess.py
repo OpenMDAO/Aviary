@@ -48,7 +48,6 @@ class TestPrePreprocessing(unittest.TestCase):
             local_phase_info,
         )
         prob.aviary_inputs.delete(Aircraft.CrewPayload.NUM_ECONOMY_CLASS)
-        prob.aviary_inputs.delete(Aircraft.Engine.SCALED_SLS_THRUST)
 
         msg = (
             'Sum of all passenger classes (36) does not equal total number of '
@@ -69,7 +68,6 @@ class TestPrePreprocessing(unittest.TestCase):
             local_phase_info,
         )
         prob.aviary_inputs.delete(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
-        prob.aviary_inputs.delete(Aircraft.Engine.SCALED_SLS_THRUST)
         prob.aviary_inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 154)
 
         msg = (
