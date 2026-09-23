@@ -867,9 +867,7 @@ class BWBWingVolume(om.ExplicitComponent):
 
 
 class WingFoldArea(om.ExplicitComponent):
-    """
-    Computation of folding area.
-    """
+    """Computation of folding area."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
@@ -1363,9 +1361,7 @@ class WingFoldVolume(om.ExplicitComponent):
 
 
 class BWBWingFoldVolume(om.ExplicitComponent):
-    """
-    Computation of wing tank fuel volume.
-    """
+    """Computation of wing tank fuel volume."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
@@ -1600,9 +1596,7 @@ class WingGroup(om.Group):
 
 
 class BWBWingGroup(om.Group):
-    """
-    Group of WingSize, WingParameters, WingFoldArea and BWBWingVolumeArea for wing parameter computations.
-    """
+    """Group of WingSize, WingParameters, WingFoldArea and BWBWingVolumeArea for wing parameter computations."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)

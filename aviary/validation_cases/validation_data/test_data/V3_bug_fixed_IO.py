@@ -18,7 +18,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 def local_get_option_defaults() -> AviaryValues:
-    """Here are the variables missing in the rest of V3_bug_fixed_options"""
+    """Here are the variables missing in the rest of V3_bug_fixed_options."""
     option_defaults = AviaryValues()
 
     option_defaults.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')

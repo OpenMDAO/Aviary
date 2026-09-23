@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class MotorMap(om.Group):
     """
-    Inputs
+    Inputs.
     ----------
     Dynamic.Vehicle.Propulsion.THROTTLE : float (unitless) (0 to 1)
         The throttle command which will be translated into torque output from the engine

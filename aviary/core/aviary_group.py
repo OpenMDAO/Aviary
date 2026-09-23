@@ -1128,9 +1128,7 @@ class AviaryGroup(om.Group):
         self.configurator.check_trajectory(self)
 
     def _find_scaling(self, var, phase1, phase_info1, phase2, phase_info2, opt2):
-        """
-        Returns a dictionary of scaling keyword arguments for a dymos linkage constraint.
-        """
+        """Returns a dictionary of scaling keyword arguments for a dymos linkage constraint."""
         phase = self.traj._phases[phase1]
         integrated_var = phase.time_options['name']
         analytic = len(phase.state_options) < 1
@@ -1546,7 +1544,7 @@ class AviaryGroup(om.Group):
                     phase.set_control_val(key, vals=val, units=units)
 
     def _validate_phase_info_modifier(self, phase_info_modifier):
-        """Check function for required arguments (phase_info, post_mission_info, aviary_inputs)"""
+        """Check function for required arguments (phase_info, post_mission_info, aviary_inputs)."""
         # validate phase_info_modifier function
         sig = inspect.signature(phase_info_modifier)
         params = sig.parameters

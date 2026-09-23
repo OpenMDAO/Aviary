@@ -8,9 +8,7 @@ from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 
 
 def print_benchmark_results(prob):
-    """
-    Prints summary of results for a completed benchmark.
-    """
+    """Prints summary of results for a completed benchmark."""
     frame = sys._getframe(1)
     test_name = frame.f_code.co_name
     file_name = frame.f_code.co_filename

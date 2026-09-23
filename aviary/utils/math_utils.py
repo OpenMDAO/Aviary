@@ -1,6 +1,4 @@
-"""
-Smooth functions and their derivatives.
-"""
+"""Smooth functions and their derivatives."""
 
 import numpy as np
 
@@ -120,7 +118,7 @@ def smooth_min(x, b, mu=100.0):
 
 def d_smooth_min(x, b, mu=100.0):
     """
-    Derivative of function smooth_min(x)
+    Derivative of function smooth_min(x).
 
     Parameters
     ----------
@@ -162,7 +160,7 @@ def smooth_max(x, b, mu=10.0):
 
 def d_smooth_max(x, b, mu=10.0):
     """
-    Derivative of function smooth_min(x)
+    Derivative of function smooth_min(x).
 
     Parameters
     ----------
@@ -224,9 +222,7 @@ def dydx_sin_int(val):
 
 
 def smooth_int_tanh(x, mu=10.0):
-    """
-    Smooth approximation of int(x) using tanh.
-    """
+    """Smooth approximation of int(x) using tanh."""
     f = np.floor(x.real) + x.imag * 1j
     frac = x - f
     t = np.tanh(mu * (frac - 0.5))

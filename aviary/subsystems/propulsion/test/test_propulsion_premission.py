@@ -129,7 +129,7 @@ class BWBPropulsionPreMissionTest(unittest.TestCase):
         self.prob = om.Problem()
 
     def test_case(self):
-        """Work in progress"""
+        """Work in progress."""
         options = get_flops_inputs('BWBsimpleFLOPS')
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]))

@@ -586,9 +586,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBPreMissionGroupCSVTest1(unittest.TestCase):
-    """
-    testing using bwb_simple_FLOPS.csv
-    """
+    """testing using bwb_simple_FLOPS.csv."""
 
     def setUp(self):
         prob = self.prob = AviaryProblem()
@@ -598,9 +596,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
     def test_case_geom(self):
-        """
-        premission: geometry
-        """
+        """premission: geometry."""
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
@@ -670,9 +666,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Design.TOTAL_WETTED_AREA], 35311.53118076, tol)
 
     def test_case_geom_mass(self):
-        """
-        premission: geometry + mass
-        """
+        """premission: geometry + mass."""
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
@@ -796,9 +790,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 556426.76964429, tol)
 
     def test_case_all_subsystems(self):
-        """
-        premission: propulsion + geometry + aerodynamics + mass
-        """
+        """premission: propulsion + geometry + aerodynamics + mass."""
         prob = self.prob
 
         engines = [build_engine_deck(self.flops_inputs)]
@@ -832,9 +824,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
 
 @use_tempdirs
 class BWBPreMissionGroupCSVTest2(unittest.TestCase):
-    """
-    testing using bwb_detailed_FLOPS.csv
-    """
+    """testing using bwb_detailed_FLOPS.csv."""
 
     def setUp(self):
         prob = self.prob = AviaryProblem()
@@ -844,9 +834,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
     def test_case_geom(self):
-        """
-        premission: geometry
-        """
+        """premission: geometry."""
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
@@ -916,9 +904,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Design.TOTAL_WETTED_AREA], 26208.46595187, tol)
 
     def test_case_geom_mass(self):
-        """
-        premission: geometry + mass
-        """
+        """premission: geometry + mass."""
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
@@ -1044,9 +1030,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 509364.22633412, tol)
 
     def test_case_all_subsystems(self):
-        """
-        premission: propulsion + geometry + aerodynamics + mass
-        """
+        """premission: propulsion + geometry + aerodynamics + mass."""
         prob = self.prob
 
         engines = [build_engine_deck(self.flops_inputs)]
@@ -1080,9 +1064,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
 
 @use_tempdirs
 class BWB300PreMissionGroupCSVTest(unittest.TestCase):
-    """
-    testing using bwb_detailed_FLOPS.csv
-    """
+    """testing using bwb_detailed_FLOPS.csv."""
 
     def setUp(self):
         prob = self.prob = AviaryProblem()
@@ -1092,9 +1074,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
     def test_case_geom(self):
-        """
-        premission: geometry
-        """
+        """premission: geometry."""
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
@@ -1165,9 +1145,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Design.TOTAL_WETTED_AREA], 19637.79833526, tol)
 
     def test_case_geom_mass(self):
-        """
-        premission: geometry + mass
-        """
+        """premission: geometry + mass."""
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
@@ -1292,9 +1270,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fins.MASS], 2822.14154503, tol)
 
     def test_case_all_subsystems(self):
-        """
-        premission: propulsion + geometry + aerodynamics + mass
-        """
+        """premission: propulsion + geometry + aerodynamics + mass."""
         prob = self.prob
 
         engines = [build_engine_deck(self.flops_inputs)]

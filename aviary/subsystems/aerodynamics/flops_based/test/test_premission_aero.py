@@ -136,7 +136,7 @@ class DesignMCLTest(unittest.TestCase):
 
 
 class LoverDTest(unittest.TestCase):
-    """Test L_over_D computation in TakeoffLoverD class"""
+    """Test L_over_D computation in TakeoffLoverD class."""
 
     def setUp(self):
         self.prob = om.Problem()

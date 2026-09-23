@@ -15,7 +15,7 @@ from aviary.variable_info.variables import Aircraft, Settings
 
 
 class PreMission(om.Group):
-    """a helper class for overriding"""
+    """a helper class for overriding."""
 
     def initialize(self):
         self.options.declare(

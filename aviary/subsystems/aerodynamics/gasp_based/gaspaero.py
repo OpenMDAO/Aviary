@@ -410,9 +410,7 @@ class Xlifts(om.ExplicitComponent):
 
 
 class SIWB(om.ExplicitComponent):
-    """
-    Compute SIWB for tube+wing aircraft
-    """
+    """Compute SIWB for tube+wing aircraft."""
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
@@ -545,7 +543,7 @@ class BWBSIWB(om.ExplicitComponent):
 
 
 class UFac(om.ExplicitComponent):
-    """GASP EAERO subroutine"""
+    """GASP EAERO subroutine."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)

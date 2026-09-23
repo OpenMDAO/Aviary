@@ -61,7 +61,7 @@ class FuselagePrelim(om.ExplicitComponent):
 
 
 class BWBFuselagePrelim(om.ExplicitComponent):
-    """Calculate fuselage average diameter and planform area for BWB"""
+    """Calculate fuselage average diameter and planform area for BWB."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')

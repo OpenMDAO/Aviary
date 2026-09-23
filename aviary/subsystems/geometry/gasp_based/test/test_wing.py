@@ -72,9 +72,7 @@ class WingSizeTestCase2(unittest.TestCase):
 
 
 class BWBWingSizeTestCase1(unittest.TestCase):
-    """
-    BWB model
-    """
+    """BWB model."""
 
     def setUp(self):
         prob = self.prob = om.Problem()
@@ -172,7 +170,7 @@ class WingParametersTestCase2(unittest.TestCase):
 
 
 class BWBWingParametersTestCase1(unittest.TestCase):
-    """Test BWB data for BWBWingParameters"""
+    """Test BWB data for BWBWingParameters."""
 
     def setUp(self):
         prob = self.prob = om.Problem()
@@ -245,7 +243,7 @@ class WingVolumeTestCase1(
 
 
 class BWBWingVolumeTestCase(unittest.TestCase):
-    """Test BWB data for BWBWingVolume"""
+    """Test BWB data for BWBWingVolume."""
 
     def setUp(self):
         # Option values below are the _MetaData defaults except where noted.
@@ -558,9 +556,7 @@ class BWBWingFoldVolumeTestCase1(unittest.TestCase):
 
 @use_tempdirs
 class BWBWingFoldVolumeTestCase2(unittest.TestCase):
-    """
-    Test against GASP BWB model, CHOOSE_FOLD_LOCATION = True
-    """
+    """Test against GASP BWB model, CHOOSE_FOLD_LOCATION = True."""
 
     def setUp(self):
         # Option values below are the _MetaData defaults except where noted.
@@ -608,7 +604,7 @@ class WingGroupTestCase1(unittest.TestCase):
     HAS_STRUT = False
     CHOOSE_FOLD_LOCATION = True
     DIMENSIONAL_LOCATION_SPECIFIED = False
-    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False.
     """
 
     def setUp(self):
@@ -662,7 +658,7 @@ class WingGroupTestCase2(unittest.TestCase):
     HAS_STRUT = True
     CHOOSE_FOLD_LOCATION = False
     DIMENSIONAL_LOCATION_SPECIFIED = True
-    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False.
     """
 
     def setUp(self):
@@ -761,7 +757,7 @@ class WingGroupTestCase3(unittest.TestCase):
     HAS_STRUT = False
     CHOOSE_FOLD_LOCATION = True
     DIMENSIONAL_LOCATION_SPECIFIED = True
-    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False.
     """
 
     def setUp(self):
@@ -850,7 +846,7 @@ class WingGroupTestCase4(unittest.TestCase):
     HAS_STRUT = True
     CHOOSE_FOLD_LOCATION = True
     DIMENSIONAL_LOCATION_SPECIFIED = True
-    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = True
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = True.
     """
 
     def setUp(self):
@@ -927,7 +923,7 @@ class WingGroupTestCase5(unittest.TestCase):
     HAS_STRUT = True
     CHOOSE_FOLD_LOCATION = False
     DIMENSIONAL_LOCATION_SPECIFIED = True
-    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = False.
     """
 
     def setUp(self):
@@ -1014,7 +1010,7 @@ class BWBWingGroupTestCase1(unittest.TestCase):
     HAS_FOLD = True
     HAS_STRUT = False
     CHOOSE_FOLD_LOCATION = True
-    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = True
+    FOLD_DIMENSIONAL_LOCATION_SPECIFIED = True.
     """
 
     def setUp(self):
@@ -1079,7 +1075,7 @@ class BWBWingGroupTestCase1(unittest.TestCase):
         Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX -- FVOLW_GEOM = 605.9
         Aircraft.Wing.FOLDING_AREA -- SWFOLD = 224.8
         Aircraft.Wing.EXPOSED_AREA -- SW_EXP = 1352.1
-        Note: CROOT in GASP matches with Aircraft.Wing.CENTER_CHORD
+        Note: CROOT in GASP matches with Aircraft.Wing.CENTER_CHORD.
         """
         prob = self.prob
         prob.run_model()

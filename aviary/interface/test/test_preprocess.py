@@ -1,6 +1,4 @@
-"""
-Test preprocessing as part of the level 2 interface.
-"""
+"""Test preprocessing as part of the level 2 interface."""
 
 import unittest
 from copy import deepcopy

@@ -7,7 +7,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class MomentRatio(om.ExplicitComponent):
-    """GASP tail moment ratio"""
+    """GASP tail moment ratio."""
 
     def initialize(self):
         self.options.declare(

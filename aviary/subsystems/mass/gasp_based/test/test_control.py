@@ -72,7 +72,7 @@ class ControlMassTestCase(unittest.TestCase):
 
 @use_tempdirs
 class BWBControlMassTestCase(unittest.TestCase):
-    """GAST BWB model"""
+    """GAST BWB model."""
 
     def setUp(self):
         prob = self.prob = om.Problem()

@@ -12,7 +12,7 @@ from aviary.variable_info.variables import Aircraft
 
 @use_tempdirs
 class HydraulicsTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = AviaryValues()
@@ -55,7 +55,7 @@ class HydraulicsTestCase1(unittest.TestCase):
 
 
 class HydraulicsTestCase2(unittest.TestCase):
-    """BWB Parameters"""
+    """BWB Parameters."""
 
     def setUp(self):
         options = AviaryValues()

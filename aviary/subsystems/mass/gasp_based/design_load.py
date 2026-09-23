@@ -1581,9 +1581,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
 
 
 class BWBLoadFactors(om.ExplicitComponent):
-    """
-    Computation of structural ultimate load factor.
-    """
+    """Computation of structural ultimate load factor."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)

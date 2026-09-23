@@ -854,7 +854,7 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """GASP data"""
+        """GASP data."""
         self.options.set_val(
             Aircraft.Design.PART25_STRUCTURAL_CATEGORY,
             val=3,
@@ -872,7 +872,7 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
     def test_case2(self):
-        """Aviary enhanced algorithms"""
+        """Aviary enhanced algorithms."""
         # case 2A
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -954,7 +954,7 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """GASP data"""
+        """GASP data."""
         self.prob.run_model()
 
         tol = 1e-7
@@ -967,7 +967,7 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
     def test_case2(self):
-        """Aviary enhanced algorithms"""
+        """Aviary enhanced algorithms."""
         # case 2A
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -1050,7 +1050,7 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """GASP data"""
+        """GASP data."""
         self.prob.run_model()
 
         tol = 1e-7
@@ -1063,7 +1063,7 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
     def test_case2(self):
-        """Aviary enhanced algorithms"""
+        """Aviary enhanced algorithms."""
         # case 2A
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -1146,7 +1146,7 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """GASP data"""
+        """GASP data."""
         self.prob.run_model()
 
         tol = 1e-7
@@ -1159,7 +1159,7 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
     def test_case2(self):
-        """Aviary enhanced algorithms"""
+        """Aviary enhanced algorithms."""
         # case 2A
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -1241,7 +1241,7 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """GASP data"""
+        """GASP data."""
         self.prob.run_model()
 
         tol = 1e-7
@@ -1254,7 +1254,7 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
     def test_case2(self):
-        """Aviary enhanced algorithms"""
+        """Aviary enhanced algorithms."""
         # case 2A
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -1311,7 +1311,7 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
 
 
 class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
-    """GASP data"""
+    """GASP data."""
 
     def setUp(self):
         prob = self.prob = om.Problem()
@@ -1333,9 +1333,7 @@ class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """
-        Test the simplest scenario
-        """
+        """Test the simplest scenario."""
         self.prob.run_model()
 
         tol = 1e-7
@@ -1347,7 +1345,7 @@ class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
     def test_case2(self):
         """
         Test all other if-else branches comparing
-        cruise_load_factor vs dive_load_factor, and gust_load_factor vs max_maneuver_factor
+        cruise_load_factor vs dive_load_factor, and gust_load_factor vs max_maneuver_factor.
         """
         # Case 2A
         self.prob.set_val('density_ratio', 0.53281, units='unitless')
@@ -1384,7 +1382,7 @@ class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
 
 
 class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
-    """Test for smoothing technique"""
+    """Test for smoothing technique."""
 
     def setUp(self):
         self.options = AviaryValues()
@@ -1407,9 +1405,7 @@ class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """
-        Test the simplest scenario
-        """
+        """Test the simplest scenario."""
         self.prob.run_model()
 
         tol = 1e-7

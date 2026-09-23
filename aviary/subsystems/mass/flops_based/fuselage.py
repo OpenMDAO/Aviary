@@ -196,7 +196,7 @@ class BWBFuselageMass(om.ExplicitComponent):
 
 
 class BWBAftBodyMass(om.ExplicitComponent):
-    """Mass of aft body for BWB aircraft"""
+    """Mass of aft body for BWB aircraft."""
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)

@@ -84,7 +84,7 @@ class PayloadGroupTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBCargoMassTest(unittest.TestCase):
-    """Test BWB cargo mass"""
+    """Test BWB cargo mass."""
 
     def setUp(self):
         self.prob = om.Problem()
