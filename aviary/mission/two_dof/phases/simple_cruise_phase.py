@@ -13,8 +13,6 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
             types=int,
             default=5,
             desc='The number of segments in transcription creation in Dymos. '
-            'While this phase is usually an analytic phase, this option is '
-            'needed if an external subsystem requires a dynamic transcription.',
         )
 
         self.declare(
@@ -22,8 +20,7 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
             types=int,
             default=3,
             desc='The order of polynomials for interpolation in the transcription '
-            'created in Dymos. While this phase is usually an analytic phase, this option is '
-            'needed if an external subsystem requires a dynamic transcription.',
+            'created in Dymos.',
         )
 
         defaults = {
@@ -146,7 +143,7 @@ class SimpleCruisePhase(PhaseBuilder):
         -------
         dymos.Phase
         """
-        phase = self.phase = super().build_phase(aviary_options)
+        phase = super().build_phase(aviary_options)
 
         # Custom configurations for the climb phase
         user_options = self.user_options

@@ -21,29 +21,39 @@ class DynBuilder(SubsystemBuilder):
         }
 
     def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
-        return om.ExecComp('x_dot = x**2 + x')
+        comp = om.ExecComp(
+            'x_dot = x**2 + x',
+            x_dot={'shape': num_nodes},
+            x={'shape': num_nodes},
+            has_diag_partials=True,
+        )
+        return comp
 
 
 @use_tempdirs
 class TestTwoDOFPhases(unittest.TestCase):
-    def test_breguet_error_message(self):
+    def test_breguet_with_states(self):
         local_phase_info = deepcopy(two_dof_phase_info)
 
         local_phase_info['cruise'] = {
             'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
             'user_options': {
                 'phase_type': PhaseType.BREGUET_RANGE,
+                'num_segments': 1,
+                'order': 3,
                 'alt_cruise': (37.5e3, 'ft'),
-                'mach_cruise': 10.8,
+                'mach_cruise': 0.8,
+                'mass_ref': (171000, 'lbm'),
+                'time_duration_ref': (26500, 's'),
             },
             'initial_guesses': {
                 # [Initial mass, delta mass] for special cruise phase.
-                'mass': ([171481.0, -35000], 'lbm'),
+                'mass': ([171481.0, 136000], 'lbm'),
                 'initial_distance': (200.0e3, 'ft'),
-                'initial_time': (1516.0, 's'),
+                'time': ([1504.0, 26500.0], 's'),
                 'altitude': (37.5e3, 'ft'),
                 'mach': (0.8, 'unitless'),
-            },
+            }
         }
 
         prob = AviaryProblem()
@@ -55,11 +65,14 @@ class TestTwoDOFPhases(unittest.TestCase):
         prob.load_external_subsystems([DynBuilder()])
         prob.check_and_preprocess_inputs()
 
-        with self.assertRaises(AttributeError) as cm:
-            prob.build_model()
+        prob.build_model()
 
-        err_text = 'The Breguet Cruise phase does not support dynamic variables in its subsystems.'
-        self.assertEqual(str(cm.exception), err_text)
+        prob.setup()
+
+        # Nonsense component, but make sure it runs.
+        prob.run_model()
+
+        self.assertTrue('x' in prob.model.traj.phases.cruise.state_options)
 
 
 if __name__ == '__main__':

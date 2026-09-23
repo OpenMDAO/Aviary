@@ -210,7 +210,6 @@ class FlightPhaseBase(PhaseBuilder):
         dymos.Phase
         """
         phase: dm.Phase = super().build_phase(aviary_options)
-        self.phase = phase
 
         num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
