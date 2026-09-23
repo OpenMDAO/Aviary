@@ -1,9 +1,8 @@
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 import dymos as dm
 import openmdao.api as om
-from dymos.transcriptions.transcription_base import TranscriptionBase
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 

@@ -1,7 +1,4 @@
 import unittest
-from copy import deepcopy
-
-import numpy as np
 
 import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
@@ -10,7 +7,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.api import Mission
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Mission, Settings
 
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': True},

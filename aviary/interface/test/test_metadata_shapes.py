@@ -1,12 +1,12 @@
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.models.external_subsystems.detailed_battery.battery_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.detailed_battery.battery_variables import Aircraft
 from aviary.models.missions.energy_state_default import phase_info as energy_phase_info
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.csv_data_file import read_data_file

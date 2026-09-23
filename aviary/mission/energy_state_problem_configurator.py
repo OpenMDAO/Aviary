@@ -2,9 +2,7 @@ from copy import deepcopy
 
 import numpy as np
 import openmdao.api as om
-from dymos.transcriptions.transcription_base import TranscriptionBase
 
-from aviary.mission.flight_phase_builder import FlightPhaseOptions
 from aviary.mission.energy_state.phases.build_landing import Landing
 from aviary.mission.energy_state.phases.build_takeoff import Takeoff
 from aviary.mission.energy_state.phases.energy_phase import EnergyPhase

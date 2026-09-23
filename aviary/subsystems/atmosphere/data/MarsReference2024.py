@@ -12,11 +12,8 @@ DATA_ORIGIN_NOTE = """
     F107 = 68.0
     """
 from collections import namedtuple
-import sys
 
 import numpy as np
-
-import openmdao.api as om
 
 atm_data = namedtuple('MarsReference2024', ['alt', 'temp', 'pres', 'rho'])
 atm_data.__doc__ = """

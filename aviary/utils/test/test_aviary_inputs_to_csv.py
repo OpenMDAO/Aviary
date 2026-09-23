@@ -1,11 +1,10 @@
-import os
-import unittest
 import importlib.util
+import unittest
+
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.aviary_inputs_to_csv import save_to_csv_file
 from aviary.utils.functions import get_path
-
-from openmdao.utils.testing_utils import use_tempdirs
 
 
 @use_tempdirs

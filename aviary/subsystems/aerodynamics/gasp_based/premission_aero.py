@@ -12,8 +12,8 @@ from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations im
 )
 from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import (
     AeroFormfactors,
-    FormFactor,
     BWBFormFactor,
+    FormFactor,
 )
 from aviary.subsystems.aerodynamics.gasp_based.interference import (
     WingFuselageInterferencePremission,

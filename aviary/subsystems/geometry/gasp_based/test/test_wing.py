@@ -5,9 +5,9 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.wing import (
-    BWBWingVolume,
     BWBWingFoldVolume,
     BWBWingGroup,
+    BWBWingVolume,
     ExposedWing,
     WingFoldArea,
     WingFoldVolume,
@@ -19,7 +19,7 @@ from aviary.subsystems.geometry.gasp_based.wing import (
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class WingSizeTestCase1(

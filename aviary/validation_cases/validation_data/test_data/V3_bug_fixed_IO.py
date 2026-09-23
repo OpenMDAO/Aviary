@@ -7,7 +7,6 @@ mass calculations and geometry calculations.
 import numpy as np
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Mission, Settings
 from aviary.variable_info.enums import (
     AircraftTypes,
     AtmosphereModel,
@@ -15,6 +14,7 @@ from aviary.variable_info.enums import (
     GASPEngineType,
     Verbosity,
 )
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 def local_get_option_defaults() -> AviaryValues:

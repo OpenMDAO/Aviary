@@ -6,7 +6,6 @@ from openmdao.utils.assert_utils import (
     assert_equal_numstrings,
     assert_near_equal,
 )
-
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.doctape import (
@@ -14,6 +13,7 @@ from aviary.utils.doctape import (
     check_contains,
     check_value,
     get_all_keys,
+    get_all_non_aviary_names,
     get_attribute_name,
     get_previous_line,
     get_value,
@@ -24,7 +24,6 @@ from aviary.utils.doctape import (
     glue_variable,
     gramatical_list,
     run_command_no_file_error,
-    get_all_non_aviary_names,
 )
 
 try:

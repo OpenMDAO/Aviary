@@ -46,7 +46,7 @@ class ACMassTestCase1(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """case gross_wt_initial > 3500.0"""
+        """Case gross_wt_initial > 3500.0"""
         self.prob.run_model()
 
         tol = 1e-7
@@ -56,7 +56,7 @@ class ACMassTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
     def test_case2(self):
-        """case gross_wt_initial < 3500.0"""
+        """Case gross_wt_initial < 3500.0"""
         self.prob.set_val(Aircraft.Design.GROSS_MASS, 3400.0, units='lbm')
         self.prob.run_model()
 
@@ -67,7 +67,7 @@ class ACMassTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
     def test_case3(self):
-        """case gross_wt_initial = 3500.0"""
+        """Case gross_wt_initial = 3500.0"""
         self.prob.set_val(Aircraft.Design.GROSS_MASS, 3500.0, units='lbm')
         self.prob.run_model()
 

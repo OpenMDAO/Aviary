@@ -10,15 +10,14 @@ from pathlib import Path
 
 import numpy as np
 import openmdao.api as om
+from openmdao.utils.units import convert_units
 
 import aviary.constants as constants
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import isiterable
 from aviary.variable_info.variable_meta_data import CoreMetaData
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-import warnings
-from openmdao.utils.units import convert_units
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class EngineModelVariables(Enum):

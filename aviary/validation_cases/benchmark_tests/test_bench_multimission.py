@@ -10,7 +10,7 @@ import aviary.api as av
 from aviary.models.missions.energy_state_default import phase_info
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.enums import ProblemType
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 def multi_mission_example():

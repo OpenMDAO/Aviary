@@ -4,7 +4,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-
 from aviary.subsystems.mass.gasp_based.hydraulics import HydraulicsMass
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options

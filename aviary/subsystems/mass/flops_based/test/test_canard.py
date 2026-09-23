@@ -9,7 +9,7 @@ from aviary.subsystems.mass.flops_based.canard import CanardMass
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test, print_case
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 canard_test_data = {}
 canard_test_data['1'] = AviaryValues(

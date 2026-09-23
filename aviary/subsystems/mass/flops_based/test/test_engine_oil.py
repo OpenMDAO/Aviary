@@ -8,11 +8,11 @@ from parameterized import parameterized
 from aviary.subsystems.mass.flops_based.engine_oil import AltEngineOilMass, TransportEngineOilMass
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
+    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_inputs,
     print_case,
-    Version,
 )
 from aviary.variable_info.variables import Aircraft
 

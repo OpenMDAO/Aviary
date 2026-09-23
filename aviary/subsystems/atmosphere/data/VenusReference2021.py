@@ -15,11 +15,8 @@ DATA_ORIGIN_NOTE = """
     Original source altitudes are included as atm_data._raw_data_geometric .
     """
 from collections import namedtuple
-import sys
 
 import numpy as np
-
-import openmdao.api as om
 
 atm_data = namedtuple('VenusReference2021', ['alt', 'temp', 'pres', 'rho'])
 atm_data.__doc__ = """

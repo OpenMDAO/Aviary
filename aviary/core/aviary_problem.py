@@ -1,4 +1,3 @@
-import csv
 import json
 import os
 import subprocess
@@ -11,12 +10,10 @@ from pathlib import Path
 
 import dymos as dm
 import numpy as np
-import openmdao
 import openmdao.api as om
 import openmdao.utils.hooks as hooks
 from openmdao.utils.reports_system import _default_reports
 from openmdao.utils.units import convert_units
-from packaging import version
 
 from aviary.core.aviary_group import AviaryGroup
 from aviary.interface.utils import set_warning_format

@@ -2,8 +2,8 @@
 Test preprocessing as part of the level 2 interface.
 """
 
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_warning
 from openmdao.utils.testing_utils import use_tempdirs

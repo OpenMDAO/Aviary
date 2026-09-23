@@ -10,10 +10,10 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     ElectricAugmentationMass,
     FixedMassGroup,
     HighLiftMass,
+    HorizontalTailMass,
     LandingGearMassGroup,
     MassParameters,
     PayloadGroup,
-    HorizontalTailMass,
     VerticalTailMass,
 )
 from aviary.utils.aviary_values import AviaryValues
@@ -1432,7 +1432,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0, units='unitless')
 
     def test_case1(self):
-        """not to smooth mass discontinuties"""
+        """Not to smooth mass discontinuties"""
         setup_model_options(self.prob, self.options)
         self.prob.setup(check=False, force_alloc_complex=True)
         self.prob.run_model()
@@ -1454,7 +1454,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
         assert_check_partials(data, atol=1e-12, rtol=1e-12)
 
     def test_case2(self):
-        """smooth mass discontinuties"""
+        """Smooth mass discontinuties"""
         self.options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, True)
         setup_model_options(self.prob, self.options)
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -1478,7 +1478,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
 
 
 class BWBPayloadGroupTestCase(unittest.TestCase):
-    "GASP BWB model"
+    """GASP BWB model"""
 
     def setUp(self):
         options = AviaryValues()

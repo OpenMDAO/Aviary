@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import argparse
 import getpass
-
 from datetime import datetime
 from enum import Enum
 

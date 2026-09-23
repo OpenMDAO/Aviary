@@ -7,11 +7,8 @@ DATA_ORIGIN_NOTE = """
     The data table contains data from -5,000 meters to 83,000 meters altitude
     """
 from collections import namedtuple
-import sys
 
 import numpy as np
-
-import openmdao.api as om
 
 atm_data = namedtuple('USatm1976Data', ['alt', 'temp', 'pres', 'rho'])
 atm_data.__doc__ = """

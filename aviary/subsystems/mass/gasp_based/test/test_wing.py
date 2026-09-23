@@ -7,10 +7,10 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.subsystems.mass.gasp_based.wing import (
     BWBWingMassGroup,
     BWBWingMassSolve,
+    StrutAndFoldMass,
     WingMassGroup,
     WingMassSolve,
     WingMassTotal,
-    StrutAndFoldMass,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options

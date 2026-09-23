@@ -1,9 +1,7 @@
-import warnings
 import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Settings
 
@@ -12,7 +10,8 @@ def load_intensity_by_factor(load_dist_factor, intn_stations):
     """
     Calculate load intensity at wing integration stations for the given load_dist_factor.
 
-    Parameters:
+    Parameters
+    ----------
     load_dist_factor (float): 0 or 1 <= load_dist_factor <= 3.
         1.0 : triangular distribution
         2.0 : elliptical distribution (default)
@@ -50,7 +49,8 @@ def smooth_load_intensity_by_factor(load_dist_factor, intn_stations):
     """
     Calculate load intensity at wing integration stations for the given load_dist_factor.
 
-    Parameters:
+    Parameters
+    ----------
     load_dist_factor (float): 0 or 1 <= load_dist_factor <= 3.
         1.0 : triangular distribution
         2.0 : elliptical distribution (default)

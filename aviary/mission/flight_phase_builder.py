@@ -2,10 +2,7 @@ import dymos as dm
 import numpy as np
 
 from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
-from aviary.mission.initial_guess_builders import (
-    InitialGuessState,
-    InitialGuessControl,
-)
+from aviary.mission.initial_guess_builders import InitialGuessControl, InitialGuessState
 from aviary.mission.phase_builder import PhaseBuilder, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues

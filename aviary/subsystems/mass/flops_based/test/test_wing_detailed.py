@@ -6,7 +6,6 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-
 from aviary.subsystems.mass.flops_based.wing_detailed import (
     BWBDetailedWingBendingFact,
     DetailedWingBendingFact,
@@ -415,7 +414,7 @@ class DetailedWingBendingTest(unittest.TestCase):
 
     def test_intensity_factor(self):
         """
-        data taken from high_wing_single_aisle.csv
+        Data taken from high_wing_single_aisle.csv
         Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL = 3, 1, 1.5, 2.5, 1.25, 2.75
         """
         options = get_option_defaults()

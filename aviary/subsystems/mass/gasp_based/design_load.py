@@ -1,6 +1,7 @@
+import warnings
+
 import numpy as np
 import openmdao.api as om
-import warnings
 
 from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import Verbosity

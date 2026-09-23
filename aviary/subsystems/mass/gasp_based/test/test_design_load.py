@@ -855,7 +855,6 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
 
     def test_case1(self):
         """GASP data"""
-
         self.options.set_val(
             Aircraft.Design.PART25_STRUCTURAL_CATEGORY,
             val=3,
@@ -874,7 +873,6 @@ class BWBLoadSpeedsTestCATD3(unittest.TestCase):
 
     def test_case2(self):
         """Aviary enhanced algorithms"""
-
         # case 2A
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -957,7 +955,6 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
 
     def test_case1(self):
         """GASP data"""
-
         self.prob.run_model()
 
         tol = 1e-7
@@ -971,7 +968,6 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
 
     def test_case2(self):
         """Aviary enhanced algorithms"""
-
         # case 2A
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -1055,7 +1051,6 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
 
     def test_case1(self):
         """GASP data"""
-
         self.prob.run_model()
 
         tol = 1e-7
@@ -1069,7 +1064,6 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
 
     def test_case2(self):
         """Aviary enhanced algorithms"""
-
         # case 2A
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -1153,7 +1147,6 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
 
     def test_case1(self):
         """GASP data"""
-
         self.prob.run_model()
 
         tol = 1e-7
@@ -1167,7 +1160,6 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
 
     def test_case2(self):
         """Aviary enhanced algorithms"""
-
         # case 2A
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -1250,7 +1242,6 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
 
     def test_case1(self):
         """GASP data"""
-
         self.prob.run_model()
 
         tol = 1e-7
@@ -1264,7 +1255,6 @@ class BWBLoadSpeedsTestCATD4(unittest.TestCase):
 
     def test_case2(self):
         """Aviary enhanced algorithms"""
-
         # case 2A
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
@@ -1359,7 +1349,6 @@ class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
         Test all other if-else branches comparing
         cruise_load_factor vs dive_load_factor, and gust_load_factor vs max_maneuver_factor
         """
-
         # Case 2A
         self.prob.set_val('density_ratio', 0.53281, units='unitless')
         self.prob.run_model()

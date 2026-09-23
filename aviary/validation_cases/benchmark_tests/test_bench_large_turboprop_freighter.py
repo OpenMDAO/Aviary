@@ -1,7 +1,6 @@
 import unittest
 from copy import deepcopy
 
-from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
@@ -11,7 +10,7 @@ from aviary.models.aircraft.large_turboprop_freighter.phase_info import (
 )
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Settings
 
 
 @use_tempdirs
