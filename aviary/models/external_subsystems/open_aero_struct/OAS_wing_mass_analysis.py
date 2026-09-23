@@ -1,44 +1,39 @@
 """
 OpenMDAO component for aerostructural analysis using OpenAeroStruct.
 
-This analysis is based on the aircraft_for_bench_FwFm.csv input data representing a
-single-aisle commercial transport aircraft.  The user_mesh method is currently
-hard-coded with values taken from the aircraft_for_bench_FwFm data, but should be coded
-to use the Aircraft.Wing.* variables for a more general capability.
+This analysis is based on the aircraft_for_bench_FwFm.csv input data representing a single-aisle
+commercial transport aircraft.  The user_mesh method is currently hard-coded with values taken from
+the aircraft_for_bench_FwFm data, but should be coded to use the Aircraft.Wing.* variables for a
+more general capability.
 
-The OAStructures class performs a structural analysis of the given wing
-by applying aeroelastic loads computed at the cruise condition and a
-2.5g maneuver at Mach 0.64 at sea level.  The optimization determines
-the optimum wing skin thickness, spar cap thickness, wing twist, wing t/c
+The OAStructures class performs a structural analysis of the given wing by applying aeroelastic
+loads computed at the cruise condition and a 2.5g maneuver at Mach 0.64 at sea level. The
+optimization determines the optimum wing skin thickness, spar cap thickness, wing twist, wing t/c
 and maneuver angle of attack that satisfies strength constraints.
 
-The only Aviary input driving the design is fuel mass, but other variables
-may be included as well.
+The only Aviary input driving the design is fuel mass, but other variables may be included as well.
 
-OAStructures returns the optimized wing mass and the fuel mass burned.
-Currently, only the wing mass is used to override the Aviary variable
-Aircraft.Wing.MASS.
-
+OAStructures returns the optimized wing mass and the fuel mass burned. Currently, only the wing mass
+is used to override the Aviary variable Aircraft.Wing.MASS.
 """
 
 import time
 import warnings
+from importlib.util import find_spec
 
 import numpy as np
 import openmdao.api as om
-
-try:
-    import openaerostruct
-except ImportError:
-    raise ImportError(
-        "openaerostruct package not found. You can install it by running 'pip install openaerostruct'."
-    )
-
 from openaerostruct.integration.aerostruct_groups import AerostructGeometry, AerostructPoint
 from openaerostruct.structures.wingbox_fuel_vol_delta import WingboxFuelVolDelta
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.variable_info.variables import Dynamic
+
+spec = find_spec('openaerostructz')
+if spec is None:
+    raise ImportError(
+        "openaerostruct package not found. You can install it by running 'pip install openaerostruct'."
+    )
 
 
 def _get_atmospheric_properties(altitude):

@@ -1,3 +1,7 @@
+from collections import namedtuple
+
+import numpy as np
+
 DATA_ORIGIN_NOTE = """
     Data extracted from Venus-GRAM 2021, GRAM Suite 2.1 by Eliot Aretskin-Hariton (NASA GRC)
     Reference data set represents a global average conditions, independent of year, season, or time of day.
@@ -14,9 +18,6 @@ DATA_ORIGIN_NOTE = """
     This data was re-interpolated to be based on the equipotential surface to match Earth and Mars inputs.
     Original source altitudes are included as atm_data._raw_data_geometric .
     """
-from collections import namedtuple
-
-import numpy as np
 
 atm_data = namedtuple('VenusReference2021', ['alt', 'temp', 'pres', 'rho'])
 atm_data.__doc__ = """

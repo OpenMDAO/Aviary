@@ -1,3 +1,7 @@
+from collections import namedtuple
+
+import numpy as np
+
 DATA_ORIGIN_NOTE = """
     United States standard atmosphere 1976 tables, data
     Based on the original model documented in https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
@@ -6,9 +10,6 @@ DATA_ORIGIN_NOTE = """
     Notes:
     The data table contains data from -5,000 meters to 83,000 meters altitude
     """
-from collections import namedtuple
-
-import numpy as np
 
 atm_data = namedtuple('USatm1976Data', ['alt', 'temp', 'pres', 'rho'])
 atm_data.__doc__ = """

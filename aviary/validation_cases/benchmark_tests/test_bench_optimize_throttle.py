@@ -5,7 +5,6 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.api import Mission
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.variable_info.variables import Mission, Settings
 
@@ -28,7 +27,6 @@ phase_info = {
             'mass_ref': (2.0e5, 'lbm'),
             'throttle_enforcement': 'control',
             'throttle_optimize': True,
-            'time_initial': (0.0, 's'),
             'time_initial': (0.0, 'min'),
             'time_duration_bounds': ((32.0, 128.0), 'min'),
         },

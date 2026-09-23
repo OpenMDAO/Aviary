@@ -1621,7 +1621,7 @@ class BWBLoadFactors(om.ExplicitComponent):
         ULF_from_maneuver = self.options[Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER]
         max_maneuver_factor = inputs['max_maneuver_factor']
 
-        if ULF_from_maneuver == True:
+        if ULF_from_maneuver:
             ULF = 1.5 * max_maneuver_factor
         else:
             gross_mass = inputs[Aircraft.Design.GROSS_MASS]
@@ -1682,7 +1682,7 @@ class BWBLoadFactors(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
         ULF_from_maneuver = self.options[Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER]
 
-        if ULF_from_maneuver == True:
+        if ULF_from_maneuver:
             # ULF = 1.5 * max_maneuver_factor
             dULF_dmax_maneuver_factor = 1.5
             dULF_dgross_mass = 0.0

@@ -1,3 +1,7 @@
+from collections import namedtuple
+
+import numpy as np
+
 DATA_ORIGIN_NOTE = """
 This information applies to MIL_SPEC_201A_tropical, MIL_SPEC_201A_polar, MIL_SPEC_201A_cold, 
 and MIL_SPEC_201A_hot
@@ -39,10 +43,6 @@ These problems include determination of engine and aircraft performance,
 aerodynamic characteristics, skin, compartment and equipment temperatures
 under transient climb conditions," - Mil_Std_210A
 """
-
-from collections import namedtuple
-
-import numpy as np
 
 atm_data = namedtuple('MIL_SPEC_210A_Tropical', ['alt', 'temp', 'pres', 'rho'])
 atm_data.__doc__ = """

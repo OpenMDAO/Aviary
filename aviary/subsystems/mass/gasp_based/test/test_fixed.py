@@ -19,7 +19,6 @@ from aviary.subsystems.mass.gasp_based.fixed import (
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.functions import extract_options, setup_model_options
-from aviary.variable_info.options import AviaryValues
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 

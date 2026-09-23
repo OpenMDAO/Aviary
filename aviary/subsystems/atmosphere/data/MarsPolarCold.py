@@ -1,3 +1,7 @@
+from collections import namedtuple
+
+import numpy as np
+
 DATA_ORIGIN_NOTE = """
     Data extracted from Mars-GRAM 2024, GRAM Suite 2.1 by Eliot Aretskin-Hariton (NASA GRC)
 
@@ -9,9 +13,6 @@ DATA_ORIGIN_NOTE = """
     Year = 2000 
     F107 = 68.0
     """
-from collections import namedtuple
-
-import numpy as np
 
 atm_data = namedtuple('MarsPolarCold', ['alt', 'temp', 'pres', 'rho'])
 atm_data.__doc__ = """

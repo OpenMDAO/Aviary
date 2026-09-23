@@ -1643,9 +1643,9 @@ class HighLiftMass(om.ExplicitComponent):
         u2 = 2 * wing_loading / (RHO * CL_max_flaps_landing)
         VFLAP = 1.8 * (0.5921 * np.sqrt(u2))
         dVFLAP_dWL = (1.8 * 0.5921) * (1 / np.sqrt(u2)) * (1 / (RHO * CL_max_flaps_landing))
-        dVFLAP_drho = (
-            -(1.8 * 0.5921) * (1 / np.sqrt(u2)) * (wing_loading / (RHO**2 * CL_max_flaps_landing))
-        )
+        # dVFLAP_drho = (
+        #     -(1.8 * 0.5921) * (1 / np.sqrt(u2)) * (wing_loading / (RHO**2 * CL_max_flaps_landing))
+        # )
         dVFLAP_dCMFL = (
             -(1.8 * 0.5921) * (1 / np.sqrt(u2)) * (wing_loading / (RHO * CL_max_flaps_landing**2))
         )

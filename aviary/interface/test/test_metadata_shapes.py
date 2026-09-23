@@ -15,7 +15,6 @@ from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variable_meta_data import CoreMetaData
-from aviary.variable_info.variables import Aircraft
 
 
 @use_tempdirs
@@ -37,7 +36,7 @@ class TestShapebyConn(unittest.TestCase):
 
         local_phase_info = deepcopy(energy_phase_info)
 
-        prob = AviaryProblem(verbosity=1)
+        prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',

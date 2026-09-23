@@ -3222,7 +3222,7 @@ class StructMassTestCase1(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBStructMassTestCase(unittest.TestCase):
+class BWBStructMassTestCase2(unittest.TestCase):
     """Using BWB data."""
 
     def setUp(self):

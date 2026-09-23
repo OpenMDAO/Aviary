@@ -746,7 +746,7 @@ class AtmosCalc(om.ExplicitComponent):
 
 
 if __name__ == '__main__':
-    from aviary.utils.engine_deck_conversion_cmd import _setup_EDC_parser
+    from aviary.utils.engine_deck_conversion_cmd import _exec_EDC, _setup_EDC_parser
 
     parser = argparse.ArgumentParser()
     _setup_EDC_parser(parser)

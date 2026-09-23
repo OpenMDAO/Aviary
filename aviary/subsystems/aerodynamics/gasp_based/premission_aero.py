@@ -6,10 +6,10 @@ the dynamic aero.
 
 import openmdao.api as om
 
-from aviary.subsystems.aerodynamics.gasp_based.flaps_model import FlapsGroup
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
     BasicFlapsGeometry,
 )
+from aviary.subsystems.aerodynamics.gasp_based.flaps_model.flaps_model import FlapsGroup
 from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import (
     AeroFormfactors,
     BWBFormFactor,

@@ -301,7 +301,7 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
             if item.suffix.lower() == '.csv':
                 best_match = item
                 break
-        if best_match == None:
+        if best_match is None:
             # Probably requested the wrong file extension.
             best_match = close_match.pop(0)
         return best_match

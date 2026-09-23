@@ -46,7 +46,7 @@ def sigmoidX(x, x0, mu=1.0):
         y = 0
         if (x - x0) * mu > -320:
             y = 1 / (1 + np.exp(-(x - x0) / mu))
-    if dtype == float:
+    if isinstance(dtype, float):
         y = y.real
     return y
 
@@ -92,7 +92,7 @@ def dSigmoidXdx(x, x0, mu=1.0):
             term = np.exp(-(x - x0) / mu)
             term2 = (1 + term) * (1 + term)
             y = term / mu / term2
-    if dtype == float:
+    if isinstance(dtype, float):
         y = y.real
     return y
 

@@ -7,7 +7,6 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.subsystems.mass.gasp_based.emergency_equipment import EmergencyEquipment
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import AviaryValues
 from aviary.variable_info.variables import Aircraft
 
 
