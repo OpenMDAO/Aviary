@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.geometry.flops_based.utils import Names
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -229,70 +228,6 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
         J[Aircraft.Fuselage.FINENESS, Aircraft.Fuselage.LENGTH] = 1.0 / avg_diam
 
         J[Aircraft.Fuselage.FINENESS, Aircraft.Fuselage.REF_DIAMETER] = -length / avg_diam**2.0
-
-    # See issue #1182. NOTE this code is currently unused!!
-    def _compute_additional_fuselages(
-        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    ):
-        num_fuselages = inputs[Aircraft.Fuselage.NUM_FUSELAGES]
-
-        if num_fuselages < 2:
-            return
-
-        num_extra = num_fuselages - 1
-
-        idx = self._num_components
-        self._num_components += num_extra
-
-        lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
-
-        fineness = outputs[Aircraft.Design.FINENESS]
-
-        laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
-        laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
-
-        for _ in range(num_extra):
-            lengths[idx] = lengths[3]
-
-            fineness[idx] = fineness[3]
-
-            laminar_flow_lower[idx] = laminar_flow_lower[3]
-            laminar_flow_upper[idx] = laminar_flow_upper[3]
-
-            idx += 1
-
-    # See issue #1182. NOTE this code is currently unused!!
-    def _compute_additional_vertical_tails(
-        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    ):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_tails = aviary_options.get_val(Aircraft.VerticalTail.NUM_TAILS)
-
-        if num_tails < 2:
-            return
-
-        num_extra = num_tails - 1
-
-        idx = self._num_components
-        self._num_components += num_extra
-
-        lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
-
-        fineness = outputs[Aircraft.Design.FINENESS]
-
-        laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
-        laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
-
-        for _ in range(num_extra):
-            lengths[idx] = lengths[2]
-
-            fineness[idx] = fineness[2]
-
-            laminar_flow_lower[idx] = laminar_flow_lower[2]
-            laminar_flow_upper[idx] = laminar_flow_upper[2]
-
-            idx += 1
-
 
 class NacelleCharacteristicLength(om.ExplicitComponent):
     """
