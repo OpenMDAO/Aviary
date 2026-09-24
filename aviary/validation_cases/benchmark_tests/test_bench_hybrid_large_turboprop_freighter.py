@@ -52,8 +52,8 @@ class LargeHybridTurbopropFreighterBenchmark(unittest.TestCase):
         electroprop_options.set_val(
             Aircraft.Engine.RPM_DESIGN, 6_000, 'rpm'
         )  # max RPM of motor map
-        # electroprop_options.delete(Aircraft.Engine.FIXED_RPM)
-        options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
+        options.delete(Aircraft.Engine.FIXED_RPM)
+        # electroprop_options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
         electroprop_options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
         electroprop_options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
         electroprop_options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1_000, 'W*h/kg')

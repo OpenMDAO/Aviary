@@ -162,11 +162,11 @@ class AviaryGroup(om.Group):
 
             if key in aviary_options:
                 val, units = aviary_options.get_item(key)
-                val_in_csv_file = True
+                val_in_inputs = True
             else:
                 val = aviary_metadata[key]['default_value']
                 units = aviary_metadata[key]['units']
-                val_in_csv_file = False
+                val_in_inputs = False
 
                 if val is None:
                     # optional, but no default value
@@ -178,11 +178,12 @@ class AviaryGroup(om.Group):
                 # If var has been declared with a shape, and isn't in the aviary_inputs, then
                 # take the default val and broadcast it.
 
-                if not val_in_csv_file and aviary_metadata[key]['multivalue']:
-                    if key in shapes and np.isscalar(val):
-                        scalar_val = val
-                        val = np.empty(shapes[key])
-                        val[:] = scalar_val
+                if (not val_in_inputs and aviary_metadata[key]['multivalue']) and (
+                    key in shapes and np.isscalar(val)
+                ):
+                    scalar_val = val
+                    val = np.empty(shapes[key])
+                    val[:] = scalar_val
 
                 # Default val if var doesn't use shape_by_conn.
                 kwargs['val'] = val

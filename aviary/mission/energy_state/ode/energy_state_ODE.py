@@ -115,7 +115,6 @@ class EnergyStateODE(_BaseODE):
 
         else:
             # Single Engine
-
             if throttle_enforcement == 'control':
                 self.add_subsystem(
                     'throttle_balance',
