@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder
@@ -123,6 +123,7 @@ def CruiseExample():
 
 @use_tempdirs
 class TestUAVCruiseExample(unittest.TestCase):
+    @require_pyoptsparse(optimizer='SNOPT')
     def test_subsystems_in_cruise_attempt(self):
         prob = CruiseExample()
 
