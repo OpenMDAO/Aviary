@@ -105,7 +105,7 @@ phase_info = {
         },
     },
     'accel': {
-        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.ACCEL,
             'num_segments': 1,
@@ -185,7 +185,7 @@ phase_info = {
         },
     },
     'cruise': {
-        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (37.5e3, 'ft'),

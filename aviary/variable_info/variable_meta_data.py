@@ -1116,10 +1116,11 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NBABR'},
     units='unitless',
-    desc='Number of business class seats abreast.',
+    desc='Number of business class seats abreast. For FLOPS-based mass, the default value varies'
+    'based on aircraft type and total number of passengers.',
     types=int,
     option=True,
-    default_value=5,
+    default_value=0,
 )
 
 add_meta_data(
@@ -1127,10 +1128,11 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SAB', 'FLOPS': 'FUSEIN.NTABR'},
     units='unitless',
-    desc='Number of economy class seats abreast.',
+    desc='Number of economy class seats abreast. For FLOPS-based mass, the default value varies'
+    'based on aircraft type and total number of passengers.',
     types=int,
     option=True,
-    default_value=6,
+    default_value=0,
 )
 
 add_meta_data(
@@ -1138,10 +1140,11 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NFABR'},
     units='unitless',
-    desc='Number of first class seats abreast.',
+    desc='Number of first class seats abreast. For FLOPS-based mass, the default value varies'
+    'based on aircraft type and total number of passengers.',
     types=int,
     option=True,
-    default_value=4,
+    default_value=0,
 )
 
 add_meta_data(
@@ -1149,8 +1152,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH'},
     units='inch',
-    desc='pitch of the business class seats.',
-    default_value=39.0,
+    desc='Pitch of the business class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1158,8 +1162,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH'},
     units='inch',
-    desc='pitch of the economy class seats.',
-    default_value=32.0,
+    desc='Pitch of the economy class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1167,8 +1172,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH'},
     units='inch',
-    desc='pitch of the first class seats.',
-    default_value=61.0,
+    desc='Pitch of the first class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
+    default_value=0.0,
 )
 
 #  _____                 _
@@ -1235,30 +1241,6 @@ add_meta_data(
     units='unitless',
     default_value=1.0,
     desc='compressibility aero calibration factor',
-)
-
-add_meta_data(
-    Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='unitless',
-    option=True,
-    default_value=False,
-    types=bool,
-    desc='if true, use empirical tail volume coefficient equation. This is '
-    'true if VBARHX is 0 in GASP.',
-)
-
-add_meta_data(
-    Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='unitless',
-    option=True,
-    default_value=False,
-    types=bool,
-    desc='if true, use empirical tail volume coefficient equation. This is '
-    'true if VBARVX is 0 in GASP.',
 )
 
 add_meta_data(
@@ -2084,7 +2066,9 @@ add_meta_data(
     },
     units='unitless',
     option=True,
-    desc='Constant term in fuel flow scaling equation',
+    desc='Constant term in fuel flow scaling equation. Directly added to the overall fuel flow '
+    'scaling (so a constant term of 0.01 increases the overall fuel flow multiplier from 1.0 to '
+    '1.01)',
     default_value=0.0,
     multivalue=True,
 )
@@ -2097,7 +2081,13 @@ add_meta_data(
         'FLOPS': 'ENGDIN.FFFAC',
     },
     units='unitless',
-    desc='Linear term in fuel flow scaling equation',
+    desc='Linear term in fuel flow scaling equation. Accounts for how fuel flow changes '
+    'with engine size, penalizing smaller engines and benefiting larger ones. This term sets '
+    'the rate that fuel flow changes with Aircraft.Engine.SCALE_FACTOR - for every percent the '
+    'engine is scaled up or down, this sets how much of a percent is fuel flow adjusted. For '
+    'example, a linear term of 0.1 means for every percent the engine is scaled up (such as from '
+    '1.0 to 1.01), the overall fuel flow multiplier is increased by 0.1, and similarly decreases '
+    'by 0.1 for every percent the engine is scaled down.',
     default_value=0.0,
     option=True,
     multivalue=True,
@@ -3577,7 +3567,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
-    desc='width of the business class seats',
+    desc='Width of the business class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
     default_value=0.0,
 )
 
@@ -3586,7 +3577,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WS', 'FLOPS': None},
     units='inch',
-    desc='width of the economy class seats',
+    desc='Width of the economy class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
     default_value=0.0,
 )
 
@@ -3595,7 +3587,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
-    desc='width of the first class seats',
+    desc='Width of the first class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
     default_value=0.0,
 )
 
@@ -4423,7 +4416,6 @@ add_meta_data(
     units='ft**2',
     desc='total nacelles wetted area',
     default_value=0.0,
-    multivalue=True,
 )
 
 add_meta_data(

@@ -4,7 +4,7 @@ import warnings
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.math import smooth_int_tanh, d_smooth_int_tanh
+from aviary.utils.math_utils import smooth_int_tanh, d_smooth_int_tanh
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Settings
@@ -341,11 +341,24 @@ class DetailedCabinLayout(om.ExplicitComponent):
         eng_flag = int(
             any(x % 2 != 0 for x in num_engines)
         )  # there is at least one center mounted engine if 1.
-        first_class_len = num_first_class_pax * seat_pitch_first / num_seat_abreast_first
-        business_class_len = (
-            num_business_class_pax * seat_pitch_business / num_seat_abreast_business
-        )
-        economy_class_len = num_economy_class_pax * seat_pitch_economy / num_seat_abreast_economy
+
+        if num_first_class_pax > 0:
+            first_class_len = num_first_class_pax * seat_pitch_first / num_seat_abreast_first
+        else:
+            first_class_len = 0
+        if num_business_class_pax > 0:
+            business_class_len = (
+                num_business_class_pax * seat_pitch_business / num_seat_abreast_business
+            )
+        else:
+            business_class_len = 0
+        if num_economy_class_pax > 0:
+            economy_class_len = (
+                num_economy_class_pax * seat_pitch_economy / num_seat_abreast_economy
+            )
+        else:
+            economy_class_len = 0
+
         pax_compart_length = (
             first_class_len
             + business_class_len

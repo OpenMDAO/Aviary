@@ -19,12 +19,13 @@ phase_info = {
         },
     },
     'rotate': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
             'ground_roll': True,
             'clean': False,
-            'time_initial_ref': (1.0e3, 'ft'),
+            'time_initial_ref': (2.0e3, 'ft'),
             'time_initial_bounds': ((1.0e3, 3.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((200.0, 2.0e3), 'ft'),
@@ -58,11 +59,12 @@ phase_info = {
         },
     },
     'BC': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
             'clean': False,
-            'time_initial_ref': (1.0e3, 'ft'),
+            'time_initial_ref': (3.0e3, 'ft'),
             'time_initial_bounds': ((1.0, 16.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((500.0, 1500.0), 'ft'),
@@ -80,18 +82,19 @@ phase_info = {
         },
         'initial_guesses': {
             'distance': [(3.0e3, 1.0e3), 'ft'],
-            'time': [(25.0, 35.0), 's'],
+            'time': [(25.0, 32.0), 's'],
             'mach': [(0.2, 0.22), 'unitless'],
             'altitude': [(0.0, 50.0), 'ft'],
             'mass': [(174.84e3, 174.82e3), 'lbm'],
         },
     },
     'C_to_P2': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
             'clean': False,
-            'time_initial_ref': (1.0e3, 'ft'),
+            'time_initial_ref': (4.0e3, 'ft'),
             'time_initial_bounds': ((1.0e3, 20.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((3.0e3, 20.0e3), 'ft'),
@@ -109,17 +112,18 @@ phase_info = {
         },
         'initial_guesses': {
             'distance': [(4.0e3, 10.0e3), 'ft'],
-            'time': [(35.0, 60.0), 's'],
+            'time': [(32.0, 60.0), 's'],
             'mach': [(0.22, 0.3), 'unitless'],
             'mass': [(174.82e3, 174.8e3), 'lbm'],
         },
     },
     'P2_to_D': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
             'clean': False,
-            'time_initial_ref': (1.0e3, 'ft'),
+            'time_initial_ref': (14.0e3, 'ft'),
             'time_initial_bounds': ((1.0e3, 20.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((3.0e3, 20.0e3), 'ft'),
@@ -143,11 +147,12 @@ phase_info = {
         },
     },
     'DE': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
             'clean': False,
-            'time_initial_ref': (1.0e3, 'ft'),
+            'time_initial_ref': (18.0e3, 'ft'),
             'time_initial_bounds': ((500.0, 30.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((1000, 5000.0), 'ft'),
@@ -178,11 +183,12 @@ phase_info = {
         },
     },
     'E_to_P1': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
             'clean': False,
-            'time_initial_ref': (1.0e3, 'ft'),
+            'time_initial_ref': (20.0e3, 'ft'),
             'time_initial_bounds': ((500.0, 50.0e3), 'ft'),
             'time_duration_ref': (1.0e3, 'ft'),
             'time_duration_bounds': ((1.0e2, 20.0e3), 'ft'),
@@ -220,6 +226,7 @@ phase_info = {
         },
     },
     'P1_to_F': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
