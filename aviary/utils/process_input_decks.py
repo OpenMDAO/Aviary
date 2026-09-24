@@ -16,6 +16,7 @@ Functions:
     initialization_guessing(aircraft_values): Set initial guesses for aircraft parameters based on problem type and other factors.
 """
 
+import csv
 import warnings
 from operator import eq, ge, gt, le, lt, ne
 
@@ -134,6 +135,7 @@ def parse_inputs(
     aircraft_values: AviaryValues = None,
     initialization_guesses=None,
     meta_data=CoreMetaData,
+    verbosity=Verbosity.BRIEF,
 ):
     """
     Parses the input files and updates the aircraft values and initial guesses. The function reads the
@@ -156,6 +158,17 @@ def parse_inputs(
         initialization_guesses = {}
 
     guess_names = list(initialization_guesses.keys())
+
+    deprecated_vars = []
+    renamed_vars = []
+    deprecated_variables_file = get_path('utils/deprecated_variables.csv')
+    with open(deprecated_variables_file, newline='') as f:
+        reader = csv.reader(f)
+        next(reader)  # skip first row
+
+        for row in reader:
+            deprecated_vars.append((row[0]))
+            renamed_vars.append((row[1]))
 
     with open(vehicle_deck, newline='') as f_in:
         for line in f_in:
@@ -208,12 +221,28 @@ def parse_inputs(
                 continue
 
             elif ':' in var_name:
-                warnings.warn(
-                    f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
-                    'It will be ignored.',
-                    UserWarning,
-                )
-                continue
+                idx = 0
+                found_old_var = False
+                for var in deprecated_vars:
+                    if var_name == var:
+                        found_old_var = True
+                        new_name = renamed_vars[idx]
+                        if new_name == 'removed':
+                            if verbosity >= Verbosity.BRIEF:
+                                warnings.warn(f'Variable {var_name} is no longer in meta_data.')
+                        else:
+                            if verbosity >= Verbosity.BRIEF:
+                                warnings.warn(f'Variable {var_name} is replaced by {new_name}')
+                        break
+                    idx = idx + 1
+                if not found_old_var:
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
+                            'It will be ignored.',
+                            UserWarning,
+                        )
+                    continue
 
     return aircraft_values, initialization_guesses
 
