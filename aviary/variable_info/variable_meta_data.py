@@ -5836,14 +5836,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.MAX_LIFT_REF,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.RCLMAX', 'FLOPS': None},
-    units='unitless',
-    desc='input reference maximum lift coefficient for basic wing',
-)
-
-add_meta_data(
     Aircraft.Wing.MAX_SLAT_DEFLECTION_LANDING,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.DELLED', 'FLOPS': None},
@@ -5956,6 +5948,16 @@ add_meta_data(
     units='ft',
     desc='Outboard semispan (used if a detailed wing outboard is being added to a BWB fuselage)',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Wing.REFERENCE_CLEAN_MAX_LIFT_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.RCLMAX', 'FLOPS': None},
+    units='unitless',
+    desc='Reference maximum lift coefficient for clean basic wing. Used for GASP Aero CLmax estimation '
+    'Basic wing has Aspect Ratio = 12, Thickness to Chord = 0.1 with slats and flaps undeflected. '
+    'This value is adjusted for changes in AR and T/C away from the above basic reference.',
 )
 
 add_meta_data(

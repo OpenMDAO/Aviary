@@ -133,7 +133,7 @@ aircraft:wing:high_lift_mass_coefficient,1,unitless
 aircraft:wing:incidence,1.5,deg
 aircraft:design:wing_loading,70,lbf/ft**2
 aircraft:wing:mass_coefficient,75.78,unitless
-aircraft:wing:max_lift_ref,1.45,unitless
+aircraft:wing:reference_clean_max_lift_coefficient,1.45,unitless
 aircraft:wing:max_slat_deflection_landing,0,deg
 aircraft:wing:max_slat_deflection_takeoff,0,deg
 aircraft:wing:max_thickness_location,0.325,unitless
