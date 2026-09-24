@@ -1,3 +1,4 @@
+from copy import deepcopy
 import json
 import os
 import unittest
@@ -8,6 +9,7 @@ import pandas as pd
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     BWBSIWB,
     SIWB,
@@ -28,7 +30,8 @@ from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     Xlifts,
 )
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import Verbosity
+from aviary.validation_cases.benchmark_tests.test_bwb_FwFm import phase_info
+from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
@@ -1967,5 +1970,40 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
             assert_near_equal(CL_over_CD, [CL_Over_CDs[i], CL_Over_CDs[i]], tol)
 
 
+@use_tempdirs
+class BWBCTabularAeroTest(unittest.TestCase):
+    def test_bwb_tabular_aero(self):
+        # Test for a bug that prevented tabular aero from building in a bwb.
+        polar_file = 'models/large_single_aisle_1/aerodynamics_tables/large_single_aisle_1_aero_free_reduced_alpha.csv'
+        local_phase_info = deepcopy(phase_info)
+
+        local_phase_info['pre_mission']['include_takeoff'] = False
+        local_phase_info['post_mission']['include_landing'] = False
+        local_phase_info['cruise']['subsystem_options'] = {}
+        local_phase_info['cruise']['subsystem_options']['aerodynamics'] = {}
+        local_phase_info['cruise']['subsystem_options']['aerodynamics']['method'] = 'tabular_cruise'
+        local_phase_info['cruise']['subsystem_options']['aerodynamics']['solve_alpha'] = True
+        local_phase_info['cruise']['subsystem_options']['aerodynamics']['aero_data'] = polar_file
+        local_phase_info.pop('climb')
+        local_phase_info.pop('descent')
+
+        prob = AviaryProblem()
+
+        prob.load_inputs(
+            'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv',
+            local_phase_info,
+        )
+        prob.model.aero_method = LegacyCode.GASP
+
+        prob.check_and_preprocess_inputs()
+        prob.build_model()
+
+        prob.setup()
+        prob.set_initial_guesses()
+        prob.run_model()
+
+
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    z = BWBCTabularAeroTest()
+    z.test_bwb_tabular_aero()
