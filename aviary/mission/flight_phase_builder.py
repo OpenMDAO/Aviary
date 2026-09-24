@@ -249,7 +249,6 @@ class FlightPhaseBase(PhaseBuilder):
             'mach',
             Dynamic.Atmosphere.MACH,
             rate_targets,
-            add_constraints=Dynamic.Atmosphere.MACH not in constraints,
         )
 
         if phase_type is EquationsOfMotion.ENERGY_STATE and not ground_roll:
@@ -264,7 +263,6 @@ class FlightPhaseBase(PhaseBuilder):
             Dynamic.Mission.ALTITUDE,
             rate_targets,
             rate2_targets=rate2_targets,
-            add_constraints=Dynamic.Mission.ALTITUDE not in constraints,
         )
 
         if throttle_enforcement == 'control':
@@ -272,7 +270,6 @@ class FlightPhaseBase(PhaseBuilder):
                 'throttle',
                 Dynamic.Vehicle.Propulsion.THROTTLE,
                 rate_targets=None,
-                add_constraints=True,
             )
 
         # For heterogeneous-engine cases, we may have throttle allocation control.
