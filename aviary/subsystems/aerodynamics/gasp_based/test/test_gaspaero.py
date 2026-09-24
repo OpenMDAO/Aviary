@@ -33,7 +33,6 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.validation_cases.benchmark_tests.test_bwb_FwFm import phase_info
 from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -809,7 +808,8 @@ class AeroGeomTest(unittest.TestCase):
 @use_tempdirs
 class BWBAeroSetupTest(unittest.TestCase):
     def test_case1(self):
-        options = get_option_defaults()
+        # Explicit options for the BWB aero setup group.
+        options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
         options.set_val(Aircraft.Wing.HAS_STRUT, False)
@@ -1329,7 +1329,8 @@ class DragCoefCleanTest(unittest.TestCase):
 @use_tempdirs
 class BWBCruiseAeroTest(unittest.TestCase):
     def setUp(self):
-        self.options = options = get_option_defaults()
+        # Explicit options for the BWB cruise aero group.
+        self.options = options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
         options.set_val(Aircraft.Wing.HAS_STRUT, False)
@@ -1521,7 +1522,8 @@ class BWBCruiseAeroTest(unittest.TestCase):
 @use_tempdirs
 class BWBLowSpeedAeroTest1(unittest.TestCase):
     def setUp(self):
-        self.options = options = get_option_defaults()
+        # Explicit options for the BWB low-speed aero group.
+        self.options = options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
         options.set_val(Aircraft.Wing.HAS_STRUT, False)
@@ -1664,7 +1666,8 @@ class BWBLowSpeedAeroTest1(unittest.TestCase):
 @use_tempdirs
 class BWBLowSpeedAeroTest2(unittest.TestCase):
     def setUp(self):
-        self.options = options = get_option_defaults()
+        # Explicit options for the BWB low-speed aero group.
+        self.options = options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
         options.set_val(Aircraft.Wing.HAS_STRUT, False)
@@ -1818,7 +1821,8 @@ class BWBLowSpeedAeroTest2(unittest.TestCase):
 @use_tempdirs
 class BWBLowSpeedAeroTest3(unittest.TestCase):
     def setUp(self):
-        self.options = options = get_option_defaults()
+        # Explicit options for the BWB low-speed aero group.
+        self.options = options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
         options.set_val(Aircraft.Wing.HAS_STRUT, False)
