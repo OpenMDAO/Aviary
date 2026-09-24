@@ -173,7 +173,7 @@ class TestPhaseInfoAPI(unittest.TestCase):
 
         prob.run_aviary_problem()
 
-        cons=prob.driver.get_constraint_values()
+        cons = prob.driver.get_constraint_values()
         self.assertTrue('traj.only_cruise.mach[initial]' in cons)
 
 
