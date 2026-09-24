@@ -28,7 +28,7 @@ class WingMassSolve(om.ImplicitComponent):
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Wing.MATERIAL_FACTOR, units='unitless')
-        add_aviary_input(self, Aircraft.Propulsion.ENGINE_POSITION_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.ENGINE_POSITION_MASS_SCALER)
         self.add_input(
             'c_gear_loc',
             units='unitless',
@@ -54,7 +54,7 @@ class WingMassSolve(om.ImplicitComponent):
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
         c_material = inputs[Aircraft.Wing.MATERIAL_FACTOR]
-        c_eng_pos = inputs[Aircraft.Propulsion.ENGINE_POSITION_FACTOR]
+        c_eng_pos = inputs[Aircraft.Wing.ENGINE_POSITION_MASS_SCALER]
         c_gear_loc = inputs['c_gear_loc']
         wingspan = inputs[Aircraft.Wing.SPAN]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
@@ -82,7 +82,7 @@ class WingMassSolve(om.ImplicitComponent):
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
         c_material = inputs[Aircraft.Wing.MATERIAL_FACTOR]
-        c_eng_pos = inputs[Aircraft.Propulsion.ENGINE_POSITION_FACTOR]
+        c_eng_pos = inputs[Aircraft.Wing.ENGINE_POSITION_MASS_SCALER]
         c_gear_loc = inputs['c_gear_loc']
         wingspan = inputs[Aircraft.Wing.SPAN]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
@@ -159,7 +159,7 @@ class WingMassSolve(om.ImplicitComponent):
             * (1.0 + taper_ratio) ** 0.4
             / GRAV_ENGLISH_LBM
         ) / (100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535)
-        J['isolated_wing_mass', Aircraft.Propulsion.ENGINE_POSITION_FACTOR] = -(
+        J['isolated_wing_mass', Aircraft.Wing.ENGINE_POSITION_MASS_SCALER] = -(
             c_wing_mass
             * c_material
             * c_gear_loc
@@ -413,7 +413,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Wing.MATERIAL_FACTOR, units='unitless')
-        add_aviary_input(self, Aircraft.Propulsion.ENGINE_POSITION_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.ENGINE_POSITION_MASS_SCALER)
         self.add_input(
             'c_gear_loc',
             units='unitless',
@@ -443,7 +443,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
         c_material = inputs[Aircraft.Wing.MATERIAL_FACTOR]
-        c_eng_pos = inputs[Aircraft.Propulsion.ENGINE_POSITION_FACTOR]
+        c_eng_pos = inputs[Aircraft.Wing.ENGINE_POSITION_MASS_SCALER]
         c_gear_loc = inputs['c_gear_loc']
         wingspan = inputs[Aircraft.Wing.SPAN]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
@@ -476,7 +476,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
         c_material = inputs[Aircraft.Wing.MATERIAL_FACTOR]
-        c_eng_pos = inputs[Aircraft.Propulsion.ENGINE_POSITION_FACTOR]
+        c_eng_pos = inputs[Aircraft.Wing.ENGINE_POSITION_MASS_SCALER]
         c_gear_loc = inputs['c_gear_loc']
         wingspan = inputs[Aircraft.Wing.SPAN]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
@@ -577,7 +577,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
             * (1.0 + taper_ratio) ** 0.4
             / GRAV_ENGLISH_LBM
         ) / (100000.0 * tc_ratio_root**0.4 * np.cos(half_sweep) ** 1.535)
-        J['isolated_wing_mass', Aircraft.Propulsion.ENGINE_POSITION_FACTOR] = -(
+        J['isolated_wing_mass', Aircraft.Wing.ENGINE_POSITION_MASS_SCALER] = -(
             c_wing_mass
             * c_material
             * c_gear_loc

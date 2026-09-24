@@ -431,7 +431,6 @@ class Aircraft:
     class Propulsion:
         ENERGY_SYSTEM_MASS = 'aircraft:propulsion:energy_system_mass'
         ENGINE_OIL_MASS_SCALER = 'aircraft:propulsion:engine_oil_mass_scaler'
-        ENGINE_POSITION_FACTOR = 'aircraft:propulsion:engine_position_factor'
         MASS = 'aircraft:propulsion:mass'
         MISC_MASS_SCALER = 'aircraft:propulsion:misc_mass_scaler'
         TOTAL_ENGINE_CONTROLS_MASS = 'aircraft:propulsion:total_engine_controls_mass'
@@ -515,6 +514,7 @@ class Aircraft:
         DIHEDRAL = 'aircraft:wing:dihedral'
         DRAG_FACTOR = 'aircraft:wing:drag_factor'
         ENG_POD_INERTIA_FACTOR = 'aircraft:wing:eng_pod_inertia_factor'
+        ENGINE_POSITION_MASS_SCALER = 'aircraft:propulsion:engine_position_mass_scaler'
         EXPOSED_AREA = 'aircraft:wing:exposed_area'
         FINENESS = 'aircraft:wing:fineness'
         FLAP_CHORD_RATIO = 'aircraft:wing:flap_chord_ratio'

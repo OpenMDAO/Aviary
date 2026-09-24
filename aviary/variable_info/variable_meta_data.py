@@ -4541,15 +4541,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Propulsion.ENGINE_POSITION_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
-    units='unitless',
-    desc='engine position factor',
-    default_value=0,
-)
-
-add_meta_data(
     Aircraft.Propulsion.MASS,
     meta_data=_MetaData,
     historical_name={
@@ -5425,6 +5416,17 @@ add_meta_data(
     desc='Engine inertia relief factor for wingspan inboard of engine locations. Used '
     'to compute Aircraft.Wing.BENDING_MATERIAL_MASS',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Wing.ENGINE_POSITION_MASS_SCALER,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
+    units='unitless',
+    desc='Wing mass scaler accounts for position of engines on aircraft. If not supplied '
+    'as an input, GASP mass method calculates a value between 0.9 and 1.05 depnding on the '
+    'number and location of wing mounted engines and the maximum mach number of the aircraft',
+    default_value=0,
 )
 
 add_meta_data(
