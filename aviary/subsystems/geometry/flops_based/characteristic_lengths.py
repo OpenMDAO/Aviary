@@ -229,6 +229,7 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
 
         J[Aircraft.Fuselage.FINENESS, Aircraft.Fuselage.REF_DIAMETER] = -length / avg_diam**2.0
 
+
 class NacelleCharacteristicLength(om.ExplicitComponent):
     """
     Calculate the characteristic length and fineness ratio of the nacelle.
