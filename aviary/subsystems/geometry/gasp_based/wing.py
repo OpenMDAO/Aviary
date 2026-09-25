@@ -7,10 +7,10 @@ from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import (
 )
 from aviary.subsystems.geometry.gasp_based.strut import StrutGeom
 from aviary.utils.conflict_checks import check_fold_location_definition
-from aviary.utils.math_utils import sigmoidX, dSigmoidXdx
+from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class WingSize(om.ExplicitComponent):
@@ -867,9 +867,7 @@ class BWBWingVolume(om.ExplicitComponent):
 
 
 class WingFoldArea(om.ExplicitComponent):
-    """
-    Computation of folding area.
-    """
+    """Computation of folding area."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
@@ -1363,9 +1361,7 @@ class WingFoldVolume(om.ExplicitComponent):
 
 
 class BWBWingFoldVolume(om.ExplicitComponent):
-    """
-    Computation of wing tank fuel volume.
-    """
+    """Computation of wing tank fuel volume."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
@@ -1600,9 +1596,7 @@ class WingGroup(om.Group):
 
 
 class BWBWingGroup(om.Group):
-    """
-    Group of WingSize, WingParameters, WingFoldArea and BWBWingVolumeArea for wing parameter computations.
-    """
+    """Group of WingSize, WingParameters, WingFoldArea and BWBWingVolumeArea for wing parameter computations."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)

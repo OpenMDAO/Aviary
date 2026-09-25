@@ -11,8 +11,8 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.models.missions.energy_state_default import phase_info
 from aviary.core.aviary_problem import AviaryProblem
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import NamedValues

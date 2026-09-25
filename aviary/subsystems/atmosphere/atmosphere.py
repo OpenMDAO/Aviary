@@ -2,9 +2,9 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
+from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
 from aviary.variable_info.enums import AtmosphereModel, SpeedType
 from aviary.variable_info.variables import Dynamic, Settings
-from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
 
 
 class Atmosphere(om.Group):
