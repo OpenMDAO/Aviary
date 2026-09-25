@@ -2,7 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 import numpy as np
 
@@ -92,6 +92,9 @@ class LandingGearLengthTest(unittest.TestCase):
         )[0]
 
         assert_near_equal(main_gear_length, 166.54100624, tolerance=1e-10)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
 
 if __name__ == '__main__':
