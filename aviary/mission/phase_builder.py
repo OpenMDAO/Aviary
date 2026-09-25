@@ -21,7 +21,6 @@ from aviary.variable_info.variable_meta_data import CoreMetaData
 _require_new_initial_guesses_meta_data_class_attr_ = namedtuple(
     '_require_new_initial_guesses_meta_data_class_attr_', ()
 )
-analytic_args = ['name', 'state_name', 'units', 'shape']
 
 
 class PhaseBuilder(ABC):
@@ -67,14 +66,6 @@ class PhaseBuilder(ABC):
         class attribute: derived type customization point; the default class
         containing the phase options options_dictionary
 
-    is_analytic_phase : bool (False)
-        class attribute: derived type customization point; if True, build_phase
-        will return an AnalyticPhase instead of a Phase
-
-    num_nodes : int (5)
-        class attribute: derived type customization point; the default value
-        for num_nodes used by build_phase, only for AnalyticPhases
-
     Methods
     -------
     build_phase
@@ -90,9 +81,8 @@ class PhaseBuilder(ABC):
         'initial_guesses',
         'ode_class',
         'transcription',
-        'is_analytic_phase',
-        'num_nodes',
         'meta_data',
+        'phase',
     )
 
     _initial_guesses_meta_data_ = _require_new_initial_guesses_meta_data_class_attr_()
@@ -114,8 +104,6 @@ class PhaseBuilder(ABC):
         ode_class=None,
         transcription=None,
         subsystem_options=None,
-        is_analytic_phase=False,
-        num_nodes=5,
         meta_data=None,
     ):
         if name is None:
@@ -144,8 +132,6 @@ class PhaseBuilder(ABC):
 
         self.ode_class = ode_class
         self.transcription = transcription
-        self.is_analytic_phase = is_analytic_phase
-        self.num_nodes = num_nodes
 
         if meta_data is None:
             meta_data = self.default_meta_data
@@ -177,7 +163,7 @@ class PhaseBuilder(ABC):
 
         transcription = self.transcription
 
-        if transcription is None and not self.is_analytic_phase:
+        if transcription is None:
             transcription = self.make_default_transcription()
 
         if aviary_options is None:
@@ -194,30 +180,19 @@ class PhaseBuilder(ABC):
 
         kwargs['subsystems'] = self.subsystems
 
-        if self.is_analytic_phase:
-            phase = dm.AnalyticPhase(
-                ode_class=ode_class,
-                ode_init_kwargs=kwargs,
-                num_nodes=self.num_nodes,
-            )
-        else:
-            phase = dm.Phase(
-                ode_class=ode_class, transcription=transcription, ode_init_kwargs=kwargs
-            )
+        phase = dm.Phase(ode_class=ode_class, transcription=transcription, ode_init_kwargs=kwargs)
 
         # Add a timeseries for the "mission bus variables" that will be a uniform grid, using Falck Magik™.
         # https://stackoverflow.com/questions/67771242/openmdao-dymos-interpolate-the-results-of-a-phase-onto-an-equispaced-grid
-        if self.is_analytic_phase:
-            tx_mission_bus = dm.GaussLobatto(num_segments=self.num_nodes, order=3, compressed=True)
-        else:
-            tx_mission_bus = dm.GaussLobatto(
-                num_segments=transcription.options['num_segments'], order=3, compressed=True
-            )
+        tx_mission_bus = dm.GaussLobatto(
+            num_segments=transcription.options['num_segments'], order=3, compressed=True
+        )
         phase.add_timeseries(
             name='mission_bus_variables', transcription=tx_mission_bus, subset='all'
         )
 
         # overrides should add state, controls, etc.
+        self.phase = phase
         return phase
 
     def make_default_transcription(self):
@@ -560,13 +535,6 @@ class PhaseBuilder(ABC):
             # Add each state and its corresponding arguments to the phase
             for state_name in subsystem_states:
                 kwargs = subsystem_states[state_name]
-                # analytic phase states only accept a limit number of arguments
-                if isinstance(phase, dm.AnalyticPhase):
-                    new_kwargs = {}
-                    for arg in analytic_args:
-                        if arg in kwargs:
-                            new_kwargs[arg] = kwargs[arg]
-                    kwargs = new_kwargs
                 phase.add_state(state_name, **kwargs)
 
             controls = subsystem.get_controls(

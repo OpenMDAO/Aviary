@@ -120,7 +120,7 @@ class AccelPhase(PhaseBuilder):
         -------
         dymos.Phase
         """
-        phase = self.phase = super().build_phase(aviary_options)
+        phase = super().build_phase(aviary_options)
         user_options = self.user_options
 
         # Extracting and setting options
