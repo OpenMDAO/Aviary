@@ -122,6 +122,8 @@ class PrepGeomTest(unittest.TestCase):
             Aircraft.HorizontalTail.FINENESS,
             Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
             Aircraft.Nacelle.FINENESS,
+            Aircraft.Nacelle.AVG_DIAMETER,
+            Aircraft.Nacelle.AVG_LENGTH,
             Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
             Aircraft.VerticalTail.FINENESS,
             Aircraft.Wing.CHARACTERISTIC_LENGTH,
@@ -157,8 +159,8 @@ class PrepGeomTest(unittest.TestCase):
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
                 Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
                 Aircraft.HorizontalTail.WETTED_AREA_SCALER,
-                Aircraft.Nacelle.AVG_DIAMETER,
-                Aircraft.Nacelle.AVG_LENGTH,
+                Aircraft.Nacelle.REFERENCE_AVG_DIAMETER,
+                Aircraft.Nacelle.REFERENCE_AVG_LENGTH,
                 Aircraft.VerticalTail.AREA,
                 Aircraft.VerticalTail.ASPECT_RATIO,
                 Aircraft.VerticalTail.TAPER_RATIO,
@@ -580,8 +582,8 @@ class CharacteristicLengthsTest(unittest.TestCase):
                 Aircraft.HorizontalTail.AREA,
                 Aircraft.HorizontalTail.ASPECT_RATIO,
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
-                Aircraft.Nacelle.AVG_DIAMETER,
-                Aircraft.Nacelle.AVG_LENGTH,
+                Aircraft.Nacelle.REFERENCE_AVG_DIAMETER,
+                Aircraft.Nacelle.REFERENCE_AVG_LENGTH,
                 Aircraft.VerticalTail.AREA,
                 Aircraft.VerticalTail.ASPECT_RATIO,
                 Aircraft.VerticalTail.THICKNESS_TO_CHORD,
@@ -601,6 +603,8 @@ class CharacteristicLengthsTest(unittest.TestCase):
                 Aircraft.HorizontalTail.FINENESS,
                 Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
                 Aircraft.Nacelle.FINENESS,
+                Aircraft.Nacelle.AVG_DIAMETER,
+                Aircraft.Nacelle.AVG_LENGTH,
                 Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
                 Aircraft.VerticalTail.FINENESS,
                 Aircraft.Wing.CHARACTERISTIC_LENGTH,
@@ -845,11 +849,12 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         # SQRT(ESCALE) = sqrt(0.80963)
         # DNAC = 12.608 * sqrt(0.80963) = 11.3446080595
         # XNAC = 17.433 * sqrt(0.80963) = 15.6861161407
-        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=12.608)
-        prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=17.433)
+        prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, val=12.608)
+        prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, val=17.433)
         prob.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, val=1.0)
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]))
-        prob.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8096304384)
+        prob.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, val=np.array([86459.2]))
+
         # CanardWettedArea
         prob.set_val(Aircraft.Canard.AREA, val=0.0)
         prob.set_val(Aircraft.Canard.THICKNESS_TO_CHORD, val=0.0)
@@ -1001,6 +1006,8 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
             prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH), 15.68612039, tolerance=1e-8
         )
         assert_near_equal(prob.get_val(Aircraft.Nacelle.FINENESS), 1.38269353, tolerance=1e-8)
+        assert_near_equal(prob.get_val(Aircraft.Nacelle.AVG_DIAMETER), 11.34461113, tolerance=1e-8)
+        assert_near_equal(prob.get_val(Aircraft.Nacelle.AVG_LENGTH), 15.68612039, tolerance=1e-8)
         # OtherCharacteristicLengths
         assert_near_equal(prob.get_val(Aircraft.Canard.CHARACTERISTIC_LENGTH), 0.0, tolerance=1e-8)
         assert_near_equal(prob.get_val(Aircraft.Canard.FINENESS), 0.0, tolerance=1e-8)
@@ -1146,11 +1153,11 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         # SQRT(ESCALE) = sqrt(0.80963)
         # DNAC = 12.608 * sqrt(0.80963) = 11.3446080595
         # XNAC = 17.433 * sqrt(0.80963) = 15.6861161407
-        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=12.608)
-        prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=17.433)
+        prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, val=12.608)
+        prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, val=17.433)
         prob.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, val=1.0)
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]), units='lbf')
-        prob.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8096304384)
+        prob.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, val=np.array([86459.2]), units='lbf')
 
         # CanardWettedArea
         prob.set_val(Aircraft.Canard.AREA, val=0.0)

@@ -134,8 +134,8 @@ inputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, 1.0)
 
 # Nacelle
 # ---------------------------
-inputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, 7.94, 'ft')
-inputs.set_val(Aircraft.Nacelle.AVG_LENGTH, 12.3, 'ft')
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, 7.94, 'ft')
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, 12.3, 'ft')
 inputs.set_val(Aircraft.Nacelle.MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, 1.0)
 
@@ -322,6 +322,8 @@ outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 8780.91, 'lbm')
 
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([12.30]), 'ft')
 outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.5491]))
+outputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
+outputs.set_val(Aircraft.Nacelle.AVG_LENGTH, np.array([12.3]), 'ft')
 outputs.set_val(Aircraft.Nacelle.MASS, 985.691, 'lbm')
 
 nacelle_wetted_area = np.array([273.45])
