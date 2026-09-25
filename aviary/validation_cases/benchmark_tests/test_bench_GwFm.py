@@ -127,7 +127,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             self.phase_info,
             max_iter=50,
             optimizer='IPOPT',
-            verbosity=0,
+            verbosity=1,
         )
         print_benchmark_results(prob)
         # self.assertTrue(prob.result.success)
@@ -140,7 +140,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             self.phase_info,
             max_iter=50,
             optimizer='SNOPT',
-            verbosity=0,
+            verbosity=1,
         )
         print_benchmark_results(prob)
         # self.assertTrue(prob.result.success)

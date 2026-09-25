@@ -135,7 +135,7 @@ class FlightPhase(PhaseBuilder):
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):
-        phase = self.phase = super().build_phase(aviary_options)
+        phase = super().build_phase(aviary_options)
 
         # Retrieve user options values
         user_options = self.user_options

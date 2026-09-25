@@ -220,21 +220,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             MPI Communicator from OpenMDAO problem.
         """
         phase_builder = user_options['phase_type']
-        if phase_builder is PhaseType.BREGUET_RANGE:
-            # The Breguet Range Cruise phase integrates over mass instead of time.
-            # We rely on mass being monotonically non-increasing across the phase.
-            phase.set_time_options(
-                name='mass',
-                fix_initial=False,
-                fix_duration=False,
-                units='lbm',
-                targets='mass',
-                initial_bounds=(0.0, 1.0e7),
-                initial_ref=100.0e3,
-                duration_bounds=(-1.0e7, -1),
-                duration_ref=50000,
-            )
-            return
 
         time_units = 's'
         initial = wrapped_convert_units(user_options['time_initial'], time_units)
@@ -287,7 +272,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             **extra_args,
         )
 
-        if phase_builder is not PhaseType.SIMPLE_CRUISE:
+        # TODO: Bring throttle support to 2DOF.
+        if phase_builder not in [PhaseType.SIMPLE_CRUISE, PhaseType.BREGUET_RANGE]:
             phase.add_control(
                 Dynamic.Vehicle.Propulsion.THROTTLE,
                 targets=Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -428,7 +414,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         )
 
     def set_phase_initial_guesses(
-        self, aviary_group, phase_name, phase, guesses, target_prob, parent_prefix
+        self, aviary_group, phase_name, phase_idx, phase, guesses, target_prob, parent_prefix
     ):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
@@ -445,6 +431,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Aviary model that owns this configurator.
         phase_name : str
             The name of the phase for which the guesses are being added.
+        phase_idx : int
+            Phase position in aviary_group.phases. Can be used to identify first phase.
         phase : Phase
             The phase object for which the guesses are being added.
         guesses : dict
@@ -454,25 +442,22 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         parent_prefix : str
             Location of this trajectory in the hierarchy.
         """
-        # Breguet cruise integrates mass, so initial guesses are different.
         phase_type = aviary_group.mission_info[phase_name]['user_options']['phase_type']
+
+        # Breguet cruise has a reduced set of state or controls.
+        # Initial guesses are different.
         if phase_type is PhaseType.BREGUET_RANGE:
             for guess_key, guess_data in guesses.items():
                 val, units = guess_data
 
                 if 'mass' == guess_key:
-                    # Set initial and duration mass for the Breguet cruise phase.
-                    # Note we are integrating over mass, not time for this phase.
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.t_initial', val[0], units=units
+                    phase.set_state_val(
+                        guess_key,
+                        vals=process_guess_var(val, guess_key, phase),
+                        units=units,
                     )
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.t_duration', val[1], units=units
-                    )
-
-                elif guess_key == 'time':
-                    # Time needs to be dealt with elsewhere.
-                    continue
+                elif 'time' == guess_key:
+                    phase.set_time_val(initial=val[0], duration=val[1], units=units)
                 else:
                     # Otherwise, set the value of the parameter in the trajectory
                     # phase

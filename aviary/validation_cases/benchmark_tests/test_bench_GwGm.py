@@ -84,14 +84,18 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
             'user_options': {
                 'phase_type': PhaseType.BREGUET_RANGE,
+                'num_segments': 1,
+                'order': 3,
                 'alt_cruise': (37.5e3, 'ft'),
-                'mach_cruise': 10.8,
+                'mach_cruise': 0.8,
+                'mass_ref': (171000, 'lbm'),
+                'time_duration_ref': (26500, 's'),
             },
             'initial_guesses': {
                 # [Initial mass, delta mass] for special cruise phase.
-                'mass': ([171481.0, -35000], 'lbm'),
+                'mass': ([171481.0, 136000], 'lbm'),
                 'initial_distance': (200.0e3, 'ft'),
-                'initial_time': (1516.0, 's'),
+                'time': ([1504.0, 26500.0], 's'),
                 'altitude': (37.5e3, 'ft'),
                 'mach': (0.8, 'unitless'),
             },

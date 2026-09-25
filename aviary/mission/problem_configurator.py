@@ -160,7 +160,7 @@ class ProblemConfiguratorBase:
         pass
 
     def set_phase_initial_guesses(
-        self, aviary_group, phase_name, phase, guesses, target_prob, parent_prefix
+        self, aviary_group, phase_name, phase_idx, phase, guesses, target_prob, parent_prefix
     ):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
@@ -174,7 +174,11 @@ class ProblemConfiguratorBase:
         Parameters
         ----------
         aviary_group : AviaryGroup
-            Aviary model that owns this builder.
+            Aviary model that owns this configurator.
+        phase_name : str
+            The name of the phase for which the guesses are being added.
+        phase_idx : int
+            Phase position in aviary_group.phases. Can be used to identify first phase.
         phase : Phase
             The phase object for which the guesses are being added.
         guesses : dict
