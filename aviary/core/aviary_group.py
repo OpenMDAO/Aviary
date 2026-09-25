@@ -1143,9 +1143,7 @@ class AviaryGroup(om.Group):
     def _find_scaling(
         self, var, phase1, phase_info1, phase2, phase_info2, opt2, vars_from_sub_builders
     ):
-        """
-        Returns a dictionary of scaling keyword arguments for a dymos linkage constraint.
-        """
+        """Returns a dictionary of scaling keyword arguments for a dymos linkage constraint."""
         phase = self.traj._phases[phase1]
         integrated_var = phase.time_options['name']
 
