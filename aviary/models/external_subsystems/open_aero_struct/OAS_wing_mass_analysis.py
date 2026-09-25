@@ -44,8 +44,7 @@ from aviary.variable_info.variables import Dynamic
 def _get_atmospheric_properties(altitude):
     """
     Compute speed of sound, density, and dynamic viscosity at the given
-    altitude(s) [m] using Aviary's own Atmosphere group, in place of the
-    external ambiance package.
+    altitude(s) [m] using Aviary's own Atmosphere group
     """
     atmos_prob = om.Problem()
     atmos_prob.model.add_subsystem(

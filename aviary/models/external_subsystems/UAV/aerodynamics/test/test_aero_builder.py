@@ -1,0 +1,29 @@
+import unittest
+
+from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft, Dynamic
+
+
+class TestRCAeroBuilder(unittest.TestCase):
+    def test_mission_interface_exposes_expected_outputs_and_parameters(self):
+        builder = AeroBuilder()
+
+        mission_inputs = builder.mission_inputs()
+        self.assertIn(Dynamic.Mission.ALTITUDE, mission_inputs)
+        self.assertIn(Dynamic.Mission.VELOCITY, mission_inputs)
+        self.assertIn('alpha', mission_inputs)
+
+        mission_outputs = builder.mission_outputs()
+        self.assertIn(Dynamic.Vehicle.DRAG, mission_outputs)
+        self.assertIn(Dynamic.Vehicle.LIFT, mission_outputs)
+        self.assertIn('lifting_surface_CD', mission_outputs)
+        # self.assertIn('avg_CL', mission_outputs)
+
+    def test_needs_mission_solver_accepts_builder_kwargs(self):
+        builder = AeroBuilder()
+
+        self.assertFalse(builder.needs_mission_solver())
+
+
+if __name__ == '__main__':
+    unittest.main()
