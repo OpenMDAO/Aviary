@@ -7,10 +7,10 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.subsystems.mass.gasp_based.wing import (
     BWBWingMassGroup,
     BWBWingMassSolve,
+    StrutAndFoldMass,
     WingMassGroup,
     WingMassSolve,
     WingMassTotal,
-    StrutAndFoldMass,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
@@ -667,7 +667,7 @@ class WingMassGroupTestCase4(unittest.TestCase):
 
 
 class BWBWingMassSolveTestCase(unittest.TestCase):
-    """this is BWB test case"""
+    """this is BWB test case."""
 
     def setUp(self):
         prob = self.prob = om.Problem()
@@ -731,7 +731,7 @@ class BWBWingMassSolveTestCase(unittest.TestCase):
 
 
 class BWBWingMassSolveTestCase2(unittest.TestCase):
-    """this is BWB test case, Test mass-weight conversion"""
+    """this is BWB test case, Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.wing as wing
@@ -802,7 +802,7 @@ class BWBWingMassSolveTestCase2(unittest.TestCase):
 
 @use_tempdirs
 class BWBWingMassGroupTest(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = AviaryValues()

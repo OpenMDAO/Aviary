@@ -1,14 +1,15 @@
 import numpy as np
 import openmdao.api as om
+
 from aviary.utils.csv_data_file import read_data_file
+from aviary.utils.functions import get_path
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.utils.functions import get_path
 
 
 class MotorMap(om.Group):
     """
-    Inputs
+    Inputs.
     ----------
     Dynamic.Vehicle.Propulsion.THROTTLE : float (unitless) (0 to 1)
         The throttle command which will be translated into torque output from the engine

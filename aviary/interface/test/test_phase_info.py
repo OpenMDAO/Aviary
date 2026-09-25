@@ -9,9 +9,9 @@ from copy import deepcopy
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.models.missions.energy_state_default import (
-    phase_info as ph_in_energy_state,
-)
+from aviary.core.aviary_problem import AviaryProblem
+from aviary.mission.phase_builder import PhaseBuilder as PhaseBuilder
+from aviary.models.missions.energy_state_default import phase_info as ph_in_energy_state
 from aviary.models.missions.energy_state_default import (
     phase_info_parameterization as phase_info_parameterization_energy_state,
 )
@@ -19,8 +19,6 @@ from aviary.models.missions.two_dof_default import phase_info as ph_in_two_dof
 from aviary.models.missions.two_dof_default import (
     phase_info_parameterization as phase_info_parameterization_two_dof,
 )
-from aviary.core.aviary_problem import AviaryProblem
-from aviary.mission.phase_builder import PhaseBuilder as PhaseBuilder
 from aviary.variable_info.variables import Aircraft, Mission
 
 

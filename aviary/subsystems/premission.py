@@ -1,6 +1,4 @@
-import openmdao
 import openmdao.api as om
-from packaging import version
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import override_aviary_vars

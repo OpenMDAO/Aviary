@@ -11,17 +11,17 @@ from aviary.mission.energy_state.ode.landing_eom import (
     GlideSlopeForces,
     GroundSumForces,
 )
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.preprocessors import preprocess_options
+from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     detailed_landing_flare,
     inputs,
 )
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.preprocessors import preprocess_options
-from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test
-from aviary.variable_info.variables import Dynamic, Mission
 from aviary.variable_info.functions import setup_model_options
-from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 @use_tempdirs

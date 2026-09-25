@@ -255,9 +255,7 @@ HSMDEStable = InterpND(
 
 
 class TakeoffLoverD(om.ExplicitComponent):
-    """
-    Estimates the Takeoff Lift over Drag ratio.
-    """
+    """Estimates the Takeoff Lift over Drag ratio."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')

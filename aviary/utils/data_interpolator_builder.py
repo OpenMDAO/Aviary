@@ -190,15 +190,12 @@ def build_data_interpolator(
         # always sort unless data is in structured format
         if not data_pre_structured:
             # first check that data are all vectors of the same length
-            for idx, item in enumerate(interpolator_data.items()):
-                key = item[0]
-                units = item[1][1]
-                if idx != 0:
-                    prev_model_length = model_length
-                else:
-                    prev_model_length = len(interpolator_data.get_val(key, units))
-                model_length = len(interpolator_data.get_val(key, units))
-                if model_length != prev_model_length:
+            model_length = None
+            for key, (val, units) in interpolator_data.items():
+                length = len(interpolator_data.get_val(key, units))
+                if model_length is None:
+                    model_length = length
+                elif length != model_length:
                     raise IndexError('Lengths of data provided for interpolation do not match.')
 
             # get data into column array format

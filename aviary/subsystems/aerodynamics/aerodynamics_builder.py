@@ -15,15 +15,15 @@ import openmdao.api as om
 
 # from dymos.utils.misc import _unspecified
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import ComputedAeroGroup
+from aviary.subsystems.aerodynamics.flops_based.premission_aero import (
+    PreMissionAero as PreMissionAeroFLOPS,
+)
 from aviary.subsystems.aerodynamics.flops_based.premission_aero import TakeoffLoverD
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import TabularAeroGroup
 from aviary.subsystems.aerodynamics.flops_based.takeoff_aero_group import TakeoffAeroGroup
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
 from aviary.subsystems.aerodynamics.gasp_based.premission_aero import (
     PreMissionAero as PreMissionAeroGASP,
-)
-from aviary.subsystems.aerodynamics.flops_based.premission_aero import (
-    PreMissionAero as PreMissionAeroFLOPS,
 )
 from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     TabularCruiseAero,
@@ -35,7 +35,6 @@ from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import AircraftTypes, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
@@ -378,7 +377,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
     def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a dictionary of parameters for the subsystem. (Optional)
+        Return a dictionary of parameters for the subsystem. (Optional).
 
         A parameter is a value that does not vary over the trajectory. Adding a variable name to
         this list promotes the input to the top of the Aviary model, where it is either implicitly

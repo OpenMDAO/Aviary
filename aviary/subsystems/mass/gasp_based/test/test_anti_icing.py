@@ -49,7 +49,7 @@ class AntiIcingTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
     def test_case2(self):
-        """non-realistic case"""
+        """non-realistic case."""
         self.prob.set_val(Aircraft.VerticalTail.AREA, 1.0, units='ft**2')
         self.prob.set_val(Aircraft.Wing.AREA, 1.0, units='ft**2')
         self.prob.set_val(Aircraft.HorizontalTail.AREA, 1.0, units='ft**2')
@@ -63,9 +63,7 @@ class AntiIcingTestCase1(unittest.TestCase):
 
 
 class AntiIcingTestCase2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         options = AviaryValues()

@@ -322,7 +322,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
         name = f'{ctrl_name}_optimize'
         default = defaults.get(name, True)
-        desc = f'When True, the optimizer will set this value. When False, the initial value '
+        desc = 'When True, the optimizer will set this value. When False, the initial value '
         desc += 'for all nodes can be set in the initial_conditions section of the phase.'
         self.declare(
             name=name,
@@ -401,7 +401,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
         name = f'{ctrl_name}_polynomial_order'
         default = defaults.get(name, None)
-        desc = f'The order of polynomials for interpolation in the transcription.\n'
+        desc = 'The order of polynomials for interpolation in the transcription.\n'
         desc += 'Default is None, which does not use a polynomial.'
         self.declare(
             name=name,
@@ -483,7 +483,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
         name = 'time_initial_direct_link'
         default = defaults.get(name, True)
-        desc = f'When True, directly connect the initial_time to the upstream phase.\n'
+        desc = 'When True, directly connect the initial_time to the upstream phase.\n'
         desc += 'When False, use a constraint.'
         self.declare(
             name=name,

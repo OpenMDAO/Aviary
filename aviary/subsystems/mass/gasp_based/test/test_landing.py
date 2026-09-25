@@ -10,7 +10,7 @@ from aviary.variable_info.variables import Aircraft
 
 @use_tempdirs
 class FixedMassGroupTestCase1(unittest.TestCase):
-    """the large single aisle 1 V3 test case"""
+    """the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = {
@@ -52,7 +52,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
 
 @use_tempdirs
 class FixedMassGroupTestCase2(unittest.TestCase):
-    """Gravity Modification"""
+    """Gravity Modification."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.landing as landing

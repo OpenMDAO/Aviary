@@ -1,15 +1,14 @@
 import openmdao.api as om
 
+from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.mission.solved_two_dof.phases.groundroll_phase import (
     GroundrollPhase as GroundrollPhaseVelocityIntegrated,
 )
 from aviary.mission.solved_two_dof.phases.solved_twodof_phase import SolvedTwoDOFPhase
-from aviary.mission.problem_configurator import ProblemConfiguratorBase
-from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.mission.utils import process_guess_var
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.mission.utils import process_guess_var
 
 
 class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):

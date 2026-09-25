@@ -9,14 +9,13 @@ CoreMassBuilder : the interface for Aviary's core mass subsystem builder
 """
 
 import numpy as np
-
 from openmdao.utils.units import convert_units
 
 from aviary.interface.utils import find_variable_in_problem
 from aviary.subsystems.mass.flops_based.mass_premission import MassPremission as MassPremissionFLOPS
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission as MassPremissionGASP
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
-from aviary.variable_info.enums import LegacyCode, ProblemType
+from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission
 
 GASP = LegacyCode.GASP

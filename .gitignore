@@ -133,6 +133,7 @@ dmypy.json
 # Test and spec generated
 reports/
 aviary/reports/
+traj_results_report.html
 *.openmdao_out
 *.out
 *.sql
