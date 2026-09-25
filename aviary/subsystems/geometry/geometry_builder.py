@@ -167,6 +167,11 @@ class CoreGeometryBuilder(GeometryBuilder):
             Aircraft.Nacelle.TOTAL_WETTED_AREA,
         ]
 
+        landing_gear_outputs = [
+            Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
+            Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
+        ]
+
         with open(filepath, mode='w') as f:
             if self.use_both_geometries:
                 method = 'FLOPS and GASP methods'
@@ -184,3 +189,5 @@ class CoreGeometryBuilder(GeometryBuilder):
             write_markdown_variable_table(f, prob, fuselage_outputs, self.meta_data)
             f.write('\n## Nacelle')
             write_markdown_variable_table(f, prob, nacelle_outputs, self.meta_data)
+            f.write('\n## Landing Gear')
+            write_markdown_variable_table(f, prob, landing_gear_outputs, self.meta_data)
