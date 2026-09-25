@@ -331,9 +331,7 @@ def common_compute_partials(
 
 
 class FurnishingMass(om.ExplicitComponent):
-    """
-    Computation of furnishing mass.
-    """
+    """Computation of furnishing mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
@@ -421,9 +419,7 @@ class FurnishingMass(om.ExplicitComponent):
 
 
 class BWBFurnishingMass(om.ExplicitComponent):
-    """
-    Computation of furnishing mass for BWB
-    """
+    """Computation of furnishing mass for BWB."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)

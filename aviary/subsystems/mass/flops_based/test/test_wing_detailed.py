@@ -6,7 +6,6 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-
 from aviary.subsystems.mass.flops_based.wing_detailed import (
     BWBDetailedWingBendingFact,
     DetailedWingBendingFact,
@@ -415,8 +414,8 @@ class DetailedWingBendingTest(unittest.TestCase):
 
     def test_intensity_factor(self):
         """
-        data taken from high_wing_single_aisle.csv
-        Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL = 3, 1, 1.5, 2.5, 1.25, 2.75
+        Data taken from high_wing_single_aisle.csv
+        Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL = 3, 1, 1.5, 2.5, 1.25, 2.75.
         """
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
@@ -752,7 +751,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         subroutin DEFINE() will update it to CHD = [116.576, 55, 33.2, 18.97, 14.19, 10.2, 2.361]
         Then in subroutin WWGHT(), right before calling BNDMAT(), it updates CHD to
         C = [1.249, 0.589, 0.356, 0.203, 0.152, 0.109, 2.361] which is used in BNDMAT(). Is it right?
-        """
+        """  # noqa: D400
         prob = self.prob
 
         aviary_options = AviaryValues()

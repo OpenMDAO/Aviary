@@ -1,6 +1,7 @@
+import warnings
+
 import numpy as np
 import openmdao.api as om
-import warnings
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.gasp_based.control import ControlMassGroup
@@ -99,7 +100,7 @@ class MassParameters(om.ExplicitComponent):
         if num_wing_engines > 4:
             if verbosity > Verbosity.BRIEF:
                 warnings.warn(
-                    f'GASP mass equations do not support more than 4 total engines on the wings. '
+                    'GASP mass equations do not support more than 4 total engines on the wings. '
                     'Aircraft.Propulsion.ENGINE_POSITION_FACTOR will use the default equation, '
                     'which is not scaled by number of wing-mounted engines.'
                 )
@@ -1642,9 +1643,9 @@ class HighLiftMass(om.ExplicitComponent):
         u2 = 2 * wing_loading / (RHO * CL_max_flaps_landing)
         VFLAP = 1.8 * (0.5921 * np.sqrt(u2))
         dVFLAP_dWL = (1.8 * 0.5921) * (1 / np.sqrt(u2)) * (1 / (RHO * CL_max_flaps_landing))
-        dVFLAP_drho = (
-            -(1.8 * 0.5921) * (1 / np.sqrt(u2)) * (wing_loading / (RHO**2 * CL_max_flaps_landing))
-        )
+        # dVFLAP_drho = (
+        #     -(1.8 * 0.5921) * (1 / np.sqrt(u2)) * (wing_loading / (RHO**2 * CL_max_flaps_landing))
+        # )
         dVFLAP_dCMFL = (
             -(1.8 * 0.5921) * (1 / np.sqrt(u2)) * (wing_loading / (RHO * CL_max_flaps_landing**2))
         )

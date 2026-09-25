@@ -2,10 +2,10 @@ import inspect
 import sys
 import warnings
 from importlib.util import module_from_spec, spec_from_file_location
-import numpy as np
 from pathlib import Path
 
 import dymos as dm
+import numpy as np
 import openmdao.api as om
 from dymos.utils.misc import _unspecified
 from openmdao.utils.mpi import MPI
@@ -1034,7 +1034,7 @@ class AviaryGroup(om.Group):
                 # Otherwise, this key allows the user to control whether the phase is connected
                 # or constrained on each input.
                 if var == 'time':
-                    key = f'time_initial_direct_link'
+                    key = 'time_initial_direct_link'
                 else:
                     key = f'{var}_direct_link'
                 connect = connect_directly and phase_info2.get(key, connect_directly)
@@ -1079,7 +1079,7 @@ class AviaryGroup(om.Group):
                     continue
 
                 if source == 'time':
-                    key = f'time_initial_direct_link'
+                    key = 'time_initial_direct_link'
                 else:
                     key = f'{source}_direct_link'
                 connect = connect_directly and phase_info2.get(key, connect_directly)
@@ -1112,7 +1112,7 @@ class AviaryGroup(om.Group):
                     continue
 
                 if target == 'time':
-                    key = f'time_initial_direct_link'
+                    key = 'time_initial_direct_link'
                 else:
                     key = f'{target}_direct_link'
                 connect = connect_directly and phase_info2.get(key, connect_directly)
@@ -1570,8 +1570,7 @@ class AviaryGroup(om.Group):
                     phase.set_control_val(key, vals=val, units=units)
 
     def _validate_phase_info_modifier(self, phase_info_modifier):
-        """Check function for required arguments (phase_info, post_mission_info, aviary_inputs)"""
-
+        """Check function for required arguments (phase_info, post_mission_info, aviary_inputs)."""
         # validate phase_info_modifier function
         sig = inspect.signature(phase_info_modifier)
         params = sig.parameters

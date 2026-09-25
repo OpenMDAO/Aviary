@@ -1,7 +1,6 @@
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
-import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 

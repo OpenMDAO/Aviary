@@ -10,8 +10,8 @@ from abc import ABC
 from collections import namedtuple
 
 import dymos as dm
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
 from aviary.mission.initial_guess_builders import InitialGuess
@@ -423,9 +423,7 @@ class PhaseBuilder(ABC):
                 ref=final,
             )
 
-    def add_control(
-        self, name, target, rate_targets=None, rate2_targets=None, add_constraints=True
-    ):
+    def add_control(self, name, target, rate_targets=None, rate2_targets=None):
         """
         Add a control to this phase using the options in the phase-info.
 
@@ -439,9 +437,6 @@ class PhaseBuilder(ABC):
             List of rate targets for this control.
         rate2_targets : Sequence of str or None
             (Optional) The parameter in the ODE to which the control 2nd derivative is connected.
-        add_constraints : bool
-            When True, add constraints on any declared initial and final values if this control is
-            being optimized. Default is True.
         """
         options = self.user_options
         phase = self.phase
@@ -491,9 +486,6 @@ class PhaseBuilder(ABC):
 
         # Add timeseries for any control.
         phase.add_timeseries_output(target)
-
-        if not add_constraints:
-            return
 
         # Add an initial constraint.
         if opt and initial is not None:

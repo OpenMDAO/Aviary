@@ -117,7 +117,7 @@ class FormFactorTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBFormFactorTest(unittest.TestCase):
-    """Test fuselage form factor computation and SIWB computation"""
+    """Test fuselage form factor computation and SIWB computation."""
 
     def test_case1(self):
         prob = om.Problem()

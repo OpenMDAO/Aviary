@@ -3,7 +3,7 @@
 import unittest
 
 from aviary.utils.named_values import NamedValues
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class NamedValuesTest(unittest.TestCase):

@@ -1,11 +1,9 @@
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
-import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-import aviary.api as av
 from aviary.models.missions.energy_state_default import phase_info
 from aviary.subsystems.energy.fuel_summation import FuelSummationGroup
 from aviary.utils.aviary_values import AviaryValues

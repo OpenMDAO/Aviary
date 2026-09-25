@@ -1,5 +1,6 @@
 import openmdao.api as om
 
+from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.mission.two_dof.ode.landing_ode import LandingSegment
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase
@@ -11,7 +12,6 @@ from aviary.mission.two_dof.phases.flight_phase import FlightPhase
 from aviary.mission.two_dof.phases.simple_cruise_phase import SimpleCruisePhase
 from aviary.mission.two_dof.phases.takeoff_phase import TakeoffPhase
 from aviary.mission.two_dof.polynomial_fit import PolynomialFit
-from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.mission.utils import process_guess_var
 from aviary.utils.process_input_decks import update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
