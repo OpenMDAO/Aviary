@@ -5,7 +5,7 @@ import os
 
 from aviary.models.external_subsystems.UAV.mass.model.mass_premission import MassPremission
 from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft
-from aviary.models.external_subsystems.UAV.mass.utils.UAV_enums import WingType
+from aviary.models.external_subsystems.UAV.mass.utils.UAV_enums import UAVWingType
 from aviary.models.external_subsystems.UAV.variable_info.variable_meta_data import (
     ExtendedMetaData,
 )
@@ -45,7 +45,7 @@ class TestMassPremission(unittest.TestCase):
         options.set_val(Aircraft.Wing.RIB_THICKNESS, rib_thicks, units='m')
         options.set_val(Aircraft.Wing.RIB_LIGHTENING_FACTOR, 2 / 3)
         options.set_val(Aircraft.Wing.AIRFOIL_PATH, airfoil)
-        options.set_val(Aircraft.Wing.TYPE, WingType.MEDIUM)
+        options.set_val(Aircraft.Wing.TYPE, UAVWingType.HOLLOW)
         options.set_val(Aircraft.Wing.NUM_STRINGERS, 2.0)
         options.set_val(Aircraft.Wing.STRINGER_THICKNESS, 0.005, units='m')
         options.set_val(Aircraft.Wing.STRINGER_DENSITY, 160.0, units='kg/m**3')

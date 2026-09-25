@@ -1,15 +1,15 @@
 from enum import Enum
 
 
-class WingType(Enum):
+class UAVWingType(Enum):
     """
     Specifies the type of wing used in the UAV mass wing model computation.
 
-    SIMPLE:
+    SOLID:
         Wing is made of solid foam and two hollow spars
-    MEDIUM:
+    HOLLOW:
         Wing design includes spars, sheeting, stringers, ribs, and is hollow
     """
 
-    SIMPLE = 'simple'
-    MEDIUM = 'medium'
+    SOLID = 'solid'
+    HOLLOW = 'hollow'

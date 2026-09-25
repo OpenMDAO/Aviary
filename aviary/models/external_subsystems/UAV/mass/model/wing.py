@@ -4,7 +4,7 @@ import jax.numpy as jnp
 
 from aviary.models.external_subsystems.UAV.mass.utils.airfoil_input import load_airfoil_csv
 from aviary.models.external_subsystems.UAV.mass.utils.materials_database import materials
-from aviary.models.external_subsystems.UAV.mass.utils.UAV_enums import WingType
+from aviary.models.external_subsystems.UAV.mass.utils.UAV_enums import UAVWingType
 
 from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft
 from aviary.models.external_subsystems.UAV.variable_info.variable_meta_data import (
@@ -102,7 +102,7 @@ class WingMass(om.ExplicitComponent):
         path = get_path(self.options[Aircraft.Wing.AIRFOIL_PATH])
         x, y = load_airfoil_csv(path, header=True)
         self.n_area = 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
-        if self.options[Aircraft.Wing.TYPE] == WingType.MEDIUM:
+        if self.options[Aircraft.Wing.TYPE] == UAVWingType.HOLLOW:
             rib_materials = self.options[Aircraft.Wing.RIB_MATERIALS]
             self.rho_rib = np.array([materials.get_item(m)[0] for m in rib_materials])
         else:
@@ -118,7 +118,7 @@ class WingMass(om.ExplicitComponent):
 
         wing_type = self.options[Aircraft.Wing.TYPE]
 
-        if wing_type == WingType.SIMPLE:
+        if wing_type == UAVWingType.SOLID:
             # Simple wing design mass calculation
             rod_thickness, units = self.options[Aircraft.Wing.ROD_THICKNESS]
             foam_density, units = self.options[Aircraft.Wing.FOAM_DENSITY]
@@ -138,7 +138,7 @@ class WingMass(om.ExplicitComponent):
 
             total_mass = foam_mass_final + rod_mass
 
-        elif wing_type == WingType.MEDIUM:
+        elif wing_type == UAVWingType.HOLLOW:
             # medium wing design mass calculation
             num_spars = self.options[Aircraft.Wing.NUM_SPARS]
             rib_lightening_factor = self.options[Aircraft.Wing.RIB_LIGHTENING_FACTOR]

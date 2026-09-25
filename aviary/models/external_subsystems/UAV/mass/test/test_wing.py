@@ -4,7 +4,7 @@ import os
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
-from aviary.models.external_subsystems.UAV.mass.utils.UAV_enums import WingType
+from aviary.models.external_subsystems.UAV.mass.utils.UAV_enums import UAVWingType
 from aviary.models.external_subsystems.UAV.mass.model.wing import WingMass
 from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft
 
@@ -29,8 +29,8 @@ class TestWingMass(unittest.TestCase):
         )
 
         # Tests for the simple wing design
-        if wing_type == WingType.SIMPLE:
-            wm.options[Aircraft.Wing.TYPE] = WingType.SIMPLE
+        if wing_type == UAVWingType.SOLID:
+            wm.options[Aircraft.Wing.TYPE] = UAVWingType.SOLID
             wm.options[Aircraft.Wing.FOAM_DENSITY] = (32.0, 'kg/m**3')
             wm.options[Aircraft.Wing.ROD_DENSITY] = (1500.0, 'kg/m**3')
             wm.options[Aircraft.Wing.ROD_RADIUS] = (0.003, 'm')
@@ -38,8 +38,8 @@ class TestWingMass(unittest.TestCase):
             wm.options[Aircraft.Wing.AIRFOIL_PATH] = airfoil
 
         # Tests for the medium wing design
-        elif wing_type == WingType.MEDIUM:
-            wm.options[Aircraft.Wing.TYPE] = WingType.MEDIUM
+        elif wing_type == UAVWingType.HOLLOW:
+            wm.options[Aircraft.Wing.TYPE] = UAVWingType.HOLLOW
             wm.options[Aircraft.Wing.RIB_LIGHTENING_FACTOR] = 2 / 3
             wm.options[Aircraft.Wing.NUM_SPARS] = 1.0
             wm.options[Aircraft.Wing.SPAR_OUTER_DIAMETER] = (0.015, 'm')
@@ -65,7 +65,7 @@ class TestWingMass(unittest.TestCase):
 
     # Simple wing test
     def test_simple_mass(self):
-        prob = self.build_problem(WingType.SIMPLE)
+        prob = self.build_problem(UAVWingType.SOLID)
         prob.run_model()
 
         actual = prob.get_val(Aircraft.Wing.MASS, units='kg')
@@ -74,7 +74,7 @@ class TestWingMass(unittest.TestCase):
 
     # Medium wing test
     def test_medium_mass(self):
-        prob = self.build_problem(WingType.MEDIUM)
+        prob = self.build_problem(UAVWingType.HOLLOW)
         prob.run_model()
 
         actual = prob.get_val(Aircraft.Wing.MASS, units='kg')
@@ -84,13 +84,13 @@ class TestWingMass(unittest.TestCase):
 
     # Partials test
     def test_partials_1(self):
-        prob = self.build_problem(WingType.MEDIUM)
+        prob = self.build_problem(UAVWingType.HOLLOW)
         prob.run_model()
         partials = prob.check_partials(compact_print=False, method='cs', step=1.1e-40)
         assert_check_partials(partials, atol=1e-6, rtol=1e-6)
 
     def test_partials_2(self):
-        prob = self.build_problem(WingType.SIMPLE)
+        prob = self.build_problem(UAVWingType.SOLID)
         prob.run_model()
         partials = prob.check_partials(compact_print=False, method='cs', step=1.1e-40)
         assert_check_partials(partials, atol=1e-6, rtol=1e-6)

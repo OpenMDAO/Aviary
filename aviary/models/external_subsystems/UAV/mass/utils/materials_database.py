@@ -6,13 +6,12 @@ This database will be expanded as needed.
 """
 
 from aviary.utils.named_values import NamedValues
-from aviary.utils.named_values import get_keys, get_values, get_items
 
 materials = NamedValues()
 
 """
 All densities below came from:
-- https://tpsx.arc.nasa.gov/MaterialsDatabase 
+- https://tpsx.arc.nasa.gov/MaterialsDatabase
 - https://cdn.pefc.org/furniture.pefc.org/media/2023-10/784c9eb4-2f65-4465-be6e-131b0c1d5dea/84952881-7f2f-5308-8a03-99f31860c423.pdf
 """
 
@@ -52,20 +51,20 @@ materials.set_val(
 """
 Below are miscellaneous values that could be of importance, particularly for small aircraft.
 
-These values were found from a variety of sources, and depending on the source/brand, the density 
-could be slightly different. For some cases, temperature of the material also matters (typically 
+These values were found from a variety of sources, and depending on the source/brand, the density
+could be slightly different. For some cases, temperature of the material also matters (typically
 the values are provided as a relative density). If there is a temperature dependence from the source,
-it will be noted as a comment next to the line where the material value is set. Below are some sources 
-for various values. 
+it will be noted as a comment next to the line where the material value is set. Below are some sources
+for various values.
 
 The values below were not explicity listed from the above source.
 
 Wood glue: https://www.gorillatough.com/wp-content/uploads/Gorilla-Wood-Glue-v1.2.pdf
 
 EPS Foam: https://www.abtfoam.com/wp-content/uploads/2020/05/EPS-Standard-Sheet-Sizes-Densities-and-R-values.pdf
-    Note that there is a density range given, along with different types. The density value used is for Type I, 
-    and the value given is the average of the minimum and maximum within the range provided. The base unit in 
-    this document is pcf for the density. It was converted to kg/m^3 for the actual value input. 
+    Note that there is a density range given, along with different types. The density value used is for Type I,
+    and the value given is the average of the minimum and maximum within the range provided. The base unit in
+    this document is pcf for the density. It was converted to kg/m^3 for the actual value input.
 
 """
 
