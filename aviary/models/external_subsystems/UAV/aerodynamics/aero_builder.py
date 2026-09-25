@@ -1,8 +1,8 @@
 import openmdao.api as om
 
-from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.models.external_subsystems.UAV.aerodynamics.model.aero_model import TotalAircraftAero
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft, Dynamic
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 
 

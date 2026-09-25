@@ -5,8 +5,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.external_subsystems.UAV.propulsion.model.prop_premission import UAVPropPreMission
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft
 from aviary.utils.aviary_values import AviaryValues
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
 
 
 @use_tempdirs

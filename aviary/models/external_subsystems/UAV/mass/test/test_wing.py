@@ -2,11 +2,11 @@ import unittest
 import numpy as np
 import os
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.models.external_subsystems.UAV.mass.utils.UAV_enums import WingType
 from aviary.models.external_subsystems.UAV.mass.model.wing import WingMass
-from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft
 
 
 class TestWingMass(unittest.TestCase):
@@ -17,7 +17,6 @@ class TestWingMass(unittest.TestCase):
         prob.model.add_subsystem('wing', wm, promotes_inputs=['*'], promotes_outputs=['*'])
 
         # Rib definitions
-        ribs = np.array([0] * 15 + [1] * 5)
         rib_materials = ['Balsa'] * 15 + ['Ply'] * 5
         rib_thicks = np.array([0.0032] * 20)
 

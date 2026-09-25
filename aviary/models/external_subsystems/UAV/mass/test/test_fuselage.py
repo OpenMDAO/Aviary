@@ -1,10 +1,10 @@
 import unittest
 import numpy as np
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.models.external_subsystems.UAV.mass.model.fuselage import FuselageMass
-from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft
 
 
 class TestFuselageMass(unittest.TestCase):

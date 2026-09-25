@@ -5,7 +5,7 @@ Phase info for a simple UAV mission.
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
     'climb': {
-        'subsystem_options': {'aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'external'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -25,7 +25,10 @@ phase_info = {
             'time_initial': (0.0, 'min'),
             'time_duration_bounds': ((0.1, 100), 's'),
         },
-        'initial_guesses': {'time': ([0, 20], 's'), 'mach': ([0.05, 0.0538], 'unitless')},
+        'initial_guesses': {
+            'time': ([0, 20], 's'),
+            'mach': ([0.05, 0.0538], 'unitless'),
+        },
     },
     'cruise': {
         'subsystem_options': {'aerodynamics': {'method': 'external'}},
@@ -44,6 +47,7 @@ phase_info = {
             'altitude_ref': (200, 'ft'),
             'distance_ref': (1000.0, 'm'),
             'throttle_enforcement': 'control',
+            'throttle_optimize': True,
             'time_duration_bounds': ((5, 240.0), 's'),
         },
         'initial_guesses': {
@@ -52,7 +56,7 @@ phase_info = {
         },
     },
     'descent': {
-        'subsystem_options': {'aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'external'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,

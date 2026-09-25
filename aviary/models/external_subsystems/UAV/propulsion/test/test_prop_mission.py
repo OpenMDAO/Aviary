@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.external_subsystems.UAV.propulsion.model.prop_mission import UAVPropMission
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 
 
@@ -48,7 +48,6 @@ class TestUAVMission(unittest.TestCase):
         rpm_constraint = prob.get_val('prop.rpm_constraint', units='rev/s')
         current_flow = prob.get_val(Dynamic.Vehicle.Propulsion.CURRENT, units='A')
         rpm_defect = prob.get_val('rpm_balance.rpm_defect', units='rev/s')
-        expected = battery_power + esc_power + motor_power - prop_power
 
         assert_near_equal(current_flow, np.full(nn, 30.0), tolerance=1e-10)
         assert_near_equal(battery_power, np.full(nn, 621.0), tolerance=1e-8)
@@ -60,17 +59,8 @@ class TestUAVMission(unittest.TestCase):
         assert_near_equal(rpm_constraint, np.full(nn, -65.0), tolerance=5e-4)
         assert_near_equal(rpm_defect, np.full(nn, 36.59853972), tolerance=5e-5)
 
-        partial_data = prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-            minimum_step=1e-12,
-            abs_err_tol=5.0e-4,
-            rel_err_tol=5.0e-5,
-        )
-        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
 
 
 if __name__ == '__main__':

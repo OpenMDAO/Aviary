@@ -1,16 +1,15 @@
+from functools import partial
 import numpy as np
 import openmdao.api as om
-from functools import partial
 
 from aviary.variable_info.functions import add_aviary_input as _add_aviary_input
 from aviary.variable_info.functions import add_aviary_option as _add_aviary_option
 from aviary.variable_info.functions import add_aviary_output as _add_aviary_output
-from aviary.variable_info.variables import Settings
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.variable_info.variable_meta_data import (
     ExtendedMetaData,
 )
-from aviary.models.external_subsystems.UAV.propulsion.Parsing.PropDataReader import PropDataReader
+from aviary.models.external_subsystems.UAV.propulsion.model.prop_data_reader import PropDataReader
 
 # RC electric variables live in ExtendedMetaData; bind it onto the add_aviary_* helpers.
 add_aviary_input = partial(_add_aviary_input, meta_data=ExtendedMetaData)
@@ -235,7 +234,6 @@ class Motor(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Engine.Motor.RESISTANCE, units='ohm')
         add_aviary_input(self, Aircraft.Engine.Motor.KV, units='rpm/V')
         self.add_input('voltage_in', val=np.zeros(nn), units='V')
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.CURRENT, shape=(nn,), units='A')
         self.add_input('current', val=np.zeros(nn), units='A')
 
         ################ TODO Alex #####################
@@ -249,19 +247,13 @@ class Motor(om.ExplicitComponent):
 
         self.declare_partials(
             [Dynamic.Vehicle.Propulsion.RPM, 'power'],
-            [
-                'voltage_in',
-                'current',
-                # Dynamic.Vehicle.Propulsion.CURRENT,
-            ],
+            ['voltage_in', 'current'],
             rows=ar,
             cols=ar,
         )
 
         self.declare_partials(
-            [
-                Dynamic.Vehicle.Propulsion.RPM,
-            ],
+            [Dynamic.Vehicle.Propulsion.RPM],
             [Aircraft.Engine.Motor.RESISTANCE, Aircraft.Engine.Motor.KV],
         )
 
@@ -341,7 +333,7 @@ class PropCoefficients(om.MetaModelSemiStructuredComp):
     def initialize(self):
         self.options.declare('method', default='lagrange2', types=str)
         self.options.declare('extrapolate', default=True, types=bool)
-        self.options.declare('training_data_gradients', default=True, types=bool)
+        self.options.declare('training_data_gradients', default=False, types=bool)
         self.options.declare('vec_size', default=1, types=int)
 
     def setup(self):

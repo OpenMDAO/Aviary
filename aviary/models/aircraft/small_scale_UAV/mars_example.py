@@ -9,10 +9,10 @@ import aviary.api as av
 from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder
 from aviary.models.external_subsystems.UAV.propulsion.prop_builder import PropBuilder
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
+from aviary.models.external_subsystems.UAV.variable_info.variable_meta_data import (
     ExtendedMetaData as UAVExtendedMetaData,
 )
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import (
+from aviary.models.external_subsystems.UAV.variable_info.variables import (
     Aircraft,
     Dynamic,
     Settings,

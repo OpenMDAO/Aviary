@@ -1,8 +1,8 @@
 import unittest
-
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+
 from aviary.models.external_subsystems.UAV.aerodynamics.model.aero_model import (
     WingTailAreaRatios,
     FuselageDrag,
@@ -11,7 +11,7 @@ from aviary.models.external_subsystems.UAV.aerodynamics.model.aero_model import 
     Averages,
     TotalAircraftAero,
 )
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Dynamic, Aircraft
+from aviary.models.external_subsystems.UAV.variable_info.variables import Dynamic, Aircraft
 
 
 class TestWingTailAreaRatios(unittest.TestCase):

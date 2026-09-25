@@ -1,10 +1,9 @@
-from aviary.models.external_subsystems.UAV.propulsion.model.prop_premission import UAVPropPreMission
 from aviary.models.external_subsystems.UAV.propulsion.model.prop_mission import UAVPropMission
-from aviary.utils.aviary_values import AviaryValues
+from aviary.models.external_subsystems.UAV.propulsion.model.prop_premission import UAVPropPreMission
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.engine_model import EngineModel
-
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 from aviary.variable_info.variables import Mission
+from aviary.utils.aviary_values import AviaryValues
 
 """ Builder for the UAV Propulsion Subsystem (RC Electric) """
 

@@ -9,7 +9,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.models.external_subsystems.UAV.aerodynamics.aero_builder import AeroBuilder
 from aviary.models.external_subsystems.UAV.mass.mass_builder import MassBuilder as DBFMassBuilder
 from aviary.models.missions.UAV_energy_phase import phase_info
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import (
+from aviary.models.external_subsystems.UAV.variable_info.variables import (
     Aircraft,
     Dynamic,
     Settings,
@@ -17,7 +17,7 @@ from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables impor
 )
 from aviary.models.external_subsystems.UAV.propulsion.prop_builder import PropBuilder
 
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
+from aviary.models.external_subsystems.UAV.variable_info.variable_meta_data import (
     ExtendedMetaData,
 )
 from aviary.variable_info.enums import Transcription

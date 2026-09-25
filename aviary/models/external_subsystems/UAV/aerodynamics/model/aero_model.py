@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft, Dynamic
 from aviary.models.external_subsystems.UAV.aerodynamics.model.aero_OAS_analysis import OASAero
 from aviary.variable_info.functions import add_aviary_input
 

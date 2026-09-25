@@ -1,13 +1,13 @@
 import unittest
-
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+
 from aviary.models.external_subsystems.UAV.aerodynamics.model.aero_OAS_analysis import (
     AeroConditions,
     LiftBalanceComp,
 )
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Dynamic
+from aviary.models.external_subsystems.UAV.variable_info.variables import Dynamic
 
 
 class TestAeroConditions(unittest.TestCase):

@@ -2,12 +2,12 @@ import unittest
 import numpy as np
 import os
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
 
 from aviary.models.external_subsystems.UAV.mass.model.horizontaltail import (
     HorizontalTailMass,
 )
-from openmdao.utils.assert_utils import assert_near_equal, assert_check_partials
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft
 
 
 class TestHorizontalTailMass(unittest.TestCase):
@@ -20,7 +20,6 @@ class TestHorizontalTailMass(unittest.TestCase):
         )
 
         # Set required options
-        ribs = np.array([0] * 15 + [1] * 5)
         rib_materials = ['Balsa'] * 15 + ['Ply'] * 5
         rib_thicks = np.array([0.0032] * 20)
 

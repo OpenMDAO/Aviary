@@ -1,18 +1,14 @@
-import openmdao.api as om
 from functools import partial
+import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variable_meta_data import (
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.variable_info.variable_meta_data import (
     ExtendedMetaData,
 )
-from aviary.variable_info.functions import add_aviary_input as _add_aviary_input
 from aviary.variable_info.functions import add_aviary_option as _add_aviary_option
-from aviary.variable_info.functions import add_aviary_output as _add_aviary_output
+from aviary.utils.aviary_values import AviaryValues
 
 # RC electric variables live in ExtendedMetaData; bind it onto the helpers.
-add_aviary_input = partial(_add_aviary_input, meta_data=ExtendedMetaData)
-add_aviary_output = partial(_add_aviary_output, meta_data=ExtendedMetaData)
 add_aviary_option = partial(_add_aviary_option, meta_data=ExtendedMetaData)
 
 

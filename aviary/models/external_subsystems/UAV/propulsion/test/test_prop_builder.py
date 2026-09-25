@@ -5,12 +5,12 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.external_subsystems.UAV.propulsion.prop_builder import PropBuilder
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft, Dynamic
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.variable_info.functions import setup_model_options
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
-from aviary.variable_info.variables import Mission, Settings
+from aviary.variable_info.variables import Settings
 
 
 class TestPropBuilder(unittest.TestCase):

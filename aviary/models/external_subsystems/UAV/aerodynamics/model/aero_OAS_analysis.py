@@ -7,7 +7,7 @@ from openaerostruct.meshing.mesh_generator import generate_mesh
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
 from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import (
+from aviary.models.external_subsystems.UAV.variable_info.variables import (
     Aircraft,
     Dynamic,
     Settings,

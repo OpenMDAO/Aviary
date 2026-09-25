@@ -10,8 +10,8 @@ from aviary.models.external_subsystems.UAV.propulsion.model.prop_performance imp
     Propeller,
     Vectorization,
 )
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
 
 
 class UAVPropMission(om.Group):
@@ -75,7 +75,6 @@ class UAVPropMission(om.Group):
                 Aircraft.Engine.Motor.IDLE_CURRENT,
                 Aircraft.Engine.Motor.RESISTANCE,
                 Aircraft.Engine.Motor.KV,
-                Dynamic.Vehicle.Propulsion.CURRENT,
             ],
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.RPM,

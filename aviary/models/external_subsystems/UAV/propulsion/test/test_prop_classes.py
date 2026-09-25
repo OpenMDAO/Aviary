@@ -12,8 +12,7 @@ from aviary.models.external_subsystems.UAV.propulsion.model.prop_performance imp
     Vectorization,
     PropCoefficients,
 )
-
-from aviary.models.external_subsystems.UAV.UAV_variable_info.UAV_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.UAV.variable_info.variables import Aircraft, Dynamic
 
 
 @use_tempdirs
@@ -38,14 +37,8 @@ class TestBattery(unittest.TestCase):
         expected_power = np.full(nn, 222.0) - np.full(nn, 5.0)
         assert_near_equal(power, expected_power, tolerance=1e-5)
 
-        partial_data = prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-        )
-        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class TestMotor(unittest.TestCase):
@@ -62,8 +55,6 @@ class TestMotor(unittest.TestCase):
         prob.set_val('voltage_in', 22.2, units='V')
         prob.set_val('current', np.full(nn, 10.0), units='A')
 
-        prob.set_val(Dynamic.Vehicle.Propulsion.CURRENT, np.full(nn, 10.0), units='A')
-
         prob.run_model()
 
         # voltage_prop = voltage_in - current*R = 22.2-10**2 * 0.032 = 21.88 #Volts
@@ -75,14 +66,8 @@ class TestMotor(unittest.TestCase):
         assert_near_equal(rpm, np.full(nn, 9189.6), tolerance=1e-5)
         assert_near_equal(power, np.full(nn, -23.1108), tolerance=1e-5)
 
-        partial_data = prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-        )
-        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class TestPropeller(unittest.TestCase):
@@ -110,14 +95,8 @@ class TestPropeller(unittest.TestCase):
         assert_near_equal(prop_power, np.full(nn, 2072190.544), tolerance=1e-3)
         assert_near_equal(rpm_constraint, np.full(nn, 875.0), tolerance=1e-8)
 
-        partial_data = prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-        )
-        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class TestESC(unittest.TestCase):
@@ -146,15 +125,8 @@ class TestESC(unittest.TestCase):
         assert_near_equal(voltage_out, np.full(nn, 16.78007758254013), tolerance=1e-6)
         assert_near_equal(power, np.full(nn, -12.24902944), tolerance=1e-6)
 
-        partial_data = prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-        )
-
-        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class TestVectorization(unittest.TestCase):
@@ -177,16 +149,8 @@ class TestVectorization(unittest.TestCase):
         assert_near_equal(
             prob.get_val('temp_pitch', units='inch'), np.full(nn, 10.0), tolerance=1e-5
         )
-
-        partial_data = prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-        )
-
-        assert_check_partials(partial_data, atol=5e-4, rtol=1e-4)
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class TestPropCoefficients(unittest.TestCase):
@@ -203,8 +167,6 @@ class TestPropCoefficients(unittest.TestCase):
         prob.set_val('temp_pitch', np.full(nn, 12), units='inch')
 
         prob.run_model()
-        prob.model.list_inputs(units=True, prom_name=True)
-        prob.model.list_outputs(units=True, prom_name=True, residuals=True)
         ct = prob.get_val('ct')
         cp = prob.get_val('cp')
         self.assertTrue(np.all(np.isfinite(ct)))
