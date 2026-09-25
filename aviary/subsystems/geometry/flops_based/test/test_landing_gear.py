@@ -2,7 +2,9 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.assert_utils import assert_near_equal
 from parameterized import parameterized
+import numpy as np
 
 from aviary.subsystems.geometry.flops_based.landing_gear import MainGearLength, NoseGearLength
 from aviary.utils.test_utils.variable_test import assert_match_varnames
@@ -62,6 +64,34 @@ class LandingGearLengthTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+    def test_multiengine(self):
+        options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([5, 2]),
+            Aircraft.Engine.NUM_WING_ENGINES: np.array([4, 2]),
+        }
+
+        self.prob.model.add_subsystem('main', MainGearLength(**options), promotes=['*'])
+
+        self.prob.setup(force_alloc_complex=True)  # complex step is great for checking partials
+
+        # 2. Set the input variables
+        self.prob.set_val(Aircraft.Fuselage.LENGTH, 150.0, units='ft')
+        self.prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 13.0, units='ft')
+        self.prob.set_val(Aircraft.Wing.SPAN, 120.0, units='ft')
+        self.prob.set_val(Aircraft.Wing.DIHEDRAL, 3.0, units='deg')
+        self.prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([4.0, 9.0]), units='ft')
+        self.prob.set_val(
+            Aircraft.Engine.WING_LOCATIONS, np.array([0.2, 0.8, 0.5]), units='unitless'
+        )
+
+        self.prob.run_model()
+
+        main_gear_length = self.prob.get_val(
+            Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, units='inch'
+        )[0]
+
+        assert_near_equal(main_gear_length, 166.54100624, tolerance=1e-10)
 
 
 if __name__ == '__main__':
