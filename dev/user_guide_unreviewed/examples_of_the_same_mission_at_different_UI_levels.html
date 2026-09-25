@@ -626,6 +626,26 @@ If you want to make minor modifications to <code class="docutils literal notrans
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
+  &#39;aircraft:engine:mass  [7400.]  lbm
+  &#39;aircraft:fins:mass  0.0  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
+  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
+  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
+  &#39;aircraft:wing:control_surface_area  137.0  ft**2
+  &#39;aircraft:wing:wetted_area  2396.56  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration limit reached    (Exit mode 9)
             Current function value: 3.9800875570924603
             Iterations: 0
@@ -756,6 +776,26 @@ In the absence of additional arguments to the methods, much of the default behav
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
+  &#39;aircraft:engine:mass  [7400.]  lbm
+  &#39;aircraft:fins:mass  0.0  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
+  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
+  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
+  &#39;aircraft:wing:control_surface_area  137.0  ft**2
+  &#39;aircraft:wing:wetted_area  2396.56  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
   traj.climb.t_initial, inds=[0]
 </pre></div>
@@ -1195,8 +1235,29 @@ You have supreme control over every part of the model and mission definition, bu
 /home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wing_characteristic_lengths&#39; &lt;class WingCharacteristicLength&gt;: input variable &#39;aircraft:wing:thickness_to_chord&#39;, promoted using &#39;aircraft:wing:thickness_to_chord&#39;, was already promoted using &#39;aircraft*&#39;.
 </pre></div>
 </div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
+  &#39;aircraft:engine:mass  [7400.]  lbm
+  &#39;aircraft:engine:scaled_sls_thrust  [28928.1]  lbf
+  &#39;aircraft:fins:mass  0.0  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
+  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
+  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
+  &#39;aircraft:wing:control_surface_area  137.0  ft**2
+  &#39;aircraft:wing:wetted_area  2396.56  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration limit reached    (Exit mode 9)
-            Current function value: 2.9247548982260096
+            Current function value: 2.924754898223249
             Iterations: 1
             Function evaluations: 3
             Gradient evaluations: 2
@@ -1209,11 +1270,11 @@ Iteration limit reached
 Driver:  ScipyOptimizeDriver
   success     : False
   iterations  : 4
-  runtime     : 1.4302E+00 s
+  runtime     : 1.4385E+00 s
   model_evals : 5
-  model_time  : 8.9338E-01 s
+  model_time  : 8.9052E-01 s
   deriv_evals : 2
-  deriv_time  : 4.7617E-01 s
+  deriv_time  : 4.7877E-01 s
   exit_status : FAIL
 </pre></div>
 </div>

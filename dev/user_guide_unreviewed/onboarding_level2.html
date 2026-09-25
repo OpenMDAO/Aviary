@@ -719,6 +719,26 @@
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:anti_icing:mass  551.0  lbm
+  &#39;aircraft:apu:mass  928.0  lbm
+  &#39;aircraft:avionics:mass  1959.0  lbm
+  &#39;aircraft:design:emergency_equipment_mass  50.0  lbm
+  &#39;aircraft:design:wing_loading  128.0  lbf/ft**2
+  &#39;aircraft:furnishings:mass  11192.0  lbm
+  &#39;aircraft:fuselage:wetted_area  4000.0  ft**2
+  &#39;aircraft:horizontal_tail:form_factor  1.25  unitless
+  &#39;aircraft:horizontal_tail:moment_ratio  0.2307  unitless
+  &#39;aircraft:horizontal_tail:volume_coefficient  1.189  unitless
+  &#39;aircraft:nacelle:form_factor  [1.5]  unitless
+  &#39;aircraft:strut:fuselage_interference_factor  0.0  unitless
+  &#39;aircraft:vertical_tail:form_factor  1.25  unitless
+  &#39;aircraft:vertical_tail:moment_ratio  2.362  unitless
+  &#39;aircraft:vertical_tail:volume_coefficient  0.145  unitless
+  &#39;aircraft:wing:form_factor  1.25  unitless
+  &#39;aircraft:wing:slat_span_ratio  0.9  unitless
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>req_fuel_mass &gt; max_wingfuel_mass, adding a body tank
 </pre></div>
 </div>
@@ -751,225 +771,9 @@ Number of inequality constraint evaluations          = 1
 Number of equality constraint Jacobian evaluations   = 1
 Number of inequality constraint Jacobian evaluations = 1
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 1.498
+Total seconds in IPOPT                               = 1.497
 
 EXIT: Maximum Number of Iterations Exceeded.
-
-
-Optimization Problem -- Optimization using pyOpt_sparse
-================================================================================
-    Objective Function: _objfunc
-
-
-   Objectives
-      Index  Name                               Value
-          0  mission:objectives:fuel     5.172289E+00
-
-   Variables (c - continuous, i - integer, d - discrete)
-      Index  Name                                        Type      Lower Bound            Value      Upper Bound     Status
-
-   Constraints (i - inequality, e - equality)
-      Index  Name                                                                        Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-          0  mission:constraints:mass_residual                                              e   0.000000E+00   -1.008446E-02    0.000000E+00         E    9.00000E+100
-          3  h_fit.h_init_gear                                                              e   1.000000E+00    2.000000E+00    1.000000E+00         E    9.00000E+100
-          4  h_fit.h_init_flaps                                                             e   1.000000E+00    1.125000E+00    1.000000E+00         E    9.00000E+100
-          6  taxi_groundroll_mass_constraint.mass                                           e   0.000000E+00   -1.545558E-01    0.000000E+00         E    9.00000E+100
-         14  traj.linkages.climb2:mass_final|cruise:mass_initial                            e   0.000000E+00    3.430667E-02    0.000000E+00         E    9.00000E+100
-         15  traj.linkages.climb2:distance_final|cruise:initial_distance_initial            e   0.000000E+00    6.583153E-02    0.000000E+00         E    9.00000E+100
-         16  traj.linkages.cruise:mass_final|desc1:mass_initial                             e   0.000000E+00   -6.666667E-03    0.000000E+00         E    9.00000E+100
-         18  traj.accel.EAS[final]                                                          e   1.000000E+00    9.926992E-01    1.000000E+00         E    9.00000E+100
-         19  traj.accel.collocation_constraint.defects:velocity                             e   0.000000E+00    5.740827E-02    0.000000E+00         E    9.00000E+100
-         20  traj.accel.collocation_constraint.defects:velocity                             e   0.000000E+00    5.774918E-02    0.000000E+00         E    9.00000E+100
-         21  traj.accel.collocation_constraint.defects:velocity                             e   0.000000E+00    6.033627E-02    0.000000E+00         E    9.00000E+100
-         22  traj.accel.collocation_constraint.defects:mass                                 e   0.000000E+00    1.496905E-04    0.000000E+00         E    9.00000E+100
-         23  traj.accel.collocation_constraint.defects:mass                                 e   0.000000E+00    1.508430E-04    0.000000E+00         E    9.00000E+100
-         24  traj.accel.collocation_constraint.defects:mass                                 e   0.000000E+00    1.524849E-04    0.000000E+00         E    9.00000E+100
-         25  traj.accel.collocation_constraint.defects:distance                             e   0.000000E+00    9.777328E-02    0.000000E+00         E    9.00000E+100
-         26  traj.accel.collocation_constraint.defects:distance                             e   0.000000E+00    8.943944E-02    0.000000E+00         E    9.00000E+100
-         27  traj.accel.collocation_constraint.defects:distance                             e   0.000000E+00    7.794045E-02    0.000000E+00         E    9.00000E+100
-         29  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    2.189007E-01    0.000000E+00         E    9.00000E+100
-         30  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    2.166063E-01    0.000000E+00         E    9.00000E+100
-         31  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    2.052008E-01    0.000000E+00         E    9.00000E+100
-         32  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    2.014057E-01    0.000000E+00         E    9.00000E+100
-         33  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.928063E-01    0.000000E+00         E    9.00000E+100
-         34  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.813205E-01    0.000000E+00         E    9.00000E+100
-         35  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.777969E-01    0.000000E+00         E    9.00000E+100
-         36  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.699268E-01    0.000000E+00         E    9.00000E+100
-         37  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.595057E-01    0.000000E+00         E    9.00000E+100
-         38  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.563096E-01    0.000000E+00         E    9.00000E+100
-         39  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.491704E-01    0.000000E+00         E    9.00000E+100
-         40  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    2.072156E-01    0.000000E+00         E    9.00000E+100
-         41  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    6.250000E-02    0.000000E+00         E    9.00000E+100
-         42  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    5.249183E-02    0.000000E+00         E    9.00000E+100
-         43  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    3.801869E-02    0.000000E+00         E    9.00000E+100
-         44  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    3.327824E-02    0.000000E+00         E    9.00000E+100
-         45  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    2.213497E-02    0.000000E+00         E    9.00000E+100
-         46  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    6.104057E-03    0.000000E+00         E    9.00000E+100
-         47  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    8.727384E-04    0.000000E+00         E    9.00000E+100
-         48  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00   -1.139040E-02    0.000000E+00         E    9.00000E+100
-         49  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00   -2.895648E-02    0.000000E+00         E    9.00000E+100
-         50  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00   -3.467113E-02    0.000000E+00         E    9.00000E+100
-         51  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00   -4.803617E-02    0.000000E+00         E    9.00000E+100
-         52  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00   -6.711102E-02    0.000000E+00         E    9.00000E+100
-         53  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -3.142148E-02    0.000000E+00         E    9.00000E+100
-         54  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -2.559293E-02    0.000000E+00         E    9.00000E+100
-         55  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.924806E-02    0.000000E+00         E    9.00000E+100
-         56  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.736727E-02    0.000000E+00         E    9.00000E+100
-         57  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.567988E-02    0.000000E+00         E    9.00000E+100
-         58  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.285395E-02    0.000000E+00         E    9.00000E+100
-         59  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.103654E-02    0.000000E+00         E    9.00000E+100
-         60  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -6.832497E-03    0.000000E+00         E    9.00000E+100
-         61  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.033272E-03    0.000000E+00         E    9.00000E+100
-         62  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00    8.001762E-04    0.000000E+00         E    9.00000E+100
-         63  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00    4.994598E-03    0.000000E+00         E    9.00000E+100
-         64  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00    9.573919E-03    0.000000E+00         E    9.00000E+100
-         65  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.202051E-05    0.000000E+00         E    9.00000E+100
-         66  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.202335E-05    0.000000E+00         E    9.00000E+100
-         67  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.201821E-05    0.000000E+00         E    9.00000E+100
-         68  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.201439E-05    0.000000E+00         E    9.00000E+100
-         69  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.200167E-05    0.000000E+00         E    9.00000E+100
-         70  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.198085E-05    0.000000E+00         E    9.00000E+100
-         71  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.197974E-05    0.000000E+00         E    9.00000E+100
-         72  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.197724E-05    0.000000E+00         E    9.00000E+100
-         73  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.197391E-05    0.000000E+00         E    9.00000E+100
-         74  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.197289E-05    0.000000E+00         E    9.00000E+100
-         75  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.197059E-05    0.000000E+00         E    9.00000E+100
-         76  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.196754E-05    0.000000E+00         E    9.00000E+100
-         77  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -4.116087E-03    0.000000E+00         E    9.00000E+100
-         78  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -5.748483E-03    0.000000E+00         E    9.00000E+100
-         79  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -7.979510E-03    0.000000E+00         E    9.00000E+100
-         80  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -8.680185E-03    0.000000E+00         E    9.00000E+100
-         81  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.027431E-02    0.000000E+00         E    9.00000E+100
-         82  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.244906E-02    0.000000E+00         E    9.00000E+100
-         83  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.313109E-02    0.000000E+00         E    9.00000E+100
-         84  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.468101E-02    0.000000E+00         E    9.00000E+100
-         85  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.679134E-02    0.000000E+00         E    9.00000E+100
-         86  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.745215E-02    0.000000E+00         E    9.00000E+100
-         87  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.895200E-02    0.000000E+00         E    9.00000E+100
-         88  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -2.098984E-02    0.000000E+00         E    9.00000E+100
-         96  traj.climb1.collocation_constraint.defects:altitude                            e   0.000000E+00    1.209448E-01    0.000000E+00         E    9.00000E+100
-         97  traj.climb1.collocation_constraint.defects:altitude                            e   0.000000E+00    1.259942E-01    0.000000E+00         E    9.00000E+100
-         98  traj.climb1.collocation_constraint.defects:altitude                            e   0.000000E+00    1.521382E-01    0.000000E+00         E    9.00000E+100
-         99  traj.climb1.collocation_constraint.defects:mass                                e   0.000000E+00    1.507399E-03    0.000000E+00         E    9.00000E+100
-        100  traj.climb1.collocation_constraint.defects:mass                                e   0.000000E+00    1.426383E-03    0.000000E+00         E    9.00000E+100
-        101  traj.climb1.collocation_constraint.defects:mass                                e   0.000000E+00    1.317015E-03    0.000000E+00         E    9.00000E+100
-        102  traj.climb1.collocation_constraint.defects:distance                            e   0.000000E+00    1.213243E-01    0.000000E+00         E    9.00000E+100
-        103  traj.climb1.collocation_constraint.defects:distance                            e   0.000000E+00    1.103883E-01    0.000000E+00         E    9.00000E+100
-        104  traj.climb1.collocation_constraint.defects:distance                            e   0.000000E+00    9.374954E-02    0.000000E+00         E    9.00000E+100
-        106  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -2.383168E-01    0.000000E+00         E    9.00000E+100
-        107  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -2.074947E-01    0.000000E+00         E    9.00000E+100
-        108  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -1.635127E-01    0.000000E+00         E    9.00000E+100
-        109  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -1.509288E-01    0.000000E+00         E    9.00000E+100
-        110  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -1.163262E-01    0.000000E+00         E    9.00000E+100
-        111  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -6.456026E-02    0.000000E+00         E    9.00000E+100
-        112  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -4.963647E-02    0.000000E+00         E    9.00000E+100
-        113  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -1.193396E-02    0.000000E+00         E    9.00000E+100
-        114  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00    6.983887E-02    0.000000E+00         E    9.00000E+100
-        115  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    4.673864E-03    0.000000E+00         E    9.00000E+100
-        116  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    4.368479E-03    0.000000E+00         E    9.00000E+100
-        117  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    3.963057E-03    0.000000E+00         E    9.00000E+100
-        118  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    3.870630E-03    0.000000E+00         E    9.00000E+100
-        119  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    3.616411E-03    0.000000E+00         E    9.00000E+100
-        120  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    3.282177E-03    0.000000E+00         E    9.00000E+100
-        121  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    3.186647E-03    0.000000E+00         E    9.00000E+100
-        122  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    2.959569E-03    0.000000E+00         E    9.00000E+100
-        123  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    2.544683E-03    0.000000E+00         E    9.00000E+100
-        124  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -3.213284E-02    0.000000E+00         E    9.00000E+100
-        125  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -3.417779E-02    0.000000E+00         E    9.00000E+100
-        126  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -3.725739E-02    0.000000E+00         E    9.00000E+100
-        127  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -3.829978E-02    0.000000E+00         E    9.00000E+100
-        128  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -4.082832E-02    0.000000E+00         E    9.00000E+100
-        129  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -4.466834E-02    0.000000E+00         E    9.00000E+100
-        130  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -4.597689E-02    0.000000E+00         E    9.00000E+100
-        131  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -4.916426E-02    0.000000E+00         E    9.00000E+100
-        132  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -4.974791E-02    0.000000E+00         E    9.00000E+100
-        133  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00    8.601683E-04    0.000000E+00         E    9.00000E+100
-        134  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00    4.965631E-04    0.000000E+00         E    9.00000E+100
-        135  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00    6.256251E-06    0.000000E+00         E    9.00000E+100
-        136  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -1.461936E-04    0.000000E+00         E    9.00000E+100
-        137  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -4.903825E-04    0.000000E+00         E    9.00000E+100
-        138  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -9.541718E-04    0.000000E+00         E    9.00000E+100
-        139  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -1.098295E-03    0.000000E+00         E    9.00000E+100
-        140  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -1.423536E-03    0.000000E+00         E    9.00000E+100
-        141  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -1.861454E-03    0.000000E+00         E    9.00000E+100
-        142  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -1.997455E-03    0.000000E+00         E    9.00000E+100
-        143  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -2.304217E-03    0.000000E+00         E    9.00000E+100
-        144  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -2.716911E-03    0.000000E+00         E    9.00000E+100
-        145  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -2.844994E-03    0.000000E+00         E    9.00000E+100
-        146  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -3.133746E-03    0.000000E+00         E    9.00000E+100
-        147  traj.cruise.collocation_constraint.defects:mass                                e   0.000000E+00   -3.476869E-03    0.000000E+00         E    9.00000E+100
-        149  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -4.922864E-02    0.000000E+00         E    9.00000E+100
-        150  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -4.623939E-02    0.000000E+00         E    9.00000E+100
-        151  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -3.663219E-02    0.000000E+00         E    9.00000E+100
-        152  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -3.261718E-02    0.000000E+00         E    9.00000E+100
-        153  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -2.166382E-02    0.000000E+00         E    9.00000E+100
-        154  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -7.070801E-03    0.000000E+00         E    9.00000E+100
-        155  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -1.092101E-02    0.000000E+00         E    9.00000E+100
-        156  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -1.936185E-02    0.000000E+00         E    9.00000E+100
-        157  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -3.026334E-02    0.000000E+00         E    9.00000E+100
-        158  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    7.138790E-05    0.000000E+00         E    9.00000E+100
-        159  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    8.259714E-05    0.000000E+00         E    9.00000E+100
-        160  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    9.953403E-05    0.000000E+00         E    9.00000E+100
-        161  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.055697E-04    0.000000E+00         E    9.00000E+100
-        162  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.202051E-04    0.000000E+00         E    9.00000E+100
-        163  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.417624E-04    0.000000E+00         E    9.00000E+100
-        164  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.468366E-04    0.000000E+00         E    9.00000E+100
-        165  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.592094E-04    0.000000E+00         E    9.00000E+100
-        166  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.786358E-04    0.000000E+00         E    9.00000E+100
-        167  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    2.299153E-01    0.000000E+00         E    9.00000E+100
-        168  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.571722E-01    0.000000E+00         E    9.00000E+100
-        169  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.312834E-01    0.000000E+00         E    9.00000E+100
-        170  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.352341E-01    0.000000E+00         E    9.00000E+100
-        171  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.337493E-01    0.000000E+00         E    9.00000E+100
-        172  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.331611E-01    0.000000E+00         E    9.00000E+100
-        173  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.358162E-01    0.000000E+00         E    9.00000E+100
-        174  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.415582E-01    0.000000E+00         E    9.00000E+100
-        175  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.487802E-01    0.000000E+00         E    9.00000E+100
-        177  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    8.586925E-02    0.000000E+00         E    9.00000E+100
-        178  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    7.848989E-02    0.000000E+00         E    9.00000E+100
-        179  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    6.262654E-02    0.000000E+00         E    9.00000E+100
-        180  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    4.221653E-02    0.000000E+00         E    9.00000E+100
-        181  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    2.126548E-02    0.000000E+00         E    9.00000E+100
-        182  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    4.016154E-03    0.000000E+00         E    9.00000E+100
-        183  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00   -6.650708E-03    0.000000E+00         E    9.00000E+100
-        184  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    4.639458E-04    0.000000E+00         E    9.00000E+100
-        185  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    4.729851E-04    0.000000E+00         E    9.00000E+100
-        186  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    4.942395E-04    0.000000E+00         E    9.00000E+100
-        187  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    5.229725E-04    0.000000E+00         E    9.00000E+100
-        188  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    5.557322E-04    0.000000E+00         E    9.00000E+100
-        189  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    5.846388E-04    0.000000E+00         E    9.00000E+100
-        190  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    6.038421E-04    0.000000E+00         E    9.00000E+100
-        191  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.331813E-01    0.000000E+00         E    9.00000E+100
-        192  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.352470E-01    0.000000E+00         E    9.00000E+100
-        193  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.396020E-01    0.000000E+00         E    9.00000E+100
-        194  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.452028E-01    0.000000E+00         E    9.00000E+100
-        195  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.508488E-01    0.000000E+00         E    9.00000E+100
-        196  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.554678E-01    0.000000E+00         E    9.00000E+100
-        197  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.582852E-01    0.000000E+00         E    9.00000E+100
-        198  traj.groundroll.collocation_constraint.defects:velocity                        e   0.000000E+00   -1.684528E-01    0.000000E+00         E    9.00000E+100
-        199  traj.groundroll.collocation_constraint.defects:velocity                        e   0.000000E+00   -1.063686E-01    0.000000E+00         E    9.00000E+100
-        200  traj.groundroll.collocation_constraint.defects:velocity                        e   0.000000E+00    9.324718E-04    0.000000E+00         E    9.00000E+100
-        201  traj.groundroll.collocation_constraint.defects:mass                            e   0.000000E+00    4.467423E-04    0.000000E+00         E    9.00000E+100
-        202  traj.groundroll.collocation_constraint.defects:mass                            e   0.000000E+00    4.510888E-04    0.000000E+00         E    9.00000E+100
-        203  traj.groundroll.collocation_constraint.defects:mass                            e   0.000000E+00    4.571135E-04    0.000000E+00         E    9.00000E+100
-        204  traj.groundroll.collocation_constraint.defects:distance                        e   0.000000E+00    1.659240E-01    0.000000E+00         E    9.00000E+100
-        205  traj.groundroll.collocation_constraint.defects:distance                        e   0.000000E+00   -4.055050E-01    0.000000E+00         E    9.00000E+100
-        206  traj.groundroll.collocation_constraint.defects:distance                        e   0.000000E+00   -1.193960E+00    0.000000E+00         E    9.00000E+100
-        207  traj.groundroll.rhs_all.groundroll_boundary.velocity                           e   0.000000E+00   -1.788367E-02    0.000000E+00         E    9.00000E+100
-        208  traj.rotation.normal_force[final]                                              e   0.000000E+00    8.808168E+00    0.000000E+00         E    9.00000E+100
-        209  traj.rotation.collocation_constraint.defects:angle_of_attack                   e   0.000000E+00   -5.895833E-01    0.000000E+00         E    9.00000E+100
-        210  traj.rotation.collocation_constraint.defects:angle_of_attack                   e   0.000000E+00   -5.895833E-01    0.000000E+00         E    9.00000E+100
-        211  traj.rotation.collocation_constraint.defects:angle_of_attack                   e   0.000000E+00   -5.895833E-01    0.000000E+00         E    9.00000E+100
-        212  traj.rotation.collocation_constraint.defects:velocity                          e   0.000000E+00   -3.322039E-02    0.000000E+00         E    9.00000E+100
-        213  traj.rotation.collocation_constraint.defects:velocity                          e   0.000000E+00   -3.152946E-02    0.000000E+00         E    9.00000E+100
-        214  traj.rotation.collocation_constraint.defects:velocity                          e   0.000000E+00   -3.044176E-02    0.000000E+00         E    9.00000E+100
-        215  traj.rotation.collocation_constraint.defects:mass                              e   0.000000E+00    5.749727E-05    0.000000E+00         E    9.00000E+100
-        216  traj.rotation.collocation_constraint.defects:mass                              e   0.000000E+00    5.753846E-05    0.000000E+00         E    9.00000E+100
-        217  traj.rotation.collocation_constraint.defects:mass                              e   0.000000E+00    5.759767E-05    0.000000E+00         E    9.00000E+100
-        218  traj.rotation.collocation_constraint.defects:distance                          e   0.000000E+00    1.251386E+00    0.000000E+00         E    9.00000E+100
-        219  traj.rotation.collocation_constraint.defects:distance                          e   0.000000E+00    1.914830E-01    0.000000E+00         E    9.00000E+100
-        220  traj.rotation.collocation_constraint.defects:distance                          e   0.000000E+00   -1.615733E-01    0.000000E+00         E    9.00000E+100
-        221  mission:constraints:excess_fuel_mass_capacity                                  i   0.000000E+00    2.182787E-16    1.000000E+20         l    9.00000E+100
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 
@@ -1394,11 +1198,39 @@ There is a special objective type: <code class="docutils literal notranslate"><s
 <p><strong>Note:</strong>  Unfortunately, not all <code class="docutils literal notranslate"><span class="pre">objective_type</span></code> and <code class="docutils literal notranslate"><span class="pre">mission_method</span></code> combinations work.</p>
 <p>Next is a line to call</p>
 <div class="cell tag_hide-output docutils container">
-<div class="cell_input docutils container">
+<div class="cell_input above-output-prompt docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+<details class="admonition hide below-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell output</p>
+<p class="expanded admonition-title">Hide code cell output</p>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:anti_icing:mass  551.0  lbm
+  &#39;aircraft:apu:mass  928.0  lbm
+  &#39;aircraft:avionics:mass  1959.0  lbm
+  &#39;aircraft:design:emergency_equipment_mass  50.0  lbm
+  &#39;aircraft:design:wing_loading  128.0  lbf/ft**2
+  &#39;aircraft:furnishings:mass  11192.0  lbm
+  &#39;aircraft:fuselage:wetted_area  4000.0  ft**2
+  &#39;aircraft:horizontal_tail:form_factor  1.25  unitless
+  &#39;aircraft:horizontal_tail:moment_ratio  0.2307  unitless
+  &#39;aircraft:horizontal_tail:volume_coefficient  1.189  unitless
+  &#39;aircraft:nacelle:form_factor  [1.5]  unitless
+  &#39;aircraft:strut:fuselage_interference_factor  0.0  unitless
+  &#39;aircraft:vertical_tail:form_factor  1.25  unitless
+  &#39;aircraft:vertical_tail:moment_ratio  2.362  unitless
+  &#39;aircraft:vertical_tail:volume_coefficient  0.145  unitless
+  &#39;aircraft:wing:form_factor  1.25  unitless
+  &#39;aircraft:wing:slat_span_ratio  0.9  unitless
+</pre></div>
+</div>
+</div>
+</details>
 </div>
 <p>This is a lightly wrapped OpenMDAO <code class="docutils literal notranslate"><span class="pre">setup()</span></code> and  <code class="docutils literal notranslate"><span class="pre">prob.set_initial_guesses</span></code> method for the problem. It allows us to do <code class="docutils literal notranslate"><span class="pre">pre-</span></code> and <code class="docutils literal notranslate"><span class="pre">post-setup</span></code> changes, like adding calls to <code class="docutils literal notranslate"><span class="pre">set_input_defaults</span></code> and do some simple <code class="docutils literal notranslate"><span class="pre">set_vals</span></code> if needed as well as setting initial guesses.</p>
 <p>If we look at the signature of <code class="docutils literal notranslate"><span class="pre">setup()</span></code> in OpenMDAO’s <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/_srcdocs/packages/core/problem.html">Problem</a> class, we find that the available kwargs are: <code class="docutils literal notranslate"><span class="pre">check</span></code>, <code class="docutils literal notranslate"><span class="pre">logger</span></code>, <code class="docutils literal notranslate"><span class="pre">mode</span></code>, <code class="docutils literal notranslate"><span class="pre">force_alloc_complex</span></code>, <code class="docutils literal notranslate"><span class="pre">distributed_vector_class</span></code>, <code class="docutils literal notranslate"><span class="pre">local_vector_class</span></code>, and <code class="docutils literal notranslate"><span class="pre">derivatives</span></code>. The ones that Aviary uses are <code class="docutils literal notranslate"><span class="pre">check</span></code> and <code class="docutils literal notranslate"><span class="pre">force_alloc_complex</span></code>. Argument <code class="docutils literal notranslate"><span class="pre">check</span></code> is a flag to determine default checks are performed. <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/theory_manual/setup_stack.html">Default checks</a> are: ‘auto_ivc_warnings’, comp_has_no_outputs’, ‘dup_inputs’, ‘missing_recorders’, ‘out_of_order’, ‘solvers’, ‘system’, ‘unserializable_options’.</p>
@@ -1419,6 +1251,9 @@ There is a special objective type: <code class="docutils literal notranslate"><s
 </summary>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>req_fuel_mass &gt; max_wingfuel_mass, adding a body tank
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
 </pre></div>
 </div>
 <div class="output text_html">
@@ -1504,6 +1339,26 @@ done
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
+  &#39;aircraft:engine:mass  [7400.]  lbm
+  &#39;aircraft:fins:mass  0.0  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
+  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
+  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
+  &#39;aircraft:wing:control_surface_area  137.0  ft**2
+  &#39;aircraft:wing:wetted_area  2396.56  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
                      variables with only lower bounds:       93
                 variables with lower and upper bounds:        3
@@ -1519,7 +1374,7 @@ Number of Iterations....: 0
 
                                    (scaled)                 (unscaled)
 Objective...............:   3.9800875570924603e+00    3.9800875570924603e+00
-Dual infeasibility......:   7.8792026331682263e-01    7.8792026331682263e-01
+Dual infeasibility......:   7.8792026331668863e-01    7.8792026331668863e-01
 Constraint violation....:   1.9006004373650107e+00    1.9006004373650107e+00
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
 Complementarity.........:   7.9560101797999998e+00    7.9560101797999998e+00
@@ -1533,121 +1388,9 @@ Number of inequality constraint evaluations          = 1
 Number of equality constraint Jacobian evaluations   = 1
 Number of inequality constraint Jacobian evaluations = 1
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 0.772
+Total seconds in IPOPT                               = 0.752
 
 EXIT: Maximum Number of Iterations Exceeded.
-
-
-Optimization Problem -- Optimization using pyOpt_sparse
-================================================================================
-    Objective Function: _objfunc
-
-
-   Objectives
-      Index  Name                               Value
-          0  mission:objectives:fuel     3.980088E+00
-
-   Variables (c - continuous, i - integer, d - discrete)
-      Index  Name                              Type      Lower Bound            Value      Upper Bound     Status
-
-   Constraints (i - inequality, e - equality)
-      Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-          0  mission:constraints:mass_residual                       e   0.000000E+00    3.680088E-01    0.000000E+00         E    9.00000E+100
-          1  mission:constraints:range_residual                      e   0.000000E+00    1.900600E+00    0.000000E+00         E    9.00000E+100
-          3  link_climb_mass.mass                                    e   0.000000E+00    5.770000E-03    0.000000E+00         E    9.00000E+100
-          4  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    3.026367E-02    0.000000E+00         E    9.00000E+100
-          5  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.663005E-02    0.000000E+00         E    9.00000E+100
-          6  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.331054E-02    0.000000E+00         E    9.00000E+100
-          7  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    4.602229E-02    0.000000E+00         E    9.00000E+100
-          8  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    4.084084E-02    0.000000E+00         E    9.00000E+100
-          9  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    3.715334E-02    0.000000E+00         E    9.00000E+100
-         10  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    4.345160E-02    0.000000E+00         E    9.00000E+100
-         11  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    4.236605E-02    0.000000E+00         E    9.00000E+100
-         12  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    4.230778E-02    0.000000E+00         E    9.00000E+100
-         13  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    3.567265E-02    0.000000E+00         E    9.00000E+100
-         14  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    3.600060E-02    0.000000E+00         E    9.00000E+100
-         15  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    3.663467E-02    0.000000E+00         E    9.00000E+100
-         16  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.804258E-02    0.000000E+00         E    9.00000E+100
-         17  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.815162E-02    0.000000E+00         E    9.00000E+100
-         18  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.838083E-02    0.000000E+00         E    9.00000E+100
-         19  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00    9.352009E-03    0.000000E+00         E    9.00000E+100
-         20  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -1.199896E-02    0.000000E+00         E    9.00000E+100
-         21  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -2.073751E-02    0.000000E+00         E    9.00000E+100
-         22  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.118017E-02    0.000000E+00         E    9.00000E+100
-         23  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.770609E-02    0.000000E+00         E    9.00000E+100
-         24  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -5.647907E-02    0.000000E+00         E    9.00000E+100
-         25  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -7.038181E-02    0.000000E+00         E    9.00000E+100
-         26  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -7.901922E-02    0.000000E+00         E    9.00000E+100
-         27  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -9.053057E-02    0.000000E+00         E    9.00000E+100
-         28  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -7.912677E-02    0.000000E+00         E    9.00000E+100
-         29  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -8.475117E-02    0.000000E+00         E    9.00000E+100
-         30  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -9.225693E-02    0.000000E+00         E    9.00000E+100
-         31  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.630595E-02    0.000000E+00         E    9.00000E+100
-         32  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.755805E-02    0.000000E+00         E    9.00000E+100
-         33  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.925455E-02    0.000000E+00         E    9.00000E+100
-         34  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.303363E-02    0.000000E+00         E    9.00000E+100
-         35  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.302416E-02    0.000000E+00         E    9.00000E+100
-         36  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.300883E-02    0.000000E+00         E    9.00000E+100
-         37  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.655736E-02    0.000000E+00         E    9.00000E+100
-         38  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.650988E-02    0.000000E+00         E    9.00000E+100
-         39  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.644713E-02    0.000000E+00         E    9.00000E+100
-         40  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    3.142020E-02    0.000000E+00         E    9.00000E+100
-         41  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    3.136000E-02    0.000000E+00         E    9.00000E+100
-         42  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    3.128155E-02    0.000000E+00         E    9.00000E+100
-         43  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.629136E-02    0.000000E+00         E    9.00000E+100
-         44  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.625419E-02    0.000000E+00         E    9.00000E+100
-         45  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.620562E-02    0.000000E+00         E    9.00000E+100
-         46  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.282432E-02    0.000000E+00         E    9.00000E+100
-         47  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.281577E-02    0.000000E+00         E    9.00000E+100
-         48  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.280398E-02    0.000000E+00         E    9.00000E+100
-         49  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.445039E-02    0.000000E+00         E    9.00000E+100
-         50  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.443410E-02    0.000000E+00         E    9.00000E+100
-         51  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.441161E-02    0.000000E+00         E    9.00000E+100
-         52  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.068660E-02    0.000000E+00         E    9.00000E+100
-         53  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.061857E-02    0.000000E+00         E    9.00000E+100
-         54  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.052464E-02    0.000000E+00         E    9.00000E+100
-         55  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -1.075895E-01    0.000000E+00         E    9.00000E+100
-         56  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -1.074931E-01    0.000000E+00         E    9.00000E+100
-         57  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -1.073600E-01    0.000000E+00         E    9.00000E+100
-         58  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.026645E-02    0.000000E+00         E    9.00000E+100
-         59  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.019811E-02    0.000000E+00         E    9.00000E+100
-         60  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.010375E-02    0.000000E+00         E    9.00000E+100
-         61  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.410447E-02    0.000000E+00         E    9.00000E+100
-         62  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.408806E-02    0.000000E+00         E    9.00000E+100
-         63  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.406540E-02    0.000000E+00         E    9.00000E+100
-         64  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.874819E-03    0.000000E+00         E    9.00000E+100
-         65  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.850165E-03    0.000000E+00         E    9.00000E+100
-         66  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.808648E-03    0.000000E+00         E    9.00000E+100
-         67  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    5.705022E-03    0.000000E+00         E    9.00000E+100
-         68  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    5.600881E-03    0.000000E+00         E    9.00000E+100
-         69  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    5.406380E-03    0.000000E+00         E    9.00000E+100
-         70  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    6.339199E-03    0.000000E+00         E    9.00000E+100
-         71  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    6.070678E-03    0.000000E+00         E    9.00000E+100
-         72  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    5.550290E-03    0.000000E+00         E    9.00000E+100
-         73  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    4.496487E-03    0.000000E+00         E    9.00000E+100
-         74  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    4.187001E-03    0.000000E+00         E    9.00000E+100
-         75  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    4.024107E-03    0.000000E+00         E    9.00000E+100
-         76  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.964933E-03    0.000000E+00         E    9.00000E+100
-         77  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.979995E-03    0.000000E+00         E    9.00000E+100
-         78  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.020933E-03    0.000000E+00         E    9.00000E+100
-         79  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.235275E-02    0.000000E+00         E    9.00000E+100
-         80  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.202263E-02    0.000000E+00         E    9.00000E+100
-         81  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.155629E-02    0.000000E+00         E    9.00000E+100
-         82  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.371734E-02    0.000000E+00         E    9.00000E+100
-         83  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.224946E-02    0.000000E+00         E    9.00000E+100
-         84  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.013521E-02    0.000000E+00         E    9.00000E+100
-         85  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.689617E-02    0.000000E+00         E    9.00000E+100
-         86  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.460209E-02    0.000000E+00         E    9.00000E+100
-         87  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.129550E-02    0.000000E+00         E    9.00000E+100
-         88  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -3.382579E-02    0.000000E+00         E    9.00000E+100
-         89  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -3.203868E-02    0.000000E+00         E    9.00000E+100
-         90  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.949307E-02    0.000000E+00         E    9.00000E+100
-         91  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -1.403741E-02    0.000000E+00         E    9.00000E+100
-         92  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -1.357939E-02    0.000000E+00         E    9.00000E+100
-         93  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -1.293836E-02    0.000000E+00         E    9.00000E+100
-        152  traj.descent.throttle[path]                             i   0.000000E+00   -6.780987E-03    1.000000E+00         L    9.00000E+100
-        153  traj.descent.throttle[path]                             i   0.000000E+00   -2.190516E-02    1.000000E+00         L    9.00000E+100
-        154  traj.descent.throttle[path]                             i   0.000000E+00   -2.643273E-02    1.000000E+00         L    9.00000E+100
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 
@@ -1727,6 +1470,26 @@ Aviary run failed. See the dashboard for more details.
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
+  &#39;aircraft:engine:mass  [7400.]  lbm
+  &#39;aircraft:fins:mass  0.0  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
+  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
+  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
+  &#39;aircraft:wing:control_surface_area  137.0  ft**2
+  &#39;aircraft:wing:wetted_area  2396.56  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
   traj.cruise.t_initial, inds=[0]
 </pre></div>

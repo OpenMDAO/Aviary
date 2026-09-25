@@ -893,18 +893,29 @@
             <span class="n">group</span><span class="o">.</span><span class="n">promotes</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">in_var_names</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">comp_promoted_outputs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">overridden_outputs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>  <span class="c1"># VERBOSE, DEBUG</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">The following variables have been overridden in the aircraft definition:&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span>
+        <span class="p">):</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The following variables have been overridden by the aircraft definition:&#39;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">prom_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">overridden_outputs</span><span class="p">):</span>
                 <span class="n">val</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">prom_name</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  &#39;</span><span class="si">{</span><span class="n">prom_name</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">external_overridden_outputs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>  <span class="c1"># VERBOSE, DEBUG</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">The following variables have been overridden by an external subsystem:&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span>
+        <span class="p">):</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+            <span class="n">newline</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">if</span> <span class="n">overridden_outputs</span><span class="p">:</span>
+                <span class="n">newline</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">newline</span><span class="si">}</span><span class="s1">The following variables have been overridden by an external subsystem:&#39;</span>
+            <span class="p">)</span>
             <span class="k">for</span> <span class="n">prom_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">external_overridden_outputs</span><span class="p">):</span>
                 <span class="c1"># do not print values because they will be updated by an external subsystem later.</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  &#39;</span><span class="si">{</span><span class="n">prom_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">overridden_outputs</span></div>
 
@@ -917,19 +928,14 @@
     <span class="n">traj</span><span class="p">:</span> <span class="n">dm</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">,</span>
     <span class="n">aviary_variables</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span>
     <span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;climb&#39;</span><span class="p">,</span> <span class="s1">&#39;cruise&#39;</span><span class="p">,</span> <span class="s1">&#39;descent&#39;</span><span class="p">],</span>
-    <span class="n">variables_to_add</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">,</span>
     <span class="n">external_parameters</span><span class="o">=</span><span class="p">{},</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This function smoothly sorts through the aviary variables which</span>
-<span class="sd">    are being used in the trajectory, and for the variables which are</span>
-<span class="sd">    not options it adds them as a parameter of the trajectory.</span>
+<span class="sd">    This function smoothly sorts through the aviary variables which are being used in the</span>
+<span class="sd">    trajectory, and for the variables which are not options it adds them as a parameter of the</span>
+<span class="sd">    trajectory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># See note # 1178: variables_to_add is required, so should be an arg, not a kwarg.</span>
-    <span class="k">if</span> <span class="n">variables_to_add</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">variables_to_add</span> <span class="o">=</span> <span class="p">[]</span>
-
     <span class="c1"># Step 1: Initialize a dictionary to hold parameters and their associated phases</span>
     <span class="n">parameters_with_phases</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -950,44 +956,6 @@
 
         <span class="n">model</span><span class="o">.</span><span class="n">promotes</span><span class="p">(</span><span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">[(</span><span class="sa">f</span><span class="s1">&#39;parameters:</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)])</span>
         <span class="n">already_added</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
-    <span class="c1"># Process the core mission inputs last, because some of them might have already</span>
-    <span class="c1"># been covered by the phase builders.</span>
-    <span class="c1"># See issue #1179: As we use more builders, we may reach the point where we don&#39;t need</span>
-    <span class="c1"># to do these anymore.</span>
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">variables_to_add</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">already_added</span><span class="p">:</span>
-            <span class="k">continue</span>
-
-        <span class="n">meta</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;option&#39;</span><span class="p">]:</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">val</span> <span class="o">=</span> <span class="n">_unspecified</span>
-            <span class="n">units</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
-
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">aviary_variables</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">val</span> <span class="o">=</span> <span class="n">aviary_variables</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-                    <span class="n">val</span> <span class="o">=</span> <span class="n">aviary_variables</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
-            <span class="c1"># See note #1180 temp line to ignore dynamic mission variables, will not work</span>
-            <span class="c1">#      if names change to &#39;dynamic:mission:*&#39;</span>
-            <span class="k">if</span> <span class="s1">&#39;:&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="n">traj</span><span class="o">.</span><span class="n">add_parameter</span><span class="p">(</span>
-                <span class="n">key</span><span class="p">,</span>
-                <span class="n">opt</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">,</span>
-                <span class="n">val</span><span class="o">=</span><span class="n">val</span><span class="p">,</span>
-                <span class="n">static_target</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">targets</span><span class="o">=</span><span class="p">{</span><span class="n">phase_name</span><span class="p">:</span> <span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">phase_name</span> <span class="ow">in</span> <span class="n">phases</span><span class="p">},</span>
-            <span class="p">)</span>
-
-            <span class="n">model</span><span class="o">.</span><span class="n">promotes</span><span class="p">(</span><span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">[(</span><span class="sa">f</span><span class="s1">&#39;parameters:</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)])</span>
 
     <span class="k">return</span> <span class="n">traj</span></div>
 

@@ -695,15 +695,12 @@
         <span class="c1"># always sort unless data is in structured format</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data_pre_structured</span><span class="p">:</span>
             <span class="c1"># first check that data are all vectors of the same length</span>
-            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">interpolator_data</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">units</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">prev_model_length</span> <span class="o">=</span> <span class="n">model_length</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">prev_model_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">interpolator_data</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="p">))</span>
-                <span class="n">model_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">interpolator_data</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">model_length</span> <span class="o">!=</span> <span class="n">prev_model_length</span><span class="p">:</span>
+            <span class="n">model_length</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span> <span class="ow">in</span> <span class="n">interpolator_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">interpolator_data</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">model_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">model_length</span> <span class="o">=</span> <span class="n">length</span>
+                <span class="k">elif</span> <span class="n">length</span> <span class="o">!=</span> <span class="n">model_length</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Lengths of data provided for interpolation do not match.&#39;</span><span class="p">)</span>
 
             <span class="c1"># get data into column array format</span>

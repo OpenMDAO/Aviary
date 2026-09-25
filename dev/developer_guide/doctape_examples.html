@@ -737,10 +737,6 @@ These can be used in places where it would be too difficult to glue portions of 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/modopt/core/visualization.py:11: UserWarning: matplotlib not found, plotting disabled.
-  warnings.warn(&quot;matplotlib not found, plotting disabled.&quot;)
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
@@ -759,10 +755,10 @@ These can be used in places where it would be too difficult to glue portions of 
 <span class="g g-Whitespace">     </span><span class="mi">16</span>     <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
 <span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="n">error_string</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{var}</span><span class="s1"> not in &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
 
-<span class="nn">File ~/work/Aviary/Aviary/aviary/utils/doctape.py:203,</span> in <span class="ni">check_contains</span><span class="nt">(expected_values, actual_values, error_string, error_type)</span>
-<span class="g g-Whitespace">    </span><span class="mi">201</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">expected_values</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">202</span>     <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">actual_values</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">203</span>         <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="n">error_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">actual_values</span><span class="o">=</span><span class="n">actual_values</span><span class="p">))</span>
+<span class="nn">File ~/work/Aviary/Aviary/aviary/utils/doctape.py:200,</span> in <span class="ni">check_contains</span><span class="nt">(expected_values, actual_values, error_string, error_type)</span>
+<span class="g g-Whitespace">    </span><span class="mi">198</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">expected_values</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">199</span>     <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">actual_values</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">200</span>         <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="n">error_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">actual_values</span><span class="o">=</span><span class="n">actual_values</span><span class="p">))</span>
 
 <span class="ne">FileNotFoundError</span>: made_up_file.py not in /home/runner/work/Aviary/Aviary/aviary/core
 </pre></div>

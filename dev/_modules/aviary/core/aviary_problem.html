@@ -501,8 +501,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for aviary.core.aviary_problem</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
@@ -514,12 +513,10 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">dymos</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">openmdao</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">openmdao.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">om</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">openmdao.utils.hooks</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">hooks</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.reports_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">_default_reports</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_units</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">packaging</span><span class="w"> </span><span class="kn">import</span> <span class="n">version</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.core.aviary_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryGroup</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_warning_format</span>
@@ -1097,7 +1094,7 @@
                 <span class="n">print_level</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;print_user_options&#39;</span><span class="p">,</span> <span class="s1">&#39;no&#39;</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
-                <span class="n">print_level</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># minimum to get exit status</span>
+                <span class="n">print_level</span> <span class="o">=</span> <span class="mi">3</span>
                 <span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;print_user_options&#39;</span><span class="p">,</span> <span class="s1">&#39;no&#39;</span><span class="p">)</span>
                 <span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;print_frequency_iter&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
@@ -1131,11 +1128,11 @@
 
         <span class="c1"># pyoptsparse print settings for both SNOPT, IPOPT</span>
         <span class="k">if</span> <span class="n">optimizer</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;SNOPT&#39;</span><span class="p">,</span> <span class="s1">&#39;IPOPT&#39;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">QUIET</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&lt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># QUIET, BRIEF</span>
                 <span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;print_results&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">elif</span> <span class="n">verbosity</span> <span class="o">&lt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span>  <span class="c1"># QUIET, BRIEF, VERBOSE</span>
+            <span class="k">elif</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># VERBOSE</span>
                 <span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;print_results&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;minimal&#39;</span>
-            <span class="k">elif</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span>  <span class="c1"># DEBUG</span>
                 <span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;print_opt_prob&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># optimizer agnostic settings</span>
@@ -1515,16 +1512,16 @@
             <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;fuel_burned&#39;</span><span class="p">:</span>
                 <span class="n">output</span> <span class="o">=</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span>
                 <span class="c1"># default scaling is valid only if this is the only argument and the ref has not yet been set</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">ref</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="c1"># set a default ref</span>
                     <span class="n">ref</span> <span class="o">=</span> <span class="n">default_ref_values</span><span class="p">[</span><span class="s1">&#39;fuel_burned&#39;</span><span class="p">]</span>
             <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;fuel&#39;</span><span class="p">:</span>
                 <span class="n">output</span> <span class="o">=</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">FUEL</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">ref</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">ref</span> <span class="o">=</span> <span class="n">default_ref_values</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">]</span>
             <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;mass&#39;</span><span class="p">:</span>
                 <span class="n">output</span> <span class="o">=</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FINAL_MASS</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">ref</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">ref</span> <span class="o">=</span> <span class="n">default_ref_values</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span>
             <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span>
                 <span class="n">output</span> <span class="o">=</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FINAL_TIME</span>
@@ -1903,6 +1900,8 @@
                 <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">success</span> <span class="ow">and</span> <span class="n">verbosity</span> <span class="o">&lt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span>  <span class="c1"># QUIET, BRIEF</span>
             <span class="p">):</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Aviary run failed. See the dashboard for more details.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">success</span> <span class="ow">and</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">QUIET</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Aviary run successful.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">run_model</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">result</span>

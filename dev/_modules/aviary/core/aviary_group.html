@@ -505,10 +505,10 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">module_from_spec</span><span class="p">,</span> <span class="n">spec_from_file_location</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">dymos</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">openmdao.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">om</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dymos.utils.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">_unspecified</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.mpi</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span>
@@ -1586,7 +1586,7 @@
                 <span class="c1"># Otherwise, this key allows the user to control whether the phase is connected</span>
                 <span class="c1"># or constrained on each input.</span>
                 <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span>
-                    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;time_initial_direct_link&#39;</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;time_initial_direct_link&#39;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">_direct_link&#39;</span>
                 <span class="n">connect</span> <span class="o">=</span> <span class="n">connect_directly</span> <span class="ow">and</span> <span class="n">phase_info2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">connect_directly</span><span class="p">)</span>
@@ -1618,7 +1618,7 @@
                     <span class="k">continue</span>
 
                 <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span>
-                    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;time_initial_direct_link&#39;</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;time_initial_direct_link&#39;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1">_direct_link&#39;</span>
                 <span class="n">connect</span> <span class="o">=</span> <span class="n">connect_directly</span> <span class="ow">and</span> <span class="n">phase_info2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">connect_directly</span><span class="p">)</span>
@@ -1645,7 +1645,7 @@
                     <span class="k">continue</span>
 
                 <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span>
-                    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;time_initial_direct_link&#39;</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;time_initial_direct_link&#39;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s1">_direct_link&#39;</span>
                 <span class="n">connect</span> <span class="o">=</span> <span class="n">connect_directly</span> <span class="ow">and</span> <span class="n">phase_info2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">connect_directly</span><span class="p">)</span>
@@ -1669,9 +1669,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_find_scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">phase1</span><span class="p">,</span> <span class="n">phase_info1</span><span class="p">,</span> <span class="n">phase2</span><span class="p">,</span> <span class="n">phase_info2</span><span class="p">,</span> <span class="n">opt2</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a dictionary of scaling keyword arguments for a dymos linkage constraint.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a dictionary of scaling keyword arguments for a dymos linkage constraint.&quot;&quot;&quot;</span>
         <span class="n">phase</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">traj</span><span class="o">.</span><span class="n">_phases</span><span class="p">[</span><span class="n">phase1</span><span class="p">]</span>
         <span class="n">integrated_var</span> <span class="o">=</span> <span class="n">phase</span><span class="o">.</span><span class="n">time_options</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
         <span class="n">analytic</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="o">.</span><span class="n">state_options</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span>
@@ -2093,8 +2091,7 @@
                     <span class="n">phase</span><span class="o">.</span><span class="n">set_control_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_phase_info_modifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase_info_modifier</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check function for required arguments (phase_info, post_mission_info, aviary_inputs)&quot;&quot;&quot;</span>
-
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check function for required arguments (phase_info, post_mission_info, aviary_inputs).&quot;&quot;&quot;</span>
         <span class="c1"># validate phase_info_modifier function</span>
         <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">phase_info_modifier</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span>

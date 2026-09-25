@@ -721,6 +721,27 @@
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  33136.4  lbm
+  &#39;aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
+  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
+  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
+  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
+  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
+  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
+  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
+  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      219
                      variables with only lower bounds:      213
                 variables with lower and upper bounds:        6
@@ -735,12 +756,12 @@ Total number of inequality constraints...............:      105
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.9306323772517426e+00    1.9306323772517426e+00
-Dual infeasibility......:   3.9475790296075518e-08    3.9475790296075518e-08
-Constraint violation....:   1.9234328697119685e-11    1.9234328697119685e-11
+Objective...............:   1.9306323772517500e+00    1.9306323772517500e+00
+Dual infeasibility......:   3.9475855743721747e-08    3.9475855743721747e-08
+Constraint violation....:   1.9229965292964374e-11    1.9229965292964374e-11
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0961731257828499e-08    9.0961731257828499e-08
-Overall NLP error.......:   9.0961731257828499e-08    9.0961731257828499e-08
+Complementarity.........:   9.0961731257809374e-08    9.0961731257809374e-08
+Overall NLP error.......:   9.0961731257809374e-08    9.0961731257809374e-08
 
 
 Number of objective function evaluations             = 27
@@ -750,29 +771,12 @@ Number of inequality constraint evaluations          = 27
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 13.563
+Total seconds in IPOPT                               = 12.838
 
 EXIT: Optimal Solution Found.
-
-
-Optimization Problem -- Optimization using pyOpt_sparse
-================================================================================
-    Objective Function: _objfunc
-
-
-   Objectives
-      Index  Name                               Value
-          0  mission:objectives:fuel     1.930632E+00
-
-   Variables (c - continuous, i - integer, d - discrete)
-      Index  Name                                                 Type      Lower Bound            Value      Upper Bound     Status
-          2  traj.climb.t_duration_0                                 c     5.000000E-01     5.000006E-01     1.500000E+00          l
-         96  traj.reserve_climb.t_duration_0                         c     2.702703E-01     2.702704E-01     1.729730E+00          l
-
-   Constraints (i - inequality, e - equality)
-      Index  Name                                                                    Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-        275  traj.descent.throttle[path]                                                i   0.000000E+00    5.110463E-07    1.000000E+00         l    9.00000E+100
-        319  traj.reserve_descent.throttle[path]                                        i   0.000000E+00    1.452108E-07    1.000000E+00         l    9.00000E+100
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
 </pre></div>
 </div>
 <div class="output text_html">

@@ -670,8 +670,8 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.core.static_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">StaticGroup</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.mission.flight_phase_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlightPhaseOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.mission.energy_state.ode.energy_state_ODE</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnergyStateODE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.mission.flight_phase_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlightPhaseOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.models.missions.energy_state_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">phase_info</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.aviary_values</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryValues</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Verbosity</span>
@@ -901,13 +901,13 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
     <span class="n">phase</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span>
         <span class="n">targets</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span>
-        <span class="n">opt</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;mach_optimize&#39;</span><span class="p">],</span>
-        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;mach_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;mach_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">opt</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_optimize&#39;</span><span class="p">],</span>
+        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
         <span class="n">ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_ref&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
         <span class="n">ref0</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_ref0&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
         <span class="n">control_type</span><span class="o">=</span><span class="s1">&#39;polynomial&#39;</span><span class="p">,</span>
-        <span class="n">order</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">],</span>
+        <span class="n">order</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">],</span>
         <span class="n">rate_targets</span><span class="o">=</span><span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH_RATE</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">)</span>
@@ -915,14 +915,14 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
     <span class="n">phase</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span>
         <span class="n">targets</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span>
-        <span class="n">opt</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;altitude_optimize&#39;</span><span class="p">],</span>
-        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;altitude_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;altitude_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">opt</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_optimize&#39;</span><span class="p">],</span>
+        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
         <span class="n">ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_ref&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
         <span class="n">ref0</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_ref0&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
         <span class="n">control_type</span><span class="o">=</span><span class="s1">&#39;polynomial&#39;</span><span class="p">,</span>
-        <span class="n">order</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">],</span>
-        <span class="n">units</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;altitude_bounds&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">order</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">],</span>
+        <span class="n">units</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_bounds&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
         <span class="n">rate_targets</span><span class="o">=</span><span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE_RATE</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">)</span>
@@ -1038,7 +1038,7 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 <span class="p">)</span>
 
 <span class="n">eq</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s1">&#39;link_climb_mass&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;link_climb_mass&#39;</span><span class="p">,</span>
     <span class="n">om</span><span class="o">.</span><span class="n">EQConstraintComp</span><span class="p">(),</span>
     <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;rhs:mass&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">)],</span>
 <span class="p">)</span>
@@ -1046,8 +1046,8 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 <span class="n">eq</span><span class="o">.</span><span class="n">add_eq_output</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="n">eq_units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">100000.0</span><span class="p">,</span> <span class="n">add_constraint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s1">&#39;traj.climb.states:mass&#39;</span><span class="p">,</span>
-    <span class="sa">f</span><span class="s1">&#39;link_climb_mass.lhs:mass&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;traj.climb.states:mass&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;link_climb_mass.lhs:mass&#39;</span><span class="p">,</span>
     <span class="n">src_indices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="n">flat_src_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1084,13 +1084,13 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s1">&#39;traj.climb.timeseries.mass&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;traj.climb.timeseries.mass&#39;</span><span class="p">,</span>
     <span class="s1">&#39;fuel_burned.initial_mass&#39;</span><span class="p">,</span>
     <span class="n">src_indices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s1">&#39;traj.descent.timeseries.mass&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;traj.descent.timeseries.mass&#39;</span><span class="p">,</span>
     <span class="s1">&#39;fuel_burned.mass_final&#39;</span><span class="p">,</span>
     <span class="n">src_indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
 <span class="p">)</span>
@@ -1188,7 +1188,7 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 <span class="n">prob</span><span class="o">.</span><span class="n">traj</span><span class="o">.</span><span class="n">link_phases</span><span class="p">(</span><span class="n">phase_list</span><span class="p">,</span> <span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">MASS</span><span class="p">],</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">traj</span><span class="o">.</span><span class="n">link_phases</span><span class="p">(</span><span class="n">phase_list</span><span class="p">,</span> <span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">],</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s1">&#39;traj.descent.timeseries.distance&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;traj.descent.timeseries.distance&#39;</span><span class="p">,</span>
     <span class="n">Mission</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span>
     <span class="n">src_indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
     <span class="n">flat_src_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -1381,6 +1381,27 @@ Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;de
 Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;descent&#39;: lower, upper, ref
 </pre></div>
 </div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  33136.4  lbm
+  &#39;aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
+  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
+  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
+  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
+  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
+  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
+  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
+  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
   traj.climb.t_initial, inds=[0]
 </pre></div>
@@ -1399,12 +1420,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3234110395965109e+00    1.3234110395965109e+00
-Dual infeasibility......:   3.6143654724306051e-08    3.6143654724306051e-08
+Objective...............:   1.3234110395965166e+00    1.3234110395965166e+00
+Dual infeasibility......:   3.6143607456557164e-08    3.6143607456557164e-08
 Constraint violation....:   2.2737367544323207e-14    2.2737367544323207e-14
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0924049294851500e-08    9.0924049294851500e-08
-Overall NLP error.......:   9.0924049294851500e-08    9.0924049294851500e-08
+Complementarity.........:   9.0924049294847808e-08    9.0924049294847808e-08
+Overall NLP error.......:   9.0924049294847808e-08    9.0924049294847808e-08
 
 
 Number of objective function evaluations             = 16
@@ -1414,7 +1435,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.532
+Total seconds in IPOPT                               = 4.342
 
 EXIT: Optimal Solution Found.
 
@@ -1436,6 +1457,9 @@ Optimization Problem -- Optimization using pyOpt_sparse
    Constraints (i - inequality, e - equality)
       Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
         154  traj.descent.throttle[path]                             i   0.000000E+00    5.221349E-07    1.000000E+00         l    9.00000E+100
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
 </pre></div>
 </div>
 <div class="output text_html">

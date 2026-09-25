@@ -564,10 +564,10 @@
     <span class="c1"># separate out a list of string names of the variables belonging to class1, and the inner classes belonging to class1</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">class1_vars_inner_classes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="c1"># just checks if it is a class</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">class1_vars_inner_classes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">class1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">class1_vars_inner_classes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">class1</span><span class="p">):</span>
             <span class="n">class1_inner_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">elif</span> <span class="p">(</span>
-            <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">class1_vars_inner_classes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">==</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">class1_vars_inner_classes</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
             <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;__module__&#39;</span><span class="p">)</span>
             <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">)</span>
         <span class="p">):</span>
@@ -575,10 +575,10 @@
 
     <span class="c1"># separate out a list of string names of the variables belonging to class2, and the inner classes belonging to class2</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">class2_vars_inner_classes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">class2_vars_inner_classes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">class2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">class2_vars_inner_classes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">class2</span><span class="p">):</span>
             <span class="n">class2_inner_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">elif</span> <span class="p">(</span>
-            <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">class2_vars_inner_classes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">==</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">class2_vars_inner_classes</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
             <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;__module__&#39;</span><span class="p">)</span>
             <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">)</span>
         <span class="p">):</span>

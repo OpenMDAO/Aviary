@@ -652,6 +652,27 @@ This command normally needs the name of the aircraft csv file and phase_info fil
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  33136.4  lbm
+  &#39;aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
+  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
+  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
+  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
+  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
+  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
+  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
+  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
                      variables with only lower bounds:       93
                 variables with lower and upper bounds:        3
@@ -666,12 +687,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813638330255082e+00    1.3813638330255082e+00
-Dual infeasibility......:   3.1079970585406368e-08    3.1079970585406368e-08
-Constraint violation....:   7.7963476574374865e-15    7.7963476574374865e-15
+Objective...............:   1.3813638330255200e+00    1.3813638330255200e+00
+Dual infeasibility......:   3.1079969232322004e-08    3.1079969232322004e-08
+Constraint violation....:   6.2708775382826036e-15    6.2708775382826036e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433403728e-08    9.0922310433403728e-08
-Overall NLP error.......:   9.0922310433403728e-08    9.0922310433403728e-08
+Complementarity.........:   9.0922310433395960e-08    9.0922310433395960e-08
+Overall NLP error.......:   9.0922310433395960e-08    9.0922310433395960e-08
 
 
 Number of objective function evaluations             = 16
@@ -681,27 +702,12 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.592
+Total seconds in IPOPT                               = 4.414
 
 EXIT: Optimal Solution Found.
-
-
-Optimization Problem -- Optimization using pyOpt_sparse
-================================================================================
-    Objective Function: _objfunc
-
-
-   Objectives
-      Index  Name                               Value
-          0  mission:objectives:fuel     1.381364E+00
-
-   Variables (c - continuous, i - integer, d - discrete)
-      Index  Name                              Type      Lower Bound            Value      Upper Bound     Status
-          2  traj.climb.t_duration_0              c     5.000000E-01     5.000006E-01     1.500000E+00          l
-
-   Constraints (i - inequality, e - equality)
-      Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-        154  traj.descent.throttle[path]                             i   0.000000E+00    5.220541E-07    1.000000E+00         l    9.00000E+100
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
 </pre></div>
 </div>
 </div>
@@ -722,6 +728,27 @@ The following command explicitly points to the files used in the above run of th
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  33136.4  lbm
+  &#39;aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
+  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
+  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
+  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
+  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
+  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
+  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
+  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
                      variables with only lower bounds:       93
                 variables with lower and upper bounds:        3
@@ -736,12 +763,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813638330255271e+00    1.3813638330255271e+00
-Dual infeasibility......:   3.1079968219243547e-08    3.1079968219243547e-08
-Constraint violation....:   4.9870033649803883e-15    4.9870033649803883e-15
+Objective...............:   1.3813638330255200e+00    1.3813638330255200e+00
+Dual infeasibility......:   3.1079969232322004e-08    3.1079969232322004e-08
+Constraint violation....:   6.2708775382826036e-15    6.2708775382826036e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433392638e-08    9.0922310433392638e-08
-Overall NLP error.......:   9.0922310433392638e-08    9.0922310433392638e-08
+Complementarity.........:   9.0922310433395960e-08    9.0922310433395960e-08
+Overall NLP error.......:   9.0922310433395960e-08    9.0922310433395960e-08
 
 
 Number of objective function evaluations             = 16
@@ -751,27 +778,12 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.561
+Total seconds in IPOPT                               = 4.347
 
 EXIT: Optimal Solution Found.
-
-
-Optimization Problem -- Optimization using pyOpt_sparse
-================================================================================
-    Objective Function: _objfunc
-
-
-   Objectives
-      Index  Name                               Value
-          0  mission:objectives:fuel     1.381364E+00
-
-   Variables (c - continuous, i - integer, d - discrete)
-      Index  Name                              Type      Lower Bound            Value      Upper Bound     Status
-          2  traj.climb.t_duration_0              c     5.000000E-01     5.000006E-01     1.500000E+00          l
-
-   Constraints (i - inequality, e - equality)
-      Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-        154  traj.descent.throttle[path]                             i   0.000000E+00    5.220541E-07    1.000000E+00         l    9.00000E+100
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
 </pre></div>
 </div>
 </div>
@@ -792,6 +804,27 @@ Optimization Problem -- Optimization using pyOpt_sparse
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  33136.4  lbm
+  &#39;aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
+  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
+  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
+  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
+  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
+  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
+  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
+  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
                      variables with only lower bounds:       93
                 variables with lower and upper bounds:        3
@@ -806,12 +839,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813638330255271e+00    1.3813638330255271e+00
-Dual infeasibility......:   3.1079968219243547e-08    3.1079968219243547e-08
-Constraint violation....:   4.9870033649803883e-15    4.9870033649803883e-15
+Objective...............:   1.3813638330255169e+00    1.3813638330255169e+00
+Dual infeasibility......:   3.1079969981722546e-08    3.1079969981722546e-08
+Constraint violation....:   7.4095622182832446e-15    7.4095622182832446e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433392638e-08    9.0922310433392638e-08
-Overall NLP error.......:   9.0922310433392638e-08    9.0922310433392638e-08
+Complementarity.........:   9.0922310433401333e-08    9.0922310433401333e-08
+Overall NLP error.......:   9.0922310433401333e-08    9.0922310433401333e-08
 
 
 Number of objective function evaluations             = 16
@@ -821,27 +854,12 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.583
+Total seconds in IPOPT                               = 4.456
 
 EXIT: Optimal Solution Found.
-
-
-Optimization Problem -- Optimization using pyOpt_sparse
-================================================================================
-    Objective Function: _objfunc
-
-
-   Objectives
-      Index  Name                               Value
-          0  mission:objectives:fuel     1.381364E+00
-
-   Variables (c - continuous, i - integer, d - discrete)
-      Index  Name                              Type      Lower Bound            Value      Upper Bound     Status
-          2  traj.climb.t_duration_0              c     5.000000E-01     5.000006E-01     1.500000E+00          l
-
-   Constraints (i - inequality, e - equality)
-      Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-        154  traj.descent.throttle[path]                             i   0.000000E+00    5.220541E-07    1.000000E+00         l    9.00000E+100
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
 </pre></div>
 </div>
 <div class="output text_html">

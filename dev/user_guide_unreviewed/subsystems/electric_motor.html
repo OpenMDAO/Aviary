@@ -692,10 +692,10 @@ This could then allow for electrical system sizing.</p>
 The key thing to remember when using the <code class="docutils literal notranslate"><span class="pre">MotorBuilder()</span></code> is to make sure you have set the motor map location by setting <code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.Motor.DATA_FILE</span></code> in Aviary Options.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.subsystems.propulsion.test</span><span class="w"> </span><span class="kn">import</span> <span class="n">test_turboprop_model</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.aviary_values</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryValues</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.subsystems.propulsion.motor.motor_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">MotorBuilder</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.subsystems.propulsion.test</span><span class="w"> </span><span class="kn">import</span> <span class="n">test_turboprop_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.aviary_values</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryValues</span>
 
 <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;electric_motor_1800Nm_6000rpm.csv&#39;</span>
 <span class="n">options</span> <span class="o">=</span> <span class="n">AviaryValues</span><span class="p">()</span>

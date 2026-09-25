@@ -635,8 +635,8 @@ can be shared with different phase builders. Subsystem options can also often be
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dynamic</span><span class="p">,</span> <span class="n">Mission</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">inputs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.preprocessors</span><span class="w"> </span><span class="kn">import</span> <span class="n">preprocess_options</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">inputs</span>
 
 <span class="n">aviary_options</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">()</span>
 
@@ -836,6 +836,7 @@ and set up, the problem can be run for trajectory analysis.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">dymos</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">openmdao.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">om</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.test_utils.default_subsystems</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_default_premission_subsystems</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">takeoff_decision_speed_builder</span><span class="p">,</span>
     <span class="n">takeoff_engine_cutback_builder</span><span class="p">,</span>
@@ -847,7 +848,6 @@ and set up, the problem can be run for trajectory analysis.</p>
     <span class="n">takeoff_mic_p2_to_engine_cutback_builder</span><span class="p">,</span>
     <span class="n">takeoff_rotate_builder</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.test_utils.default_subsystems</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_default_premission_subsystems</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_model_options</span>
 
 <span class="n">takeoff_trajectory_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">DetailedTakeoffTrajectoryBuilder</span><span class="p">(</span><span class="s1">&#39;detailed_takeoff&#39;</span><span class="p">)</span>

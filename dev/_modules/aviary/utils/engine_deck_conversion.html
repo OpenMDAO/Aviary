@@ -522,7 +522,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_aviary_input</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variables</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dynamic</span>
 
-
 <span class="n">MACH</span> <span class="o">=</span> <span class="n">EngineModelVariables</span><span class="o">.</span><span class="n">MACH</span>
 <span class="n">ALTITUDE</span> <span class="o">=</span> <span class="n">EngineModelVariables</span><span class="o">.</span><span class="n">ALTITUDE</span>
 <span class="n">THROTTLE</span> <span class="o">=</span> <span class="n">EngineModelVariables</span><span class="o">.</span><span class="n">THROTTLE</span>
@@ -1277,7 +1276,7 @@
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.engine_deck_conversion_cmd</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_EDC</span><span class="p">,</span> <span class="n">_setup_EDC_parser</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.engine_deck_conversion_cmd</span><span class="w"> </span><span class="kn">import</span> <span class="n">_exec_EDC</span><span class="p">,</span> <span class="n">_setup_EDC_parser</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
     <span class="n">_setup_EDC_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>

@@ -703,6 +703,26 @@ Later in this example, we increase this order which will allow the optimizer to 
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
+  &#39;aircraft:engine:mass  [7400.]  lbm
+  &#39;aircraft:fins:mass  0.0  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
+  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
+  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
+  &#39;aircraft:wing:control_surface_area  137.0  ft**2
+  &#39;aircraft:wing:wetted_area  2396.56  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
   traj.climb_1.t_initial, inds=[0]
 </pre></div>
@@ -721,12 +741,12 @@ Total number of inequality constraints...............:       27
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5497020995242812e+00    2.5497020995242812e+00
-Dual infeasibility......:   1.7762092578555479e-08    1.7762092578555479e-08
-Constraint violation....:   4.0263621408351456e-15    4.0263621408351456e-15
+Objective...............:   2.5497020995242754e+00    2.5497020995242754e+00
+Dual infeasibility......:   1.7762093494490215e-08    1.7762093494490215e-08
+Constraint violation....:   6.8029199846121247e-15    6.8029199846121247e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0944744385320975e-08    9.0944744385320975e-08
-Overall NLP error.......:   9.0944744385320975e-08    9.0944744385320975e-08
+Complementarity.........:   9.0944744385286127e-08    9.0944744385286127e-08
+Overall NLP error.......:   9.0944744385286127e-08    9.0944744385286127e-08
 
 
 Number of objective function evaluations             = 28
@@ -736,27 +756,12 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 5.747
+Total seconds in IPOPT                               = 5.604
 
 EXIT: Optimal Solution Found.
-
-
-Optimization Problem -- Optimization using pyOpt_sparse
-================================================================================
-    Objective Function: _objfunc
-
-
-   Objectives
-      Index  Name                               Value
-          0  mission:objectives:fuel     2.549702E+00
-
-   Variables (c - continuous, i - integer, d - discrete)
-      Index  Name                               Type      Lower Bound            Value      Upper Bound     Status
-          2  traj.climb_1.t_initial_0              c     0.000000E+00     0.000000E+00     0.000000E+00         lu
-
-   Constraints (i - inequality, e - equality)
-      Index  Name                                                   Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-         76  traj.climb_1.throttle[path]                               i   0.000000E+00    9.999995E-01    1.000000E+00         u    9.00000E+100
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
 </pre></div>
 </div>
 <div class="output text_html">
@@ -792,7 +797,7 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.477071171947
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.47707117192
 </pre></div>
 </div>
 </div>
@@ -805,7 +810,7 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.020995242812
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.020995242754
 </pre></div>
 </div>
 </div>
@@ -866,6 +871,26 @@ We’ll use the same <code class="docutils literal notranslate"><span class="pre
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
+  &#39;aircraft:engine:mass  [7400.]  lbm
+  &#39;aircraft:fins:mass  0.0  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
+  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
+  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.02091  unitless
+  &#39;aircraft:wing:control_surface_area  137.0  ft**2
+  &#39;aircraft:wing:wetted_area  2396.56  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
   traj.climb_1.t_initial, inds=[0]
 </pre></div>
@@ -881,32 +906,15 @@ Total number of inequality constraints...............:       27
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization Problem -- Optimization using pyOpt_sparse
-================================================================================
-    Objective Function: _objfunc
-
-
-   Objectives
-      Index  Name                               Value
-          0  mission:objectives:fuel     2.563709E+00
-
-   Variables (c - continuous, i - integer, d - discrete)
-      Index  Name                               Type      Lower Bound            Value      Upper Bound     Status
-          2  traj.climb_1.t_initial_0              c     0.000000E+00     0.000000E+00     0.000000E+00         lu
-
-   Constraints (i - inequality, e - equality)
-      Index  Name                                                   Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-         76  traj.climb_1.throttle[path]                               i   0.000000E+00    9.999996E-01    1.000000E+00         u    9.00000E+100
-
-Number of Iterations....: 22
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5637089674782243e+00    2.5637089674782243e+00
-Dual infeasibility......:   3.9054357934947646e-08    3.9054357934947646e-08
-Constraint violation....:   9.8197701986025122e-15    9.8197701986025122e-15
+Objective...............:   2.5637089674782270e+00    2.5637089674782270e+00
+Dual infeasibility......:   3.9054361446031363e-08    3.9054361446031363e-08
+Constraint violation....:   8.2834897013459861e-15    8.2834897013459861e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0971568541219679e-08    9.0971568541219679e-08
-Overall NLP error.......:   9.0971568541219679e-08    9.0971568541219679e-08
+Complementarity.........:   9.0971568541163060e-08    9.0971568541163060e-08
+Overall NLP error.......:   9.0971568541163060e-08    9.0971568541163060e-08
 
 
 Number of objective function evaluations             = 28
@@ -916,9 +924,12 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 5.443
+Total seconds in IPOPT                               = 5.359
 
 EXIT: Optimal Solution Found.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
 </pre></div>
 </div>
 <div class="output text_html">
@@ -941,7 +952,7 @@ Let’s take a look at the fuel burn value:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.011155486993
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.01115548702
 </pre></div>
 </div>
 </div>
@@ -973,6 +984,26 @@ We’ll use the original aircraft configuration for this run.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
+  &#39;aircraft:engine:mass  [7400.]  lbm
+  &#39;aircraft:fins:mass  0.0  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
+  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
+  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
+  &#39;aircraft:wing:control_surface_area  137.0  ft**2
+  &#39;aircraft:wing:wetted_area  2396.56  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
   traj.climb_1.t_initial, inds=[0]
 </pre></div>
@@ -988,54 +1019,15 @@ Total number of inequality constraints...............:       27
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization Problem -- Optimization using pyOpt_sparse
-================================================================================
-    Objective Function: _objfunc
-
-
-   Objectives
-      Index  Name                               Value
-          0  mission:objectives:fuel     2.511743E+00
-
-   Variables (c - continuous, i - integer, d - discrete)
-      Index  Name                               Type      Lower Bound            Value      Upper Bound     Status
-          2  traj.climb_1.t_initial_0              c     0.000000E+00     0.000000E+00     0.000000E+00         lu
-
-   Constraints (i - inequality, e - equality)
-      Index  Name                                                   Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-          7  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00    4.624204E-05    0.000000E+00         E    9.00000E+100
-          8  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00    4.250165E-05    0.000000E+00         E    9.00000E+100
-          9  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00    1.314141E-04    0.000000E+00         E    9.00000E+100
-         10  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00    3.006290E-05    0.000000E+00         E    9.00000E+100
-         11  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00   -2.171195E-06    0.000000E+00         E    9.00000E+100
-         12  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00   -2.167604E-06    0.000000E+00         E    9.00000E+100
-         13  traj.climb_1.collocation_constraint.defects:mass          e   0.000000E+00   -1.537301E-06    0.000000E+00         E    9.00000E+100
-         46  traj.descent_1.collocation_constraint.defects:mass        e   0.000000E+00    4.395013E-06    0.000000E+00         E    9.00000E+100
-         47  traj.descent_1.collocation_constraint.defects:mass        e   0.000000E+00    2.232696E-04    0.000000E+00         E    9.00000E+100
-         48  traj.descent_1.collocation_constraint.defects:mass        e   0.000000E+00    4.359247E-04    0.000000E+00         E    9.00000E+100
-         49  traj.descent_1.collocation_constraint.defects:mass        e   0.000000E+00    8.300980E-04    0.000000E+00         E    9.00000E+100
-         50  traj.descent_1.collocation_constraint.defects:mass        e   0.000000E+00    3.579396E-04    0.000000E+00         E    9.00000E+100
-         51  traj.descent_1.collocation_constraint.defects:mass        e   0.000000E+00    1.381714E-04    0.000000E+00         E    9.00000E+100
-         52  traj.descent_1.collocation_constraint.defects:mass        e   0.000000E+00    1.022722E-04    0.000000E+00         E    9.00000E+100
-         53  traj.descent_1.collocation_constraint.defects:mass        e   0.000000E+00    3.040939E-05    0.000000E+00         E    9.00000E+100
-         56  traj.descent_1.collocation_constraint.defects:distance    e   0.000000E+00   -7.142114E-05    0.000000E+00         E    9.00000E+100
-         57  traj.descent_1.collocation_constraint.defects:distance    e   0.000000E+00   -1.284966E-04    0.000000E+00         E    9.00000E+100
-         58  traj.descent_1.collocation_constraint.defects:distance    e   0.000000E+00   -2.229365E-04    0.000000E+00         E    9.00000E+100
-         59  traj.descent_1.collocation_constraint.defects:distance    e   0.000000E+00   -2.301442E-04    0.000000E+00         E    9.00000E+100
-         60  traj.descent_1.collocation_constraint.defects:distance    e   0.000000E+00   -1.533612E-04    0.000000E+00         E    9.00000E+100
-         61  traj.descent_1.collocation_constraint.defects:distance    e   0.000000E+00   -7.332919E-05    0.000000E+00         E    9.00000E+100
-         62  traj.descent_1.collocation_constraint.defects:distance    e   0.000000E+00   -4.262566E-05    0.000000E+00         E    9.00000E+100
-         63  traj.descent_1.collocation_constraint.defects:distance    e   0.000000E+00   -7.515343E-06    0.000000E+00         E    9.00000E+100
-
-Number of Iterations....: 50
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 50
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5117428911862052e+00    2.5117428911862052e+00
-Dual infeasibility......:   2.9540184726225176e-03    2.9540184726225176e-03
-Constraint violation....:   8.3009804018810559e-04    8.3009804018810559e-04
+Objective...............:   2.5117428911844155e+00    2.5117428911844155e+00
+Dual infeasibility......:   2.9540184680237791e-03    2.9540184680237791e-03
+Constraint violation....:   8.3009803998989175e-04    8.3009803998989175e-04
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   1.0002893841386246e-05    1.0002893841386246e-05
-Overall NLP error.......:   2.9540184726225176e-03    2.9540184726225176e-03
+Complementarity.........:   1.0002893841313072e-05    1.0002893841313072e-05
+Overall NLP error.......:   2.9540184680237791e-03    2.9540184680237791e-03
 
 
 Number of objective function evaluations             = 69
@@ -1045,7 +1037,7 @@ Number of inequality constraint evaluations          = 69
 Number of equality constraint Jacobian evaluations   = 51
 Number of inequality constraint Jacobian evaluations = 51
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 13.333
+Total seconds in IPOPT                               = 13.141
 
 EXIT: Maximum Number of Iterations Exceeded.
 </pre></div>
@@ -1073,7 +1065,7 @@ Aviary run failed. See the dashboard for more details.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10032.296984905006
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10032.2969848969
 </pre></div>
 </div>
 </div>

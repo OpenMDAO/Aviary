@@ -736,7 +736,7 @@
 
     <span class="c1"># If the path still doesn&#39;t exist, attempt to find it relative to the Aviary package.</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># VERBOSE, DEBUG</span>
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>  <span class="c1"># DEBUG</span>
             <span class="nb">print</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Unable to locate &#39;</span><span class="si">{</span><span class="n">original_path</span><span class="si">}</span><span class="s2">&#39; as an absolute or relative path. &quot;</span>
                 <span class="s1">&#39;Trying Aviary package path.&#39;</span>
@@ -748,7 +748,7 @@
 
     <span class="c1"># If the path still doesn&#39;t exist, attempt to find it in the models directory.</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>  <span class="c1"># DEBUG</span>
             <span class="nb">print</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Unable to locate &#39;</span><span class="si">{</span><span class="n">aviary_based_path</span><span class="si">}</span><span class="s2">&#39; as an Aviary package path, &quot;</span>
                 <span class="s1">&#39;checking built-in models&#39;</span>
@@ -824,7 +824,7 @@
             <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;.csv&#39;</span><span class="p">:</span>
                 <span class="n">best_match</span> <span class="o">=</span> <span class="n">item</span>
                 <span class="k">break</span>
-        <span class="k">if</span> <span class="n">best_match</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">best_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Probably requested the wrong file extension.</span>
             <span class="n">best_match</span> <span class="o">=</span> <span class="n">close_match</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">best_match</span>

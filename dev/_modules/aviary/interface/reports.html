@@ -1162,7 +1162,6 @@
 <span class="sd">    prob : AviaryProblem</span>
 <span class="sd">        The AviaryProblem used to generate this report</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">reports_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_reports_dir</span><span class="p">())</span>
     <span class="n">report_file</span> <span class="o">=</span> <span class="n">reports_folder</span> <span class="o">/</span> <span class="s1">&#39;overridden_variables.md&#39;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -1353,7 +1352,6 @@
 <span class="sd">    **kwargs : dict</span>
 <span class="sd">        Additional keyword arguments, not used in this function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">reports_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_reports_dir</span><span class="p">())</span>
     <span class="n">report_file</span> <span class="o">=</span> <span class="n">reports_folder</span> <span class="o">/</span> <span class="s1">&#39;options.txt&#39;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>

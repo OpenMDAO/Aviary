@@ -501,9 +501,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for aviary.utils.math_utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Smooth functions and their derivatives.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Smooth functions and their derivatives.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -553,7 +551,7 @@
         <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">320</span><span class="p">:</span>
             <span class="n">y</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">/</span> <span class="n">mu</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">real</span>
     <span class="k">return</span> <span class="n">y</span></div>
 
@@ -602,7 +600,7 @@
             <span class="n">term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span> <span class="o">/</span> <span class="n">mu</span><span class="p">)</span>
             <span class="n">term2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">term</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">term</span><span class="p">)</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">term</span> <span class="o">/</span> <span class="n">mu</span> <span class="o">/</span> <span class="n">term2</span>
-    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">real</span>
     <span class="k">return</span> <span class="n">y</span></div>
 
@@ -614,12 +612,14 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Smooth approximation of the min function using the log-sum-exp trick.</span>
 
-<span class="sd">    Parameters:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 <span class="sd">    x (float or array-like): First value.</span>
 <span class="sd">    b (float or array-like): Second value.</span>
 <span class="sd">    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.</span>
 
-<span class="sd">    Returns:</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 <span class="sd">    float or array-like: The smooth approximation of min(x, b).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sum_log_exp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="o">-</span><span class="n">mu</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="o">-</span><span class="n">mu</span><span class="p">,</span> <span class="n">b</span><span class="p">)))</span>
@@ -632,14 +632,16 @@
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.d_smooth_min">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">d_smooth_min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">100.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Derivative of function smooth_min(x)</span>
+<span class="sd">    Derivative of function smooth_min(x).</span>
 
-<span class="sd">    Parameters:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 <span class="sd">    x (float or array-like): First value.</span>
 <span class="sd">    b (float or array-like): Second value.</span>
 <span class="sd">    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.</span>
 
-<span class="sd">    Returns:</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 <span class="sd">    float or array-like: The smooth approximation of derivative of min(x, b).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">d_sum_log_exp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="o">-</span><span class="n">mu</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
@@ -655,12 +657,14 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Smooth approximation of the min function using the log-sum-exp trick.</span>
 
-<span class="sd">    Parameters:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 <span class="sd">    x (float or array-like): First value.</span>
 <span class="sd">    b (float or array-like): Second value.</span>
 <span class="sd">    mu (float): The smoothing factor. Higher values make it closer to the true maximum. Try between 75 and 275.</span>
 
-<span class="sd">    Returns:</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 <span class="sd">    float or array-like: The smooth approximation of max(x, b).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mu_x</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">x</span>
@@ -676,14 +680,16 @@
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.d_smooth_max">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">d_smooth_max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Derivative of function smooth_min(x)</span>
+<span class="sd">    Derivative of function smooth_min(x).</span>
 
-<span class="sd">    Parameters:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 <span class="sd">    x (float or array-like): First value.</span>
 <span class="sd">    b (float or array-like): Second value.</span>
 <span class="sd">    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.</span>
 
-<span class="sd">    Returns:</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 <span class="sd">    float or array-like: The smooth approximation of derivative of min(x, b).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mu_x</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">x</span>
@@ -751,9 +757,7 @@
 <div class="viewcode-block" id="smooth_int_tanh">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.smooth_int_tanh">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">smooth_int_tanh</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Smooth approximation of int(x) using tanh.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Smooth approximation of int(x) using tanh.&quot;&quot;&quot;</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">imag</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span>
     <span class="n">frac</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">f</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">mu</span> <span class="o">*</span> <span class="p">(</span><span class="n">frac</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">))</span>

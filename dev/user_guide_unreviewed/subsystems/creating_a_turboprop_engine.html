@@ -661,6 +661,26 @@
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: As-flown payload (42673.0 lbm) is greater than maximum payload (31273.0 lbm). The aircraft will be undersized for this payload!
 </pre></div>
 </div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:anti_icing:mass  644.0  lbm
+  &#39;aircraft:apu:mass  756.0  lbm
+  &#39;aircraft:avionics:mass  936.0  lbm
+  &#39;aircraft:design:emergency_equipment_mass  25.0  lbm
+  &#39;aircraft:design:wing_loading  88.846  lbf/ft**2
+  &#39;aircraft:furnishings:mass  0.0  lbm
+  &#39;aircraft:fuselage:form_factor  1.25  unitless
+  &#39;aircraft:horizontal_tail:form_factor  1.25  unitless
+  &#39;aircraft:horizontal_tail:moment_ratio  0.3061  unitless
+  &#39;aircraft:horizontal_tail:volume_coefficient  0.8614  unitless
+  &#39;aircraft:nacelle:form_factor  [1.5]  unitless
+  &#39;aircraft:strut:fuselage_interference_factor  0.0  unitless
+  &#39;aircraft:vertical_tail:form_factor  1.25  unitless
+  &#39;aircraft:vertical_tail:moment_ratio  2.809  unitless
+  &#39;aircraft:vertical_tail:volume_coefficient  0.05355  unitless
+  &#39;aircraft:wing:form_factor  1.25  unitless
+  &#39;aircraft:wing:slat_span_ratio  0.9  unitless
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1198: OMDeprecationWarning:&#39;pre_mission.core_subsystems.mass.fixed_mass.payload&#39; &lt;class PayloadGroup&gt;: d(payload_mass_des)/d(aircraft:crew_and_payload:mass_per_passenger_with_bags): Partial was declared to be exactly zero. This is inefficient and the declaration should be removed. In a future version of OpenMDAO this behavior will raise an error.
 /home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1198: OMDeprecationWarning:&#39;pre_mission.core_subsystems.mass.fixed_mass.payload&#39; &lt;class PayloadGroup&gt;: d(payload_mass_max)/d(aircraft:crew_and_payload:mass_per_passenger_with_bags): Partial was declared to be exactly zero. This is inefficient and the declaration should be removed. In a future version of OpenMDAO this behavior will raise an error.
 </pre></div>

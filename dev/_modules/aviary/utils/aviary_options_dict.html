@@ -850,7 +850,7 @@
 
         <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_optimize&#39;</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;When True, the optimizer will set this value. When False, the initial value &#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;When True, the optimizer will set this value. When False, the initial value &#39;</span>
         <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;for all nodes can be set in the initial_conditions section of the phase.&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
@@ -929,7 +929,7 @@
 
         <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_polynomial_order&#39;</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;The order of polynomials for interpolation in the transcription.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;The order of polynomials for interpolation in the transcription.</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;Default is None, which does not use a polynomial.&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
@@ -1014,7 +1014,7 @@
 
         <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;time_initial_direct_link&#39;</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;When True, directly connect the initial_time to the upstream phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;When True, directly connect the initial_time to the upstream phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;When False, use a constraint.&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>

@@ -584,25 +584,43 @@ Returns (y, dy_dx).</p>
 <dl class="py function">
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">d_smooth_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#d_smooth_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Derivative of function smooth_min(x)</p>
-<p>Parameters:
-x (float or array-like): First value.
-b (float or array-like): Second value.
-mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.</p>
-<p>Returns:
-float or array-like: The smooth approximation of derivative of min(x, b).</p>
+<dd><p>Derivative of function smooth_min(x).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array-like</strong><strong>)</strong> (<em>b</em><em> (</em><em>float or</em>)</p></li>
+<li><p><strong>array-like</strong><strong>)</strong></p></li>
+<li><p><strong>(</strong><strong>float</strong><strong>)</strong> (<em>mu</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>float or array-like</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The smooth approximation of derivative of min(x, b).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">d_smooth_min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#d_smooth_min"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Derivative of function smooth_min(x)</p>
-<p>Parameters:
-x (float or array-like): First value.
-b (float or array-like): Second value.
-mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.</p>
-<p>Returns:
-float or array-like: The smooth approximation of derivative of min(x, b).</p>
+<dd><p>Derivative of function smooth_min(x).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array-like</strong><strong>)</strong> (<em>b</em><em> (</em><em>float or</em>)</p></li>
+<li><p><strong>array-like</strong><strong>)</strong></p></li>
+<li><p><strong>(</strong><strong>float</strong><strong>)</strong> (<em>mu</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>float or array-like</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The smooth approximation of derivative of min(x, b).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -661,24 +679,42 @@ differentialbe function.</p>
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">smooth_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#smooth_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Smooth approximation of the min function using the log-sum-exp trick.</p>
-<p>Parameters:
-x (float or array-like): First value.
-b (float or array-like): Second value.
-mu (float): The smoothing factor. Higher values make it closer to the true maximum. Try between 75 and 275.</p>
-<p>Returns:
-float or array-like: The smooth approximation of max(x, b).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array-like</strong><strong>)</strong> (<em>b</em><em> (</em><em>float or</em>)</p></li>
+<li><p><strong>array-like</strong><strong>)</strong></p></li>
+<li><p><strong>(</strong><strong>float</strong><strong>)</strong> (<em>mu</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>float or array-like</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The smooth approximation of max(x, b).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">smooth_min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#smooth_min"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Smooth approximation of the min function using the log-sum-exp trick.</p>
-<p>Parameters:
-x (float or array-like): First value.
-b (float or array-like): Second value.
-mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.</p>
-<p>Returns:
-float or array-like: The smooth approximation of min(x, b).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array-like</strong><strong>)</strong> (<em>b</em><em> (</em><em>float or</em>)</p></li>
+<li><p><strong>array-like</strong><strong>)</strong></p></li>
+<li><p><strong>(</strong><strong>float</strong><strong>)</strong> (<em>mu</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>float or array-like</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The smooth approximation of min(x, b).</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div></blockquote>

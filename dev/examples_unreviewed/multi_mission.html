@@ -776,6 +776,42 @@
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  &#39;aircraft:engine:mass  [8071.35]  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  46063.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  98.5  ft
+  &#39;aircraft:fuselage:planform_area  1538.1675  ft**2
+  &#39;aircraft:fuselage:wetted_area  4142.317  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  707.706  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  84.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
+  &#39;aircraft:vertical_tail:wetted_area  589.35  ft**2
+  &#39;aircraft:wing:aspect_ratio  9.45  unitless
+  &#39;aircraft:wing:mass  15288.0  lbm
+  &#39;aircraft:wing:wetted_area  2423.02  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.35  unitless
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  &#39;aircraft:engine:mass  [8071.35]  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  46063.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  98.5  ft
+  &#39;aircraft:fuselage:planform_area  1538.1675  ft**2
+  &#39;aircraft:fuselage:wetted_area  4142.317  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  707.706  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  84.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
+  &#39;aircraft:vertical_tail:wetted_area  589.35  ft**2
+  &#39;aircraft:wing:aspect_ratio  9.45  unitless
+  &#39;aircraft:wing:mass  15288.0  lbm
+  &#39;aircraft:wing:wetted_area  2423.02  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.35  unitless
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      192
                      variables with only lower bounds:      182
                 variables with lower and upper bounds:       10
@@ -790,12 +826,12 @@ Total number of inequality constraints...............:      124
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 44
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.1871834676333858e+01    2.5517140455722831e+04
-Dual infeasibility......:   1.1101018794936739e-09    1.2951188594092861e-06
-Constraint violation....:   2.4130475439149691e-10    2.4130475439149691e-10
+Objective...............:   2.1871834676333911e+01    2.5517140455722896e+04
+Dual infeasibility......:   1.1100735826843337e-09    1.2950858464650558e-06
+Constraint violation....:   2.4130181419878345e-10    2.4130181419878345e-10
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   3.1624119734160997e-08    3.6894806356521163e-05
-Overall NLP error.......:   3.1624119734160997e-08    3.6894806356521163e-05
+Complementarity.........:   3.1624119734199941e-08    3.6894806356566597e-05
+Overall NLP error.......:   3.1624119734199941e-08    3.6894806356566597e-05
 
 
 Number of objective function evaluations             = 107
@@ -805,31 +841,12 @@ Number of inequality constraint evaluations          = 107
 Number of equality constraint Jacobian evaluations   = 48
 Number of inequality constraint Jacobian evaluations = 48
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 35.786
+Total seconds in IPOPT                               = 34.013
 
 EXIT: Optimal Solution Found.
-
-
-Optimization Problem -- Optimization using pyOpt_sparse
-================================================================================
-    Objective Function: _objfunc
-
-
-   Objectives
-      Index  Name                           Value
-          0  composite_objective     2.551714E+04
-
-   Variables (c - continuous, i - integer, d - discrete)
-      Index  Name                                       Type      Lower Bound            Value      Upper Bound     Status
-          1  Aircraft1:SWEEP_0                             c     2.300000E+01     2.300000E+01     2.700000E+01          l
-          3  mission1.traj.climb.t_duration_0              c     5.000000E-01     5.000000E-01     1.500000E+00          l
-         66  mission1.traj.descent.t_duration_0            c     5.000000E-01     5.000000E-01     1.500000E+00          l
-         98  mission2.traj.climb.t_duration_0              c     5.000000E-01     5.000000E-01     1.500000E+00          l
-        161  mission2.traj.descent.t_duration_0            c     5.000000E-01     5.000001E-01     1.500000E+00          l
-
-   Constraints (i - inequality, e - equality)
-      Index  Name                                                          Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-        186  mission1.gross_mass_resid                                        i   0.000000E+00    1.122580E-07    1.000000E+20         l    9.00000E+100
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
 </pre></div>
 </div>
 <div class="output text_html">
@@ -920,7 +937,7 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.models.missions.energy_state_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">phase_info</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.validation_cases.validation_tests</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_flops_inputs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProblemType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variables</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span><span class="p">,</span> <span class="n">Mission</span><span class="p">,</span> <span class="n">Settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variables</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span><span class="p">,</span> <span class="n">Mission</span>
 
 <span class="n">phase_info_mission1</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">phase_info</span><span class="p">)</span>
 <span class="n">phase_info_mission2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">phase_info</span><span class="p">)</span>
@@ -1018,6 +1035,44 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  &#39;aircraft:engine:mass  [8071.35]  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  46063.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  98.5  ft
+  &#39;aircraft:fuselage:planform_area  1538.1675  ft**2
+  &#39;aircraft:fuselage:wetted_area  4142.317  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  707.706  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  84.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
+  &#39;aircraft:vertical_tail:wetted_area  589.35  ft**2
+  &#39;aircraft:wing:aspect_ratio  9.45  unitless
+  &#39;aircraft:wing:mass  15288.0  lbm
+  &#39;aircraft:wing:wetted_area  2423.02  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.35  unitless
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  &#39;aircraft:engine:mass  [8071.35]  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  46063.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  98.5  ft
+  &#39;aircraft:fuselage:planform_area  1538.1675  ft**2
+  &#39;aircraft:fuselage:wetted_area  4142.317  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  707.706  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  84.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
+  &#39;aircraft:vertical_tail:wetted_area  589.35  ft**2
+  &#39;aircraft:wing:aspect_ratio  9.45  unitless
+  &#39;aircraft:wing:mass  15288.0  lbm
+  &#39;aircraft:wing:wetted_area  2423.02  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.35  unitless
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="setting-values">
@@ -1051,12 +1106,12 @@ Total number of inequality constraints...............:      124
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 44
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.1871834676333879e+01    2.5517140455722856e+04
-Dual infeasibility......:   1.1099836684971253e-09    1.2949809465799794e-06
-Constraint violation....:   2.4130188027053007e-10    2.4130188027053007e-10
+Objective...............:   2.1871834676333883e+01    2.5517140455722860e+04
+Dual infeasibility......:   1.1101719276276338e-09    1.2952005822322394e-06
+Constraint violation....:   2.4130184723465689e-10    2.4130184723465689e-10
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   3.1624119734260801e-08    3.6894806356637599e-05
-Overall NLP error.......:   3.1624119734260801e-08    3.6894806356637599e-05
+Complementarity.........:   3.1624119734189664e-08    3.6894806356554603e-05
+Overall NLP error.......:   3.1624119734189664e-08    3.6894806356554603e-05
 
 
 Number of objective function evaluations             = 107
@@ -1066,31 +1121,12 @@ Number of inequality constraint evaluations          = 107
 Number of equality constraint Jacobian evaluations   = 48
 Number of inequality constraint Jacobian evaluations = 48
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 35.161
+Total seconds in IPOPT                               = 33.467
 
 EXIT: Optimal Solution Found.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization Problem -- Optimization using pyOpt_sparse
-================================================================================
-    Objective Function: _objfunc
-
-
-   Objectives
-      Index  Name                           Value
-          0  composite_objective     2.551714E+04
-
-   Variables (c - continuous, i - integer, d - discrete)
-      Index  Name                                       Type      Lower Bound            Value      Upper Bound     Status
-          1  Aircraft1:SWEEP_0                             c     2.300000E+01     2.300000E+01     2.700000E+01          l
-          3  mission1.traj.climb.t_duration_0              c     5.000000E-01     5.000000E-01     1.500000E+00          l
-         66  mission1.traj.descent.t_duration_0            c     5.000000E-01     5.000000E-01     1.500000E+00          l
-         98  mission2.traj.climb.t_duration_0              c     5.000000E-01     5.000000E-01     1.500000E+00          l
-        161  mission2.traj.descent.t_duration_0            c     5.000000E-01     5.000001E-01     1.500000E+00          l
-
-   Constraints (i - inequality, e - equality)
-      Index  Name                                                          Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-        186  mission1.gross_mass_resid                                        i   0.000000E+00    1.122580E-07    1.000000E+20         l    9.00000E+100
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
 </pre></div>
 </div>
 <div class="output text_html">
