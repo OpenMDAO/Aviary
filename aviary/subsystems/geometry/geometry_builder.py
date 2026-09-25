@@ -162,7 +162,7 @@ class CoreGeometryBuilder(GeometryBuilder):
 
         nacelle_outputs = [
             Aircraft.Nacelle.AVG_DIAMETER,
-            Aircraft.Nacelle.AVG_Length,
+            Aircraft.Nacelle.AVG_LENGTH,
             Aircraft.Nacelle.WETTED_AREA,
             Aircraft.Nacelle.TOTAL_WETTED_AREA,
         ]
