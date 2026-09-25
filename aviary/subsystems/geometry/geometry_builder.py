@@ -122,8 +122,6 @@ class CoreGeometryBuilder(GeometryBuilder):
         filename = self.name + '.md'
         filepath = reports_folder / filename
 
-        # TODO output differs by method
-        # TODO finish variables of interest
         wing_outputs = [
             Aircraft.Wing.AREA,
             Aircraft.Wing.SPAN,
@@ -134,6 +132,7 @@ class CoreGeometryBuilder(GeometryBuilder):
         ]
 
         htail_outputs = [
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
             Aircraft.HorizontalTail.AREA,
             Aircraft.HorizontalTail.SPAN,
             Aircraft.HorizontalTail.ASPECT_RATIO,
@@ -153,14 +152,16 @@ class CoreGeometryBuilder(GeometryBuilder):
 
         fuselage_outputs = [
             Aircraft.Fuselage.LENGTH,
+            Aircraft.Fuselage.REF_DIAMETER,
+            Aircraft.Fuselage.AVG_DIAMETER,
             Aircraft.Fuselage.WETTED_AREA,
         ]
-        if self.code_origin is FLOPS or self.use_both_geometries:
-            fuselage_outputs.append(Aircraft.Fuselage.REF_DIAMETER)
-        if self.code_origin is GASP or self.use_both_geometries:
-            fuselage_outputs.append(Aircraft.Fuselage.AVG_DIAMETER)
 
         nacelle_outputs = [
+            Aircraft.Nacelle.REFERENCE_AVG_DIAMETER,
+            Aircraft.Nacelle.REFERENCE_AVG_LENGTH,
+            Aircraft.Engine.NUM_ENGINES,
+            Aircraft.Engine.SCALE_FACTOR,
             Aircraft.Nacelle.AVG_DIAMETER,
             Aircraft.Nacelle.AVG_LENGTH,
             Aircraft.Nacelle.WETTED_AREA,
@@ -180,7 +181,6 @@ class CoreGeometryBuilder(GeometryBuilder):
             f.write(f'# Geometry: {method}\n')
             f.write('## Wing')
             write_markdown_variable_table(f, prob, wing_outputs, self.meta_data)
-            f.write('\n## Empennage\n')
             f.write('### Horizontal Tail')
             write_markdown_variable_table(f, prob, htail_outputs, self.meta_data)
             f.write('### Vertical Tail')
