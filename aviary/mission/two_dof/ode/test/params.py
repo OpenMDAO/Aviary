@@ -1,4 +1,3 @@
-
 from aviary.variable_info.variables import Aircraft, Mission
 
 params_for_unit_tests = {

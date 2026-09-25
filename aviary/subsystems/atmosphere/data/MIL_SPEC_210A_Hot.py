@@ -1,4 +1,3 @@
-
 """See MIL_SPEC_210A_Tropical for source note."""
 
 from collections import namedtuple

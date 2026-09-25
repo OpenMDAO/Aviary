@@ -29,7 +29,7 @@ from openaerostruct.structures.wingbox_fuel_vol_delta import WingboxFuelVolDelta
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.variable_info.variables import Dynamic
 
-spec = find_spec('openaerostructz')
+spec = find_spec('openaerostruct')
 if spec is None:
     raise ImportError(
         "openaerostruct package not found. You can install it by running 'pip install openaerostruct'."
