@@ -114,17 +114,6 @@ class PrepGeom(om.Group):
                 'wing_prelim', WingPrelim(), promotes_inputs=['*'], promotes_outputs=['*']
             )
 
-        self.add_subsystem(
-            'wetted_area',
-            WettedAreaGroup(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        self.add_subsystem(
-            'fus_ratios', _FuselageRatios(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
-        )
-
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
                 'wing_characteristic_lengths',
@@ -154,10 +143,19 @@ class PrepGeom(om.Group):
             promotes_outputs=['*'],
         )
 
-        # self.connect(f'prelim.{Names.CROOT}', f'other_characteristic_lengths.{Names.CROOT}')
+        self.add_subsystem(
+            'wetted_area',
+            WettedAreaGroup(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
 
         self.add_subsystem(
             'total_wetted_area', TotalWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
+
+        self.add_subsystem(
+            'fus_ratios', _FuselageRatios(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(

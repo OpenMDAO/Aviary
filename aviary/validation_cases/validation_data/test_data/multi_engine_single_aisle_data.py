@@ -134,8 +134,8 @@ inputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, 1.0)
 
 # Nacelle
 # ---------------------------
-inputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, 7.0, 'ft')
-inputs.set_val(Aircraft.Nacelle.AVG_LENGTH, 11.65, 'ft')
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, 7.0, 'ft')
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, 11.65, 'ft')
 inputs.set_val(Aircraft.Nacelle.MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, 1.0)
 

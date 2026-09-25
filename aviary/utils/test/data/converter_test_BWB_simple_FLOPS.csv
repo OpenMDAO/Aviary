@@ -60,8 +60,8 @@ aircraft:hydraulics:mass_scaler,1,unitless
 aircraft:hydraulics:system_pressure,3000.0,psi
 aircraft:landing_gear:main_gear_oleo_length,85,inch
 aircraft:landing_gear:nose_gear_oleo_length,87,inch
-aircraft:nacelle:avg_diameter,12.608,ft
-aircraft:nacelle:avg_length,17.433,ft
+aircraft:nacelle:reference_avg_diameter,12.608,ft
+aircraft:nacelle:reference_avg_length,17.433,ft
 aircraft:propulsion:misc_mass_scaler,0,unitless
 aircraft:vertical_tail:aspect_ratio,0.0,unitless
 aircraft:vertical_tail:mass_scaler,1,unitless

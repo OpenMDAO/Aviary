@@ -17,8 +17,8 @@ aircraft:fuel:wing_fuel_fraction,0.7752,unitless
 aircraft:fuselage:length,125,ft
 aircraft:fuselage:max_height,13,ft
 aircraft:fuselage:max_width,12.3,ft
-aircraft:nacelle:avg_diameter,7.2,ft
-aircraft:nacelle:avg_length,35,ft
+aircraft:nacelle:reference_avg_diameter,7.2,ft
+aircraft:nacelle:reference_avg_length,35,ft
 
 # Empennage geometry
 aircraft:horizontal_tail:area,349.522730527158,ft**2

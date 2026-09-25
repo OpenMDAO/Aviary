@@ -4224,10 +4224,10 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.DBARN',
-        'FLOPS': 'WTIN.DNAC',  # ['&DEFINE.WTIN.DNAC', 'EDETIN.DNAC'],
+        'FLOPS': None,
     },
     units='ft',
-    desc='Average diameter of engine nacelles for each engine model',
+    desc='Output average diameter of nacelles for each engine model',
     default_value=0.0,
     multivalue=True,
 )
@@ -4239,10 +4239,10 @@ add_meta_data(
     # it appear to be one
     historical_name={
         'GASP': 'INGASP.ELN',
-        'FLOPS': 'WTIN.XNAC',  # ['&DEFINE.WTIN.XNAC', 'EDETIN.XNAC'],
+        'FLOPS': None,
     },
     units='ft',
-    desc='Average length of nacelles for each engine model',
+    desc='Output average length of nacelles for each engine model',
     default_value=0.0,
     multivalue=True,
 )
@@ -4394,6 +4394,32 @@ add_meta_data(
     units='unitless',
     default_value=1.0,
     desc='pylon aero calibration factor',
+)
+
+add_meta_data(
+    Aircraft.Nacelle.REFERENCE_AVG_DIAMETER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.DNAC',  # ['&DEFINE.WTIN.DNAC', 'EDETIN.DNAC'],
+    },
+    units='ft',
+    desc='Reference average diameter of nacelles for each engine model',
+    default_value=0.0,
+    multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Nacelle.REFERENCE_AVG_LENGTH,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.XNAC',  # ['&DEFINE.WTIN.XNAC', 'EDETIN.XNAC'],
+    },
+    units='ft',
+    desc='Reference average length of nacelles for each engine model',
+    default_value=0.0,
+    multivalue=True,
 )
 
 add_meta_data(
