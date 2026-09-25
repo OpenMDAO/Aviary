@@ -824,8 +824,6 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
     <span class="c1"># This basically just adds these objects to the class - we have them all available in this L3 script so have no need for the extra class!</span>
     <span class="n">transcription</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">ode_class</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">is_analytic_phase</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">num_nodes</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># this is only used for analytic phases</span>
 
     <span class="c1"># Now build the phase using the instantiated phase object:</span>
     <span class="c1"># phase = phase_object.build_phase(aviary_options=aviary_inputs)</span>
@@ -1420,12 +1418,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3234110395965166e+00    1.3234110395965166e+00
-Dual infeasibility......:   3.6143607456557164e-08    3.6143607456557164e-08
+Objective...............:   1.3234110395965109e+00    1.3234110395965109e+00
+Dual infeasibility......:   3.6143654724306051e-08    3.6143654724306051e-08
 Constraint violation....:   2.2737367544323207e-14    2.2737367544323207e-14
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0924049294847808e-08    9.0924049294847808e-08
-Overall NLP error.......:   9.0924049294847808e-08    9.0924049294847808e-08
+Complementarity.........:   9.0924049294851500e-08    9.0924049294851500e-08
+Overall NLP error.......:   9.0924049294851500e-08    9.0924049294851500e-08
 
 
 Number of objective function evaluations             = 16
@@ -1435,10 +1433,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.342
-
-EXIT: Optimal Solution Found.
-
+Total seconds in IPOPT       
 
 Optimization Problem -- Optimization using pyOpt_sparse
 ================================================================================
@@ -1457,6 +1452,10 @@ Optimization Problem -- Optimization using pyOpt_sparse
    Constraints (i - inequality, e - equality)
       Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
         154  traj.descent.throttle[path]                             i   0.000000E+00    5.221349E-07    1.000000E+00         l    9.00000E+100
+
+                        = 4.584
+
+EXIT: Optimal Solution Found.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
