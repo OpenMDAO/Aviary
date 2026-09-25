@@ -32,7 +32,6 @@ def CruiseExample():
     cruise_phase_info['cruise']['user_options']['time_initial'] = (0.0, 's')
     cruise_phase_info['cruise']['user_options']['time_duration_bounds'] = ((0, 240), 's')
     cruise_phase_info['cruise']['initial_guesses']['time'] = ([0, 55], 's')
-    cruise_phase_info['cruise']['user_options']['target_distance'] = (1000, 'm')
 
     prob.load_inputs('aviary/models/aircraft/UAV/small_scale_uav.csv', cruise_phase_info)
 
@@ -71,13 +70,13 @@ def CruiseExample():
     prob.setup()
 
     # Add special rescaling for small aircraft
-    prob.model.set_constraint_options(Mission.Constraints.MASS_RESIDUAL, ref=1)
-    prob.model.set_design_var_options(Aircraft.Design.GROSS_MASS, lower=2, upper=100, ref=1)
-    prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=1)
-    prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1)
+    prob.model.set_constraint_options(Mission.Constraints.MASS_RESIDUAL, ref=10.0)
+    prob.model.set_design_var_options(Aircraft.Design.GROSS_MASS, lower=2, upper=100, ref=10.0)
+    prob.model.set_design_var_options(Mission.GROSS_MASS, lower=2, upper=50, ref=10.0)
+    prob.model.set_constraint_options('cruise_distance_constraint.distance_resid', ref=1000.0)
     prob.model.traj.phases.cruise.rhs_all.set_constraint_options(
         'thrust_residual',
-        ref=1.0,
+        ref=2.0,
         equals=0.0,
     )
 
