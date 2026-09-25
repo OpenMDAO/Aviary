@@ -296,7 +296,7 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
 
 class NacelleCharacteristicLength(om.ExplicitComponent):
     """
-    Calculate the characteristic length and fineness ratio of the nacelle.
+    Calculate the scaled length, scaled diameter, characteristic length and fineness ratio of the nacelle.
     """
 
     def initialize(self):
@@ -308,10 +308,12 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
         add_aviary_input(
             self, Aircraft.Engine.REFERENCE_SLS_THRUST, shape=num_engine_type, units='lbf'
         )
-        add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
-        add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type, units='ft')
-        # add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_LOWER, 0.0)
-        # add_aviary_input(self, Aircraft.Nacelle.LAMINAR_FLOW_UPPER, 0.0)
+        add_aviary_input(
+            self, Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, shape=num_engine_type, units='ft'
+        )
+        add_aviary_input(
+            self, Aircraft.Nacelle.REFERENCE_AVG_LENGTH, shape=num_engine_type, units='ft'
+        )
         add_aviary_input(
             self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_type, units='lbf'
         )
@@ -320,6 +322,8 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
             self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH, shape=num_engine_type, units='ft'
         )
         add_aviary_output(self, Aircraft.Nacelle.FINENESS, shape=num_engine_type, units='unitless')
+        add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
+        add_aviary_output(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type, units='ft')
 
     def setup_partials(self):
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
@@ -329,17 +333,8 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
             [
-                Aircraft.Nacelle.AVG_LENGTH,
+                Aircraft.Nacelle.REFERENCE_AVG_LENGTH,
                 Aircraft.Engine.SCALED_SLS_THRUST,
-            ],
-            rows=shape,
-            cols=shape,
-            val=1.0,
-        )
-
-        self.declare_partials(
-            Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
-            [
                 Aircraft.Engine.REFERENCE_SLS_THRUST,
             ],
             rows=shape,
@@ -349,24 +344,45 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Nacelle.FINENESS,
             [
-                Aircraft.Nacelle.AVG_DIAMETER,
-                Aircraft.Nacelle.AVG_LENGTH,
+                Aircraft.Nacelle.REFERENCE_AVG_DIAMETER,
+                Aircraft.Nacelle.REFERENCE_AVG_LENGTH,
             ],
             rows=shape,
             cols=shape,
-            val=1.0,
+        )
+
+        self.declare_partials(
+            Aircraft.Nacelle.AVG_DIAMETER,
+            [
+                Aircraft.Nacelle.REFERENCE_AVG_DIAMETER,
+                Aircraft.Engine.REFERENCE_SLS_THRUST,
+                Aircraft.Engine.SCALED_SLS_THRUST,
+            ],
+            rows=shape,
+            cols=shape,
+        )
+
+        self.declare_partials(
+            Aircraft.Nacelle.AVG_LENGTH,
+            [
+                Aircraft.Nacelle.REFERENCE_AVG_LENGTH,
+                Aircraft.Engine.REFERENCE_SLS_THRUST,
+                Aircraft.Engine.SCALED_SLS_THRUST,
+            ],
+            rows=shape,
+            cols=shape,
         )
 
     def compute(self, inputs, outputs):
-        # For engine without nacelle, see issue #1090.
         num_eng = self.options[Aircraft.Engine.NUM_ENGINES]
 
-        avg_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
-        avg_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
+        avg_diam = inputs[Aircraft.Nacelle.REFERENCE_AVG_DIAMETER]
+        avg_length = inputs[Aircraft.Nacelle.REFERENCE_AVG_LENGTH]
 
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         ref_sls_thrust = inputs[Aircraft.Engine.REFERENCE_SLS_THRUST]
         thrust_ratio = thrust / ref_sls_thrust
+
         adjusted_avg_diam = avg_diam * np.sqrt(thrust_ratio)
         adjusted_avg_length = avg_length * np.sqrt(thrust_ratio)
 
@@ -377,53 +393,106 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
         char_len[num_idx] = adjusted_avg_length[num_idx]
         fineness[num_idx] = 1.0
 
-        calc_idx = np.intersect1d(np.where(adjusted_avg_diam[num_idx] > 0), num_idx)
-
-        fineness[calc_idx] = adjusted_avg_length[calc_idx] / adjusted_avg_diam[calc_idx]
+        fine_calc_idx = np.where((num_eng >= 1) & (adjusted_avg_diam > 0))
+        fineness[fine_calc_idx] = (
+            adjusted_avg_length[fine_calc_idx] / adjusted_avg_diam[fine_calc_idx]
+        )
 
         outputs[Aircraft.Nacelle.CHARACTERISTIC_LENGTH] = char_len
         outputs[Aircraft.Nacelle.FINENESS] = fineness
+        outputs[Aircraft.Nacelle.AVG_DIAMETER] = adjusted_avg_diam
+        outputs[Aircraft.Nacelle.AVG_LENGTH] = adjusted_avg_length
 
     def compute_partials(self, inputs, J):
         num_eng = self.options[Aircraft.Engine.NUM_ENGINES]
 
-        avg_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
-        avg_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
+        avg_diam = inputs[Aircraft.Nacelle.REFERENCE_AVG_DIAMETER]
+        avg_length = inputs[Aircraft.Nacelle.REFERENCE_AVG_LENGTH]
 
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         ref_sls_thrust = inputs[Aircraft.Engine.REFERENCE_SLS_THRUST]
         thrust_ratio = thrust / ref_sls_thrust
+
         adjusted_avg_diam = avg_diam * np.sqrt(thrust_ratio)
+        adjusted_avg_length = avg_length * np.sqrt(thrust_ratio)
 
         deriv_char_len = np.zeros(len(num_eng), dtype=avg_diam.dtype)
         deriv_char_thrust = np.zeros(len(num_eng), dtype=avg_diam.dtype)
         deriv_char_sls = np.zeros(len(num_eng), dtype=avg_diam.dtype)
+
+        deriv_diam_thrust = np.zeros(len(num_eng), dtype=avg_diam.dtype)
+        deriv_diam_sls = np.zeros(len(num_eng), dtype=avg_diam.dtype)
+
         deriv_fine_len = np.zeros(len(num_eng), dtype=avg_diam.dtype)
         deriv_fine_diam = np.zeros(len(num_eng), dtype=avg_diam.dtype)
 
-        calc_idx = np.where(num_eng >= 1)
-        deriv_char_len[calc_idx] = 1.0 * np.sqrt(thrust_ratio)
-        deriv_char_thrust[calc_idx] = 0.5 * avg_length / np.sqrt(thrust_ratio) / ref_sls_thrust
-        deriv_char_sls[calc_idx] = (
-            -0.5 * avg_length / np.sqrt(thrust_ratio) * thrust / ref_sls_thrust**2
+        fine_calc_idx = np.where((num_eng >= 1) & (adjusted_avg_diam > 0))
+
+        deriv_fine_len[fine_calc_idx] = (
+            1.0 / adjusted_avg_diam[fine_calc_idx] * np.sqrt(thrust_ratio[fine_calc_idx])
+        )
+        deriv_fine_diam[fine_calc_idx] = (
+            -adjusted_avg_length[fine_calc_idx]
+            / (adjusted_avg_diam[fine_calc_idx] ** 2.0)
+            * np.sqrt(thrust_ratio[fine_calc_idx])
         )
 
-        deriv_fine_len[calc_idx] = 1.0 / adjusted_avg_diam[calc_idx] * np.sqrt(thrust_ratio)
-        deriv_fine_diam[calc_idx] = -avg_length[calc_idx] / avg_diam[calc_idx] ** 2.0
+        calc_idx = np.where(num_eng >= 1)
+        thrust_ratio_calc = thrust_ratio[calc_idx]
+        sqrt_thrust_ratio = np.sqrt(thrust_ratio_calc)
 
-        J[Aircraft.Nacelle.CHARACTERISTIC_LENGTH, Aircraft.Nacelle.AVG_LENGTH] = deriv_char_len
+        deriv_char_len[calc_idx] = 1.0 * sqrt_thrust_ratio
 
+        deriv_char_thrust[calc_idx] = (
+            0.5 * avg_length[calc_idx] / sqrt_thrust_ratio / ref_sls_thrust[calc_idx]
+        )
+        deriv_char_sls[calc_idx] = (
+            -0.5
+            * avg_length[calc_idx]
+            / sqrt_thrust_ratio
+            * thrust[calc_idx]
+            / (ref_sls_thrust[calc_idx] ** 2)
+        )
+
+        deriv_diam_thrust[calc_idx] = (
+            0.5 * avg_diam[calc_idx] / sqrt_thrust_ratio / ref_sls_thrust[calc_idx]
+        )
+        deriv_diam_sls[calc_idx] = (
+            -0.5
+            * avg_diam[calc_idx]
+            / sqrt_thrust_ratio
+            * thrust[calc_idx]
+            / (ref_sls_thrust[calc_idx] ** 2)
+        )
+
+        # Characteristic Length Partials
+        J[Aircraft.Nacelle.CHARACTERISTIC_LENGTH, Aircraft.Nacelle.REFERENCE_AVG_LENGTH] = (
+            deriv_char_len
+        )
         J[Aircraft.Nacelle.CHARACTERISTIC_LENGTH, Aircraft.Engine.SCALED_SLS_THRUST] = (
             deriv_char_thrust
         )
-
         J[Aircraft.Nacelle.CHARACTERISTIC_LENGTH, Aircraft.Engine.REFERENCE_SLS_THRUST] = (
             deriv_char_sls
         )
 
-        J[Aircraft.Nacelle.FINENESS, Aircraft.Nacelle.AVG_LENGTH] = deriv_fine_len
+        # Fineness Partials
+        J[Aircraft.Nacelle.FINENESS, Aircraft.Nacelle.REFERENCE_AVG_LENGTH] = deriv_fine_len
+        J[Aircraft.Nacelle.FINENESS, Aircraft.Nacelle.REFERENCE_AVG_DIAMETER] = deriv_fine_diam
 
-        J[Aircraft.Nacelle.FINENESS, Aircraft.Nacelle.AVG_DIAMETER] = deriv_fine_diam
+        # Avg Diameter Partials
+        J[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Nacelle.REFERENCE_AVG_DIAMETER] = np.sqrt(
+            thrust_ratio
+        )
+        J[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALED_SLS_THRUST] = deriv_diam_thrust
+        J[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.REFERENCE_SLS_THRUST] = deriv_diam_sls
+
+        # Avg Length Partials
+        J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.REFERENCE_AVG_LENGTH] = np.sqrt(
+            thrust_ratio
+        )
+        J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Engine.SCALED_SLS_THRUST] = deriv_char_thrust
+        J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Engine.REFERENCE_SLS_THRUST] = deriv_char_sls
 
 
 class HorizontalTailCharacteristicLength(om.ExplicitComponent):
