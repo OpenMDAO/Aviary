@@ -1,10 +1,10 @@
-from aviary.mission.two_dof.ode.flight_ode import FlightODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessIntegrationVariable,
     InitialGuessState,
 )
 from aviary.mission.phase_builder import PhaseBuilder
+from aviary.mission.two_dof.ode.flight_ode import FlightODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import SpeedType
@@ -135,7 +135,7 @@ class FlightPhase(PhaseBuilder):
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):
-        phase = self.phase = super().build_phase(aviary_options)
+        phase = super().build_phase(aviary_options)
 
         # Retrieve user options values
         user_options = self.user_options

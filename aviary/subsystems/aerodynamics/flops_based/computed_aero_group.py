@@ -13,7 +13,7 @@ from aviary.subsystems.aerodynamics.flops_based.lift_dependent_drag import LiftD
 from aviary.subsystems.aerodynamics.flops_based.mux_component import MuxComponent
 from aviary.subsystems.aerodynamics.flops_based.skin_friction import SkinFriction
 from aviary.subsystems.aerodynamics.flops_based.skin_friction_drag import SkinFrictionDrag
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class ComputedAeroGroup(om.Group):

@@ -5,7 +5,6 @@ from aviary.mission.two_dof.ode.constraints.flight_constraints import FlightCons
 from aviary.mission.two_dof.ode.constraints.speed_constraints import SpeedConstraints
 from aviary.mission.two_dof.ode.flight_eom import EOMRates
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import AlphaModes, SpeedType

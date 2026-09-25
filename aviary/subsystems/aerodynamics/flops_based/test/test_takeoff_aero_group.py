@@ -5,18 +5,16 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
-    N3CC,
-    takeoff_subsystem_options,
-    takeoff_subsystem_options_spoilers,
-)
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues
+from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
+    takeoff_subsystem_options,
+    takeoff_subsystem_options_spoilers,
+)
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.utils.preprocessors import preprocess_options
 
 
 @use_tempdirs

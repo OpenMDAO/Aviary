@@ -19,7 +19,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class PreMission(om.Group):
-    "a helper class for overridings"
+    """a helper class for overridings."""
 
     def initialize(self):
         self.options.declare(
@@ -3222,7 +3222,7 @@ class StructMassTestCase1(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBStructMassTestCase(unittest.TestCase):
+class BWBStructMassTestCase2(unittest.TestCase):
     """Using BWB data."""
 
     def setUp(self):

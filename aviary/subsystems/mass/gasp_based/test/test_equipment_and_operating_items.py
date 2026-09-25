@@ -11,8 +11,8 @@ from aviary.subsystems.mass.gasp_based.equipment_and_operating_items import (
     OperatingItemsMassGroup,
 )
 from aviary.subsystems.mass.gasp_based.mass_summation import (
-    SystemsEquipmentMass,
     OperatingItemsMass,
+    SystemsEquipmentMass,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import AircraftTypes, GASPEngineType

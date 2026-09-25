@@ -11,7 +11,7 @@ from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 # Map of variable names to allowed headers for data files (only lowercase required,
 # spaces are replaced with underscores when data tables are read)

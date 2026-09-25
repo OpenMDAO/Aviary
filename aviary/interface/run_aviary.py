@@ -1,10 +1,7 @@
 """This file contains functions needed to run Aviary using the Level 1 interface."""
 
-from importlib.util import spec_from_file_location, module_from_spec
-import os
-from pathlib import Path
-import subprocess
 import sys
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
 from aviary.utils.functions import get_path

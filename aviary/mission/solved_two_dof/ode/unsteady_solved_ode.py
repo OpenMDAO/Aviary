@@ -1,16 +1,14 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.solved_two_dof.ode.gamma_comp import GammaComp
 from aviary.mission.solved_two_dof.ode.unsteady_solved_eom import UnsteadySolvedEOM
 from aviary.mission.solved_two_dof.ode.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
 )
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
+from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
-from aviary.variable_info.enums import LegacyCode, SpeedType
+from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Dynamic
 

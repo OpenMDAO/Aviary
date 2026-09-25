@@ -1,7 +1,4 @@
-import openmdao.api as om
-
 from aviary.variable_info.variables import Aircraft, Mission
-
 
 params_for_unit_tests = {
     Aircraft.Wing.AREA: dict(units='ft**2', val=1370.3),

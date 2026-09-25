@@ -5,10 +5,10 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.missions.two_dof_default import phase_info
 from aviary.interface.run_aviary import run_aviary
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.models.missions.two_dof_default import phase_info
 from aviary.variable_info.enums import PhaseType
+from aviary.variable_info.variables import Mission
 
 
 @use_tempdirs
@@ -84,14 +84,18 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
             'user_options': {
                 'phase_type': PhaseType.BREGUET_RANGE,
+                'num_segments': 1,
+                'order': 3,
                 'alt_cruise': (37.5e3, 'ft'),
-                'mach_cruise': 10.8,
+                'mach_cruise': 0.8,
+                'mass_ref': (171000, 'lbm'),
+                'time_duration_ref': (26500, 's'),
             },
             'initial_guesses': {
                 # [Initial mass, delta mass] for special cruise phase.
-                'mass': ([171481.0, -35000], 'lbm'),
+                'mass': ([171481.0, 136000], 'lbm'),
                 'initial_distance': (200.0e3, 'ft'),
-                'initial_time': (1516.0, 's'),
+                'time': ([1504.0, 26500.0], 's'),
                 'altitude': (37.5e3, 'ft'),
                 'mach': (0.8, 'unitless'),
             },
