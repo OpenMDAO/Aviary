@@ -129,15 +129,43 @@ class CoreGeometryBuilder(GeometryBuilder):
             Aircraft.Wing.SPAN,
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.SWEEP,
+            Aircraft.Wing.TAPER_RATIO,
+            Aircraft.Wing.WETTED_AREA,
         ]
-        htail_outputs = [Aircraft.HorizontalTail.AREA]
-        vtail_outputs = [Aircraft.VerticalTail.AREA]
-        fuselage_outputs = [Aircraft.Fuselage.LENGTH]
 
+        htail_outputs = [
+            Aircraft.HorizontalTail.AREA,
+            Aircraft.HorizontalTail.SPAN,
+            Aircraft.HorizontalTail.ASPECT_RATIO,
+            Aircraft.HorizontalTail.SWEEP,
+            Aircraft.HorizontalTail.TAPER_RATIO,
+            Aircraft.HorizontalTail.WETTED_AREA,
+        ]
+
+        vtail_outputs = [
+            Aircraft.VerticalTail.AREA,
+            Aircraft.VerticalTail.SPAN,
+            Aircraft.VerticalTail.ASPECT_RATIO,
+            Aircraft.VerticalTail.SWEEP,
+            Aircraft.VerticalTail.TAPER_RATIO,
+            Aircraft.VerticalTail.WETTED_AREA,
+        ]
+
+        fuselage_outputs = [
+            Aircraft.Fuselage.LENGTH,
+            Aircraft.Fuselage.WETTED_AREA,
+        ]
         if self.code_origin is FLOPS or self.use_both_geometries:
             fuselage_outputs.append(Aircraft.Fuselage.REF_DIAMETER)
         if self.code_origin is GASP or self.use_both_geometries:
             fuselage_outputs.append(Aircraft.Fuselage.AVG_DIAMETER)
+
+        nacelle_outputs = [
+            Aircraft.Nacelle.AVG_DIAMETER,
+            Aircraft.Nacelle.AVG_Length,
+            Aircraft.Nacelle.WETTED_AREA,
+            Aircraft.Nacelle.TOTAL_WETTED_AREA,
+        ]
 
         with open(filepath, mode='w') as f:
             if self.use_both_geometries:
@@ -154,3 +182,5 @@ class CoreGeometryBuilder(GeometryBuilder):
             write_markdown_variable_table(f, prob, vtail_outputs, self.meta_data)
             f.write('\n## Fuselage')
             write_markdown_variable_table(f, prob, fuselage_outputs, self.meta_data)
+            f.write('\n## Nacelle')
+            write_markdown_variable_table(f, prob, nacelle_outputs, self.meta_data)

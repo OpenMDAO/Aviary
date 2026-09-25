@@ -173,8 +173,7 @@ class PrepGeomTest(unittest.TestCase):
                 Aircraft.Wing.TAPER_RATIO,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
                 Aircraft.Wing.WETTED_AREA_SCALER,
-                Aircraft.Engine.SCALED_SLS_THRUST,
-                Aircraft.Engine.REFERENCE_SLS_THRUST,
+                Aircraft.Engine.SCALE_FACTOR,
             ],
             output_keys=output_keys,
             aviary_option_keys=[
@@ -576,7 +575,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
                 Aircraft.Canard.AREA,
                 Aircraft.Canard.ASPECT_RATIO,
                 Aircraft.Canard.THICKNESS_TO_CHORD,
-                Aircraft.Engine.SCALED_SLS_THRUST,
+                Aircraft.Engine.SCALE_FACTOR,
                 Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.HorizontalTail.AREA,
@@ -592,7 +591,6 @@ class CharacteristicLengthsTest(unittest.TestCase):
                 Aircraft.Wing.GLOVE_AND_BAT,
                 Aircraft.Wing.TAPER_RATIO,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
-                Aircraft.Engine.REFERENCE_SLS_THRUST,
             ],
             output_keys=[
                 Aircraft.Canard.CHARACTERISTIC_LENGTH,
@@ -812,7 +810,6 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        prob.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, units='lbf')
         # BWBSimpleCabinLayout
         prob.set_val(Aircraft.Fuselage.LENGTH, 137.5, units='ft')
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 64.58, units='ft')
@@ -852,8 +849,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, val=12.608)
         prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, val=17.433)
         prob.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, val=1.0)
-        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]))
-        prob.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, val=np.array([86459.2]))
+        prob.set_val(Aircraft.Engine.SCALE_FACTOR, val=np.array([70000.0 / 86459.2]))
 
         # CanardWettedArea
         prob.set_val(Aircraft.Canard.AREA, val=0.0)
@@ -1071,7 +1067,6 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, units='inch')
         prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, units='inch')
         prob.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, units='inch')
-        prob.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, units='lbf')
         # BWBDetailedCabinLayout
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=45.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
@@ -1156,8 +1151,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, val=12.608)
         prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, val=17.433)
         prob.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, val=1.0)
-        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]), units='lbf')
-        prob.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, val=np.array([86459.2]), units='lbf')
+        prob.set_val(Aircraft.Engine.SCALE_FACTOR, val=np.array([70000.0 / 86459.2]))
 
         # CanardWettedArea
         prob.set_val(Aircraft.Canard.AREA, val=0.0)
