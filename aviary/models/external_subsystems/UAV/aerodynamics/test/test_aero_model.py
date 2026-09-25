@@ -29,9 +29,8 @@ class TestWingTailAreaRatios(unittest.TestCase):
 
         prob.run_model()
 
-        cp_data = prob.check_partials(compact_print=True, out_stream=None, method='fd')
-
-        assert_check_partials(cp_data, atol=1e-6, rtol=1e-6)
+        cp_data = prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
+        assert_check_partials(cp_data, atol=1e-10, rtol=1e-10)
 
 
 class TestFuselageDrag(unittest.TestCase):
@@ -57,11 +56,8 @@ class TestFuselageDrag(unittest.TestCase):
 
         prob.run_model()
 
-        cp_data = prob.check_partials(
-            compact_print=True, out_stream=None, method='fd', form='central'
-        )
-
-        assert_check_partials(cp_data, atol=1e-5, rtol=1e-5)
+        cp_data = prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
+        assert_check_partials(cp_data, atol=1e-10, rtol=1e-10)
 
 
 class TestVTailDrag(unittest.TestCase):
@@ -87,13 +83,8 @@ class TestVTailDrag(unittest.TestCase):
 
         prob.run_model()
 
-        # Check partials using central finite difference
-        cp_data = prob.check_partials(
-            compact_print=True, out_stream=None, method='fd', form='central'
-        )
-
-        # Assert derivatives match within tolerances
-        assert_check_partials(cp_data, atol=1e-6, rtol=1e-6)
+        cp_data = prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
+        assert_check_partials(cp_data, atol=1e-10, rtol=1e-10)
 
 
 class TestLandingGearDrag(unittest.TestCase):
@@ -110,13 +101,8 @@ class TestLandingGearDrag(unittest.TestCase):
 
         prob.run_model()
 
-        cp_data = prob.check_partials(
-            compact_print=True,
-            out_stream=None,
-            method='cs',
-        )
-
-        assert_check_partials(cp_data, atol=1e-6, rtol=1e-6)
+        cp_data = prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
+        assert_check_partials(cp_data, atol=1e-10, rtol=1e-10)
 
 
 class TestAverages(unittest.TestCase):
@@ -132,14 +118,8 @@ class TestAverages(unittest.TestCase):
 
         prob.run_model()
 
-        # Check partials using central finite difference
-        cp_data = prob.check_partials(
-            compact_print=True, out_stream=None, method='fd', form='central'
-        )
-
-        # Because the math is purely linear, FD will match analytical exactly.
-        # 1e-6 tolerances are more than sufficient.
-        assert_check_partials(cp_data, atol=1e-6, rtol=1e-6)
+        cp_data = prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
+        assert_check_partials(cp_data, atol=1e-10, rtol=1e-10)
 
 
 # TODO: There should be a avlues test for TotalAircraftAero, and values tests for all the other tests as well to sanity check the results.

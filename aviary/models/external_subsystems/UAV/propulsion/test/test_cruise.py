@@ -80,8 +80,6 @@ def CruiseExample():
         ref=1.0,
         equals=0.0,
     )
-    reports_dir = prob.get_reports_dir()
-    reports_dir.mkdir(parents=True, exist_ok=True)
 
     prob.set_solver_print(level=0)
     prob.set_initial_guesses()
