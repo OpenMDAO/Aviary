@@ -141,6 +141,8 @@ inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, 12.608, 'ft')  # DNAC
 inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, 17.433, 'ft')  # XNAC
 inputs.set_val(Aircraft.Nacelle.MASS_SCALER, 0.0)  # FRNA
 inputs.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, 1.0)  # SWETN
+inputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([12.608 * 0.8096304384**0.5]), 'ft')
+inputs.set_val(Aircraft.Nacelle.AVG_LENGTH, np.array([17.433 * 0.8096304384**0.5]), 'ft')
 
 # Paint
 # ---------------------------

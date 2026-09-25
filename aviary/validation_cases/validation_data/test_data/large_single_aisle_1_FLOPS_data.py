@@ -138,6 +138,9 @@ inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, 7.94, 'ft')
 inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, 12.3, 'ft')
 inputs.set_val(Aircraft.Nacelle.MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, 1.0)
+# these are outputs, but some components require them as inputs.
+inputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
+inputs.set_val(Aircraft.Nacelle.AVG_LENGTH, np.array([12.3]), 'ft')
 
 # Paint
 # ---------------------------
