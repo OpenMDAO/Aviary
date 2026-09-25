@@ -18,6 +18,8 @@ class AeroBuilder(SubsystemBuilder):
         subsystem_options=None,
     ):
         return [
+            Dynamic.Atmosphere.DENSITY,
+            Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
             Dynamic.Mission.ALTITUDE,
             Dynamic.Mission.VELOCITY,
             Dynamic.Vehicle.MASS,

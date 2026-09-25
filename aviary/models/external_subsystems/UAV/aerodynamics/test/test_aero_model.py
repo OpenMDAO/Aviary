@@ -8,13 +8,16 @@ from aviary.models.external_subsystems.UAV.aerodynamics.model.aero_model import 
     FuselageDrag,
     VTailDrag,
     LandingGearDrag,
-    Averages,
     TotalAircraftAero,
 )
 from aviary.models.external_subsystems.UAV.variable_info.variables import Dynamic, Aircraft
 
+# TODO: There should be a values test for TotalAircraftAero, and values tests for all the other
+# tests as well to sanity check the results.
+
 
 class TestWingTailAreaRatios(unittest.TestCase):
+
     def test_partials(self):
         prob = om.Problem()
         prob.model.add_subsystem('comp', WingTailAreaRatios(num_nodes=3), promotes=['*'])
@@ -104,25 +107,6 @@ class TestLandingGearDrag(unittest.TestCase):
         cp_data = prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
         assert_check_partials(cp_data, atol=1e-10, rtol=1e-10)
 
-
-class TestAverages(unittest.TestCase):
-    def test_partials(self):
-        prob = om.Problem()
-        prob.model.add_subsystem('comp', Averages(num_nodes=4), promotes=['*'])
-
-        prob.setup(force_alloc_complex=True)
-
-        # Provide distinct arrays so we know it's averaging actual data
-        prob.set_val('CD', val=np.array([0.02, 0.025, 0.03, 0.035]))
-        prob.set_val('lifting_surface_CL', val=np.array([0.3, 0.5, 0.8, 1.2]))
-
-        prob.run_model()
-
-        cp_data = prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
-        assert_check_partials(cp_data, atol=1e-10, rtol=1e-10)
-
-
-# TODO: There should be a avlues test for TotalAircraftAero, and values tests for all the other tests as well to sanity check the results.
 
 if __name__ == '__main__':
     unittest.main()

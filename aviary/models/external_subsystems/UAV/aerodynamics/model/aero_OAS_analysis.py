@@ -221,22 +221,6 @@ class OASAero(om.Group):
         )
         atmosphere_model = aviary_inputs.get_val(Settings.ATMOSPHERE_MODEL)
 
-        self.add_subsystem(
-            'av_atmosphere',
-            AtmosphereComp(
-                num_nodes=nn,
-                h_def='geometric',
-                **{Settings.ATMOSPHERE_MODEL: atmosphere_model},
-            ),
-            promotes_inputs=[Dynamic.Mission.ALTITUDE],
-            promotes_outputs=[
-                Dynamic.Atmosphere.DENSITY,
-                Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
-                'temperature',
-                'speed_of_sound',
-            ],
-        )
-
         self.add_subsystem('broadcast', Broadcaster(), promotes=['*'])
 
         mesh_dict = {

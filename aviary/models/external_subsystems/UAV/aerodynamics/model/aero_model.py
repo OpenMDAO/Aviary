@@ -301,32 +301,6 @@ class LandingGearDrag(om.ExplicitComponent):
         partials['D_gear', Aircraft.Wing.AREA] = CD_gear * q
 
 
-class Averages(om.ExplicitComponent):
-    # averages because Aviary objectives must be scalar. not doing this would be preferable
-    def initialize(self):
-        self.options.declare('num_nodes', types=int)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-
-        self.add_input('CD', shape=nn, units='unitless')
-        self.add_input('lifting_surface_CL', shape=nn, units='unitless')
-        self.add_output('avg_CD', units='unitless')
-        self.add_output('avg_CL', units='unitless')
-
-    def setup_partials(self):
-        nn = self.options['num_nodes']
-        self.declare_partials('avg_CD', 'CD', val=np.ones(nn) / nn)
-        self.declare_partials('avg_CL', 'lifting_surface_CL', val=np.ones(nn) / nn)
-
-    def compute(self, inputs, outputs):
-        total_CD = inputs['CD']
-        outputs['avg_CD'] = np.mean(total_CD)
-
-        total_CL = inputs['lifting_surface_CL']
-        outputs['avg_CL'] = np.mean(total_CL)
-
-
 class TotalAircraftAero(om.Group):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -425,17 +399,6 @@ class TotalAircraftAero(om.Group):
             ),
             promotes_inputs=['D_fus', 'D_vtail', 'lifting_surface_drag', 'D_gear'],
             promotes_outputs=[('drag', Dynamic.Vehicle.DRAG)],
-        )
-
-        # would like to not need this
-        self.add_subsystem(
-            'averages',
-            Averages(num_nodes=nn),
-            promotes_inputs=[
-                ('CD', Dynamic.Vehicle.DRAG_COEFFICIENT),
-                'lifting_surface_CL',
-            ],
-            promotes_outputs=['avg_CD', 'avg_CL'],
         )
 
         self.connect('OAS_aero.aero_point_0.wing.S_ref', 'aircraft:wing:area')
