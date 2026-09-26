@@ -46,20 +46,21 @@ class MainGearLength(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_WING_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-        if isinstance(self.options[Aircraft.Engine.NUM_ENGINES], np.ndarray):
-            num_wing_engines_total = sum(self.options[Aircraft.Engine.NUM_WING_ENGINES])
-        else:
-            num_wing_engines_total = self.options[Aircraft.Engine.NUM_WING_ENGINES]
+        num_engines = np.atleast_1d(self.options[Aircraft.Engine.NUM_ENGINES])
+        num_wing_engines = np.atleast_1d(self.options[Aircraft.Engine.NUM_WING_ENGINES])
+
+        num_engine_type = len(num_engines)
+        num_wing_engines_total = int(np.sum(num_wing_engines))
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
+
         if num_wing_engines_total > 1:
             add_aviary_input(
                 self,
                 Aircraft.Engine.WING_LOCATIONS,
-                shape=int(num_wing_engines_total / 2),
+                shape=num_wing_engines_total // 2,
                 units='unitless',
             )
         else:  # this case is not tested
@@ -74,128 +75,119 @@ class MainGearLength(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        num_eng = self.options[Aircraft.Engine.NUM_ENGINES][0]
+        num_engines = np.atleast_1d(self.options[Aircraft.Engine.NUM_ENGINES])
+        num_wing_engines = np.atleast_1d(self.options[Aircraft.Engine.NUM_WING_ENGINES])
 
-        # See issue #1183. temp using first engine, heterogeneous engines not supported
-        num_wing_eng = self.options[Aircraft.Engine.NUM_WING_ENGINES][0]
+        tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL][0] * DEG2RAD)
+        fuse_half_width = inputs[Aircraft.Fuselage.MAX_WIDTH][0] * 6.0
+        wing_span = inputs[Aircraft.Wing.SPAN][0]
 
-        # See issue #1183. high engine-count configuration.
-        y_eng_aft = 0
+        locations = np.atleast_1d(inputs[Aircraft.Engine.WING_LOCATIONS])
+        diameters = np.atleast_1d(inputs[Aircraft.Nacelle.AVG_DIAMETER])
 
-        if num_wing_eng > 0:
-            y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0]
+        max_cmlg = 0.0
+        loc_idx = 0
 
-            tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD)
-            fuse_half_width = inputs[Aircraft.Fuselage.MAX_WIDTH] * 6.0
+        # Track active variables so we can compute correct partials for the limiting engine
+        self._fallback_active = False
+        self._active_loc_idx = 0
+        self._active_eng_idx = 0
+        self._active_yee_raw = 0.0
+        self._active_n_total = 0
 
-            d_nacelle = inputs[Aircraft.Nacelle.AVG_DIAMETER][0]
-            # f_nacelle = d_nacelle
-            # if num_eng > 4:
-            #     f_nacelle = 0.5 * d_nacelle * num_eng ** 0.5
+        # Iterate through each engine type
+        for eng_idx, n_wing in enumerate(num_wing_engines):
+            pairs_of_wing_engines = int(n_wing) // 2
 
-            f_nacelle = distributed_nacelle_diam_factor(d_nacelle, num_eng)
+            # Iterate through spanwise locations for this engine type
+            for _ in range(pairs_of_wing_engines):
+                yee_raw = locations[loc_idx]
+                yee = yee_raw
 
-            yee = y_eng_fore
-            if num_wing_eng > 2 and y_eng_aft > 0.0:
-                yee = y_eng_aft
-
-            if yee < 1.0:
                 # This is triggered when the input engine locations are normalized.
-                yee *= 6.0 * inputs[Aircraft.Wing.SPAN]
+                if yee < 1.0:
+                    yee *= 6.0 * wing_span
 
-            cmlg = 12.0 * f_nacelle + (0.26 - tan_dih) * (yee - fuse_half_width)
+                d_nacelle = diameters[eng_idx]
+                n_total = int(num_engines[eng_idx])
 
-        else:
-            cmlg = 0.0
+                f_nacelle = distributed_nacelle_diam_factor(d_nacelle, n_total)
+                cmlg = 12.0 * f_nacelle + (0.26 - tan_dih) * (yee - fuse_half_width)
 
-        if cmlg < 12.0:
-            cmlg = 0.75 * inputs[Aircraft.Fuselage.LENGTH]
+                # Check if this engine sizes the gear
+                if cmlg > max_cmlg:
+                    max_cmlg = cmlg
 
-        outputs[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH] = cmlg
+                    # Save the "active" parameters for the derivative calculation
+                    self._active_loc_idx = loc_idx
+                    self._active_eng_idx = eng_idx
+                    self._active_yee_raw = yee_raw
+                    self._active_n_total = n_total
+
+                loc_idx += 1
+
+        # Fallback if no wing engines exist or if calculated gear length is too small
+        if max_cmlg < 12.0:
+            max_cmlg = 0.75 * inputs[Aircraft.Fuselage.LENGTH][0]
+            self._fallback_active = True
+
+        outputs[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH] = max_cmlg
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        # See issue #1183. temp using first engine, heterogeneous engines not supported
-        num_eng = self.options[Aircraft.Engine.NUM_ENGINES][0]
-        num_wing_eng = self.options[Aircraft.Engine.NUM_WING_ENGINES][0]
+        # Initialize all partials to zero because the "active" limiting engine might change
+        partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Fuselage.LENGTH] = 0.0
+        partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Fuselage.MAX_WIDTH] = 0.0
+        partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Wing.DIHEDRAL] = 0.0
+        partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Wing.SPAN] = 0.0
 
-        y_eng_aft = 0
+        # Zero out the array partials
+        partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Nacelle.AVG_DIAMETER] *= 0.0
+        partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Engine.WING_LOCATIONS] *= 0.0
 
-        if num_wing_eng > 0:
-            y_eng_fore = inputs[Aircraft.Engine.WING_LOCATIONS][0]
+        if self._fallback_active:
+            partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Fuselage.LENGTH] = 0.75
 
-            tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD)
-            dtan_dih = DEG2RAD / np.cos(inputs[Aircraft.Wing.DIHEDRAL] * DEG2RAD) ** 2
+        else:
+            # We only compute gradients with respect to the engine that sized the gear length
+            tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL][0] * DEG2RAD)
+            dtan_dih = DEG2RAD / np.cos(inputs[Aircraft.Wing.DIHEDRAL][0] * DEG2RAD) ** 2
 
-            fuse_half_width = inputs[Aircraft.Fuselage.MAX_WIDTH] * 6.0
+            fuse_half_width = inputs[Aircraft.Fuselage.MAX_WIDTH][0] * 6.0
             dhw_dfuse_wid = 6.0
 
-            d_nacelle = inputs[Aircraft.Nacelle.AVG_DIAMETER][0]
-            # f_nacelle = d_nacelle
-            # d_nac = 1.0
-            # if num_eng > 4:
-            #     f_nacelle = 0.5 * d_nacelle * num_eng ** 0.5
-            #     d_nac = 0.5 * num_eng ** 0.5
-
-            f_nacelle = distributed_nacelle_diam_factor(d_nacelle, num_eng)
-            d_nac = distributed_nacelle_diam_factor_deriv(num_eng)
-
-            yee = y_eng_fore
-            if num_wing_eng > 2 and y_eng_aft > 0.0:
-                yee = y_eng_aft
+            yee_raw = self._active_yee_raw
+            yee = yee_raw
 
             dyee_dwel = 1.0
-            dyee_dspan = 1.0
-            if yee < 1.0:
-                dyee_dwel = 6.0 * inputs[Aircraft.Wing.SPAN]
-                dyee_dspan = 6.0 * yee
+            dyee_dspan = 0.0
 
-                yee *= 6.0 * inputs[Aircraft.Wing.SPAN]
+            if yee_raw < 1.0:
+                dyee_dwel = 6.0 * inputs[Aircraft.Wing.SPAN][0]
+                dyee_dspan = 6.0 * yee_raw
+                yee *= 6.0 * inputs[Aircraft.Wing.SPAN][0]
 
-            cmlg = 12.0 * f_nacelle + (0.26 - tan_dih) * (yee - fuse_half_width)
+            d_nac = distributed_nacelle_diam_factor_deriv(self._active_n_total)
+
             dcmlg_dnac = 12.0 * d_nac
             dcmlg_dtan = -(yee - fuse_half_width)
             dcmlg_dyee = 0.26 - tan_dih
             dcmlg_dhw = tan_dih - 0.26
 
-        else:
-            cmlg = 0.0
-
-        if cmlg < 12.0:
-            partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Fuselage.LENGTH] = 0.75
-
-            partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Fuselage.MAX_WIDTH] = 0.0
-
-            partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Nacelle.AVG_DIAMETER] = (
-                0.0
-            )
-
-            partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Engine.WING_LOCATIONS] = (
-                0.0
-            )
-
-            partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Wing.DIHEDRAL] = 0.0
-
-            partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Wing.SPAN] = 0.0
-
-        else:
-            partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Fuselage.LENGTH] = 0.0
-
+            # Always apply gradients to the fuselage & wing parameters
             partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Fuselage.MAX_WIDTH] = (
                 dcmlg_dhw * dhw_dfuse_wid
             )
-
-            partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Nacelle.AVG_DIAMETER][
-                :
-            ] = dcmlg_dnac
-
-            partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Engine.WING_LOCATIONS] = (
-                dcmlg_dyee * dyee_dwel
-            )
-
             partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Wing.DIHEDRAL] = (
                 dcmlg_dtan * dtan_dih
             )
-
             partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Wing.SPAN] = (
                 dcmlg_dyee * dyee_dspan
             )
+
+            # Only apply array gradients to the limiting engine type and specific location
+            partials[
+                Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Nacelle.AVG_DIAMETER
+            ].flat[self._active_eng_idx] = dcmlg_dnac
+            partials[
+                Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Engine.WING_LOCATIONS
+            ].flat[self._active_loc_idx] = dcmlg_dyee * dyee_dwel
