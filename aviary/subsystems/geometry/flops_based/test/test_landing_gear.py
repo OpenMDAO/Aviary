@@ -73,9 +73,8 @@ class LandingGearLengthTest(unittest.TestCase):
 
         self.prob.model.add_subsystem('main', MainGearLength(**options), promotes=['*'])
 
-        self.prob.setup(force_alloc_complex=True)  # complex step is great for checking partials
+        self.prob.setup(force_alloc_complex=True)
 
-        # 2. Set the input variables
         self.prob.set_val(Aircraft.Fuselage.LENGTH, 150.0, units='ft')
         self.prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 13.0, units='ft')
         self.prob.set_val(Aircraft.Wing.SPAN, 120.0, units='ft')

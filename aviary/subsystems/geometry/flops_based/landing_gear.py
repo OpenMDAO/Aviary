@@ -99,7 +99,7 @@ class MainGearLength(om.ExplicitComponent):
         for eng_idx, n_wing in enumerate(num_wing_engines):
             pairs_of_wing_engines = int(n_wing) // 2
 
-            # Iterate through all spanwise locations for this specific engine type
+            # Iterate through spanwise locations for this engine type
             for _ in range(pairs_of_wing_engines):
                 yee_raw = locations[loc_idx]
                 yee = yee_raw
@@ -114,7 +114,7 @@ class MainGearLength(om.ExplicitComponent):
                 f_nacelle = distributed_nacelle_diam_factor(d_nacelle, n_total)
                 cmlg = 12.0 * f_nacelle + (0.26 - tan_dih) * (yee - fuse_half_width)
 
-                # Check if this engine demands the longest gear length so far
+                # Check if this engine sizes the gear
                 if cmlg > max_cmlg:
                     max_cmlg = cmlg
 
@@ -148,7 +148,7 @@ class MainGearLength(om.ExplicitComponent):
             partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Fuselage.LENGTH] = 0.75
 
         else:
-            # We only compute gradients with respect to the engine that caused the max gear length
+            # We only compute gradients with respect to the engine that sized the gear length
             tan_dih = np.tan(inputs[Aircraft.Wing.DIHEDRAL][0] * DEG2RAD)
             dtan_dih = DEG2RAD / np.cos(inputs[Aircraft.Wing.DIHEDRAL][0] * DEG2RAD) ** 2
 
@@ -173,7 +173,7 @@ class MainGearLength(om.ExplicitComponent):
             dcmlg_dyee = 0.26 - tan_dih
             dcmlg_dhw = tan_dih - 0.26
 
-            # Apply gradients to the global fuselage/wing parameters
+            # Always apply gradients to the fuselage & wing parameters
             partials[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Fuselage.MAX_WIDTH] = (
                 dcmlg_dhw * dhw_dfuse_wid
             )
@@ -184,7 +184,7 @@ class MainGearLength(om.ExplicitComponent):
                 dcmlg_dyee * dyee_dspan
             )
 
-            # Apply array gradients ONLY to the limiting engine type and specific location
+            # Only apply array gradients to the limiting engine type and specific location
             partials[
                 Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, Aircraft.Nacelle.AVG_DIAMETER
             ].flat[self._active_eng_idx] = dcmlg_dnac
