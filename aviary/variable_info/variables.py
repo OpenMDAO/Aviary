@@ -134,7 +134,6 @@ class Aircraft:
         # These variables are values that do not fall into a particular aircraft component.
         BASE_AREA = 'aircraft:design:base_area'
         CG_DELTA = 'aircraft:design:cg_delta'
-        CHARACTERISTIC_LENGTHS = 'aircraft:design:characteristic_lengths'
         COCKPIT_CONTROL_MASS_COEFFICIENT = 'aircraft:design:cockpit_control_mass_coefficient'
         COMPRESSIBILITY_DRAG_FACTOR = 'aircraft:design:compressibility_drag_factor'
         CRUISE_ALTITUDE = 'aircraft:design:cruise_altitude'
