@@ -1,10 +1,11 @@
 import unittest
-import aviary.api as av
 
-from aviary.models.missions.solved2dof_default import phase_info
-from aviary.models.missions.solved2dof_landing_default import phase_info as phase_info_landing
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+
+import aviary.api as av
+from aviary.models.missions.solved2dof_default import phase_info
+from aviary.models.missions.solved2dof_landing_default import phase_info as phase_info_landing
 from aviary.validation_cases.benchmark_utils import print_benchmark_results
 
 

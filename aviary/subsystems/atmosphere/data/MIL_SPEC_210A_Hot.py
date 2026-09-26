@@ -1,10 +1,7 @@
-from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Tropical import DATA_ORIGIN_NOTE
-
-"""
-See MIL_SPEC_210A_Tropical for source note
-"""
+"""See MIL_SPEC_210A_Tropical for source note."""
 
 from collections import namedtuple
+
 import numpy as np
 
 atm_data = namedtuple('MIL_SPEC_210A_Hot', ['alt', 'temp', 'pres', 'rho'])

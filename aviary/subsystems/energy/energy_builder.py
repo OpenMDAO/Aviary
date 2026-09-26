@@ -74,7 +74,7 @@ class CoreEnergyBuilder(EnergyBuilder):
             post_mission_names.append(f'{self.name}.reserve_fuel_frac.final_mass')
 
         post_mission_bus[main_phases[-1]] = {
-            f'mass': {
+            'mass': {
                 'post_mission_name': post_mission_names,
                 'src_indices': [-1],
             }
@@ -82,13 +82,13 @@ class CoreEnergyBuilder(EnergyBuilder):
 
         if reserve_phases:
             post_mission_bus[reserve_phases[0]] = {
-                f'mass': {
+                'mass': {
                     'post_mission_name': f'{self.name}.reserve_fuel_burned.mass_initial',
                     'src_indices': [0],
                 }
             }
             post_mission_bus[reserve_phases[-1]] = {
-                f'mass': {
+                'mass': {
                     'post_mission_name': f'{self.name}.reserve_fuel_burned.mass_final',
                     'src_indices': [-1],
                 }

@@ -48,7 +48,6 @@ aircraft:engine:num_fuselage_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,1.25,unitless
 aircraft:engine:reference_sls_thrust,19580.2,lbf
-aircraft:engine:scaled_sls_thrust,19580.2,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.0,unitless
 aircraft:fuel:density,6.687,lbm/galUS
@@ -133,7 +132,7 @@ aircraft:wing:high_lift_mass_coefficient,1,unitless
 aircraft:wing:incidence,1.5,deg
 aircraft:design:wing_loading,70,lbf/ft**2
 aircraft:wing:mass_coefficient,75.78,unitless
-aircraft:wing:max_lift_ref,1.45,unitless
+aircraft:wing:reference_clean_max_lift_coefficient,1.45,unitless
 aircraft:wing:max_slat_deflection_landing,0,deg
 aircraft:wing:max_slat_deflection_takeoff,0,deg
 aircraft:wing:max_thickness_location,0.325,unitless

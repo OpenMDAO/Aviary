@@ -1,7 +1,6 @@
 import unittest
 
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.interference import (
@@ -13,6 +12,7 @@ from aviary.subsystems.aerodynamics.gasp_based.interference import (
     WingFuselageInterferenceMission,
     WingFuselageInterferencePremission,
 )
+from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 tol = 1e-6

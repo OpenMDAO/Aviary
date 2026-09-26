@@ -15,6 +15,8 @@ from aviary.mission.energy_state.ode.takeoff_eom import (
     TakeoffEOM,
     VelocityRate,
 )
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     detailed_takeoff_climbing,
@@ -24,8 +26,6 @@ from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_dat
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.preprocessors import preprocess_options
 
 inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 

@@ -114,7 +114,7 @@ class TestEngineDiameter(
 
 @use_tempdirs
 class BWBTestEngineDiameter(unittest.TestCase):
-    """Test engine size using GASPEngineSize class and BWB data"""
+    """Test engine size using GASPEngineSize class and BWB data."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -179,7 +179,7 @@ class ElectricTestCaseMultiEngineDiameter(unittest.TestCase):
 
 @use_tempdirs
 class GASPEngineSizeGroupTestCase(unittest.TestCase):
-    """this is the GASP BWB test case"""
+    """this is the GASP BWB test case."""
 
     def setUp(self):
         aviary_options = AviaryValues()
@@ -210,7 +210,7 @@ class GASPEngineSizeGroupTestCase(unittest.TestCase):
         Testing GASP data case:
         Aircraft.Nacelle.AVG_DIAMETER -- DBARN = 5.3338151
         Aircraft.Nacelle.AVG_LENGTH -- ELN = 7.24758816
-        Aircraft.Nacelle.SURFACE_AREA -- SN/2 = 121.445763 (for one engine)
+        Aircraft.Nacelle.SURFACE_AREA -- SN/2 = 121.445763 (for one engine).
         """
         self.prob.run_model()
 

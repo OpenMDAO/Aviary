@@ -1,4 +1,3 @@
-import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
@@ -7,9 +6,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class MiscControlMass(om.ExplicitComponent):
-    """
-    Computation of total mass of cockpit controls, and stability augmentation system
-    """
+    """Computation of total mass of cockpit controls, and stability augmentation system."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, units='unitless')
@@ -112,9 +109,7 @@ class MiscControlMass(om.ExplicitComponent):
 
 
 class SurfaceControlMass(om.ExplicitComponent):
-    """
-    Computation mass of surface controls.
-    """
+    """Computation mass of surface controls."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, units='unitless')
@@ -272,9 +267,7 @@ class SurfaceControlMass(om.ExplicitComponent):
 
 
 class SumControlMass(om.ExplicitComponent):
-    """
-    Computation of control mass.
-    """
+    """Computation of control mass."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Controls.CONTROL_MASS_INCREMENT, units='lbm')

@@ -5,13 +5,13 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
+from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission, PropulsionSum
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_data.test_data.multi_engine_single_aisle_data import (
     engine_1_inputs,
     engine_2_inputs,
 )
-from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission, PropulsionSum
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Settings
@@ -129,7 +129,7 @@ class BWBPropulsionPreMissionTest(unittest.TestCase):
         self.prob = om.Problem()
 
     def test_case(self):
-        """work in progress"""
+        """Work in progress."""
         options = get_flops_inputs('BWBsimpleFLOPS')
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]))
