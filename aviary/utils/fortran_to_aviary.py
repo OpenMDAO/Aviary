@@ -326,6 +326,11 @@ def process_and_store_data(
     guess_names = list(initialization_guesses.keys())
     var_ind = data_units = None
     skip_variable = False
+
+    if current_namelist:
+        current_namelist = current_namelist.upper()
+        var_name = var_name.upper()
+
     # skip any variables that shouldn't get converted
     if re.search(current_namelist + '.' + var_name, str(unused_vars), re.IGNORECASE):
         return vehicle_data
@@ -1069,6 +1074,14 @@ def update_flops_options(vehicle_data, cmts, verbosity=Verbosity.BRIEF):
         except KeyError:
             CLLDM = 3.0
         input_values.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, [CLLDM])
+
+    if 'AERIN.CLTOM' in vehicle_data['unused_values']:
+        print('unused CLTOM')
+        if Mission.Takeoff.LIFT_COEFFICIENT_MAX not in input_values:
+            print('overwriting_clmax')
+            values, units = vehicle_data['unused_values'].get_item('AERIN.CLTOM')
+            input_values.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, values, units)
+            vehicle_data['unused_values'].delete('AERIN.CLTOM')
 
     design_type, design_units = input_values.get_item(Aircraft.Design.TYPE)
     if design_type[0] == 0:
