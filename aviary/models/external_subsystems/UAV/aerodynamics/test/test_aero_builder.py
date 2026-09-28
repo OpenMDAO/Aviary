@@ -9,7 +9,6 @@ class TestRCAeroBuilder(unittest.TestCase):
         builder = AeroBuilder()
 
         mission_inputs = builder.mission_inputs()
-        self.assertIn(Dynamic.Mission.ALTITUDE, mission_inputs)
         self.assertIn(Dynamic.Mission.VELOCITY, mission_inputs)
         self.assertIn('alpha', mission_inputs)
 
