@@ -1244,7 +1244,7 @@ def update_flops_options(vehicle_data, cmts, verbosity=Verbosity.BRIEF):
         Aircraft.HorizontalTail.SWEEP not in input_values
         or input_values.get_val(Aircraft.HorizontalTail.SWEEP, units='deg')[0] < -90.0
     ):
-        if Aircraft.WING.SWEEP in input_values:
+        if Aircraft.Wing.SWEEP in input_values:
             SWEEP = input_values.get_val(Aircraft.Wing.SWEEP, units='deg')[0]
             input_values.set_val(Aircraft.HorizontalTail.SWEEP, [SWEEP], 'deg')
 
@@ -1255,7 +1255,7 @@ def update_flops_options(vehicle_data, cmts, verbosity=Verbosity.BRIEF):
         if Aircraft.HorizontalTail.SWEEP in input_values:
             SWPHT = input_values.get_val(Aircraft.HorizontalTail.SWEEP, units='deg')[0]
             input_values.set_val(Aircraft.VerticalTail.SWEEP, [SWPHT], 'deg')
-        elif Aircraft.WING.SWEEP in input_values:
+        elif Aircraft.Wing.SWEEP in input_values:
             SWEEP = input_values.get_val(Aircraft.Wing.SWEEP, units='deg')[0]
             input_values.set_val(Aircraft.VerticalTail.SWEEP, [SWEEP], 'deg')
 
@@ -1263,8 +1263,8 @@ def update_flops_options(vehicle_data, cmts, verbosity=Verbosity.BRIEF):
         Aircraft.HorizontalTail.ASPECT_RATIO not in input_values
         or input_values.get_val(Aircraft.HorizontalTail.ASPECT_RATIO)[0] < 0
     ):
-        if Aircraft.WING.ASPECT_RATIO in input_values:
-            AR = input_values.get_val(Aircraft.WING.ASPECT_RATIO)
+        if Aircraft.Wing.ASPECT_RATIO in input_values:
+            AR = input_values.get_val(Aircraft.Wing.ASPECT_RATIO)
             input_values.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, [AR], 'unitless')
 
     if (
