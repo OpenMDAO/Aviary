@@ -27,7 +27,16 @@ def register_custom_reports():
 
     # register per-subsystem report generation
     register_report(
-        name='subsystems',
+        name='subsystems_run_model',
+        func=subsystem_report,
+        desc='Generates reports for each subsystem builder in the Aviary Problem',
+        class_name='AviaryProblem',
+        method='run_model',
+        pre_or_post='post',
+    )
+
+    register_report(
+        name='subsystems_run_driver',
         func=subsystem_report,
         desc='Generates reports for each subsystem builder in the Aviary Problem',
         class_name='AviaryProblem',
@@ -108,7 +117,16 @@ def register_custom_reports():
     )
 
     register_report(
-        name='list_options',
+        name='list_options_run_model',
+        func=_list_options_report,
+        desc='Generates a report on the Problem options',
+        class_name='AviaryProblem',
+        method='run_model',
+        pre_or_post='post',
+    )
+
+    register_report(
+        name='list_options_run_driver',
         func=_list_options_report,
         desc='Generates a report on the Problem options',
         class_name='AviaryProblem',
