@@ -201,5 +201,4 @@ from aviary.subsystems.propulsion.propulsion_builder import (
 )
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
-from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.propeller.propeller_builder import PropellerBuilder

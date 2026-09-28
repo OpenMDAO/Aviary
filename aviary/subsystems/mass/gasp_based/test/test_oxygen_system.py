@@ -10,7 +10,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class OxygenSystemTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = AviaryValues()
@@ -47,7 +47,7 @@ class OxygenSystemTestCase1(unittest.TestCase):
 
 
 class OxygenSystemTestCase2(unittest.TestCase):
-    """Gravity Modification"""
+    """Gravity Modification."""
 
     def setUp(self):
         options = AviaryValues()
@@ -93,7 +93,7 @@ class OxygenSystemTestCase2(unittest.TestCase):
 
 
 class OxygenSystemTestCase3(unittest.TestCase):
-    """BWB Parameters"""
+    """BWB Parameters."""
 
     def setUp(self):
         options = AviaryValues()

@@ -8,9 +8,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class WingCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the wing.
-    """
+    """Calculate the characteristic length and fineness ratio of the wing."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
@@ -101,9 +99,7 @@ class WingCharacteristicLength(om.ExplicitComponent):
 
 
 class BWBWingCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the wing of BWB.
-    """
+    """Calculate the characteristic length and fineness ratio of the wing of BWB."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
@@ -177,9 +173,7 @@ class OtherCharacteristicLengths(om.Group):
 
 
 class FuselageCharacteristicLengths(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the fuselage.
-    """
+    """Calculate the characteristic length and fineness ratio of the fuselage."""
 
     def setup(self):
         # add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)
@@ -295,9 +289,7 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
 
 
 class NacelleCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the nacelle.
-    """
+    """Calculate the characteristic length and fineness ratio of the nacelle."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -427,9 +419,7 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
 
 
 class HorizontalTailCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the horizontal tail.
-    """
+    """Calculate the characteristic length and fineness ratio of the horizontal tail."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
@@ -503,9 +493,7 @@ class HorizontalTailCharacteristicLength(om.ExplicitComponent):
 
 
 class VerticalTailCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the vertical tail.
-    """
+    """Calculate the characteristic length and fineness ratio of the vertical tail."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
@@ -568,9 +556,7 @@ class VerticalTailCharacteristicLength(om.ExplicitComponent):
 
 
 class CanardCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the canard.
-    """
+    """Calculate the characteristic length and fineness ratio of the canard."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Canard.AREA, units='ft**2')

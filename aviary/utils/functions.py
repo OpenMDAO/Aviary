@@ -216,7 +216,7 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
 
     # If the path still doesn't exist, attempt to find it relative to the Aviary package.
     if not path.exists():
-        if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
+        if verbosity > Verbosity.VERBOSE:  # DEBUG
             print(
                 f"Unable to locate '{original_path}' as an absolute or relative path. "
                 'Trying Aviary package path.'
@@ -228,7 +228,7 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
 
     # If the path still doesn't exist, attempt to find it in the models directory.
     if not path.exists():
-        if verbosity > Verbosity.BRIEF:
+        if verbosity > Verbosity.VERBOSE:  # DEBUG
             print(
                 f"Unable to locate '{aviary_based_path}' as an Aviary package path, "
                 'checking built-in models'
@@ -301,7 +301,7 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
             if item.suffix.lower() == '.csv':
                 best_match = item
                 break
-        if best_match == None:
+        if best_match is None:
             # Probably requested the wrong file extension.
             best_match = close_match.pop(0)
         return best_match

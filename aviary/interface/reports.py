@@ -636,7 +636,6 @@ def overridden_variables_report(prob: AviaryProblem, **kwargs):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
-
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'overridden_variables.md'
     with open(report_file, mode='w') as f:
@@ -826,7 +825,6 @@ def _list_options_report(prob: AviaryProblem, **kwargs):
     **kwargs : dict
         Additional keyword arguments, not used in this function
     """
-
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'options.txt'
     with open(report_file, mode='w') as f:

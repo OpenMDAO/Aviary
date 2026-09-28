@@ -16,8 +16,8 @@ from aviary.subsystems.mass.gasp_based.instruments import InstrumentMass
 from aviary.subsystems.mass.gasp_based.oxygen_system import OxygenSystemMass
 from aviary.subsystems.mass.gasp_based.passenger_service import PassengerServiceMass
 from aviary.variable_info.enums import AircraftTypes
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.functions import add_aviary_option
+from aviary.variable_info.variables import Aircraft
 
 
 class EquipMassGroup(om.Group):

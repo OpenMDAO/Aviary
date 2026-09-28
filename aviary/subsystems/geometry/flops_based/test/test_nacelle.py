@@ -5,10 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.geometry.flops_based.nacelle import (
-    NacelleWettedArea,
-    NacelleTotalWettedArea,
-)
+from aviary.subsystems.geometry.flops_based.nacelle import NacelleTotalWettedArea, NacelleWettedArea
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import get_flops_options
 from aviary.variable_info.variables import Aircraft

@@ -74,7 +74,6 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
             'angle_of_attack_optimize': True,
             'angle_of_attack_ref': 15.0,
             'angle_of_attack_bounds': (0.0, 15.0),
-            'angle_of_attack_optimize': True,
             'angle_of_attack_initial': 0.0,
             'angle_of_attack_direct_link': False,
         }
