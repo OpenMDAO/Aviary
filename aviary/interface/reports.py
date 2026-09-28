@@ -117,6 +117,15 @@ def register_custom_reports():
     )
 
     register_report(
+        name='list_options_final_setup',
+        func=_list_options_report,
+        desc='Generates a report on the Problem options',
+        class_name='AviaryProblem',
+        method='final_setup',
+        pre_or_post='post',
+    )
+
+    register_report(
         name='list_options_run_model',
         func=_list_options_report,
         desc='Generates a report on the Problem options',
