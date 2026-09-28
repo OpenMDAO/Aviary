@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -14,6 +14,7 @@ class WingBendingMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
@@ -41,6 +42,9 @@ class WingBendingMass(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
+        gravity = self.options[Mission.GRAVITY]
+        num_fuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
+
         bt = inputs[Aircraft.Wing.BENDING_MATERIAL_FACTOR]
         ulf = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         span = inputs[Aircraft.Wing.SPAN]
@@ -49,24 +53,19 @@ class WingBendingMass(om.ExplicitComponent):
         varswp = inputs[Aircraft.Wing.VAR_SWEEP_MASS_PENALTY]
         pctl = inputs[Aircraft.Wing.LOAD_FRACTION]
         sweep = inputs[Aircraft.Wing.SWEEP]
-        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
         CAYE = inputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR]
+        M2 = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS]
+        M3 = inputs[Aircraft.Wing.MISC_MASS]
+        M2scale = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER]
+        M3scale = inputs[Aircraft.Wing.MISC_MASS_SCALER]
         scaler = inputs[Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER]
 
-        num_fuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
+        gross_weight = mass_to_force_english((gross_mass, 'lbm'), gravity)
 
-        # Note: Calculation requires weights prior to being scaled, so we need to divide
-        # by the scale factor.
-        W2 = (
-            inputs[Aircraft.Wing.SHEAR_CONTROL_MASS]
-            / inputs[Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER]
-            * GRAV_ENGLISH_LBM
-        )
-        W3 = (
-            inputs[Aircraft.Wing.MISC_MASS]
-            / inputs[Aircraft.Wing.MISC_MASS_SCALER]
-            * GRAV_ENGLISH_LBM
-        )
+        W2 = mass_to_force_english((M2 / M2scale, 'lbm'), gravity)
+
+        W3 = mass_to_force_english((M3 / M3scale, 'lbm'), gravity)
 
         vfact = 1.0 + varswp * (0.96 / np.cos(np.pi / 180.0 * sweep) - 1.0)
         cayf = 0.5 if num_fuse > 1 else 1.0
@@ -86,12 +85,13 @@ class WingBendingMass(om.ExplicitComponent):
         )
 
         outputs[Aircraft.Wing.BENDING_MATERIAL_MASS] = (
-            ((gross_weight * CAYE * W1NIR + W2 + W3) / (1.0 + W1NIR) - W2 - W3)
-            * scaler
-            / GRAV_ENGLISH_LBM
-        )
+            (gross_weight * CAYE * W1NIR + W2 + W3) / (1.0 + W1NIR) - W2 - W3
+        ) * scaler
 
     def compute_partials(self, inputs, J):
+        gravity = self.options[Mission.GRAVITY]
+        num_fuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
+
         bt = inputs[Aircraft.Wing.BENDING_MATERIAL_FACTOR]
         ulf = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         span = inputs[Aircraft.Wing.SPAN]
@@ -100,15 +100,21 @@ class WingBendingMass(om.ExplicitComponent):
         varswp = inputs[Aircraft.Wing.VAR_SWEEP_MASS_PENALTY]
         pctl = inputs[Aircraft.Wing.LOAD_FRACTION]
         sweep = inputs[Aircraft.Wing.SWEEP]
-        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
         CAYE = inputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR]
-        W2 = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS] * GRAV_ENGLISH_LBM
-        W3 = inputs[Aircraft.Wing.MISC_MASS] * GRAV_ENGLISH_LBM
-        W2scale = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER]
-        W3scale = inputs[Aircraft.Wing.MISC_MASS_SCALER]
+        M2 = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS]
+        M3 = inputs[Aircraft.Wing.MISC_MASS]
+        M2scale = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER]
+        M3scale = inputs[Aircraft.Wing.MISC_MASS_SCALER]
         scaler = inputs[Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER]
 
-        num_fuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
+        gross_weight = mass_to_force_english((gross_mass, 'lbm'), gravity)
+
+        W2 = mass_to_force_english((M2 / M2scale, 'lbm'), gravity)
+
+        W3 = mass_to_force_english((M3 / M3scale, 'lbm'), gravity)
+
+        dforce_dmass = mass_to_force_english_derivative(gravity)
 
         deg2rad = np.pi / 180.0
         term = 0.96 / np.cos(deg2rad * sweep)
@@ -152,71 +158,67 @@ class WingBendingMass(om.ExplicitComponent):
             * 1.0e-6
         )
 
-        fact1 = gross_weight * CAYE * W1NIR + W2 / W2scale + W3 / W3scale
+        fact1 = gross_weight * CAYE * W1NIR + W2 + W3
         fact2 = 1.0 / (1.0 + W1NIR)
         dbend_w1nir = scaler * (gross_weight * CAYE * fact2 - fact1 * fact2**2)
 
         J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Design.GROSS_MASS] = (
             CAYE * W1NIR * fact2 * scaler
-        )
+        ) * dforce_dmass
 
         J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = (
-            gross_weight * W1NIR * fact2 * scaler / GRAV_ENGLISH_LBM
+            gross_weight * W1NIR * fact2 * scaler
         )
 
         J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.SHEAR_CONTROL_MASS] = (
-            (fact2 - 1.0) * scaler / W2scale
-        )
+            (fact2 - 1.0) * scaler / M2scale
+        ) * dforce_dmass
 
         J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER] = (
-            -(fact2 - 1.0) * scaler * W2 / W2scale**2 / GRAV_ENGLISH_LBM
-        )
+            -(fact2 - 1.0) * scaler * M2 / M2scale**2
+        ) * dforce_dmass
 
         J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.MISC_MASS] = (
-            (fact2 - 1.0) * scaler / W3scale
-        )
+            (fact2 - 1.0) * scaler / M3scale
+        ) * dforce_dmass
 
         J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.MISC_MASS_SCALER] = (
-            -(fact2 - 1.0) * scaler * W3 / W3scale**2 / GRAV_ENGLISH_LBM
-        )
+            -(fact2 - 1.0) * scaler * M3 / M3scale**2
+        ) * dforce_dmass
 
         J[
             Aircraft.Wing.BENDING_MATERIAL_MASS,
             Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER,
-        ] = (fact1 * fact2 - W2 / W2scale - W3 / W3scale) / GRAV_ENGLISH_LBM
+        ] = fact1 * fact2 - W2 - W3
 
         J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.BENDING_MATERIAL_FACTOR] = (
-            dbend_w1nir * dW1NIR_bt / GRAV_ENGLISH_LBM
+            dbend_w1nir * dW1NIR_bt
         )
 
         J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.ULTIMATE_LOAD_FACTOR] = (
-            dbend_w1nir * dW1NIR_ulf / GRAV_ENGLISH_LBM
+            dbend_w1nir * dW1NIR_ulf
         )
 
         J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.LOAD_FRACTION] = (
-            dbend_w1nir * dW1NIR_pctl / GRAV_ENGLISH_LBM
+            dbend_w1nir * dW1NIR_pctl
         )
 
         J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.COMPOSITE_FRACTION] = (
-            dbend_w1nir * dW1NIR_compfrac / GRAV_ENGLISH_LBM
+            dbend_w1nir * dW1NIR_compfrac
         )
 
         J[
             Aircraft.Wing.BENDING_MATERIAL_MASS,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
-        ] = dbend_w1nir * dW1NIR_faert / GRAV_ENGLISH_LBM
+        ] = dbend_w1nir * dW1NIR_faert
 
         J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.VAR_SWEEP_MASS_PENALTY] = (
-            dbend_w1nir * dW1NIR_varswp / GRAV_ENGLISH_LBM
+            dbend_w1nir * dW1NIR_varswp
         )
 
-        J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.SWEEP] = (
-            dbend_w1nir * dW1NIR_sweep / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.SWEEP] = dbend_w1nir * dW1NIR_sweep
 
-        J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.SPAN] = (
-            dbend_w1nir * dW1NIR_span / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.Wing.BENDING_MATERIAL_MASS, Aircraft.Wing.SPAN] = dbend_w1nir * dW1NIR_span
 
 
 class WingShearControlMass(om.ExplicitComponent):
@@ -228,6 +230,7 @@ class WingShearControlMass(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.TYPE)
         add_aviary_option(self, Settings.VERBOSITY)
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         # design_type = self.options[Aircraft.Design.TYPE]
@@ -251,51 +254,46 @@ class WingShearControlMass(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
+        gravity = self.options[Mission.GRAVITY]
+
         comp_frac = inputs[Aircraft.Wing.COMPOSITE_FRACTION]
-        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
         ctrl_area = inputs[Aircraft.Wing.CONTROL_SURFACE_AREA]
         scaler = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER]
 
+        gross_weight = mass_to_force_english((gross_mass, 'lbm'), gravity)
+
         outputs[Aircraft.Wing.SHEAR_CONTROL_MASS] = (
-            self.A3
-            * (1.0 - 0.17 * comp_frac)
-            * ctrl_area**self.A4
-            * gross_weight**self.A5
-            * scaler
-            / GRAV_ENGLISH_LBM
+            self.A3 * (1.0 - 0.17 * comp_frac) * ctrl_area**self.A4 * gross_weight**self.A5 * scaler
         )
 
     def compute_partials(self, inputs, J):
+        gravity = self.options[Mission.GRAVITY]
+
         comp_frac = inputs[Aircraft.Wing.COMPOSITE_FRACTION]
-        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
         ctrl_area = inputs[Aircraft.Wing.CONTROL_SURFACE_AREA]
         scaler = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER]
+
+        gross_weight = mass_to_force_english((gross_mass, 'lbm'), gravity)
+        dforce_dmass = mass_to_force_english_derivative(gravity)
 
         comp_frac_term = self.A3 * (1.0 - 0.17 * comp_frac)
 
         J[Aircraft.Wing.SHEAR_CONTROL_MASS, Aircraft.Wing.COMPOSITE_FRACTION] = (
-            -0.17 * self.A3 * ctrl_area**self.A4 * gross_weight**self.A5 * scaler / GRAV_ENGLISH_LBM
+            -0.17 * self.A3 * ctrl_area**self.A4 * gross_weight**self.A5 * scaler
         )
 
         J[Aircraft.Wing.SHEAR_CONTROL_MASS, Aircraft.Wing.CONTROL_SURFACE_AREA] = (
-            comp_frac_term
-            * self.A4
-            * ctrl_area ** (self.A4 - 1.0)
-            * gross_weight**self.A5
-            * scaler
-            / GRAV_ENGLISH_LBM
+            comp_frac_term * self.A4 * ctrl_area ** (self.A4 - 1.0) * gross_weight**self.A5 * scaler
         )
 
         J[Aircraft.Wing.SHEAR_CONTROL_MASS, Aircraft.Design.GROSS_MASS] = (
             comp_frac_term * ctrl_area**self.A4 * self.A5 * gross_weight ** (self.A5 - 1.0) * scaler
-        )
+        ) * dforce_dmass
 
         J[Aircraft.Wing.SHEAR_CONTROL_MASS, Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER] = (
-            self.A3
-            * (1.0 - 0.17 * comp_frac)
-            * ctrl_area**self.A4
-            * gross_weight**self.A5
-            / GRAV_ENGLISH_LBM
+            self.A3 * (1.0 - 0.17 * comp_frac) * ctrl_area**self.A4 * gross_weight**self.A5
         )
 
 
@@ -339,7 +337,7 @@ class WingMiscMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Wing.MISC_MASS_SCALER]
 
         outputs[Aircraft.Wing.MISC_MASS] = (
-            self.A6 * (1.0 - 0.3 * comp_frac) * area**self.A7 * scaler / GRAV_ENGLISH_LBM
+            self.A6 * (1.0 - 0.3 * comp_frac) * area**self.A7 * scaler
         )
 
     def compute_partials(self, inputs, J):
@@ -348,18 +346,13 @@ class WingMiscMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Wing.MISC_MASS_SCALER]
 
         J[Aircraft.Wing.MISC_MASS, Aircraft.Wing.COMPOSITE_FRACTION] = (
-            -0.3 * self.A6 * area**self.A7 * scaler / GRAV_ENGLISH_LBM
+            -0.3 * self.A6 * area**self.A7 * scaler
         )
         J[Aircraft.Wing.MISC_MASS, Aircraft.Wing.AREA] = (
-            self.A6
-            * (1.0 - 0.3 * comp_frac)
-            * self.A7
-            * area ** (self.A7 - 1)
-            * scaler
-            / GRAV_ENGLISH_LBM
+            self.A6 * (1.0 - 0.3 * comp_frac) * self.A7 * area ** (self.A7 - 1) * scaler
         )
         J[Aircraft.Wing.MISC_MASS, Aircraft.Wing.MISC_MASS_SCALER] = (
-            self.A6 * (1.0 - 0.3 * comp_frac) * area**self.A7 / GRAV_ENGLISH_LBM
+            self.A6 * (1.0 - 0.3 * comp_frac) * area**self.A7
         )
 
 
@@ -398,7 +391,7 @@ class BWBWingMiscMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Wing.MISC_MASS_SCALER]
 
         outputs[Aircraft.Wing.MISC_MASS] = (
-            self.A6 * (1.0 - 0.3 * comp_frac) * area**self.A7 * scaler / GRAV_ENGLISH_LBM
+            self.A6 * (1.0 - 0.3 * comp_frac) * area**self.A7 * scaler
         )
 
     def compute_partials(self, inputs, J):
@@ -407,18 +400,13 @@ class BWBWingMiscMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Wing.MISC_MASS_SCALER]
 
         J[Aircraft.Wing.MISC_MASS, Aircraft.Wing.COMPOSITE_FRACTION] = (
-            -0.3 * self.A6 * area**self.A7 * scaler / GRAV_ENGLISH_LBM
+            -0.3 * self.A6 * area**self.A7 * scaler
         )
         J[Aircraft.Wing.MISC_MASS, 'calculated_wing_area'] = (
-            self.A6
-            * (1.0 - 0.3 * comp_frac)
-            * self.A7
-            * area ** (self.A7 - 1)
-            * scaler
-            / GRAV_ENGLISH_LBM
+            self.A6 * (1.0 - 0.3 * comp_frac) * self.A7 * area ** (self.A7 - 1) * scaler
         )
         J[Aircraft.Wing.MISC_MASS, Aircraft.Wing.MISC_MASS_SCALER] = (
-            self.A6 * (1.0 - 0.3 * comp_frac) * area**self.A7 / GRAV_ENGLISH_LBM
+            self.A6 * (1.0 - 0.3 * comp_frac) * area**self.A7
         )
 
 

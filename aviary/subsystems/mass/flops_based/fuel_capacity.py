@@ -1,7 +1,6 @@
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -142,7 +141,7 @@ class WingFuelCapacity(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         wing_area = inputs[Aircraft.Wing.AREA]
 
-        fuel_density = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
+        fuel_density = inputs[Aircraft.Fuel.DENSITY]
         volume_fraction = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
         span = inputs[Aircraft.Wing.SPAN]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
@@ -157,12 +156,12 @@ class WingFuelCapacity(om.ExplicitComponent):
         )
         fuel_cap_wing = fuel_density * volume_fraction * volume_of_wing
 
-        outputs[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY] = fuel_cap_wing / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY] = fuel_cap_wing
 
     def compute_partials(self, inputs, partials):
         wing_area = inputs[Aircraft.Wing.AREA]
 
-        fuel_density = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
+        fuel_density = inputs[Aircraft.Fuel.DENSITY]
         volume_fraction = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
         span = inputs[Aircraft.Wing.SPAN]
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]

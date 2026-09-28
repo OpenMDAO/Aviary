@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.math_utils import sin_int4, dydx_sin_int4
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
@@ -33,9 +32,7 @@ class TransportCargoContainersMass(om.ExplicitComponent):
         container_count = sin_int4(temp)
         cargo_container_weight = container_count * 175.0 * scaler
 
-        outputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS] = (
-            cargo_container_weight / GRAV_ENGLISH_LBM
-        )
+        outputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS] = cargo_container_weight
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         scaler = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER]
@@ -50,12 +47,12 @@ class TransportCargoContainersMass(om.ExplicitComponent):
         J[
             Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
             Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER,
-        ] = container_count * 175.0 / GRAV_ENGLISH_LBM
+        ] = container_count * 175.0
 
         J[Aircraft.CrewPayload.CARGO_CONTAINER_MASS, Aircraft.CrewPayload.CARGO_MASS] = (
-            partial * scaler / GRAV_ENGLISH_LBM
+            partial * scaler
         )
 
         J[Aircraft.CrewPayload.CARGO_CONTAINER_MASS, Aircraft.CrewPayload.BAGGAGE_MASS] = (
-            partial * scaler / GRAV_ENGLISH_LBM
+            partial * scaler
         )

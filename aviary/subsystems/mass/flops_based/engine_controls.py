@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_engine_count_factor,
     distributed_thrust_factor,
@@ -48,9 +47,7 @@ class TransportEngineCtrlsMass(om.ExplicitComponent):
 
         total_controls_weight = 0.26 * num_engines_factor * thrust_factor**0.5
 
-        outputs[Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS] = (
-            total_controls_weight / GRAV_ENGLISH_LBM
-        )
+        outputs[Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS] = total_controls_weight
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
@@ -62,4 +59,4 @@ class TransportEngineCtrlsMass(om.ExplicitComponent):
         J[
             Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
             Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
-        ] = 0.13 / distributed_thrust_factor_exp / GRAV_ENGLISH_LBM
+        ] = 0.13 / distributed_thrust_factor_exp

@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -31,23 +30,17 @@ class VerticalTailMass(om.ExplicitComponent):
         area = inputs[Aircraft.VerticalTail.AREA]
         taper_ratio = inputs[Aircraft.VerticalTail.TAPER_RATIO]
         scaler = inputs[Aircraft.VerticalTail.MASS_SCALER]
-        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_weight = inputs[Aircraft.Design.GROSS_MASS]
 
         outputs[Aircraft.VerticalTail.MASS] = (
-            scaler
-            * 0.32
-            * gross_weight**0.30
-            * (taper_ratio + 0.50)
-            * area**0.85
-            * num_tails**0.7
-            / GRAV_ENGLISH_LBM
+            scaler * 0.32 * gross_weight**0.30 * (taper_ratio + 0.50) * area**0.85 * num_tails**0.7
         )
 
     def compute_partials(self, inputs, J):
         num_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         area = inputs[Aircraft.VerticalTail.AREA]
-        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_weight = inputs[Aircraft.Design.GROSS_MASS]
         taper_ratio = inputs[Aircraft.VerticalTail.TAPER_RATIO]
         scaler = inputs[Aircraft.VerticalTail.MASS_SCALER]
 
@@ -63,7 +56,6 @@ class VerticalTailMass(om.ExplicitComponent):
                 * (taper_ratio + 0.50)
                 * area**-0.15
                 * num_tails_exp
-                / GRAV_ENGLISH_LBM
             )
         else:
             J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.AREA] = 0.0
@@ -73,16 +65,11 @@ class VerticalTailMass(om.ExplicitComponent):
         )
 
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.TAPER_RATIO] = (
-            scaler * 0.32 * gross_weight_exp * area_exp * num_tails_exp / GRAV_ENGLISH_LBM
+            scaler * 0.32 * gross_weight_exp * area_exp * num_tails_exp
         )
 
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.MASS_SCALER] = (
-            0.32
-            * gross_weight_exp
-            * (taper_ratio + 0.50)
-            * area_exp
-            * num_tails_exp
-            / GRAV_ENGLISH_LBM
+            0.32 * gross_weight_exp * (taper_ratio + 0.50) * area_exp * num_tails_exp
         )
 
 
