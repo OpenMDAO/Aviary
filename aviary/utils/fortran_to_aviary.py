@@ -1076,9 +1076,7 @@ def update_flops_options(vehicle_data, cmts, verbosity=Verbosity.BRIEF):
         input_values.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, [CLLDM])
 
     if 'AERIN.CLTOM' in vehicle_data['unused_values']:
-        print('unused CLTOM')
         if Mission.Takeoff.LIFT_COEFFICIENT_MAX not in input_values:
-            print('overwriting_clmax')
             values, units = vehicle_data['unused_values'].get_item('AERIN.CLTOM')
             input_values.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, values, units)
             vehicle_data['unused_values'].delete('AERIN.CLTOM')
