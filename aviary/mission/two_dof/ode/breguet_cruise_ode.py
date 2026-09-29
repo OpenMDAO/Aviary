@@ -19,13 +19,6 @@ class BreguetCruiseODE(TwoDOFODE):
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
-        self.add_subsystem(
-            'calc_weight',
-            MassToWeight(num_nodes=nn),
-            promotes_inputs=['mass'],
-            promotes_outputs=['weight'],
-        )
-
         prop_group = self.add_subsystems_and_solver(couple_propulsion=True)
 
         bal = om.BalanceComp(
