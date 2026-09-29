@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -27,38 +26,38 @@ class ElectricalMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        elec_mass_coeff = inputs[Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER] * GRAV_ENGLISH_LBM
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
+        elec_mass_coeff = inputs[Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER]
 
         if PAX <= 12:
-            electrical_wt = 0.03217 * gross_wt_initial - 20.0
+            electrical_mass = 0.03217 * gross_mass_initial - 20.0
         else:
             if num_engines == 1:
-                electrical_wt = 0.00778 * gross_wt_initial + 33.0
+                electrical_mass = 0.00778 * gross_mass_initial + 33.0
             else:
-                electrical_wt = elec_mass_coeff * PAX + 170.0
+                electrical_mass = elec_mass_coeff * PAX + 170.0
 
-        outputs[Aircraft.Electrical.MASS] = electrical_wt / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Electrical.MASS] = electrical_mass
 
     def compute_partials(self, inputs, J):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
 
         if PAX <= 12.0:
-            delectrical_wt_dgross_wt_initial = 0.03217
-            delectrical_wt_delec_mass_coeff = 0.0
+            delectrical_mass_dgross_mass_initial = 0.03217
+            delectrical_mass_delec_mass_coeff = 0.0
         else:
             if num_engines == 1:
-                delectrical_wt_dgross_wt_initial = 0.00778
-                delectrical_wt_delec_mass_coeff = 0.0
+                delectrical_mass_dgross_mass_initial = 0.00778
+                delectrical_mass_delec_mass_coeff = 0.0
             else:
-                delectrical_wt_dgross_wt_initial = 0.0
-                delectrical_wt_delec_mass_coeff = PAX * GRAV_ENGLISH_LBM
+                delectrical_mass_dgross_mass_initial = 0.0
+                delectrical_mass_delec_mass_coeff = PAX
 
         J[Aircraft.Electrical.MASS, Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER] = (
-            delectrical_wt_delec_mass_coeff
-        ) / GRAV_ENGLISH_LBM
+            delectrical_mass_delec_mass_coeff
+        )
 
         J[Aircraft.Electrical.MASS, Aircraft.Design.GROSS_MASS] = (
-            delectrical_wt_dgross_wt_initial / GRAV_ENGLISH_LBM
+            delectrical_mass_dgross_mass_initial
         )

@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
@@ -150,22 +149,22 @@ class ACMass(om.ExplicitComponent):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         mu = self.options['mu']
         x0 = self.options['x0']
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         p_diff_fus = inputs[Aircraft.Fuselage.PRESSURE_DIFFERENTIAL]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         ac_coeff = inputs[Aircraft.AirConditioning.MASS_COEFFICIENT]
 
-        air_conditioning_wt = common_compute(
-            smooth, mu, x0, gross_wt_initial, fus_len, p_diff_fus, cabin_width, ac_coeff
+        air_conditioning_mass = common_compute(
+            smooth, mu, x0, gross_mass_initial, fus_len, p_diff_fus, cabin_width, ac_coeff
         )
-        outputs[Aircraft.AirConditioning.MASS] = air_conditioning_wt / GRAV_ENGLISH_LBM
+        outputs[Aircraft.AirConditioning.MASS] = air_conditioning_mass
 
     def compute_partials(self, inputs, J):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         mu = self.options['mu']
         x0 = self.options['x0']
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         p_diff_fus = inputs[Aircraft.Fuselage.PRESSURE_DIFFERENTIAL]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
@@ -181,17 +180,13 @@ class ACMass(om.ExplicitComponent):
             smooth, mu, x0, gross_wt_initial, fus_len, p_diff_fus, cabin_width, ac_coeff
         )
         J[Aircraft.AirConditioning.MASS, Aircraft.Design.GROSS_MASS] = dac_wt_dgross_wt
-        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.LENGTH] = (
-            dac_wt_dfus_len / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.LENGTH] = dac_wt_dfus_len
         J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL] = (
-            dac_wt_dp_diff_fus / GRAV_ENGLISH_LBM
+            dac_wt_dp_diff_fus
         )
-        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.AVG_DIAMETER] = (
-            dac_wt_dcabin_width / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.AVG_DIAMETER] = dac_wt_dcabin_width
         J[Aircraft.AirConditioning.MASS, Aircraft.AirConditioning.MASS_COEFFICIENT] = (
-            dac_wt_dac_coeff / GRAV_ENGLISH_LBM
+            dac_wt_dac_coeff
         )
 
 
@@ -227,23 +222,23 @@ class BWBACMass(om.ExplicitComponent):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         mu = self.options['mu']
         x0 = self.options['x0']
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         p_diff_fus = inputs[Aircraft.Fuselage.PRESSURE_DIFFERENTIAL]
         cabin_width = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
         ac_coeff = inputs[Aircraft.AirConditioning.MASS_COEFFICIENT]
 
-        air_conditioning_wt = common_compute(
-            smooth, mu, x0, gross_wt_initial, fus_len, p_diff_fus, cabin_width, ac_coeff
+        air_conditioning_mass = common_compute(
+            smooth, mu, x0, gross_mass_initial, fus_len, p_diff_fus, cabin_width, ac_coeff
         )
 
-        outputs[Aircraft.AirConditioning.MASS] = air_conditioning_wt / GRAV_ENGLISH_LBM
+        outputs[Aircraft.AirConditioning.MASS] = air_conditioning_mass
 
     def compute_partials(self, inputs, J):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         mu = self.options['mu']
         x0 = self.options['x0']
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         p_diff_fus = inputs[Aircraft.Fuselage.PRESSURE_DIFFERENTIAL]
         cabin_width = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
@@ -259,15 +254,11 @@ class BWBACMass(om.ExplicitComponent):
             smooth, mu, x0, gross_wt_initial, fus_len, p_diff_fus, cabin_width, ac_coeff
         )
         J[Aircraft.AirConditioning.MASS, Aircraft.Design.GROSS_MASS] = dac_wt_dgross_wt
-        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.LENGTH] = (
-            dac_wt_dfus_len / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.LENGTH] = dac_wt_dfus_len
         J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL] = (
-            dac_wt_dp_diff_fus / GRAV_ENGLISH_LBM
+            dac_wt_dp_diff_fus
         )
-        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.HYDRAULIC_DIAMETER] = (
-            dac_wt_dcabin_width / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.HYDRAULIC_DIAMETER] = dac_wt_dcabin_width
         J[Aircraft.AirConditioning.MASS, Aircraft.AirConditioning.MASS_COEFFICIENT] = (
-            dac_wt_dac_coeff / GRAV_ENGLISH_LBM
+            dac_wt_dac_coeff
         )

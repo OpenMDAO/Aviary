@@ -1,8 +1,8 @@
-import numpy as np
-import openmdao.api as om
 import warnings
 
-from aviary.constants import GRAV_ENGLISH_LBM
+import numpy as np
+import openmdao.api as om
+
 from aviary.subsystems.mass.gasp_based.control import ControlMassGroup
 from aviary.subsystems.mass.gasp_based.engine import EngineMassGroup
 from aviary.subsystems.mass.gasp_based.landing import LandingGearMassGroup
@@ -10,14 +10,14 @@ from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import FlapType, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 
 
 class MassParameters(om.ExplicitComponent):
     """
-    Computation of various parameters (such as correction factor for the use of
-    non optimum material, reduction in bending moment factor for strut braced wing,
-    landing gear location factor, engine position factor, and wing chord half sweep
-    angle).
+    Computation of various parameters (such as correction factor for the use of non optimum
+    material, reduction in bending moment factor for strut braced wing, landing gear location
+    factor, engine position factor, and wing chord half sweep angle).
     """
 
     def initialize(self):
@@ -432,33 +432,31 @@ class ElectricAugmentationMass(om.ExplicitComponent):
         transmission_eff = inputs['transmission_eff']
         battery_eff = inputs['battery_eff']
         rho_battery = inputs['rho_battery']
-        motor_spec_wt = inputs['motor_spec_mass'] / GRAV_ENGLISH_LBM
-        inverter_spec_wt = inputs['inverter_spec_mass'] / GRAV_ENGLISH_LBM
-        TMS_spec_wt = inputs['TMS_spec_mass'] * GRAV_ENGLISH_LBM
+        motor_spec_mass = inputs['motor_spec_mass']
+        inverter_spec_mass = inputs['inverter_spec_mass']
+        TMS_spec_mass = inputs['TMS_spec_mass']
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
 
         motor_current = 1000.0 * motor_power / motor_voltage
         num_wires = motor_current / max_amp_per_wire
-        cable_wt = (
-            1.15 * safety_factor * num_wires * cable_len * wire_area * rho_wire * GRAV_ENGLISH_LBM
-        )
+        cable_mass = 1.15 * safety_factor * num_wires * cable_len * wire_area * rho_wire
         actual_battery_energy = battery_energy / (
             motor_eff * inverter_eff * transmission_eff * battery_eff
         )
-        battery_wt = actual_battery_energy / rho_battery
-        motor_wt = motor_power / 0.746 / motor_spec_wt
-        inverter_wt = motor_power / inverter_spec_wt
-        TMS_wt = TMS_spec_wt * motor_power
+        battery_mass = actual_battery_energy / rho_battery
+        motor_mass = motor_power / 0.746 / motor_spec_mass
+        inverter_mass = motor_power / inverter_spec_mass
+        TMS_mass = TMS_spec_mass * motor_power
 
-        aug_wt = (
-            battery_wt
-            + cable_wt
-            + num_engines * inverter_wt
-            + num_engines * motor_wt
-            + num_engines * TMS_wt
+        aug_mass = (
+            battery_mass
+            + cable_mass
+            + num_engines * inverter_mass
+            + num_engines * motor_mass
+            + num_engines * TMS_mass
         )
 
-        outputs['aug_mass'] = aug_wt / GRAV_ENGLISH_LBM
+        outputs['aug_mass'] = aug_mass
 
     def compute_partials(self, inputs, J):
         motor_power = inputs['motor_power']
@@ -474,9 +472,9 @@ class ElectricAugmentationMass(om.ExplicitComponent):
         transmission_eff = inputs['transmission_eff']
         battery_eff = inputs['battery_eff']
         rho_battery = inputs['rho_battery']
-        motor_spec_wt = inputs['motor_spec_mass'] / GRAV_ENGLISH_LBM
-        inverter_spec_wt = inputs['inverter_spec_mass'] / GRAV_ENGLISH_LBM
-        TMS_spec_wt = inputs['TMS_spec_mass'] * GRAV_ENGLISH_LBM
+        motor_spec_mass = inputs['motor_spec_mass']
+        inverter_spec_mass = inputs['inverter_spec_mass']
+        TMS_spec_mass = inputs['TMS_spec_mass']
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
 
         motor_current = 1000.0 * motor_power / motor_voltage
@@ -491,34 +489,31 @@ class ElectricAugmentationMass(om.ExplicitComponent):
             * cable_len
             * wire_area
             * rho_wire
-            * GRAV_ENGLISH_LBM
             * 1000.0
             / motor_voltage
             / max_amp_per_wire
         )
 
-        dInverterWt_dMotorPower = 1 / inverter_spec_wt
-        dMotorWt_dMotorPower = 1 / 0.746 / motor_spec_wt
-        dTMSwt_dMotorPower = TMS_spec_wt
+        dInverterWt_dMotorPower = 1 / inverter_spec_mass
+        dMotorWt_dMotorPower = 1 / 0.746 / motor_spec_mass
+        dTMSwt_dMotorPower = TMS_spec_mass
 
         J['aug_mass', 'motor_power'] = (
             dCableWt_dMotorPower
             + num_engines * dInverterWt_dMotorPower
             + num_engines * dMotorWt_dMotorPower
             + num_engines * dTMSwt_dMotorPower
-        ) / GRAV_ENGLISH_LBM
+        )
         J['aug_mass', 'motor_voltage'] = (
             -1.15
             * safety_factor
             * cable_len
             * wire_area
             * rho_wire
-            * GRAV_ENGLISH_LBM
             / max_amp_per_wire
             * 1000.0
             * motor_power
             / motor_voltage**2
-            / GRAV_ENGLISH_LBM
         )
         J['aug_mass', 'max_amp_per_wire'] = (
             -1.15
@@ -526,10 +521,8 @@ class ElectricAugmentationMass(om.ExplicitComponent):
             * cable_len
             * wire_area
             * rho_wire
-            * GRAV_ENGLISH_LBM
             * motor_current
             / max_amp_per_wire**2
-            / GRAV_ENGLISH_LBM
         )
         J['aug_mass', 'safety_factor'] = 1.15 * num_wires * cable_len * wire_area * rho_wire
         J['aug_mass', Aircraft.Electrical.HYBRID_CABLE_LENGTH] = (
@@ -538,47 +531,39 @@ class ElectricAugmentationMass(om.ExplicitComponent):
         J['aug_mass', 'wire_area'] = 1.15 * safety_factor * num_wires * cable_len * rho_wire
         J['aug_mass', 'rho_wire'] = 1.15 * safety_factor * num_wires * cable_len * wire_area
         J['aug_mass', 'battery_energy'] = (
-            1
-            / (motor_eff * inverter_eff * transmission_eff * battery_eff)
-            / rho_battery
-            / GRAV_ENGLISH_LBM
+            1 / (motor_eff * inverter_eff * transmission_eff * battery_eff) / rho_battery
         )
         J['aug_mass', 'motor_eff'] = (
             -battery_energy
             / (motor_eff**2 * inverter_eff * transmission_eff * battery_eff)
             / rho_battery
-            / GRAV_ENGLISH_LBM
         )
         J['aug_mass', 'inverter_eff'] = (
             -battery_energy
             / (motor_eff * inverter_eff**2 * transmission_eff * battery_eff)
             / rho_battery
-            / GRAV_ENGLISH_LBM
         )
         J['aug_mass', 'transmission_eff'] = (
             -battery_energy
             / (motor_eff * inverter_eff * transmission_eff**2 * battery_eff)
             / rho_battery
-            / GRAV_ENGLISH_LBM
         )
         J['aug_mass', 'battery_eff'] = (
             -battery_energy
             / (motor_eff * inverter_eff * transmission_eff * battery_eff**2)
             / rho_battery
-            / GRAV_ENGLISH_LBM
         )
-        J['aug_mass', 'rho_battery'] = -actual_battery_energy / rho_battery**2 / GRAV_ENGLISH_LBM
-        J['aug_mass', 'motor_spec_mass'] = (
-            -num_engines * motor_power / 0.746 / motor_spec_wt**2 / GRAV_ENGLISH_LBM**2
-        )
-        J['aug_mass', 'inverter_spec_mass'] = (
-            -num_engines * motor_power / inverter_spec_wt**2 / GRAV_ENGLISH_LBM**2
-        )
+        J['aug_mass', 'rho_battery'] = -actual_battery_energy / rho_battery**2
+        J['aug_mass', 'motor_spec_mass'] = -num_engines * motor_power / 0.746 / motor_spec_mass**2
+        J['aug_mass', 'inverter_spec_mass'] = -num_engines * motor_power / inverter_spec_mass**2
         J['aug_mass', 'TMS_spec_mass'] = num_engines * motor_power
 
 
 class HorizontalTailMass(om.ExplicitComponent):
     """Computation of horizontal tail mass."""
+
+    def initialize(self):
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
@@ -616,7 +601,9 @@ class HorizontalTailMass(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gravity = self.options[Mission.GRAVITY]
+
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         coef_htail = inputs[Aircraft.HorizontalTail.MASS_COEFFICIENT]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         span_htail = inputs[Aircraft.HorizontalTail.SPAN]
@@ -628,6 +615,8 @@ class HorizontalTailMass(om.ExplicitComponent):
         tc_ratio_root_htail = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
         root_chord_htail = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
         CK9 = inputs[Aircraft.HorizontalTail.MASS_SCALER]
+
+        gross_wt_initial = mass_to_force_english((gross_mass_initial, 'lbm'), gravity)
 
         FH = (
             gross_wt_initial
@@ -641,7 +630,6 @@ class HorizontalTailMass(om.ExplicitComponent):
 
         outputs[Aircraft.HorizontalTail.MASS] = CK9 * (
             350.0
-            / GRAV_ENGLISH_LBM
             * (
                 htail_area
                 * FH
@@ -649,10 +637,12 @@ class HorizontalTailMass(om.ExplicitComponent):
                 / (100.0 * htail_mom_arm * tc_ratio_root_htail * root_chord_htail)
             )
             ** 0.54
-        )
+        )  # implied 1 lbf -> 1 lbm conversion at standard Earth gravity
 
     def compute_partials(self, inputs, J):
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gravity = self.options[Mission.GRAVITY]
+
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         coef_htail = inputs[Aircraft.HorizontalTail.MASS_COEFFICIENT]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         span_htail = inputs[Aircraft.HorizontalTail.SPAN]
@@ -663,6 +653,9 @@ class HorizontalTailMass(om.ExplicitComponent):
         htail_mom_arm = inputs[Aircraft.HorizontalTail.MOMENT_ARM]
         tc_ratio_root_htail = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
         root_chord_htail = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
+
+        gross_wt_initial = mass_to_force_english((gross_mass_initial, 'lbm'), gravity)
+        dforce_dmass = mass_to_force_english_derivative(gravity)
 
         FH = (
             gross_wt_initial
@@ -729,7 +722,6 @@ class HorizontalTailMass(om.ExplicitComponent):
 
         J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.AREA] = (
             350.0
-            / GRAV_ENGLISH_LBM
             * 0.54
             * (
                 FH
@@ -750,10 +742,10 @@ class HorizontalTailMass(om.ExplicitComponent):
             ** 0.54
             * FH ** (-0.46)
             * dFH_dGrossWtInitial
+            * dforce_dmass
         )
         J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.MASS_COEFFICIENT] = (
             350.0
-            / GRAV_ENGLISH_LBM
             * 0.54
             * (
                 htail_area
@@ -766,7 +758,6 @@ class HorizontalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.HorizontalTail.MASS, Aircraft.Fuselage.LENGTH] = (
             350.0
-            / GRAV_ENGLISH_LBM
             * 0.54
             * (
                 htail_area
@@ -779,7 +770,6 @@ class HorizontalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.SPAN] = (
             350.0
-            / GRAV_ENGLISH_LBM
             * 0.54
             * (
                 htail_area
@@ -792,7 +782,6 @@ class HorizontalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.HorizontalTail.MASS, Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER] = (
             350.0
-            / GRAV_ENGLISH_LBM
             * 0.54
             * (
                 htail_area
@@ -805,7 +794,6 @@ class HorizontalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.TAPER_RATIO] = (
             350.0
-            / GRAV_ENGLISH_LBM
             * 0.54
             * (
                 htail_area
@@ -818,7 +806,6 @@ class HorizontalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.HorizontalTail.MASS, 'min_dive_vel'] = (
             350.0
-            / GRAV_ENGLISH_LBM
             * 0.54
             * (htail_area * FH / (100.0 * htail_mom_arm * tc_ratio_root_htail * root_chord_htail))
             ** 0.54
@@ -827,7 +814,6 @@ class HorizontalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.MOMENT_ARM] = (
             350.0
-            / GRAV_ENGLISH_LBM
             * (
                 htail_area
                 * FH
@@ -840,7 +826,6 @@ class HorizontalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.THICKNESS_TO_CHORD] = (
             350.0
-            / GRAV_ENGLISH_LBM
             * (
                 htail_area
                 * FH
@@ -853,7 +838,6 @@ class HorizontalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.ROOT_CHORD] = (
             350.0
-            / GRAV_ENGLISH_LBM
             * (
                 htail_area
                 * FH
@@ -866,7 +850,6 @@ class HorizontalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.MASS_SCALER] = (
             350.0
-            / GRAV_ENGLISH_LBM
             * (
                 htail_area
                 * FH
@@ -879,6 +862,9 @@ class HorizontalTailMass(om.ExplicitComponent):
 
 class VerticalTailMass(om.ExplicitComponent):
     """Computation of vertical tail mass."""
+
+    def initialize(self):
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, units='unitless')
@@ -949,11 +935,13 @@ class VerticalTailMass(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        gravity = self.options[Mission.GRAVITY]
+
         taper_ratio_vtail = inputs[Aircraft.VerticalTail.TAPER_RATIO]
         AR_vtail = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
         quarter_sweep_tail = inputs[Aircraft.VerticalTail.SWEEP]
         span_vtail = inputs[Aircraft.VerticalTail.SPAN]
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         coef_htail = inputs[Aircraft.HorizontalTail.MASS_COEFFICIENT]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         span_htail = inputs[Aircraft.HorizontalTail.SPAN]
@@ -968,6 +956,8 @@ class VerticalTailMass(om.ExplicitComponent):
         tc_ratio_root_vtail = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
         root_chord_vtail = inputs[Aircraft.VerticalTail.ROOT_CHORD]
         CK10 = inputs[Aircraft.VerticalTail.MASS_SCALER]
+
+        gross_wt_initial = mass_to_force_english((gross_mass_initial, 'lbm'), gravity)
 
         tan_sweep_vtail_LE = (1.0 - taper_ratio_vtail) / (
             1.0 + taper_ratio_vtail
@@ -999,7 +989,6 @@ class VerticalTailMass(om.ExplicitComponent):
         )
         outputs[Aircraft.VerticalTail.MASS] = CK10 * (
             380.0
-            / GRAV_ENGLISH_LBM
             * (
                 (FV + htail_loc * FH / 2.0)
                 * vtail_area
@@ -1007,14 +996,16 @@ class VerticalTailMass(om.ExplicitComponent):
                 / (100.0 * vtail_mom_arm * tc_ratio_root_vtail * root_chord_vtail)
             )
             ** 0.54
-        )
+        )  # implied 1 lbf -> 1 lbm conversion at standard Earth gravity
 
     def compute_partials(self, inputs, J):
+        gravity = self.options[Mission.GRAVITY]
+
         taper_ratio_vtail = inputs[Aircraft.VerticalTail.TAPER_RATIO]
         AR_vtail = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
         quarter_sweep_tail = inputs[Aircraft.VerticalTail.SWEEP]
         span_vtail = inputs[Aircraft.VerticalTail.SPAN]
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         coef_htail = inputs[Aircraft.HorizontalTail.MASS_COEFFICIENT]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         span_htail = inputs[Aircraft.HorizontalTail.SPAN]
@@ -1028,6 +1019,9 @@ class VerticalTailMass(om.ExplicitComponent):
         vtail_mom_arm = inputs[Aircraft.VerticalTail.MOMENT_ARM]
         tc_ratio_root_vtail = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
         root_chord_vtail = inputs[Aircraft.VerticalTail.ROOT_CHORD]
+
+        gross_wt_initial = mass_to_force_english((gross_mass_initial, 'lbm'), gravity)
+        dforce_dmass = mass_to_force_english_derivative(gravity)
 
         tan_sweep_vtail_LE = (1.0 - taper_ratio_vtail) / (
             1.0 + taper_ratio_vtail
@@ -1161,7 +1155,7 @@ class VerticalTailMass(om.ExplicitComponent):
             / (2 * 1000000.0 * (1.0 + taper_ratio_vtail)) ** 2
         )
 
-        temp = ((3.0 * (1.0 + taper_ratio_vtail)) * 2 - (1.0 + 2.0 * taper_ratio_vtail) * 3) / (
+        common = ((3.0 * (1.0 + taper_ratio_vtail)) * 2 - (1.0 + 2.0 * taper_ratio_vtail) * 3) / (
             3.0 * (1.0 + taper_ratio_vtail)
         ) ** 2
 
@@ -1172,7 +1166,7 @@ class VerticalTailMass(om.ExplicitComponent):
             dTanSweepVtailLE_dTaperRatioVtail
             * (1.0 + 2.0 * taper_ratio_vtail)
             / (3.0 * (1.0 + taper_ratio_vtail))
-            + tan_sweep_vtail_LE * temp
+            + tan_sweep_vtail_LE * common
         )
         J['loc_MAC_vtail', Aircraft.VerticalTail.ASPECT_RATIO] = (
             dTanSweepVtailLE_dARVtail
@@ -1187,7 +1181,7 @@ class VerticalTailMass(om.ExplicitComponent):
             / (3.0 * (1.0 + taper_ratio_vtail))
         )
 
-        temp = (
+        common = (
             380.0
             * (
                 vtail_area
@@ -1198,64 +1192,40 @@ class VerticalTailMass(om.ExplicitComponent):
         )
 
         J[Aircraft.VerticalTail.MASS, Aircraft.Design.GROSS_MASS] = (
-            temp
+            common
             * 0.54
             * (FV + htail_loc * FH / 2.0) ** (-0.46)
             * (dFV_dGrossWtInitial + htail_loc * dFH_dGrossWtInitial / 2)
-        )
+        ) * dforce_dmass
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.MASS_COEFFICIENT] = (
-            temp * 0.54 * (FV + htail_loc * FH / 2.0) ** (-0.46) * dFV_dCoefVtail / GRAV_ENGLISH_LBM
+            common * 0.54 * (FV + htail_loc * FH / 2.0) ** (-0.46) * dFV_dCoefVtail
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.Fuselage.LENGTH] = (
-            temp
-            / GRAV_ENGLISH_LBM
+            common
             * 0.54
             * (FV + htail_loc * FH / 2.0) ** (-0.46)
             * (dFV_dFusLen + htail_loc * dFH_dFusLen / 2)
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.Wing.SPAN] = (
-            temp * 0.54 * (FV + htail_loc * FH / 2.0) ** (-0.46) * dFV_dWingspan / GRAV_ENGLISH_LBM
+            common * 0.54 * (FV + htail_loc * FH / 2.0) ** (-0.46) * dFV_dWingspan
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.SPAN] = (
-            temp * 0.54 * (FV + htail_loc * FH / 2.0) ** (-0.46) * dFV_dSpanVtail / GRAV_ENGLISH_LBM
+            common * 0.54 * (FV + htail_loc * FH / 2.0) ** (-0.46) * dFV_dSpanVtail
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.TAPER_RATIO] = (
-            temp
-            * 0.54
-            * (FV + htail_loc * FH / 2.0) ** (-0.46)
-            * dFV_dTaperRatioVtail
-            / GRAV_ENGLISH_LBM
+            common * 0.54 * (FV + htail_loc * FH / 2.0) ** (-0.46) * dFV_dTaperRatioVtail
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.HorizontalTail.MASS_COEFFICIENT] = (
-            temp
-            / GRAV_ENGLISH_LBM
-            * 0.54
-            * (FV + htail_loc * FH / 2.0) ** (-0.46)
-            * dFH_dCoefHtail
-            * htail_loc
-            / 2
+            common * 0.54 * (FV + htail_loc * FH / 2.0) ** (-0.46) * dFH_dCoefHtail * htail_loc / 2
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.HorizontalTail.SPAN] = (
-            temp
-            / GRAV_ENGLISH_LBM
-            * 0.54
-            * (FV + htail_loc * FH / 2.0) ** (-0.46)
-            * dFH_dSpanHtail
-            * htail_loc
-            / 2
+            common * 0.54 * (FV + htail_loc * FH / 2.0) ** (-0.46) * dFH_dSpanHtail * htail_loc / 2
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER] = (
-            temp
-            / GRAV_ENGLISH_LBM
-            * 0.54
-            * (FV + htail_loc * FH / 2.0) ** (-0.46)
-            * dFH_dHookFac
-            * htail_loc
-            / 2
+            common * 0.54 * (FV + htail_loc * FH / 2.0) ** (-0.46) * dFH_dHookFac * htail_loc / 2
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.HorizontalTail.TAPER_RATIO] = (
-            temp
-            / GRAV_ENGLISH_LBM
+            common
             * 0.54
             * (FV + htail_loc * FH / 2.0) ** (-0.46)
             * dFH_dTaperRatioHtail
@@ -1264,7 +1234,6 @@ class VerticalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION] = (
             380.0
-            / GRAV_ENGLISH_LBM
             * (
                 vtail_area
                 * np.log10(min_dive_vel)
@@ -1278,7 +1247,6 @@ class VerticalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.AREA] = (
             380.0
-            / GRAV_ENGLISH_LBM
             * (
                 (FV + htail_loc * FH / 2.0)
                 * np.log10(min_dive_vel)
@@ -1290,7 +1258,6 @@ class VerticalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.VerticalTail.MASS, 'min_dive_vel'] = (
             380.0
-            / GRAV_ENGLISH_LBM
             * (
                 (FV + htail_loc * FH / 2.0)
                 * vtail_area
@@ -1303,7 +1270,6 @@ class VerticalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.MOMENT_ARM] = (
             380.0
-            / GRAV_ENGLISH_LBM
             * (
                 (FV + htail_loc * FH / 2.0)
                 * vtail_area
@@ -1316,7 +1282,6 @@ class VerticalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.THICKNESS_TO_CHORD] = (
             380.0
-            / GRAV_ENGLISH_LBM
             * (
                 (FV + htail_loc * FH / 2.0)
                 * vtail_area
@@ -1329,7 +1294,6 @@ class VerticalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.ROOT_CHORD] = (
             380.0
-            / GRAV_ENGLISH_LBM
             * (
                 (FV + htail_loc * FH / 2.0)
                 * vtail_area
@@ -1342,7 +1306,6 @@ class VerticalTailMass(om.ExplicitComponent):
         )
         J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.MASS_SCALER] = (
             380.0
-            / GRAV_ENGLISH_LBM
             * (
                 (FV + htail_loc * FH / 2.0)
                 * vtail_area
@@ -1478,26 +1441,18 @@ class HighLiftMass(om.ExplicitComponent):
 
         # Slat Mass
         WLED = 3.28 * SLE**1.13
-        outputs['slat_mass'] = WLED / GRAV_ENGLISH_LBM
+        outputs['slat_mass'] = WLED
 
         # Flap Mass
         if flap_type is FlapType.PLAIN:
             outputs['flap_mass'] = (
-                c_mass_trend_high_lift
-                * (VFLAP / 100.0) ** 2
-                * SFLAP
-                * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (VFLAP / 100.0) ** 2 * SFLAP * num_flaps ** (-0.5)
             )
         elif flap_type is FlapType.SPLIT:
             if VFLAP > 160:
-                outputs['flap_mass'] = (
-                    c_mass_trend_high_lift * SFLAP * (VFLAP**2.195) / 45180.0 / GRAV_ENGLISH_LBM
-                )
+                outputs['flap_mass'] = c_mass_trend_high_lift * SFLAP * (VFLAP**2.195) / 45180.0
             else:
-                outputs['flap_mass'] = (
-                    c_mass_trend_high_lift * SFLAP * 0.369 * VFLAP**0.2733 / GRAV_ENGLISH_LBM
-                )
+                outputs['flap_mass'] = c_mass_trend_high_lift * SFLAP * 0.369 * VFLAP**0.2733
 
         elif (
             flap_type is FlapType.SINGLE_SLOTTED
@@ -1505,24 +1460,16 @@ class HighLiftMass(om.ExplicitComponent):
             or flap_type is FlapType.TRIPLE_SLOTTED
         ):
             outputs['flap_mass'] = (
-                c_mass_trend_high_lift
-                * (VFLAP / 100.0) ** 2
-                * SFLAP
-                * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (VFLAP / 100.0) ** 2 * SFLAP * num_flaps**0.5
             )
         elif flap_type is FlapType.FOWLER or flap_type is FlapType.DOUBLE_SLOTTED_FOWLER:
             outputs['flap_mass'] = (
-                c_mass_trend_high_lift
-                * (VFLAP / 100.0) ** 2.38
-                * SFLAP**1.19
-                / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (VFLAP / 100.0) ** 2.38 * SFLAP**1.19 / (num_flaps**0.595)
             )
         else:
             raise ValueError(flap_type + ' is not a valid flap type')
 
-        outputs[Aircraft.Wing.HIGH_LIFT_MASS] = outputs['flap_mass'] + WLED / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Wing.HIGH_LIFT_MASS] = outputs['flap_mass'] + WLED
 
     def compute_partials(self, inputs, J):
         flap_type = self.options[Aircraft.Wing.FLAP_TYPE]
@@ -1650,34 +1597,28 @@ class HighLiftMass(om.ExplicitComponent):
         )
 
         # Slat Mass
-        J['slat_mass', Aircraft.Wing.SLAT_CHORD_RATIO] = (
-            3.28 * 1.13 * (SLE**0.13) * dSLE_dSCR / GRAV_ENGLISH_LBM
-        )
-        J['slat_mass', Aircraft.Wing.AREA] = 3.28 * 1.13 * (SLE**0.13) * dSLE_dWA / GRAV_ENGLISH_LBM
-        J['slat_mass', Aircraft.Wing.SLAT_SPAN_RATIO] = (
-            3.28 * 1.13 * (SLE**0.13) * dSLE_dSSR / GRAV_ENGLISH_LBM
-        )
-        J['slat_mass', Aircraft.Wing.TAPER_RATIO] = (
-            3.28 * 1.13 * (SLE**0.13) * dSLE_dTR / GRAV_ENGLISH_LBM
-        )
+        J['slat_mass', Aircraft.Wing.SLAT_CHORD_RATIO] = 3.28 * 1.13 * (SLE**0.13) * dSLE_dSCR
+        J['slat_mass', Aircraft.Wing.AREA] = 3.28 * 1.13 * (SLE**0.13) * dSLE_dWA
+        J['slat_mass', Aircraft.Wing.SLAT_SPAN_RATIO] = 3.28 * 1.13 * (SLE**0.13) * dSLE_dSSR
+        J['slat_mass', Aircraft.Wing.TAPER_RATIO] = 3.28 * 1.13 * (SLE**0.13) * dSLE_dTR
         J['slat_mass', Aircraft.Wing.SPAN] = (
-            3.28 * 1.13 * (SLE**0.13) * dSLE_dBTSR * dBTSR_dwingspan / GRAV_ENGLISH_LBM
+            3.28 * 1.13 * (SLE**0.13) * dSLE_dBTSR * dBTSR_dwingspan
         )
         J['slat_mass', Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
-            3.28 * 1.13 * (SLE**0.13) * dSLE_dBTSR * dBTSR_dTCRR / GRAV_ENGLISH_LBM
+            3.28 * 1.13 * (SLE**0.13) * dSLE_dBTSR * dBTSR_dTCRR
         )
         J['slat_mass', Aircraft.Wing.CENTER_CHORD] = (
-            3.28 * 1.13 * (SLE**0.13) * dSLE_dBTSR * dBTSR_dCC / GRAV_ENGLISH_LBM
+            3.28 * 1.13 * (SLE**0.13) * dSLE_dBTSR * dBTSR_dCC
         )
         J['slat_mass', Aircraft.Fuselage.AVG_DIAMETER] = (
-            3.28 * 1.13 * (SLE**0.13) * dSLE_dBTSR * dBTSR_dCW / GRAV_ENGLISH_LBM
+            3.28 * 1.13 * (SLE**0.13) * dSLE_dBTSR * dBTSR_dCW
         )
 
         # Flap Mass
         if flap_type is FlapType.PLAIN:
-            # c_wt_trend_high_lift * (VFLAP/100.)**2*SFLAP*num_flaps**(-.5)
+            # c_mass_trend_high_lift * (VFLAP/100.)**2*SFLAP*num_flaps**(-.5)
             J['flap_mass', Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
-                (VFLAP / 100) ** 2 * SFLAP * num_flaps ** (-0.5) / GRAV_ENGLISH_LBM
+                (VFLAP / 100) ** 2 * SFLAP * num_flaps ** (-0.5)
             )
             J['flap_mass', Aircraft.Design.WING_LOADING] = (
                 c_mass_trend_high_lift
@@ -1685,7 +1626,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dVFLAP_dWL
                 * SFLAP
                 * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Mission.Landing.LIFT_COEFFICIENT_MAX] = (
                 c_mass_trend_high_lift
@@ -1693,35 +1633,18 @@ class HighLiftMass(om.ExplicitComponent):
                 * dVFLAP_dCMFL
                 * SFLAP
                 * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Aircraft.Wing.FLAP_CHORD_RATIO] = (
-                c_mass_trend_high_lift
-                * (VFLAP / 100) ** 2
-                * dSFLAP_dFCR
-                * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (VFLAP / 100) ** 2 * dSFLAP_dFCR * num_flaps ** (-0.5)
             )
             J['flap_mass', Aircraft.Wing.AREA] = (
-                c_mass_trend_high_lift
-                * (VFLAP / 100) ** 2
-                * dSFLAP_dWA
-                * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (VFLAP / 100) ** 2 * dSFLAP_dWA * num_flaps ** (-0.5)
             )
             J['flap_mass', Aircraft.Wing.FLAP_SPAN_RATIO] = (
-                c_mass_trend_high_lift
-                * (VFLAP / 100) ** 2
-                * dSFLAP_dFSR
-                * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (VFLAP / 100) ** 2 * dSFLAP_dFSR * num_flaps ** (-0.5)
             )
             J['flap_mass', Aircraft.Wing.TAPER_RATIO] = (
-                c_mass_trend_high_lift
-                * (VFLAP / 100) ** 2
-                * dSFLAP_dTR
-                * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (VFLAP / 100) ** 2 * dSFLAP_dTR * num_flaps ** (-0.5)
             )
             J['flap_mass', Aircraft.Wing.SPAN] = (
                 c_mass_trend_high_lift
@@ -1729,7 +1652,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dwingspan
                 * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
             )
 
             J['flap_mass', Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
@@ -1738,7 +1660,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dTCRR
                 * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
             )
 
             J['flap_mass', Aircraft.Wing.CENTER_CHORD] = (
@@ -1747,7 +1668,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dCC
                 * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Aircraft.Fuselage.AVG_DIAMETER] = (
                 c_mass_trend_high_lift
@@ -1755,60 +1675,35 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dCW
                 * num_flaps ** (-0.5)
-                / GRAV_ENGLISH_LBM
             )
         elif flap_type is FlapType.SPLIT:
             if VFLAP > 160:
-                # c_wt_trend_high_lift*SFLAP*(VFLAP**2.195)/45180.
+                # c_mass_trend_high_lift*SFLAP*(VFLAP**2.195)/45180.
                 J['flap_mass', Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
-                    SFLAP * (VFLAP**2.195) / 45180.0 / GRAV_ENGLISH_LBM
+                    SFLAP * (VFLAP**2.195) / 45180.0
                 )
                 J['flap_mass', Aircraft.Design.WING_LOADING] = (
-                    c_mass_trend_high_lift
-                    * SFLAP
-                    * (2.195 * VFLAP**1.195 * dVFLAP_dWL)
-                    / 45180.0
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * SFLAP * (2.195 * VFLAP**1.195 * dVFLAP_dWL) / 45180.0
                 )
 
                 J['flap_mass', Mission.Landing.LIFT_COEFFICIENT_MAX] = (
-                    c_mass_trend_high_lift
-                    * SFLAP
-                    * (2.195 * VFLAP**1.195 * dVFLAP_dCMFL)
-                    / 45180.0
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * SFLAP * (2.195 * VFLAP**1.195 * dVFLAP_dCMFL) / 45180.0
                 )
 
                 J['flap_mass', Aircraft.Wing.FLAP_CHORD_RATIO] = (
-                    c_mass_trend_high_lift
-                    * dSFLAP_dFCR
-                    * (VFLAP**2.195)
-                    / 45180.0
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dFCR * (VFLAP**2.195) / 45180.0
                 )
 
                 J['flap_mass', Aircraft.Wing.AREA] = (
-                    c_mass_trend_high_lift
-                    * dSFLAP_dWA
-                    * (VFLAP**2.195)
-                    / 45180.0
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dWA * (VFLAP**2.195) / 45180.0
                 )
 
                 J['flap_mass', Aircraft.Wing.FLAP_SPAN_RATIO] = (
-                    c_mass_trend_high_lift
-                    * dSFLAP_dFSR
-                    * (VFLAP**2.195)
-                    / 45180.0
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dFSR * (VFLAP**2.195) / 45180.0
                 )
 
                 J['flap_mass', Aircraft.Wing.TAPER_RATIO] = (
-                    c_mass_trend_high_lift
-                    * dSFLAP_dTR
-                    * (VFLAP**2.195)
-                    / 45180.0
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dTR * (VFLAP**2.195) / 45180.0
                 )
                 J['flap_mass', Aircraft.Wing.SPAN] = (
                     c_mass_trend_high_lift
@@ -1816,46 +1711,29 @@ class HighLiftMass(om.ExplicitComponent):
                     * dBTSR_dwingspan
                     * (VFLAP**2.195)
                     / 45180.0
-                    / GRAV_ENGLISH_LBM
                 )
 
                 J['flap_mass', Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
-                    c_mass_trend_high_lift
-                    * dSFLAP_dBTSR
-                    * dBTSR_dTCRR
-                    * (VFLAP**2.195)
-                    / 45180.0
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dBTSR * dBTSR_dTCRR * (VFLAP**2.195) / 45180.0
                 )
 
                 J['flap_mass', Aircraft.Wing.CENTER_CHORD] = (
-                    c_mass_trend_high_lift
-                    * dSFLAP_dBTSR
-                    * dBTSR_dCC
-                    * (VFLAP**2.195)
-                    / 45180.0
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dBTSR * dBTSR_dCC * (VFLAP**2.195) / 45180.0
                 )
 
                 J['flap_mass', Aircraft.Fuselage.AVG_DIAMETER] = (
-                    c_mass_trend_high_lift
-                    * dSFLAP_dBTSR
-                    * dBTSR_dCW
-                    * (VFLAP**2.195)
-                    / 45180.0
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dBTSR * dBTSR_dCW * (VFLAP**2.195) / 45180.0
                 )
             else:
-                # c_wt_trend_high_lift*SFLAP*0.369*VFLAP**0.2733
+                # c_mass_trend_high_lift*SFLAP*0.369*VFLAP**0.2733
                 J['flap_mass', Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
-                    SFLAP * 0.369 * VFLAP**0.2733 / GRAV_ENGLISH_LBM
+                    SFLAP * 0.369 * VFLAP**0.2733
                 )
                 J['flap_mass', Aircraft.Design.WING_LOADING] = (
                     c_mass_trend_high_lift
                     * SFLAP
                     * 0.369
                     * (0.2733 * VFLAP ** (-0.7267) * dVFLAP_dWL)
-                    / GRAV_ENGLISH_LBM
                 )
 
                 J['flap_mass', Mission.Landing.LIFT_COEFFICIENT_MAX] = (
@@ -1863,75 +1741,49 @@ class HighLiftMass(om.ExplicitComponent):
                     * SFLAP
                     * 0.369
                     * (0.2733 * VFLAP ** (-0.7267) * dVFLAP_dCMFL)
-                    / GRAV_ENGLISH_LBM
                 )
 
                 J['flap_mass', Aircraft.Wing.FLAP_CHORD_RATIO] = (
-                    c_mass_trend_high_lift * dSFLAP_dFCR * 0.369 * VFLAP**0.2733 / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dFCR * 0.369 * VFLAP**0.2733
                 )
 
                 J['flap_mass', Aircraft.Wing.AREA] = (
-                    c_mass_trend_high_lift * dSFLAP_dWA * 0.369 * VFLAP**0.2733 / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dWA * 0.369 * VFLAP**0.2733
                 )
 
                 J['flap_mass', Aircraft.Wing.FLAP_SPAN_RATIO] = (
-                    c_mass_trend_high_lift * dSFLAP_dFSR * 0.369 * VFLAP**0.2733 / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dFSR * 0.369 * VFLAP**0.2733
                 )
 
                 J['flap_mass', Aircraft.Wing.TAPER_RATIO] = (
-                    c_mass_trend_high_lift * dSFLAP_dTR * 0.369 * VFLAP**0.2733 / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dTR * 0.369 * VFLAP**0.2733
                 )
                 J['flap_mass', Aircraft.Wing.SPAN] = (
-                    c_mass_trend_high_lift
-                    * dSFLAP_dBTSR
-                    * dBTSR_dwingspan
-                    * 0.369
-                    * VFLAP**0.2733
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dBTSR * dBTSR_dwingspan * 0.369 * VFLAP**0.2733
                 )
 
                 J['flap_mass', Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
-                    c_mass_trend_high_lift
-                    * dSFLAP_dBTSR
-                    * dBTSR_dTCRR
-                    * 0.369
-                    * VFLAP**0.2733
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dBTSR * dBTSR_dTCRR * 0.369 * VFLAP**0.2733
                 )
 
                 J['flap_mass', Aircraft.Wing.CENTER_CHORD] = (
-                    c_mass_trend_high_lift
-                    * dSFLAP_dBTSR
-                    * dBTSR_dCC
-                    * 0.369
-                    * VFLAP**0.2733
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dBTSR * dBTSR_dCC * 0.369 * VFLAP**0.2733
                 )
 
                 J['flap_mass', Aircraft.Fuselage.AVG_DIAMETER] = (
-                    c_mass_trend_high_lift
-                    * dSFLAP_dBTSR
-                    * dBTSR_dCW
-                    * 0.369
-                    * VFLAP**0.2733
-                    / GRAV_ENGLISH_LBM
+                    c_mass_trend_high_lift * dSFLAP_dBTSR * dBTSR_dCW * 0.369 * VFLAP**0.2733
                 )
         elif (
             flap_type is FlapType.SINGLE_SLOTTED
             or flap_type is FlapType.DOUBLE_SLOTTED
             or flap_type is FlapType.TRIPLE_SLOTTED
         ):
-            # c_wt_trend_high_lift*(VFLAP/100.)**2*SFLAP*num_flaps**.5
+            # c_mass_trend_high_lift*(VFLAP/100.)**2*SFLAP*num_flaps**.5
             J['flap_mass', Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
-                (VFLAP / 100.0) ** 2 * SFLAP * num_flaps**0.5 / GRAV_ENGLISH_LBM
+                (VFLAP / 100.0) ** 2 * SFLAP * num_flaps**0.5
             )
             J['flap_mass', Aircraft.Design.WING_LOADING] = (
-                c_mass_trend_high_lift
-                * (2 * VFLAP / 100**2)
-                * dVFLAP_dWL
-                * SFLAP
-                * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (2 * VFLAP / 100**2) * dVFLAP_dWL * SFLAP * num_flaps**0.5
             )
             J['flap_mass', Mission.Landing.LIFT_COEFFICIENT_MAX] = (
                 c_mass_trend_high_lift
@@ -1939,35 +1791,18 @@ class HighLiftMass(om.ExplicitComponent):
                 * dVFLAP_dCMFL
                 * SFLAP
                 * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Aircraft.Wing.FLAP_CHORD_RATIO] = (
-                c_mass_trend_high_lift
-                * (VFLAP / 100.0) ** 2
-                * dSFLAP_dFCR
-                * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (VFLAP / 100.0) ** 2 * dSFLAP_dFCR * num_flaps**0.5
             )
             J['flap_mass', Aircraft.Wing.AREA] = (
-                c_mass_trend_high_lift
-                * (VFLAP / 100.0) ** 2
-                * dSFLAP_dWA
-                * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (VFLAP / 100.0) ** 2 * dSFLAP_dWA * num_flaps**0.5
             )
             J['flap_mass', Aircraft.Wing.FLAP_SPAN_RATIO] = (
-                c_mass_trend_high_lift
-                * (VFLAP / 100.0) ** 2
-                * dSFLAP_dFSR
-                * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (VFLAP / 100.0) ** 2 * dSFLAP_dFSR * num_flaps**0.5
             )
             J['flap_mass', Aircraft.Wing.TAPER_RATIO] = (
-                c_mass_trend_high_lift
-                * (VFLAP / 100.0) ** 2
-                * dSFLAP_dTR
-                * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
+                c_mass_trend_high_lift * (VFLAP / 100.0) ** 2 * dSFLAP_dTR * num_flaps**0.5
             )
             J['flap_mass', Aircraft.Wing.SPAN] = (
                 c_mass_trend_high_lift
@@ -1975,7 +1810,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dwingspan
                 * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
             )
 
             J['flap_mass', Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
@@ -1984,7 +1818,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dTCRR
                 * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
             )
 
             J['flap_mass', Aircraft.Wing.CENTER_CHORD] = (
@@ -1993,7 +1826,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dCC
                 * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Aircraft.Fuselage.AVG_DIAMETER] = (
                 c_mass_trend_high_lift
@@ -2001,12 +1833,11 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dCW
                 * num_flaps**0.5
-                / GRAV_ENGLISH_LBM
             )
         elif flap_type is FlapType.FOWLER or flap_type is FlapType.DOUBLE_SLOTTED_FOWLER:
-            # c_wt_trend_high_lift * (VFLAP/100.)**2.38*SFLAP**1.19/(num_flaps**.595)
+            # c_mass_trend_high_lift * (VFLAP/100.)**2.38*SFLAP**1.19/(num_flaps**.595)
             J['flap_mass', Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
-                (VFLAP / 100.0) ** 2.38 * SFLAP**1.19 / (num_flaps**0.595) / GRAV_ENGLISH_LBM
+                (VFLAP / 100.0) ** 2.38 * SFLAP**1.19 / (num_flaps**0.595)
             )
             J['flap_mass', Aircraft.Design.WING_LOADING] = (
                 c_mass_trend_high_lift
@@ -2014,7 +1845,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dVFLAP_dWL
                 * SFLAP**1.19
                 / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Mission.Landing.LIFT_COEFFICIENT_MAX] = (
                 c_mass_trend_high_lift
@@ -2022,7 +1852,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dVFLAP_dCMFL
                 * SFLAP**1.19
                 / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Aircraft.Wing.FLAP_CHORD_RATIO] = (
                 c_mass_trend_high_lift
@@ -2030,7 +1859,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * (1.19 * SFLAP**0.19)
                 * dSFLAP_dFCR
                 / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Aircraft.Wing.AREA] = (
                 c_mass_trend_high_lift
@@ -2038,7 +1866,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * (1.19 * SFLAP**0.19)
                 * dSFLAP_dWA
                 / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Aircraft.Wing.FLAP_SPAN_RATIO] = (
                 c_mass_trend_high_lift
@@ -2046,7 +1873,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * (1.19 * SFLAP**0.19)
                 * dSFLAP_dFSR
                 / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Aircraft.Wing.TAPER_RATIO] = (
                 c_mass_trend_high_lift
@@ -2054,7 +1880,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * (1.19 * SFLAP**0.19)
                 * dSFLAP_dTR
                 / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Aircraft.Wing.SPAN] = (
                 c_mass_trend_high_lift
@@ -2063,7 +1888,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dwingspan
                 / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
             )
 
             J['flap_mass', Aircraft.Wing.THICKNESS_TO_CHORD_ROOT] = (
@@ -2073,7 +1897,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dTCRR
                 / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
             )
 
             J['flap_mass', Aircraft.Wing.CENTER_CHORD] = (
@@ -2083,7 +1906,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dCC
                 / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
             )
             J['flap_mass', Aircraft.Fuselage.AVG_DIAMETER] = (
                 c_mass_trend_high_lift
@@ -2092,7 +1914,6 @@ class HighLiftMass(om.ExplicitComponent):
                 * dSFLAP_dBTSR
                 * dBTSR_dCW
                 / (num_flaps**0.595)
-                / GRAV_ENGLISH_LBM
             )
 
         J[Aircraft.Wing.HIGH_LIFT_MASS, Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = J[

@@ -1,7 +1,7 @@
 import openmdao.utils.units as units
 
 units.add_unit('distance_units', '1*m')
-GRAV_ENGLISH_LBM = 1
+
 GRAV_EARTH = (
     9.80665,
     'm/s**2',

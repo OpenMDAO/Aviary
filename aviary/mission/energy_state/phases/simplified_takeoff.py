@@ -186,7 +186,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         rho_SL = self.options[Mission.SEA_LEVEL_DENSITY][0]
         gravity = self.options[Mission.GRAVITY]
 
-        dmass_dforce = mass_to_force_english_derivative(gravity)
+        dforce_dmass = mass_to_force_english_derivative(gravity)
 
         ramp_weight = mass_to_force_english(mass=(inputs['mass'], 'lbm'), gravity=gravity)
         rho = inputs[Dynamic.Atmosphere.DENSITY]
@@ -210,7 +210,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
             * S
             * Cl_max
             * (-thrust / ramp_weight**2 - (0.00550 / S) / L_over_D)
-        ) * dmass_dforce
+        ) * dforce_dmass
         dRD_dS = (
             den_RD * 0
             - 17
@@ -247,7 +247,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         )
         dRD_dRho = 0
 
-        dRot_dM = 140 * 0.5 * rad_Rot ** (-0.5) / (S * Cl_max * rho_ratio) * dmass_dforce
+        dRot_dM = 140 * 0.5 * rad_Rot ** (-0.5) / (S * Cl_max * rho_ratio) * dforce_dmass
         dRot_dS = 140 * 0.5 * rad_Rot ** (-0.5) * (-ramp_weight / (S**2 * Cl_max * rho_ratio))
         dRot_dClMax = 140 * 0.5 * rad_Rot ** (-0.5) * (-ramp_weight / (S * Cl_max**2 * rho_ratio))
         dRot_dThrust = 0
@@ -257,7 +257,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         dCout_dM = (
             140 * 0.5 * (ramp_weight / S) ** (-0.5) / S / den_Cout
             - 140 * (ramp_weight / S) ** 0.5 / (den_Cout) ** 2 * (-climbout_thrust / ramp_weight**2)
-        ) * dmass_dforce
+        ) * dforce_dmass
         dCout_dS = 140 * 0.5 * (ramp_weight / S) ** (-0.5) * (-ramp_weight) / S**2 / den_Cout
         dCout_dClMax = 0
         dCout_dThrust = (

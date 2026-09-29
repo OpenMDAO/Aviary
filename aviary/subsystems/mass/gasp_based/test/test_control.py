@@ -1,278 +1,315 @@
 import unittest
 
-import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary import constants
-from aviary.subsystems.mass.gasp_based.control import ControlMassGroup
+from aviary.subsystems.mass.gasp_based.control import (
+    ControlMassGroup,
+    MiscControlMass,
+    SumControlMass,
+    SurfaceControlMass,
+)
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
-# this is the large single aisle 1 V3 test case
 @use_tempdirs
-class ControlMassTestCase(unittest.TestCase):
+class MiscControlMassTestCase(unittest.TestCase):
+    """Tests for the MiscControlMass component."""
+
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('control_mass', ControlMassGroup(), promotes=['*'])
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=0.95, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.AREA, val=1392.1, units='ft**2'
-        )  # bug fixed value
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.951, units='unitless'
-        )  # bug fixed value
-        self.prob.model.set_input_defaults(
-            'min_dive_vel', val=420, units='kn'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.CONTROL_MASS_INCREMENT, val=0, units='lbm'
-        )  # bug fixed value and original value
+        self.prob.model.add_subsystem('misc_control', MiscControlMass(), promotes=['*'])
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def _set_inputs(self, gross_mass):
+        self.prob.set_val(
+            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
+        )
+        self.prob.set_val(Aircraft.Design.GROSS_MASS, val=gross_mass, units='lbm')
+        self.prob.set_val(
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
+        )
+        self.prob.set_val(Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless')
+        self.prob.set_val(
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, val=1, units='unitless'
+        )
+        self.prob.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1, units='unitless')
+
+    def test_case_1(self):
+        # this is the large single aisle 1 V3 test case
+        self._set_inputs(gross_mass=175400)
         self.prob.run_model()
 
         expected_values = {
-            Aircraft.Controls.MASS: 3945,
+            Aircraft.Controls.COCKPIT_CONTROL_MASS: (137.25749725, 'lbm'),
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS: (0.0, 'lbm'),
         }
         tol = 5e-4
 
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
+        with self.subTest(check='values'):
+            for var_name, (expected, units) in expected_values.items():
+                with self.subTest(var=var_name):
+                    actual = self.prob.get_val(var_name, units=units)
+                    assert_near_equal(actual, expected, tol)
 
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=1e-11, rtol=1e-12)
+        with self.subTest(check='partials'):
+            data = self.prob.check_partials(out_stream=None, method='cs')
+            assert_check_partials(data, atol=1e-11, rtol=1e-12)
 
-
-@use_tempdirs
-class BWBControlMassTestCase(unittest.TestCase):
-    """GAST BWB model"""
-
-    def setUp(self):
-        prob = self.prob = om.Problem()
-        prob.model.add_subsystem('control_mass', ControlMassGroup(), promotes=['*'])
-
-        prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, 0.5, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85714286, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.97744787, units='unitless'
-        )
-        prob.model.set_input_defaults('min_dive_vel', 420, units='kn')
-        prob.model.set_input_defaults(
-            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, 16.5, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, 0, units='lbm'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, 1, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, 1, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, 1, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Controls.CONTROL_MASS_INCREMENT, 0, units='lbm')
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
+    def test_BWB(self):
+        # GASP BWB model
+        self._set_inputs(gross_mass=150000)
         self.prob.run_model()
 
         expected_values = {
-            Aircraft.Wing.SURFACE_CONTROL_MASS: 2045.5556421,
-            Aircraft.Controls.MASS: 2174.28611375,
+            Aircraft.Controls.COCKPIT_CONTROL_MASS: (128.73047164, 'lbm'),
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS: (0.0, 'lbm'),
         }
         tol = 1e-7
 
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
+        with self.subTest(check='values'):
+            for var_name, (expected, units) in expected_values.items():
+                with self.subTest(var=var_name):
+                    actual = self.prob.get_val(var_name, units=units)
+                    assert_near_equal(actual, expected, tol)
 
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=1e-11, rtol=1e-12)
+        with self.subTest(check='partials'):
+            data = self.prob.check_partials(out_stream=None, method='cs')
+            assert_check_partials(data, atol=1e-11, rtol=1e-12)
 
 
-# this is the large single aisle 1 V3 test case
 @use_tempdirs
-class ControlGroupTestCase1(unittest.TestCase):
-    def setUp(self):
-        options = AviaryValues()
+class SurfaceControlMassTestCase(unittest.TestCase):
+    """Tests for the SurfaceControlMass component."""
 
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('surface_control', SurfaceControlMass(), promotes=['*'])
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def _set_inputs(
+        self, coefficient, area, gross_mass, ultimate_load_factor, min_dive_vel, cockpit_mass
+    ):
+        self.prob.set_val(
+            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=coefficient, units='unitless'
+        )
+        self.prob.set_val(Aircraft.Wing.AREA, val=area, units='ft**2')
+        self.prob.set_val(Aircraft.Design.GROSS_MASS, val=gross_mass, units='lbm')
+        self.prob.set_val(
+            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=ultimate_load_factor, units='unitless'
+        )
+        self.prob.set_val('min_dive_vel', val=min_dive_vel, units='kn')
+        self.prob.set_val(Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless')
+        self.prob.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1, units='unitless')
+        self.prob.set_val(Aircraft.Controls.COCKPIT_CONTROL_MASS, val=cockpit_mass, units='lbm')
+
+    def test_case_1(self):
+        # this is the large single aisle 1 V3 test case
+        self._set_inputs(
+            coefficient=0.95,
+            area=1392.1,
+            gross_mass=175400,
+            ultimate_load_factor=3.951,
+            min_dive_vel=420,
+            cockpit_mass=137.25749725,
+        )
+        self.prob.run_model()
+
+        with self.subTest(check='value'):
+            assert_near_equal(self.prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 3807.92115815, 5e-4)
+
+        with self.subTest(check='partials'):
+            data = self.prob.check_partials(out_stream=None, method='cs')
+            assert_check_partials(data, atol=1e-11, rtol=1e-12)
+
+    def test_BWB(self):
+        # GASP BWB model
+        self._set_inputs(
+            coefficient=0.5,
+            area=2142.85714286,
+            gross_mass=150000,
+            ultimate_load_factor=3.97744787,
+            min_dive_vel=420,
+            cockpit_mass=128.73047164,
+        )
+        self.prob.run_model()
+
+        assert_near_equal(self.prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 2045.5556421, 1e-7)
+
+    def test_alt_gravity(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
-            'control_group',
-            ControlMassGroup(),
+            'surface_control',
+            SurfaceControlMass(**{Mission.GRAVITY: (25, 'ft/s**2')}),
             promotes=['*'],
         )
 
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        self._set_inputs(
+            coefficient=0.95,
+            area=1392.1,
+            gross_mass=175400,
+            ultimate_load_factor=3.951,
+            min_dive_vel=420,
+            cockpit_mass=137.25749725,
+        )
+        self.prob.run_model()
+
+        with self.subTest(check='value'):
+            assert_near_equal(self.prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 3252.0277469, 1e-10)
+
+        with self.subTest(check='partials'):
+            data = self.prob.check_partials(out_stream=None, method='cs')
+            assert_check_partials(data, atol=1e-11, rtol=1e-12)
+
+
+@use_tempdirs
+class SumControlMassTestCase(unittest.TestCase):
+    """Tests for the SumControlMass component."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('sum_control', SumControlMass(), promotes=['*'])
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def _set_inputs(self, cockpit_mass, stab_mass, surface_mass):
+        self.prob.set_val(Aircraft.Controls.CONTROL_MASS_INCREMENT, val=0, units='lbm')
+        self.prob.set_val(Aircraft.Controls.COCKPIT_CONTROL_MASS, val=cockpit_mass, units='lbm')
+        self.prob.set_val(
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=stab_mass, units='lbm'
+        )
+        self.prob.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, val=surface_mass, units='lbm')
+
+    def test_case_1(self):
+        # this is the large single aisle 1 V3 test case
+        self._set_inputs(cockpit_mass=137.25749725, stab_mass=0.0, surface_mass=3807.92115815)
+        self.prob.run_model()
+
+        with self.subTest(check='value'):
+            assert_near_equal(self.prob[Aircraft.Controls.MASS], 3945.0, 5e-4)
+
+        with self.subTest(check='partials'):
+            data = self.prob.check_partials(out_stream=None, method='cs')
+            assert_check_partials(data, atol=1e-11, rtol=1e-12)
+
+    def test_BWB(self):
+        # GASP BWB model
+        self._set_inputs(
+            cockpit_mass=128.73047164,
+            stab_mass=0.0,
+            surface_mass=2045.5556421,
+        )
+        self.prob.run_model()
+
+        assert_near_equal(self.prob[Aircraft.Controls.MASS], 2174.28611375, 1e-7)
+
+
+@use_tempdirs
+class ControlMassGroupTestCase(unittest.TestCase):
+    """Tests for the ControlMassGroup group."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('control_group', ControlMassGroup(), promotes=['*'])
+
+    def _set_inputs(self, coefficient, area, gross_mass, ultimate_load_factor, min_dive_vel):
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=0.95, units='unitless'
-        )  # bug fixed value and original value
+            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=coefficient, units='unitless'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=area, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=gross_mass, units='lbm')
         self.prob.model.set_input_defaults(
-            Aircraft.Wing.AREA, val=1392.1, units='ft**2'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.951, units='unitless'
-        )  # bug fixed value
-        self.prob.model.set_input_defaults(
-            'min_dive_vel', val=420, units='kn'
-        )  # bug fixed value and original value
+            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=ultimate_load_factor, units='unitless'
+        )
+        self.prob.model.set_input_defaults('min_dive_vel', val=min_dive_vel, units='kn')
         self.prob.model.set_input_defaults(
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
-        )  # bug fixed value and original value
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
-        )  # bug fixed value and original value
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Controls.CONTROL_MASS_INCREMENT, val=0, units='lbm'
-        )  # bug fixed value and original value
+        )
 
+        options = AviaryValues()
         setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
-        self.prob.run_model()
-
-        expected_values = {
-            Aircraft.Controls.COCKPIT_CONTROL_MASS: 137.25749725,
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS: 0.0,
-            Aircraft.Wing.SURFACE_CONTROL_MASS: 3807.92115815,
-            Aircraft.Controls.MASS: 3945.0,
-        }
-        tol = 5e-4
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=3e-11, rtol=1e-12)
-
-
-class ControlGroupTestCase2(unittest.TestCase):
-    def setUp(self):
-        import aviary.subsystems.mass.gasp_based.control as control
-
-        # Set GRAV_ENGLISH_LBM = 1.1 to find errors that aren't
-        # caught when GRAV_ENGLISH_LBM = 1 and is misplaced.
-        constants.GRAV_ENGLISH_LBM = 1.1
-        control.GRAV_ENGLISH_LBM = 1.1
-
-        options = AviaryValues()
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'control_group',
-            ControlMassGroup(),
-            promotes=['*'],
+    def test_case_1(self):
+        # this is the large single aisle 1 V3 test case
+        self._set_inputs(
+            coefficient=0.95,
+            area=1392.1,
+            gross_mass=175400,
+            ultimate_load_factor=3.951,
+            min_dive_vel=420,
         )
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=0.95, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.AREA, val=1392.1, units='ft**2'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.951, units='unitless'
-        )  # bug fixed value
-        self.prob.model.set_input_defaults(
-            'min_dive_vel', val=420, units='kn'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.CONTROL_MASS_INCREMENT, val=0, units='lbm'
-        )  # bug fixed value and original value
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.control as control
-
-        constants.GRAV_ENGLISH_LBM = 1.0
-        control.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case1(self):
         self.prob.run_model()
 
         expected_values = {
-            Aircraft.Controls.COCKPIT_CONTROL_MASS: 129.75209879,
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS: 0.0,
-            Aircraft.Wing.SURFACE_CONTROL_MASS: 3668.57521123,
-            Aircraft.Controls.MASS: 3798.32731002,
+            Aircraft.Controls.COCKPIT_CONTROL_MASS: (137.25749725, 'lbm'),
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS: (0.0, 'lbm'),
+            Aircraft.Wing.SURFACE_CONTROL_MASS: (3807.92115815, 'lbm'),
+            Aircraft.Controls.MASS: (3945.0, 'lbm'),
         }
         tol = 5e-4
 
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
+        with self.subTest(check='values'):
+            for var_name, (expected, units) in expected_values.items():
+                with self.subTest(var=var_name):
+                    actual = self.prob.get_val(var_name, units=units)
+                    assert_near_equal(actual, expected, tol)
 
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=3e-11, rtol=1e-12)
+        with self.subTest(check='partials'):
+            data = self.prob.check_partials(out_stream=None, method='cs')
+            assert_check_partials(data, atol=3e-11, rtol=1e-12)
+
+    def test_BWB(self):
+        # GASP BWB model
+        self._set_inputs(
+            coefficient=0.5,
+            area=2142.85714286,
+            gross_mass=150000,
+            ultimate_load_factor=3.97744787,
+            min_dive_vel=420,
+        )
+        self.prob.run_model()
+
+        expected_values = {
+            Aircraft.Controls.COCKPIT_CONTROL_MASS: (128.73047164, 'lbm'),
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS: (0.0, 'lbm'),
+            Aircraft.Wing.SURFACE_CONTROL_MASS: (2045.5556421, 'lbm'),
+            Aircraft.Controls.MASS: (2174.28611375, 'lbm'),
+        }
+        tol = 1e-7
+
+        with self.subTest(check='values'):
+            for var_name, (expected, units) in expected_values.items():
+                with self.subTest(var=var_name):
+                    actual = self.prob.get_val(var_name, units=units)
+                    assert_near_equal(actual, expected, tol)
+
+        with self.subTest(check='partials'):
+            data = self.prob.check_partials(out_stream=None, method='cs')
+            assert_check_partials(data, atol=1e-11, rtol=1e-12)
 
 
 if __name__ == '__main__':

@@ -61,7 +61,9 @@ class WingBendingMass(om.ExplicitComponent):
         M3scale = inputs[Aircraft.Wing.MISC_MASS_SCALER]
         scaler = inputs[Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER]
 
-        gross_weight = mass_to_force_english((gross_mass, 'lbm'), gravity)
+        gross_weight = mass_to_force_english(
+            (gross_mass, 'lbm'), gravity
+        )  # bending material sized based on force
 
         W2 = mass_to_force_english((M2 / M2scale, 'lbm'), gravity)
 
@@ -85,8 +87,8 @@ class WingBendingMass(om.ExplicitComponent):
         )
 
         outputs[Aircraft.Wing.BENDING_MATERIAL_MASS] = (
-            (gross_weight * CAYE * W1NIR + W2 + W3) / (1.0 + W1NIR) - W2 - W3
-        ) * scaler
+            ((gross_weight * CAYE * W1NIR + W2 + W3) / (1.0 + W1NIR) - W2 - W3) * scaler
+        )  # implied 1 lbf -> lbm conversion here, as FLOPS equations are based on standard gravity
 
     def compute_partials(self, inputs, J):
         gravity = self.options[Mission.GRAVITY]
@@ -261,11 +263,13 @@ class WingShearControlMass(om.ExplicitComponent):
         ctrl_area = inputs[Aircraft.Wing.CONTROL_SURFACE_AREA]
         scaler = inputs[Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER]
 
-        gross_weight = mass_to_force_english((gross_mass, 'lbm'), gravity)
+        gross_weight = mass_to_force_english(
+            (gross_mass, 'lbm'), gravity
+        )  # wing shear component determined by force - control component is independent of gravity
 
         outputs[Aircraft.Wing.SHEAR_CONTROL_MASS] = (
             self.A3 * (1.0 - 0.17 * comp_frac) * ctrl_area**self.A4 * gross_weight**self.A5 * scaler
-        )
+        )  # implied 1 lbf -> lbm conversion here, as FLOPS equations are based on standard gravity
 
     def compute_partials(self, inputs, J):
         gravity = self.options[Mission.GRAVITY]

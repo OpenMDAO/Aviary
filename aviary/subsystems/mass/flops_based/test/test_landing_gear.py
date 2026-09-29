@@ -11,7 +11,6 @@ from aviary.validation_cases.validation_tests import (
     Version,
     flops_validation_test,
     get_flops_case_names,
-    get_flops_inputs,
     print_case,
 )
 from aviary.variable_info.variables import Aircraft, Mission

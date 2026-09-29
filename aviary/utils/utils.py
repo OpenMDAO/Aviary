@@ -346,49 +346,49 @@ def mass_to_force_english_derivative(gravity: tuple):
     return deriv
 
 
-def force_to_mass_english(force: tuple, gravity: tuple):
-    """
-    Convert mass into force in the english unit system.
-    Uses the basic equation lbm = lbf / (g_current / g_earth).
+# def force_to_mass_english(force: tuple, gravity: tuple):
+#     """
+#     Convert mass into force in the english unit system.
+#     Uses the basic equation lbm = lbf / (g_current / g_earth).
 
-    Parameters
-    ----------
-    force: tuple
-        force to be converted, in the form of a tuple containing (val, units)
-    gravity: tuple
-        current gravitational acceleration, in the form of a tuple containing (val, units)
+#     Parameters
+#     ----------
+#     force: tuple
+#         force to be converted, in the form of a tuple containing (val, units)
+#     gravity: tuple
+#         current gravitational acceleration, in the form of a tuple containing (val, units)
 
-    Returns
-    -------
-    mass: float
-        converted mass in lbm
-    """
-    force_val = convert_units(force[0], force[1], 'lbf')
-    gravity_val = convert_units(gravity[0], gravity[1], GRAV_EARTH[1])
+#     Returns
+#     -------
+#     mass: float
+#         converted mass in lbm
+#     """
+#     force_val = convert_units(force[0], force[1], 'lbf')
+#     gravity_val = convert_units(gravity[0], gravity[1], GRAV_EARTH[1])
 
-    mass = force_val / (gravity_val / GRAV_EARTH[0])
+#     mass = force_val / (gravity_val / GRAV_EARTH[0])
 
-    return mass
+#     return mass
 
 
-def force_to_mass_english_derivative(gravity: tuple):
-    """
-    Compute the derivative of outputs computed using masses with respect to force, which is the
-    inverse ratio of gravities. The purpose of this function is to make sure units are always
-    consistent and reduce repeated code.
+# def force_to_mass_english_derivative(gravity: tuple):
+#     """
+#     Compute the derivative of outputs computed using masses with respect to force, which is the
+#     inverse ratio of gravities. The purpose of this function is to make sure units are always
+#     consistent and reduce repeated code.
 
-    Parameters
-    ----------
-    gravity: tuple
-        current gravitational acceleration, in the form of a tuple containing (val, units)
+#     Parameters
+#     ----------
+#     gravity: tuple
+#         current gravitational acceleration, in the form of a tuple containing (val, units)
 
-    Returns
-    -------
-    deriv: float
-        gravity ratio
-    """
-    gravity_val = convert_units(gravity[0], gravity[1], GRAV_EARTH[1])
+#     Returns
+#     -------
+#     deriv: float
+#         gravity ratio
+#     """
+#     gravity_val = convert_units(gravity[0], gravity[1], GRAV_EARTH[1])
 
-    deriv = GRAV_EARTH[0] / gravity_val
+#     deriv = GRAV_EARTH[0] / gravity_val
 
-    return deriv
+#     return deriv

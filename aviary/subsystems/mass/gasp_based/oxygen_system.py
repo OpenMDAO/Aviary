@@ -1,9 +1,8 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class OxygenSystemMass(om.ExplicitComponent):
@@ -30,42 +29,40 @@ class OxygenSystemMass(om.ExplicitComponent):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
 
         if PAX < 9:
             if smooth:
-                oxygen_system_wt = 3 * sigmoidX(gross_wt_initial / 3000, 1.0, 0.01)
+                oxygen_system_mass = 3 * sigmoidX(gross_mass_initial / 3000, 1.0, 0.01)
             else:
-                if gross_wt_initial > 3000.0:
-                    oxygen_system_wt = 3.0
+                if gross_mass_initial > 3000.0:
+                    oxygen_system_mass = 3.0
                 else:
-                    oxygen_system_wt = 0.0
+                    oxygen_system_mass = 0.0
         elif PAX >= 9 and PAX < 20:
-            oxygen_system_wt = 10.0
+            oxygen_system_mass = 10.0
         elif PAX >= 20 and PAX < 75:
-            oxygen_system_wt = 20.0
+            oxygen_system_mass = 20.0
         else:
-            oxygen_system_wt = 50.0
+            oxygen_system_mass = 50.0
 
-        outputs[Aircraft.OxygenSystem.MASS] = oxygen_system_wt / GRAV_ENGLISH_LBM
+        outputs[Aircraft.OxygenSystem.MASS] = oxygen_system_mass
 
     def compute_partials(self, inputs, J):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
 
         if PAX < 9:
             if smooth:
-                d_aux_wt_dgross_wt_initial = (
-                    3 * dSigmoidXdx(gross_wt_initial / 3000, 1, 0.01) * 1 / 3000
+                d_aux_mass_dgross_mass_initial = (
+                    3 * dSigmoidXdx(gross_mass_initial / 3000, 1, 0.01) * 1 / 3000
                 )
             else:
-                if gross_wt_initial > 3000.0:
-                    d_aux_wt_dgross_wt_initial = 0.0
+                if gross_mass_initial > 3000.0:
+                    d_aux_mass_dgross_mass_initial = 0.0
         else:
-            d_aux_wt_dgross_wt_initial = 0.0
+            d_aux_mass_dgross_mass_initial = 0.0
 
-        J[Aircraft.OxygenSystem.MASS, Aircraft.Design.GROSS_MASS] = (
-            d_aux_wt_dgross_wt_initial / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.OxygenSystem.MASS, Aircraft.Design.GROSS_MASS] = d_aux_mass_dgross_mass_initial

@@ -92,11 +92,15 @@ class MainGearMass(om.ExplicitComponent):
         main_gear_scaler = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER]
         landing_mass = inputs[Aircraft.Design.TOUCHDOWN_MASS_MAX]
 
-        landing_weight = mass_to_force_english((landing_mass, 'lbm'), gravity)
+        landing_weight = mass_to_force_english(
+            (landing_mass, 'lbm'), gravity
+        )  # landing gear equation based on force
 
         main_gear_mass = 0.0117 * landing_weight**0.95 * main_gear_length**0.43 * main_gear_scaler
 
-        outputs[Aircraft.LandingGear.MAIN_GEAR_MASS] = main_gear_mass
+        outputs[Aircraft.LandingGear.MAIN_GEAR_MASS] = (
+            main_gear_mass  # implied 1 lbf -> lbm conversion here, as FLOPS equations are based on standard gravity
+        )
 
     def compute_partials(self, inputs, J):
         gravity = self.options[Mission.GRAVITY]
@@ -162,11 +166,15 @@ class NoseGearMass(om.ExplicitComponent):
         nose_gear_scaler = inputs[Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER]
         landing_mass = inputs[Aircraft.Design.TOUCHDOWN_MASS_MAX]
 
-        landing_weight = mass_to_force_english((landing_mass, 'lbm'), gravity)
+        landing_weight = mass_to_force_english(
+            (landing_mass, 'lbm'), gravity
+        )  # landing gear equation based on force
 
         nose_gear_mass = 0.048 * landing_weight**0.67 * nose_gear_length**0.43 * nose_gear_scaler
 
-        outputs[Aircraft.LandingGear.NOSE_GEAR_MASS] = nose_gear_mass
+        outputs[Aircraft.LandingGear.NOSE_GEAR_MASS] = (
+            nose_gear_mass  # implied 1 lbf -> lbm conversion here, as FLOPS equations are based on standard gravity
+        )
 
     def compute_partials(self, inputs, J):
         gravity = self.options[Mission.GRAVITY]
