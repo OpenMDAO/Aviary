@@ -6,7 +6,6 @@ from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
-from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic

@@ -5,7 +5,6 @@ from aviary.mission.two_dof.ode.takeoff_eom import TakeoffEOM
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.two_dof.ode.v_rotate_comp import VRotateComp
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
-from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
