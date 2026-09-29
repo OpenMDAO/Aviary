@@ -676,7 +676,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:nacelle:avg_diameter",
+        "aircraft:nacelle:reference_avg_diameter",
         [
             7.94
         ],
@@ -684,7 +684,7 @@
         "<class 'numpy.ndarray'>"
     ],
     [
-        "aircraft:nacelle:avg_length",
+        "aircraft:nacelle:reference_avg_length",
         [
             12.3
         ],

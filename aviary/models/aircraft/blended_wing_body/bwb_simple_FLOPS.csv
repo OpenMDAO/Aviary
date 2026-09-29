@@ -113,8 +113,8 @@ aircraft:landing_gear:main_gear_oleo_length,85.0,inch
 aircraft:landing_gear:main_gear_mass_scaler,1.0,unitless
 aircraft:landing_gear:nose_gear_oleo_length,87.0,inch
 aircraft:landing_gear:nose_gear_mass_scaler,1.0,unitless
-aircraft:nacelle:avg_diameter,12.608,ft
-aircraft:nacelle:avg_length,17.433,ft
+aircraft:nacelle:reference_avg_diameter,12.608,ft
+aircraft:nacelle:reference_avg_length,17.433,ft
 aircraft:nacelle:mass_scaler,0.0,unitless
 aircraft:nacelle:wetted_area_scaler,1.0,unitless
 aircraft:paint:mass_per_unit_area,0.0,lbm/ft**2
