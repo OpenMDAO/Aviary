@@ -73,6 +73,7 @@ class BaseODE(om.Group):
         aero_solver_sub : None or om.Group
             Some ODEs (like solved 2DOF) place the aerodynamics and propulsion cycles in separate
             groups. When this is specified, the aerodynamics subsystem is placed in this sub.
+
         Returns
         -------
         om.Group

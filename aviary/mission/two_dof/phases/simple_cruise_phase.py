@@ -1,6 +1,6 @@
-from aviary.mission.two_dof.ode.simple_cruise_ode import SimpleCruiseODE
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 from aviary.mission.phase_builder import PhaseBuilder
+from aviary.mission.two_dof.ode.simple_cruise_ode import SimpleCruiseODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
@@ -12,9 +12,7 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
             name='num_segments',
             types=int,
             default=5,
-            desc='The number of segments in transcription creation in Dymos. '
-            'While this phase is usually an analytic phase, this option is '
-            'needed if an external subsystem requires a dynamic transcription.',
+            desc='The number of segments in transcription creation in Dymos. ',
         )
 
         self.declare(
@@ -22,8 +20,7 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
             types=int,
             default=3,
             desc='The order of polynomials for interpolation in the transcription '
-            'created in Dymos. While this phase is usually an analytic phase, this option is '
-            'needed if an external subsystem requires a dynamic transcription.',
+            'created in Dymos.',
         )
 
         defaults = {
@@ -146,7 +143,7 @@ class SimpleCruisePhase(PhaseBuilder):
         -------
         dymos.Phase
         """
-        phase = self.phase = super().build_phase(aviary_options)
+        phase = super().build_phase(aviary_options)
 
         # Custom configurations for the climb phase
         user_options = self.user_options

@@ -1,12 +1,12 @@
+import warnings
+
 import numpy as np
 import openmdao.api as om
 from openmdao.utils import cs_safe as cs
-import warnings
 
+from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
-from aviary.variable_info.enums import AtmosphereModel
 
 FCFWC = 1  # Excrescence drag factor
 FCFWT = 1  # Aero technology factors for wing

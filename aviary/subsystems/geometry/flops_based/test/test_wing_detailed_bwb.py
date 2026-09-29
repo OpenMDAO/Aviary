@@ -1,5 +1,5 @@
-import numpy as np
 import unittest
+
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
@@ -16,9 +16,7 @@ from aviary.variable_info.variables import Aircraft, Settings
 
 @use_tempdirs
 class BWBUpdateDetailedWingDistTest(unittest.TestCase):
-    """
-    For BWB, test the updated detailed wing information when detailed wing information is given.
-    """
+    """For BWB, test the updated detailed wing information when detailed wing information is given."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -135,7 +133,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
     def test_case2(self):
-        """bwb300_baseline"""
+        """bwb300_baseline."""
         prob = self.prob
         options = self.aviary_options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -271,9 +269,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBComputeDetailedWingDistTest(unittest.TestCase):
-    """
-    For BWB, test the updated detailed wing information when detailed wing information is not given.
-    """
+    """For BWB, test the updated detailed wing information when detailed wing information is not given."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -320,15 +316,13 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBWingPrelimTest(unittest.TestCase):
-    """
-    For BWB with given detailed wing information, test the computation of wing parameters.
-    """
+    """For BWB with given detailed wing information, test the computation of wing parameters."""
 
     def setUp(self):
         self.prob = om.Problem()
 
     def test_case1(self):
-        """Computed detailed wing case"""
+        """Computed detailed wing case."""
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -361,7 +355,7 @@ class BWBWingPrelimTest(unittest.TestCase):
         )
 
     def test_case2(self):
-        """Provided detailed wing case"""
+        """Provided detailed wing case."""
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -410,7 +404,7 @@ class BWBWingPrelimTest(unittest.TestCase):
         )
 
     def test_case3(self):
-        """Provided detailed wing case for bwb300_baseline"""
+        """Provided detailed wing case for bwb300_baseline."""
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')

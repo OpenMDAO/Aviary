@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 

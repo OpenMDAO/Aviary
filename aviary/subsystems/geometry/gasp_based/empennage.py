@@ -1,14 +1,12 @@
 import numpy as np
 import openmdao.api as om
-import warnings
 
-from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.variables import Aircraft
 
 
 class MomentRatio(om.ExplicitComponent):
-    """GASP tail moment ratio"""
+    """GASP tail moment ratio."""
 
     def initialize(self):
         self.options.declare(

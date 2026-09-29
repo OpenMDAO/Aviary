@@ -1,5 +1,5 @@
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 import aviary.api as av
 from aviary.utils.merge_variable_metadata import merge_meta_data

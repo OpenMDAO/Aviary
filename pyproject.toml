@@ -80,7 +80,8 @@ convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
 # Ignore `F401` (unused import) in api and doc files.
+# Ignore `F403` (undefined local with import star) in api
 # Ignore `I001` (sort and format imports) in api.
 # Ignore `E402` (module import not at top of file) for doc cells.
-"api.py" = ["F401", "I001"]
+"api.py" = ["F401", "I001", "F403"]
 "*.ipynb" = ["F401", "E402"]

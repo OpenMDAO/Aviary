@@ -6,7 +6,6 @@ from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 

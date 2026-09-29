@@ -4,7 +4,6 @@ from aviary.subsystems.geometry.flops_based.utils import (
     calc_lifting_surface_scaler,
     thickness_to_chord_scaler,
 )
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
