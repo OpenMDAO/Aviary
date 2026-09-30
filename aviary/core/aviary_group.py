@@ -1420,7 +1420,11 @@ class AviaryGroup(om.Group):
                     ],
                 )
 
-                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
+                self.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL,
+                    equals=0,
+                    ref=self.target_range,
+                )
 
             elif problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
                 # target range problem
@@ -1437,7 +1441,11 @@ class AviaryGroup(om.Group):
 
                 # If target_range is unspecified, then don't assume we want to fly a fixed range.
                 if 'target_range' in self.post_mission_info:
-                    self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
+                    self.add_constraint(
+                        Mission.Constraints.RANGE_RESIDUAL,
+                        equals=0,
+                        ref=self.target_range,
+                    )
 
             elif problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
                 # fixed vehicle gross mass aviary finds optimal trajectory and maximum range
@@ -1458,7 +1466,11 @@ class AviaryGroup(om.Group):
                 # TODO: RANGE_RESIDUAL constraint should be added based on what the
                 # user sets as the objective. if Objective is not range or Mission.RANGE,
                 # the range constriant should be added to make target rage = summary range
-                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
+                self.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL,
+                    equals=0,
+                    ref=self.target_range,
+                )
 
                 # We must ensure that design.gross_mass is greater than  Mission.GROSS_MASS
                 # and this must hold true for each of the different missions that is flown the
