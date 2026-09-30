@@ -46,6 +46,7 @@ class TestReports(unittest.TestCase):
             'mach (unitless)',
             'mach_rate (1/s)',
             'mass (kg)',
+            'nox_rate_total (lbm/h)',
             'specific_energy_rate_excess (m/s)',
             'throttle (unitless)',
             'thrust_net_total (lbf)',
