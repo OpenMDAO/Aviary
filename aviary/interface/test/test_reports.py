@@ -68,6 +68,7 @@ class TestReports(unittest.TestCase):
                 '0.2',
                 '0.0001354166666666668',
                 '79560.101698',
+                '36.96304989331518',
                 '12.349371130670201',
                 '0.5654905755095957',
                 '28479.14295846102',
@@ -172,6 +173,6 @@ class TestReports(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestReports()
-    test.test_multiple_off_design_report_directories()
+    unittest.main()
+    # test = TestReports()
+    # test.test_multiple_off_design_report_directories()
