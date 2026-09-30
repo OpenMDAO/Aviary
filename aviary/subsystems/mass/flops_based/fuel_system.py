@@ -33,6 +33,11 @@ class TransportFuelSystemMass(om.ExplicitComponent):
         num_eng_fact = distributed_engine_count_factor(num_eng)
         max_mach = inputs[Aircraft.Design.MAX_MACH]
 
+        if capacity <= 0.0:
+            # Derivatives undefined here.
+            outputs[Aircraft.Fuel.FUEL_SYSTEM_MASS] = 0.0
+            return
+
         outputs[Aircraft.Fuel.FUEL_SYSTEM_MASS] = (
             1.07 * capacity**0.58 * num_eng_fact**0.43 * max_mach**0.34 * scaler
         ) / GRAV_ENGLISH_LBM
@@ -43,6 +48,10 @@ class TransportFuelSystemMass(om.ExplicitComponent):
         num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
         max_mach = inputs[Aircraft.Design.MAX_MACH]
+
+        if capacity <= 0.0:
+            # Derivatives undefined here.
+            return
 
         J[Aircraft.Fuel.FUEL_SYSTEM_MASS, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER] = (
             1.07 * capacity**0.58 * num_eng_fact**0.43 * max_mach**0.34 / GRAV_ENGLISH_LBM
