@@ -20,7 +20,7 @@ from aviary.subsystems.subsystem_builder import SubsystemBuilder
 #      Ideally, an alternate solution to loop through the hierarchy will be created and
 #      these can be replaced.
 from aviary.utils.preprocessors import _get_engine_variables
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class PropulsionBuilder(SubsystemBuilder):
@@ -288,6 +288,8 @@ class CorePropulsionBuilder(PropulsionBuilder):
                 subsystem_options=subsystem_options,
             )
             outputs.append(engine_outputs)
+
+        outputs.append(Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL)
 
         return outputs
 
