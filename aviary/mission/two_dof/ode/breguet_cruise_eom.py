@@ -372,7 +372,7 @@ class ElectricRangeComp(om.ExplicitComponent):
         t0 = t0[0]
 
         # All-electric version
-        E_1 = EE[:-1]  # Initial energy across each two-node pair, kW*h
+        E_1 = EE[:-1]  # Initial energy across each two-node pair, kW*s
         E_2 = EE[1:]  # Final power energy each two-node pair
         P_1 = EP[:-1]  # Initial power across each two-node pair, kW
         P_2 = EP[1:]  # Final power across each two-node pair

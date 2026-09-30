@@ -1,12 +1,10 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.two_dof.ode.breguet_cruise_eom import ElectricRangeComp, RangeComp
-from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
+from aviary.mission.two_dof.ode.breguet_cruise_eom import ElectricRangeComp, RangeComp
+from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
@@ -105,13 +103,6 @@ class ElectricBreguetCruiseODE(TwoDOFODE):
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
-        self.add_subsystem(
-            'calc_weight',
-            MassToWeight(num_nodes=nn),
-            promotes_inputs=['mass'],
-            promotes_outputs=['weight'],
-        )
-
         prop_group = self.add_subsystems_and_solver(couple_propulsion=True)
 
         bal = om.BalanceComp(
@@ -186,5 +177,5 @@ class ElectricBreguetCruiseODE(TwoDOFODE):
             promotes_outputs=[(Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)],
         )
 
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units='ft')
-        self.set_input_defaults('mass', val=np.linspace(171481, 171581 - 10000, nn), units='lbm')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='ft')
+        self.set_input_defaults('mass', val=np.ones(nn), units='lbm')

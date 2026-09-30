@@ -11,21 +11,22 @@ from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 
 
 class WingSize(om.ExplicitComponent):
     """Computation of wing area and wing span for GASP-based aerodynamics."""
 
     def initialize(self):
-        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='kg')
-        add_aviary_input(self, Aircraft.Design.WING_LOADING, units='N/m**2')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.WING_LOADING, units='lbf/ft**2')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
 
-        add_aviary_output(self, Aircraft.Wing.AREA, units='m**2')
-        add_aviary_output(self, Aircraft.Wing.SPAN, units='m')
+        add_aviary_output(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_output(self, Aircraft.Wing.SPAN, units='ft')
 
         self.declare_partials(
             Aircraft.Wing.AREA, [Aircraft.Design.GROSS_MASS, Aircraft.Design.WING_LOADING]
@@ -40,30 +41,35 @@ class WingSize(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        gravity = self.options[Mission.GRAVITY][0]
+        gravity = self.options[Mission.GRAVITY]
 
         gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         wing_loading = inputs[Aircraft.Design.WING_LOADING]
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
 
-        wing_area = gross_mass_initial * gravity / wing_loading
+        gross_weight_initial = mass_to_force_english((gross_mass_initial, 'lbm'), gravity)
+
+        wing_area = gross_weight_initial / wing_loading
         wingspan = (AR * wing_area) ** 0.5
 
         outputs[Aircraft.Wing.AREA] = wing_area
         outputs[Aircraft.Wing.SPAN] = wingspan
 
     def compute_partials(self, inputs, J):
-        gravity = self.options[Mission.GRAVITY][0]
+        gravity = self.options[Mission.GRAVITY]
 
         gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         wing_loading = inputs[Aircraft.Design.WING_LOADING]
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
 
-        wing_area = gross_mass_initial * gravity / wing_loading
+        gross_weight_initial = mass_to_force_english((gross_mass_initial, 'lbm'), gravity)
+        dforce_dmass = mass_to_force_english_derivative(gravity)
 
-        J[Aircraft.Wing.AREA, Aircraft.Design.GROSS_MASS] = dWA_dGMT = gravity / wing_loading
+        wing_area = gross_weight_initial / wing_loading
+
+        J[Aircraft.Wing.AREA, Aircraft.Design.GROSS_MASS] = dWA_dGMT = dforce_dmass / wing_loading
         J[Aircraft.Wing.AREA, Aircraft.Design.WING_LOADING] = dWA_dWL = (
-            -gross_mass_initial * gravity / wing_loading**2
+            -gross_weight_initial / wing_loading**2
         )
 
         J[Aircraft.Wing.SPAN, Aircraft.Wing.ASPECT_RATIO] = 0.5 * wing_area**0.5 * AR ** (-0.5)

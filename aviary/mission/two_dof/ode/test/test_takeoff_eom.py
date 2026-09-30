@@ -15,10 +15,9 @@ class TakeoffEOMTestCase(unittest.TestCase):
 
     def _make_prob(self, ground_roll=False, rotation=False, alpha=None):
         prob = om.Problem()
-        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         prob.model.add_subsystem(
             'group',
-            TakeoffEOM(num_nodes=2, ground_roll=ground_roll, rotation=rotation, **options),
+            TakeoffEOM(num_nodes=2, ground_roll=ground_roll, rotation=rotation),
             promotes=['*'],
         )
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm')
@@ -45,7 +44,7 @@ class TakeoffEOMTestCase(unittest.TestCase):
         prob.run_model()
 
         expected_values = {
-            Dynamic.Mission.VELOCITY_RATE: (np.array([1.5597, 1.5597]), 'ft/s**2'),
+            Dynamic.Mission.VELOCITY_RATE: (np.array([1.55844194, 1.55844194]), 'ft/s**2'),
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: (np.array([0.0, 0.0]), 'rad/s'),
             Dynamic.Mission.ALTITUDE_RATE: (np.array([0.0, 0.0]), 'ft/s'),
             Dynamic.Mission.DISTANCE_RATE: (np.array([10.0, 10.0]), 'ft/s'),
@@ -66,7 +65,7 @@ class TakeoffEOMTestCase(unittest.TestCase):
         prob.run_model()
 
         expected_values = {
-            Dynamic.Mission.VELOCITY_RATE: (np.array([1.5597, 1.5597]), 'ft/s**2'),
+            Dynamic.Mission.VELOCITY_RATE: (np.array([1.55844194, 1.55844194]), 'ft/s**2'),
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: (np.array([0.0, 0.0]), 'rad/s'),
             Dynamic.Mission.ALTITUDE_RATE: (np.array([0.0, 0.0]), 'ft/s'),
             Dynamic.Mission.DISTANCE_RATE: (np.array([10.0, 10.0]), 'ft/s'),
@@ -87,9 +86,9 @@ class TakeoffEOMTestCase(unittest.TestCase):
         prob.run_model()
 
         expected_values = {
-            Dynamic.Mission.VELOCITY_RATE: (np.array([2.202965, 2.202965]), 'ft/s**2'),
+            Dynamic.Mission.VELOCITY_RATE: (np.array([2.20118919, 2.20118919]), 'ft/s**2'),
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: (
-                np.array([-3.216328, -3.216328]),
+                np.array([-3.21373621, -3.21373621]),
                 'rad/s',
             ),
         }

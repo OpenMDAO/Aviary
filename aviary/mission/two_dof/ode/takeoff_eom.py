@@ -42,8 +42,8 @@ class TakeoffEOM(om.ExplicitComponent):
         self.options.declare(
             'rotation_pitch_rate',
             types=float,
-            default=0.05811946409141117,
-            desc='Pitch rate during rotation in radians/second.',
+            default=3.33,
+            desc='Pitch rate during rotation in deg/second.',
         )
 
         add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
@@ -267,7 +267,7 @@ class TakeoffEOM(om.ExplicitComponent):
         outputs['load_factor'] = load_factor
 
         if rotation:
-            outputs['angle_of_attack_rate'][:] = self.options['rotation_pitch_rate']
+            outputs['angle_of_attack_rate'][:] = np.deg2rad(self.options['rotation_pitch_rate'])
         else:
             outputs['angle_of_attack_rate'][:] = 0.0
 
@@ -373,13 +373,13 @@ class TakeoffEOM(om.ExplicitComponent):
             J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.ANGLE_OF_ATTACK] = (
                 dTAcF_dAlpha / (TAS * mass)
             )
-            J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Aircraft.Wing.INCIDENCE] = dTAcF_dIwing * (
+            J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Aircraft.Wing.INCIDENCE] = dTAcF_dIwing / (
                 TAS * mass
             )
-            J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.LIFT] = TAS * mass
-            J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.MASS] = (gravity / TAS) * (
-                -thrust_across_flightpath / mass**2 - incremented_lift / mass**2
-            )
+            J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.LIFT] = 1 / (TAS * mass)
+            J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Vehicle.MASS] = -(
+                thrust_across_flightpath + incremented_lift
+            ) / (TAS * mass**2)
             J[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,

@@ -118,38 +118,48 @@ class SizeGroupTestCase1(unittest.TestCase):
 
         tol = 5e-4
         expected_values = {
-            Aircraft.Fuselage.AVG_DIAMETER: 157.2,
-            'cabin_height': 13.1,
-            'cabin_len': 72.1,
-            'nose_height': 8.6,
-            Aircraft.Fuselage.LENGTH: 129.5,  # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
-            Aircraft.Fuselage.WETTED_AREA: 4639.57,
-            Aircraft.TailBoom.LENGTH: 129.5,  # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
-            Aircraft.Wing.AREA: 1370.3,
-            Aircraft.Wing.SPAN: 117.8,
-            Aircraft.Wing.CENTER_CHORD: 17.49,
-            Aircraft.Wing.AVERAGE_CHORD: 12.615,
-            Aircraft.Wing.ROOT_CHORD: 16.41,
-            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: 0.1397,  # not exact GASP value, likely due to rounding error
-            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: 1114,
-            Aircraft.HorizontalTail.AREA: 375.9,
-            Aircraft.HorizontalTail.SPAN: 42.25,
-            Aircraft.HorizontalTail.ROOT_CHORD: 13.16130387591471,
-            Aircraft.HorizontalTail.AVERAGE_CHORD: 9.57573,
-            Aircraft.HorizontalTail.MOMENT_ARM: 54.7,
-            Aircraft.VerticalTail.AREA: 469.3,
-            Aircraft.VerticalTail.SPAN: 28,
-            Aircraft.VerticalTail.ROOT_CHORD: 18.61267549773935,
-            Aircraft.VerticalTail.AVERAGE_CHORD: 16.83022,
-            Aircraft.VerticalTail.MOMENT_ARM: 49.9,
-            Aircraft.Nacelle.AVG_DIAMETER: 7.35,
-            Aircraft.Nacelle.AVG_LENGTH: 14.7,
-            Aircraft.Nacelle.SURFACE_AREA: 339.58,
+            Aircraft.Fuselage.AVG_DIAMETER: (157.2, 'ft'),
+            'cabin_height': (13.1, 'ft'),
+            'cabin_len': (72.1, 'ft'),
+            'nose_height': (8.6, 'ft'),
+            Aircraft.Fuselage.LENGTH: (
+                129.5,
+                'ft',
+            ),  # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
+            Aircraft.Fuselage.WETTED_AREA: (4639.57, 'ft**2'),
+            Aircraft.TailBoom.LENGTH: (
+                129.5,
+                'ft',
+            ),  # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
+            Aircraft.Wing.AREA: (1370.3, 'ft**2'),
+            Aircraft.Wing.SPAN: (117.8, 'ft'),
+            Aircraft.Wing.CENTER_CHORD: (17.49, 'ft'),
+            Aircraft.Wing.AVERAGE_CHORD: (12.615, 'ft'),
+            Aircraft.Wing.ROOT_CHORD: (16.41, 'ft'),
+            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: (
+                0.1397,
+                'unitless',
+            ),  # not exact GASP value, likely due to rounding error
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: (1114, 'ft**3'),
+            Aircraft.HorizontalTail.AREA: (375.9, 'ft**2'),
+            Aircraft.HorizontalTail.SPAN: (42.25, 'ft'),
+            Aircraft.HorizontalTail.ROOT_CHORD: (13.16130387591471, 'ft'),
+            Aircraft.HorizontalTail.AVERAGE_CHORD: (9.57573, 'ft'),
+            Aircraft.HorizontalTail.MOMENT_ARM: (54.7, 'ft'),
+            Aircraft.VerticalTail.AREA: (469.3, 'ft**2'),
+            Aircraft.VerticalTail.SPAN: (28, 'ft'),
+            Aircraft.VerticalTail.ROOT_CHORD: (18.61267549773935, 'ft'),
+            Aircraft.VerticalTail.AVERAGE_CHORD: (16.83022, 'ft'),
+            Aircraft.VerticalTail.MOMENT_ARM: (49.9, 'ft'),
+            Aircraft.Nacelle.AVG_DIAMETER: (7.35, 'ft'),
+            Aircraft.Nacelle.AVG_LENGTH: (14.7, 'ft'),
+            Aircraft.Nacelle.SURFACE_AREA: (339.58, 'ft**2'),
         }
 
-        for var_name, expected_val in expected_values.items():
+        for var_name, (expected_val, units) in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(prob[var_name], expected_val, tol)
+                actual = prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected_val, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
@@ -240,46 +250,53 @@ class SizeGroupTestCase2(unittest.TestCase):
 
         tol = 1e-4
         expected_values = {
-            Aircraft.Fuselage.AVG_DIAMETER: 157.2,  # not actual GASP value
-            'cabin_height': 13.1,  # not actual GASP value
-            'cabin_len': 72.09722222,  # not actual GASP value
-            'nose_height': 8.6,  # not actual GASP value
-            Aircraft.Fuselage.LENGTH: 129.5,  # not actual GASP value
-            Aircraft.Fuselage.WETTED_AREA: 4639.57,  # not actual GASP value
-            Aircraft.TailBoom.LENGTH: 129.5,  # not actual GASP value
-            Aircraft.Wing.AREA: 1370.3125,  # not actual GASP value
-            Aircraft.Wing.SPAN: 117.81878299,  # not actual GASP value
-            Aircraft.Wing.CENTER_CHORD: 17.48974356,  # not actual GASP value
-            Aircraft.Wing.AVERAGE_CHORD: 12.61453233,  # not actual GASP value
-            Aircraft.Wing.ROOT_CHORD: 16.40711451,  # not actual GASP value
-            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: 0.13965584,  # not actual GASP value
-            'nonfolded_taper_ratio': 0.93175961,  # not actual GASP value
-            Aircraft.Wing.FOLDING_AREA: 1167.5966191,  # not actual GASP value
-            'nonfolded_wing_area': 202.7158809,  # not actual GASP value
-            'tc_ratio_mean_folded': 0.14847223,  # not actual GASP value
-            'nonfolded_AR': 0.71035382,  # not actual GASP value
-            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: 208.08091725,  # not actual GASP value
-            'strut_y': 6,  # not actual GASP value
-            Aircraft.Strut.LENGTH: 13.11154072,  # not actual GASP value
-            Aircraft.Strut.CHORD: 1.14403031,  # not actual GASP value
-            Aircraft.HorizontalTail.AREA: 375.87987047,  # not actual GASP value
-            Aircraft.HorizontalTail.SPAN: 42.25434161,  # not actual GASP value
-            Aircraft.HorizontalTail.ROOT_CHORD: 13.15924684,  # not actual GASP value
-            Aircraft.HorizontalTail.AVERAGE_CHORD: 9.57681709,  # not actual GASP value
-            Aircraft.HorizontalTail.MOMENT_ARM: 54.67937726,  # not actual GASP value
-            Aircraft.VerticalTail.AREA: 469.31832812,  # not actual GASP value
-            Aircraft.VerticalTail.SPAN: 27.99574268,  # not actual GASP value
-            Aircraft.VerticalTail.ROOT_CHORD: 18.61623295,  # not actual GASP value
-            Aircraft.VerticalTail.AVERAGE_CHORD: 16.83214111,  # not actual GASP value
-            Aircraft.VerticalTail.MOMENT_ARM: 49.88094115,  # not actual GASP value
-            Aircraft.Nacelle.AVG_DIAMETER: 7.35163168,  # may not be actual GASP value
-            Aircraft.Nacelle.AVG_LENGTH: 14.70326336,  # may not be actual GASP value
-            Aircraft.Nacelle.SURFACE_AREA: 339.58410134,  # may not be actual GASP value
+            Aircraft.Fuselage.AVG_DIAMETER: (157.2, 'ft'),  # not actual GASP value
+            'cabin_height': (13.1, 'ft'),  # not actual GASP value
+            'cabin_len': (72.09722222, 'ft'),  # not actual GASP value
+            'nose_height': (8.6, 'ft'),  # not actual GASP value
+            Aircraft.Fuselage.LENGTH: (129.5, 'ft'),  # not actual GASP value
+            Aircraft.Fuselage.WETTED_AREA: (4639.57, 'ft**2'),  # not actual GASP value
+            Aircraft.TailBoom.LENGTH: (129.5, 'ft'),  # not actual GASP value
+            Aircraft.Wing.AREA: (1370.3125, 'ft**2'),  # not actual GASP value
+            Aircraft.Wing.SPAN: (117.81878299, 'ft'),  # not actual GASP value
+            Aircraft.Wing.CENTER_CHORD: (17.48974356, 'ft'),  # not actual GASP value
+            Aircraft.Wing.AVERAGE_CHORD: (12.61453233, 'ft'),  # not actual GASP value
+            Aircraft.Wing.ROOT_CHORD: (16.40711451, 'ft'),  # not actual GASP value
+            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: (
+                0.13965584,
+                'unitless',
+            ),  # not actual GASP value
+            'nonfolded_taper_ratio': (0.93175961, 'unitless'),  # not actual GASP value
+            Aircraft.Wing.FOLDING_AREA: (1167.5966191, 'ft**2'),  # not actual GASP value
+            'nonfolded_wing_area': (202.7158809, 'ft**2'),  # not actual GASP value
+            'tc_ratio_mean_folded': (0.14847223, 'unitless'),  # not actual GASP value
+            'nonfolded_AR': (0.71035382, 'unitless'),  # not actual GASP value
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: (
+                208.08091725,
+                'ft**3',
+            ),  # not actual GASP value
+            'strut_y': (6, 'ft'),  # not actual GASP value
+            Aircraft.Strut.LENGTH: (13.11154072, 'ft'),  # not actual GASP value
+            Aircraft.Strut.CHORD: (1.14403031, 'ft'),  # not actual GASP value
+            Aircraft.HorizontalTail.AREA: (375.87987047, 'ft**2'),  # not actual GASP value
+            Aircraft.HorizontalTail.SPAN: (42.25434161, 'ft'),  # not actual GASP value
+            Aircraft.HorizontalTail.ROOT_CHORD: (13.15924684, 'ft'),  # not actual GASP value
+            Aircraft.HorizontalTail.AVERAGE_CHORD: (9.57681709, 'ft'),  # not actual GASP value
+            Aircraft.HorizontalTail.MOMENT_ARM: (54.67937726, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.AREA: (469.31832812, 'ft**2'),  # not actual GASP value
+            Aircraft.VerticalTail.SPAN: (27.99574268, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.ROOT_CHORD: (18.61623295, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.AVERAGE_CHORD: (16.83214111, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.MOMENT_ARM: (49.88094115, 'ft'),  # not actual GASP value
+            Aircraft.Nacelle.AVG_DIAMETER: (7.35163168, 'ft'),  # may not be actual GASP value
+            Aircraft.Nacelle.AVG_LENGTH: (14.70326336, 'ft'),  # may not be actual GASP value
+            Aircraft.Nacelle.SURFACE_AREA: (339.58410134, 'ft**2'),  # may not be actual GASP value
         }
 
-        for var_name, expected_val in expected_values.items():
+        for var_name, (expected_val, units) in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(prob[var_name], expected_val, tol)
+                actual = prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected_val, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
@@ -369,44 +386,51 @@ class SizeGroupTestCase3(unittest.TestCase):
 
         tol = 1e-4
         expected_values = {
-            Aircraft.Fuselage.AVG_DIAMETER: 56.2,  # not actual GASP value
-            'cabin_height': 9.18333,  # not actual GASP value
-            'cabin_len': 435,  # not actual GASP value
-            'nose_height': 4.68333,  # not actual GASP value
-            Aircraft.Fuselage.LENGTH: 476.7333,  # not actual GASP value
-            Aircraft.Fuselage.WETTED_AREA: 13400.44,  # not actual GASP value
-            Aircraft.TailBoom.LENGTH: 476.7333,  # not actual GASP value
-            Aircraft.Wing.AREA: 1370.3125,  # not actual GASP value
-            Aircraft.Wing.SPAN: 117.81878299,  # not actual GASP value
-            Aircraft.Wing.CENTER_CHORD: 17.48974356,  # not actual GASP value
-            Aircraft.Wing.AVERAGE_CHORD: 12.61453233,  # not actual GASP value
-            Aircraft.Wing.ROOT_CHORD: 16.988,  # not actual GASP value
-            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: 0.14151,  # not actual GASP value
-            'nonfolded_taper_ratio': 0.85783252,  # not actual GASP value
-            Aircraft.Wing.FOLDING_AREA: 964.14982163,  # not actual GASP value
-            'nonfolded_wing_area': 406.16267837,  # not actual GASP value
-            'tc_ratio_mean_folded': 0.14681715,  # not actual GASP value
-            'nonfolded_AR': 1.5387923,  # not actual GASP value
-            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: 406.53567274,  # not actual GASP value
-            Aircraft.HorizontalTail.AREA: 298.484,  # not actual GASP value
-            Aircraft.HorizontalTail.SPAN: 37.654,  # not actual GASP value
-            Aircraft.HorizontalTail.ROOT_CHORD: 11.7265,  # not actual GASP value
-            Aircraft.HorizontalTail.AVERAGE_CHORD: 8.5341,  # not actual GASP value
-            Aircraft.HorizontalTail.MOMENT_ARM: 54.67937726,  # not actual GASP value
-            Aircraft.VerticalTail.AREA: 297.003,  # not actual GASP value
-            Aircraft.VerticalTail.SPAN: 22.2709,  # not actual GASP value
-            Aircraft.VerticalTail.ROOT_CHORD: 14.8094,  # not actual GASP value
-            Aircraft.VerticalTail.AVERAGE_CHORD: 13.3902,  # not actual GASP value
-            Aircraft.VerticalTail.MOMENT_ARM: 49.88094115,  # not actual GASP value
-            Aircraft.Nacelle.AVG_DIAMETER: 7.35163168,  # may not be actual GASP value
-            Aircraft.Nacelle.AVG_LENGTH: 14.70326336,  # may not be actual GASP value
-            Aircraft.Nacelle.SURFACE_AREA: 339.58410134,  # may not be actual GASP value
-            Aircraft.Electrical.HYBRID_CABLE_LENGTH: 50.6032,  # not actual GASP value
+            Aircraft.Fuselage.AVG_DIAMETER: (56.2, 'ft'),  # not actual GASP value
+            'cabin_height': (9.18333, 'ft'),  # not actual GASP value
+            'cabin_len': (435, 'ft'),  # not actual GASP value
+            'nose_height': (4.68333, 'ft'),  # not actual GASP value
+            Aircraft.Fuselage.LENGTH: (476.7333, 'ft'),  # not actual GASP value
+            Aircraft.Fuselage.WETTED_AREA: (13400.44, 'ft**2'),  # not actual GASP value
+            Aircraft.TailBoom.LENGTH: (476.7333, 'ft'),  # not actual GASP value
+            Aircraft.Wing.AREA: (1370.3125, 'ft**2'),  # not actual GASP value
+            Aircraft.Wing.SPAN: (117.81878299, 'ft'),  # not actual GASP value
+            Aircraft.Wing.CENTER_CHORD: (17.48974356, 'ft'),  # not actual GASP value
+            Aircraft.Wing.AVERAGE_CHORD: (12.61453233, 'ft'),  # not actual GASP value
+            Aircraft.Wing.ROOT_CHORD: (16.988, 'ft'),  # not actual GASP value
+            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: (
+                0.14151,
+                'unitless',
+            ),  # not actual GASP value
+            'nonfolded_taper_ratio': (0.85783252, 'unitless'),  # not actual GASP value
+            Aircraft.Wing.FOLDING_AREA: (964.14982163, 'ft**2'),  # not actual GASP value
+            'nonfolded_wing_area': (406.16267837, 'ft**2'),  # not actual GASP value
+            'tc_ratio_mean_folded': (0.14681715, 'unitless'),  # not actual GASP value
+            'nonfolded_AR': (1.5387923, 'unitless'),  # not actual GASP value
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: (
+                406.53567274,
+                'ft**3',
+            ),  # not actual GASP value
+            Aircraft.HorizontalTail.AREA: (298.484, 'ft**2'),  # not actual GASP value
+            Aircraft.HorizontalTail.SPAN: (37.654, 'ft'),  # not actual GASP value
+            Aircraft.HorizontalTail.ROOT_CHORD: (11.7265, 'ft'),  # not actual GASP value
+            Aircraft.HorizontalTail.AVERAGE_CHORD: (8.5341, 'ft'),  # not actual GASP value
+            Aircraft.HorizontalTail.MOMENT_ARM: (54.67937726, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.AREA: (297.003, 'ft**2'),  # not actual GASP value
+            Aircraft.VerticalTail.SPAN: (22.2709, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.ROOT_CHORD: (14.8094, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.AVERAGE_CHORD: (13.3902, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.MOMENT_ARM: (49.88094115, 'ft'),  # not actual GASP value
+            Aircraft.Nacelle.AVG_DIAMETER: (7.35163168, 'ft'),  # may not be actual GASP value
+            Aircraft.Nacelle.AVG_LENGTH: (14.70326336, 'ft'),  # may not be actual GASP value
+            Aircraft.Nacelle.SURFACE_AREA: (339.58410134, 'ft**2'),  # may not be actual GASP value
+            Aircraft.Electrical.HYBRID_CABLE_LENGTH: (50.6032, 'ft'),  # not actual GASP value
         }
 
-        for var_name, expected_val in expected_values.items():
+        for var_name, (expected_val, units) in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(prob[var_name], expected_val, tol)
+                actual = prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected_val, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-12)
@@ -497,40 +521,44 @@ class SizeGroupTestCase4(unittest.TestCase):
 
         tol = 1e-4
         expected_values = {
-            Aircraft.Fuselage.AVG_DIAMETER: 56.2,  # not actual GASP value
-            'cabin_height': 9.18333,  # not actual GASP value
-            'cabin_len': 435,  # not actual GASP value
-            'nose_height': 4.68333,  # not actual GASP value
-            Aircraft.Fuselage.LENGTH: 476.7333,  # not actual GASP value
-            Aircraft.Fuselage.WETTED_AREA: 13400.44,  # not actual GASP value
-            Aircraft.TailBoom.LENGTH: 476.7333,  # not actual GASP value
-            Aircraft.Wing.AREA: 1370.3125,  # not actual GASP value
-            Aircraft.Wing.SPAN: 117.81878299,  # not actual GASP value
-            Aircraft.Wing.CENTER_CHORD: 17.48974356,  # not actual GASP value
-            Aircraft.Wing.AVERAGE_CHORD: 12.61453233,  # not actual GASP value
-            Aircraft.Wing.ROOT_CHORD: 16.988,  # not actual GASP value
-            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: 0.14151,  # not actual GASP value
-            'strut_y': 0,  # not actual GASP value
-            Aircraft.Strut.LENGTH: 5.2361,  # not actual GASP value
-            Aircraft.Strut.CHORD: 2.8647,  # not actual GASP value
-            Aircraft.HorizontalTail.AREA: 298.484,  # not actual GASP value
-            Aircraft.HorizontalTail.SPAN: 37.654,  # not actual GASP value
-            Aircraft.HorizontalTail.ROOT_CHORD: 11.7265,  # not actual GASP value
-            Aircraft.HorizontalTail.AVERAGE_CHORD: 8.5341,  # not actual GASP value
-            Aircraft.HorizontalTail.MOMENT_ARM: 54.67937726,  # not actual GASP value
-            Aircraft.VerticalTail.AREA: 297.003,  # not actual GASP value
-            Aircraft.VerticalTail.SPAN: 22.2709,  # not actual GASP value
-            Aircraft.VerticalTail.ROOT_CHORD: 14.8094,  # not actual GASP value
-            Aircraft.VerticalTail.AVERAGE_CHORD: 13.3902,  # not actual GASP value
-            Aircraft.VerticalTail.MOMENT_ARM: 49.88094115,  # not actual GASP value
-            Aircraft.Nacelle.AVG_DIAMETER: 7.35163168,  # may not be actual GASP value
-            Aircraft.Nacelle.AVG_LENGTH: 14.70326336,  # may not be actual GASP value
-            Aircraft.Nacelle.SURFACE_AREA: 339.58410134,  # may not be actual GASP value
+            Aircraft.Fuselage.AVG_DIAMETER: (56.2, 'ft'),  # not actual GASP value
+            'cabin_height': (9.18333, 'ft'),  # not actual GASP value
+            'cabin_len': (435, 'ft'),  # not actual GASP value
+            'nose_height': (4.68333, 'ft'),  # not actual GASP value
+            Aircraft.Fuselage.LENGTH: (476.7333, 'ft'),  # not actual GASP value
+            Aircraft.Fuselage.WETTED_AREA: (13400.44, 'ft**2'),  # not actual GASP value
+            Aircraft.TailBoom.LENGTH: (476.7333, 'ft'),  # not actual GASP value
+            Aircraft.Wing.AREA: (1370.3125, 'ft**2'),  # not actual GASP value
+            Aircraft.Wing.SPAN: (117.81878299, 'ft'),  # not actual GASP value
+            Aircraft.Wing.CENTER_CHORD: (17.48974356, 'ft'),  # not actual GASP value
+            Aircraft.Wing.AVERAGE_CHORD: (12.61453233, 'ft'),  # not actual GASP value
+            Aircraft.Wing.ROOT_CHORD: (16.988, 'ft'),  # not actual GASP value
+            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: (
+                0.14151,
+                'unitless',
+            ),  # not actual GASP value
+            'strut_y': (0, 'ft'),  # not actual GASP value
+            Aircraft.Strut.LENGTH: (5.2361, 'ft'),  # not actual GASP value
+            Aircraft.Strut.CHORD: (2.8647, 'ft'),  # not actual GASP value
+            Aircraft.HorizontalTail.AREA: (298.484, 'ft**2'),  # not actual GASP value
+            Aircraft.HorizontalTail.SPAN: (37.654, 'ft'),  # not actual GASP value
+            Aircraft.HorizontalTail.ROOT_CHORD: (11.7265, 'ft'),  # not actual GASP value
+            Aircraft.HorizontalTail.AVERAGE_CHORD: (8.5341, 'ft'),  # not actual GASP value
+            Aircraft.HorizontalTail.MOMENT_ARM: (54.67937726, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.AREA: (297.003, 'ft**2'),  # not actual GASP value
+            Aircraft.VerticalTail.SPAN: (22.2709, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.ROOT_CHORD: (14.8094, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.AVERAGE_CHORD: (13.3902, 'ft'),  # not actual GASP value
+            Aircraft.VerticalTail.MOMENT_ARM: (49.88094115, 'ft'),  # not actual GASP value
+            Aircraft.Nacelle.AVG_DIAMETER: (7.35163168, 'ft'),  # may not be actual GASP value
+            Aircraft.Nacelle.AVG_LENGTH: (14.70326336, 'ft'),  # may not be actual GASP value
+            Aircraft.Nacelle.SURFACE_AREA: (339.58410134, 'ft**2'),  # may not be actual GASP value
         }
 
-        for var_name, expected_val in expected_values.items():
+        for var_name, (expected_val, units) in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(prob[var_name], expected_val, tol)
+                actual = prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected_val, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
@@ -665,39 +693,40 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         tol = 1e-4
         # BWBFuselageGroup
         expected_values = {
-            Aircraft.Fuselage.AVG_DIAMETER: 38,
-            'cabin_height': 9.86859989,
-            'nose_height': 4.86859989,
-            Aircraft.Fuselage.LENGTH: 71.5245514,
-            Aircraft.Fuselage.WETTED_AREA: 4573.42578,
-            Aircraft.TailBoom.LENGTH: 71.5245514,
-            Aircraft.Wing.AREA: 2142.85714286,
-            Aircraft.Wing.SPAN: 146.38501094,
-            Aircraft.Wing.CENTER_CHORD: 22.97244452,
-            Aircraft.Wing.AVERAGE_CHORD: 16.2200522,
-            Aircraft.Wing.ROOT_CHORD: 20.33371617,
-            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: 0.13596576,
-            'wing_volume_no_fold': 783.62100035,
-            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: 605.90781747,
-            Aircraft.Wing.EXPOSED_AREA: 1352.1135998,
-            Aircraft.HorizontalTail.AREA: 0.00117064,
-            Aircraft.HorizontalTail.SPAN: 0.04467601,
-            Aircraft.HorizontalTail.ROOT_CHORD: 0.03836448,
-            Aircraft.HorizontalTail.AVERAGE_CHORD: 0.02808445,
-            Aircraft.HorizontalTail.MOMENT_ARM: 29.69074172,
-            Aircraft.VerticalTail.AREA: 169.11964286,
-            Aircraft.VerticalTail.SPAN: 16.98084188,
-            Aircraft.VerticalTail.ROOT_CHORD: 14.58190052,
-            Aircraft.VerticalTail.AVERAGE_CHORD: 10.67457744,
-            Aircraft.VerticalTail.MOMENT_ARM: 27.82191598,
-            Aircraft.Nacelle.AVG_DIAMETER: 5.33382144,
-            Aircraft.Nacelle.AVG_LENGTH: 7.24759657,
-            Aircraft.Nacelle.SURFACE_AREA: 121.44575974,
+            Aircraft.Fuselage.AVG_DIAMETER: (38, 'ft'),
+            'cabin_height': (9.86859989, 'ft'),
+            'nose_height': (4.86859989, 'ft'),
+            Aircraft.Fuselage.LENGTH: (71.5245514, 'ft'),
+            Aircraft.Fuselage.WETTED_AREA: (4573.42578, 'ft**2'),
+            Aircraft.TailBoom.LENGTH: (71.5245514, 'ft'),
+            Aircraft.Wing.AREA: (2142.85714286, 'ft**2'),
+            Aircraft.Wing.SPAN: (146.38501094, 'ft'),
+            Aircraft.Wing.CENTER_CHORD: (22.97244452, 'ft'),
+            Aircraft.Wing.AVERAGE_CHORD: (16.2200522, 'ft'),
+            Aircraft.Wing.ROOT_CHORD: (20.33371617, 'ft'),
+            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: (0.13596576, 'unitless'),
+            'wing_volume_no_fold': (783.62100035, 'ft**3'),
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: (605.90781747, 'ft**3'),
+            Aircraft.Wing.EXPOSED_AREA: (1352.1135998, 'ft**2'),
+            Aircraft.HorizontalTail.AREA: (0.00117064, 'ft**2'),
+            Aircraft.HorizontalTail.SPAN: (0.04467601, 'ft'),
+            Aircraft.HorizontalTail.ROOT_CHORD: (0.03836448, 'ft'),
+            Aircraft.HorizontalTail.AVERAGE_CHORD: (0.02808445, 'ft'),
+            Aircraft.HorizontalTail.MOMENT_ARM: (29.69074172, 'ft'),
+            Aircraft.VerticalTail.AREA: (169.11964286, 'ft**2'),
+            Aircraft.VerticalTail.SPAN: (16.98084188, 'ft'),
+            Aircraft.VerticalTail.ROOT_CHORD: (14.58190052, 'ft'),
+            Aircraft.VerticalTail.AVERAGE_CHORD: (10.67457744, 'ft'),
+            Aircraft.VerticalTail.MOMENT_ARM: (27.82191598, 'ft'),
+            Aircraft.Nacelle.AVG_DIAMETER: (5.33382144, 'ft'),
+            Aircraft.Nacelle.AVG_LENGTH: (7.24759657, 'ft'),
+            Aircraft.Nacelle.SURFACE_AREA: (121.44575974, 'ft**2'),
         }
 
-        for var_name, expected_val in expected_values.items():
+        for var_name, (expected_val, units) in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(prob[var_name], expected_val, tol)
+                actual = prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected_val, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)
