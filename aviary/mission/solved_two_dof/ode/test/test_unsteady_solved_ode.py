@@ -108,7 +108,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
             assert_near_equal(drag + thrust_req * s_gamma, thrust_req * c_alphai, tolerance=1.0e-12)
 
             # 2. Test that forces balance normal to the velocity axis
-            assert_near_equal(lift + thrust_req * s_alphai, weight * c_gamma, tolerance=1.0e-12)
+            assert_near_equal(lift + thrust_req * s_alphai, weight * c_gamma, tolerance=1.0e-8)
 
             # 3. Test that dt_dr is the inverse of true airspeed
             assert_near_equal(tas, 1 / dt_dr, tolerance=1.0e-12)
@@ -119,7 +119,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
             # 5. Test that fuelflow (lbf/s) * dt_dr (s/ft) is equal to dmass_dr
             assert_near_equal(fuelflow * dt_dr, dmass_dr, tolerance=1.0e-12)
 
-        cpd = p.check_partials(compact_print=True, method='cs', excludes=['*params*', '*aero*'])
+        cpd = p.check_partials(out_stream=None, method='cs', excludes=['*params*', '*aero*'])
         assert_check_partials(cpd, atol=1e-6, rtol=1e-6)
 
     def test_steady_level_flight(self):

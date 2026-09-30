@@ -1,6 +1,5 @@
 import unittest
 
-import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
@@ -10,13 +9,12 @@ from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
-from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-@use_tempdirs
+# @use_tempdirs
 class GroundrollODETestCase(unittest.TestCase):
     """Test groundroll ODE."""
 
@@ -39,7 +37,7 @@ class GroundrollODETestCase(unittest.TestCase):
 
         setup_model_options(self.prob, aviary_options)
 
-    def test_groundroll_partials(self):
+    def test_case_1(self):
         # Check partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -58,22 +56,29 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         self.prob.run_model()
+        om.n2(self.prob)
 
-        testvals = {
-            Dynamic.Mission.VELOCITY_RATE: [14.58304081, 11.87430892],
-            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [0.0, 0.0],
-            Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
-            Dynamic.Mission.DISTANCE_RATE: [126.58573928, 253.17147857],
-            'normal_force': [85313.25425063, 41138.11842255],
-            'fuselage_pitch': [0.0, 0.0],
-            'dmass_dv': [-0.4852005, -0.60896963],
+        tol = 1e-6
+        expected_values = {
+            Dynamic.Mission.VELOCITY_RATE: ([14.58304081, 11.87430892], 'ft/s**2'),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: ([0.0, 0.0], 'rad/s'),
+            Dynamic.Mission.ALTITUDE_RATE: ([0.0, 0.0], 'ft/s'),
+            Dynamic.Mission.DISTANCE_RATE: ([126.58573928, 253.17147857], 'ft/s'),
+            'normal_force': ([85313.25425063, 41138.11842255], 'lbf'),
+            'fuselage_pitch': ([0.0, 0.0], 'deg'),
+            'dmass_dv': ([-0.4852005, -0.60896963], 'lbm/(ft/s)'),
         }
-        check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
-        partial_data = self.prob.check_partials(
-            out_stream=None, method='cs', excludes=['*params*', '*aero*']
-        )
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tol)
+
+        with self.subTest(check='partials'):
+            partial_data = self.prob.check_partials(
+                out_stream=None, method='cs', excludes=['*params*', '*aero*']
+            )
+            assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
 class RotationODETestCase(unittest.TestCase):
@@ -118,31 +123,31 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-6
-        assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE],
-            np.array([13.68875852, 13.68875852]),
-            tol,
-        )
-        assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array([0.0, 0.0]), tol
-        )
-        assert_near_equal(self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0.0, 0.0]), tol)
-        assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE_RATE], np.array([168.781, 168.781]), tol
-        )
-        assert_near_equal(
-            self.prob['normal_force'], np.array([66936.59676831, 66936.59676831]), tol
-        )
-        assert_near_equal(self.prob['fuselage_pitch'], np.array([0.0, 0.0]), tol)
+        expected_values = {
+            Dynamic.Mission.VELOCITY_RATE: ([13.68875852, 13.68875852], 'ft/s**2'),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: ([0.0, 0.0], 'rad/s'),
+            Dynamic.Mission.ALTITUDE_RATE: ([0.0, 0.0], 'ft/s'),
+            Dynamic.Mission.DISTANCE_RATE: ([168.781, 168.781], 'ft/s'),
+            'normal_force': ([66936.59676831, 66936.59676831], 'lbf'),
+            'fuselage_pitch': ([0.0, 0.0], 'deg'),
+        }
 
-        partial_data = self.prob.check_partials(
-            out_stream=None, method='cs', excludes=['*params*', '*aero*']
-        )
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tol)
+
+        with self.subTest(check='partials'):
+            partial_data = self.prob.check_partials(
+                out_stream=None, method='cs', excludes=['*params*', '*aero*']
+            )
+            assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
 @use_tempdirs
 class AscentODETestCase(unittest.TestCase):
+    """Test 2-degrees-of-freedom ascent ODE."""
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -179,30 +184,28 @@ class AscentODETestCase(unittest.TestCase):
 
         self.prob.run_model()
 
-        tol = tol = 1e-6
-        assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE],
-            np.array([642156.99315828, 642156.99315828]),
-            tol,
-        )
-        assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE],
-            np.array([2260.37849562, 2260.37849562]),
-            tol,
-        )
-        assert_near_equal(self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0.0, 0.0]), tol)
-        assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE_RATE], np.array([168.781, 168.781]), tol
-        )
-        assert_near_equal(self.prob['angle_of_attack_rate'], np.array([0.0, 0.0]), tol)
-        assert_near_equal(self.prob['normal_force'], np.array([0.0, 0.0]), tol)
-        assert_near_equal(self.prob['fuselage_pitch'], np.array([0.0, 0.0]), tol)
-        assert_near_equal(self.prob['load_factor'], np.array([11849.10281268, 11849.10281268]), tol)
+        tol = 1e-6
+        expected_values = {
+            Dynamic.Mission.VELOCITY_RATE: ([642156.99315828, 642156.99315828], 'ft/s**2'),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: ([2260.37849562, 2260.37849562], 'rad/s'),
+            Dynamic.Mission.ALTITUDE_RATE: ([0.0, 0.0], 'ft/s'),
+            Dynamic.Mission.DISTANCE_RATE: ([168.781, 168.781], 'ft/s'),
+            'angle_of_attack_rate': ([0.0, 0.0], 'deg/s'),
+            'normal_force': ([0.0, 0.0], 'lbf'),
+            'fuselage_pitch': ([0.0, 0.0], 'deg'),
+            'load_factor': ([11849.10281268, 11849.10281268], 'unitless'),
+        }
 
-        partial_data = self.prob.check_partials(
-            out_stream=None, method='cs', excludes=['*params*', '*aero*']
-        )
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tol)
+
+        with self.subTest(check='partials'):
+            partial_data = self.prob.check_partials(
+                out_stream=None, method='cs', excludes=['*params*', '*aero*']
+            )
+            assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
 if __name__ == '__main__':
