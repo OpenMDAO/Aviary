@@ -485,7 +485,6 @@ class AviaryGroup(om.Group):
         else:
             target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
 
-        aviary_inputs.set_val(Mission.RANGE, target_range, units='NM')
         self.target_range = target_range
 
         # TODO this seems like the wrong place to define the core subsystems. Maybe move to
@@ -1439,19 +1438,26 @@ class AviaryGroup(om.Group):
                     ref=MTOW,
                 )
 
-                # If target_range is unspecified, then don't assume we want to fly a fixed range.
-                if 'target_range' in self.post_mission_info:
-                    self.add_constraint(
-                        Mission.Constraints.RANGE_RESIDUAL,
-                        equals=0,
-                        ref=self.target_range,
-                    )
+                self.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL,
+                    equals=0,
+                    ref=self.target_range,
+                )
 
             elif problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
                 # fixed vehicle gross mass aviary finds optimal trajectory and maximum range
                 if verbosity >= Verbosity.VERBOSE:
                     print(
                         'No additional aircraft design variables added for OFF_DESIGN_MAX_RANGE missions'
+                    )
+
+            elif problem_type is ProblemType.OFF_DESIGN_GENERAL:
+                # If target_range is unspecified, then don't assume we want to fly a fixed range.
+                if 'target_range' in self.post_mission_info:
+                    self.add_constraint(
+                        Mission.Constraints.RANGE_RESIDUAL,
+                        equals=0,
+                        ref=self.target_range,
                     )
 
             elif problem_type is ProblemType.MULTI_MISSION:

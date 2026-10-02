@@ -37,11 +37,6 @@ operation_dict = {
     '>': gt,
     'isinstance': isinstance,
 }
-problem_types = {
-    'sizing': ProblemType.SIZING,
-    'off_design_min_fuel': ProblemType.OFF_DESIGN_MIN_FUEL,
-    'off_design_max_range': ProblemType.OFF_DESIGN_MAX_RANGE,
-}
 
 
 def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=Verbosity.BRIEF):

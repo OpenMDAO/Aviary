@@ -67,6 +67,7 @@ class TestBatteryMission(unittest.TestCase):
 
     def test_subsystems_in_a_mission(self):
         phase_info = deepcopy(self.phase_info)
+        phase_info
 
         prob = av.AviaryProblem(verbosity=0)
 
@@ -74,9 +75,9 @@ class TestBatteryMission(unittest.TestCase):
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm_with_electric.csv',
             phase_info,
         )
-        prob.problem_type = av.ProblemType.OFF_DESIGN_MIN_FUEL
+        prob.problem_type = av.ProblemType.OFF_DESIGN_GENERAL
 
-        prob.aviary_inputs.set_val(Settings.PROBLEM_TYPE, ProblemType.OFF_DESIGN_MIN_FUEL)
+        prob.aviary_inputs.set_val(Settings.PROBLEM_TYPE, ProblemType.OFF_DESIGN_GENERAL)
         prob.aviary_inputs.set_val(av.Aircraft.Battery.EFFICIENCY, 0.95, 'unitless')
 
         # Weight comes from Sizing run.
