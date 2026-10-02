@@ -21,7 +21,7 @@ from aviary.variable_info.variables import Aircraft, Settings
 
 
 def add_aviary_input(
-    comp: System,
+    comp: Component,
     varname: str,
     units: str | None = None,
     desc: str | None = None,
@@ -102,7 +102,7 @@ def add_aviary_input(
 
 
 def add_aviary_output(
-    comp: System,
+    comp: Component,
     varname: str,
     units: str | None = None,
     desc: str | None = None,
