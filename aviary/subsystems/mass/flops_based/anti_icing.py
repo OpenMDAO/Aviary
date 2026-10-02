@@ -6,6 +6,7 @@ from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_nacelle_diam_factor,
     distributed_nacelle_diam_factor_deriv,
 )
+from aviary.utils.math_utils import deg2rad
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -27,7 +28,7 @@ class AntiIcingMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
-        add_aviary_input(self, Aircraft.Wing.SWEEP, units='rad')
+        add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
         add_aviary_input(
             self, Aircraft.Engine.SCALE_FACTOR, shape=num_engine_type, units='unitless'
         )
@@ -45,7 +46,7 @@ class AntiIcingMass(om.ExplicitComponent):
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         avg_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
         span = inputs[Aircraft.Wing.SPAN]
-        sweep = inputs[Aircraft.Wing.SWEEP]
+        sweep = deg2rad(inputs[Aircraft.Wing.SWEEP])
 
         thrust_ratio = inputs[Aircraft.Engine.SCALE_FACTOR]
         adjusted_avg_diam = avg_diam * np.sqrt(thrust_ratio)
@@ -65,7 +66,7 @@ class AntiIcingMass(om.ExplicitComponent):
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         avg_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
         span = inputs[Aircraft.Wing.SPAN]
-        sweep = inputs[Aircraft.Wing.SWEEP]
+        sweep = deg2rad(inputs[Aircraft.Wing.SWEEP])
 
         # scale avg_diam by thrust ratio
         thrust_ratio = inputs[Aircraft.Engine.SCALE_FACTOR]
@@ -92,7 +93,7 @@ class AntiIcingMass(om.ExplicitComponent):
         J[Aircraft.AntiIcing.MASS, Aircraft.Wing.SPAN] = 1 / cos_sweep * scaler
 
         J[Aircraft.AntiIcing.MASS, Aircraft.Wing.SWEEP] = (
-            span * sin_sweep / (cos_sweep) ** 2 * scaler
+            span * sin_sweep / (cos_sweep) ** 2 * scaler * np.pi / 180.0
         )
 
         J[Aircraft.AntiIcing.MASS, Aircraft.Engine.SCALE_FACTOR] = (

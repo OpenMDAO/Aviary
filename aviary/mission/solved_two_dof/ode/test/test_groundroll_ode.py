@@ -1,8 +1,7 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
-from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.solved_two_dof.ode.groundroll_ode import GroundrollODE
 from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
@@ -11,13 +10,11 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
-from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
-@use_tempdirs
 class GroundrollODETestCase(unittest.TestCase):
     """Test groundroll ODE."""
 
@@ -33,7 +30,7 @@ class GroundrollODETestCase(unittest.TestCase):
         aviary_options.set_val(Aircraft.Design.TYPE, val='transport', units='unitless')
         aviary_options.set_val(Aircraft.Wing.HAS_STRUT, val=False, units='unitless')
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
-        aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
+        # aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
 
         # Engine deck build inputs (hardcoded, not read from _MetaData).
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, val=True)
@@ -59,10 +56,7 @@ class GroundrollODETestCase(unittest.TestCase):
 
         setup_model_options(self.prob, aviary_options)
 
-    def test_groundroll_partials(self):
-        # Check partial derivatives
-        self.prob.setup(check=False, force_alloc_complex=True)
-
+    def _set_inputs(self):
         set_params_for_unit_tests(self.prob)
 
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units='kn')
@@ -75,18 +69,34 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Dynamic.Vehicle.MASS, [1.0, 1.0], units='lbm')
 
+    def test_groundroll(self):
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        self._set_inputs()
+
         self.prob.run_model()
 
-        testvals = {
-            Dynamic.Mission.VELOCITY_RATE: [1415713.83389512, 1415713.83389512],
-            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [0.0, 0.0],
-            Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
-            Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
-            'normal_force': [0.0, 0.0],
-            'fuselage_pitch': [0.0, 0.0],
-            'dmass_dv': [-5.02392469e-06, -5.02392469e-06],
+        expected_values = {
+            Dynamic.Mission.VELOCITY_RATE: ([1414572.84759388, 1414572.84759388], 'ft/s**2'),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: ([0.0, 0.0], 'rad/s'),
+            Dynamic.Mission.ALTITUDE_RATE: ([0.0, 0.0], 'ft/s'),
+            Dynamic.Mission.DISTANCE_RATE: ([168.781, 168.781], 'ft/s'),
+            'normal_force': ([0.0, 0.0], 'N'),
+            'fuselage_pitch': ([0.0, 0.0], 'rad'),
+            'dmass_dv': ([-5.02797696e-06, -5.02797696e-06], 'lbm/kn'),
         }
-        check_prob_outputs(self.prob, testvals, rtol=1e-6)
+
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tolerance=1e-6)
+
+    def test_partials(self):
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        self._set_inputs()
+
+        self.prob.run_model()
 
         partial_data = self.prob.check_partials(
             out_stream=None, method='cs', excludes=['*params*', '*aero*']

@@ -5,6 +5,7 @@ from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.mission.two_dof.ode.breguet_cruise_eom import ElectricRangeComp, RangeComp
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
+from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
@@ -16,6 +17,13 @@ class BreguetCruiseODE(TwoDOFODE):
         nn = self.options['num_nodes']
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
+
+        self.add_subsystem(
+            'calc_weight',
+            MassToWeight(num_nodes=nn),
+            promotes_inputs=['mass'],
+            promotes_outputs=['weight'],
+        )
 
         prop_group = self.add_subsystems_and_solver(couple_propulsion=True)
 
@@ -102,6 +110,13 @@ class ElectricBreguetCruiseODE(TwoDOFODE):
         nn = self.options['num_nodes']
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
+
+        self.add_subsystem(
+            'calc_weight',
+            MassToWeight(num_nodes=nn),
+            promotes_inputs=['mass'],
+            promotes_outputs=['weight'],
+        )
 
         prop_group = self.add_subsystems_and_solver(couple_propulsion=True)
 

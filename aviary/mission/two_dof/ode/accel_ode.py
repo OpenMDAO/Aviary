@@ -2,6 +2,7 @@ import numpy as np
 
 from aviary.mission.two_dof.ode.accel_eom import AccelerationRates
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
+from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.variable_info.variables import Dynamic
 
 
@@ -17,6 +18,13 @@ class AccelODE(TwoDOFODE):
         nn = self.options['num_nodes']
 
         self.add_atmosphere()
+
+        self.add_subsystem(
+            'calc_weight',
+            MassToWeight(num_nodes=nn),
+            promotes_inputs=[('mass', Dynamic.Vehicle.MASS)],
+            promotes_outputs=['weight'],
+        )
 
         self.add_subsystems_and_solver()
 

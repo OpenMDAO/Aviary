@@ -70,7 +70,9 @@ class DistanceComp(om.ExplicitComponent):
         self.declare_partials(Dynamic.Mission.DISTANCE, 'time', rows=all_row, cols=all_col)
 
     def compute(self, inputs, outputs):
-        v_x = inputs['TAS_cruise']
+        v_x = inputs[
+            'TAS_cruise'
+        ]  # TODO to compute distance we want speed relative to ground not airspeed
         r0 = inputs['cruise_distance_initial']
         t = inputs['time']
         t0 = t[0]

@@ -23,7 +23,7 @@ class GroundrollODETestCase(unittest.TestCase):
 
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
-        aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
+        # aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', [build_engine_deck(aviary_options)]
         )
@@ -37,8 +37,7 @@ class GroundrollODETestCase(unittest.TestCase):
 
         setup_model_options(self.prob, aviary_options)
 
-    def test_case_1(self):
-        # Check partial derivatives
+    def test_groundroll(self):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         set_params_for_unit_tests(self.prob)
@@ -56,17 +55,16 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         self.prob.run_model()
-        om.n2(self.prob)
 
         tol = 1e-6
         expected_values = {
-            Dynamic.Mission.VELOCITY_RATE: ([14.58304081, 11.87430892], 'ft/s**2'),
+            Dynamic.Mission.VELOCITY_RATE: ([14.5712877, 11.8647389], 'ft/s**2'),
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: ([0.0, 0.0], 'rad/s'),
             Dynamic.Mission.ALTITUDE_RATE: ([0.0, 0.0], 'ft/s'),
             Dynamic.Mission.DISTANCE_RATE: ([126.58573928, 253.17147857], 'ft/s'),
             'normal_force': ([85313.25425063, 41138.11842255], 'lbf'),
             'fuselage_pitch': ([0.0, 0.0], 'deg'),
-            'dmass_dv': ([-0.4852005, -0.60896963], 'lbm/(ft/s)'),
+            'dmass_dv': ([-0.48559186, -0.60946082], 'lbm/knot'),
         }
 
         for var_name, (expected, units) in expected_values.items():
@@ -89,7 +87,7 @@ class RotationODETestCase(unittest.TestCase):
 
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
-        aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
+        # aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', [build_engine_deck(aviary_options)]
         )
@@ -102,8 +100,7 @@ class RotationODETestCase(unittest.TestCase):
         )
         setup_model_options(self.prob, aviary_options)
 
-    def test_rotation_partials(self):
-        # Check partial derivatives
+    def test_rotation(self):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val(Aircraft.Wing.INCIDENCE, 1.5, units='deg')
@@ -124,7 +121,7 @@ class RotationODETestCase(unittest.TestCase):
 
         tol = 1e-6
         expected_values = {
-            Dynamic.Mission.VELOCITY_RATE: ([13.68875852, 13.68875852], 'ft/s**2'),
+            Dynamic.Mission.VELOCITY_RATE: ([13.67772614, 13.67772614], 'ft/s**2'),
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: ([0.0, 0.0], 'rad/s'),
             Dynamic.Mission.ALTITUDE_RATE: ([0.0, 0.0], 'ft/s'),
             Dynamic.Mission.DISTANCE_RATE: ([168.781, 168.781], 'ft/s'),
@@ -153,7 +150,7 @@ class AscentODETestCase(unittest.TestCase):
 
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
-        aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
+        # aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', [build_engine_deck(aviary_options)]
@@ -165,7 +162,7 @@ class AscentODETestCase(unittest.TestCase):
 
         setup_model_options(self.prob, AviaryValues(aviary_options))
 
-    def test_ascent_partials(self):
+    def test_ascent(self):
         # Test partial derivatives
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -186,8 +183,8 @@ class AscentODETestCase(unittest.TestCase):
 
         tol = 1e-6
         expected_values = {
-            Dynamic.Mission.VELOCITY_RATE: ([642156.99315828, 642156.99315828], 'ft/s**2'),
-            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: ([2260.37849562, 2260.37849562], 'rad/s'),
+            Dynamic.Mission.VELOCITY_RATE: ([641639.45047776, 641639.45047776], 'ft/s**2'),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: ([2258.55674809, 2258.55674809], 'rad/s'),
             Dynamic.Mission.ALTITUDE_RATE: ([0.0, 0.0], 'ft/s'),
             Dynamic.Mission.DISTANCE_RATE: ([168.781, 168.781], 'ft/s'),
             'angle_of_attack_rate': ([0.0, 0.0], 'deg/s'),

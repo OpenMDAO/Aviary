@@ -11,7 +11,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import PhaseType
 
 
-@use_tempdirs
+# @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using

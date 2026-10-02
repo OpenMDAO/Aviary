@@ -3,6 +3,7 @@ import openmdao.api as om
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.utils.math_utils import rad2deg, deg2rad
 
 
 class TakeoffEOM(om.ExplicitComponent):
@@ -64,7 +65,7 @@ class TakeoffEOM(om.ExplicitComponent):
             units='m/s',
         )
         add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
-        add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='rad')
+        add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='deg')
         add_aviary_input(self, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, units='unitless')
 
         add_aviary_output(
@@ -79,14 +80,14 @@ class TakeoffEOM(om.ExplicitComponent):
         add_aviary_output(self, Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, shape=nn, units='rad/s')
 
         if not ground_roll:
-            add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='rad')
+            add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='deg')
 
         add_aviary_output(self, Dynamic.Mission.DISTANCE_RATE, shape=nn, units='m/s')
 
         self.add_output('normal_force', val=np.ones(nn), desc='normal forces', units='N')
-        self.add_output('fuselage_pitch', val=np.ones(nn), desc='fuselage pitch angle', units='rad')
+        self.add_output('fuselage_pitch', val=np.ones(nn), desc='fuselage pitch angle', units='deg')
         self.add_output('load_factor', val=np.ones(nn), desc='load factor', units='unitless')
-        self.add_output('angle_of_attack_rate', val=np.ones(nn), units='rad/s')
+        self.add_output('angle_of_attack_rate', val=np.ones(nn), units='deg/s')
 
     def setup_partials(self):
         ground_roll = self.options['ground_roll']
@@ -204,7 +205,7 @@ class TakeoffEOM(om.ExplicitComponent):
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
             rows=arange,
             cols=arange,
-            val=1,
+            val=rad2deg(1),
         )
         self.declare_partials('fuselage_pitch', [Aircraft.Wing.INCIDENCE])
 
@@ -221,14 +222,14 @@ class TakeoffEOM(om.ExplicitComponent):
         incremented_drag = inputs[Dynamic.Vehicle.DRAG]
         TAS = inputs[Dynamic.Mission.VELOCITY]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
-        i_wing = inputs[Aircraft.Wing.INCIDENCE]
+        i_wing = deg2rad(inputs[Aircraft.Wing.INCIDENCE])
 
         weight = mass * gravity
 
         if ground_roll:
-            alpha = inputs[Aircraft.Wing.INCIDENCE]
+            alpha = i_wing
         else:
-            alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
+            alpha = deg2rad(inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK])
 
         thrust_along_flightpath = thrust * np.cos(alpha - i_wing)
         thrust_across_flightpath = thrust * np.sin(alpha - i_wing)
@@ -261,18 +262,19 @@ class TakeoffEOM(om.ExplicitComponent):
         outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * sin_gamma
         outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * cos_gamma
 
-        outputs['fuselage_pitch'] = gamma - i_wing + alpha
+        outputs['fuselage_pitch'] = rad2deg(gamma - i_wing + alpha)
 
         load_factor = (incremented_lift + thrust_across_flightpath) / (weight * cos_gamma)
         outputs['load_factor'] = load_factor
 
         if rotation:
-            outputs['angle_of_attack_rate'][:] = np.deg2rad(self.options['rotation_pitch_rate'])
+            outputs['angle_of_attack_rate'][:] = self.options['rotation_pitch_rate']
         else:
             outputs['angle_of_attack_rate'][:] = 0.0
 
     def compute_partials(self, inputs, J):
         gravity = self.options[Mission.GRAVITY][0]
+
         ground_roll = self.options['ground_roll']
         rotation = self.options['rotation']
         nn = self.options['num_nodes']
@@ -288,12 +290,12 @@ class TakeoffEOM(om.ExplicitComponent):
         incremented_drag = inputs[Dynamic.Vehicle.DRAG]
         TAS = inputs[Dynamic.Mission.VELOCITY]
         gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
-        i_wing = inputs[Aircraft.Wing.INCIDENCE]
+        i_wing = deg2rad(inputs[Aircraft.Wing.INCIDENCE])
 
         if ground_roll:
             alpha = i_wing
         else:
-            alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
+            alpha = deg2rad(inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK])
 
         weight = mass * gravity
 
@@ -306,12 +308,12 @@ class TakeoffEOM(om.ExplicitComponent):
         thrust_across_flightpath = thrust * sin_alpha
 
         dTAlF_dThrust = cos_alpha
-        dTAlF_dAlpha = -thrust * sin_alpha
-        dTAlF_dIwing = thrust * sin_alpha
+        dTAlF_dAlpha = -thrust * sin_alpha * deg2rad(1)
+        dTAlF_dIwing = thrust * sin_alpha * deg2rad(1)
 
         dTAcF_dThrust = sin_alpha
-        dTAcF_dAlpha = thrust * cos_alpha
-        dTAcF_dIwing = -thrust * cos_alpha
+        dTAcF_dAlpha = thrust * cos_alpha * deg2rad(1)
+        dTAcF_dIwing = -thrust * cos_alpha * deg2rad(1)
 
         J['load_factor', Dynamic.Vehicle.LIFT] = 1 / (weight * cos_gamma)
         J['load_factor', Dynamic.Vehicle.MASS] = (

@@ -301,7 +301,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
             elif method in ('cruise', 'tabular_cruise'):
                 if 'output_alpha' in subsystem_options:
                     if subsystem_options['output_alpha']:
-                        promotes = ['*']
+                        promotes = ['*', ('lift_req', 'weight')]
 
             else:
                 raise ValueError(

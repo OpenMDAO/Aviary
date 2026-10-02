@@ -118,7 +118,7 @@ class SizeGroupTestCase1(unittest.TestCase):
 
         tol = 5e-4
         expected_values = {
-            Aircraft.Fuselage.AVG_DIAMETER: (157.2, 'ft'),
+            Aircraft.Fuselage.AVG_DIAMETER: (157.2, 'inch'),
             'cabin_height': (13.1, 'ft'),
             'cabin_len': (72.1, 'ft'),
             'nose_height': (8.6, 'ft'),
@@ -250,7 +250,7 @@ class SizeGroupTestCase2(unittest.TestCase):
 
         tol = 1e-4
         expected_values = {
-            Aircraft.Fuselage.AVG_DIAMETER: (157.2, 'ft'),  # not actual GASP value
+            Aircraft.Fuselage.AVG_DIAMETER: (157.2, 'inch'),  # not actual GASP value
             'cabin_height': (13.1, 'ft'),  # not actual GASP value
             'cabin_len': (72.09722222, 'ft'),  # not actual GASP value
             'nose_height': (8.6, 'ft'),  # not actual GASP value
@@ -386,7 +386,7 @@ class SizeGroupTestCase3(unittest.TestCase):
 
         tol = 1e-4
         expected_values = {
-            Aircraft.Fuselage.AVG_DIAMETER: (56.2, 'ft'),  # not actual GASP value
+            Aircraft.Fuselage.AVG_DIAMETER: (56.2, 'inch'),  # not actual GASP value
             'cabin_height': (9.18333, 'ft'),  # not actual GASP value
             'cabin_len': (435, 'ft'),  # not actual GASP value
             'nose_height': (4.68333, 'ft'),  # not actual GASP value
@@ -521,7 +521,7 @@ class SizeGroupTestCase4(unittest.TestCase):
 
         tol = 1e-4
         expected_values = {
-            Aircraft.Fuselage.AVG_DIAMETER: (56.2, 'ft'),  # not actual GASP value
+            Aircraft.Fuselage.AVG_DIAMETER: (56.2, 'inch'),  # not actual GASP value
             'cabin_height': (9.18333, 'ft'),  # not actual GASP value
             'cabin_len': (435, 'ft'),  # not actual GASP value
             'nose_height': (4.68333, 'ft'),  # not actual GASP value
