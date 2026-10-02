@@ -475,9 +475,17 @@ class AviaryGroup(om.Group):
 
         # This function sets all the following defaults if they were not already set:
         # self.pre_mission_info, self_post_mission_info,
-        # self.require_range_residual, self.target_range
         # Other specific self.*** are defined in here as well that are specific to each builder
         self.configurator.initial_guesses(self)
+
+        # If the user doesn't specify a target range, then the design range is used for
+        # sizing the aircraft or in other off-design missions that require it.
+        if 'target_range' in self.post_mission_info:
+            target_range = wrapped_convert_units(self.post_mission_info['target_range'], 'NM')
+        else:
+            target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
+
+        self.target_range = target_range
 
         # TODO this seems like the wrong place to define the core subsystems. Maybe move to
         # load_inputs?
@@ -841,6 +849,22 @@ class AviaryGroup(om.Group):
         )
 
         self.configurator.add_post_mission_systems(self)
+
+        # This component is always present, even when its residual is not constrained.
+        self.add_subsystem(
+            'range_constraint',
+            om.ExecComp(
+                'range_resid = target_range - actual_range',
+                target_range={'val': self.target_range, 'units': 'NM'},
+                actual_range={'val': self.target_range, 'units': 'NM'},
+                range_resid={'val': 30, 'units': 'NM'},
+            ),
+            promotes_inputs=[
+                ('actual_range', Mission.RANGE),
+                'target_range',
+            ],
+            promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
+        )
 
         post_mission = self.post_mission
         self.add_subsystem(
@@ -1395,8 +1419,11 @@ class AviaryGroup(om.Group):
                     ],
                 )
 
-                if self.require_range_residual:
-                    self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
+                self.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL,
+                    equals=0,
+                    ref=self.target_range,
+                )
 
             elif problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
                 # target range problem
@@ -1411,13 +1438,26 @@ class AviaryGroup(om.Group):
                     ref=MTOW,
                 )
 
-                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
+                self.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL,
+                    equals=0,
+                    ref=self.target_range,
+                )
 
             elif problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
                 # fixed vehicle gross mass aviary finds optimal trajectory and maximum range
                 if verbosity >= Verbosity.VERBOSE:
                     print(
                         'No additional aircraft design variables added for OFF_DESIGN_MAX_RANGE missions'
+                    )
+
+            elif problem_type is ProblemType.OFF_DESIGN_GENERAL:
+                # If target_range is unspecified, then don't assume we want to fly a fixed range.
+                if 'target_range' in self.post_mission_info:
+                    self.add_constraint(
+                        Mission.Constraints.RANGE_RESIDUAL,
+                        equals=0,
+                        ref=self.target_range,
                     )
 
             elif problem_type is ProblemType.MULTI_MISSION:
@@ -1432,7 +1472,11 @@ class AviaryGroup(om.Group):
                 # TODO: RANGE_RESIDUAL constraint should be added based on what the
                 # user sets as the objective. if Objective is not range or Mission.RANGE,
                 # the range constriant should be added to make target rage = summary range
-                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
+                self.add_constraint(
+                    Mission.Constraints.RANGE_RESIDUAL,
+                    equals=0,
+                    ref=self.target_range,
+                )
 
                 # We must ensure that design.gross_mass is greater than  Mission.GROSS_MASS
                 # and this must hold true for each of the different missions that is flown the

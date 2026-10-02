@@ -47,7 +47,7 @@ def run_trajectory(sim=True):
     prob.check_and_preprocess_inputs()
 
     prob.build_model()
-    prob.add_driver('SNOPT', max_iter=50, verbosity=0)
+    prob.add_driver('SNOPT', max_iter=50, verbosity=1)
 
     ##########################
     # Design Variables       #

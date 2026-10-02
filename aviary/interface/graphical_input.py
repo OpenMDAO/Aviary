@@ -1698,7 +1698,6 @@ def create_phase_info(
 
     phase_info['post_mission'] = {
         'include_landing': user_choices['include_landing'],
-        'constrain_range': True,
         'target_range': (0.0, 'nmi'),
     }
 
@@ -1711,9 +1710,6 @@ def create_phase_info(
                 'distance_solve_segments': user_choices.get('distance_solve_segments', False),
             }
         )
-
-    # Apply global settings if required
-    phase_info['post_mission']['constrain_range'] = user_choices.get('constrain_range', True)
 
     # Calculate the total range
     total_range, range_unit = estimate_total_range_trapezoidal(times, mach_values, units)

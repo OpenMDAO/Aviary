@@ -14,6 +14,7 @@ phase_info = {
             'mach_bounds': ((0.2, 0.79), 'unitless'),
             'altitude_optimize': True,
             'altitude_bounds': ((0.0, 37000.0), 'ft'),
+            'altitude_ref': (37000.0, 'ft'),
             'mass_ref': (150000, 'lbm'),
             'throttle_enforcement': 'path_constraint',
             'time_initial': (0.0, 'min'),
@@ -60,6 +61,7 @@ phase_info = {
             'altitude_initial': (35000.0, 'ft'),
             'altitude_final': (35.0, 'ft'),
             'altitude_bounds': ((0.0, 38000.0), 'ft'),
+            'altitude_ref': (38000.0, 'ft'),
             'mass_ref': (150000, 'lbm'),
             'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((215.1, 872.4), 'min'),
@@ -73,7 +75,6 @@ phase_info = {
     },
     'post_mission': {
         'include_landing': True,
-        'constrain_range': True,
         'target_range': (3380.0, 'nmi'),
     },
 }

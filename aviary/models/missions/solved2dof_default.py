@@ -270,6 +270,5 @@ phase_info = {
     },
     'post_mission': {
         'include_landing': False,
-        'constrain_range': False,
     },
 }
