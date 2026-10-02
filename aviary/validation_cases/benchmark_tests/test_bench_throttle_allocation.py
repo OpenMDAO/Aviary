@@ -212,6 +212,7 @@ class ThrottleAllocation2DOFTestcase(unittest.TestCase):
         engine1.name = 'engine_1'
 
         self.options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.4)
+        self.options.set_val(Aircraft.Engine.DATA_FILE, 'turbofan_24k_2.csv')
         engine2 = build_engine_deck(self.options)
         engine2.name = 'engine_2'
 
