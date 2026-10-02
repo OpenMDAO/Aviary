@@ -107,7 +107,6 @@ class FlightConditions(om.ExplicitComponent):
 
             self.declare_partials(
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                # [Dynamic.Atmosphere.DENSITY, 'EAS'],
                 'EAS',
                 rows=arange,
                 cols=arange,
