@@ -4,7 +4,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.mission.two_dof.ode.takeoff_ode import TakeOffODE
+from aviary.mission.two_dof.ode.takeoff_ode import RequiredLift, TakeOffODE
 from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
@@ -14,7 +14,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-# @use_tempdirs
+@use_tempdirs
 class GroundrollODETestCase(unittest.TestCase):
     """Test groundroll ODE."""
 
@@ -202,6 +202,43 @@ class AscentODETestCase(unittest.TestCase):
             partial_data = self.prob.check_partials(
                 out_stream=None, method='cs', excludes=['*params*', '*aero*']
             )
+            assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
+class RequiredLiftTestCase(unittest.TestCase):
+    """Test the RequiredLift component used by AlphaModes.REQUIRED_LIFT."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('required_lift', RequiredLift(num_nodes=2), promotes=['*'])
+
+        aviary_options = get_option_defaults()
+        setup_model_options(self.prob, aviary_options)
+
+    def test_required_lift(self):
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        # mass and wing incidence borrowed from RotationODETestCase
+        self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units='lbm')
+        self.prob.set_val(Aircraft.Wing.INCIDENCE, 1.5, units='deg')
+        self.prob.set_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, [20000, 18000], units='lbf')
+        self.prob.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, [5, 7], units='deg')
+        self.prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, [8, 6], units='deg')
+
+        self.prob.run_model()
+
+        tol = 1e-6
+        expected_values = {
+            'required_lift': ([96913.46751237, 96965.82140898], 'lbf'),
+        }
+
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tol)
+
+        with self.subTest(check='partials'):
+            partial_data = self.prob.check_partials(out_stream=None, method='cs')
             assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 

@@ -105,7 +105,10 @@ class TakeOffODE(TwoDOFODE):
         else:
             if alpha_mode is AlphaModes.REQUIRED_LIFT:
                 self.add_subsystem(
-                    'required_lift', RequiredLift(), promotes_inputs=['*'], promotes_outputs=['*']
+                    'required_lift',
+                    RequiredLift(num_nodes=nn),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
                 )
 
             self.add_alpha_control(
@@ -250,7 +253,7 @@ class TakeOffODE(TwoDOFODE):
                 'groundroll_boundary',
                 om.EQConstraintComp(
                     'velocity',
-                    eq_units='ft/s',
+                    eq_units='m/s',
                     normalize=True,
                     add_constraint=True,
                 ),
@@ -266,6 +269,7 @@ class TakeOffODE(TwoDOFODE):
         if not (ground_roll or rotation):
             self.add_excess_rate_comps(nn)
 
+        self.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
         self.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
         self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='deg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='kn')
@@ -297,28 +301,47 @@ class RequiredLift(om.ExplicitComponent):
     """Component to calculate required lift for 2DOF equations of motion."""
 
     def initialize(self):
-        add_aviary_option(self, Mission.GRAVITY, 'm/s**2')
+        self.options.declare('num_nodes', types=int)
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
 
     def setup(self):
-        add_aviary_input(self, Dynamic.Vehicle.MASS)
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=(1,))
-        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=(1,), units='rad')
-        add_aviary_input(self, Aircraft.Wing.INCIDENCE)
-        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=(1,), units='rad')
+        nn = self.options['num_nodes']
 
-        self.add_output('required_lift', val=np.zeros(1), units='lbf')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=(nn,), units='kg')
+        add_aviary_input(
+            self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=(nn,), units='N'
+        )
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=(nn,), units='rad')
+        add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='rad')
+        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=(nn,), units='rad')
+
+        self.add_output('required_lift', val=np.zeros(nn), units='N')
 
     def setup_partials(self):
-        self.declare_partials('required_lift', '*')
+        nn = self.options['num_nodes']
+        rows_cols = np.arange(nn)
+
+        self.declare_partials(
+            'required_lift',
+            [
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            ],
+            rows=rows_cols,
+            cols=rows_cols,
+        )
+        self.declare_partials('required_lift', Aircraft.Wing.INCIDENCE)
 
     def compute(self, inputs, outputs):
         gravity = self.options[Mission.GRAVITY][0]
 
         weight = inputs[Dynamic.Vehicle.MASS] * gravity
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
-        gamma = inputs[self, Dynamic.Mission.FLIGHT_PATH_ANGLE]
-        i_wing = inputs[self, Aircraft.Wing.INCIDENCE]
-        alpha = inputs[self, Dynamic.Vehicle.ANGLE_OF_ATTACK]
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
+        i_wing = inputs[Aircraft.Wing.INCIDENCE]
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         outputs['required_lift'] = weight * np.cos(alpha + gamma) - thrust * np.sin(i_wing)
 
@@ -327,18 +350,18 @@ class RequiredLift(om.ExplicitComponent):
 
         weight = inputs[Dynamic.Vehicle.MASS] * gravity
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
-        gamma = inputs[self, Dynamic.Mission.FLIGHT_PATH_ANGLE]
-        i_wing = inputs[self, Aircraft.Wing.INCIDENCE]
-        alpha = inputs[self, Dynamic.Vehicle.ANGLE_OF_ATTACK]
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
+        i_wing = inputs[Aircraft.Wing.INCIDENCE]
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
-        partials['required_lift', Dynamic.Vehicle.MASS] = np.cos(alpha + gamma) / gravity
+        partials['required_lift', Dynamic.Vehicle.MASS] = gravity * np.cos(alpha + gamma)
         partials['required_lift', Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = -np.sin(i_wing)
         partials['required_lift', Dynamic.Mission.FLIGHT_PATH_ANGLE] = -weight * np.sin(
             alpha + gamma
         )
-        partials['required_lift', Aircraft.Wing.INCIDENCE] = weight * np.cos(
+        partials['required_lift', Aircraft.Wing.INCIDENCE] = (
+            -thrust * np.cos(i_wing)
+        ).reshape(-1, 1)
+        partials['required_lift', Dynamic.Vehicle.ANGLE_OF_ATTACK] = -weight * np.sin(
             alpha + gamma
-        ) - thrust * np.sin(i_wing)
-        partials['required_lift', Dynamic.Vehicle.ANGLE_OF_ATTACK] = -weight * np.cos(
-            alpha + gamma
-        ) - thrust * np.sin(i_wing)
+        )

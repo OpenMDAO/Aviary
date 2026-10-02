@@ -157,13 +157,13 @@ class GroundrollPhase(PhaseBuilder):
 
         self._add_user_defined_constraints(phase, constraints)
 
-        self.phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK)
-        self.phase.add_timeseries_output(Dynamic.Vehicle.DRAG)
+        self.phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
+        self.phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         self.phase.add_timeseries_output('EAS', units='kn')
-        self.phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
+        self.phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
         self.phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
-        self.phase.add_timeseries_output(Dynamic.Vehicle.MASS)
-        self.phase.add_timeseries_output('normal_force')
+        self.phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
+        self.phase.add_timeseries_output('normal_force', units='lbf')
         self.phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         self.phase.add_timeseries_output('time')
         self.phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')

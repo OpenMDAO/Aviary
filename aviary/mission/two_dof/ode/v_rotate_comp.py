@@ -11,7 +11,7 @@ class VRotateComp(om.ExplicitComponent):
         add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
         self.add_input('CL_max', shape=(1,), units='unitless', desc='Maximum lift coefficient')
         self.add_input('mass', shape=(1,), units='kg', desc='Vehicle mass at rotation point.')
