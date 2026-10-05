@@ -1,6 +1,8 @@
 import unittest
 from pathlib import Path
 
+from openmdao.utils.testing_utils import use_tempdirs
+
 from aviary.api import AviaryProblem
 from aviary.models.missions.energy_state_default import phase_info
 from aviary.subsystems.test.dummy_subsystem import ExtendedMetaData, FullSubsystemBuilder
@@ -151,7 +153,7 @@ class FullSubsystemBuilderTestSuite(unittest.TestCase):
         self.assertTrue(
             any(
                 'aircraft:dummy_timeseries_variable' in tuple
-                for tuple in cruise.timeseries.list_outputs()
+                for tuple in cruise.timeseries.list_outputs(outstream=None)
             )
         )
 
