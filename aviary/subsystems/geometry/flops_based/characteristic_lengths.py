@@ -226,7 +226,7 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
 
 class NacelleCharacteristicLength(om.ExplicitComponent):
     """
-    Calculate the scaled length, scaled diameter, characteristic length and fineness ratio of the nacelle.
+    Calculate the characteristic length and fineness ratio of the scaled nacelle.
     """
 
     def initialize(self):

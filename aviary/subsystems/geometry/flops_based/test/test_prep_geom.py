@@ -16,7 +16,11 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
-from aviary.subsystems.geometry.flops_based.nacelle import NacelleTotalWettedArea, NacelleWettedArea
+from aviary.subsystems.geometry.flops_based.nacelle import (
+    NacellePrelim,
+    NacelleTotalWettedArea,
+    NacelleWettedArea,
+)
 from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom, _FuselageRatios
 from aviary.subsystems.geometry.flops_based.utils import Names
 from aviary.subsystems.geometry.flops_based.wetted_area_total import (
@@ -447,7 +451,8 @@ class NacellesTest(unittest.TestCase):
             options[key] = flops_inputs.get_item(key)[0]
         options[Aircraft.Engine.NUM_ENGINES] = np.array([2])
 
-        prob.model.add_subsystem('nacelles', NacelleWettedArea(**options), promotes=['*'])
+        prob.model.add_subsystem('nacelle_prelim', NacellePrelim(**options), promotes=['*'])
+        prob.model.add_subsystem('nacelles_swet', NacelleWettedArea(**options), promotes=['*'])
         prob.model.add_subsystem(
             'nacelles_total',
             NacelleTotalWettedArea(**options),
@@ -462,8 +467,9 @@ class NacellesTest(unittest.TestCase):
             prob,
             case_name,
             input_keys=[
-                Aircraft.Nacelle.AVG_DIAMETER,
-                Aircraft.Nacelle.AVG_LENGTH,
+                Aircraft.Engine.SCALE_FACTOR,
+                Aircraft.Nacelle.REFERENCE_AVG_DIAMETER,
+                Aircraft.Nacelle.REFERENCE_AVG_LENGTH,
                 Aircraft.Nacelle.WETTED_AREA_SCALER,
             ],
             output_keys=[Aircraft.Nacelle.TOTAL_WETTED_AREA, Aircraft.Nacelle.WETTED_AREA],
@@ -575,14 +581,13 @@ class CharacteristicLengthsTest(unittest.TestCase):
                 Aircraft.Canard.AREA,
                 Aircraft.Canard.ASPECT_RATIO,
                 Aircraft.Canard.THICKNESS_TO_CHORD,
-                Aircraft.Engine.SCALE_FACTOR,
                 Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.HorizontalTail.AREA,
                 Aircraft.HorizontalTail.ASPECT_RATIO,
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
-                Aircraft.Nacelle.REFERENCE_AVG_DIAMETER,
-                Aircraft.Nacelle.REFERENCE_AVG_LENGTH,
+                Aircraft.Nacelle.AVG_DIAMETER,
+                Aircraft.Nacelle.AVG_LENGTH,
                 Aircraft.VerticalTail.AREA,
                 Aircraft.VerticalTail.ASPECT_RATIO,
                 Aircraft.VerticalTail.THICKNESS_TO_CHORD,
@@ -601,8 +606,6 @@ class CharacteristicLengthsTest(unittest.TestCase):
                 Aircraft.HorizontalTail.FINENESS,
                 Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
                 Aircraft.Nacelle.FINENESS,
-                Aircraft.Nacelle.AVG_DIAMETER,
-                Aircraft.Nacelle.AVG_LENGTH,
                 Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
                 Aircraft.VerticalTail.FINENESS,
                 Aircraft.Wing.CHARACTERISTIC_LENGTH,
