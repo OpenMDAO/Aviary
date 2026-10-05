@@ -16,7 +16,6 @@ from openmdao.utils.reports_system import _default_reports
 from openmdao.utils.units import convert_units
 
 from aviary.core.aviary_group import AviaryGroup
-from aviary.interface.reports import AVIARY_DEFAULT_REPORTS
 from aviary.interface.utils import set_warning_format
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.csv_data_file import write_data_file
@@ -78,6 +77,8 @@ class AviaryProblem(om.Problem):
         meta_data=CoreMetaData.copy(),
         **kwargs,
     ):
+        from aviary.interface.reports import AVIARY_DEFAULT_REPORTS
+
         # Modify OpenMDAO's default_reports for this session.
         for report in AVIARY_DEFAULT_REPORTS:
             if report not in _default_reports:
