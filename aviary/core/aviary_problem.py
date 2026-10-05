@@ -79,7 +79,8 @@ class AviaryProblem(om.Problem):
     ):
         # Modify OpenMDAO's default_reports for this session.
         new_reports = [
-            'subsystems',
+            'subsystems_run_model',
+            'subsystems_run_driver',
             'mission',
             'timeseries_csv',
             'run_status',
@@ -88,7 +89,9 @@ class AviaryProblem(om.Problem):
             'overridden_variables_setup',
             'overridden_variables_run_model',
             'overridden_variables_run_driver',
-            'list_options',
+            'list_options_final_setup',
+            'list_options_run_model',
+            'list_options_run_driver',
         ]
         for report in new_reports:
             if report not in _default_reports:
