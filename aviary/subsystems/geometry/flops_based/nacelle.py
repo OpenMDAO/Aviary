@@ -8,6 +8,84 @@ from aviary.variable_info.variables import Aircraft
 # NOTE default values for avg diam & avg length if not defined by user:
 #      Aircraft.Nacelle.AVG_LENGTH = 0.07 * sqrt(Aircraft.ENGINE.SCALED_SLS_THRUST)
 #      Aircraft.Nacelle.AVG_DIAMETER = 0.04 * sqrt(Aircraft.ENGINE.SCALED_SLS_THRUST)
+
+
+class NacellePrelim(om.ExplicitComponent):
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+
+    def setup(self):
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+
+        add_aviary_input(
+            self, Aircraft.Engine.SCALE_FACTOR, shape=num_engine_type, units='unitless'
+        )
+        add_aviary_input(
+            self, Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, shape=num_engine_type, units='ft'
+        )
+        add_aviary_input(
+            self, Aircraft.Nacelle.REFERENCE_AVG_LENGTH, shape=num_engine_type, units='ft'
+        )
+
+        add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
+        add_aviary_output(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type, units='ft')
+
+    def setup_partials(self):
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+        shape = np.arange(num_engine_type)
+
+        self.declare_partials(
+            Aircraft.Nacelle.AVG_DIAMETER,
+            [
+                Aircraft.Nacelle.REFERENCE_AVG_DIAMETER,
+                Aircraft.Engine.SCALE_FACTOR,
+            ],
+            rows=shape,
+            cols=shape,
+        )
+
+        self.declare_partials(
+            Aircraft.Nacelle.AVG_LENGTH,
+            [
+                Aircraft.Nacelle.REFERENCE_AVG_LENGTH,
+                Aircraft.Engine.SCALE_FACTOR,
+            ],
+            rows=shape,
+            cols=shape,
+        )
+
+    def compute(self, inputs, outputs):
+        avg_diam = inputs[Aircraft.Nacelle.REFERENCE_AVG_DIAMETER]
+        avg_length = inputs[Aircraft.Nacelle.REFERENCE_AVG_LENGTH]
+        thrust_ratio = inputs[Aircraft.Engine.SCALE_FACTOR]
+        sqrt_thrust_ratio = np.sqrt(thrust_ratio)
+
+        adjusted_avg_diam = avg_diam * sqrt_thrust_ratio
+        adjusted_avg_length = avg_length * sqrt_thrust_ratio
+
+        outputs[Aircraft.Nacelle.AVG_DIAMETER] = adjusted_avg_diam
+        outputs[Aircraft.Nacelle.AVG_LENGTH] = adjusted_avg_length
+
+    def compute_partials(self, inputs, J):
+        avg_diam = inputs[Aircraft.Nacelle.REFERENCE_AVG_DIAMETER]
+        avg_length = inputs[Aircraft.Nacelle.REFERENCE_AVG_LENGTH]
+        thrust_ratio = inputs[Aircraft.Engine.SCALE_FACTOR]
+        sqrt_thrust_ratio = np.sqrt(thrust_ratio)
+
+        deriv_len_sf = 0.5 * avg_length / sqrt_thrust_ratio
+        deriv_diam_sf = 0.5 * avg_diam / sqrt_thrust_ratio
+
+        # Avg Diameter Partials
+        J[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Nacelle.REFERENCE_AVG_DIAMETER] = (
+            sqrt_thrust_ratio
+        )
+        J[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALE_FACTOR] = deriv_diam_sf
+
+        # Avg Length Partials
+        J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.REFERENCE_AVG_LENGTH] = sqrt_thrust_ratio
+        J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Engine.SCALE_FACTOR] = deriv_len_sf
+
+
 class NacelleWettedArea(om.ExplicitComponent):
     """Calculate nacelle wetted area"""
 

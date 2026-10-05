@@ -133,24 +133,24 @@ def preprocess_options(
         )
 
 
-def deprecations(aviary_options: AviaryValues, verbosity=None):
+def deprecations(aviary_options: AviaryValues, verbosity=Verbosity.BRIEF):
     if verbosity >= Verbosity.BRIEF:
         try:
-            avg_diameter = aviary_options.get_val(Aircraft.Nacelle.AVG_DIAMETER)
+            aviary_options.get_val(Aircraft.Nacelle.AVG_DIAMETER, units='ft')
             warnings.warn(
                 'Aircraft.Nacelle.AVG_DIAMETER has been changed to Aircraft.Nacelle.REFERENCE_AVG_DIAMETER. To avoid overriding scaled nacelle dimensions update your input file to the new variable name.',
                 category=DeprecationWarning,
             )  # Added v1.0.2
         except KeyError:
-            avg_diameter = None
+            pass
         try:
-            avg_length = aviary_options.get_val(Aircraft.Nacelle.AVG_LENGTH)
+            aviary_options.get_val(Aircraft.Nacelle.AVG_LENGTH, units='ft')
             warnings.warn(
                 'Aircraft.Nacelle.AVG_LENGTH has been changed to Aircraft.Nacelle.REFERENCE_AVG_LENGTH. To avoid overriding scaled nacelle dimensions update your input file to the new variable name.',
                 category=DeprecationWarning,
             )  # Added v1.0.2
         except KeyError:
-            avg_length = None
+            pass
 
 
 def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):

@@ -19,6 +19,7 @@ from aviary.subsystems.geometry.flops_based.fuselage import (
     FuselagePrelim,
     SimpleCabinLayout,
 )
+from aviary.subsystems.geometry.flops_based.nacelle import NacellePrelim
 from aviary.subsystems.geometry.flops_based.landing_gear import MainGearLength, NoseGearLength
 from aviary.subsystems.geometry.flops_based.wetted_area_total import (
     TotalWettedArea,
@@ -113,6 +114,13 @@ class PrepGeom(om.Group):
             self.add_subsystem(
                 'wing_prelim', WingPrelim(), promotes_inputs=['*'], promotes_outputs=['*']
             )
+
+        self.add_subsystem(
+            'nacelle_prelim',
+            NacellePrelim(),
+            promotes_inputs=['aircraft*'],
+            promotes_outputs=['*'],
+        )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
