@@ -34,6 +34,7 @@ def get_option_defaults(engine=True, meta_data=CoreMetaData) -> AviaryValues:
         engine_options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, 'lbf')
         engine_deck = EngineDeck(options=engine_options)
         preprocess_propulsion(option_defaults, [engine_deck])
+        option_defaults.delete(Aircraft.Engine.SCALED_SLS_THRUST)
 
     return option_defaults
 

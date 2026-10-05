@@ -1,23 +1,22 @@
-"""
-Define meta data associated with variables in the Aviary data hierarchy.
-"""
+"""Define meta data associated with variables in the Aviary data hierarchy."""
 
 from copy import deepcopy
+
 import numpy as np
 
+import aviary.constants as Constants
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.enums import (
     AircraftTypes,
+    AtmosphereModel,
     EquationsOfMotion,
     FlapType,
     GASPEngineType,
     LegacyCode,
     ProblemType,
     Verbosity,
-    AtmosphereModel,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-import aviary.constants as Constants
 
 # ---------------------------
 # Meta data associated with variables in the aircraft data hierarchy.
@@ -1116,10 +1115,11 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NBABR'},
     units='unitless',
-    desc='Number of business class seats abreast.',
+    desc='Number of business class seats abreast. For FLOPS-based mass, the default value varies'
+    'based on aircraft type and total number of passengers.',
     types=int,
     option=True,
-    default_value=5,
+    default_value=0,
 )
 
 add_meta_data(
@@ -1127,10 +1127,11 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SAB', 'FLOPS': 'FUSEIN.NTABR'},
     units='unitless',
-    desc='Number of economy class seats abreast.',
+    desc='Number of economy class seats abreast. For FLOPS-based mass, the default value varies'
+    'based on aircraft type and total number of passengers.',
     types=int,
     option=True,
-    default_value=6,
+    default_value=0,
 )
 
 add_meta_data(
@@ -1138,10 +1139,11 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NFABR'},
     units='unitless',
-    desc='Number of first class seats abreast.',
+    desc='Number of first class seats abreast. For FLOPS-based mass, the default value varies'
+    'based on aircraft type and total number of passengers.',
     types=int,
     option=True,
-    default_value=4,
+    default_value=0,
 )
 
 add_meta_data(
@@ -1149,8 +1151,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH'},
     units='inch',
-    desc='pitch of the business class seats.',
-    default_value=39.0,
+    desc='Pitch of the business class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1158,8 +1161,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH'},
     units='inch',
-    desc='pitch of the economy class seats.',
-    default_value=32.0,
+    desc='Pitch of the economy class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1167,8 +1171,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH'},
     units='inch',
-    desc='pitch of the first class seats.',
-    default_value=61.0,
+    desc='Pitch of the first class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
+    default_value=0.0,
 )
 
 #  _____                 _
@@ -1205,18 +1210,6 @@ add_meta_data(
     units='unitless',
     desc='allowable center-of-gravity (cg) travel as a fraction of the mean aerodynamic chord',
     default_value=0.0,
-)
-
-# See issue #1182. this should be removed from metadata (intermediate calculation)
-add_meta_data(
-    Aircraft.Design.CHARACTERISTIC_LENGTHS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # 'MISSA.EL',
-    },
-    units='ft',
-    desc='Reynolds characteristic length for each component',
 )
 
 add_meta_data(
@@ -2060,7 +2053,9 @@ add_meta_data(
     },
     units='unitless',
     option=True,
-    desc='Constant term in fuel flow scaling equation',
+    desc='Constant term in fuel flow scaling equation. Directly added to the overall fuel flow '
+    'scaling (so a constant term of 0.01 increases the overall fuel flow multiplier from 1.0 to '
+    '1.01)',
     default_value=0.0,
     multivalue=True,
 )
@@ -2073,7 +2068,13 @@ add_meta_data(
         'FLOPS': 'ENGDIN.FFFAC',
     },
     units='unitless',
-    desc='Linear term in fuel flow scaling equation',
+    desc='Linear term in fuel flow scaling equation. Accounts for how fuel flow changes '
+    'with engine size, penalizing smaller engines and benefiting larger ones. This term sets '
+    'the rate that fuel flow changes with Aircraft.Engine.SCALE_FACTOR - for every percent the '
+    'engine is scaled up or down, this sets how much of a percent is fuel flow adjusted. For '
+    'example, a linear term of 0.1 means for every percent the engine is scaled up (such as from '
+    '1.0 to 1.01), the overall fuel flow multiplier is increased by 0.1, and similarly decreases '
+    'by 0.1 for every percent the engine is scaled down.',
     default_value=0.0,
     option=True,
     multivalue=True,
@@ -3553,7 +3554,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
-    desc='width of the business class seats',
+    desc='Width of the business class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
     default_value=0.0,
 )
 
@@ -3562,7 +3564,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WS', 'FLOPS': None},
     units='inch',
-    desc='width of the economy class seats',
+    desc='Width of the economy class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
     default_value=0.0,
 )
 
@@ -3571,7 +3574,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
-    desc='width of the first class seats',
+    desc='Width of the first class seats. The default value for FLOPS- or GASP-based mass '
+    'varies based on aircraft type and total number of passengers.',
     default_value=0.0,
 )
 
@@ -4524,15 +4528,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Propulsion.ENGINE_POSITION_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
-    units='unitless',
-    desc='engine position factor',
-    default_value=0,
-)
-
-add_meta_data(
     Aircraft.Propulsion.MASS,
     meta_data=_MetaData,
     historical_name={
@@ -5411,6 +5406,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Wing.ENGINE_POSITION_MASS_SCALER,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
+    units='unitless',
+    desc='Wing mass scaler accounts for position of engines on aircraft. If not supplied '
+    'as an input, GASP mass method calculates a value between 0.9 and 1.05 depending on the '
+    'number of wing mounted engines and the maximum mach number of the aircraft',
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.Wing.EXPOSED_AREA,
     meta_data=_MetaData,
     historical_name={
@@ -5817,14 +5823,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.MAX_LIFT_REF,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.RCLMAX', 'FLOPS': None},
-    units='unitless',
-    desc='input reference maximum lift coefficient for basic wing',
-)
-
-add_meta_data(
     Aircraft.Wing.MAX_SLAT_DEFLECTION_LANDING,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.DELLED', 'FLOPS': None},
@@ -5937,6 +5935,15 @@ add_meta_data(
     units='ft',
     desc='Outboard semispan (used if a detailed wing outboard is being added to a BWB fuselage)',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Wing.REFERENCE_CLEAN_MAX_LIFT_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.RCLMAX', 'FLOPS': None},
+    units='unitless',
+    desc='Reference maximum lift coefficient for clean basic wing. Used for GASP Aero CLmax estimation.'
+    'Basic wing is unswept, untapered, has Aspect Ratio = 12, Thickness to Chord = 0.1 with undeflected full span slats and flaps.',
 )
 
 add_meta_data(

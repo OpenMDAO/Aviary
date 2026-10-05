@@ -11,19 +11,18 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
 class EngineScalingTest(unittest.TestCase):
     def setUp(self):
-        self.prob = om.Problem(model=om.Group())
+        self.prob = om.Problem()
 
     def test_case(self):
         nn = 4
         count = 1
 
-        filename = 'models/engines/turbofan_28k.csv'
-        filename = get_path(filename)
+        filename = get_path('models/engines/turbofan_28k.csv')
 
         options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 0)
@@ -32,7 +31,7 @@ class EngineScalingTest(unittest.TestCase):
         # make supersonic scaling factor extremely high so it is obvious if it gets used
         options.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1000)
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 1.15)
-        options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.05)
+        options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.05)
         options.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 10.0, units='lbm/h')
         options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.9)
         options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
@@ -43,10 +42,8 @@ class EngineScalingTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
         options.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 
-        # engine1 uses all scaling factors
-        engine1 = EngineDeck(options=options)
-
-        preprocess_propulsion(options, [engine1])
+        engine = EngineDeck(options=options)
+        preprocess_propulsion(options, [engine])
 
         engine_variables = {
             EngineModelVariables.THRUST: 'lbf',
@@ -74,20 +71,25 @@ class EngineScalingTest(unittest.TestCase):
 
         self.prob.run_model()
 
-        thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST)
-        fuel_flow = self.prob.get_val(Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE)
-        nox_rate = self.prob.get_val(Dynamic.Vehicle.Propulsion.NOX_RATE)
-        # exit_area = self.prob.get_val(Dynamic.Mission.EXIT_AREA)
+        expected_values = {
+            Dynamic.Vehicle.Propulsion.THRUST: (
+                np.array([900.0, 900.0, 900.0, 900.0]),
+                'lbf',
+            ),
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE: (
+                np.array([-1755.55, -1755.55, -1755.55, -1755.55]),
+                'lbm/h',
+            ),
+            Dynamic.Vehicle.Propulsion.NOX_RATE: (
+                np.array([9.0, 9.0, 9.0, 9.0]),
+                'lbm/h',
+            ),
+        }
 
-        thrust_expected = np.array([900.0, 900.0, 900.0, 900])
-
-        fuel_flow_expected = np.array([-1836.55, -1836.55, -1836.55, -1836.55])
-
-        nox_rate_expected = np.array([9.0, 9.0, 9.0, 9])
-
-        assert_near_equal(thrust, thrust_expected, tolerance=1e-10)
-        assert_near_equal(fuel_flow, fuel_flow_expected, tolerance=1e-10)
-        assert_near_equal(nox_rate, nox_rate_expected, tolerance=1e-10)
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tolerance=1e-10)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-10)
