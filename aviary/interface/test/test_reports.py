@@ -10,7 +10,7 @@ from openmdao.utils.reports_system import _reports_registry
 
 import aviary.api as av
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.interface.reports import AVIARY_DEFAULT_REPORTS, register_custom_reports
+from aviary.interface.reports import AVIARY_DEFAULT_REPORTS
 from aviary.interface.run_aviary import run_aviary
 from aviary.models.missions.energy_state_default import phase_info
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
