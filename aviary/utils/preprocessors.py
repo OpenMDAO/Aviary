@@ -47,6 +47,8 @@ def preprocess_options(
             verbosity = meta_data[Settings.VERBOSITY]['default_value']
             aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
+    deprecations(aviary_options, verbosity)
+
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
     preprocess_fuel_capacities(aviary_options, verbosity)
 
@@ -129,6 +131,26 @@ def preprocess_options(
         aviary_options.set_val(
             Mission.SEA_LEVEL_DENSITY, val=sea_level_density[0], units=sea_level_density[1]
         )
+
+
+def deprecations(aviary_options: AviaryValues, verbosity=None):
+    if verbosity >= Verbosity.BRIEF:
+        try:
+            avg_diameter = aviary_options.get_val(Aircraft.Nacelle.AVG_DIAMETER)
+            warnings.warn(
+                'Aircraft.Nacelle.AVG_DIAMETER has been changed to Aircraft.Nacelle.REFERENCE_AVG_DIAMETER. To avoid overriding scaled nacelle dimensions update your input file to the new variable name.',
+                category=DeprecationWarning,
+            )  # Added v1.0.2
+        except KeyError:
+            avg_diameter = None
+        try:
+            avg_length = aviary_options.get_val(Aircraft.Nacelle.AVG_LENGTH)
+            warnings.warn(
+                'Aircraft.Nacelle.AVG_LENGTH has been changed to Aircraft.Nacelle.REFERENCE_AVG_LENGTH. To avoid overriding scaled nacelle dimensions update your input file to the new variable name.',
+                category=DeprecationWarning,
+            )  # Added v1.0.2
+        except KeyError:
+            avg_length = None
 
 
 def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
