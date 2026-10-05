@@ -16,6 +16,102 @@ from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import ProblemType
 
+REPORT_REGISTRY = {
+    'subsystems_run_model': {
+        'func': subsystem_report,
+        'desc': 'Generates reports for each subsystem builder in the Aviary Problem',
+        'class_name': 'AviaryProblem',
+        'method': 'run_model',
+        'pre_or_post': 'post',
+    },
+    'subsystems_run_driver': {
+        'func': subsystem_report,
+        'desc': 'Generates reports for each subsystem builder in the Aviary Problem',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'mission': {
+        'func': mission_report,
+        'desc': 'Generates report for mission results from Aviary problem',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'timeseries_csv': {
+        'func': timeseries_csv,
+        'desc': 'Generates an output .csv file for variables in the timeseries of the trajectory',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'run_status': {
+        'func': run_status,
+        'desc': 'Generates a report on the status of the run',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'sizing_results': {
+        'func': sizing_results,
+        'desc': 'Generates an output file containing all variables in a completed sizing problem',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'input_checks': {
+        'func': input_check_report,
+        'desc': 'Generates a report on the aviary inputs',
+        'class_name': 'AviaryProblem',
+        'method': 'final_setup',
+        'pre_or_post': 'post',
+    },
+    'overridden_variables_setup': {
+        'func': overridden_variables_report,
+        'desc': 'Generates a report on the overridden variables',
+        'class_name': 'AviaryProblem',
+        'method': 'final_setup',
+        'pre_or_post': 'post',
+    },
+    'overridden_variables_run_model': {
+        'func': overridden_variables_report,
+        'desc': 'Generates a report on the overridden variables',
+        'class_name': 'AviaryProblem',
+        'method': 'run_model',
+        'pre_or_post': 'post',
+    },
+    'overridden_variables_run_driver': {
+        'func': overridden_variables_report,
+        'desc': 'Generates a report on the overridden variables',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'list_options_final_setup': {
+        'func': _list_options_report,
+        'desc': 'Generates a report on the Problem options',
+        'class_name': 'AviaryProblem',
+        'method': 'final_setup',
+        'pre_or_post': 'post',
+    },
+    'list_options_run_model': {
+        'func': _list_options_report,
+        'desc': 'Generates a report on the Problem options',
+        'class_name': 'AviaryProblem',
+        'method': 'run_model',
+        'pre_or_post': 'post',
+    },
+    'list_options_run_driver': {
+        'func': _list_options_report,
+        'desc': 'Generates a report on the Problem options',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+}
+
+AVIARY_DEFAULT_REPORTS = list(REPORT_REGISTRY.keys())
+
 
 def register_custom_reports():
     """
@@ -25,123 +121,8 @@ def register_custom_reports():
     # TODO top-level aircraft report?
     # TODO add flag to skip registering reports?
 
-    # register per-subsystem report generation
-    register_report(
-        name='subsystems_run_model',
-        func=subsystem_report,
-        desc='Generates reports for each subsystem builder in the Aviary Problem',
-        class_name='AviaryProblem',
-        method='run_model',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='subsystems_run_driver',
-        func=subsystem_report,
-        desc='Generates reports for each subsystem builder in the Aviary Problem',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='mission',
-        func=mission_report,
-        desc='Generates report for mission results from Aviary problem',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='timeseries_csv',
-        func=timeseries_csv,
-        desc='Generates an output .csv file for variables in the timeseries of the trajectory',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='run_status',
-        func=run_status,
-        desc='Generates a report on the status of the run',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='sizing_results',
-        func=sizing_results,
-        desc='Generates an output file containing all variables in a completed sizing problem',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='input_checks',
-        func=input_check_report,
-        desc='Generates a report on the aviary inputs',
-        class_name='AviaryProblem',
-        method='final_setup',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='overridden_variables_setup',
-        func=overridden_variables_report,
-        desc='Generates a report on the overridden variables',
-        class_name='AviaryProblem',
-        method='final_setup',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='overridden_variables_run_model',
-        func=overridden_variables_report,
-        desc='Generates a report on the overridden variables',
-        class_name='AviaryProblem',
-        method='run_model',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='overridden_variables_run_driver',
-        func=overridden_variables_report,
-        desc='Generates a report on the overridden variables',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='list_options_final_setup',
-        func=_list_options_report,
-        desc='Generates a report on the Problem options',
-        class_name='AviaryProblem',
-        method='final_setup',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='list_options_run_model',
-        func=_list_options_report,
-        desc='Generates a report on the Problem options',
-        class_name='AviaryProblem',
-        method='run_model',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='list_options_run_driver',
-        func=_list_options_report,
-        desc='Generates a report on the Problem options',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
+    for report_name, report_kwargs in REPORT_REGISTRY.items():
+        register_report(name=report_name, **report_kwargs)
 
 
 def run_status(prob: AviaryProblem):

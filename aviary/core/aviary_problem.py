@@ -16,6 +16,7 @@ from openmdao.utils.reports_system import _default_reports
 from openmdao.utils.units import convert_units
 
 from aviary.core.aviary_group import AviaryGroup
+from aviary.interface.reports import AVIARY_DEFAULT_REPORTS
 from aviary.interface.utils import set_warning_format
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.csv_data_file import write_data_file
@@ -78,22 +79,7 @@ class AviaryProblem(om.Problem):
         **kwargs,
     ):
         # Modify OpenMDAO's default_reports for this session.
-        new_reports = [
-            'subsystems_run_model',
-            'subsystems_run_driver',
-            'mission',
-            'timeseries_csv',
-            'run_status',
-            'sizing_results',
-            'input_checks',
-            'overridden_variables_setup',
-            'overridden_variables_run_model',
-            'overridden_variables_run_driver',
-            'list_options_final_setup',
-            'list_options_run_model',
-            'list_options_run_driver',
-        ]
-        for report in new_reports:
+        for report in AVIARY_DEFAULT_REPORTS:
             if report not in _default_reports:
                 _default_reports.append(report)
 
