@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class GearboxMission(om.Group):

@@ -46,7 +46,7 @@ class SimpleAeroBuilder(SubsystemBuilder):
 
     def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a dictionary of parameters for the subsystem. (Optional)
+        Return a dictionary of parameters for the subsystem. (Optional).
 
         A parameter is a value that does not vary over the trajectory. Adding a variable name to
         this list promotes the input to the top of the Aviary model, where it is either implicitly

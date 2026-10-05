@@ -8,6 +8,7 @@ from aviary.subsystems.geometry.gasp_based.wing import (
     BWBWingFoldVolume,
     BWBWingGroup,
     BWBWingVolume,
+    BWBWingVolume,
     ExposedWing,
     WingFoldArea,
     WingFoldVolume,
@@ -19,6 +20,7 @@ from aviary.subsystems.geometry.gasp_based.wing import (
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Aircraft, Settings
 from aviary.variable_info.variables import Aircraft, Settings
 
 
@@ -904,7 +906,7 @@ class BWBWingGroupTestCase(unittest.TestCase):
         Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX -- FVOLW_GEOM = 605.9
         Aircraft.Wing.FOLDING_AREA -- SWFOLD = 224.8
         Aircraft.Wing.EXPOSED_AREA -- SW_EXP = 1352.1
-        Note: CROOT in GASP matches with Aircraft.Wing.CENTER_CHORD
+        Note: CROOT in GASP matches with Aircraft.Wing.CENTER_CHORD.
         """
         prob = self.prob
         prob.run_model()

@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class WingBendingMass(om.ExplicitComponent):

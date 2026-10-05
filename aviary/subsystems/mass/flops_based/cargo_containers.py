@@ -1,4 +1,3 @@
-import numpy as np
 import openmdao.api as om
 
 from aviary.utils.math_utils import sin_int4, dydx_sin_int4

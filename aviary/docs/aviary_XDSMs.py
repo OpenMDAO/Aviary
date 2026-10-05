@@ -1,6 +1,5 @@
-from pyxdsm.XDSM import XDSM
 import fitz  # PyMuPDF
-
+from pyxdsm.XDSM import XDSM
 
 full_xdsm = XDSM()
 

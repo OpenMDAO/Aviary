@@ -434,9 +434,7 @@ class FurnishingMass(om.ExplicitComponent):
 
 
 class BWBFurnishingMass(om.ExplicitComponent):
-    """
-    Computation of furnishing mass for BWB
-    """
+    """Computation of furnishing mass for BWB."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)

@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Aircraft
 
 @use_tempdirs
 class FurnishingMassTestCase1(unittest.TestCase):
-    """Created based on EquipMassTestCase1"""
+    """Created based on EquipMassTestCase1."""
 
     def setUp(self):
         options = AviaryValues()
@@ -62,7 +62,7 @@ class FurnishingMassTestCase1(unittest.TestCase):
 class FurnishingMassTestCase3(unittest.TestCase):
     """
     Created based on GASP BWB model where SWF is DHYDRAL
-    NUM_PASSENGERS < 50
+    NUM_PASSENGERS < 50.
     """
 
     def setUp(self):
@@ -101,9 +101,7 @@ class FurnishingMassTestCase3(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
-        """
-        SMOOTH_MASS_DISCONTINUITIES = False
-        """
+        """SMOOTH_MASS_DISCONTINUITIES = False."""
         self.prob.run_model()
 
         tol = 1e-7
@@ -113,9 +111,7 @@ class FurnishingMassTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_case2(self):
-        """
-        SMOOTH_MASS_DISCONTINUITIES = True
-        """
+        """SMOOTH_MASS_DISCONTINUITIES = True."""
         self.options.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless'
         )
@@ -133,7 +129,7 @@ class FurnishingMassTestCase3(unittest.TestCase):
 class BWBFurnishingMassTestCase1(unittest.TestCase):
     """
     Created based on GASP BWB model
-    GROSS_MASS > 10000.0
+    GROSS_MASS > 10000.0.
     """
 
     def setUp(self):
@@ -174,7 +170,7 @@ class BWBFurnishingMassTestCase1(unittest.TestCase):
     def test_case1(self):
         """
         USE_EMPIRICAL_EQUATION = True
-        SMOOTH_MASS_DISCONTINUITIES = False
+        SMOOTH_MASS_DISCONTINUITIES = False.
         """
         self.prob.run_model()
 
@@ -241,7 +237,7 @@ class BWBFurnishingMassTestCase1(unittest.TestCase):
 class BWBFurnishingMassTestCase2(unittest.TestCase):
     """
     Created based on GASP BWB model
-    GROSS_MASS < 10000
+    GROSS_MASS < 10000.
     """
 
     def setUp(self):

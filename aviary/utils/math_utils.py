@@ -54,7 +54,7 @@ def sigmoidX(x, x0, mu=1.0):
         y = 0
         if (x - x0) * mu > -320:
             y = 1 / (1 + np.exp(-(x - x0) / mu))
-    if dtype == float:
+    if isinstance(dtype, float):
         y = y.real
     return y
 
@@ -100,7 +100,7 @@ def dSigmoidXdx(x, x0, mu=1.0):
             term = np.exp(-(x - x0) / mu)
             term2 = (1 + term) * (1 + term)
             y = term / mu / term2
-    if dtype == float:
+    if isinstance(dtype, float):
         y = y.real
     return y
 
@@ -109,12 +109,14 @@ def smooth_min(x, b, mu=100.0):
     """
     Smooth approximation of the min function using the log-sum-exp trick.
 
-    Parameters:
+    Parameters
+    ----------
     x (float or array-like): First value.
     b (float or array-like): Second value.
     mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
 
-    Returns:
+    Returns
+    -------
     float or array-like: The smooth approximation of min(x, b).
     """
     sum_log_exp = np.log(np.exp(np.multiply(-mu, x)) + np.exp(np.multiply(-mu, b)))
@@ -124,14 +126,16 @@ def smooth_min(x, b, mu=100.0):
 
 def d_smooth_min(x, b, mu=100.0):
     """
-    Derivative of function smooth_min(x)
+    Derivative of function smooth_min(x).
 
-    Parameters:
+    Parameters
+    ----------
     x (float or array-like): First value.
     b (float or array-like): Second value.
     mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
 
-    Returns:
+    Returns
+    -------
     float or array-like: The smooth approximation of derivative of min(x, b).
     """
     d_sum_log_exp = np.exp(np.multiply(-mu, x)) / (
@@ -144,12 +148,14 @@ def smooth_max(x, b, mu=10.0):
     """
     Smooth approximation of the min function using the log-sum-exp trick.
 
-    Parameters:
+    Parameters
+    ----------
     x (float or array-like): First value.
     b (float or array-like): Second value.
     mu (float): The smoothing factor. Higher values make it closer to the true maximum. Try between 75 and 275.
 
-    Returns:
+    Returns
+    -------
     float or array-like: The smooth approximation of max(x, b).
     """
     mu_x = mu * x
@@ -162,14 +168,16 @@ def smooth_max(x, b, mu=10.0):
 
 def d_smooth_max(x, b, mu=10.0):
     """
-    Derivative of function smooth_min(x)
+    Derivative of function smooth_min(x).
 
-    Parameters:
+    Parameters
+    ----------
     x (float or array-like): First value.
     b (float or array-like): Second value.
     mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
 
-    Returns:
+    Returns
+    -------
     float or array-like: The smooth approximation of derivative of min(x, b).
     """
     mu_x = mu * x
@@ -222,9 +230,7 @@ def dydx_sin_int(val):
 
 
 def smooth_int_tanh(x, mu=10.0):
-    """
-    Smooth approximation of int(x) using tanh.
-    """
+    """Smooth approximation of int(x) using tanh."""
     f = np.floor(x.real) + x.imag * 1j
     frac = x - f
     t = np.tanh(mu * (frac - 0.5))

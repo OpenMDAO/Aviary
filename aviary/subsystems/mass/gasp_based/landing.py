@@ -1,4 +1,3 @@
-import numpy as np
 import openmdao.api as om
 from openmdao.components.ks_comp import KSfunction
 

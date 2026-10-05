@@ -10,15 +10,14 @@ from pathlib import Path
 
 import numpy as np
 import openmdao.api as om
+from openmdao.utils.units import convert_units
 
 import aviary.constants as constants
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import isiterable
 from aviary.variable_info.variable_meta_data import CoreMetaData
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-import warnings
-from openmdao.utils.units import convert_units
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class EngineModelVariables(Enum):
@@ -281,14 +280,13 @@ class EngineDataInterpolator(om.Group):
         )
 
         # check that data in table are all vectors of the same length
-        for idx, item in enumerate(input_data.items()):
+        model_length = None
+        for item in input_data.items():
             val = item[1][0]
-            if idx != 0:
-                prev_model_length = model_length
-            else:
-                prev_model_length = len(val)
-            model_length = len(val)
-            if model_length != prev_model_length:
+            length = len(val)
+            if model_length is None:
+                model_length = length
+            elif length != model_length:
                 raise IndexError(
                     'Lengths of data provided for engine performance interpolation do not match.'
                 )

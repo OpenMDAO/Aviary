@@ -1,3 +1,9 @@
+from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import N3CC
+from aviary.validation_cases.validation_data.test_data.bwb300_baseline_FLOPS_data import BWB300FLOPS
+from aviary.validation_cases.validation_data.test_data.bwb_detailed_FLOPS_data import (
+    BWBdetailedFLOPS,
+)
+from aviary.validation_cases.validation_data.test_data.bwb_simple_FLOPS_data import BWBsimpleFLOPS
 from aviary.validation_cases.validation_data.test_data.large_single_aisle_1_FLOPS_data import (
     LargeSingleAisle1FLOPS,
 )
@@ -12,14 +18,6 @@ from aviary.validation_cases.validation_data.test_data.large_single_aisle_2_FLOP
 )
 from aviary.validation_cases.validation_data.test_data.multi_engine_single_aisle_data import (
     MultiEngineSingleAisle,
-)
-from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import N3CC
-from aviary.validation_cases.validation_data.test_data.bwb_simple_FLOPS_data import BWBsimpleFLOPS
-from aviary.validation_cases.validation_data.test_data.bwb_detailed_FLOPS_data import (
-    BWBdetailedFLOPS,
-)
-from aviary.validation_cases.validation_data.test_data.bwb300_baseline_FLOPS_data import (
-    BWB300FLOPS,
 )
 
 FLOPS_Test_Data = {}

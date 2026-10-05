@@ -1,7 +1,7 @@
-from copy import deepcopy
 import os
 import unittest
 import warnings
+from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal, assert_warning
 from openmdao.utils.testing_utils import use_tempdirs

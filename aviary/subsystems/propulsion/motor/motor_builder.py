@@ -1,8 +1,7 @@
 from aviary.subsystems.propulsion.motor.model.motor_mission import MotorMission
 from aviary.subsystems.propulsion.motor.model.motor_premission import MotorPreMission
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
-from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Aircraft
 
 
 class MotorBuilder(SubsystemBuilder):

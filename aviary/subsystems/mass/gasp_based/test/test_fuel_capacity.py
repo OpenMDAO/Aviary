@@ -7,13 +7,12 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.subsystems.mass.gasp_based.fuel_capacity import TrappedFuelCapacity
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import AviaryValues
 from aviary.variable_info.variables import Aircraft
 
 
 @use_tempdirs
 class TrappedFuelCapacityCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = self.options = AviaryValues()
@@ -64,7 +63,7 @@ class TrappedFuelCapacityCase1(unittest.TestCase):
 
 
 class TrappedFuelCapacityCase3(unittest.TestCase):
-    """BWB Parameters"""
+    """BWB Parameters."""
 
     def setUp(self):
         options = AviaryValues()
