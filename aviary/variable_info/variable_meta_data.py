@@ -1212,18 +1212,6 @@ add_meta_data(
     default_value=0.0,
 )
 
-# See issue #1182. this should be removed from metadata (intermediate calculation)
-add_meta_data(
-    Aircraft.Design.CHARACTERISTIC_LENGTHS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # 'MISSA.EL',
-    },
-    units='ft',
-    desc='Reynolds characteristic length for each component',
-)
-
 add_meta_data(
     Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT,
     meta_data=_MetaData,
@@ -7597,7 +7585,7 @@ add_meta_data(
     historical_name={
         'GASP': 'INGASP.CLMWTO',
         # ['&DEFINE.AERIN.CLTOM', 'LANDG.CLTOM', '~DEFTOL.CLTOA'],
-        'FLOPS': ['AERIN.CLTOM', 'TOLIN.CLTOM'],
+        'FLOPS': 'TOLIN.CLTOM',  #'AERIN.CLTOM'
     },
     units='unitless',
     desc='maximum lift coefficient for takeoff',
