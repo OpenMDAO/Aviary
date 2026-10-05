@@ -13,7 +13,7 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     print_case,
 )
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 @use_tempdirs

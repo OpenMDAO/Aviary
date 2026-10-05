@@ -2,9 +2,9 @@ import openmdao.api as om
 from openmdao.components.ks_comp import KSfunction
 
 from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 
 
 class LandingMass(om.ExplicitComponent):

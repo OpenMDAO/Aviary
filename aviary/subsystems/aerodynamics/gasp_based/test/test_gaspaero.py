@@ -1,7 +1,7 @@
-from copy import deepcopy
 import json
 import os
 import unittest
+from copy import deepcopy
 
 import numpy as np
 import openmdao.api as om

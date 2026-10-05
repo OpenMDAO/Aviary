@@ -3,7 +3,7 @@ from copy import deepcopy
 
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.interface.run_aviary import run_aviary
 from aviary.models.missions.two_dof_default import phase_info

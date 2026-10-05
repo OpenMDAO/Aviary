@@ -1,7 +1,5 @@
 import warnings
 
-import warnings
-
 import numpy as np
 import openmdao.api as om
 
@@ -9,10 +7,10 @@ from aviary.subsystems.mass.gasp_based.control import ControlMassGroup
 from aviary.subsystems.mass.gasp_based.engine import EngineMassGroup
 from aviary.subsystems.mass.gasp_based.landing import LandingGearMassGroup
 from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.enums import FlapType, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 
 
 class MassParameters(om.ExplicitComponent):

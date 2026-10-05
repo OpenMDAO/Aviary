@@ -7,8 +7,8 @@ from aviary.mission.two_dof.ode.v_rotate_comp import VRotateComp
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import AlphaModes, SpeedType
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.variable_info.functions import add_aviary_option, add_aviary_input
 
 
 class TakeOffODE(TwoDOFODE):

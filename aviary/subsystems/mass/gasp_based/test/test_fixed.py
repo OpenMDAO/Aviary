@@ -8,6 +8,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     ElectricAugmentationMass,
     FixedMassGroup,
     HighLiftMass,
+    HorizontalTailMass,
     MassParameters,
     PayloadGroup,
     VerticalTailMass,
@@ -80,7 +81,7 @@ class MassParametersTestCase(unittest.TestCase):
             assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_case1(self):
-        """this is large single aisle 1 v3 bug fixed test case."""
+        """This is large single aisle 1 v3 bug fixed test case."""
         prob = self._make_prob(
             num_wing_engines=2,
             smooth_mass_discontinuities=False,
@@ -258,7 +259,7 @@ class PayloadGroupTestCase(unittest.TestCase):
         return prob
 
     def test_case1(self):
-        """this is the large single aisle 1 V3 test case."""
+        """This is the large single aisle 1 V3 test case."""
         prob = self._make_prob(
             num_passengers=180,
             num_passengers_design=180,
@@ -403,7 +404,7 @@ class HorizontalTailMassTestCase(unittest.TestCase):
         return prob
 
     def test_case1(self):
-        """this is the large single aisle 1 V3 test case."""
+        """This is the large single aisle 1 V3 test case."""
         values = {
             Aircraft.Design.GROSS_MASS: (175400, 'lbm'),  # bug fixed value and original value
             Aircraft.HorizontalTail.MASS_COEFFICIENT: (
@@ -532,7 +533,7 @@ class VerticalTailMassTestCase(unittest.TestCase):
         return prob
 
     def test_case1(self):
-        """this is the large single aisle 1 V3 test case."""
+        """This is the large single aisle 1 V3 test case."""
         values = {
             Aircraft.VerticalTail.TAPER_RATIO: (
                 0.801,
@@ -730,7 +731,7 @@ class HighLiftTestCase(unittest.TestCase):
         return prob
 
     def test_case1(self):
-        """this is a different configuration with turbofan_23k_1 test case."""
+        """This is a different configuration with turbofan_23k_1 test case."""
         values = {
             Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT: (1.9, 'unitless'),
             Aircraft.Wing.AREA: (1764.6, 'ft**2'),
@@ -842,7 +843,7 @@ class FixedMassGroupTestCase(unittest.TestCase):
     """Tests for the FixedMassGroup group against GASP output, including BWB."""
 
     def test_case1(self):
-        """this is the large single aisle 1 V3 test case."""
+        """This is the large single aisle 1 V3 test case."""
         options = AviaryValues()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')

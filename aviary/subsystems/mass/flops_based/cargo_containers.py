@@ -1,6 +1,6 @@
 import openmdao.api as om
 
-from aviary.utils.math_utils import sin_int4, dydx_sin_int4
+from aviary.utils.math_utils import dydx_sin_int4, sin_int4
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 

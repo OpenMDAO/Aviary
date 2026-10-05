@@ -8,7 +8,6 @@ from aviary.subsystems.mass.gasp_based.wing import (
     BWBWingMassGroup,
     BWBWingMassSolve,
     StrutAndFoldMass,
-    StrutAndFoldMass,
     WingMassGroup,
     WingMassSolve,
     WingMassTotal,

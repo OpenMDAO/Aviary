@@ -1,13 +1,9 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.mass.flops_based.distributed_prop import (
-    distributed_nacelle_diam_factor,
-    distributed_nacelle_diam_factor_deriv,
-)
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 
 DEG2RAD = np.pi / 180.0
 

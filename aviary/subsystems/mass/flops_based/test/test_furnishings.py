@@ -1,7 +1,6 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
@@ -16,7 +15,6 @@ from aviary.validation_cases.validation_tests import (
     Version,
     flops_validation_test,
     get_flops_case_names,
-    get_flops_inputs,
     get_flops_options,
     print_case,
 )

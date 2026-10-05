@@ -12,7 +12,7 @@ from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
 class GroundrollODETestCase(unittest.TestCase):

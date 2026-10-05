@@ -1,9 +1,9 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.utils.math_utils import deg2rad, rad2deg
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.utils.math_utils import rad2deg, deg2rad
 
 
 class TakeoffEOM(om.ExplicitComponent):
