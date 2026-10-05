@@ -1366,20 +1366,9 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;climb&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;climb&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;cruise&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;cruise&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;descent&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;descent&#39;: lower, upper, ref
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1791217580.464330] [runnervm8df0l:5068 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55f945e9d8f0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1791217580.464675] [runnervm8df0l:5068 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
   &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
   &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
@@ -1400,6 +1389,20 @@ Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#3
   &#39;aircraft:wing:wetted_area  2210.280228  ft**2
 </pre></div>
 </div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm8df0l:05068] pml_ucx.c:313  Error: Failed to create UCP worker
+Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;climb&#39;: lower, upper, ref
+
+Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;climb&#39;: lower, upper, ref
+
+Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;cruise&#39;: lower, upper, ref
+
+Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;cruise&#39;: lower, upper, ref
+
+Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;descent&#39;: lower, upper, ref
+
+Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;descent&#39;: lower, upper, ref
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
   traj.climb.t_initial, inds=[0]
 </pre></div>
@@ -1418,12 +1421,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3234110395965109e+00    1.3234110395965109e+00
-Dual infeasibility......:   3.6143654724306051e-08    3.6143654724306051e-08
+Objective...............:   1.3234110395965166e+00    1.3234110395965166e+00
+Dual infeasibility......:   3.6143607456557164e-08    3.6143607456557164e-08
 Constraint violation....:   2.2737367544323207e-14    2.2737367544323207e-14
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0924049294851500e-08    9.0924049294851500e-08
-Overall NLP error.......:   9.0924049294851500e-08    9.0924049294851500e-08
+Complementarity.........:   9.0924049294847808e-08    9.0924049294847808e-08
+Overall NLP error.......:   9.0924049294847808e-08    9.0924049294847808e-08
 
 
 Number of objective function evaluations             = 16
@@ -1433,7 +1436,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.613
+Total seconds in IPOPT                               = 2.741
 
 EXIT: Optimal Solution Found.
 
