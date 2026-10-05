@@ -532,7 +532,16 @@
 
     <span class="c1"># register per-subsystem report generation</span>
     <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;subsystems&#39;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;subsystems_run_model&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">subsystem_report</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates reports for each subsystem builder in the Aviary Problem&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_model&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;subsystems_run_driver&#39;</span><span class="p">,</span>
         <span class="n">func</span><span class="o">=</span><span class="n">subsystem_report</span><span class="p">,</span>
         <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates reports for each subsystem builder in the Aviary Problem&#39;</span><span class="p">,</span>
         <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
@@ -613,7 +622,25 @@
     <span class="p">)</span>
 
     <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;list_options&#39;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;list_options_final_setup&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">_list_options_report</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the Problem options&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;final_setup&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;list_options_run_model&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">_list_options_report</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the Problem options&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_model&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;list_options_run_driver&#39;</span><span class="p">,</span>
         <span class="n">func</span><span class="o">=</span><span class="n">_list_options_report</span><span class="p">,</span>
         <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the Problem options&#39;</span><span class="p">,</span>
         <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
