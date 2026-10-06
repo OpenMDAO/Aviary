@@ -1,4 +1,3 @@
-import csv
 import json
 import os
 import subprocess
@@ -11,12 +10,10 @@ from pathlib import Path
 
 import dymos as dm
 import numpy as np
-import openmdao
 import openmdao.api as om
 import openmdao.utils.hooks as hooks
 from openmdao.utils.reports_system import _default_reports
 from openmdao.utils.units import convert_units
-from packaging import version
 
 from aviary.core.aviary_group import AviaryGroup
 from aviary.interface.utils import set_warning_format
@@ -563,7 +560,7 @@ class AviaryProblem(om.Problem):
                 print_level = 0
                 driver.opt_settings.setdefault('print_user_options', 'no')
             elif verbosity == Verbosity.BRIEF:
-                print_level = 3  # minimum to get exit status
+                print_level = 3
                 driver.opt_settings.setdefault('print_user_options', 'no')
                 driver.opt_settings.setdefault('print_frequency_iter', 10)
             elif verbosity == Verbosity.VERBOSE:
@@ -597,11 +594,11 @@ class AviaryProblem(om.Problem):
 
         # pyoptsparse print settings for both SNOPT, IPOPT
         if optimizer in ('SNOPT', 'IPOPT'):
-            if verbosity == Verbosity.QUIET:
+            if verbosity <= Verbosity.BRIEF:  # QUIET, BRIEF
                 driver.options['print_results'] = False
-            elif verbosity < Verbosity.DEBUG:  # QUIET, BRIEF, VERBOSE
+            elif verbosity > Verbosity.BRIEF:  # VERBOSE
                 driver.options['print_results'] = 'minimal'
-            elif verbosity >= Verbosity.DEBUG:
+            elif verbosity >= Verbosity.DEBUG:  # DEBUG
                 driver.options['print_opt_prob'] = True
 
         # optimizer agnostic settings
@@ -966,16 +963,16 @@ class AviaryProblem(om.Problem):
             if output == 'fuel_burned':
                 output = Mission.FUEL_MASS
                 # default scaling is valid only if this is the only argument and the ref has not yet been set
-                if len(args) == 1 and ref == None:
+                if len(args) == 1 and ref is None:
                     # set a default ref
                     ref = default_ref_values['fuel_burned']
             elif output == 'fuel':
                 output = Mission.Objectives.FUEL
-                if len(args) == 1 and ref == None:
+                if len(args) == 1 and ref is None:
                     ref = default_ref_values['fuel']
             elif output == 'mass':
                 output = Mission.FINAL_MASS
-                if len(args) == 1 and ref == None:
+                if len(args) == 1 and ref is None:
                     ref = default_ref_values['mass']
             elif output == 'time':
                 output = Mission.FINAL_TIME
@@ -1336,6 +1333,8 @@ class AviaryProblem(om.Problem):
                 not self.result.success and verbosity <= Verbosity.BRIEF  # QUIET, BRIEF
             ):
                 warnings.warn('\nAviary run failed. See the dashboard for more details.\n')
+            elif self.result.success and verbosity > Verbosity.QUIET:  # BRIEF, VERBOSE, DEBUG
+                print('\nAviary run successful.\n')
         else:
             self.run_model()
             self.result = self.driver.result

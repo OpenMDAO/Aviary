@@ -1,6 +1,7 @@
+import warnings
+
 import numpy as np
 import openmdao.api as om
-import warnings
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.gasp_based.control import ControlMassGroup
@@ -55,7 +56,7 @@ class MassParameters(om.ExplicitComponent):
         )
         add_aviary_output(
             self,
-            Aircraft.Propulsion.ENGINE_POSITION_FACTOR,
+            Aircraft.Wing.ENGINE_POSITION_MASS_SCALER,
             units='unitless',
         )
         self.add_output('half_sweep', units='rad', desc='SWC2: wing chord half sweep angle')
@@ -70,7 +71,7 @@ class MassParameters(om.ExplicitComponent):
                 Aircraft.Wing.ASPECT_RATIO,
             ],
         )
-        self.declare_partials(Aircraft.Propulsion.ENGINE_POSITION_FACTOR, Aircraft.Design.MAX_MACH)
+        self.declare_partials(Aircraft.Wing.ENGINE_POSITION_MASS_SCALER, Aircraft.Design.MAX_MACH)
         self.declare_partials(
             'half_sweep',
             [
@@ -99,7 +100,7 @@ class MassParameters(om.ExplicitComponent):
         if num_wing_engines > 4:
             if verbosity > Verbosity.BRIEF:
                 warnings.warn(
-                    f'GASP mass equations do not support more than 4 total engines on the wings. '
+                    'GASP mass equations do not support more than 4 total engines on the wings. '
                     'Aircraft.Propulsion.ENGINE_POSITION_FACTOR will use the default equation, '
                     'which is not scaled by number of wing-mounted engines.'
                 )
@@ -164,7 +165,7 @@ class MassParameters(om.ExplicitComponent):
         outputs[Aircraft.Wing.MATERIAL_FACTOR] = c_material
         outputs['c_strut_braced'] = c_strut_braced
         outputs['c_gear_loc'] = c_gear_loc
-        outputs[Aircraft.Propulsion.ENGINE_POSITION_FACTOR] = c_eng_pos
+        outputs[Aircraft.Wing.ENGINE_POSITION_MASS_SCALER] = c_eng_pos
         outputs['half_sweep'] = half_sweep
 
     def compute_partials(self, inputs, J):
@@ -221,21 +222,21 @@ class MassParameters(om.ExplicitComponent):
         )
 
         if smooth:
-            J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, Aircraft.Design.MAX_MACH] = -dSigmoidXdx(
+            J[Aircraft.Wing.ENGINE_POSITION_MASS_SCALER, Aircraft.Design.MAX_MACH] = -dSigmoidXdx(
                 max_mach, 0.75, 1 / 320.0
             ) + 1.05 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
             if num_wing_engines == 2 or num_wing_engines == 3:
-                J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, Aircraft.Design.MAX_MACH] = (
+                J[Aircraft.Wing.ENGINE_POSITION_MASS_SCALER, Aircraft.Design.MAX_MACH] = (
                     -0.98 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
                     + 0.95 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
                 )
             if num_wing_engines == 4:
-                J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, Aircraft.Design.MAX_MACH] = (
+                J[Aircraft.Wing.ENGINE_POSITION_MASS_SCALER, Aircraft.Design.MAX_MACH] = (
                     -0.95 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
                     + 0.9 * dSigmoidXdx(max_mach, 0.75, 1 / 320.0)
                 )
         else:
-            J[Aircraft.Propulsion.ENGINE_POSITION_FACTOR, Aircraft.Design.MAX_MACH] = 0.0
+            J[Aircraft.Wing.ENGINE_POSITION_MASS_SCALER, Aircraft.Design.MAX_MACH] = 0.0
 
         J['half_sweep', Aircraft.Wing.SWEEP] = 1 / (tan_half_sweep**2 + 1) * dTanHS_dSC4
         J['half_sweep', Aircraft.Wing.TAPER_RATIO] = 1 / (tan_half_sweep**2 + 1) * dTanHS_TR
@@ -1642,9 +1643,9 @@ class HighLiftMass(om.ExplicitComponent):
         u2 = 2 * wing_loading / (RHO * CL_max_flaps_landing)
         VFLAP = 1.8 * (0.5921 * np.sqrt(u2))
         dVFLAP_dWL = (1.8 * 0.5921) * (1 / np.sqrt(u2)) * (1 / (RHO * CL_max_flaps_landing))
-        dVFLAP_drho = (
-            -(1.8 * 0.5921) * (1 / np.sqrt(u2)) * (wing_loading / (RHO**2 * CL_max_flaps_landing))
-        )
+        # dVFLAP_drho = (
+        #     -(1.8 * 0.5921) * (1 / np.sqrt(u2)) * (wing_loading / (RHO**2 * CL_max_flaps_landing))
+        # )
         dVFLAP_dCMFL = (
             -(1.8 * 0.5921) * (1 / np.sqrt(u2)) * (wing_loading / (RHO * CL_max_flaps_landing**2))
         )

@@ -8,12 +8,12 @@ from aviary.subsystems.mass.flops_based.payload import PayloadGroup
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
+    Version,
     do_validation_test,
     flops_validation_test,
     get_flops_case_names,
     get_flops_options,
     print_case,
-    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
@@ -84,7 +84,7 @@ class PayloadGroupTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBCargoMassTest(unittest.TestCase):
-    """Test BWB cargo mass"""
+    """Test BWB cargo mass."""
 
     def setUp(self):
         self.prob = om.Problem()

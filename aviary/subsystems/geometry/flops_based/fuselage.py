@@ -1,10 +1,11 @@
 """Contains any preliminary calculations on the fuselage."""
 
 import warnings
+
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.math_utils import smooth_int_tanh, d_smooth_int_tanh
+from aviary.utils.math_utils import smooth_int_tanh
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Settings
@@ -60,7 +61,7 @@ class FuselagePrelim(om.ExplicitComponent):
 
 
 class BWBFuselagePrelim(om.ExplicitComponent):
-    """Calculate fuselage average diameter and planform area for BWB"""
+    """Calculate fuselage average diameter and planform area for BWB."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
@@ -723,7 +724,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
             iter += 1
             if iter > 100:
-                warnings.warn(f'Number of iteration exceeded 100 in BWBDetailedCabinLayout.')
+                warnings.warn('Number of iteration exceeded 100 in BWBDetailedCabinLayout.')
                 break
 
         length = pax_compart_length / rear_spar_percent_chord

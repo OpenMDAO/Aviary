@@ -31,7 +31,7 @@ class TestExternalAero(av.TestSubsystemBuilder):
             'method': 'external',
         }
 
-        prob = av.AviaryProblem()
+        prob = av.AviaryProblem(verbosity=0)
 
         # Load aircraft and options data from user
         prob.load_inputs(

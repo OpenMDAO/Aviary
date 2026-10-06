@@ -3,7 +3,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class OxygenSystemMass(om.ExplicitComponent):

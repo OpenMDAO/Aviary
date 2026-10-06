@@ -1,11 +1,12 @@
 import warnings
+
 import numpy as np
 import openmdao.api as om
 from openmdao.utils import cs_safe as cs
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces, CLFromLift, TanhRampComp
-from aviary.utils.math_utils import sigmoidX, smooth_min, d_smooth_min
+from aviary.utils.math_utils import d_smooth_min, sigmoidX, smooth_min
 from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
@@ -409,9 +410,7 @@ class Xlifts(om.ExplicitComponent):
 
 
 class SIWB(om.ExplicitComponent):
-    """
-    Compute SIWB for tube+wing aircraft
-    """
+    """Compute SIWB for tube+wing aircraft."""
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
@@ -544,7 +543,7 @@ class BWBSIWB(om.ExplicitComponent):
 
 
 class UFac(om.ExplicitComponent):
-    """GASP EAERO subroutine"""
+    """GASP EAERO subroutine."""
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)

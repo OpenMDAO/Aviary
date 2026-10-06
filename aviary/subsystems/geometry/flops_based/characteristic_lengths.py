@@ -2,15 +2,12 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.geometry.flops_based.utils import Names
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
 class WingCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the wing.
-    """
+    """Calculate the characteristic length and fineness ratio of the wing."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
@@ -101,9 +98,7 @@ class WingCharacteristicLength(om.ExplicitComponent):
 
 
 class BWBWingCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the wing of BWB.
-    """
+    """Calculate the characteristic length and fineness ratio of the wing of BWB."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
@@ -177,9 +172,7 @@ class OtherCharacteristicLengths(om.Group):
 
 
 class FuselageCharacteristicLengths(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the fuselage.
-    """
+    """Calculate the characteristic length and fineness ratio of the fuselage."""
 
     def setup(self):
         # add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)
@@ -230,74 +223,9 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
 
         J[Aircraft.Fuselage.FINENESS, Aircraft.Fuselage.REF_DIAMETER] = -length / avg_diam**2.0
 
-    # See issue #1182. NOTE this code is currently unused!!
-    def _compute_additional_fuselages(
-        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    ):
-        num_fuselages = inputs[Aircraft.Fuselage.NUM_FUSELAGES]
-
-        if num_fuselages < 2:
-            return
-
-        num_extra = num_fuselages - 1
-
-        idx = self._num_components
-        self._num_components += num_extra
-
-        lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
-
-        fineness = outputs[Aircraft.Design.FINENESS]
-
-        laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
-        laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
-
-        for _ in range(num_extra):
-            lengths[idx] = lengths[3]
-
-            fineness[idx] = fineness[3]
-
-            laminar_flow_lower[idx] = laminar_flow_lower[3]
-            laminar_flow_upper[idx] = laminar_flow_upper[3]
-
-            idx += 1
-
-    # See issue #1182. NOTE this code is currently unused!!
-    def _compute_additional_vertical_tails(
-        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    ):
-        aviary_options: AviaryValues = self.options['aviary_options']
-        num_tails = aviary_options.get_val(Aircraft.VerticalTail.NUM_TAILS)
-
-        if num_tails < 2:
-            return
-
-        num_extra = num_tails - 1
-
-        idx = self._num_components
-        self._num_components += num_extra
-
-        lengths = outputs[Aircraft.Design.CHARACTERISTIC_LENGTHS]
-
-        fineness = outputs[Aircraft.Design.FINENESS]
-
-        laminar_flow_lower = outputs[Aircraft.Design.LAMINAR_FLOW_LOWER]
-        laminar_flow_upper = outputs[Aircraft.Design.LAMINAR_FLOW_UPPER]
-
-        for _ in range(num_extra):
-            lengths[idx] = lengths[2]
-
-            fineness[idx] = fineness[2]
-
-            laminar_flow_lower[idx] = laminar_flow_lower[2]
-            laminar_flow_upper[idx] = laminar_flow_upper[2]
-
-            idx += 1
-
 
 class NacelleCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the nacelle.
-    """
+    """Calculate the characteristic length and fineness ratio of the nacelle."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -427,9 +355,7 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
 
 
 class HorizontalTailCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the horizontal tail.
-    """
+    """Calculate the characteristic length and fineness ratio of the horizontal tail."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
@@ -503,9 +429,7 @@ class HorizontalTailCharacteristicLength(om.ExplicitComponent):
 
 
 class VerticalTailCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the vertical tail.
-    """
+    """Calculate the characteristic length and fineness ratio of the vertical tail."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
@@ -568,9 +492,7 @@ class VerticalTailCharacteristicLength(om.ExplicitComponent):
 
 
 class CanardCharacteristicLength(om.ExplicitComponent):
-    """
-    Calculate the characteristic length and fineness ratio of the canard.
-    """
+    """Calculate the characteristic length and fineness ratio of the canard."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Canard.AREA, units='ft**2')

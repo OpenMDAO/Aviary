@@ -384,7 +384,7 @@ class FuelComponentsTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
 
     def test_case1(self):
-        """not to smooth mass discontinuties (OEM_wingfuel_wt > volume_wingfuel_wt)"""
+        """Not to smooth mass discontinuties (OEM_wingfuel_wt > volume_wingfuel_wt)."""
         setup_model_options(
             self.prob,
             AviaryValues(
@@ -408,7 +408,7 @@ class FuelComponentsTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
     def test_case2(self):
-        """smooth mass discontinuties"""
+        """Smooth mass discontinuties."""
         setup_model_options(
             self.prob,
             AviaryValues(
@@ -756,7 +756,7 @@ class BWBFuselageMassTestCase(unittest.TestCase):
 
 
 class BWBFuselageMassTestCase2(unittest.TestCase):
-    """GASP data. Test mass-weight conversion"""
+    """GASP data. Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.gasp_based.fuel as fuel
