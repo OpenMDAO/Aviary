@@ -225,6 +225,12 @@ def parse_inputs(
                             f'Variable {var_name} is replaced by {new_name} as of {the_date} '
                             f'See PR #{the_PRs} for details.'
                         )
+                else:
+                    warnings.warn(
+                        f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
+                        'It will be ignored.',
+                        UserWarning,
+                    )
                 continue
 
     return aircraft_values, initialization_guesses
