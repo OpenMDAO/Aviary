@@ -3,10 +3,7 @@ import openmdao.api as om
 from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.canard import CanardWettedArea
-from aviary.subsystems.geometry.flops_based.nacelle import (
-    NacelleWettedArea,
-    NacelleTotalWettedArea,
-)
+from aviary.subsystems.geometry.flops_based.nacelle import NacelleTotalWettedArea, NacelleWettedArea
 from aviary.subsystems.geometry.flops_based.utils import (
     Names,
     calc_fuselage_adjustment,

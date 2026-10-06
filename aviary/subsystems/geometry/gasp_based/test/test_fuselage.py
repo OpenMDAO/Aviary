@@ -499,6 +499,9 @@ class BWBLayoutTestCase(unittest.TestCase):
         prob = self.prob
         setup_model_options(prob, self.aviary_options)
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, val=25.0, units='inch')
+        prob.model.set_input_defaults(
+            Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, val=39.0, units='inch'
+        )
         prob.setup()
 
         prob.run_model()

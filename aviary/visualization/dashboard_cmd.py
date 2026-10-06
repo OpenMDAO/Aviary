@@ -4,9 +4,9 @@ import Bokeh unless we need it. This greatly speeds up the command line.
 """
 
 import argparse
-from pathlib import Path
 import shutil
 import zipfile
+from pathlib import Path
 
 
 def _dashboard_setup_parser(parser):

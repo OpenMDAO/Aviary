@@ -1,9 +1,7 @@
 import unittest
 
-import openmdao
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from packaging.version import Version
 
 from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
 from aviary.utils.aviary_values import AviaryValues

@@ -1277,7 +1277,7 @@ def update_flops_options(vehicle_data, cmts, verbosity=Verbosity.BRIEF):
 
     if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in input_values and design_type[0] != 3:
         if input_values.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)[0] > 0:
-            if input_values.get_val(Aircraft.Fuselage.SIMPLE_LAYOUT) == False:
+            if not input_values.get_val(Aircraft.Fuselage.SIMPLE_LAYOUT):
                 cmts.append(
                     '# business class seats are included. Fuselage layout may be different '
                     'from FLOPS.'

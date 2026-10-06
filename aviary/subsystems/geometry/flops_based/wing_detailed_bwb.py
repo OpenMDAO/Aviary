@@ -397,7 +397,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
 
 
 class BWBWingPrelim(om.ExplicitComponent):
-    """preliminary calculations of wing aspect ratio for BWB using detailed wing information"""
+    """preliminary calculations of wing aspect ratio for BWB using detailed wing information."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.BWB.WING_ROOT_INDEX)
