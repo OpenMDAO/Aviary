@@ -170,6 +170,12 @@ def parse_inputs(
             deprecated_vars.append((row[0]))
             renamed_vars.append((row[1]))
 
+    deprecated_variables = {
+        'aircraft:design:characteristic_lengths': ('removed', '#1308', '1.0.0', '9/29/2026'),
+        'aircraft:design:compute_htail_volume_coeff': ('removed', '#1285', '1.0.0', '9/11/2026'),
+        'aircraft:design:compute_vtail_volume_coeff': ('removed', '#1285', '1.0.0', '9/11/2026'),
+        'aircraft:design:thrust_takeoff_per_eng': ('removed', '#1142', '1.0.0', '5/15/2026'),
+    }
     with open(vehicle_deck, newline='') as f_in:
         for line in f_in:
             data_units = None
@@ -229,12 +235,21 @@ def parse_inputs(
                         new_name = renamed_vars[idx]
                         if new_name == 'removed':
                             if verbosity >= Verbosity.BRIEF:
-                                warnings.warn(f'Variable {var_name} is no longer in meta_data.')
+                                # warnings.warn(f'Variable {var_name} is no longer in meta_data.')
+                                pass
                         else:
                             if verbosity >= Verbosity.BRIEF:
-                                warnings.warn(f'Variable {var_name} is replaced by {new_name}')
+                                # warnings.warn(f'Variable {var_name} is replaced by {new_name}')
+                                pass
                         break
                     idx = idx + 1
+                if var_name in deprecated_variables:
+                    if verbosity >= Verbosity.BRIEF:
+                        new_name = deprecated_variables[var_name][0]
+                        if new_name == 'removed':
+                            warnings.warn(f'Variable {var_name} is no longer in meta_data.')
+                        else:
+                            warnings.warn(f'Variable {var_name} is replaced by {new_name}')
                 if not found_old_var:
                     if verbosity >= Verbosity.BRIEF:
                         warnings.warn(
