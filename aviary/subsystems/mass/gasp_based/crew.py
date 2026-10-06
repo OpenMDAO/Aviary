@@ -48,10 +48,10 @@ class CabinCrewMass(om.ExplicitComponent):
         # pct_male = the percentage of US flight attendants that are male (based on data from
         # the women in aerospace international organization in 2020, which listed this percentage as
         # 20.8%)
-        # avg_mass_male is the average weight of males according to the CDC, and is 199.8 lbf
+        # avg_mass_male is the average weight of males according to the CDC, and is 199.8 lbm
         # pct_female is calculated from the same methods as pct_male, and results in 79.2%
-        # avg_mass_female is the average weight of females according to the CDC, and is 170.8 lbf
-        # the resulting value is that the average weight of the US flight attendant is 177 lbf
+        # avg_mass_female is the average weight of females according to the CDC, and is 170.8 lbm
+        # the resulting value is that the average weight of the US flight attendant is 177 lbm
         flight_attendant_mass = 177 * num_flight_attendants
 
         if PAX >= 40.0:

@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
@@ -13,7 +14,7 @@ from aviary.validation_cases.validation_tests import (
     get_flops_options,
     print_case,
 )
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 @use_tempdirs
@@ -52,6 +53,33 @@ class VerticalTailMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+    def test_alt_gravity(self):
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'vertical_tail',
+            VerticalTailMass(**{Mission.GRAVITY: (30, 'ft/s**2')}),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        prob.set_val(Aircraft.Design.GROSS_MASS, 100000, 'lbm')
+        prob.set_val(Aircraft.VerticalTail.AREA, 250, 'ft**2')
+        prob.set_val(Aircraft.VerticalTail.TAPER_RATIO, 0.33, 'unitless')
+        prob.set_val(Aircraft.VerticalTail.MASS_SCALER, 1.0, 'unitless')
+
+        prob.run_model()
+
+        with self.subTest(var='vertical_tail_mass'):
+            actual = prob.get_val(Aircraft.VerticalTail.MASS, units='lbm')
+            assert_near_equal(actual, 898.1766089260108, 1e-10)
+
+        with self.subTest(check='partials'):
+            partial_data = prob.check_partials(out_stream=None, method='cs')
+            assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
 @use_tempdirs

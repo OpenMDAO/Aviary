@@ -1,7 +1,8 @@
 import openmdao.api as om
 
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class HorizontalTailMass(om.ExplicitComponent):
@@ -12,6 +13,7 @@ class HorizontalTailMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
@@ -26,11 +28,14 @@ class HorizontalTailMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+        gravity = self.options[Mission.GRAVITY]
 
         area = inputs[Aircraft.HorizontalTail.AREA]
-        gross_weight = inputs[Aircraft.Design.GROSS_MASS]
+        togm = inputs[Aircraft.Design.GROSS_MASS]
         scaler = inputs[Aircraft.HorizontalTail.MASS_SCALER]
         taper_ratio = inputs[Aircraft.HorizontalTail.TAPER_RATIO]
+
+        gross_weight = mass_to_force_english((togm, 'lbm'), gravity)
 
         if num_tails == 1:
             outputs[Aircraft.HorizontalTail.MASS] = (
@@ -43,11 +48,15 @@ class HorizontalTailMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+        gravity = self.options[Mission.GRAVITY]
 
         area = inputs[Aircraft.HorizontalTail.AREA]
-        gross_weight = inputs[Aircraft.Design.GROSS_MASS]
+        togm = inputs[Aircraft.Design.GROSS_MASS]
         scaler = inputs[Aircraft.HorizontalTail.MASS_SCALER]
         taper_ratio = inputs[Aircraft.HorizontalTail.TAPER_RATIO]
+
+        gross_weight = mass_to_force_english((togm, 'lbm'), gravity)
+        dforce_dmass = mass_to_force_english_derivative(gravity)
 
         gross_weight_exp = gross_weight**0.20
 
@@ -61,7 +70,12 @@ class HorizontalTailMass(om.ExplicitComponent):
             )
 
             J[Aircraft.HorizontalTail.MASS, Aircraft.Design.GROSS_MASS] = (
-                scaler * 0.106 * area * gross_weight**-0.8 * (taper_ratio + 0.50)
+                dforce_dmass
+                * scaler
+                * 0.106
+                * area
+                * gross_weight**-0.8
+                * (taper_ratio + 0.50)
             )
 
             J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.TAPER_RATIO] = (

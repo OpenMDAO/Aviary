@@ -300,7 +300,7 @@ class TankCapacity(om.ExplicitComponent):
         rho_fuel = inputs[Aircraft.Fuel.DENSITY]
         gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         fuel_mass_des = inputs['fuel_mass']
-        OEW = inputs[Mission.OPERATING_MASS]
+        OEM = inputs[Mission.OPERATING_MASS]
         unusable_fuel = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
 
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
@@ -333,8 +333,8 @@ class TankCapacity(om.ExplicitComponent):
                 extra_fuel_mass = 0
 
         max_fuel_avail_est = fuel_mass_des + extra_fuel_mass
-        max_fuel_avail_new = gross_mass_initial - OEW
-        est_GTOW = OEW + max_fuel_avail_est
+        max_fuel_avail_new = gross_mass_initial - OEM
+        est_GTOW = OEM + max_fuel_avail_est
         if smooth:
             max_fuel_avail = max_fuel_avail_est * sigmoidX(
                 gross_mass_initial - est_GTOW, 0, 1.0 / 110.0
@@ -354,7 +354,7 @@ class TankCapacity(om.ExplicitComponent):
         outputs[Aircraft.Fuel.MAX_CAPACITY_MASS] = max_fuel_avail + unusable_fuel
 
         # WPLMXF: allowable payload mass with maximum fuel
-        outputs['payload_mass_max_fuel'] = gross_mass_initial - OEW - max_fuel_avail
+        outputs['payload_mass_max_fuel'] = gross_mass_initial - OEM - max_fuel_avail
 
     def compute_partials(self, inputs, J):
         req_fuel_mass = inputs['fuel_mass_required']
@@ -363,7 +363,7 @@ class TankCapacity(om.ExplicitComponent):
 
         gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         fuel_mass_des = inputs['fuel_mass']
-        OEW = inputs[Mission.OPERATING_MASS]
+        OEM = inputs[Mission.OPERATING_MASS]
 
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
@@ -410,16 +410,16 @@ class TankCapacity(om.ExplicitComponent):
         dmax_fuel_avail_est_dreq_fuel_mass = dextra_fuel_mass_dreq_fuel_mass
         dmax_fuel_avail_est_dmax_wingfuel_mass = dextra_fuel_mass_dmax_wingfuel_mass
         dmax_fuel_avail_est_dgross_mass_initial = 0.0
-        dmax_fuel_avail_est_dOEW = 0.0
+        dmax_fuel_avail_est_dOEM = 0.0
 
-        max_fuel_avail_new = gross_mass_initial - OEW
+        max_fuel_avail_new = gross_mass_initial - OEM
         dmax_fuel_avail_new_dfuel_mass_des = 0.0
         dmax_fuel_avail_new_dreq_fuel_mass = 0.0
         dmax_fuel_avail_new_dmax_wingfuel_mass = 0.0
         dmax_fuel_avail_new_dgross_mass_initial = 1.0
-        dmax_fuel_avail_new_dOEW = -1.0
+        dmax_fuel_avail_new_dOEM = -1.0
 
-        est_GTOW = OEW + fuel_mass_des + extra_fuel_mass
+        est_GTOW = OEM + fuel_mass_des + extra_fuel_mass
         if smooth:
             Int1 = sigmoidX(gross_mass_initial - est_GTOW, 0, 1 / 110.0)
             Int2 = sigmoidX(est_GTOW - gross_mass_initial, 0, 1 / 110.0)
@@ -441,7 +441,7 @@ class TankCapacity(om.ExplicitComponent):
             dInt1_dgross_mass_initial = (
                 dSigmoidXdx(gross_mass_initial - est_GTOW, 0, 1 / 110.0) / 110.0
             )
-            dInt1_dOEW = dSigmoidXdx(gross_mass_initial - est_GTOW, 0, 1 / 110.0) * (-1 / 110.0)
+            dInt1_dOEM = dSigmoidXdx(gross_mass_initial - est_GTOW, 0, 1 / 110.0) * (-1 / 110.0)
 
             dInt2_dfuel_mass_des = dSigmoidXdx(est_GTOW - gross_mass_initial, 0, 1 / 110.0) / 110.0
             dInt2_dreq_fuel_mass = (
@@ -457,7 +457,7 @@ class TankCapacity(om.ExplicitComponent):
             dInt2_dgross_mass_initial = dSigmoidXdx(est_GTOW - gross_mass_initial, 0, 1 / 110.0) * (
                 -1 / 110.0
             )
-            dInt2_dOEW = dSigmoidXdx(est_GTOW - gross_mass_initial, 0, 1 / 110.0) / 110.0
+            dInt2_dOEM = dSigmoidXdx(est_GTOW - gross_mass_initial, 0, 1 / 110.0) / 110.0
             dmax_fuel_avail_dfuel_mass_des = (
                 dmax_fuel_avail_est_dfuel_mass_des * Int1
                 + max_fuel_avail_est * dInt1_dfuel_mass_des
@@ -482,11 +482,11 @@ class TankCapacity(om.ExplicitComponent):
                 + dmax_fuel_avail_new_dgross_mass_initial * Int2
                 + max_fuel_avail_new * dInt2_dgross_mass_initial
             )
-            dmax_fuel_avail_dOEW = (
-                dmax_fuel_avail_est_dOEW * Int1
-                + max_fuel_avail_est * dInt1_dOEW
-                + dmax_fuel_avail_new_dOEW * Int2
-                + max_fuel_avail_new * dInt2_dOEW
+            dmax_fuel_avail_dOEM = (
+                dmax_fuel_avail_est_dOEM * Int1
+                + max_fuel_avail_est * dInt1_dOEM
+                + dmax_fuel_avail_new_dOEM * Int2
+                + max_fuel_avail_new * dInt2_dOEM
             )
         else:
             if gross_mass_initial > est_GTOW:
@@ -495,21 +495,21 @@ class TankCapacity(om.ExplicitComponent):
                 dmax_fuel_avail_dreq_fuel_mass = dextra_fuel_mass_dreq_fuel_mass
                 dmax_fuel_avail_dmax_wingfuel_mass = dmax_fuel_avail_est_dmax_wingfuel_mass
                 dmax_fuel_avail_dgross_mass_initial = 0.0
-                dmax_fuel_avail_dOEW = 0.0
+                dmax_fuel_avail_dOEM = 0.0
             elif gross_mass_initial < est_GTOW:
                 # max_fuel_avail = max_fuel_avail_new
                 dmax_fuel_avail_dfuel_mass_des = 0.0
                 dmax_fuel_avail_dreq_fuel_mass = 0.0
                 dmax_fuel_avail_dmax_wingfuel_mass = 0.0
                 dmax_fuel_avail_dgross_mass_initial = 1.0
-                dmax_fuel_avail_dOEW = -1.0
+                dmax_fuel_avail_dOEM = -1.0
             else:
                 # max_fuel_avail = (max_fuel_avail_est + max_fuel_avail_new) / 2.0
                 dmax_fuel_avail_dfuel_mass_des = 1.0 / 2.0
                 dmax_fuel_avail_dreq_fuel_mass = dextra_fuel_mass_dreq_fuel_mass / 2.0
                 dmax_fuel_avail_dmax_wingfuel_mass = 0.0
                 dmax_fuel_avail_dgross_mass_initial = 1.0 / 2.0
-                dmax_fuel_avail_dOEW = -1.0 / 2.0
+                dmax_fuel_avail_dOEM = -1.0 / 2.0
 
         J['extra_fuel_volume', Aircraft.Fuel.WING_VOLUME_DESIGN] = (
             dextra_fuel_volume_ddesign_fuel_vol
@@ -546,18 +546,18 @@ class TankCapacity(om.ExplicitComponent):
         J[Aircraft.Fuel.MAX_CAPACITY_MASS, Aircraft.Design.GROSS_MASS] = (
             dmax_fuel_avail_dgross_mass_initial
         )
-        J[Aircraft.Fuel.MAX_CAPACITY_MASS, Mission.OPERATING_MASS] = dmax_fuel_avail_dOEW
+        J[Aircraft.Fuel.MAX_CAPACITY_MASS, Mission.OPERATING_MASS] = dmax_fuel_avail_dOEM
 
-        # payload_mass_max_fuel = gross_mass_initial - OEW - max_fuel_avail (all weights),
+        # payload_mass_max_fuel = gross_mass_initial - OEM - max_fuel_avail (all weights),
         # so its partials are the negatives of max_fuel_avail's, plus the explicit
-        # gross/OEW terms (+1 / -1).
+        # gross/OEM terms (+1 / -1).
         J['payload_mass_max_fuel', 'fuel_mass'] = -dmax_fuel_avail_dfuel_mass_des
         J['payload_mass_max_fuel', 'fuel_mass_required'] = -dmax_fuel_avail_dreq_fuel_mass
         J['payload_mass_max_fuel', 'max_wingfuel_mass'] = -dmax_fuel_avail_dmax_wingfuel_mass
         J['payload_mass_max_fuel', Aircraft.Design.GROSS_MASS] = (
             1.0 - dmax_fuel_avail_dgross_mass_initial
         )
-        J['payload_mass_max_fuel', Mission.OPERATING_MASS] = -1.0 - dmax_fuel_avail_dOEW
+        J['payload_mass_max_fuel', Mission.OPERATING_MASS] = -1.0 - dmax_fuel_avail_dOEM
 
 
 class FuelComponents(om.ExplicitComponent):
@@ -651,9 +651,9 @@ class FuelComponents(om.ExplicitComponent):
         req_fuel_mass = inputs['fuel_mass_required']
         geometric_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX]
         fuel_margin = inputs[Aircraft.Fuel.VOLUME_MARGIN]
-        OEW = inputs[Mission.OPERATING_MASS]
+        OEM = inputs[Mission.OPERATING_MASS]
 
-        OEM_wingfuel_mass = gross_mass_initial - OEW
+        OEM_wingfuel_mass = gross_mass_initial - OEM
 
         OEM_fuel_vol = OEM_wingfuel_mass / rho_fuel
         design_fuel_vol = (1.0 + fuel_margin / 100.0) * req_fuel_mass / rho_fuel
@@ -684,12 +684,12 @@ class FuelComponents(om.ExplicitComponent):
 
         rho_fuel = inputs[Aircraft.Fuel.DENSITY]
         gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
-        OEW = inputs[Mission.OPERATING_MASS]
+        OEM = inputs[Mission.OPERATING_MASS]
         req_fuel_mass = inputs['fuel_mass_required']
         geometric_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX]
         fuel_margin = inputs[Aircraft.Fuel.VOLUME_MARGIN]
 
-        OEM_wingfuel_mass = gross_mass_initial - OEW
+        OEM_wingfuel_mass = gross_mass_initial - OEM
         volume_wingfuel_mass = geometric_fuel_vol * rho_fuel
         if smooth:
             max_wingfuel_mass = OEM_wingfuel_mass * sigmoidX(
@@ -704,7 +704,7 @@ class FuelComponents(om.ExplicitComponent):
                 max_wingfuel_mass = volume_wingfuel_mass
 
         J['OEM_wingfuel_mass', Aircraft.Design.GROSS_MASS] = dOEMwingfuelWt_dGTOW = 1
-        J['OEM_wingfuel_mass', Mission.OPERATING_MASS] = dOEMwingfuelWt_dOEW = -1
+        J['OEM_wingfuel_mass', Mission.OPERATING_MASS] = dOEMwingfuelWt_dOEM = -1
 
         J['OEM_fuel_vol', Aircraft.Design.GROSS_MASS] = 1 / rho_fuel
         J['OEM_fuel_vol', Mission.OPERATING_MASS] = -1 / rho_fuel
@@ -734,15 +734,15 @@ class FuelComponents(om.ExplicitComponent):
                 * dSigmoidXdx(OEM_wingfuel_mass - volume_wingfuel_mass, 0, 1 / 95.0)
                 * dOEMwingfuelWt_dGTOW
             )
-            dMaxWFWt_dOEW = (
+            dMaxWFWt_dOEM = (
                 OEM_wingfuel_mass
                 * dSigmoidXdx(volume_wingfuel_mass - OEM_wingfuel_mass, 0, 1 / 95.0)
-                * dOEMwingfuelWt_dOEW
-                + dOEMwingfuelWt_dOEW
+                * dOEMwingfuelWt_dOEM
+                + dOEMwingfuelWt_dOEM
                 * sigmoidX(volume_wingfuel_mass - OEM_wingfuel_mass, 0, 1 / 95.0)
                 + volume_wingfuel_mass
                 * dSigmoidXdx(OEM_wingfuel_mass - volume_wingfuel_mass, 0, 1 / 95.0)
-                * dOEMwingfuelWt_dOEW
+                * dOEMwingfuelWt_dOEM
             )
             dMaxWFWt_dGeomFuelVol = (
                 OEM_wingfuel_mass
@@ -765,7 +765,7 @@ class FuelComponents(om.ExplicitComponent):
             )
 
             J['max_wingfuel_mass', Aircraft.Design.GROSS_MASS] = dMaxWFWt_dGTOW
-            J['max_wingfuel_mass', Mission.OPERATING_MASS] = dMaxWFWt_dOEW
+            J['max_wingfuel_mass', Mission.OPERATING_MASS] = dMaxWFWt_dOEM
             J['max_wingfuel_mass', Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = dMaxWFWt_dGeomFuelVol
             J['max_wingfuel_mass', Aircraft.Fuel.DENSITY] = dMaxWFWt_dRhoFuel
         else:
@@ -793,7 +793,7 @@ class FuelComponents(om.ExplicitComponent):
                 dMaxWFWt_dGTOW / rho_fuel
             )
             J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Mission.OPERATING_MASS] = (
-                dMaxWFWt_dOEW / rho_fuel
+                dMaxWFWt_dOEM / rho_fuel
             )
             J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = (
                 dMaxWFWt_dGeomFuelVol / rho_fuel
@@ -1327,7 +1327,7 @@ class FuelMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         fuel_sys_mass = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS]
         gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
-        OEW = inputs[Mission.OPERATING_MASS]
+        OEM = inputs[Mission.OPERATING_MASS]
         payload_mass_des = inputs['payload_mass_des']
         CK21 = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
         c_mass_trend_fuel_sys = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT]
@@ -1336,16 +1336,16 @@ class FuelMass(om.ExplicitComponent):
         fuel_margin = inputs[Aircraft.Fuel.VOLUME_MARGIN]
 
         # GASP code is updated later than the following formula.
-        outputs['fuel_mass'] = (gross_mass_initial - OEW + fuel_sys_mass - payload_mass_des) / (
+        outputs['fuel_mass'] = (gross_mass_initial - OEM + fuel_sys_mass - payload_mass_des) / (
             1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
         )
-        outputs['fuel_mass_required'] = gross_mass_initial - OEW - payload_mass_des
-        outputs['fuel_mass_min'] = gross_mass_initial - OEW - payload_mass_max
+        outputs['fuel_mass_required'] = gross_mass_initial - OEM - payload_mass_des
+        outputs['fuel_mass_min'] = gross_mass_initial - OEM - payload_mass_max
 
     def compute_partials(self, inputs, J):
         fuel_sys_mass = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS]
         gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
-        OEW = inputs[Mission.OPERATING_MASS]
+        OEM = inputs[Mission.OPERATING_MASS]
         payload_mass_des = inputs['payload_mass_des']
         CK21 = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
         c_mass_trend_fuel_sys = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT]
@@ -1365,7 +1365,7 @@ class FuelMass(om.ExplicitComponent):
             1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
         )
         J['fuel_mass', Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER] = (
-            -(gross_mass_initial - OEW + fuel_sys_mass - payload_mass_des)
+            -(gross_mass_initial - OEM + fuel_sys_mass - payload_mass_des)
             / (1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel) ** 2
             * c_mass_trend_fuel_sys
             * (1 + fuel_margin / 100)
@@ -1373,7 +1373,7 @@ class FuelMass(om.ExplicitComponent):
             / rho_fuel
         )
         J['fuel_mass', Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT] = (
-            -(gross_mass_initial - OEW + fuel_sys_mass - payload_mass_des)
+            -(gross_mass_initial - OEM + fuel_sys_mass - payload_mass_des)
             / (1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel) ** 2
             * CK21
             * (1 + fuel_margin / 100)
@@ -1381,12 +1381,12 @@ class FuelMass(om.ExplicitComponent):
             / rho_fuel
         )
         J['fuel_mass', Aircraft.Fuel.DENSITY] = (
-            -(gross_mass_initial - OEW + fuel_sys_mass - payload_mass_des)
+            -(gross_mass_initial - OEM + fuel_sys_mass - payload_mass_des)
             / (1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel) ** 2
             * (-CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel**2)
         )
         J['fuel_mass', Aircraft.Fuel.VOLUME_MARGIN] = (
-            -(gross_mass_initial - OEW + fuel_sys_mass - payload_mass_des)
+            -(gross_mass_initial - OEM + fuel_sys_mass - payload_mass_des)
             / (1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel) ** 2
             * CK21
             * c_mass_trend_fuel_sys

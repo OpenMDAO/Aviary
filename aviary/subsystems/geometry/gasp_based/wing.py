@@ -1592,7 +1592,8 @@ class WingGroup(om.Group):
             if not choose_fold_location:
                 if not choose_fold_location and not has_strut:
                     raise RuntimeError(
-                        'The option CHOOSE_FOLD_LOCATION can only be False if the option HAS_STRUT is True.'
+                        'For GASP wing geometry, Aircraft.Wing.CHOOSE_FOLD_LOCATION can only be '
+                        'False when the option Aircraft.Wing.HAS_STRUT is True.'
                     )
                 self.promotes('strut', outputs=['strut_y'])
                 self.promotes('fold_area', inputs=['strut_y'])

@@ -13,18 +13,23 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 class GroundrollEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group', GroundrollEOM(num_nodes=2), promotes=['*'])
+        self.prob.model.add_subsystem(
+            'group',
+            GroundrollEOM(num_nodes=2),
+            promotes=['*'],
+        )
+
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.MASS, val=np.array([175000, 174950]), units='lbm'
+            Dynamic.Vehicle.MASS, val=np.array([175400, 174950]), units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.array([24000, 23000]), units='lbf'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.array([22000, 23000]), units='lbf'
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.LIFT, val=np.array([500, 25000]), units='lbf'
+            Dynamic.Vehicle.LIFT, val=np.array([200, 25000]), units='lbf'
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.DRAG, val=np.array([1500, 9000]), units='lbf'
+            Dynamic.Vehicle.DRAG, val=np.array([10000, 11000]), units='lbf'
         )
         self.prob.model.set_input_defaults(
             Dynamic.Mission.VELOCITY, val=np.array([10, 130]), units='ft/s'
@@ -34,9 +39,9 @@ class GroundrollEOMTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.array([0, 1]), units='deg'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=-1, units='deg')
+        self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units='deg')
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.array([1, 2]), units='deg'
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.array([0, 2]), units='deg'
         )
         self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
@@ -47,12 +52,12 @@ class GroundrollEOMTestCase(unittest.TestCase):
         self.prob.run_model()
 
         expected_values = {
-            Dynamic.Mission.VELOCITY_RATE: (np.array([3.49541283, 1.4602467]), 'ft/s**2'),
-            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: (np.array([0.0, 0.0]), 'rad/s'),  # always zero
+            Dynamic.Mission.VELOCITY_RATE: (np.array([1.55844194, 1.09418326]), 'ft/s**2'),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: (np.array([0.0, 0.0]), 'deg/s'),  # always zero
             Dynamic.Mission.ALTITUDE_RATE: (np.array([0.0, 2.26881284]), 'ft/s'),
             Dynamic.Mission.DISTANCE_RATE: (np.array([10.0, 129.98020037]), 'ft/s'),
-            'normal_force': (np.array([173662.41207914, 148746.27300641]), 'lbf'),
-            'fuselage_pitch': (np.array([0.03490659, 0.06981317]), 'rad'),
+            'normal_force': (np.array([175200.0, 149147.31138944]), 'lbf'),
+            'fuselage_pitch': (np.array([0.0, 3]), 'deg'),
         }
 
         for var_name, (expected, units) in expected_values.items():
@@ -70,12 +75,12 @@ class GroundrollEOMTestCase(unittest.TestCase):
         self.prob.run_model()
 
         expected_values = {
-            Dynamic.Mission.VELOCITY_RATE: (np.array([3.48272582, 1.43648875]), 'ft/s**2'),
-            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: (np.array([0.0, 0.0]), 'rad/s'),
+            Dynamic.Mission.VELOCITY_RATE: (np.array([1.54575494, 1.07042531]), 'ft/s**2'),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: (np.array([0.0, 0.0]), 'deg/s'),
             Dynamic.Mission.ALTITUDE_RATE: (np.array([0.0, 2.26881284]), 'ft/s'),
             Dynamic.Mission.DISTANCE_RATE: (np.array([10.0, 129.98020037]), 'ft/s'),
-            'normal_force': (np.array([177112.74935028, 152195.6244669]), 'lbf'),
-            'fuselage_pitch': (np.array([0.03490659, 0.06981317]), 'rad'),
+            'normal_force': (np.array([178658.22356576, 152596.66284625]), 'lbf'),
+            'fuselage_pitch': (np.array([0.0, 3]), 'deg'),
         }
 
         tol = 1e-6

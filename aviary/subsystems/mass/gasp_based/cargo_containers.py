@@ -22,11 +22,10 @@ class CargoContainerMass(om.ExplicitComponent):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         # Some aircraft don’t use ULD’s, like the Boeing Max-8, so it can be 0.
         uld_per_pax = self.options[Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER][0]
-        # uld_per_pax = uld_per_pax.real
 
-        # weight of a single ULD (LD-3 type)
-        unit_weight_cargo_handling = 165.0
+        # mass of a single ULD (LD-3 type)
+        unit_mass_cargo_handling = 165.0
 
-        cargo_handling_mass = (int(PAX * uld_per_pax) + 1) * unit_weight_cargo_handling
+        cargo_handling_mass = (int(PAX * uld_per_pax) + 1) * unit_mass_cargo_handling
 
         outputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS] = cargo_handling_mass

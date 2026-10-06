@@ -39,14 +39,14 @@ class TransportInstrumentMass(om.ExplicitComponent):
         max_mach = inputs[Aircraft.Design.MAX_MACH]
         mass_scaler = inputs[Aircraft.Instruments.MASS_SCALER]
 
-        instrument_weight = (
+        instrument_mass = (
             0.48
             * fuse_area**0.57
             * max_mach**0.5
             * (10.0 + 2.5 * num_crew + num_wing_eng_fact + 1.5 * num_fuse_eng_fact)
         )
 
-        outputs[Aircraft.Instruments.MASS] = instrument_weight * mass_scaler
+        outputs[Aircraft.Instruments.MASS] = instrument_mass * mass_scaler
 
     def compute_partials(self, inputs, J):
         num_crew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]

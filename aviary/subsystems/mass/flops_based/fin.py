@@ -1,7 +1,8 @@
 import openmdao.api as om
 
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class FinMass(om.ExplicitComponent):
@@ -12,6 +13,7 @@ class FinMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Fins.NUM_FINS)
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
@@ -27,9 +29,13 @@ class FinMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         num_fins = self.options[Aircraft.Fins.NUM_FINS]
         if num_fins > 0:
-            togw = inputs[Aircraft.Design.GROSS_MASS]
+            gravity = self.options[Mission.GRAVITY]
+
+            togm = inputs[Aircraft.Design.GROSS_MASS]
             area = inputs[Aircraft.Fins.AREA]
             taper_ratio = inputs[Aircraft.Fins.TAPER_RATIO]
+
+            togw = mass_to_force_english((togm, 'lbm'), gravity)
 
             fin_weight = 0.32 * togw**0.3 * area**0.85 * (taper_ratio + 0.5) * num_fins
             outputs[Aircraft.Fins.MASS] = fin_weight * inputs[Aircraft.Fins.MASS_SCALER]
@@ -37,23 +43,30 @@ class FinMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         num_fins = self.options[Aircraft.Fins.NUM_FINS]
         if num_fins > 0:
+            gravity = self.options[Mission.GRAVITY]
+
+            togm = inputs[Aircraft.Design.GROSS_MASS]
             area = inputs[Aircraft.Fins.AREA]
             taper_ratio = inputs[Aircraft.Fins.TAPER_RATIO]
             scaler = inputs[Aircraft.Fins.MASS_SCALER]
-            gross_mass = inputs[Aircraft.Design.GROSS_MASS]
+
+            gross_weight = mass_to_force_english((togm, 'lbm'), gravity)
+            dforce_dmass = mass_to_force_english_derivative(gravity)
 
             area_exp = area**0.85
-            gross_mass_exp = gross_mass**0.3
+            gross_weight_exp = gross_weight**0.3
 
             J[Aircraft.Fins.MASS, Aircraft.Fins.AREA] = (
-                0.272 * num_fins * scaler * (taper_ratio + 0.5) * gross_mass_exp
+                0.272 * num_fins * scaler * (taper_ratio + 0.5) * gross_weight_exp
             ) / area**0.15
             J[Aircraft.Fins.MASS, Aircraft.Fins.TAPER_RATIO] = (
-                0.32 * area_exp * num_fins * scaler * gross_mass_exp
+                0.32 * area_exp * num_fins * scaler * gross_weight_exp
             )
             J[Aircraft.Fins.MASS, Aircraft.Fins.MASS_SCALER] = (
-                0.32 * area_exp * num_fins * (taper_ratio + 0.5) * gross_mass_exp
+                0.32 * area_exp * num_fins * (taper_ratio + 0.5) * gross_weight_exp
             )
             J[Aircraft.Fins.MASS, Aircraft.Design.GROSS_MASS] = (
-                0.096 * area_exp * num_fins * scaler * (taper_ratio + 0.5)
-            ) / gross_mass**0.7
+                dforce_dmass
+                * (0.096 * area_exp * num_fins * scaler * (taper_ratio + 0.5))
+                / gross_weight**0.7
+            )

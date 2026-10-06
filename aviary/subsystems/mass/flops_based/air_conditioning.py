@@ -30,20 +30,20 @@ class TransportAirCondMass(om.ExplicitComponent):
         pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         scaler = inputs[Aircraft.AirConditioning.MASS_SCALER]
-        avionics_wt = inputs[Aircraft.Avionics.MASS]
+        avionics_mass = inputs[Aircraft.Avionics.MASS]
         height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
         max_mach = inputs[Aircraft.Design.MAX_MACH]
 
         outputs[Aircraft.AirConditioning.MASS] = (
-            (3.2 * (planform * height) ** 0.6 + 9 * pax**0.83) * max_mach + 0.075 * avionics_wt
+            (3.2 * (planform * height) ** 0.6 + 9 * pax**0.83) * max_mach + 0.075 * avionics_mass
         ) * scaler
 
     def compute_partials(self, inputs, J):
         pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         scaler = inputs[Aircraft.AirConditioning.MASS_SCALER]
-        avionics_wt = inputs[Aircraft.Avionics.MASS]
+        avionics_mass = inputs[Aircraft.Avionics.MASS]
         height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
         max_mach = inputs[Aircraft.Design.MAX_MACH]
@@ -54,7 +54,7 @@ class TransportAirCondMass(om.ExplicitComponent):
 
         J[Aircraft.AirConditioning.MASS, Aircraft.AirConditioning.MASS_SCALER] = (
             3.2 * planform_exp * height_exp + 9 * pax_exp
-        ) * max_mach + 0.075 * avionics_wt
+        ) * max_mach + 0.075 * avionics_mass
 
         J[Aircraft.AirConditioning.MASS, Aircraft.Avionics.MASS] = 0.075 * scaler
 

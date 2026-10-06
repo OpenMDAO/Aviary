@@ -80,14 +80,14 @@ class AltFuelSystemMass(om.ExplicitComponent):
         total_fuel_capacity = inputs[Aircraft.Fuel.MAX_CAPACITY_MASS]
         scaler = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
 
-        fuel_sys_weight = (
+        fuel_sys_mass = (
             978.6 * (number_of_fuel_tanks / 13.0)
             + 2283.4 * (total_fuel_capacity / 208100.0) ** (2.0 / 3.0)
             + 350.0
             + 0.00029 * total_fuel_capacity
         ) * scaler
 
-        outputs[Aircraft.Fuel.FUEL_SYSTEM_MASS] = fuel_sys_weight
+        outputs[Aircraft.Fuel.FUEL_SYSTEM_MASS] = fuel_sys_mass
 
     def compute_partials(self, inputs, J):
         number_of_fuel_tanks = self.options[Aircraft.Fuel.NUM_TANKS]

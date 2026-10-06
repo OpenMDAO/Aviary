@@ -344,7 +344,7 @@ class FuelComponentsTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
 
     def test_case1(self):
-        """Not to smooth mass discontinuties (OEM_wingfuel_wt > volume_wingfuel_wt)."""
+        """Not to smooth mass discontinuties (OEM_wingfuel_mass > volume_wingfuel_mass)."""
         setup_model_options(
             self.prob,
             AviaryValues(
