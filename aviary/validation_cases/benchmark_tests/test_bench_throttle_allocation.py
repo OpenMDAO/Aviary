@@ -206,17 +206,17 @@ class ThrottleAllocation2DOFTestcase(unittest.TestCase):
 
         self.options = prob.aviary_inputs
         self.options.delete(Aircraft.Engine.SCALED_SLS_THRUST)
-        self.options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.6)
+        self.options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8)
+        self.options.set_val(Aircraft.Engine.DATA_FILE, 'turbofan_28k.csv')
 
         engine1 = build_engine_deck(self.options)
         engine1.name = 'engine_1'
 
-        self.options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.4)
-        self.options.set_val(Aircraft.Engine.DATA_FILE, 'turbofan_24k_2.csv')
+        self.options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8)
+        self.options.set_val(Aircraft.Engine.DATA_FILE, 'turbofan_22k.csv')
         engine2 = build_engine_deck(self.options)
         engine2.name = 'engine_2'
 
-        self.options.set_val(Aircraft.Engine.SCALE_FACTOR, [0.6, 0.4])
         self.engines = [engine1, engine2]
 
     @require_pyoptsparse(optimizer='SNOPT')
@@ -258,7 +258,7 @@ class ThrottleAllocation2DOFTestcase(unittest.TestCase):
 
         test_phase_info['cruise']['user_options']['throttle_allocation'] = method
 
-        prob = AviaryProblem(verbosity=0)
+        prob = AviaryProblem(verbosity=1)
 
         prob.load_inputs(self.options, test_phase_info)
 
@@ -281,7 +281,7 @@ class ThrottleAllocation2DOFTestcase(unittest.TestCase):
 
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
 
-        assert_near_equal(alloc_cruise[0], 0.5, tolerance=1e-2)
+        assert_near_equal(alloc_cruise[0], 0.1601102, tolerance=1e-2)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_multiengine_dynamic(self):
@@ -290,7 +290,7 @@ class ThrottleAllocation2DOFTestcase(unittest.TestCase):
 
         test_phase_info['cruise']['user_options']['throttle_allocation'] = method
 
-        prob = AviaryProblem(verbosity=0)
+        prob = AviaryProblem(verbosity=1)
 
         prob.load_inputs(self.options, test_phase_info)
 
@@ -313,7 +313,7 @@ class ThrottleAllocation2DOFTestcase(unittest.TestCase):
 
         alloc_cruise = prob.get_val('traj.cruise.controls:throttle_allocations')
 
-        assert_near_equal(alloc_cruise[0], 0.5, tolerance=1e-2)
+        assert_near_equal(alloc_cruise[0], 0.097555, tolerance=1e-2)
 
 
 if __name__ == '__main__':
@@ -321,3 +321,4 @@ if __name__ == '__main__':
     # test = ThrottleAllocation2DOFTestcase()
     # test.setUp()
     # test.test_multiengine_dynamic()
+    # test.test_multiengine_static()
