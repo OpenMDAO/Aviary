@@ -90,7 +90,6 @@ class CharacteristicLengthsTest(unittest.TestCase):
             (Aircraft.Canard.AREA, 'ft**2'),
             (Aircraft.Canard.ASPECT_RATIO, 'unitless'),
             (Aircraft.Canard.THICKNESS_TO_CHORD, 'unitless'),
-            (Aircraft.Engine.SCALE_FACTOR, 'unitless'),
             (Aircraft.Fuselage.LENGTH, 'ft'),
             (Aircraft.HorizontalTail.AREA, 'ft**2'),
             (Aircraft.HorizontalTail.ASPECT_RATIO, 'unitless'),
@@ -110,26 +109,19 @@ class CharacteristicLengthsTest(unittest.TestCase):
         # this is another component's output
         prob.set_val(Aircraft.Fuselage.REF_DIAMETER, val=12.75)
 
-        prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, val=np.array([6, 4.25, 9.6]))
-        prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, val=np.array([8.4, 5.75, 10]))
-        prob.set_val(Aircraft.Engine.SCALE_FACTOR, val=np.array([1.0, 1.0, 1.0]))
+        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([6, 4.25, 9.6]))
+        prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([8.4, 5.75, 10]))
 
         prob.run_model()
 
         char_length = prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH)
         fineness = prob.get_val(Aircraft.Nacelle.FINENESS)
-        length = prob.get_val(Aircraft.Nacelle.AVG_LENGTH)
-        diameter = prob.get_val(Aircraft.Nacelle.AVG_DIAMETER)
 
         expected_char_length = np.array([8.4, 5.75, 10.0])
         expected_fineness = np.array([1.4, 1.352941176470, 1.041666666667])
-        expected_length = np.array([8.4, 5.75, 10.0])
-        expected_diameter = np.array([6, 4.25, 9.6])
 
         assert_near_equal(char_length, expected_char_length, tolerance=1e-10)
         assert_near_equal(fineness, expected_fineness, tolerance=1e-10)
-        assert_near_equal(length, expected_length, tolerance=1e-10)
-        assert_near_equal(diameter, expected_diameter, tolerance=1e-10)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
@@ -188,9 +180,8 @@ class BWBNacelleCharacteristicLengthTest(unittest.TestCase):
         prob.model_options['*'] = options
 
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, val=np.array([12.608]))
-        prob.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, val=np.array([17.433]))
-        prob.set_val(Aircraft.Engine.SCALE_FACTOR, val=np.array([0.8096304384]))
+        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([11.344611131]))
+        prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([15.6861203876]))
         prob.run_model()
 
         out1 = prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH)
@@ -200,14 +191,6 @@ class BWBNacelleCharacteristicLengthTest(unittest.TestCase):
         out2 = prob.get_val(Aircraft.Nacelle.FINENESS)
         exp2 = np.array([1.382693531])
         assert_near_equal(out2, exp2, tolerance=3e-9)
-
-        out3 = prob.get_val(Aircraft.Nacelle.AVG_LENGTH)
-        exp3 = np.array([15.68612039])
-        assert_near_equal(out3, exp3, tolerance=1e-9)
-
-        out4 = prob.get_val(Aircraft.Nacelle.AVG_DIAMETER)
-        exp4 = np.array([11.34461113])
-        assert_near_equal(out4, exp4, tolerance=1e-9)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

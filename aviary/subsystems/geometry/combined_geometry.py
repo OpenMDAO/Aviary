@@ -46,11 +46,9 @@ class CombinedGeometry(om.Group):
             flops_geom_pathname + '.wetted_area.fus_swet.' + Aircraft.Fuselage.WETTED_AREA
         )
         flops_nac_diam_path = (
-            flops_geom_pathname + '.nacelle_characteristic_lengths.' + Aircraft.Nacelle.AVG_DIAMETER
+            flops_geom_pathname + '.nacelle_prelim.' + Aircraft.Nacelle.AVG_DIAMETER
         )
-        flops_nac_len_path = (
-            flops_geom_pathname + '.nacelle_characteristic_lengths.' + Aircraft.Nacelle.AVG_LENGTH
-        )
+        flops_nac_len_path = flops_geom_pathname + '.nacelle_prelim.' + Aircraft.Nacelle.AVG_LENGTH
 
         gasp_geom_pathname = self.gasp_based_geom.pathname
         gasp_fus_area_path = gasp_geom_pathname + '.fuselage.size.' + Aircraft.Fuselage.WETTED_AREA
@@ -76,7 +74,7 @@ class CombinedGeometry(om.Group):
                 (nac_diam_name, f'CODE_ORIGIN_OVERRIDE:{nac_diam_name}'),
                 (nac_len_name, f'CODE_ORIGIN_OVERRIDE:{nac_len_name}'),
             ]
-            self.flops_based_geom.promotes('nacelle_characteristic_lengths', outputs=nac_outs)
+            self.flops_based_geom.promotes('nacelle_prelim', outputs=nac_outs)
 
         elif prioritize_origin is FLOPS:
             # Add all GASP overridden variables to the list
