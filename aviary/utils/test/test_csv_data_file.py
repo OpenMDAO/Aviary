@@ -113,6 +113,26 @@ class TestAviaryCSV(unittest.TestCase):
         # remove the temporary csv file
         os.remove(file_name)
 
+    @use_tempdirs
+    def test_parse_input2(self):
+        # parse_inputs only writes to aircraft_values (never reads pre-existing options),
+        # so an empty AviaryValues is sufficient here.
+        aircraft_values = AviaryValues()
+        # create a temporary csv file for testing deprecated Aviary variable name
+        file_name = 'aircraft_for_invalid_var.csv'
+        with open(file_name, 'w') as file:
+            file.write('test_string,0\n')  # be ignored
+            file.write('aircraft:design:characteristic_lengths,1,ft\n')  # raise a warning
+            file.write('aircraft:anti_icing:mass,551,lbm\n')  # a good variable
+        vehicle_deck = get_path(file_name)
+
+        msg = 'Variable aircraft:design:characteristic_lengths is no longer in meta_data as of 9/29/2026. See PR #1308 for details.'
+        with assert_warning(DeprecationWarning, msg):
+            parse_inputs(vehicle_deck, aircraft_values)
+
+        # remove the temporary csv file
+        os.remove(file_name)
+
     def _compare_csv_results(self, data, inputs, outputs, comments):
         expected_data = self.data
 
