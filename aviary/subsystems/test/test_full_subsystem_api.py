@@ -153,7 +153,7 @@ class FullSubsystemBuilderTestSuite(unittest.TestCase):
         self.assertTrue(
             any(
                 'aircraft:dummy_timeseries_variable' in tuple
-                for tuple in cruise.timeseries.list_outputs(outstream=None)
+                for tuple in cruise.timeseries.list_outputs(out_stream=None)
             )
         )
 
