@@ -584,20 +584,10 @@
         <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.reports</span><span class="w"> </span><span class="kn">import</span> <span class="n">AVIARY_DEFAULT_REPORTS</span>
+
         <span class="c1"># Modify OpenMDAO&#39;s default_reports for this session.</span>
-        <span class="n">new_reports</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s1">&#39;subsystems&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;mission&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;timeseries_csv&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;run_status&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;sizing_results&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;input_checks&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;overridden_variables_setup&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;overridden_variables_run_model&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;overridden_variables_run_driver&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;list_options&#39;</span><span class="p">,</span>
-        <span class="p">]</span>
-        <span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">new_reports</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">AVIARY_DEFAULT_REPORTS</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">report</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_default_reports</span><span class="p">:</span>
                 <span class="n">_default_reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
 

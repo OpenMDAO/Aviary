@@ -520,136 +520,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProblemType</span>
 
 
-<div class="viewcode-block" id="register_custom_reports">
-<a class="viewcode-back" href="../../../_srcdocs/packages/interface/reports.html#aviary.interface.reports.register_custom_reports">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">register_custom_reports</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Registers Aviary reports with OpenMDAO, so they are automatically generated and</span>
-<span class="sd">    added to the same reports folder as other default reports.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO top-level aircraft report?</span>
-    <span class="c1"># TODO add flag to skip registering reports?</span>
-
-    <span class="c1"># register per-subsystem report generation</span>
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;subsystems_run_model&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">subsystem_report</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates reports for each subsystem builder in the Aviary Problem&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_model&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;subsystems_run_driver&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">subsystem_report</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates reports for each subsystem builder in the Aviary Problem&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mission&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">mission_report</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates report for mission results from Aviary problem&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;timeseries_csv&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">timeseries_csv</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates an output .csv file for variables in the timeseries of the trajectory&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;run_status&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">run_status</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the status of the run&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sizing_results&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">sizing_results</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates an output file containing all variables in a completed sizing problem&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;input_checks&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">input_check_report</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the aviary inputs&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;final_setup&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;overridden_variables_setup&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">overridden_variables_report</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the overridden variables&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;final_setup&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;overridden_variables_run_model&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">overridden_variables_report</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the overridden variables&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_model&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;overridden_variables_run_driver&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">overridden_variables_report</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the overridden variables&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;list_options_final_setup&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">_list_options_report</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the Problem options&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;final_setup&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;list_options_run_model&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">_list_options_report</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the Problem options&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_model&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">register_report</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;list_options_run_driver&#39;</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">_list_options_report</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the Problem options&#39;</span><span class="p">,</span>
-        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
-        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-
 <div class="viewcode-block" id="run_status">
 <a class="viewcode-back" href="../../../_srcdocs/packages/interface/reports.html#aviary.interface.reports.run_status">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_status</span><span class="p">(</span><span class="n">prob</span><span class="p">:</span> <span class="n">AviaryProblem</span><span class="p">):</span>
@@ -1383,6 +1253,118 @@
     <span class="n">report_file</span> <span class="o">=</span> <span class="n">reports_folder</span> <span class="o">/</span> <span class="s1">&#39;options.txt&#39;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">list_options</span><span class="p">(</span><span class="n">out_stream</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">include_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_solvers</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="n">REPORT_REGISTRY</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;subsystems_run_model&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">subsystem_report</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates reports for each subsystem builder in the Aviary Problem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;run_model&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;subsystems_run_driver&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">subsystem_report</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates reports for each subsystem builder in the Aviary Problem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;mission&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">mission_report</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates report for mission results from Aviary problem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;timeseries_csv&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">timeseries_csv</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates an output .csv file for variables in the timeseries of the trajectory&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;run_status&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">run_status</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates a report on the status of the run&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;sizing_results&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">sizing_results</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates an output file containing all variables in a completed sizing problem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;input_checks&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">input_check_report</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates a report on the aviary inputs&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;final_setup&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;overridden_variables_setup&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">overridden_variables_report</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates a report on the overridden variables&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;final_setup&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;overridden_variables_run_model&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">overridden_variables_report</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates a report on the overridden variables&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;run_model&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;overridden_variables_run_driver&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">overridden_variables_report</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates a report on the overridden variables&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;list_options_final_setup&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">_list_options_report</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates a report on the Problem options&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;final_setup&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;list_options_run_model&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">_list_options_report</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates a report on the Problem options&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;run_model&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;list_options_run_driver&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="n">_list_options_report</span><span class="p">,</span>
+        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="s1">&#39;Generates a report on the Problem options&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pre_or_post&#39;</span><span class="p">:</span> <span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="n">AVIARY_DEFAULT_REPORTS</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">REPORT_REGISTRY</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="register_custom_reports">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/reports.html#aviary.interface.reports.register_custom_reports">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_custom_reports</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registers Aviary reports with OpenMDAO, so they are automatically generated and</span>
+<span class="sd">    added to the same reports folder as other default reports.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO top-level aircraft report?</span>
+    <span class="c1"># TODO add flag to skip registering reports?</span>
+
+    <span class="k">for</span> <span class="n">report_name</span><span class="p">,</span> <span class="n">report_kwargs</span> <span class="ow">in</span> <span class="n">REPORT_REGISTRY</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">register_report</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">report_name</span><span class="p">,</span> <span class="o">**</span><span class="n">report_kwargs</span><span class="p">)</span></div>
+
 </pre></div>
 
                 </article>
