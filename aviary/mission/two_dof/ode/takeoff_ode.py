@@ -308,9 +308,7 @@ class RequiredLift(om.ExplicitComponent):
         nn = self.options['num_nodes']
 
         add_aviary_input(self, Dynamic.Vehicle.MASS, shape=(nn,), units='kg')
-        add_aviary_input(
-            self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=(nn,), units='N'
-        )
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=(nn,), units='N')
         add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=(nn,), units='rad')
         add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='rad')
         add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=(nn,), units='rad')
@@ -359,9 +357,7 @@ class RequiredLift(om.ExplicitComponent):
         partials['required_lift', Dynamic.Mission.FLIGHT_PATH_ANGLE] = -weight * np.sin(
             alpha + gamma
         )
-        partials['required_lift', Aircraft.Wing.INCIDENCE] = (
-            -thrust * np.cos(i_wing)
-        ).reshape(-1, 1)
-        partials['required_lift', Dynamic.Vehicle.ANGLE_OF_ATTACK] = -weight * np.sin(
-            alpha + gamma
+        partials['required_lift', Aircraft.Wing.INCIDENCE] = (-thrust * np.cos(i_wing)).reshape(
+            -1, 1
         )
+        partials['required_lift', Dynamic.Vehicle.ANGLE_OF_ATTACK] = -weight * np.sin(alpha + gamma)

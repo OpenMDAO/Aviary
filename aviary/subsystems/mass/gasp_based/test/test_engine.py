@@ -210,9 +210,7 @@ class EnginePodMassTestCase(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Engine.POD_MASS_SCALER, val=[1, 1], units='unitless')
         prob.model.set_input_defaults(Aircraft.Nacelle.MASS, val=[1018.74, 577.367], units='lbm')
-        prob.model.set_input_defaults(
-            'pylon_mass', val=[873.50386333, 495.03559317], units='lbm'
-        )
+        prob.model.set_input_defaults('pylon_mass', val=[873.50386333, 495.03559317], units='lbm')
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()

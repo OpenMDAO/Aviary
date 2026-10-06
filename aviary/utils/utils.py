@@ -344,5 +344,3 @@ def mass_to_force_english_derivative(gravity: tuple):
     deriv = gravity_val / GRAV_EARTH[0]
 
     return deriv
-
-

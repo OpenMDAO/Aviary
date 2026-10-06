@@ -34,7 +34,9 @@ class MassToWeight(om.ExplicitComponent):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
         grav_metric = self.options[Mission.GRAVITY][0]
-        self.declare_partials('weight', 'mass', rows=arange, cols=arange, val=np.full(nn, grav_metric))
+        self.declare_partials(
+            'weight', 'mass', rows=arange, cols=arange, val=np.full(nn, grav_metric)
+        )
 
     def compute(self, inputs, outputs):
         grav_metric = self.options[Mission.GRAVITY][0]
