@@ -6,9 +6,11 @@ from pathlib import Path
 import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
+from openmdao.utils.reports_system import _reports_registry
 
 import aviary.api as av
 from aviary.core.aviary_problem import AviaryProblem
+from aviary.interface.reports import AVIARY_DEFAULT_REPORTS
 from aviary.interface.run_aviary import run_aviary
 from aviary.models.missions.energy_state_default import phase_info
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
@@ -169,8 +171,69 @@ class TestReports(unittest.TestCase):
         assert Path(f'{stem}_off_design_1_out').is_dir()
         assert Path(f'{stem}_off_design_out').is_dir()
 
+    def test_reports_are_registered_and_sync(self):
+        """
+        Ensures all reports in AVIARY_DEFAULT_REPORTS are registered in the
+        OpenMDAO reporting system to prevent initialization warnings.
+        """
+        # NOTE: We do NOT need to call register_custom_reports() manually here.
+        # OpenMDAO automatically executes it on startup via pyproject.toml entry points.
+
+        registered_reports = list(_reports_registry.keys())
+
+        # Assert every default Aviary report was properly registered
+        for report_name in AVIARY_DEFAULT_REPORTS:
+            self.assertIn(
+                report_name,
+                registered_reports,
+                f"Report '{report_name}' is in AVIARY_DEFAULT_REPORTS but was not registered in OpenMDAO!",
+            )
+
+    @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='default')
+    def test_all_default_reports_generated(self):
+        """
+        Test to ensure the reports actually get created on disk when the problem runs.
+        """
+        local_phase_info = deepcopy(phase_info)
+        prob = run_aviary(
+            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
+            local_phase_info,
+            optimizer='SLSQP',
+            max_iter=0,
+        )
+
+        reports_dir = Path(prob.get_reports_dir())
+
+        self.assertTrue(reports_dir.exists(), 'Reports directory was not created!')
+
+        generated_files = [
+            str(f.relative_to(reports_dir)).replace('\\', '/')
+            for f in reports_dir.rglob('*')
+            if f.is_file()
+        ]
+
+        expected_files = [
+            'subsystems/geometry.md',
+            'subsystems/mass.md',
+            'subsystems/propulsion.md',
+            'mission_summary.md',
+            'mission_timeseries_data.csv',
+            'status.json',
+            'sizing_results.json',
+            'input_checks.md',
+            'overridden_variables.md',
+            'options.txt',
+        ]
+
+        for expected_file in expected_files:
+            self.assertIn(
+                expected_file,
+                generated_files,
+                f"Expected report file '{expected_file}' was not found in the reports directory.",
+            )
+
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestReports()
-    test.test_multiple_off_design_report_directories()
+    unittest.main()
+    # test = TestReports()
+    # test.test_multiple_off_design_report_directories()
