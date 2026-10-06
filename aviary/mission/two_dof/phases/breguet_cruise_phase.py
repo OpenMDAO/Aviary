@@ -98,7 +98,7 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
 
         self.declare(
             name='throttle_allocation',
-            default=ThrottleAllocation.FIXED,S
+            default=ThrottleAllocation.FIXED,
             values=[
                 ThrottleAllocation.FIXED,
                 ThrottleAllocation.STATIC,
