@@ -652,6 +652,11 @@ This command normally needs the name of the aircraft csv file and phase_info fil
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1791396183.764485] [runnervmmprz5:4975 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55945570f040 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1791396183.764799] [runnervmmprz5:4975 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+[runnervmmprz5:04975] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
   &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
@@ -687,12 +692,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813638330255300e+00    1.3813638330255300e+00
-Dual infeasibility......:   3.1079969516816628e-08    3.1079969516816628e-08
-Constraint violation....:   7.6997495906938700e-15    7.6997495906938700e-15
+Objective...............:   1.3813638330255038e+00    1.3813638330255038e+00
+Dual infeasibility......:   3.1079970238461647e-08    3.1079970238461647e-08
+Constraint violation....:   6.7428116507054256e-15    6.7428116507054256e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433400751e-08    9.0922310433400751e-08
-Overall NLP error.......:   9.0922310433400751e-08    9.0922310433400751e-08
+Complementarity.........:   9.0922310433401995e-08    9.0922310433401995e-08
+Overall NLP error.......:   9.0922310433401995e-08    9.0922310433401995e-08
 
 
 Number of objective function evaluations             = 16
@@ -702,7 +707,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.555
+Total seconds in IPOPT                               = 2.701
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -728,82 +733,11 @@ The following command explicitly points to the files used in the above run of th
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
-  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  33136.4  lbm
-  &#39;aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
-  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
-  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
-  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
-  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
-  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
-  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
-  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1791396195.251773] [runnervmmprz5:5012 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55677e16a8a0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1791396195.252103] [runnervmmprz5:5012 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+[runnervmmprz5:05012] pml_ucx.c:313  Error: Failed to create UCP worker
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
-                     variables with only lower bounds:       93
-                variables with lower and upper bounds:        3
-                     variables with only upper bounds:        0
-Total number of equality constraints.................:       94
-Total number of inequality constraints...............:       61
-        inequality constraints with only lower bounds:        1
-   inequality constraints with lower and upper bounds:       60
-        inequality constraints with only upper bounds:        0
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
-
-                                   (scaled)                 (unscaled)
-Objective...............:   1.3813638330255169e+00    1.3813638330255169e+00
-Dual infeasibility......:   3.1079969607022301e-08    3.1079969607022301e-08
-Constraint violation....:   4.9788944164194463e-15    4.9788944164194463e-15
-Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433391936e-08    9.0922310433391936e-08
-Overall NLP error.......:   9.0922310433391936e-08    9.0922310433391936e-08
-
-
-Number of objective function evaluations             = 16
-Number of objective gradient evaluations             = 16
-Number of equality constraint evaluations            = 16
-Number of inequality constraint evaluations          = 16
-Number of equality constraint Jacobian evaluations   = 16
-Number of inequality constraint Jacobian evaluations = 16
-Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.635
-
-EXIT: Optimal Solution Found.
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="running-via-python-api">
-<h2>Running via Python API<a class="headerlink" href="#running-via-python-api" title="Link to this heading">#</a></h2>
-<p>We can also run that exact same problem setup using the basic Python API. Here we call the <code class="docutils literal notranslate"><span class="pre">run_aviary()</span></code> function with a the same information. Just like with the command line, we are able to take the same shortcuts because we are using pre-provided models and the default mission. However, for completeness the below code shows how to provide a full filepath for the aircraft input file and phase info file. This is the template you will need to use when using custom input files.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
-
-<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span>
-    <span class="n">aircraft_data</span><span class="o">=</span><span class="s1">&#39;models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv&#39;</span><span class="p">,</span>
-    <span class="n">phase_info</span><span class="o">=</span><span class="s1">&#39;models/missions/energy_state_default&#39;</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
   &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
@@ -840,11 +774,11 @@ Total number of inequality constraints...............:       61
 
                                    (scaled)                 (unscaled)
 Objective...............:   1.3813638330255140e+00    1.3813638330255140e+00
-Dual infeasibility......:   3.1079969378038803e-08    3.1079969378038803e-08
-Constraint violation....:   4.9788944164194463e-15    4.9788944164194463e-15
+Dual infeasibility......:   3.1079968552310481e-08    3.1079968552310481e-08
+Constraint violation....:   3.9838339292514262e-15    3.9838339292514262e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433392320e-08    9.0922310433392320e-08
-Overall NLP error.......:   9.0922310433392320e-08    9.0922310433392320e-08
+Complementarity.........:   9.0922310433393180e-08    9.0922310433393180e-08
+Overall NLP error.......:   9.0922310433393180e-08    9.0922310433393180e-08
 
 
 Number of objective function evaluations             = 16
@@ -854,7 +788,88 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.679
+Total seconds in IPOPT                               = 2.805
+
+EXIT: Optimal Solution Found.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="running-via-python-api">
+<h2>Running via Python API<a class="headerlink" href="#running-via-python-api" title="Link to this heading">#</a></h2>
+<p>We can also run that exact same problem setup using the basic Python API. Here we call the <code class="docutils literal notranslate"><span class="pre">run_aviary()</span></code> function with a the same information. Just like with the command line, we are able to take the same shortcuts because we are using pre-provided models and the default mission. However, for completeness the below code shows how to provide a full filepath for the aircraft input file and phase info file. This is the template you will need to use when using custom input files.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+
+<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span>
+    <span class="n">aircraft_data</span><span class="o">=</span><span class="s1">&#39;models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv&#39;</span><span class="p">,</span>
+    <span class="n">phase_info</span><span class="o">=</span><span class="s1">&#39;models/missions/energy_state_default&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1791396205.640990] [runnervmmprz5:4957 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x559e33105420 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1791396205.641303] [runnervmmprz5:4957 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+The following variables have been overridden by the aircraft definition:
+  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  33136.4  lbm
+  &#39;aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
+  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
+  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
+  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
+  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
+  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
+  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
+  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervmmprz5:04957] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
+                     variables with only lower bounds:       93
+                variables with lower and upper bounds:        3
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:       94
+Total number of inequality constraints...............:       61
+        inequality constraints with only lower bounds:        1
+   inequality constraints with lower and upper bounds:       60
+        inequality constraints with only upper bounds:        0
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
+
+                                   (scaled)                 (unscaled)
+Objective...............:   1.3813638330255111e+00    1.3813638330255111e+00
+Dual infeasibility......:   3.1079971862162820e-08    3.1079971862162820e-08
+Constraint violation....:   6.3227930385823592e-15    6.3227930385823592e-15
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   9.0922310433388932e-08    9.0922310433388932e-08
+Overall NLP error.......:   9.0922310433388932e-08    9.0922310433388932e-08
+
+
+Number of objective function evaluations             = 16
+Number of objective gradient evaluations             = 16
+Number of equality constraint evaluations            = 16
+Number of inequality constraint evaluations          = 16
+Number of equality constraint Jacobian evaluations   = 16
+Number of inequality constraint Jacobian evaluations = 16
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 2.764
 
 EXIT: Optimal Solution Found.
 </pre></div>
