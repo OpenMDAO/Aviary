@@ -180,7 +180,8 @@ class FullSubsystemBuilderTestSuite(unittest.TestCase):
         prob = self.prob
         prob.run_aviary_problem(suppress_solver_print=True, verbosity=0)
 
-        self.assertTrue(Path('FullSubsystemTest.md').exists())
+        reports_folder = Path(prob.get_reports_dir()) / 'subsystems'
+        self.assertTrue((reports_folder / 'FullSubsystemTest.md').exists())
 
 
 if __name__ == '__main__':

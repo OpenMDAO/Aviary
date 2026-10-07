@@ -658,7 +658,7 @@ class FullSubsystemBuilder(SubsystemBuilder):
 
     def report(self, prob, reports_folder, **kwargs):
         filename = 'FullSubsystemTest.md'
-        filepath = filename
+        filepath = reports_folder / filename
 
         with open(filepath, mode='w') as f:
             f.write(f'Test Report Written')
