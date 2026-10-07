@@ -215,7 +215,7 @@ def parse_inputs(
                     the_PRs = deprecated_variables[var_name][1]
                     the_PRs = the_PRs.replace('|', ', #')
                     the_date = deprecated_variables[var_name][3]
-                    # Warning was ignored somehow. But need to print it out.
+                    # Warning was ignored somehow, but need to be print out.
                     # after it is done, automatically restores the warning settings
                     with warnings.catch_warnings():
                         warnings.simplefilter('always')
@@ -232,11 +232,13 @@ def parse_inputs(
                                 UserWarning,
                             )
                 else:
-                    warnings.warn(
-                        f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
-                        'It will be ignored.',
-                        UserWarning,
-                    )
+                    with warnings.catch_warnings():
+                        warnings.simplefilter('always')
+                        warnings.warn(
+                            f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
+                            'It will be ignored.',
+                            UserWarning,
+                        )
                 continue
 
     return aircraft_values, initialization_guesses
