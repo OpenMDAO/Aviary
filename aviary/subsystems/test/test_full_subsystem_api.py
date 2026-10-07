@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 
-from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 
 from aviary.api import AviaryProblem
 from aviary.models.missions.energy_state_default import phase_info
@@ -176,8 +176,25 @@ class FullSubsystemBuilderTestSuite(unittest.TestCase):
             )
         )
 
+    @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='subsystems')
     def test_report(self):
-        prob = self.prob
+        # Reports are disabled by default under testflo, so this test must force them on
+        # and build its own problem, since setUp() runs before the decorator above applies.
+        prob = AviaryProblem(verbosity=0, meta_data=ExtendedMetaData)
+
+        prob.load_inputs(
+            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
+        )
+
+        prob.load_external_subsystems([FullSubsystemBuilder()])
+        prob.check_and_preprocess_inputs()
+        prob.build_model()
+        prob.add_driver()
+        prob.add_design_variables()
+        prob.add_objective()
+        prob.setup()
+        prob.final_setup()
+
         prob.run_aviary_problem(suppress_solver_print=True, verbosity=0)
 
         reports_folder = Path(prob.get_reports_dir()) / 'subsystems'
