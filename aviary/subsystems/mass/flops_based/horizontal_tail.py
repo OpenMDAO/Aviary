@@ -70,12 +70,7 @@ class HorizontalTailMass(om.ExplicitComponent):
             )
 
             J[Aircraft.HorizontalTail.MASS, Aircraft.Design.GROSS_MASS] = (
-                dforce_dmass
-                * scaler
-                * 0.106
-                * area
-                * gross_weight**-0.8
-                * (taper_ratio + 0.50)
+                dforce_dmass * scaler * 0.106 * area * gross_weight**-0.8 * (taper_ratio + 0.50)
             )
 
             J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.TAPER_RATIO] = (
