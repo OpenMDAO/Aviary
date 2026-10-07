@@ -7559,7 +7559,7 @@ add_meta_data(
     historical_name={
         'GASP': 'INGASP.CLMWTO',
         # ['&DEFINE.AERIN.CLTOM', 'LANDG.CLTOM', '~DEFTOL.CLTOA'],
-        'FLOPS': ['AERIN.CLTOM', 'TOLIN.CLTOM'],
+        'FLOPS': 'TOLIN.CLTOM',  #'AERIN.CLTOM'
     },
     units='unitless',
     desc='maximum lift coefficient for takeoff',
