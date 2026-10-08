@@ -794,8 +794,8 @@ add_meta_data(
         'FLOPS': 'WTIN.WPPASS',  # ['&DEFINE.WTIN.WPPASS', 'WPAB.WPPASS'],
     },
     units='lbm',
-    desc='mass per passenger',
-    default_value=165.0,
+    desc='mass per passenger (default to 165 lbm in FLOPS)',
+    default_value=0.0,
 )
 
 add_meta_data(
