@@ -783,7 +783,7 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
     desc='mass per flight crew (default to 225 lbm in FLOPS)',
-    default_value=225.0,
+    default_value=0.0,
 )
 
 add_meta_data(
