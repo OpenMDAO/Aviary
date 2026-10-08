@@ -1010,6 +1010,14 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
         ):
             aviary_options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 165.0, 'lbm')
 
+    # Process GASP based crew variables
+    if mass_method == LegacyCode.GASP:
+        if (
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS not in aviary_options
+            or aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, 'lbm') <= 0
+        ):
+            aviary_options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, 200.0, 'lbm')
+
     return aviary_options
 
 
