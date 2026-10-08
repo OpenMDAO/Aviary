@@ -778,6 +778,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='mass per flight crew (default to 225 lbm in FLOPS)',
+    default_value=225.0,
+)
+
+add_meta_data(
     Aircraft.CrewPayload.MASS_PER_PASSENGER,
     meta_data=_MetaData,
     historical_name={

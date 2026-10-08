@@ -68,19 +68,23 @@ class FlightCrewMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW, units='lbm')
 
         add_aviary_output(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(
-            Aircraft.CrewPayload.FLIGHT_CREW_MASS, Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER
+            Aircraft.CrewPayload.FLIGHT_CREW_MASS,
+            [
+                Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW,
+                Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,
+            ],
         )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
 
-        mass_per_flight_crew = self._mass_per_flight_crew(inputs)
-
+        mass_per_flight_crew = inputs[Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW]
         mass_scaler = inputs[Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER]
 
         outputs[Aircraft.CrewPayload.FLIGHT_CREW_MASS] = (
@@ -90,18 +94,12 @@ class FlightCrewMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J, discrete_inputs=None):
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
 
-        mass_per_flight_crew = self._mass_per_flight_crew(inputs)
+        mass_per_flight_crew = inputs[Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW]
+        mass_scaler = inputs[Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER]
 
+        J[Aircraft.CrewPayload.FLIGHT_CREW_MASS, Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW] = (
+            flight_crew_count * mass_scaler
+        )
         J[Aircraft.CrewPayload.FLIGHT_CREW_MASS, Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER] = (
             flight_crew_count * mass_per_flight_crew
         )
-
-    def _mass_per_flight_crew(self, inputs):
-        """
-        Return the mass, in pounds, of one member of the flight crew and
-        their baggage.
-        """
-        # See issue #1190. This should be its own variable
-        mass_per_flight_crew = 225.0  # lbm
-
-        return mass_per_flight_crew
