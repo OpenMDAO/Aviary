@@ -999,6 +999,12 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
                 units='unitless',
             )
 
+        if (
+            Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW not in aviary_options
+            or aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW, 'lbm') <= 0
+        ):
+            aviary_options.set_val(Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW, 225.0, 'lbm')
+
     return aviary_options
 
 
