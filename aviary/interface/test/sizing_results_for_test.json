@@ -1077,6 +1077,12 @@
         "<class 'int'>"
     ],
     [
+        "aircraft:crew_and_payload:mass_per_flight_crew",
+        225.0,
+        "lbm",
+        "<class 'float'>"
+    ],
+    [
         "aircraft:engine:global_hybrid_throttle",
         [
             false
