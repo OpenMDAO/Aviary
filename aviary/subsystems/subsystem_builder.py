@@ -252,7 +252,7 @@ class SubsystemBuilder(ABC):
     def get_bus_variables(self, aviary_inputs: AviaryValues | None = None):
         # This is an error instead of a warning because it has potential to cause your model to
         # fail in ways that are difficult to debug.
-        raise RuntimeError(
+        raise DeprecationWarning(
             '"get_bus_variables()" has been renamed to "get_pre_mission_bus_variables()" to '
             'differentiate it from "get_post_mission_bus_variables()". Please rename this method '
             'in your subsystem builders.'
