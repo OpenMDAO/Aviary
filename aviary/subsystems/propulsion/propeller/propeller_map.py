@@ -1,15 +1,14 @@
 import warnings
-from pathlib import Path
 
 import numpy as np
 import openmdao.api as om
 
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
+from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.utils.named_values import NamedValues
 
 aliases = {
     # whitespaces are replaced with underscores converted to lowercase before
@@ -61,7 +60,7 @@ class PropellerMap(om.Group):
             if verbosity > Verbosity.BRIEF:
                 if data_file is not None:
                     warnings.warn(
-                        f'Propeller performance map provided as both a data file and as data '
+                        'Propeller performance map provided as both a data file and as data '
                         'passed in-memory. Provided data file will be not be used.'
                     )
                 print(f'Reading propeller performance data from {data_file}')

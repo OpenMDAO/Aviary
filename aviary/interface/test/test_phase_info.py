@@ -9,9 +9,9 @@ from copy import deepcopy
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.models.missions.energy_state_default import (
-    phase_info as ph_in_energy_state,
-)
+from aviary.core.aviary_problem import AviaryProblem
+from aviary.mission.phase_builder import PhaseBuilder as PhaseBuilder
+from aviary.models.missions.energy_state_default import phase_info as ph_in_energy_state
 from aviary.models.missions.energy_state_default import (
     phase_info_parameterization as phase_info_parameterization_energy_state,
 )
@@ -19,8 +19,6 @@ from aviary.models.missions.two_dof_default import phase_info as ph_in_two_dof
 from aviary.models.missions.two_dof_default import (
     phase_info_parameterization as phase_info_parameterization_two_dof,
 )
-from aviary.core.aviary_problem import AviaryProblem
-from aviary.mission.phase_builder import PhaseBuilder as PhaseBuilder
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -134,6 +132,47 @@ class TestPhaseInfoAPI(unittest.TestCase):
 
         time = prob.get_val('traj.only_cruise.timeseries.time', units='s')[-1]
         assert_near_equal(time, 77.0, 1e-5)
+
+    def test_control_path_constraint(self):
+        phase_info = {
+            'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
+            'only_cruise': {
+                'user_options': {
+                    'num_segments': 5,
+                    'order': 3,
+                    'mach_initial': (0.72, 'unitless'),
+                    'mach_optimize': True,
+                    'mach_final': (0.72, 'unitless'),
+                    'altitude_initial': (32000.0, 'ft'),
+                    'altitude_final': (32000.0, 'ft'),
+                    'time_duration': (77, 's'),
+                    'constraints': {
+                        'mach': {
+                            'lower': 0.1,
+                            'upper': 0.86,
+                            'type': 'path',  # enforced at ALL nodes, not just endpoints
+                            'units': 'unitless',
+                        },
+                    },
+                },
+            },
+        }
+        prob = AviaryProblem()
+
+        csv_path = 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'
+
+        prob.load_inputs(csv_path, phase_info)
+
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+
+        prob.setup()
+
+        prob.run_aviary_problem()
+
+        cons = prob.driver.get_constraint_values()
+        self.assertTrue('traj.only_cruise.mach[initial]' in cons)
 
 
 # To run the tests

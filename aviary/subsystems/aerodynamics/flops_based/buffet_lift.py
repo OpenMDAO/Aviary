@@ -5,7 +5,7 @@ import scipy.constants as _units
 from openmdao.components.interp_util.interp import InterpND
 
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BuffetLift(om.ExplicitComponent):

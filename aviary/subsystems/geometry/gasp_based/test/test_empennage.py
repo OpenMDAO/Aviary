@@ -20,7 +20,7 @@ partial_tols = {'atol': 1e-8, 'rtol': 1e-8}
 
 
 class PreMission(om.Group):
-    """a helper class for overriding"""
+    """a helper class for overriding."""
 
     def initialize(self):
         self.options.declare(

@@ -1,5 +1,5 @@
-from aviary.mission.flight_phase_builder import FlightPhaseBase, register
 from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
+from aviary.mission.flight_phase_builder import FlightPhaseBase, register
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 
 

@@ -20,7 +20,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs, print_case
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP

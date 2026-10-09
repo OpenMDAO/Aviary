@@ -3,10 +3,9 @@ import openmdao.api as om
 
 from aviary.mission.base_ode import BaseODE as _BaseODE
 from aviary.mission.energy_state.ode.mission_EOM import MissionEOM
-
 from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
 from aviary.variable_info.enums import SpeedType, ThrottleAllocation
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class EnergyStateODE(_BaseODE):
@@ -87,7 +86,6 @@ class EnergyStateODE(_BaseODE):
         thrust_res_ref = 1.0e6
         if num_engine_type > 1:
             # Multi Engine
-
             ode_sub.add_subsystem(
                 name='throttle_balance',
                 subsys=om.BalanceComp(
@@ -115,7 +113,6 @@ class EnergyStateODE(_BaseODE):
 
         else:
             # Single Engine
-
             if throttle_enforcement == 'control':
                 self.add_subsystem(
                     'throttle_balance',

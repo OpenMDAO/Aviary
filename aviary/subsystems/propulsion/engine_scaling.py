@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.subsystems.propulsion.utils import EngineModelVariables, max_variables
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 MACH = EngineModelVariables.MACH
 ALTITUDE = EngineModelVariables.ALTITUDE

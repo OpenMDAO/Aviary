@@ -1,6 +1,4 @@
-"""
-Define meta data associated with variables in the Aviary data hierarchy.
-"""
+"""Define meta data associated with variables in the Aviary data hierarchy."""
 
 from copy import deepcopy
 
@@ -1213,18 +1211,6 @@ add_meta_data(
     units='unitless',
     desc='allowable center-of-gravity (cg) travel as a fraction of the mean aerodynamic chord',
     default_value=0.0,
-)
-
-# See issue #1182. this should be removed from metadata (intermediate calculation)
-add_meta_data(
-    Aircraft.Design.CHARACTERISTIC_LENGTHS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # 'MISSA.EL',
-    },
-    units='ft',
-    desc='Reynolds characteristic length for each component',
 )
 
 add_meta_data(
@@ -4557,15 +4543,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Propulsion.ENGINE_POSITION_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
-    units='unitless',
-    desc='engine position factor',
-    default_value=0,
-)
-
-add_meta_data(
     Aircraft.Propulsion.MASS,
     meta_data=_MetaData,
     historical_name={
@@ -5444,6 +5421,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Wing.ENGINE_POSITION_MASS_SCALER,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SKEPOS', 'FLOPS': None},
+    units='unitless',
+    desc='Wing mass scaler accounts for position of engines on aircraft. If not supplied '
+    'as an input, GASP mass method calculates a value between 0.9 and 1.05 depending on the '
+    'number of wing mounted engines and the maximum mach number of the aircraft',
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.Wing.EXPOSED_AREA,
     meta_data=_MetaData,
     historical_name={
@@ -5850,14 +5838,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.MAX_LIFT_REF,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.RCLMAX', 'FLOPS': None},
-    units='unitless',
-    desc='input reference maximum lift coefficient for basic wing',
-)
-
-add_meta_data(
     Aircraft.Wing.MAX_SLAT_DEFLECTION_LANDING,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.DELLED', 'FLOPS': None},
@@ -5970,6 +5950,15 @@ add_meta_data(
     units='ft',
     desc='Outboard semispan (used if a detailed wing outboard is being added to a BWB fuselage)',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Wing.REFERENCE_CLEAN_MAX_LIFT_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.RCLMAX', 'FLOPS': None},
+    units='unitless',
+    desc='Reference maximum lift coefficient for clean basic wing. Used for GASP Aero CLmax estimation.'
+    'Basic wing is unswept, untapered, has Aspect Ratio = 12, Thickness to Chord = 0.1 with undeflected full span slats and flaps.',
 )
 
 add_meta_data(
@@ -7591,7 +7580,7 @@ add_meta_data(
     historical_name={
         'GASP': 'INGASP.CLMWTO',
         # ['&DEFINE.AERIN.CLTOM', 'LANDG.CLTOM', '~DEFTOL.CLTOA'],
-        'FLOPS': ['AERIN.CLTOM', 'TOLIN.CLTOM'],
+        'FLOPS': 'TOLIN.CLTOM',  #'AERIN.CLTOM'
     },
     units='unitless',
     desc='maximum lift coefficient for takeoff',

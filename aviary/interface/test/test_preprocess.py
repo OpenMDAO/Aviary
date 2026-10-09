@@ -1,9 +1,7 @@
-"""
-Test preprocessing as part of the level 2 interface.
-"""
+"""Test preprocessing as part of the level 2 interface."""
 
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_warning
 from openmdao.utils.testing_utils import use_tempdirs
@@ -48,7 +46,6 @@ class TestPrePreprocessing(unittest.TestCase):
             local_phase_info,
         )
         prob.aviary_inputs.delete(Aircraft.CrewPayload.NUM_ECONOMY_CLASS)
-        prob.aviary_inputs.delete(Aircraft.Engine.SCALED_SLS_THRUST)
 
         msg = (
             'Sum of all passenger classes (36) does not equal total number of '
@@ -69,7 +66,6 @@ class TestPrePreprocessing(unittest.TestCase):
             local_phase_info,
         )
         prob.aviary_inputs.delete(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
-        prob.aviary_inputs.delete(Aircraft.Engine.SCALED_SLS_THRUST)
         prob.aviary_inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 154)
 
         msg = (
@@ -99,7 +95,7 @@ class TestPrePreprocessing(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestPrePreprocessing()
-    test.setUp()
-    test.test_missing_passengers_warnings()
+    unittest.main()
+    # test = TestPrePreprocessing()
+    # test.setUp()
+    # test.test_missing_passengers_warnings()

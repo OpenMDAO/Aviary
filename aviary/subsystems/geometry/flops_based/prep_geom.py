@@ -20,17 +20,19 @@ from aviary.subsystems.geometry.flops_based.fuselage import (
     SimpleCabinLayout,
 )
 from aviary.subsystems.geometry.flops_based.landing_gear import MainGearLength, NoseGearLength
-from aviary.subsystems.geometry.flops_based.wetted_area_total import WettedAreaGroup
-from aviary.subsystems.geometry.flops_based.wetted_area_total import TotalWettedArea
+from aviary.subsystems.geometry.flops_based.wetted_area_total import (
+    TotalWettedArea,
+    WettedAreaGroup,
+)
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
 from aviary.subsystems.geometry.flops_based.wing_detailed_bwb import (
-    BWBUpdateDetailedWingDist,
     BWBComputeDetailedWingDist,
+    BWBUpdateDetailedWingDist,
     BWBWingPrelim,
 )
-from aviary.variable_info.enums import AircraftTypes, Verbosity
+from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.variables import Aircraft
 
 
 class PrepGeom(om.Group):

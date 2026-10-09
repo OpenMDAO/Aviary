@@ -760,9 +760,7 @@ def create_optimization_history_plot(case_recorder, df):
 
 @_handle_pane_creation_errors()
 def _create_interactive_xy_plot_mission_variables(documentation, problem_recorder_path):
-    """
-    Create a pane showing an XY plot of mission variables.
-    """
+    """Create a pane showing an XY plot of mission variables."""
     if problem_recorder_path:
         if os.path.exists(problem_recorder_path):
             cr = om.CaseReader(problem_recorder_path)
@@ -1468,6 +1466,7 @@ def dashboard(script_name, port=0, run_in_background=False):
 
 if __name__ == '__main__':
     import argparse
+
     from aviary.visualization.dashboard_cmd import _dashboard_cmd, _dashboard_setup_parser
 
     parser = argparse.ArgumentParser()

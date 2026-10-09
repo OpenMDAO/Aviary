@@ -12,7 +12,7 @@ from aviary.variable_info.variables import Aircraft
 
 @use_tempdirs
 class ApuTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = AviaryValues()
@@ -42,7 +42,7 @@ class ApuTestCase1(unittest.TestCase):
 
 @use_tempdirs
 class ApuTestCase2(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = AviaryValues()
@@ -81,7 +81,7 @@ class ApuTestCase2(unittest.TestCase):
 
 @use_tempdirs
 class ApuTestCase3(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = AviaryValues()

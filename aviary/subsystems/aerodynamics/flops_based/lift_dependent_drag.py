@@ -3,8 +3,8 @@ import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class LiftDependentDrag(om.ExplicitComponent):

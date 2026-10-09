@@ -5,7 +5,6 @@ from aviary.mission.two_dof.ode.constraints.flight_constraints import FlightCons
 from aviary.mission.two_dof.ode.constraints.speed_constraints import SpeedConstraints
 from aviary.mission.two_dof.ode.flight_eom import EOMRates
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import AlphaModes, SpeedType
@@ -35,13 +34,6 @@ class FlightODE(TwoDOFODE):
     def setup(self):
         nn = self.options['num_nodes']
         input_speed_type = self.options['input_speed_type']
-
-        if input_speed_type is SpeedType.EAS:
-            speed_inputs = ['EAS']
-            speed_outputs = ['mach', Dynamic.Mission.VELOCITY]
-        elif input_speed_type is SpeedType.MACH:
-            speed_inputs = ['mach']
-            speed_outputs = ['EAS', Dynamic.Mission.VELOCITY]
 
         self.add_subsystem(
             name='atmosphere',
@@ -179,14 +171,18 @@ class FlightODE(TwoDOFODE):
             num_nodes=nn,
         )
 
+        # TODO throttle currently comes from phase_info initial conditions, not a true control.
+        #      If in the future we make it a real control, it can use existing code.
+        # self.add_throttle_control(propulsion_group=lift_balance_group)
+
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='ft')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='lbm')
         self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
-        self.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THROTTLE, val=np.ones(nn), units='unitless'
-        )
+        # self.set_input_defaults(
+        #     Dynamic.Vehicle.Propulsion.THROTTLE, val=np.ones(nn), units='unitless'
+        # )
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')

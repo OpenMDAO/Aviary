@@ -1,6 +1,4 @@
-"""
-Define utilities to calculate the estimated mass of emergency equipment mass
-"""
+"""Define utilities to calculate the estimated mass of emergency equipment mass."""
 
 import openmdao.api as om
 

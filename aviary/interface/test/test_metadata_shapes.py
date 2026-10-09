@@ -1,12 +1,12 @@
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.models.external_subsystems.detailed_battery.battery_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.detailed_battery.battery_variables import Aircraft
 from aviary.models.missions.energy_state_default import phase_info as energy_phase_info
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.csv_data_file import read_data_file
@@ -15,7 +15,6 @@ from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variable_meta_data import CoreMetaData
-from aviary.variable_info.variables import Aircraft
 
 
 @use_tempdirs
@@ -37,7 +36,7 @@ class TestShapebyConn(unittest.TestCase):
 
         local_phase_info = deepcopy(energy_phase_info)
 
-        prob = AviaryProblem(verbosity=1)
+        prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
