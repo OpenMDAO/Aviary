@@ -98,7 +98,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
-                'constrain_range': True,
                 'target_range': (1906, 'nmi'),
             },
         }
@@ -381,8 +380,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
         finally:
             sys.stdout = stdout
         output = strout.getvalue().split('\n')
-
-        print('z')
 
         self.assertEqual(
             output[1], 'The following issues were detected in your phase_info options.'

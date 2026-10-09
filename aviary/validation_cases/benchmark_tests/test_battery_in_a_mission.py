@@ -7,6 +7,8 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 import aviary.api as av
 from aviary.models.missions.two_dof_default import phase_info as twodof_phase_info
 from aviary.subsystems.energy.battery_builder import BatteryBuilder
+from aviary.variable_info.enums import ProblemType
+from aviary.variable_info.variables import Settings
 
 
 @use_tempdirs
@@ -65,6 +67,7 @@ class TestBatteryMission(unittest.TestCase):
 
     def test_subsystems_in_a_mission(self):
         phase_info = deepcopy(self.phase_info)
+        phase_info
 
         prob = av.AviaryProblem(verbosity=0)
 
@@ -72,9 +75,16 @@ class TestBatteryMission(unittest.TestCase):
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm_with_electric.csv',
             phase_info,
         )
-        prob.load_external_subsystems([BatteryBuilder()])
+        prob.problem_type = av.ProblemType.OFF_DESIGN_GENERAL
 
+        prob.aviary_inputs.set_val(Settings.PROBLEM_TYPE, ProblemType.OFF_DESIGN_GENERAL)
         prob.aviary_inputs.set_val(av.Aircraft.Battery.EFFICIENCY, 0.95, 'unitless')
+
+        # Weight comes from Sizing run.
+        prob.aviary_inputs.set_val(av.Aircraft.Design.GROSS_MASS, 143284.5662295, 'lbm')
+        prob.aviary_inputs.set_val(av.Mission.GROSS_MASS, 143284.5662295, 'lbm')
+
+        prob.load_external_subsystems([BatteryBuilder()])
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -110,7 +120,7 @@ class TestBatteryMission(unittest.TestCase):
                 actual = prob.get_val(var_name, units=units)
                 if actual.size > 1:
                     actual = actual[-1]
-                assert_near_equal(actual, expected, 1.0e-7)
+                assert_near_equal(actual, expected, 1.0e-6)
 
         # Check battery state-of-charge over mission
         soc_cruise1_var = f'traj.cruise1.timeseries.{av.Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE}'

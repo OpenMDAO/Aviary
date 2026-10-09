@@ -74,7 +74,6 @@ energy_phase_info = {
     },
     'post_mission': {
         'include_landing': False,
-        'constrain_range': True,
         'target_range': (2_020.0, 'nmi'),
     },
 }
@@ -336,5 +335,8 @@ two_dof_phase_info = {
             'distance': ([0.96 * 2_020, 2_020], 'NM'),
             'time': ([22000.0, 500.0], 's'),
         },
+    },
+    'post_mission': {
+        'target_range': (2020.0, 'nmi'),
     },
 }

@@ -14,29 +14,6 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
     """The Solved 2DOF builder is used for detailed take-off and landing."""
 
-    def initial_guesses(self, aviary_group):
-        """
-        Set any initial guesses for variables in the aviary problem.
-
-        This is called at the end of AivaryProblem.load_inputs.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
-        """
-        # This doesn't really have much value, but is needed for initializing
-        # an objective-related component that still lives in level 2.
-
-        if 'target_range' in aviary_group.post_mission_info:
-            aviary_group.target_range = wrapped_convert_units(
-                aviary_group.post_mission_info['target_range'], 'NM'
-            )
-        else:
-            aviary_group.target_range = aviary_group.aviary_inputs.get_val(
-                Aircraft.Design.RANGE, units='NM'
-            )
-
     def get_default_phase_info(self, aviary_group):
         """
         Return a default phase_info for this type or problem.

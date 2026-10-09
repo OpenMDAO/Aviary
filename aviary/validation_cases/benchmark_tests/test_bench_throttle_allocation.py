@@ -193,7 +193,7 @@ class ThrottleAllocation2DOFTestcase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
         self.phase_info = test_phase_info = deepcopy(twodof_phase_info)
         for phase in test_phase_info:
-            if phase != 'cruise':
+            if phase not in ['cruise', 'pre_mission', 'post_mission']:
                 # phase_info[phase]['user_options']['throttle_allocation'] = method
                 throttle_guess = test_phase_info[phase]['initial_guesses']['throttle']
                 test_phase_info[phase]['initial_guesses']['throttle'] = [
