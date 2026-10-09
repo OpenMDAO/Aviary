@@ -672,11 +672,11 @@
 
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
                 <span class="n">val</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-                <span class="n">val_in_csv_file</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">val_in_inputs</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">val</span> <span class="o">=</span> <span class="n">aviary_metadata</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
                 <span class="n">units</span> <span class="o">=</span> <span class="n">aviary_metadata</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
-                <span class="n">val_in_csv_file</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">val_in_inputs</span> <span class="o">=</span> <span class="kc">False</span>
 
                 <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="c1"># optional, but no default value</span>
@@ -688,11 +688,12 @@
                 <span class="c1"># If var has been declared with a shape, and isn&#39;t in the aviary_inputs, then</span>
                 <span class="c1"># take the default val and broadcast it.</span>
 
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">val_in_csv_file</span> <span class="ow">and</span> <span class="n">aviary_metadata</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;multivalue&#39;</span><span class="p">]:</span>
-                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">shapes</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-                        <span class="n">scalar_val</span> <span class="o">=</span> <span class="n">val</span>
-                        <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shapes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-                        <span class="n">val</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">scalar_val</span>
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">val_in_inputs</span> <span class="ow">and</span> <span class="n">aviary_metadata</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;multivalue&#39;</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span>
+                    <span class="n">key</span> <span class="ow">in</span> <span class="n">shapes</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                <span class="p">):</span>
+                    <span class="n">scalar_val</span> <span class="o">=</span> <span class="n">val</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shapes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                    <span class="n">val</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">scalar_val</span>
 
                 <span class="c1"># Default val if var doesn&#39;t use shape_by_conn.</span>
                 <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
