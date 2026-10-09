@@ -16,7 +16,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
     GASP mass and aero method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
-    based on 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv' model.
+    based on 'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv' model.
     """
 
     def setUp(self):
