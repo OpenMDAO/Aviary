@@ -334,4 +334,7 @@ two_dof_phase_info = {
             'time': ([22000.0, 500.0], 's'),
         },
     },
+    'post_mission': {
+        'target_range': (2020.0, 'nmi'),
+    },
 }

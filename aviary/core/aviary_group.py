@@ -479,15 +479,6 @@ class AviaryGroup(om.Group):
         # Other specific self.*** are defined in here as well that are specific to each builder
         self.configurator.initial_guesses(self)
 
-        # If the user doesn't specify a target range, then the design range is used for
-        # sizing the aircraft or in other off-design missions that require it.
-        if 'target_range' in self.post_mission_info:
-            target_range = wrapped_convert_units(self.post_mission_info['target_range'], 'NM')
-        else:
-            target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
-
-        self.target_range = target_range
-
         # TODO this seems like the wrong place to define the core subsystems. Maybe move to
         # load_inputs?
         ## Set Up Core Subsystems ##
@@ -850,22 +841,6 @@ class AviaryGroup(om.Group):
         )
 
         self.configurator.add_post_mission_systems(self)
-
-        # This component is always present, even when its residual is not constrained.
-        self.add_subsystem(
-            'range_constraint',
-            om.ExecComp(
-                'range_resid = target_range - actual_range',
-                target_range={'val': self.target_range, 'units': 'NM'},
-                actual_range={'val': self.target_range, 'units': 'NM'},
-                range_resid={'val': 30, 'units': 'NM'},
-            ),
-            promotes_inputs=[
-                ('actual_range', Mission.RANGE),
-                'target_range',
-            ],
-            promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
-        )
 
         post_mission = self.post_mission
         self.add_subsystem(
@@ -1352,27 +1327,56 @@ class AviaryGroup(om.Group):
         - the initial altitude of the aircraft with flaps extended is constrained to be 400 ft
 
         If solving a sizing problem, a design variable is added for the gross mass of the aircraft,
-        and another for the gross mass of the aircraft computed during the mission. A constraint is
-        also added to ensure that the residual range is zero.
+        and another for the gross mass of the aircraft computed during the mission.
 
         If solving an OFF_DESIGN_MIN_FUEL problem, only a design variable for the gross mass of the aircraft
-        computed during the mission is added. A constraint is also added to ensure that the residual
-        range is zero.
+        computed during the mission is added.
 
         In all cases, a design variable is added for the final cruise mass of the aircraft, with no
         upper bound, and a residual mass constraint is added to ensure that the mass balances.
+
+        In all cases, except for OFF_DESIGN_MAX_RANGE, the final Mission.RANGE is constrained to the
+        value specified in 'constrain_range' in the phase_info.
         """
         verbosity = self._override_verbosity(verbosity)
 
         all_subsystems = self.subsystems
 
-        # loop through all_subsystems and call `get_design_vars` on each subsystem
+        # Add all design variables requested by the subsystem builders.
         for subsystem in all_subsystems:
             dv_dict = subsystem.get_design_vars(aviary_inputs=self.aviary_inputs)
             for dv_name, dv_dict in dv_dict.items():
                 self.add_design_var(dv_name, **dv_dict)
 
-        if self.mission_method is SOLVED_2DOF:  # TODO: to be removed soon
+        # Constrain Mission.RANGE if requested.
+        if 'target_range' in self.post_mission_info:
+            target_range = wrapped_convert_units(self.post_mission_info['target_range'], 'NM')
+
+            if problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Disabling range constraint for max range mission.'
+                    )
+            else:
+                self.add_constraint(
+                    Mission.RANGE,
+                    equals=target_range,
+                    ref=target_range,
+                )
+                des_range = self.aviary_inputs.get_val(Aircraft.Design.RANGE, 'NM')
+                if verbosity >= Verbosity.BRIEF and des_range != target_range:
+                    warnings.warn(
+                        f'Design range {des_range} differs from target_range {target_range} (NM).'
+                    )
+
+        elif problem_type is ProblemType.SIZING:
+            if verbosity >= Verbosity.BRIEF:
+                warnings.warn(
+                    'Sizing mission does not include a target range.'
+                )
+
+        # TODO: Solved 2dof is a special case that doesn't support off design.
+        if self.mission_method is SOLVED_2DOF:
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.add_design_var(
@@ -1382,137 +1386,106 @@ class AviaryGroup(om.Group):
                     upper=900.0e3,
                     ref=175.0e3,
                 )
+            return
 
-        elif self.mission_method in (
-            ENERGY_STATE,
-            TWO_DEGREES_OF_FREEDOM,
-        ):  # TODO: This becomes generic as soon as SOLVED_2DOF is removed
-            # vehicle sizing problem
-            # size the vehicle (via design GTOW) to meet a target range using all fuel
-            # capacity
-            if problem_type is ProblemType.SIZING:
-                self.add_design_var(
-                    Aircraft.Design.GROSS_MASS,
-                    lower=10.0,
-                    upper=None,
-                    units='lbm',
-                    ref=175e3,
-                )
-                self.add_design_var(
-                    Mission.GROSS_MASS,
-                    lower=10.0,
-                    upper=None,
-                    units='lbm',
-                    ref=175e3,
-                )
+        # Add mass balance design variables and constraints for each problem type.
+        if problem_type is ProblemType.SIZING:
+            self.add_design_var(
+                Aircraft.Design.GROSS_MASS,
+                lower=10.0,
+                upper=None,
+                units='lbm',
+                ref=175e3,
+            )
+            self.add_design_var(
+                Mission.GROSS_MASS,
+                lower=10.0,
+                upper=None,
+                units='lbm',
+                ref=175e3,
+            )
 
-                self.add_subsystem(
-                    'gtow_constraint',
-                    om.EQConstraintComp(
-                        'GTOW',
-                        eq_units='lbm',
-                        normalize=True,
-                        add_constraint=True,
-                    ),
-                    promotes_inputs=[
-                        ('lhs:GTOW', Aircraft.Design.GROSS_MASS),
-                        ('rhs:GTOW', Mission.GROSS_MASS),
-                    ],
-                )
+            self.add_subsystem(
+                'gtow_constraint',
+                om.EQConstraintComp(
+                    'GTOW',
+                    eq_units='lbm',
+                    normalize=True,
+                    add_constraint=True,
+                ),
+                promotes_inputs=[
+                    ('lhs:GTOW', Aircraft.Design.GROSS_MASS),
+                    ('rhs:GTOW', Mission.GROSS_MASS),
+                ],
+            )
 
-                self.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL,
-                    equals=0,
-                    ref=self.target_range,
-                )
+        elif problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
+            # target range problem
+            # fixed vehicle (design GTOW) but variable actual GTOW for off-design
+            # get the design gross mass and set as the upper bound for the gross mass design variable
+            MTOW = self.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, 'lbm')
+            self.add_design_var(
+                Mission.GROSS_MASS,
+                lower=10.0,
+                upper=MTOW,
+                units='lbm',
+                ref=MTOW,
+            )
 
-            elif problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
-                # target range problem
-                # fixed vehicle (design GTOW) but variable actual GTOW for off-design
-                # get the design gross mass and set as the upper bound for the gross mass design variable
-                MTOW = self.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, 'lbm')
-                self.add_design_var(
-                    Mission.GROSS_MASS,
-                    lower=10.0,
-                    upper=MTOW,
-                    units='lbm',
-                    ref=MTOW,
+        elif problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
+            # fixed vehicle gross mass aviary finds optimal trajectory and maximum range
+            if verbosity >= Verbosity.VERBOSE:
+                print(
+                    'No additional aircraft design variables added for OFF_DESIGN_MAX_RANGE missions'
                 )
 
-                self.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL,
-                    equals=0,
-                    ref=self.target_range,
-                )
+        elif problem_type is ProblemType.OFF_DESIGN_GENERAL:
 
-            elif problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
-                # fixed vehicle gross mass aviary finds optimal trajectory and maximum range
-                if verbosity >= Verbosity.VERBOSE:
-                    print(
-                        'No additional aircraft design variables added for OFF_DESIGN_MAX_RANGE missions'
-                    )
+            pass
 
-            elif problem_type is ProblemType.OFF_DESIGN_GENERAL:
-                # If target_range is unspecified, then don't assume we want to fly a fixed range.
-                if 'target_range' in self.post_mission_info:
-                    self.add_constraint(
-                        Mission.Constraints.RANGE_RESIDUAL,
-                        equals=0,
-                        ref=self.target_range,
-                    )
+        elif problem_type is ProblemType.MULTI_MISSION:
+            self.add_design_var(
+                Mission.GROSS_MASS,
+                lower=10.0,
+                upper=900e3,
+                units='lbm',
+                ref=175e3,
+            )
 
-            elif problem_type is ProblemType.MULTI_MISSION:
-                self.add_design_var(
-                    Mission.GROSS_MASS,
-                    lower=10.0,
-                    upper=900e3,
-                    units='lbm',
-                    ref=175e3,
-                )
+            # We must ensure that design.gross_mass is greater than  Mission.GROSS_MASS
+            # and this must hold true for each of the different missions that is flown the
+            # result will be the design.gross_mass should be equal to the
+            # Mission.GROSS_MASS of the heaviest mission
+            self.add_subsystem(
+                'GROSS_MASS_constraint',
+                om.ExecComp(
+                    'gross_mass_resid = design_mass - actual_mass',
+                    design_mass={'val': 1, 'units': 'kg'},
+                    actual_mass={'val': 0, 'units': 'kg'},
+                    gross_mass_resid={'val': 30, 'units': 'kg'},
+                ),
+                promotes_inputs=[
+                    ('design_mass', Aircraft.Design.GROSS_MASS),
+                    ('actual_mass', Mission.GROSS_MASS),
+                ],
+                promotes_outputs=['gross_mass_resid'],
+            )
 
-                # TODO: RANGE_RESIDUAL constraint should be added based on what the
-                # user sets as the objective. if Objective is not range or Mission.RANGE,
-                # the range constriant should be added to make target rage = summary range
-                self.add_constraint(
-                    Mission.Constraints.RANGE_RESIDUAL,
-                    equals=0,
-                    ref=self.target_range,
-                )
+            # ref scales gross_mass_resid = design_mass - actual_mass to O(1).
+            # For fleet missions much lighter than design, residuals can be
+            # 10-20% of design mass. GROSS_MASS/4 puts scaled values ~0.2-0.6.
+            _gm_ref = self.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, 'kg') / 4.0
+            self.add_constraint('gross_mass_resid', lower=0, ref=_gm_ref)
 
-                # We must ensure that design.gross_mass is greater than  Mission.GROSS_MASS
-                # and this must hold true for each of the different missions that is flown the
-                # result will be the design.gross_mass should be equal to the
-                # Mission.GROSS_MASS of the heaviest mission
-                self.add_subsystem(
-                    'GROSS_MASS_constraint',
-                    om.ExecComp(
-                        'gross_mass_resid = design_mass - actual_mass',
-                        design_mass={'val': 1, 'units': 'kg'},
-                        actual_mass={'val': 0, 'units': 'kg'},
-                        gross_mass_resid={'val': 30, 'units': 'kg'},
-                    ),
-                    promotes_inputs=[
-                        ('design_mass', Aircraft.Design.GROSS_MASS),
-                        ('actual_mass', Mission.GROSS_MASS),
-                    ],
-                    promotes_outputs=['gross_mass_resid'],
-                )
-
-                # ref scales gross_mass_resid = design_mass - actual_mass to O(1).
-                # For fleet missions much lighter than design, residuals can be
-                # 10-20% of design mass. GROSS_MASS/4 puts scaled values ~0.2-0.6.
-                _gm_ref = self.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, 'kg') / 4.0
-                self.add_constraint('gross_mass_resid', lower=0, ref=_gm_ref)
-
-            if self.mission_method is TWO_DEGREES_OF_FREEDOM:
-                # TODO: This should be moved into the problem configurator b/c it's 2DOF specific
-                # problem formulation to make the trajectory work
-                self.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0)
-                self.add_design_var(Mission.Takeoff.ASCENT_DURATION, lower=1, upper=1000, ref=10.0)
-                self.add_design_var('tau_gear', lower=0.01, upper=1.0, units='unitless', ref=1)
-                self.add_design_var('tau_flaps', lower=0.01, upper=1.0, units='unitless', ref=1)
-                self.add_constraint('h_fit.h_init_gear', equals=50.0, units='ft', ref=50.0)
-                self.add_constraint('h_fit.h_init_flaps', equals=400.0, units='ft', ref=400.0)
+        if self.mission_method is TWO_DEGREES_OF_FREEDOM:
+            # TODO: This should be moved into the problem configurator b/c it's 2DOF specific
+            # problem formulation to make the trajectory work
+            self.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0)
+            self.add_design_var(Mission.Takeoff.ASCENT_DURATION, lower=1, upper=1000, ref=10.0)
+            self.add_design_var('tau_gear', lower=0.01, upper=1.0, units='unitless', ref=1)
+            self.add_design_var('tau_flaps', lower=0.01, upper=1.0, units='unitless', ref=1)
+            self.add_constraint('h_fit.h_init_gear', equals=50.0, units='ft', ref=50.0)
+            self.add_constraint('h_fit.h_init_flaps', equals=400.0, units='ft', ref=400.0)
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """

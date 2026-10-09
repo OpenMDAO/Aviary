@@ -6,7 +6,7 @@ consistency and correctness.
 import unittest
 from copy import deepcopy
 
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_near_equal, assert_warning
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
@@ -18,7 +18,8 @@ from aviary.models.missions.two_dof_default import phase_info as ph_in_two_dof
 from aviary.models.missions.two_dof_default import (
     phase_info_parameterization as phase_info_parameterization_two_dof,
 )
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.enums import ProblemType
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
 @use_tempdirs
@@ -82,18 +83,16 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob.check_and_preprocess_inputs()
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
+        prob.add_design_variables()
 
         prob.setup()
 
         prob.run_model()
 
-        range_resid = prob.get_val(Mission.Constraints.RANGE_RESIDUAL, units='nmi')[-1]
-        assert_near_equal(range_resid, 1906, tolerance=1e-3)
+        con_range = prob.driver._cons[Mission.RANGE]['equals']
+        design_range = prob.aviary_inputs.get_val(Aircraft.Design.RANGE, units='nmi')
+        assert_near_equal(con_range, design_range, tolerance=1e-3)
         assert_near_equal(prob.get_val('traj.cruise.timeseries.altitude', units='ft')[0], 31000.0)
         assert_near_equal(prob.get_val('traj.cruise.timeseries.mach')[0], 0.6)
 
@@ -218,8 +217,50 @@ class TestPhaseInfoAPI(unittest.TestCase):
         self.assertTrue('traj.groundroll.fuselage_pitch[path]' in cons)
         self.assertTrue('traj.cruise.lift[path]' in cons)
 
+    def test_target_range(self):
+        # Tests warning messages for different usecases of target_range.
+        csv_path = 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'
+
+        phase_info = deepcopy(ph_in_energy_state)
+        phase_info['post_mission']['target_range'] = (99.0, 'nmi')
+
+        prob = AviaryProblem(verbosity=1)
+        prob.load_inputs(csv_path, phase_info)
+        prob.check_and_preprocess_inputs()
+        prob.build_model()
+
+        msg = "Design range 3500.0 differs from target_range 99.0 (NM)."
+        with assert_warning(UserWarning, msg):
+            prob.add_design_variables()
+
+        prob = AviaryProblem(verbosity=1)
+        prob.load_inputs(csv_path, phase_info)
+        prob.aviary_inputs.set_val(Settings.PROBLEM_TYPE, ProblemType.OFF_DESIGN_MAX_RANGE)
+        prob.problem_type = ProblemType.OFF_DESIGN_MAX_RANGE
+
+        prob.check_and_preprocess_inputs()
+        prob.build_model()
+
+        msg = "Disabling range constraint for max range mission."
+        with assert_warning(UserWarning, msg):
+            prob.add_design_variables()
+
+        del phase_info['post_mission']['target_range']
+
+        prob = AviaryProblem(verbosity=1)
+        prob.load_inputs(csv_path, phase_info)
+        prob.check_and_preprocess_inputs()
+        prob.build_model()
+
+        msg = "Sizing mission does not include a target range."
+        with assert_warning(UserWarning, msg):
+            prob.add_design_variables()
+
+        print('done')
+
+
 # To run the tests
 if __name__ == '__main__':
-    unittest.main()
-    # test = TestParameterizePhaseInfo()
-    # test.test_phase_info_parameterization_two_dof()
+    # unittest.main()
+    test = TestPhaseInfoAPI()
+    test.test_target_range()

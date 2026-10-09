@@ -14,8 +14,8 @@ from aviary.variable_info.variables import Aircraft
 
 class WingWeightSubsys(om.ExplicitComponent):
     def setup(self):
-        add_aviary_input(self, Aircraft.Engine.MASS, 1.0, units='lbm')
-        add_aviary_output(self, Aircraft.Canard.ASPECT_RATIO, 1.0, units='unitless')
+        add_aviary_input(self, Aircraft.Engine.MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Canard.ASPECT_RATIO, units='unitless')
         self.add_output('Tail', 1.0, units='unitless')
 
         self.declare_partials(Aircraft.Canard.ASPECT_RATIO, Aircraft.Engine.MASS, val=2.0)
@@ -65,11 +65,7 @@ class WingWeightBuilder(SubsystemBuilder):
 class PreMissionGroupTest(unittest.TestCase):
     def test_post_mission_promotion(self):
         phase_info = deepcopy(ph_in)
-        phase_info['post_mission'] = {}
         phase_info['post_mission']['include_landing'] = False
-        phase_info['post_mission']['external_subsystems'] = [
-            WingWeightBuilder(name='wing_external')
-        ]
 
         prob = AviaryProblem()
 
@@ -77,6 +73,9 @@ class PreMissionGroupTest(unittest.TestCase):
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwFm.csv'
         )
         prob.load_inputs(csv_path, phase_info)
+        prob.load_external_subsystems(
+            external_subsystems=[WingWeightBuilder(name='wing_external')]
+        )
 
         prob.check_and_preprocess_inputs()
 
@@ -92,11 +91,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
     def test_serial_phase_group(self):
         phase_info = deepcopy(ph_in)
-        phase_info['post_mission'] = {}
         phase_info['post_mission']['include_landing'] = False
-        phase_info['post_mission']['external_subsystems'] = [
-            WingWeightBuilder(name='wing_external')
-        ]
 
         prob = AviaryProblem()
 
@@ -104,6 +99,9 @@ class PreMissionGroupTest(unittest.TestCase):
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwFm.csv'
         )
         prob.load_inputs(csv_path, phase_info)
+        prob.load_external_subsystems(
+            external_subsystems=[WingWeightBuilder(name='wing_external')]
+        )
 
         prob.check_and_preprocess_inputs()
 
