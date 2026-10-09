@@ -117,7 +117,6 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
         )
 
 
-
 class SimpleCruisePhase(PhaseBuilder):
     """
     A phase builder for a cruise phase in a mission simulation.

@@ -18,7 +18,7 @@ phase_info = {
         'initial_guesses': {
             'time': ([0, 40.0], 'min'),
             'altitude': ([0, 35000.0], 'ft'),
-            'mach': ([0.2, 0.79], 'unitless'),
+            'mach': ([0.2, 0.78], 'unitless'),
         },
     },
     'cruise': {
@@ -28,8 +28,8 @@ phase_info = {
             'order': 3,
             'mach_optimize': True,
             'mach_polynomial_order': 1,
-            'mach_initial': (0.79, 'unitless'),
-            'mach_bounds': ((0.78, 0.8), 'unitless'),
+            'mach_initial': (0.78, 'unitless'),
+            'mach_bounds': ((0.77, 0.79), 'unitless'),
             'altitude_optimize': True,
             'altitude_polynomial_order': 1,
             'altitude_initial': (35000.0, 'ft'),
@@ -42,7 +42,7 @@ phase_info = {
         'initial_guesses': {
             'time': ([128, 113], 'min'),
             'altitude': ([35000, 35000.0], 'ft'),
-            'mach': ([0.79, 0.79], 'unitless'),
+            'mach': ([0.78, 0.78], 'unitless'),
         },
     },
     'descent': {
@@ -51,7 +51,7 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'mach_optimize': True,
-            'mach_initial': (0.79, 'unitless'),
+            'mach_initial': (0.78, 'unitless'),
             'mach_final': (0.3, 'unitless'),
             'mach_bounds': ((0.2, 0.8), 'unitless'),
             'altitude_optimize': True,
@@ -64,7 +64,10 @@ phase_info = {
             'time_duration_bounds': ((5.0, 30.0), 'min'),
             'no_climb': True,
         },
-        'initial_guesses': {'time': ([241, 30], 'min')},
+        'initial_guesses': {
+            'time': ([241, 30], 'min'),
+            'mach': ([0.78, 0.3], 'unitless'),
+        },
     },
     'post_mission': {
         'include_landing': False,
