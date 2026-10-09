@@ -61,6 +61,15 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            '_add_user_defined_constraints().',
+        )
+
+        self.declare(
             name='altitude_direct_link',
             default=True,
             types=bool,
@@ -137,6 +146,9 @@ class BreguetCruisePhase(PhaseBuilder):
         alt_cruise, alt_units = user_options['alt_cruise']
 
         phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
+
+        constraints = user_options['constraints']
+        self._add_user_defined_constraints(phase, constraints)
 
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, val=alt_cruise, units=alt_units)
         phase.add_parameter(Dynamic.Atmosphere.MACH, opt=False, val=mach_cruise)

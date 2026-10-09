@@ -151,6 +151,15 @@ class TakeoffPhaseOptions(AviaryOptionsDictionary):
             desc='Scale factor ref for the pitch constraint.',
         )
 
+        self.declare(
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            '_add_user_defined_constraints().',
+        )
+
 
 class TakeoffPhase(PhaseBuilder):
     """
@@ -215,6 +224,9 @@ class TakeoffPhase(PhaseBuilder):
                 'angle_of_attack',
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
             )
+
+        constraints = user_options['constraints']
+        self._add_user_defined_constraints(phase, constraints)
 
         # Add parameters
         # TODO: These are backdoor defaults.

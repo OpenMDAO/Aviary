@@ -10,7 +10,6 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.mission.phase_builder import PhaseBuilder as PhaseBuilder
 from aviary.models.missions.energy_state_default import phase_info as ph_in_energy_state
 from aviary.models.missions.energy_state_default import (
     phase_info_parameterization as phase_info_parameterization_energy_state,
@@ -19,7 +18,7 @@ from aviary.models.missions.two_dof_default import phase_info as ph_in_two_dof
 from aviary.models.missions.two_dof_default import (
     phase_info_parameterization as phase_info_parameterization_two_dof,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 @use_tempdirs
@@ -174,6 +173,50 @@ class TestPhaseInfoAPI(unittest.TestCase):
         cons = prob.driver.get_constraint_values()
         self.assertTrue('traj.only_cruise.mach[initial]' in cons)
 
+    def test_control_path_constraint_2dof_phases(self):
+        phase_info = deepcopy(ph_in_two_dof)
+
+        phase_info['accel']['user_options']['constraints'] = {
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: {
+                'lower': 0.1,
+                'upper': 15.0,
+                'type': 'path',
+                'units': 'deg',
+            },
+        }
+        phase_info['groundroll']['user_options']['constraints'] = {
+            'fuselage_pitch': {
+                'lower': -1.0,
+                'upper': 1.0,
+                'type': 'path',
+                'units': 'deg',
+            },
+        }
+        phase_info['cruise']['user_options']['constraints'] = {
+            Dynamic.Vehicle.LIFT: {
+                'lower': 1000.0,
+                'type': 'path',
+                'units': 'lbf',
+            },
+        }
+
+        prob = AviaryProblem()
+
+        csv_path = 'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv'
+
+        prob.load_inputs(csv_path, phase_info)
+
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+
+        prob.setup()
+        prob.run_model()
+
+        cons = prob.driver.get_constraint_values()
+        self.assertTrue('traj.accel.angle_of_attack[path]' in cons)
+        self.assertTrue('traj.groundroll.fuselage_pitch[path]' in cons)
+        self.assertTrue('traj.cruise.lift[path]' in cons)
 
 # To run the tests
 if __name__ == '__main__':
