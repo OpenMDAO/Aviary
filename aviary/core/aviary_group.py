@@ -40,13 +40,7 @@ from aviary.utils.process_input_decks import (
     update_GASP_options,
 )
 from aviary.utils.utils import wrapped_convert_units
-from aviary.variable_info.enums import (
-    EquationsOfMotion,
-    LegacyCode,
-    PhaseType,
-    ProblemType,
-    Verbosity,
-)
+from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 

@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import distributed_engine_count_factor
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
@@ -40,14 +39,14 @@ class TransportInstrumentMass(om.ExplicitComponent):
         max_mach = inputs[Aircraft.Design.MAX_MACH]
         mass_scaler = inputs[Aircraft.Instruments.MASS_SCALER]
 
-        instrument_weight = (
+        instrument_mass = (
             0.48
             * fuse_area**0.57
             * max_mach**0.5
             * (10.0 + 2.5 * num_crew + num_wing_eng_fact + 1.5 * num_fuse_eng_fact)
         )
 
-        outputs[Aircraft.Instruments.MASS] = instrument_weight * mass_scaler / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Instruments.MASS] = instrument_mass * mass_scaler
 
     def compute_partials(self, inputs, J):
         num_crew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
@@ -65,13 +64,13 @@ class TransportInstrumentMass(om.ExplicitComponent):
         mach_fact = max_mach**0.5
 
         J[Aircraft.Instruments.MASS, Aircraft.Fuselage.PLANFORM_AREA] = (
-            0.2736 * fuse_area**-0.43 * mach_fact * fact * mass_scaler / GRAV_ENGLISH_LBM
+            0.2736 * fuse_area**-0.43 * mach_fact * fact * mass_scaler
         )
 
         J[Aircraft.Instruments.MASS, Aircraft.Instruments.MASS_SCALER] = (
-            0.48 * area_fact * mach_fact * fact / GRAV_ENGLISH_LBM
+            0.48 * area_fact * mach_fact * fact
         )
 
         J[Aircraft.Instruments.MASS, Aircraft.Design.MAX_MACH] = (
-            0.48 * 0.5 * area_fact * max_mach**-0.5 * fact * mass_scaler / GRAV_ENGLISH_LBM
+            0.48 * 0.5 * area_fact * max_mach**-0.5 * fact * mass_scaler
         )

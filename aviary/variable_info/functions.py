@@ -6,6 +6,7 @@ import numpy as np
 import openmdao.api as om
 from dymos.utils.misc import _unspecified
 from openmdao.core.component import Component
+from openmdao.core.system import System
 
 from aviary.utils.aviary_options_dict import units_setter
 from aviary.utils.aviary_values import AviaryValues
@@ -39,7 +40,7 @@ def add_aviary_input(
 
     Parameters
     ----------
-    comp: Component
+    comp: System
         OpenMDAO component the variable `varname` will be added as an input to.
     varname: str
         Name of the variable in this component's namespace.
@@ -120,7 +121,7 @@ def add_aviary_output(
 
     Parameters
     ----------
-    comp: Component
+    comp: System
         OpenMDAO component the variable `varname` will be added as an output to.
     varname: str
         Name of the variable in this component's namespace.
@@ -181,7 +182,7 @@ def add_aviary_output(
 
 
 def add_aviary_option(
-    comp: Component,
+    comp: System,
     name: str,
     val=_unspecified,
     units: str | None = None,
@@ -195,7 +196,7 @@ def add_aviary_option(
 
     Parameters
     ----------
-    comp: Component
+    comp: System
         OpenMDAO component to add this option.
     name: str
         Name of variable.

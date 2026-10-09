@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -91,12 +90,12 @@ class TotalEngineMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
-        eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
+        eng_spec_mass = inputs[Aircraft.Engine.MASS_SPECIFIC]
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
-        dry_wt_eng = eng_spec_wt * Fn_SLS
-        dry_wt_eng_all = dry_wt_eng * num_engines
-        outputs[Aircraft.Propulsion.TOTAL_ENGINE_MASS] = sum(dry_wt_eng_all) / GRAV_ENGLISH_LBM
+        dry_mass_eng = eng_spec_mass * Fn_SLS
+        dry_mass_eng_all = dry_mass_eng * num_engines
+        outputs[Aircraft.Propulsion.TOTAL_ENGINE_MASS] = sum(dry_mass_eng_all)
 
         #######
 
@@ -104,84 +103,78 @@ class TotalEngineMass(om.ExplicitComponent):
 
         pylon_fac = inputs[Aircraft.Engine.PYLON_FACTOR]
         scaler = inputs[Aircraft.Nacelle.MASS_SCALER]
-        spec_nacelle_wt = inputs[Aircraft.Nacelle.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
+        spec_nacelle_mass = inputs[Aircraft.Nacelle.MASS_SPECIFIC]
         nacelle_area = inputs[Aircraft.Nacelle.SURFACE_AREA]
 
-        nacelle_wt = scaler * spec_nacelle_wt * nacelle_area
-        pylon_wt = pylon_fac * (dry_wt_eng + nacelle_wt) ** 0.736
-        # sec_wt_all = sum((nacelle_wt + pylon_wt) * num_engines)
+        nacelle_mass = scaler * spec_nacelle_mass * nacelle_area
+        pylon_mass = pylon_fac * (dry_mass_eng + nacelle_mass) ** 0.736
+        # sec_mass_all = sum((nacelle_mass + pylon_mass) * num_engines)
         # In GASP, WPEI = SKPEI * (WEP + ENP*WTGB), even though WTGB = 0.
-        outputs[Aircraft.Nacelle.MASS] = nacelle_wt / GRAV_ENGLISH_LBM
-        outputs['pylon_mass'] = pylon_wt / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Nacelle.MASS] = nacelle_mass
+        outputs['pylon_mass'] = pylon_mass
 
     def compute_partials(self, inputs, J):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
-        eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
+        eng_spec_mass = inputs[Aircraft.Engine.MASS_SPECIFIC]
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
-        spec_nacelle_wt = inputs[Aircraft.Nacelle.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
+        spec_nacelle_mass = inputs[Aircraft.Nacelle.MASS_SPECIFIC]
         nacelle_area = inputs[Aircraft.Nacelle.SURFACE_AREA]
         pylon_fac = inputs[Aircraft.Engine.PYLON_FACTOR]
         scaler = inputs[Aircraft.Nacelle.MASS_SCALER]
 
         dDWEA_dESW = num_engines * Fn_SLS
-        dDWEA_dFNSLS = num_engines * eng_spec_wt
+        dDWEA_dFNSLS = num_engines * eng_spec_mass
         dNW_dNWS = scaler * nacelle_area
         dPW_dNWS = (
             0.736
             * pylon_fac
-            * (eng_spec_wt * Fn_SLS + scaler * spec_nacelle_wt * nacelle_area) ** (-0.264)
+            * (eng_spec_mass * Fn_SLS + scaler * spec_nacelle_mass * nacelle_area) ** (-0.264)
             * nacelle_area
         )
-        dNW_dNSA = scaler * spec_nacelle_wt
+        dNW_dNSA = scaler * spec_nacelle_mass
         dPW_dNSA = (
             0.736
             * pylon_fac
-            * (eng_spec_wt * Fn_SLS + scaler * spec_nacelle_wt * nacelle_area) ** (-0.264)
-            * spec_nacelle_wt
+            * (eng_spec_mass * Fn_SLS + scaler * spec_nacelle_mass * nacelle_area) ** (-0.264)
+            * spec_nacelle_mass
         )
-        dPW_dPF = (eng_spec_wt * Fn_SLS + scaler * spec_nacelle_wt * nacelle_area) ** 0.736
+        dPW_dPF = (eng_spec_mass * Fn_SLS + scaler * spec_nacelle_mass * nacelle_area) ** 0.736
         dPW_dEWS = (
             0.736
             * pylon_fac
-            * (eng_spec_wt * Fn_SLS + scaler * spec_nacelle_wt * nacelle_area) ** (-0.264)
+            * (eng_spec_mass * Fn_SLS + scaler * spec_nacelle_mass * nacelle_area) ** (-0.264)
             * Fn_SLS
         )
         dPW_dSLST = (
             pylon_fac
             * 0.736
-            * (eng_spec_wt * Fn_SLS + scaler * spec_nacelle_wt * nacelle_area) ** (-0.264)
-            * eng_spec_wt
+            * (eng_spec_mass * Fn_SLS + scaler * spec_nacelle_mass * nacelle_area) ** (-0.264)
+            * eng_spec_mass
         )
 
         J[Aircraft.Propulsion.TOTAL_ENGINE_MASS, Aircraft.Engine.MASS_SPECIFIC] = dDWEA_dESW
-        J[Aircraft.Propulsion.TOTAL_ENGINE_MASS, Aircraft.Engine.SCALED_SLS_THRUST] = (
-            dDWEA_dFNSLS / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.Propulsion.TOTAL_ENGINE_MASS, Aircraft.Engine.SCALED_SLS_THRUST] = dDWEA_dFNSLS
 
         J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SPECIFIC] = dNW_dNWS
         J['pylon_mass', Aircraft.Nacelle.MASS_SPECIFIC] = dPW_dNWS
-        J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.SURFACE_AREA] = dNW_dNSA / GRAV_ENGLISH_LBM
-        J['pylon_mass', Aircraft.Nacelle.SURFACE_AREA] = dPW_dNSA / GRAV_ENGLISH_LBM
-        J['pylon_mass', Aircraft.Engine.PYLON_FACTOR] = dPW_dPF / GRAV_ENGLISH_LBM
+        J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.SURFACE_AREA] = dNW_dNSA
+        J['pylon_mass', Aircraft.Nacelle.SURFACE_AREA] = dPW_dNSA
+        J['pylon_mass', Aircraft.Engine.PYLON_FACTOR] = dPW_dPF
         J['pylon_mass', Aircraft.Engine.MASS_SPECIFIC] = dPW_dEWS
-        J['pylon_mass', Aircraft.Engine.SCALED_SLS_THRUST] = dPW_dSLST / GRAV_ENGLISH_LBM
+        J['pylon_mass', Aircraft.Engine.SCALED_SLS_THRUST] = dPW_dSLST
 
-        dry_wt_eng = eng_spec_wt * Fn_SLS
-        J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER] = (
-            spec_nacelle_wt * nacelle_area
-        ) / GRAV_ENGLISH_LBM
+        dry_mass_eng = eng_spec_mass * Fn_SLS
+        J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER] = spec_nacelle_mass * nacelle_area
         J['pylon_mass', Aircraft.Nacelle.MASS_SCALER] = (
             pylon_fac
             * 0.736
-            * (dry_wt_eng + scaler * spec_nacelle_wt * nacelle_area) ** -0.264
-            * spec_nacelle_wt
+            * (dry_mass_eng + scaler * spec_nacelle_mass * nacelle_area) ** -0.264
+            * spec_nacelle_mass
             * nacelle_area
-        ) / GRAV_ENGLISH_LBM
+        )
 
-        J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER] = (
-            spec_nacelle_wt * nacelle_area
-        ) / GRAV_ENGLISH_LBM
+        J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER] = spec_nacelle_mass * nacelle_area
 
 
 class EnginePodMass(om.ExplicitComponent):
@@ -232,23 +225,23 @@ class EnginePodMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
         CK14 = inputs[Aircraft.Engine.POD_MASS_SCALER]
-        nacelle_wt = inputs[Aircraft.Nacelle.MASS] * GRAV_ENGLISH_LBM
-        pylon_wt = inputs['pylon_mass'] * GRAV_ENGLISH_LBM
-        pod_wt = nacelle_wt + pylon_wt
-        outputs[Aircraft.Engine.POD_MASS] = pod_wt / GRAV_ENGLISH_LBM
+        nacelle_mass = inputs[Aircraft.Nacelle.MASS]
+        pylon_mass = inputs['pylon_mass']
+        pod_mass = nacelle_mass + pylon_mass
+        outputs[Aircraft.Engine.POD_MASS] = pod_mass
         # TODO TOTAL_ENGINE_POD_MASS by definition includes everything *in* the pod too! This component
         #      should probably use a new/different variable name (same for pod mass scaler)
-        pod_wt_sum = np.dot(CK14 * pod_wt, num_engines)
-        outputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS] = pod_wt_sum / GRAV_ENGLISH_LBM
+        pod_mass_sum = np.dot(CK14 * pod_mass, num_engines)
+        outputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS] = pod_mass_sum
 
     def compute_partials(self, inputs, J):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         CK14 = inputs[Aircraft.Engine.POD_MASS_SCALER]
-        nacelle_wt = inputs[Aircraft.Nacelle.MASS] * GRAV_ENGLISH_LBM
-        pylon_wt = inputs['pylon_mass'] * GRAV_ENGLISH_LBM
-        pod_wt = nacelle_wt + pylon_wt
+        nacelle_mass = inputs[Aircraft.Nacelle.MASS]
+        pylon_mass = inputs['pylon_mass']
+        pod_mass = nacelle_mass + pylon_mass
 
         J[Aircraft.Engine.POD_MASS, Aircraft.Nacelle.MASS] = np.ones(num_engine_type)
         J[Aircraft.Engine.POD_MASS, 'pylon_mass'] = np.ones(num_engine_type)
@@ -258,7 +251,7 @@ class EnginePodMass(om.ExplicitComponent):
         J[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, 'pylon_mass'] = CK14 * num_engines
 
         J[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, Aircraft.Engine.POD_MASS_SCALER] = (
-            pod_wt * num_engines / GRAV_ENGLISH_LBM
+            pod_mass * num_engines
         )
 
 
@@ -307,28 +300,28 @@ class AdditionalEngineMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         CK7 = inputs[Aircraft.Propulsion.MISC_MASS_SCALER]
         c_instl = self.options[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
-        eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
+        eng_spec_mass = inputs[Aircraft.Engine.MASS_SPECIFIC]
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
-        dry_wt_eng = eng_spec_wt * Fn_SLS
+        dry_mass_eng = eng_spec_mass * Fn_SLS
         # In GASP, WPEI = SKPEI * (WEP + ENP*WTGB), even though WTGB = 0.
-        eng_instl_wt = c_instl * dry_wt_eng
+        eng_instl_mass = c_instl * dry_mass_eng
 
-        outputs[Aircraft.Engine.ADDITIONAL_MASS] = CK7 * eng_instl_wt / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Engine.ADDITIONAL_MASS] = CK7 * eng_instl_mass
 
     def compute_partials(self, inputs, J):
         c_instl = self.options[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
 
-        eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
+        eng_spec_mass = inputs[Aircraft.Engine.MASS_SPECIFIC]
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         CK7 = inputs[Aircraft.Propulsion.MISC_MASS_SCALER]
 
         J[Aircraft.Engine.ADDITIONAL_MASS, Aircraft.Engine.MASS_SPECIFIC] = CK7 * c_instl * Fn_SLS
         J[Aircraft.Engine.ADDITIONAL_MASS, Aircraft.Engine.SCALED_SLS_THRUST] = (
-            CK7 * c_instl * eng_spec_wt / GRAV_ENGLISH_LBM
+            CK7 * c_instl * eng_spec_mass
         )
         J[Aircraft.Engine.ADDITIONAL_MASS, Aircraft.Propulsion.MISC_MASS_SCALER] = (
-            c_instl * eng_spec_wt * Fn_SLS / GRAV_ENGLISH_LBM
+            c_instl * eng_spec_mass * Fn_SLS
         )
 
 
@@ -450,38 +443,36 @@ class WingMountEngineMass(om.ExplicitComponent):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
         num_engine_type = len(num_engines)
         CK7 = inputs[Aircraft.Propulsion.MISC_MASS_SCALER]
-        eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
+        eng_spec_mass = inputs[Aircraft.Engine.MASS_SPECIFIC]
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
-        dry_wt_eng = eng_spec_wt * Fn_SLS
-        dry_wt_eng_all = dry_wt_eng * num_engines
+        dry_mass_eng = eng_spec_mass * Fn_SLS
+        dry_mass_eng_all = dry_mass_eng * num_engines
 
-        eng_instl_wt = inputs[Aircraft.Engine.ADDITIONAL_MASS] / CK7 * GRAV_ENGLISH_LBM
-        eng_instl_wt_all = eng_instl_wt * num_engines
+        eng_instl_mass = inputs[Aircraft.Engine.ADDITIONAL_MASS] / CK7
+        eng_instl_mass_all = eng_instl_mass * num_engines
 
         CK5 = inputs[Aircraft.Engine.MASS_SCALER]
         eng_span_frac = inputs[Aircraft.Engine.WING_LOCATIONS]
         eng_additional_mass_sum = sum(inputs[Aircraft.Engine.ADDITIONAL_MASS] * num_engines)
-        pod_wt = inputs[Aircraft.Engine.POD_MASS] * GRAV_ENGLISH_LBM
-        pod_wt_all = pod_wt * num_engines
+        pod_mass = inputs[Aircraft.Engine.POD_MASS]
+        pod_mass_all = pod_mass * num_engines
 
         # In GASP, WPSTAR=CK5*WEP+CK7*WPEI+WPROP+WTGB*ENP, even though the last two terms are 0.
         if self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]:
             aug_mass = inputs['aug_mass']
             outputs['eng_comb_mass'] = (
-                sum(CK5 * dry_wt_eng_all) / GRAV_ENGLISH_LBM + eng_additional_mass_sum + aug_mass
+                sum(CK5 * dry_mass_eng_all) + eng_additional_mass_sum + aug_mass
             )
         else:
-            outputs['eng_comb_mass'] = (
-                sum(CK5 * dry_wt_eng_all) / GRAV_ENGLISH_LBM + eng_additional_mass_sum
-            )
+            outputs['eng_comb_mass'] = sum(CK5 * dry_mass_eng_all) + eng_additional_mass_sum
 
-        prop_wt = inputs[Aircraft.Engine.Propeller.MASS] * GRAV_ENGLISH_LBM
-        prop_wt_all = prop_wt * num_engines
-        outputs['prop_mass_sum'] = sum(prop_wt_all) / GRAV_ENGLISH_LBM
+        prop_mass = inputs[Aircraft.Engine.Propeller.MASS]
+        prop_mass_all = prop_mass * num_engines
+        outputs['prop_mass_sum'] = sum(prop_mass_all)
 
         span_frac_factor = eng_span_frac / (eng_span_frac + 0.001)
         # sum span_frac_factor for each engine type
-        span_frac_factor_sum = np.zeros(num_engine_type, dtype=Fn_SLS.dtype)
+        span_frac_factor_sum = np.zeros(num_engine_type, dtype=eng_span_frac.dtype)
         idx = 0
         for i in range(num_engine_type):
             # fmt: off
@@ -489,77 +480,66 @@ class WingMountEngineMass(om.ExplicitComponent):
             # fmt: on
             idx = idx + num_engines[i]
 
-        main_gear_wt = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS] * GRAV_ENGLISH_LBM
+        main_gear_mass = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS]
         loc_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
         # In GASP,
         # WM = YP/(YP+.001)*(WEP+WPEI+WPES+WPROP+ENP*WTGB)
         #      + WMG*YMG/(YMG+.001)
         #      + WCMIN*YC/(YC+.001)
-        outputs['wing_mounted_mass'] = (
-            sum(
-                span_frac_factor_sum
-                * (dry_wt_eng_all + eng_instl_wt_all + pod_wt_all + prop_wt_all)
-            )
-            + main_gear_wt * loc_main_gear / (loc_main_gear + 0.001)
-        ) / GRAV_ENGLISH_LBM
+        outputs['wing_mounted_mass'] = sum(
+            span_frac_factor_sum
+            * (dry_mass_eng_all + eng_instl_mass_all + pod_mass_all + prop_mass_all)
+        ) + main_gear_mass * loc_main_gear / (loc_main_gear + 0.001)
 
     def compute_partials(self, inputs, J):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
         num_engine_type = len(num_engines)
-        c_instl = self.options[Aircraft.Engine.ADDITIONAL_MASS_FRACTION]
 
-        eng_spec_wt = inputs[Aircraft.Engine.MASS_SPECIFIC] * GRAV_ENGLISH_LBM
+        eng_spec_mass = inputs[Aircraft.Engine.MASS_SPECIFIC]
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         CK5 = inputs[Aircraft.Engine.MASS_SCALER]
         CK7 = inputs[Aircraft.Propulsion.MISC_MASS_SCALER]
         eng_span_frac = inputs[Aircraft.Engine.WING_LOCATIONS]
-        main_gear_wt = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS] * GRAV_ENGLISH_LBM
+        main_gear_mass = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS]
         loc_main_gear = inputs[Aircraft.LandingGear.MAIN_GEAR_LOCATION]
 
-        J['eng_comb_mass', Aircraft.Engine.MASS_SCALER] = (
-            eng_spec_wt * Fn_SLS * num_engines / GRAV_ENGLISH_LBM
-        )
+        J['eng_comb_mass', Aircraft.Engine.MASS_SCALER] = eng_spec_mass * Fn_SLS * num_engines
         J['eng_comb_mass', Aircraft.Engine.MASS_SPECIFIC] = CK5 * num_engines * Fn_SLS
-        J['eng_comb_mass', Aircraft.Engine.SCALED_SLS_THRUST] = (
-            CK5 * num_engines * eng_spec_wt / GRAV_ENGLISH_LBM
-        )
+        J['eng_comb_mass', Aircraft.Engine.SCALED_SLS_THRUST] = CK5 * num_engines * eng_spec_mass
         J['eng_comb_mass', Aircraft.Engine.ADDITIONAL_MASS] = num_engines
 
         J['prop_mass_sum', Aircraft.Engine.Propeller.MASS] = num_engines
 
-        dry_wt_eng = eng_spec_wt * Fn_SLS
-        pod_wt = inputs[Aircraft.Engine.POD_MASS] * GRAV_ENGLISH_LBM
-        eng_instl_wt = c_instl * dry_wt_eng
-        prop_wt = inputs[Aircraft.Engine.Propeller.MASS] * GRAV_ENGLISH_LBM
-        # prop_wt_all = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
+        dry_mass_eng = eng_spec_mass * Fn_SLS
+        pod_mass = inputs[Aircraft.Engine.POD_MASS]
+        eng_instl_mass = inputs[Aircraft.Engine.ADDITIONAL_MASS] / CK7
+        prop_mass = inputs[Aircraft.Engine.Propeller.MASS]
+        # prop_mass_all = sum(num_engines * prop_mass)
         span_frac_factor = eng_span_frac / (eng_span_frac + 0.001)
         # sum span_frac_factor for each engine type
-        span_frac_factor_sum = np.zeros(num_engine_type, dtype=Fn_SLS.dtype)
-        wing_mass_deriv = np.zeros(len(span_frac_factor), dtype=Fn_SLS.dtype)
+        span_frac_factor_sum = np.zeros(num_engine_type, dtype=eng_span_frac.dtype)
+        wing_mass_deriv = np.zeros(len(span_frac_factor), dtype=eng_span_frac.dtype)
         idx = 0
-        # wing_mass_vec = (eng_spec_wt * Fn_SLS * (1 + c_instl) +
-        #                 sec_wt + prop_wt) * num_engines
-        wing_mass_vec = (dry_wt_eng + eng_instl_wt + pod_wt + prop_wt) * num_engines
+        wing_mass_vec = (dry_mass_eng + eng_instl_mass + pod_mass + prop_mass) * num_engines
         for i in range(num_engine_type):
             span_frac_factor_sum[i] = sum(span_frac_factor[idx : idx + num_engines[i]])
             wing_mass_deriv[idx : idx + num_engines[i]] = wing_mass_vec[i]
             idx = idx + num_engines[i]
 
         J['wing_mounted_mass', Aircraft.Engine.WING_LOCATIONS] = (
-            0.001 / (eng_span_frac + 0.001) ** 2 * wing_mass_deriv / GRAV_ENGLISH_LBM
+            0.001 / (eng_span_frac + 0.001) ** 2 * wing_mass_deriv
         )
         J['wing_mounted_mass', Aircraft.Engine.MASS_SPECIFIC] = (
             span_frac_factor_sum * (Fn_SLS) * num_engines
         )
-        J['wing_mounted_mass', Aircraft.Engine.SCALED_SLS_THRUST] = (
-            span_frac_factor_sum * (num_engines * eng_spec_wt) / GRAV_ENGLISH_LBM
+        J['wing_mounted_mass', Aircraft.Engine.SCALED_SLS_THRUST] = span_frac_factor_sum * (
+            num_engines * eng_spec_mass
         )
         J['wing_mounted_mass', Aircraft.LandingGear.MAIN_GEAR_MASS] = loc_main_gear / (
             loc_main_gear + 0.001
         )
         J['wing_mounted_mass', Aircraft.LandingGear.MAIN_GEAR_LOCATION] = (
-            main_gear_wt
-            / GRAV_ENGLISH_LBM
+            main_gear_mass
             * ((loc_main_gear + 0.001) - loc_main_gear)
             / (loc_main_gear + 0.001) ** 2
         )

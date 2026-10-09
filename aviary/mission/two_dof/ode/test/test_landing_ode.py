@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.landing_ode import LandingSegment
@@ -11,7 +11,6 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
-from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
@@ -41,7 +40,6 @@ class DLandTestCase(unittest.TestCase):
         setup_model_options(self.prob, options)
         self.prob.model.set_input_defaults(Mission.Landing.AIRPORT_ALTITUDE, 0, units='ft')
 
-    def test_dland(self):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         set_params_for_unit_tests(self.prob)
@@ -58,18 +56,26 @@ class DLandTestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, 0.0, units='unitless')
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25, units='unitless')
 
+    def test_dland(self):
         self.prob.run_model()
 
         testvals = {
-            Mission.Landing.INITIAL_VELOCITY: 240.9179994,  # ft/s (142.74 knot)
-            'TAS_touchdown': 213.1197687,  # ft/s (126.27 knot)
-            'theta': 0.06230825,  # rad (3.57 deg)
-            'flare_alt': 20.8,
-            'ground_roll_distance': 1798,
-            Mission.Landing.GROUND_DISTANCE: 2980,
-            'CL_max': 2.9533,
+            Mission.Landing.INITIAL_VELOCITY: (240.9179994, 'ft/s'),
+            'TAS_touchdown': (213.1197687, 'ft/s'),
+            'theta': (0.06230825, 'rad'),
+            'flare_alt': (20.8, 'ft'),
+            'ground_roll_distance': (1798, 'ft'),
+            Mission.Landing.GROUND_DISTANCE: (2980, 'ft'),
+            'CL_max': (2.9533, 'unitless'),
         }
-        check_prob_outputs(self.prob, testvals, rtol=1e-2)
+
+        for var_name, (expected, units) in testvals.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, 1e-2)
+
+    def test_partials(self):
+        self.prob.run_model()
 
         partial_data = self.prob.check_partials(
             out_stream=None, method='cs', excludes=['*params*', '*aero*']

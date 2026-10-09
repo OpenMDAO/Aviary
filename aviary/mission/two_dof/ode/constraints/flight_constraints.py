@@ -1,9 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class FlightConstraints(om.ExplicitComponent):
@@ -18,6 +17,7 @@ class FlightConstraints(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -27,16 +27,16 @@ class FlightConstraints(om.ExplicitComponent):
             self,
             Dynamic.Vehicle.MASS,
             shape=nn,
-            units='lbm',
+            units='kg',
         )
 
-        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
         add_aviary_input(
             self,
             Dynamic.Atmosphere.DENSITY,
             shape=nn,
-            units='slug/ft**3',
+            units='kg/m**3',
         )
         self.add_input(
             'CL_max',
@@ -64,7 +64,7 @@ class FlightConstraints(om.ExplicitComponent):
             self,
             Dynamic.Mission.VELOCITY,
             shape=nn,
-            units='ft/s',
+            units='m/s',
         )
 
         self.add_output(
@@ -76,11 +76,11 @@ class FlightConstraints(om.ExplicitComponent):
         self.add_output(
             'TAS_violation',
             val=np.ones(nn),
-            units='ft/s',
+            units='m/s',
             desc='value to show if minimum TAS constraint is being violated. Negative or'
             ' zero if constraint is satisfied.',
         )
-        self.add_output('TAS_min', val=np.zeros(nn), units='ft/s')
+        self.add_output('TAS_min', val=np.zeros(nn), units='m/s')
 
         self.declare_partials(
             'theta',
@@ -125,7 +125,9 @@ class FlightConstraints(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
+        gravity = self.options[Mission.GRAVITY][0]
+
+        weight = inputs[Dynamic.Vehicle.MASS] * gravity
         wing_area = inputs[Aircraft.Wing.AREA]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         CL_max = inputs['CL_max']
@@ -144,7 +146,9 @@ class FlightConstraints(om.ExplicitComponent):
         outputs['TAS_violation'] = TAS_min - TAS
 
     def compute_partials(self, inputs, J):
-        weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
+        gravity = self.options[Mission.GRAVITY][0]
+
+        weight = inputs[Dynamic.Vehicle.MASS] * gravity
         wing_area = inputs[Aircraft.Wing.AREA]
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         CL_max = inputs['CL_max']
@@ -154,11 +158,7 @@ class FlightConstraints(om.ExplicitComponent):
         J['theta', Aircraft.Wing.INCIDENCE] = -1
 
         J['TAS_violation', Dynamic.Vehicle.MASS] = (
-            1.1
-            * 0.5
-            * (2 / (wing_area * rho * CL_max)) ** 0.5
-            * weight ** (-0.5)
-            * GRAV_ENGLISH_LBM
+            1.1 * 0.5 * (2 / (wing_area * rho * CL_max)) ** 0.5 * weight ** (-0.5) * gravity
         )
         J['TAS_violation', Dynamic.Atmosphere.DENSITY] = (
             1.1 * (2 * weight / (wing_area * CL_max)) ** 0.5 * (-0.5) * rho ** (-1.5)
@@ -172,7 +172,7 @@ class FlightConstraints(om.ExplicitComponent):
         )
 
         J['TAS_min', Dynamic.Vehicle.MASS] = 1.1 * (
-            0.5 * (2 / (wing_area * rho * CL_max)) ** 0.5 * weight ** (-0.5) * GRAV_ENGLISH_LBM
+            0.5 * (2 / (wing_area * rho * CL_max)) ** 0.5 * weight ** (-0.5) * gravity
         )
         J['TAS_min', Dynamic.Atmosphere.DENSITY] = 1.1 * (
             (2 * weight / (wing_area * CL_max)) ** 0.5 * (-0.5) * rho ** (-1.5)
@@ -182,25 +182,4 @@ class FlightConstraints(om.ExplicitComponent):
         )
         J['TAS_min', Aircraft.Wing.AREA] = 1.1 * (
             (2 * weight / (rho * CL_max)) ** 0.5 * (-0.5) * wing_area ** (-1.5)
-        )
-
-
-class ClimbAtTopOfClimb(om.ExplicitComponent):
-    """This class is not used nor tested."""
-
-    def setup(self):
-        add_aviary_input(self, Dynamic.Mission.VELOCITY, units='ft/s', val=-200)
-        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, units='rad', val=0.0)
-        self.add_output('ROC', units='ft/s')
-        self.declare_partials('*', '*')
-
-    def compute(self, inputs, outputs):
-        outputs['ROC'] = inputs[Dynamic.Mission.VELOCITY] * np.sin(
-            inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
-        )
-
-    def compute_partials(self, inputs, J):
-        J['ROC', Dynamic.Mission.VELOCITY] = np.sin(inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE])
-        J['ROC', Dynamic.Mission.FLIGHT_PATH_ANGLE] = inputs[Dynamic.Mission.VELOCITY] * np.cos(
-            inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
         )

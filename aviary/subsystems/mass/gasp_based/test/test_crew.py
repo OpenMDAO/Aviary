@@ -12,147 +12,71 @@ from aviary.variable_info.variables import Aircraft
 
 
 @use_tempdirs
-class CrewTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case."""
+class CrewMassTestCase(unittest.TestCase):
+    """Tests for CabinCrewMass and FlightCrewMass."""
 
-    def setUp(self):
+    def _make_prob(self, engine_type, num_passengers):
         options = AviaryValues()
+        options.set_val(Aircraft.Engine.TYPE, val=[engine_type], units='unitless')
         options.set_val(
-            Aircraft.Engine.TYPE, val=[GASPEngineType.TURBOJET], units='unitless'
-        )  # arbitrarily set
-        options.set_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless'
-        )  # large_single_aisle_1_GASP.csv
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=num_passengers, units='unitless'
+        )
 
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
+        prob = om.Problem()
+        prob.model.add_subsystem(
             'non_flight_crew',
             CabinCrewMass(),
             promotes=['*'],
         )
 
-        self.prob.model.add_subsystem(
+        prob.model.add_subsystem(
             'flight_crew',
             FlightCrewMass(),
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(
+        prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
-        setup_model_options(self.prob, options)
+        setup_model_options(prob, options)
 
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 800.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
-
-
-@use_tempdirs
-class CrewTestCase2(unittest.TestCase):
-    """Gravity Modification Test."""
-
-    def setUp(self):
-        options = AviaryValues()
-        options.set_val(
-            Aircraft.Engine.TYPE, val=[GASPEngineType.TURBOJET], units='unitless'
-        )  # arbitrarily set
-        options.set_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless'
-        )  # large_single_aisle_1_GASP.csv
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'non_flight_crew',
-            CabinCrewMass(),
-            promotes=['*'],
-        )
-
-        self.prob.model.add_subsystem(
-            'flight_crew',
-            FlightCrewMass(),
-            promotes=['*'],
-        )
-
-        import aviary.subsystems.mass.gasp_based.crew as crew
-
-        crew.GRAV_ENGLISH_LBM = 1.0
-
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
-        )  # large_single_aisle_1_GASP.csv
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.crew as crew
-
-        crew.GRAV_ENGLISH_LBM = 1.0
+        prob.setup(check=False, force_alloc_complex=True)
+        return prob
 
     def test_case1(self):
-        self.prob.run_model()
+        """This is the large single aisle 1 V3 test case."""
+        prob = self._make_prob(
+            engine_type=GASPEngineType.TURBOJET,  # arbitrarily set
+            num_passengers=180,  # large_single_aisle_1_GASP.csv
+        )
+        prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 800.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
+        with self.subTest(check='value'):
+            assert_near_equal(prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 800.0, tol)
+            assert_near_equal(prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+        with self.subTest(check='partials'):
+            partial_data = prob.check_partials(out_stream=None, method='cs')
+            assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
-
-@use_tempdirs
-class CrewTestCase3(unittest.TestCase):
-    """BWB Parameters."""
-
-    def setUp(self):
-        options = AviaryValues()
-        options.set_val(
-            Aircraft.Engine.TYPE, val=[GASPEngineType.RECIP_CARB], units='unitless'
-        )  # arbitrarily set
-        options.set_val(
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless'
-        )  # large_single_aisle_1_GASP.csv
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'non_flight_crew',
-            CabinCrewMass(),
-            promotes=['*'],
+    def test_case3(self):
+        """BWB Parameters."""
+        prob = self._make_prob(
+            engine_type=GASPEngineType.RECIP_CARB,  # arbitrarily set
+            num_passengers=150,  # large_single_aisle_1_GASP.csv
         )
-
-        self.prob.model.add_subsystem(
-            'flight_crew',
-            FlightCrewMass(),
-            promotes=['*'],
-        )
-
-        self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
-        )
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
+        prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 600.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
+        with self.subTest(check='value'):
+            assert_near_equal(prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 600.0, tol)
+            assert_near_equal(prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+        with self.subTest(check='partials'):
+            partial_data = prob.check_partials(out_stream=None, method='cs')
+            assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
+from aviary.utils.math_utils import deg2rad
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -92,7 +93,7 @@ class CompressibilityDrag(om.ExplicitComponent):
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         TC = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         max_camber_70 = inputs[Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN]
-        sweep25 = inputs[Aircraft.Wing.SWEEP]
+        sweep25 = deg2rad(inputs[Aircraft.Wing.SWEEP])
         wing_taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         fuse_area = inputs[Aircraft.Fuselage.CROSS_SECTION]
         base_area = inputs[Aircraft.Design.BASE_AREA]
@@ -100,7 +101,7 @@ class CompressibilityDrag(om.ExplicitComponent):
         fuselage_len_to_diam_ratio = inputs[Aircraft.Fuselage.LENGTH_TO_DIAMETER]
         diam_to_wing_span_ratio = inputs[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN]
 
-        ART = AR * np.tan(sweep25 / 57.2958) + (1.0 - wing_taper_ratio) / (1.0 + wing_taper_ratio)
+        ART = AR * np.tan(sweep25) + (1.0 - wing_taper_ratio) / (1.0 + wing_taper_ratio)
         x = np.empty((nn, 2), dtype=mach.dtype)
         x[:, 0] = del_mach
         x[:, 1] = ART
@@ -141,9 +142,7 @@ class CompressibilityDrag(om.ExplicitComponent):
                 if wing_taper_ratio == 1.0:
                     wing_taper_ratio = 0.5
 
-                int_compress_drag_coeff = CD5 * (
-                    1.0 / (1.0 - wing_taper_ratio) / np.cos(sweep25 / 57.2958)
-                )
+                int_compress_drag_coeff = CD5 * (1.0 / (1.0 - wing_taper_ratio) / np.cos(sweep25))
 
                 compress_drag_coeff[idx_mach] += int_compress_drag_coeff
 
@@ -236,7 +235,7 @@ class CompressibilityDrag(om.ExplicitComponent):
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         TC = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         max_camber_70 = inputs[Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN]
-        sweep25 = inputs[Aircraft.Wing.SWEEP]
+        sweep25 = deg2rad(inputs[Aircraft.Wing.SWEEP])
         wing_taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         fuse_area = inputs[Aircraft.Fuselage.CROSS_SECTION]
         base_area = inputs[Aircraft.Design.BASE_AREA]
@@ -249,7 +248,7 @@ class CompressibilityDrag(om.ExplicitComponent):
 
         dCd3_dCD3 = TC ** (5.0 / 3.0) * (1.0 + max_camber_70 / 10.0)
         dCd4_dCD4 = (fuse_area / wing_area) * (1.0 / fuselage_len_to_diam_ratio**2)
-        dCd5_dCD5 = 1.0 / (1.0 - wing_taper_ratio) / np.cos(sweep25 / 57.2958)
+        dCd5_dCD5 = 1.0 / (1.0 - wing_taper_ratio) / np.cos(sweep25)
 
         ddel_mach_ddesign_Mach = -1.0
         ddel_mach_dMach = 1.0
@@ -277,15 +276,15 @@ class CompressibilityDrag(om.ExplicitComponent):
         dCd_dmax_camber_70 = dCd3_dmax_camber_70
 
         # wrt AR
-        dART_dAR = np.tan(sweep25 / 57.2958)
+        dART_dAR = np.tan(sweep25)
         dCd_dAR = dCd3_dCD3 * dCD3_dART * dART_dAR
 
         dART_dwing_taper_ratio = -(1 - wing_taper_ratio) / (wing_taper_ratio + 1) ** 2 - 1.0 / (
             wing_taper_ratio + 1
         )
 
-        dART_dsweep25 = AR * (np.tan(sweep25 / 57.2958) ** 2 + 1) / 57.2958
-        dCd3_dsweep25 = dCd3_dCD3 * dCD3_dART * dART_dsweep25
+        dART_dsweep25 = AR * (np.tan(sweep25) ** 2 + 1)
+        dCd3_dsweep25 = dCd3_dCD3 * dCD3_dART * dART_dsweep25 * deg2rad(1)
 
         dCd_ddiam_to_wing_span_ratio = 0
 
@@ -327,9 +326,7 @@ class CompressibilityDrag(om.ExplicitComponent):
             if len(idx_mach[0]) > 0:
                 dCd_dMach[idx_mach] += dCd5_dCD5 * dCD5_dMach
 
-                dCd5_dwing_taper_ratio = CD5 / (
-                    (1.0 - wing_taper_ratio) ** 2 * np.cos(sweep25 / 57.2958)
-                )
+                dCd5_dwing_taper_ratio = CD5 / ((1.0 - wing_taper_ratio) ** 2 * np.cos(sweep25))
                 dCd_dwing_taper_ratio[idx_mach] += dCd5_dwing_taper_ratio
 
                 # wrt diam_to_wing_span_ratio
@@ -337,8 +334,9 @@ class CompressibilityDrag(om.ExplicitComponent):
 
                 dCd5_dsweep25 = (
                     CD5
-                    * np.sin(sweep25 / 57.2958)
-                    / (57.2958 * (1.0 - wing_taper_ratio) * np.cos(sweep25 / 57.2958) ** 2)
+                    * np.sin(sweep25)
+                    * deg2rad(1)
+                    / ((1.0 - wing_taper_ratio) * np.cos(sweep25) ** 2)
                 )
                 dCd_dsweep25[idx_mach] += dCd5_dsweep25
 

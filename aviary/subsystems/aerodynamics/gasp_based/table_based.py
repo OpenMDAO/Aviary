@@ -3,7 +3,6 @@ from pathlib import Path
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.aerodynamics.flops_based.drag import ScaledCD
 from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces, TimeRamp
 from aviary.utils.csv_data_file import read_data_file
@@ -379,9 +378,11 @@ class TabularLowSpeedAero(om.Group):
 
 
 class GearDragIncrement(om.ExplicitComponent):
-    """Gear drag coefficient increment.
+    """
+    Gear drag coefficient increment.
 
     Constant for a given *full* flap deflection.
+    The methodology is modified to use mass instead of weight.
     """
 
     def initialize(self):
@@ -418,10 +419,9 @@ class GearDragIncrement(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         gross_mass_initial, wing_area, flap_defl = inputs.values()
-        gross_wt_initial = gross_mass_initial * GRAV_ENGLISH_LBM
 
         # landing gear flat plate area
-        grfe = 0.0033 * gross_wt_initial**0.785
+        grfe = 0.0033 * gross_mass_initial**0.785
         # landing gear CD increment for zero flap deflection
         grcd = grfe / wing_area
 
@@ -429,15 +429,12 @@ class GearDragIncrement(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         gross_mass_initial, wing_area, flap_defl = inputs.values()
-        gross_wt_initial = gross_mass_initial * GRAV_ENGLISH_LBM
-        grfe = 0.0033 * gross_wt_initial**0.785
+        grfe = 0.0033 * gross_mass_initial**0.785
         grcd = grfe / wing_area
 
         J['dCD', Aircraft.Design.GROSS_MASS] = (
-            (0.0033 * 0.785 * gross_wt_initial ** (0.785 - 1) / wing_area)
-            * (1 - 0.454545 * flap_defl / 50)
-            * GRAV_ENGLISH_LBM
-        )
+            0.0033 * 0.785 * gross_mass_initial ** (0.785 - 1) / wing_area
+        ) * (1 - 0.454545 * flap_defl / 50)
         J['dCD', Aircraft.Wing.AREA] = -(grfe / wing_area**2) * (1 - 0.454545 * flap_defl / 50)
         J['dCD', 'flap_defl'] = -grcd * 0.454545 / 50
 

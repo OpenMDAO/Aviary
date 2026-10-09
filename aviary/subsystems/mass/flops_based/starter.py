@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_engine_count_factor,
     distributed_nacelle_diam_factor,
@@ -13,9 +12,9 @@ from aviary.variable_info.variables import Aircraft
 
 class TransportStarterMass(om.ExplicitComponent):
     """
-    Calculates total sum of all engine starter masses for the entire propulsion
-    system (all engines).  The methodology is based on the
-    FLOPS weight equations, modified to output mass instead of weight.
+    Calculates total sum of all engine starter masses for the entire propulsion system (all
+    engines). The methodology is based on the FLOPS weight equations, modified to output mass
+    instead of weight.
     """
 
     def initialize(self):
@@ -52,7 +51,7 @@ class TransportStarterMass(om.ExplicitComponent):
 
         outputs[Aircraft.Propulsion.TOTAL_STARTER_MASS] = (
             11.0 * num_engines_factor * max_mach**0.32 * f_nacelle**1.6
-        ) / GRAV_ENGLISH_LBM
+        )
 
     def compute_partials(self, inputs, J):
         total_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
@@ -80,7 +79,7 @@ class TransportStarterMass(om.ExplicitComponent):
             * diam_deriv_fact**1.6
             * np.sqrt(thrust_ratio)
             * d_avg**0.6
-        ) / GRAV_ENGLISH_LBM
+        )
 
         J[Aircraft.Propulsion.TOTAL_STARTER_MASS, Aircraft.Engine.SCALE_FACTOR] = (
             17.6
@@ -89,8 +88,8 @@ class TransportStarterMass(om.ExplicitComponent):
             * diam_deriv_fact**1.6
             * d_avg**0.6
             * (d_nacelle * 0.5 / np.sqrt(thrust_ratio))
-        ) / GRAV_ENGLISH_LBM
+        )
 
         J[Aircraft.Propulsion.TOTAL_STARTER_MASS, Aircraft.Design.MAX_MACH] = (
             0.32 * 11.0 * eng_count_factor * max_mach**-0.68 * f_nacelle**1.6
-        ) / GRAV_ENGLISH_LBM
+        )

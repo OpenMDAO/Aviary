@@ -1,8 +1,8 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class HorizontalTailMass(om.ExplicitComponent):
@@ -13,6 +13,7 @@ class HorizontalTailMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
@@ -27,46 +28,53 @@ class HorizontalTailMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+        gravity = self.options[Mission.GRAVITY]
 
         area = inputs[Aircraft.HorizontalTail.AREA]
-        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        togm = inputs[Aircraft.Design.GROSS_MASS]
         scaler = inputs[Aircraft.HorizontalTail.MASS_SCALER]
         taper_ratio = inputs[Aircraft.HorizontalTail.TAPER_RATIO]
 
+        gross_weight = mass_to_force_english((togm, 'lbm'), gravity)
+
         if num_tails == 1:
             outputs[Aircraft.HorizontalTail.MASS] = (
-                scaler * 0.53 * area * gross_weight**0.20 * (taper_ratio + 0.50) / GRAV_ENGLISH_LBM
+                scaler * 0.53 * area * gross_weight**0.20 * (taper_ratio + 0.50)
             )
         elif num_tails == 0:
             outputs[Aircraft.HorizontalTail.MASS] = 0.0
         else:
-            raise ('User needs to provide a mass equation for horizontal tail.')
+            raise UserWarning('FLOPS mass regressions do not support multiple horizontal tails.')
 
     def compute_partials(self, inputs, J):
         num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+        gravity = self.options[Mission.GRAVITY]
 
         area = inputs[Aircraft.HorizontalTail.AREA]
-        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        togm = inputs[Aircraft.Design.GROSS_MASS]
         scaler = inputs[Aircraft.HorizontalTail.MASS_SCALER]
         taper_ratio = inputs[Aircraft.HorizontalTail.TAPER_RATIO]
+
+        gross_weight = mass_to_force_english((togm, 'lbm'), gravity)
+        dforce_dmass = mass_to_force_english_derivative(gravity)
 
         gross_weight_exp = gross_weight**0.20
 
         if num_tails == 1:
             J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.AREA] = (
-                scaler * 0.530 * gross_weight_exp * (taper_ratio + 0.50) / GRAV_ENGLISH_LBM
+                scaler * 0.530 * gross_weight_exp * (taper_ratio + 0.50)
             )
 
             J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.MASS_SCALER] = (
-                0.530 * area * gross_weight_exp * (taper_ratio + 0.50) / GRAV_ENGLISH_LBM
+                0.530 * area * gross_weight_exp * (taper_ratio + 0.50)
             )
 
             J[Aircraft.HorizontalTail.MASS, Aircraft.Design.GROSS_MASS] = (
-                scaler * 0.106 * area * gross_weight**-0.8 * (taper_ratio + 0.50)
+                dforce_dmass * scaler * 0.106 * area * gross_weight**-0.8 * (taper_ratio + 0.50)
             )
 
             J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.TAPER_RATIO] = (
-                scaler * 0.530 * area * gross_weight_exp / GRAV_ENGLISH_LBM
+                scaler * 0.530 * area * gross_weight_exp
             )
         elif num_tails == 0:
             J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.AREA] = 0.0
@@ -95,16 +103,12 @@ class AltHorizontalTailMass(om.ExplicitComponent):
         area = inputs[Aircraft.HorizontalTail.AREA]
         scaler = inputs[Aircraft.HorizontalTail.MASS_SCALER]
 
-        outputs[Aircraft.HorizontalTail.MASS] = scaler * 5.4 * area / GRAV_ENGLISH_LBM
+        outputs[Aircraft.HorizontalTail.MASS] = scaler * 5.4 * area
 
     def compute_partials(self, inputs, J):
         area = inputs[Aircraft.HorizontalTail.AREA]
         scaler = inputs[Aircraft.HorizontalTail.MASS_SCALER]
 
-        J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.AREA] = (
-            5.4 * scaler / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.AREA] = 5.4 * scaler
 
-        J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.MASS_SCALER] = (
-            5.4 * area / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.MASS_SCALER] = 5.4 * area

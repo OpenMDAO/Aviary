@@ -1,9 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 class RangeComp(om.ExplicitComponent):
@@ -11,6 +10,7 @@ class RangeComp(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -21,15 +21,15 @@ class RangeComp(om.ExplicitComponent):
         self.add_input(
             'cruise_distance_initial',
             val=0.0,
-            units='NM',
+            units='m',
             desc='range reference at which cruise begins',
         )
 
-        self.add_input('TAS_cruise', val=0.0001 * np.ones(nn), units='NM/s', desc='true airspeed')
+        self.add_input('TAS_cruise', val=0.0001 * np.ones(nn), units='m/s', desc='true airspeed')
         self.add_input(
             'mass',
-            val=150000 * np.ones(nn),
-            units='lbm',
+            val=70000 * np.ones(nn),
+            units='kg',
             desc='mass at each node, monotonically nonincreasing',
         )
 
@@ -37,7 +37,7 @@ class RangeComp(om.ExplicitComponent):
             self,
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             shape=nn,
-            units='lbm/h',
+            units='kg/s',
         )
 
         self.add_output(
@@ -50,7 +50,7 @@ class RangeComp(om.ExplicitComponent):
         self.add_output(
             'cruise_range',
             shape=(nn,),
-            units='NM',
+            units='m',
             desc='cruise range',
             tags=['dymos.state_source:distance'],
         )
@@ -115,11 +115,14 @@ class RangeComp(om.ExplicitComponent):
         self._scratch_nn_x_nn = np.zeros((nn, nn))
 
     def compute(self, inputs, outputs):
+        gravity = self.options[Mission.GRAVITY][0]
+
         v_x = inputs['TAS_cruise']
         m = inputs['mass']
         FF = -inputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL]
         r0 = inputs['cruise_distance_initial']
         t0 = inputs['cruise_time_initial']
+
         r0 = r0[0]
         t0 = t0[0]
 
@@ -127,16 +130,16 @@ class RangeComp(om.ExplicitComponent):
         FF_2 = FF[1:]  # Final fuel flow across each two-node pair
 
         # Initial weight across each two-node pair
-        W1 = m[:-1] * GRAV_ENGLISH_LBM
+        W1 = m[:-1] * gravity
         # Final weight across each two-node pair
-        W2 = m[1:] * GRAV_ENGLISH_LBM
+        W2 = m[1:] * gravity
 
         vx_1 = v_x[:-1]  # Initial airspeed across each two-node pair
         vx_2 = v_x[1:]  # Final airspeed across each two-node pair
         vx_m = (vx_1 + vx_2) / 2  # Average airspeed across each two-node pair.
 
-        breg_1 = vx_1 * W1 * 3600 / FF_1
-        breg_2 = vx_2 * W2 * 3600 / FF_2
+        breg_1 = vx_1 * W1 / (gravity * FF_1)
+        breg_2 = vx_2 * W2 / (gravity * FF_2)
         bregA = (breg_1 + breg_2) / 2
 
         drange_cruise = bregA * np.log(1.0 / (1.0 - (W1 - W2) / W1))
@@ -147,32 +150,35 @@ class RangeComp(om.ExplicitComponent):
         outputs['cruise_time'][1:] = t0 + np.cumsum(drange_cruise) / vx_m
 
     def compute_partials(self, inputs, J):
+        gravity = self.options[Mission.GRAVITY][0]
+
         v_x = inputs['TAS_cruise']
+        m = inputs['mass']
+        FF = -inputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL]
+
         vx_1 = v_x[:-1]  # Initial airspeed across each two-node pair
         vx_2 = v_x[1:]  # Final airspeed across each two-node pair
         vx_m = (vx_1 + vx_2) / 2  # Average airspeed across each two-node pair.
 
-        m = inputs['mass']
         # Initial mass across each two-node pair
-        W1 = m[:-1] * GRAV_ENGLISH_LBM
-        W2 = m[1:] * GRAV_ENGLISH_LBM  # Final mass across each two-node pair
+        W1 = m[:-1] * gravity
+        W2 = m[1:] * gravity  # Final mass across each two-node pair
 
-        FF = -inputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL]
         FF_1 = FF[:-1]  # Initial fuel flow across each two-node pair
         FF_2 = FF[1:]  # Final fuel flow across each two_node pair
 
-        breg_1 = vx_1 * W1 * 3600 / FF_1
-        breg_2 = vx_2 * W2 * 3600 / FF_2
+        breg_1 = vx_1 * W1 / (gravity * FF_1)
+        breg_2 = vx_2 * W2 / (gravity * FF_2)
         bregA = (breg_1 + breg_2) / 2
         star = np.log(1 / (1 - (W1 - W2) / W1))
 
-        dBreg1_dVx1 = W1 * 3600 / FF_1
-        dBreg1_dW1 = vx_1 * 3600 / FF_1
-        dBreg1_dFF1 = vx_1 * W1 * 3600 / FF_1**2
+        dBreg1_dVx1 = W1 / (gravity * FF_1)
+        dBreg1_dW1 = vx_1 / (gravity * FF_1)
+        dBreg1_dFF1 = vx_1 * W1 / (gravity * FF_1**2)
 
-        dBreg2_dVx2 = W2 * 3600 / FF_2
-        dBreg2_dW2 = vx_2 * 3600 / FF_2
-        dBreg2_dFF2 = vx_2 * W2 * 3600 / FF_2**2
+        dBreg2_dVx2 = W2 / (gravity * FF_2)
+        dBreg2_dW2 = vx_2 / (gravity * FF_2)
+        dBreg2_dFF2 = vx_2 * W2 / (gravity * FF_2**2)
 
         dStar_dW1 = 1.0 / W1
         dStar_dW2 = -1.0 / W2
@@ -202,8 +208,8 @@ class RangeComp(om.ExplicitComponent):
         )[self._tril_rs, self._tril_cs]
 
         # WRT Mass: dRange_dm = dRange_dW * dW_dm
-        np.fill_diagonal(self._scratch_nn_x_nn[1:, :-1], dRange_dW1 * GRAV_ENGLISH_LBM)
-        np.fill_diagonal(self._scratch_nn_x_nn[1:, 1:], dRange_dW2 * GRAV_ENGLISH_LBM)
+        np.fill_diagonal(self._scratch_nn_x_nn[1:, :-1], dRange_dW1 * gravity)
+        np.fill_diagonal(self._scratch_nn_x_nn[1:, 1:], dRange_dW2 * gravity)
 
         J['cruise_range', 'mass'][...] = (self._d_cumsum_dx @ self._scratch_nn_x_nn)[
             self._tril_rs, self._tril_cs
@@ -248,7 +254,7 @@ class RangeComp(om.ExplicitComponent):
 class ElectricRangeComp(om.ExplicitComponent):
     """
     Compute the cruise range and time for all-electric aircraft.
-    Assume the battery mass does not change during the cruise.
+    Assumes the battery mass does not change during the cruise.
     """
 
     def initialize(self):
@@ -265,15 +271,15 @@ class ElectricRangeComp(om.ExplicitComponent):
         self.add_input(
             'cruise_distance_initial',
             val=0.0,
-            units='NM',
+            units='m',
             desc='range reference at which cruise begins',
         )
-        self.add_input('TAS_cruise', val=0.0001 * np.ones(nn), units='NM/s', desc='true airspeed')
+        self.add_input('TAS_cruise', val=0.0001 * np.ones(nn), units='m/s', desc='true airspeed')
         add_aviary_input(
             self,
             Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
             shape=nn,
-            units='kW*h',
+            units='kW*s',
         )
         add_aviary_input(
             self,
@@ -292,7 +298,7 @@ class ElectricRangeComp(om.ExplicitComponent):
         self.add_output(
             'cruise_range',
             shape=(nn,),
-            units='NM',
+            units='m',
             desc='cruise range',
             tags=['dymos.state_source:distance'],
         )
@@ -366,17 +372,17 @@ class ElectricRangeComp(om.ExplicitComponent):
         t0 = t0[0]
 
         # All-electric version
-        E_1 = EE[:-1]  # Initial energy across each two-node pair, kW*h
+        E_1 = EE[:-1]  # Initial energy across each two-node pair, kW*s
         E_2 = EE[1:]  # Final power energy each two-node pair
         P_1 = EP[:-1]  # Initial power across each two-node pair, kW
         P_2 = EP[1:]  # Final power across each two-node pair
 
-        vx_1 = v_x[:-1]  # Initial airspeed across each two-node pair, NM/s
+        vx_1 = v_x[:-1]  # Initial airspeed across each two-node pair, m/s
         vx_2 = v_x[1:]  # Final airspeed across each two-node pair
         vx_m = (vx_1 + vx_2) / 2  # Average airspeed across each two-node pair.
 
-        e_breg_1 = vx_1 * E_1 * 3600 / P_1  # NM
-        e_breg_2 = vx_2 * E_2 * 3600 / P_2
+        e_breg_1 = vx_1 * E_1 / P_1  # m
+        e_breg_2 = vx_2 * E_2 / P_2
         e_drange_cruise = e_breg_2 - e_breg_1
 
         outputs['cruise_range'][0] = r0
@@ -399,17 +405,17 @@ class ElectricRangeComp(om.ExplicitComponent):
         EP_1 = EP[:-1]  # Initial power across each two-node pair
         EP_2 = EP[1:]  # Final power across each two-node pair
 
-        e_breg_1 = vx_1 * E_1 * 3600 / EP_1
-        e_breg_2 = vx_2 * E_2 * 3600 / EP_2
+        e_breg_1 = vx_1 * E_1 / EP_1
+        e_breg_2 = vx_2 * E_2 / EP_2
         e_drange_cruise = e_breg_2 - e_breg_1
 
-        dBreg1_dVx1 = E_1 * 3600 / EP_1
-        dBreg1_dE1 = vx_1 * 3600 / EP_1
-        dBreg1_dP1 = -vx_1 * E_1 * 3600 / EP_1**2
+        dBreg1_dVx1 = E_1 / EP_1
+        dBreg1_dE1 = vx_1 / EP_1
+        dBreg1_dP1 = -vx_1 * E_1 / EP_1**2
 
-        dBreg2_dVx2 = E_2 * 3600 / EP_2
-        dBreg2_dE2 = vx_2 * 3600 / EP_2
-        dBreg2_dP2 = -vx_2 * E_2 * 3600 / EP_2**2
+        dBreg2_dVx2 = E_2 / EP_2
+        dBreg2_dE2 = vx_2 / EP_2
+        dBreg2_dP2 = -vx_2 * E_2 / EP_2**2
 
         dRange_dVx1 = -dBreg1_dVx1
         dRange_dVx2 = dBreg2_dVx2

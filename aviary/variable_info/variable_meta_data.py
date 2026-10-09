@@ -5291,7 +5291,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.CHOOSE_FOLD_LOCATION,
+    Aircraft.Wing.CHOOSE_FOLD_LOCATION,  # TODO this variable name is highly misleading
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='unitless',

@@ -41,7 +41,7 @@ class CruiseODETestCase(unittest.TestCase):
         setup_model_options(self.prob, aviary_options)
 
     def test_cruise(self):
-        # test partial derivatives
+        """Test outputs and partial derivatives of the Breguet cruise ODE."""
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val(Dynamic.Atmosphere.MACH, [0.7, 0.7], units='unitless')
@@ -52,34 +52,42 @@ class CruiseODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
         self.prob.set_val(Dynamic.Mission.ALTITUDE, val=37500 * np.ones(2), units='ft')
-        self.prob.set_val('mass', val=np.linspace(171481, 171581 - 10000, 2), units='lbm')
+        self.prob.set_val(
+            Dynamic.Vehicle.MASS, val=np.linspace(171481, 171581 - 10000, 2), units='lbm'
+        )
 
         set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 
-        tol = tol = 1e-6
-        assert_near_equal(self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([0.0, 0.0]), tol)
-        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 923.38992577]), tol)
-        assert_near_equal(self.prob['time'], np.array([0, 8280.29080821]), tol)
-        assert_near_equal(
-            self.prob[Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS],
-            np.array([3.88463177, 4.90286726]),
-            tol,
-        )
-        assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
-            np.array([3.88463177, 4.90286726]),
-            tol,
-        )
+        tol = 1e-6
+        expected_values = {
+            Dynamic.Mission.VELOCITY_RATE: (np.array([0.0, 0.0]), 'ft/s**2'),
+            Dynamic.Mission.DISTANCE: (np.array([0.0, 923.38992577]), 'NM'),
+            'time': (np.array([0, 8280.29080821]), 's'),
+            Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS: (
+                np.array([3.88463177, 4.90286726]),
+                'm/s',
+            ),
+            Dynamic.Mission.ALTITUDE_RATE_MAX: (
+                np.array([3.88463177, 4.90286726]),
+                'm/s',
+            ),
+        }
 
-        partial_data = self.prob.check_partials(
-            out_stream=None, method='cs', excludes=['*USatm*', '*params*', '*aero*']
-        )
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tol)
+
+        with self.subTest(check='partials'):
+            partial_data = self.prob.check_partials(
+                out_stream=None, method='cs', excludes=['*USatm*', '*params*', '*aero*']
+            )
+            assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
-@use_tempdirs
+# @use_tempdirs
 class ElectricCruiseODETestCase(unittest.TestCase):
     """This test uses a makeup electrical engine to test electrical Breguet cruise ODE."""
 
@@ -112,45 +120,54 @@ class ElectricCruiseODETestCase(unittest.TestCase):
         setup_model_options(self.prob, aviary_options)
 
     def test_electric_cruise(self):
-        # test partial derivatives
+        """Test outputs and partial derivatives of the electric Breguet cruise ODE."""
         self.prob.setup(check=False, force_alloc_complex=True)
 
+        self.prob.set_val(Dynamic.Mission.ALTITUDE, val=37500 * np.ones(2), units='ft')
+        self.prob.set_val(
+            Dynamic.Vehicle.MASS, val=np.linspace(171481, 171581 - 10000, 2), units='lbm'
+        )
         self.prob.set_val(Dynamic.Atmosphere.MACH, [0.7, 0.7], units='unitless')
         self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
         self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
-        self.prob.set_val(Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED, [10, 10])
+        self.prob.set_val(Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED, [10, 10], units='kW*h')
 
         set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 
-        tol = tol = 1e-6
-        assert_near_equal(self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([0.0, 0.0]), tol)
-        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 66.37459993]), tol)
-        assert_near_equal(self.prob['time'], np.array([0, 595.19924828]), tol)
-        assert_near_equal(
-            self.prob[Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS],
-            np.array([3.89225953, 4.91096237]),
-            tol,
-        )
-        assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
-            np.array([3.89225953, 4.91096237]),
-            tol,
-        )
-        assert_near_equal(
-            self.prob[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL],
-            np.array([4.45947061, 4.15325208]),
-            tol,
-        )
+        tol = 1e-6
+        expected_values = {
+            Dynamic.Mission.VELOCITY_RATE: (np.array([0.0, 0.0]), 'ft/s**2'),
+            Dynamic.Mission.DISTANCE: (np.array([0.0, 66.37459993]), 'NM'),
+            'time': (np.array([0, 595.19924828]), 's'),
+            Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS: (
+                np.array([3.89225953, 4.91096237]),
+                'm/s',
+            ),
+            Dynamic.Mission.ALTITUDE_RATE_MAX: (
+                np.array([3.89225953, 4.91096237]),
+                'm/s',
+            ),
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL: (
+                np.array([4.45947061, 4.15325208]),
+                'kW',
+            ),
+        }
 
-        partial_data = self.prob.check_partials(
-            out_stream=None, method='cs', excludes=['*USatm*', '*params*', '*aero*']
-        )
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tol)
+
+        with self.subTest(check='partials'):
+            partial_data = self.prob.check_partials(
+                out_stream=None, method='cs', excludes=['*USatm*', '*params*', '*aero*']
+            )
+            assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
 if __name__ == '__main__':

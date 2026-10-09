@@ -1,8 +1,8 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.variables import Aircraft, Mission
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 
 
 class CanardMass(om.ExplicitComponent):
@@ -10,6 +10,9 @@ class CanardMass(om.ExplicitComponent):
     Calculates the mass of the canard. The methodology is based on the FLOPS weight
     equations, modified to output mass instead of weight.
     """
+
+    def initialize(self):
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
@@ -23,35 +26,43 @@ class CanardMass(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
-        togw = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        area = inputs[Aircraft.Canard.AREA]
-        taper_ratio = inputs[Aircraft.Canard.TAPER_RATIO]
+        gravity = self.options[Mission.GRAVITY]
 
-        canard_weight = 0.53 * area * togw**0.2 * (taper_ratio + 0.5)
-        outputs[Aircraft.Canard.MASS] = (
-            canard_weight * inputs[Aircraft.Canard.MASS_SCALER] / GRAV_ENGLISH_LBM
-        )
-
-    def compute_partials(self, inputs, J):
+        togm = inputs[Aircraft.Design.GROSS_MASS]
         area = inputs[Aircraft.Canard.AREA]
         taper_ratio = inputs[Aircraft.Canard.TAPER_RATIO]
         scaler = inputs[Aircraft.Canard.MASS_SCALER]
-        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+
+        togw = mass_to_force_english((togm, 'lbm'), gravity)
+
+        canard_weight = 0.53 * area * togw**0.2 * (taper_ratio + 0.5)
+        outputs[Aircraft.Canard.MASS] = canard_weight * scaler
+
+    def compute_partials(self, inputs, J):
+        gravity = self.options[Mission.GRAVITY]
+
+        togm = inputs[Aircraft.Design.GROSS_MASS]
+        area = inputs[Aircraft.Canard.AREA]
+        taper_ratio = inputs[Aircraft.Canard.TAPER_RATIO]
+        scaler = inputs[Aircraft.Canard.MASS_SCALER]
+
+        gross_weight = mass_to_force_english((togm, 'lbm'), gravity)
+        dforce_dmass = mass_to_force_english_derivative(gravity)
 
         gross_weight_exp = gross_weight**0.2
 
         J[Aircraft.Canard.MASS, Aircraft.Canard.AREA] = (
-            0.53 * scaler * (taper_ratio + 0.5) * gross_weight_exp / GRAV_ENGLISH_LBM
+            0.53 * scaler * (taper_ratio + 0.5) * gross_weight_exp
         )
 
         J[Aircraft.Canard.MASS, Aircraft.Canard.TAPER_RATIO] = (
-            0.53 * area * scaler * gross_weight_exp / GRAV_ENGLISH_LBM
+            0.53 * area * scaler * gross_weight_exp
         )
 
         J[Aircraft.Canard.MASS, Aircraft.Canard.MASS_SCALER] = (
-            0.53 * area * (taper_ratio + 0.5) * gross_weight_exp / GRAV_ENGLISH_LBM
+            0.53 * area * (taper_ratio + 0.5) * gross_weight_exp
         )
 
         J[Aircraft.Canard.MASS, Aircraft.Design.GROSS_MASS] = (
-            0.106 * area * scaler * (taper_ratio + 0.5)
-        ) / gross_weight**0.8
+            dforce_dmass * (0.106 * area * scaler * (taper_ratio + 0.5)) / gross_weight**0.8
+        )
