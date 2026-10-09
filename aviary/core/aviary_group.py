@@ -1354,9 +1354,7 @@ class AviaryGroup(om.Group):
 
             if problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
                 if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        'Disabling range constraint for max range mission.'
-                    )
+                    warnings.warn('Disabling range constraint for max range mission.')
             else:
                 self.add_constraint(
                     Mission.RANGE,
@@ -1371,9 +1369,7 @@ class AviaryGroup(om.Group):
 
         elif problem_type is ProblemType.SIZING:
             if verbosity >= Verbosity.BRIEF:
-                warnings.warn(
-                    'Sizing mission does not include a target range.'
-                )
+                warnings.warn('Sizing mission does not include a target range.')
 
         # TODO: Solved 2dof is a special case that doesn't support off design.
         if self.mission_method is SOLVED_2DOF:
@@ -1440,7 +1436,7 @@ class AviaryGroup(om.Group):
                 )
 
         elif problem_type is ProblemType.OFF_DESIGN_GENERAL:
-
+            # No mass variables are added.
             pass
 
         elif problem_type is ProblemType.MULTI_MISSION:

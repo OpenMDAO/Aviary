@@ -229,7 +229,7 @@ class TestPhaseInfoAPI(unittest.TestCase):
         prob.check_and_preprocess_inputs()
         prob.build_model()
 
-        msg = "Design range 3500.0 differs from target_range 99.0 (NM)."
+        msg = 'Design range 3500.0 differs from target_range 99.0 (NM).'
         with assert_warning(UserWarning, msg):
             prob.add_design_variables()
 
@@ -241,7 +241,7 @@ class TestPhaseInfoAPI(unittest.TestCase):
         prob.check_and_preprocess_inputs()
         prob.build_model()
 
-        msg = "Disabling range constraint for max range mission."
+        msg = 'Disabling range constraint for max range mission.'
         with assert_warning(UserWarning, msg):
             prob.add_design_variables()
 
@@ -252,7 +252,7 @@ class TestPhaseInfoAPI(unittest.TestCase):
         prob.check_and_preprocess_inputs()
         prob.build_model()
 
-        msg = "Sizing mission does not include a target range."
+        msg = 'Sizing mission does not include a target range.'
         with assert_warning(UserWarning, msg):
             prob.add_design_variables()
 

@@ -74,7 +74,7 @@ class PreMissionGroupTest(unittest.TestCase):
         )
         prob.load_inputs(csv_path, phase_info)
         prob.load_external_subsystems(
-            external_subsystems=[WingWeightBuilder(name='wing_external')]
+            external_subsystems=[WingWeightBuilder(name='wing_external')],
         )
 
         prob.check_and_preprocess_inputs()
@@ -100,7 +100,7 @@ class PreMissionGroupTest(unittest.TestCase):
         )
         prob.load_inputs(csv_path, phase_info)
         prob.load_external_subsystems(
-            external_subsystems=[WingWeightBuilder(name='wing_external')]
+            external_subsystems=[WingWeightBuilder(name='wing_external')],
         )
 
         prob.check_and_preprocess_inputs()
