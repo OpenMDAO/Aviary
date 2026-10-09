@@ -63,6 +63,7 @@ phase_info = {
             'altitude_bounds': ((0.0, 38000.0), 'ft'),
             'altitude_ref': (38000.0, 'ft'),
             'mass_ref': (150000, 'lbm'),
+            'distance_ref': (3380.0, 'nmi'),
             'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((215.1, 872.4), 'min'),
             'time_duration_bounds': ((14.6, 45.0), 'min'),

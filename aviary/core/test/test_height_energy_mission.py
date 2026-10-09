@@ -381,8 +381,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
             sys.stdout = stdout
         output = strout.getvalue().split('\n')
 
-        print('z')
-
         self.assertEqual(
             output[1], 'The following issues were detected in your phase_info options.'
         )

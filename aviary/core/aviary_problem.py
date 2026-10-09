@@ -704,7 +704,7 @@ class AviaryProblem(om.Problem):
                 'reg_objective = -actual_range/1000 + ascent_duration/30.',
                 reg_objective={'val': 0.0, 'units': 'unitless'},
                 ascent_duration={'units': 's', 'shape': 1},
-                actual_range={'val': self.model.target_range, 'units': 'NM'},
+                actual_range={'units': 'NM'},
             ),
             promotes_inputs=[
                 ('actual_range', Mission.RANGE),

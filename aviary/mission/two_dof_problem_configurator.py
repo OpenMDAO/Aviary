@@ -258,12 +258,13 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             **extra_args,
         )
 
-        # TODO: Bring throttle support to 2DOF.
         if phase_builder not in [PhaseType.SIMPLE_CRUISE, PhaseType.BREGUET_RANGE]:
+            num_engine_type = len(aviary_group.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
             phase.add_control(
                 Dynamic.Vehicle.Propulsion.THROTTLE,
                 targets=Dynamic.Vehicle.Propulsion.THROTTLE,
                 units='unitless',
+                shape=(num_engine_type,),
                 opt=False,
             )
 

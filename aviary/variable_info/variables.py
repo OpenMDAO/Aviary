@@ -697,8 +697,6 @@ class Mission:
         EXCESS_FUEL_MASS_CAPACITY = 'mission:constraints:excess_fuel_mass_capacity'
         GEARBOX_SHAFT_POWER_RESIDUAL = 'mission:constraints:gearbox_shaft_power_residual'
         MASS_RESIDUAL = 'mission:constraints:mass_residual'
-        RANGE_RESIDUAL = 'mission:constraints:range_residual'
-        RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
 
     class Landing:
         # These are values which have to do with landing

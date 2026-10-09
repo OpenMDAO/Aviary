@@ -1,9 +1,12 @@
+import numpy as np
+
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODE, ElectricBreguetCruiseODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.enums import ThrottleAllocation
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
@@ -61,6 +64,15 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            '_add_user_defined_constraints().',
+        )
+
+        self.declare(
             name='altitude_direct_link',
             default=True,
             types=bool,
@@ -81,6 +93,52 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
             default=False,
             types=bool,
             desc='Because mass is output, this should always be false.',
+        )
+
+        self.declare(
+            name='throttle_enforcement',
+            default='bounded',
+            values=['path_constraint', 'boundary_constraint', 'bounded', 'control', None],
+            desc='Flag to enforce engine throttle bounds as path constraints, boundary '
+            'constraints, solver bounds. You can also select "control" to turn throttle into a '
+            'control, which allows you to assign a value or let the optimizer choose it.',
+        )
+
+        self.declare(
+            name='throttle_allocation',
+            default=ThrottleAllocation.FIXED,
+            values=[
+                ThrottleAllocation.FIXED,
+                ThrottleAllocation.STATIC,
+                ThrottleAllocation.DYNAMIC,
+            ],
+            desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
+            'user-specified value. STATIC is specified by the optimizer as one value for the '
+            'whole phase. DYNAMIC is specified by the optimizer at each point in the phase. '
+            'Because this is an analytic phase, DYNAMIC is treated the same as STATIC.',
+        )
+
+        self.declare(
+            name='throttle_enforcement',
+            default='bounded',
+            values=['path_constraint', 'boundary_constraint', 'bounded', 'control', None],
+            desc='Flag to enforce engine throttle bounds as path constraints, boundary '
+            'constraints, solver bounds. You can also select "control" to turn throttle into a '
+            'control, which allows you to assign a value or let the optimizer choose it.',
+        )
+
+        self.declare(
+            name='throttle_allocation',
+            default=ThrottleAllocation.FIXED,
+            values=[
+                ThrottleAllocation.FIXED,
+                ThrottleAllocation.STATIC,
+                ThrottleAllocation.DYNAMIC,
+            ],
+            desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
+            'user-specified value. STATIC is specified by the optimizer as one value for the '
+            'whole phase. DYNAMIC is specified by the optimizer at each point in the phase. '
+            'Because this is an analytic phase, DYNAMIC is treated the same as STATIC.',
         )
 
 
@@ -138,16 +196,48 @@ class BreguetCruisePhase(PhaseBuilder):
 
         phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
 
+        constraints = user_options['constraints']
+        self._add_user_defined_constraints(phase, constraints)
+
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, val=alt_cruise, units=alt_units)
         phase.add_parameter(Dynamic.Atmosphere.MACH, opt=False, val=mach_cruise)
         phase.add_parameter('initial_distance', opt=False, val=0.0, units='NM', static_target=True)
         phase.add_parameter('initial_time', opt=False, val=0.0, units='s', static_target=True)
 
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        if num_engine_type > 1:
+            allocation = user_options['throttle_allocation']
+
+            # Allocation should default to an even split so that we don't start
+            # with an allocation that might not produce enough thrust.
+            val = np.ones(num_engine_type - 1) * (1.0 / num_engine_type)
+
+            # DYNAMIC doesn't really make sense for analytic phases, here it does the same thing as
+            # STATIC
+            opt = allocation in (ThrottleAllocation.STATIC, ThrottleAllocation.DYNAMIC)
+            kwargs = {}
+            if opt:
+                kwargs['lower'] = 0.0
+                kwargs['upper'] = 1.0
+
+            phase.add_parameter(
+                'throttle_allocations',
+                units='unitless',
+                val=val,
+                shape=(num_engine_type - 1,),
+                opt=opt,
+                **kwargs,
+            )
+
+        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
         phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
         phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
         phase.add_timeseries_output('time', units='s', output_name='time')
+
+        if user_options['throttle_enforcement'] != 'control':
+            phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless')
 
         return phase
 
@@ -160,6 +250,13 @@ class BreguetCruisePhase(PhaseBuilder):
             'time',
         ]
         return linked_vars
+
+    def _extra_ode_init_kwargs(self):
+        """Return extra kwargs required for initializing the ODE."""
+        return {
+            'throttle_enforcement': self.user_options['throttle_enforcement'],
+            'throttle_allocation': self.user_options['throttle_allocation'],
+        }
 
 
 BreguetCruisePhase._add_initial_guess_meta_data(

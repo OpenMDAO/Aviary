@@ -252,6 +252,6 @@ phase_info = {
         },
     },
     'post_mission': {
-        #'target_range': (3000.0, 'nmi'),
+        'target_range': (3000.0, 'nmi'),
     },
 }
