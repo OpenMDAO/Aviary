@@ -90,7 +90,7 @@ class GroundrollPhase(PhaseBuilder):
     This is used exclusively by the Solved 2DOF Phase Builder.
     """
 
-    __slots__ = ('subsystems', 'meta_data', 'phase')
+    __slots__ = ('meta_data', 'phase', 'subsystems')
 
     _initial_guesses_meta_data_ = {}
 

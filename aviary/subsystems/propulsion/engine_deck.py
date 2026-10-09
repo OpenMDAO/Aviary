@@ -1665,8 +1665,7 @@ class EngineDeck(EngineModel):
                     alt_count += 1
                     data_indices = extend_array(data_indices, [mach_count, alt_count])
 
-                    if data_count > max_data_count:
-                        max_data_count = data_count
+                    max_data_count = max(max_data_count, data_count)
                     # new altitude means reset data counter
                     data_count = 1
                     # count data associated with new altitude
@@ -1690,15 +1689,13 @@ class EngineDeck(EngineModel):
                 mach_count += 1
 
                 # new mach comes with new altitude, record and count it
-                if alt_count > max_alt_count:
-                    max_alt_count = alt_count
+                max_alt_count = max(max_alt_count, alt_count)
                 # new mach means reset altitude counter
                 curr_alt = alt
                 alt_count = 1
                 data_indices = extend_array(data_indices, [mach_count, alt_count])
 
-                if data_count > max_data_count:
-                    max_data_count = data_count
+                max_data_count = max(max_data_count, data_count)
                 # new mach means reset data counter
                 data_count = 1
                 # count data associated with new altitude

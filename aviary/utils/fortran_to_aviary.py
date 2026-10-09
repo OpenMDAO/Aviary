@@ -217,7 +217,6 @@ def parse_input_file(
                     line = line.split(maxsplit=1)[1]  # remove current_namelist from line (if any)
                 except:
                     line = ''
-                    pass
 
             # remove all white space and trailing commas
             line = ''.join(line.split()).rstrip(',')
@@ -760,7 +759,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     if reserve_fuel_volume < 0:
         ValueError(
             '"FVOL_MRG" is not valid below 0. Cannot set fuel volume reserves to less than zero'
-        )  #
+        )
         input_values.set_val(Aircraft.Fuel.VOLUME_MARGIN, [0], units='lbm')
 
     # FLARE LOAD FACTOR ##

@@ -369,7 +369,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         if aviary_group.post_mission_info['include_landing']:
             self._add_landing_systems(aviary_group)
 
-        ascent_phase = getattr(aviary_group.traj.phases, 'ascent')
+        ascent_phase = aviary_group.traj.phases.ascent
         ascent_tx = ascent_phase.options['transcription']
         ascent_num_nodes = ascent_tx.grid_data.num_nodes
         aviary_group.add_subsystem(

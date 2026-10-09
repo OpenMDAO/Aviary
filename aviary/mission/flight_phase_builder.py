@@ -175,7 +175,7 @@ class FlightPhaseBase(PhaseBuilder):
     SolvedTwoDOFPhase.
     """
 
-    __slots__ = ('subsystems', 'meta_data')
+    __slots__ = ('meta_data', 'subsystems')
 
     _initial_guesses_meta_data_ = {}
     default_name = 'cruise'

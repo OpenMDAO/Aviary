@@ -2,9 +2,9 @@ import tkinter as tk
 from tkinter import Button, Label, StringVar, filedialog, messagebox
 from tkinter.ttk import Combobox
 
-import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import cm
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 from aviary.utils.csv_data_file import read_data_file
@@ -33,7 +33,7 @@ def plot_drag_polar(input_file=None):
         )
 
     except Exception as e:
-        messagebox.showerror('Error', f'Failed to read the file: {str(e)}')
+        messagebox.showerror('Error', f'Failed to read the file: {e!s}')
         return
 
     mach = polar_data.get_val('mach_number')
@@ -200,7 +200,6 @@ def _setup_plot_drag_polar_parser(parser):
     parser : argparse subparser
         The parser we're adding options to.
     """
-    pass
 
 
 def _exec_plot_drag_polar(options, user_args):

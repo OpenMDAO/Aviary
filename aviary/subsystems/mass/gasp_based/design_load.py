@@ -80,8 +80,7 @@ class LoadSpeeds(om.ExplicitComponent):
                     VCMIN / VCMAX, 1, 0.01
                 )
             else:
-                if VCMIN > VCMAX:
-                    VCMIN = VCMAX
+                VCMIN = min(VCMIN, VCMAX)
 
             VDCOF = 1.4
             if WGS_greater_than_20_flag:
@@ -104,8 +103,7 @@ class LoadSpeeds(om.ExplicitComponent):
                     min_dive_vel / max_struct_speed_kts, 1, -0.01
                 ) + min_dive_vel * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, 0.01)
             else:
-                if min_dive_vel < max_struct_speed_kts:
-                    min_dive_vel = max_struct_speed_kts
+                min_dive_vel = max(min_dive_vel, max_struct_speed_kts)
 
             max_airspeed = 0.85 * min_dive_vel
             vel_c = VCMIN
@@ -1263,8 +1261,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                     VCMIN / VCMAX, 1, 0.01
                 )
             else:
-                if VCMIN > VCMAX:
-                    VCMIN = VCMAX
+                VCMIN = min(VCMIN, VCMAX)
 
             if CATD == 0:
                 if WGS_greater_than_20_flag:
@@ -1289,8 +1286,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                     min_dive_vel / max_struct_speed_kts, 1, -0.01
                 ) + min_dive_vel * sigmoidX(min_dive_vel / max_struct_speed_kts, 1, 0.01)
             else:
-                if min_dive_vel < max_struct_speed_kts:
-                    min_dive_vel = max_struct_speed_kts
+                min_dive_vel = max(min_dive_vel, max_struct_speed_kts)
 
             max_airspeed = 0.85 * min_dive_vel
             vel_c = VCMIN

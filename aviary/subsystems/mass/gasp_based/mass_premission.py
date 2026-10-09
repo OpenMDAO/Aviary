@@ -11,7 +11,6 @@ from aviary.subsystems.mass.gasp_based.fuel import (
     FuelMass,
     FuelSysAndFullFuselageMass,
     FuselageMass,
-    TankCapacity,
     WingFuelMin,
 )
 from aviary.subsystems.mass.gasp_based.mass_summation import MassSummation

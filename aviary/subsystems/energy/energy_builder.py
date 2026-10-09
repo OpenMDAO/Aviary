@@ -20,7 +20,7 @@ from aviary.subsystems.energy.gasp_based.gasp_tank import FuelTankGASP
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variables import Dynamic, Mission, Settings
+from aviary.variable_info.variables import Dynamic, Settings
 
 
 class EnergyBuilder(SubsystemBuilder):

@@ -6,13 +6,11 @@ Classes
 TankModel : the interface for a fuel tank model builder.
 """
 
-import openmdao.api as om
 from openmdao.core.system import System
 
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import FuelType, LegacyCode, Verbosity
-from aviary.variable_info.variables import Settings
+from aviary.variable_info.enums import FuelType
 
 
 class FuelTankModel(SubsystemBuilder):

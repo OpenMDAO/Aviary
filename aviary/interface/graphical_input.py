@@ -3,8 +3,12 @@ import json
 import os
 import platform
 import tkinter as tk  # base tkinter
-import tkinter.ttk as ttk  # used for combobox
-from tkinter import filedialog, font, messagebox
+from tkinter import (
+    filedialog,
+    font,
+    messagebox,
+    ttk,  # used for combobox
+)
 
 import numpy as np
 from matplotlib.backend_bases import MouseButton
@@ -1764,7 +1768,6 @@ def _setup_flight_profile_parser(parser):
     parser : argparse.ArgumentParser
         The parser instance.
     """
-    pass
 
 
 def _exec_flight_profile(options, user_args):

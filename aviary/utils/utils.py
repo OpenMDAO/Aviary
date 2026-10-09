@@ -60,7 +60,7 @@ def wrapped_convert_units(val_unit_tuple, new_units):
 
         for i, item in enumerate(value):
             # Any entry may be none.
-            if value[i] is not None:
+            if item is not None:
                 value[i] = convert_units(item, units, new_units)
 
         if istuple:

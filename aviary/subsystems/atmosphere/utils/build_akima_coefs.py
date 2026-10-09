@@ -104,7 +104,7 @@ def build_akima_coefs(out_stream, raw_data, units):
                 textwrap.indent(repr(atm_data.alt).replace('array', 'np.array'), '    '),
                 file=out_stream,
             )
-            print('', file=out_stream)
+            print(file=out_stream)
         input('Press Enter to continue: ')
 
     vars = ['T', 'P', 'rho', 'dT']
@@ -127,7 +127,7 @@ def build_akima_coefs(out_stream, raw_data, units):
                     textwrap.indent(repr(coeff_array).replace('array', 'np.array'), '    '),
                     file=out_stream,
                 )
-                print('', file=out_stream)
+                print(file=out_stream)
 
             coeff_data[f'atm_data.akima_{var}'] = coeff_array
             input('Press Enter to continue: ')

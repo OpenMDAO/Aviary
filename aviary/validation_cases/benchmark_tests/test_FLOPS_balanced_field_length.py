@@ -14,13 +14,8 @@ from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
-from aviary.validation_cases.benchmark_utils import print_benchmark_results
-from aviary.subsystems.premission import CorePreMission
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
-from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.default_subsystems import get_default_subsystems
+from aviary.validation_cases.benchmark_utils import print_benchmark_results
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     balanced_liftoff_user_options as _takeoff_liftoff_user_options,
 )
@@ -30,7 +25,6 @@ from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_dat
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     inputs as _inputs,
 )
-from aviary.validation_cases.benchmark_utils import print_benchmark_results
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic
 

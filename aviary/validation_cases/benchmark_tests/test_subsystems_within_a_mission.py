@@ -1,5 +1,4 @@
 import unittest
-import unittest
 from copy import deepcopy
 
 import numpy as np

@@ -1,4 +1,4 @@
-import openmdao.utils.units as units
+from openmdao.utils import units
 
 units.add_unit('distance_units', '1*m')
 

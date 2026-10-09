@@ -87,7 +87,7 @@ class EngineModel(SubsystemBuilder):
             the pre-mission part of the Aviary problem. This
             includes sizing, design, and other non-mission parameters.
         """
-        return None
+        return
 
     def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """
@@ -129,7 +129,7 @@ class EngineModel(SubsystemBuilder):
             being integrated as well as any other variables that vary after
             the mission.
         """
-        return None
+        return
 
     def _preprocess_inputs(self):
         """

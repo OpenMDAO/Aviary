@@ -94,12 +94,12 @@ class TransportStarterMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.flops_based.starter as starter
+        from aviary.subsystems.mass.flops_based import starter
 
         starter.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.flops_based.starter as starter
+        from aviary.subsystems.mass.flops_based import starter
 
         starter.GRAV_ENGLISH_LBM = 1.0
 

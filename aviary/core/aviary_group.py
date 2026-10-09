@@ -40,13 +40,7 @@ from aviary.utils.process_input_decks import (
     update_GASP_options,
 )
 from aviary.utils.utils import wrapped_convert_units
-from aviary.variable_info.enums import (
-    EquationsOfMotion,
-    LegacyCode,
-    PhaseType,
-    ProblemType,
-    Verbosity,
-)
+from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
@@ -341,7 +335,7 @@ class AviaryGroup(om.Group):
             sys.modules['phase_info_file'] = phase_info_file
             spec.loader.exec_module(phase_info_file)
 
-            phase_info = getattr(phase_info_file, 'phase_info')
+            phase_info = phase_info_file.phase_info
 
         if phase_info is None:
             phase_info = self.configurator.get_default_phase_info(self)

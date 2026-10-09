@@ -5,8 +5,8 @@ from pathlib import Path
 
 import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
-from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 from openmdao.utils.reports_system import _reports_registry
+from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 
 import aviary.api as av
 from aviary.core.aviary_problem import AviaryProblem

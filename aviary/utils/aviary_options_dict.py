@@ -79,7 +79,6 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
     def declare_options(self):
         """Hook for declaring options for a phase builder."""
-        pass
 
     def declare(
         self,

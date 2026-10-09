@@ -110,8 +110,7 @@ class WingFuelMin(om.ExplicitComponent):
         if smooth:
             wingfuel_wt_min = wingfuel_wt_min * sigmoidX(wingfuel_wt_min, 0)
         else:
-            if wingfuel_wt_min < 0.0:
-                wingfuel_wt_min = 0.0
+            wingfuel_wt_min = max(wingfuel_wt_min, 0.0)
 
         outputs['wingfuel_mass_min'] = wingfuel_wt_min / GRAV_ENGLISH_LBM
 
@@ -333,8 +332,7 @@ class TankCapacity(om.ExplicitComponent):
         if smooth:
             extra_fuel_wt = extra_fuel_wt * sigmoidX(extra_fuel_wt, 0, 1 / 50)
         else:
-            if extra_fuel_wt < 0:
-                extra_fuel_wt = 0
+            extra_fuel_wt = max(extra_fuel_wt, 0)
 
         max_fuel_avail_est = fuel_wt_des + extra_fuel_wt
         max_fuel_avail_new = gross_wt_initial - OEW
