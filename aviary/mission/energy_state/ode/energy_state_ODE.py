@@ -86,7 +86,6 @@ class EnergyStateODE(_BaseODE):
         thrust_res_ref = 1.0e6
         if num_engine_type > 1:
             # Multi Engine
-
             ode_sub.add_subsystem(
                 name='throttle_balance',
                 subsys=om.BalanceComp(

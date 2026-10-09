@@ -220,6 +220,14 @@ class FlightPhase(PhaseBuilder):
         #             opt=opt,
         #             **kwargs,
         #         )
+        #
+        #     # Constrain throttle for each engine within bounds
+        #     phase.add_path_constraint(
+        #         Dynamic.Vehicle.Propulsion.THROTTLE,
+        #         lower=0.0,
+        #         upper=1.0,
+        #         units='unitless',
+        #     )
 
         # Add timeseries outputs
         phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')

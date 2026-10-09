@@ -3,7 +3,6 @@ import numpy as np
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.two_dof.ode.simple_cruise_ode import SimpleCruiseODE
-from aviary.mission.two_dof.ode.simple_cruise_ode import SimpleCruiseODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import ThrottleAllocation
@@ -247,8 +246,35 @@ class SimpleCruisePhase(PhaseBuilder):
         phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
 
-        if user_options['throttle_enforcement'] != 'control':
+        throttle_enforcement = user_options['throttle_enforcement']
+
+        if throttle_enforcement != 'control':
             phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless')
+
+        # Keep each engine's throttle in [0, 1], required for multi-engine cases to prevent
+        # the allocator from running engines above 1
+        if throttle_enforcement == 'boundary_constraint':
+            phase.add_boundary_constraint(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                loc='initial',
+                lower=0.0,
+                upper=1.0,
+                units='unitless',
+            )
+            phase.add_boundary_constraint(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                loc='final',
+                lower=0.0,
+                upper=1.0,
+                units='unitless',
+            )
+        elif throttle_enforcement == 'path_constraint':
+            phase.add_path_constraint(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                lower=0.0,
+                upper=1.0,
+                units='unitless',
+            )
 
         return phase
 
