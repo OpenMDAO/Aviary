@@ -162,12 +162,14 @@ class CoreMassBuilder(MassBuilder):
 
             # OTHER STRUCTURES (NOT IN GROUP) #
             val, units = find_variable_in_problem(Aircraft.Nacelle.MASS, prob, self.meta_data)
-            f.write(f'|Nacelles|{np.dot(val, num_engines)}||\n')
+            if val != 'Not Found in Model':
+                f.write(f'|Nacelles|{np.dot(val, num_engines)}||\n')
             for i, engine in enumerate(engine_models):
                 if isinstance(val, (np.ndarray, list, tuple)):
                     val = val[i]
                 f.write(f'|{tab}{engine.name}|{val} ({val * num_engines[i]} total)|{units}|\n')
 
+            # is it an incomplete code? It does not do anything.
             val, units = find_variable_in_problem(Aircraft.Nacelle.MASS, prob, self.meta_data)
             if val == 0.0:
                 val = [val]

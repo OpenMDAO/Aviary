@@ -778,6 +778,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='mass per flight crew (default to 225 lbm in FLOPS)',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.CrewPayload.MASS_PER_PASSENGER,
     meta_data=_MetaData,
     historical_name={
@@ -785,8 +794,8 @@ add_meta_data(
         'FLOPS': 'WTIN.WPPASS',  # ['&DEFINE.WTIN.WPPASS', 'WPAB.WPPASS'],
     },
     units='lbm',
-    desc='mass per passenger',
-    default_value=165.0,
+    desc='mass per passenger (default to 165 lbm in FLOPS)',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -794,8 +803,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.UWPAX', 'FLOPS': None},
     units='lbm',
-    desc='total mass of one passenger and their bags',
-    default_value=200,
+    desc='total mass of one passenger and their bags  (default to 200 lbm in GASP)',
+    default_value=0.0,
 )
 
 add_meta_data(
