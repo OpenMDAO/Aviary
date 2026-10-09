@@ -5,6 +5,7 @@ import unittest
 from copy import deepcopy
 from io import StringIO
 
+
 import dymos
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.reports_system import clear_reports
@@ -12,9 +13,11 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.interface.run_aviary import run_aviary
+from aviary.interface.run_aviary import run_aviary
 from aviary.mission.energy_state.phases.energy_phase import EnergyPhase
-from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
+from aviary.subsystems.test.dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.variable_info.enums import Transcription
+from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variables import Dynamic
 
 
