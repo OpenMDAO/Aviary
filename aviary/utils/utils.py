@@ -7,10 +7,84 @@ from copy import deepcopy
 from enum import Enum
 from math import floor, log10
 
+import itertools
 import numpy as np
 from openmdao.utils.units import convert_units
 
 from aviary.variable_info.variable_meta_data import CoreMetaData
+
+
+def _rep(n, t):
+    """Shorthand for ``itertools.repeat`` with the multiplier first."""
+    return itertools.repeat(t, n)
+
+
+def _parse(f, fmt):
+    """Read a line from file ``f`` and parse it according to the given ``fmt``."""
+    return _strparse(f.readline(), fmt)
+
+
+def _strparse(s, fmt):
+    """Parse a string into fixed-width numeric fields.
+    ``fmt`` should be a list of tuples specifying (type, length) for each field in
+    string ``s``. Use None for the type to skip (i.e. not yield) that field.
+    """
+    p = 0
+    for typ, length in fmt:
+        sub = s[p : p + length]
+        if typ is not None:
+            yield typ(sub)
+        p += length
+
+
+def _read_map(f, is_turbo_prop=False):
+    """Read a single map of a table from the engine deck or propeller map file.
+    The map data is returned in the same format as in ``read_table`` except
+    there is a single altitude value per map in the case of engine deck and
+    there is a single Mach number per map in the case of propeller map.
+    """
+    # map dimensions: FORMAT(/2I5,F10.1,10X))
+    npts, nline, amap = _parse(f, [*_rep(2, (int, 5)), (float, 10)])
+
+    map_data = np.empty((npts * nline, 4))
+    map_data[:, 0] = amap
+
+    # number of points on a single line - wrapped if more than 6
+    max_columns = 6
+
+    # point vals: FORMAT(10X,6F10.4,10X)
+    x = []
+    npts_remaining = npts
+    while npts_remaining > 0:
+        npts_to_read = min(max_columns, npts_remaining)
+        # remaining vals on wrapped line
+        x.extend(list(_parse(f, [(None, 10), *_rep(npts_to_read, (float, 10))])))
+        npts_remaining -= npts_to_read
+
+    map_data[:, 2] = np.tile(x, nline)
+
+    for j in range(nline):
+        npts_remaining = npts
+        npts_to_read = min(max_columns, npts_remaining)
+        # line (y) val then z vals: FORMAT(F10.4,6F10.1,10X,/(6F10.1,10X))
+        vals = list(_parse(f, [(float, 10), *_rep(npts_to_read, (float, 10))]))
+        y = vals[0]
+        z = vals[1:]
+        npts_remaining -= npts_to_read
+        while npts_remaining > 0:
+            npts_to_read = min(max_columns, npts_remaining)
+            # add remaining vals on warapped line
+            line_format = [*_rep(npts_to_read, (float, 10))]
+            if is_turbo_prop:
+                line_format = [(None, 10), *line_format]
+            z.extend(list(_parse(f, line_format)))
+            npts_remaining -= npts_to_read
+
+        sl = slice(j * npts, (j + 1) * npts)
+        map_data[sl, 1] = y
+        map_data[sl, 3] = z
+
+    return map_data
 
 
 def isiterable(val, valid_iterables: tuple = (list, np.ndarray, tuple)):
@@ -295,3 +369,243 @@ def round_it(x, sig=None):
         return round(x, sig - int(floor(log10(abs(x)))) - 1)
     else:
         return 0
+
+
+def sigmoidX(x, x0, mu=1.0):
+    """
+    Sigmoid used to smoothly transition between piecewise functions.
+
+    Parameters
+    ----------
+    x: float or array
+        independent variable
+    x0: float
+        the center of symmetry. When x = x0, sigmoidX = 1/2.
+    mu: float
+        steepness parameter.
+
+    Returns
+    -------
+    float or array
+        smoothed value from input parameter x.
+    """
+    if mu == 0:
+        raise ValueError('mu must be non-zero')
+
+    if isinstance(x, np.ndarray):
+        if np.isrealobj(x):
+            dtype = float
+        else:
+            dtype = complex
+        n_size = x.size
+        y = np.zeros(n_size, dtype=dtype)
+        # avoid overflow in squared term, underflow seems to be ok
+        calc_idx = np.where((x.real - x0) / mu > -320)
+
+        if isinstance(x0, np.ndarray) and len(x0) == n_size:
+            y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0[calc_idx]) / mu))
+        else:
+            y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / mu))
+    else:
+        if isinstance(x, float):
+            dtype = float
+        else:
+            dtype = complex
+        y = 0
+        if (x - x0) * mu > -320:
+            y = 1 / (1 + np.exp(-(x - x0) / mu))
+    if isinstance(dtype, float):
+        y = y.real
+    return y
+
+
+def dSigmoidXdx(x, x0, mu=1.0):
+    """
+    Derivative of sigmoid function.
+
+    Parameters
+    ----------
+    x: float or array
+        independent variable
+    x0: float
+        the center of symmetry. When x = x0, sigmoidX = 1/2.
+    mu: float
+        steepness parameter.
+
+    Returns
+    -------
+    float or array
+        smoothed derivative value from input parameter x.
+    """
+    if mu == 0:
+        raise ValueError('mu must be non-zero')
+
+    if isinstance(x, np.ndarray):
+        if np.isrealobj(x):
+            dtype = float
+        else:
+            dtype = complex
+        n_size = x.size
+        y = np.zeros(n_size, dtype=dtype)
+        term = np.zeros(n_size, dtype=dtype)
+        term2 = np.zeros(n_size, dtype=dtype)
+        # avoid overflow in squared term, underflow seems to be ok
+        calc_idx = np.where((x.real - x0) / mu > -320)
+        term[calc_idx] = np.exp(-(x[calc_idx] - x0) / mu)
+        term2[calc_idx] = (1 + term[calc_idx]) * (1 + term[calc_idx])
+        y[calc_idx] = term[calc_idx] / mu / term2[calc_idx]
+    else:
+        y = 0
+        if (x - x0) * mu > -320:
+            term = np.exp(-(x - x0) / mu)
+            term2 = (1 + term) * (1 + term)
+            y = term / mu / term2
+    if isinstance(dtype, float):
+        y = y.real
+    return y
+
+
+def smooth_min(x, b, mu=100.0):
+    """
+    Smooth approximation of the min function using the log-sum-exp trick.
+
+    Parameters
+    ----------
+    x (float or array-like): First value.
+    b (float or array-like): Second value.
+    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
+
+    Returns
+    -------
+    float or array-like: The smooth approximation of min(x, b).
+    """
+    sum_log_exp = np.log(np.exp(np.multiply(-mu, x)) + np.exp(np.multiply(-mu, b)))
+    rv = -(1 / mu) * sum_log_exp
+    return rv
+
+
+def d_smooth_min(x, b, mu=100.0):
+    """
+    Derivative of function smooth_min(x).
+
+    Parameters
+    ----------
+    x (float or array-like): First value.
+    b (float or array-like): Second value.
+    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
+
+    Returns
+    -------
+    float or array-like: The smooth approximation of derivative of min(x, b).
+    """
+    d_sum_log_exp = np.exp(np.multiply(-mu, x)) / (
+        np.exp(np.multiply(-mu, x)) + np.exp(np.multiply(-mu, b))
+    )
+    return d_sum_log_exp
+
+
+def smooth_max(x, b, mu=10.0):
+    """
+    Smooth approximation of the min function using the log-sum-exp trick.
+
+    Parameters
+    ----------
+    x (float or array-like): First value.
+    b (float or array-like): Second value.
+    mu (float): The smoothing factor. Higher values make it closer to the true maximum. Try between 75 and 275.
+
+    Returns
+    -------
+    float or array-like: The smooth approximation of max(x, b).
+    """
+    mu_x = mu * x
+    mu_b = mu * b
+    m = np.maximum(mu_x, mu_b)
+    sum_log_exp = (m + np.log(np.exp(mu_x - m) + np.exp(mu_b - m))) / mu
+
+    return sum_log_exp
+
+
+def d_smooth_max(x, b, mu=10.0):
+    """
+    Derivative of function smooth_min(x).
+
+    Parameters
+    ----------
+    x (float or array-like): First value.
+    b (float or array-like): Second value.
+    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
+
+    Returns
+    -------
+    float or array-like: The smooth approximation of derivative of min(x, b).
+    """
+    mu_x = mu * x
+    mu_b = mu * b
+    m = np.maximum(mu_x, mu_b)
+    numerator = np.exp(mu_x - m)
+    denominator = np.exp(mu_x - m) + np.exp(mu_b - m)
+    d_sum_log_exp = numerator / denominator
+    return d_sum_log_exp
+
+
+def sin_int4(val):
+    """Define a smooth, differentialbe approximation to the 'int' function."""
+    return sin_int(sin_int(sin_int(sin_int(val)))) - 0.5
+
+
+def dydx_sin_int4(val):
+    """Define the derivative (dy/dx) of sin_int4, at x = val."""
+    y0 = sin_int(val)
+    y1 = sin_int(y0)
+    y2 = sin_int(y1)
+
+    dydx3 = dydx_sin_int(y2)
+    dydx2 = dydx_sin_int(y1)
+    dydx1 = dydx_sin_int(y0)
+    dydx0 = dydx_sin_int(val)
+
+    dydx = dydx3 * dydx2 * dydx1 * dydx0
+
+    return dydx
+
+
+# 'int' function can be approximated by recursively applying this sin function
+# which makes a smooth, differentialbe function (is there a good one?)
+def sin_int(val):
+    """
+    Define one step in approximating the 'int' function with a smooth,
+    differentialbe function.
+    """
+    int_val = val - np.sin(2 * np.pi * (val + 0.5)) / (2 * np.pi)
+
+    return int_val
+
+
+def dydx_sin_int(val):
+    """Define the derivative (dy/dx) of sin_int, at x = val."""
+    dydx = 1.0 - np.cos(2 * np.pi * (val + 0.5))
+
+    return dydx
+
+
+def smooth_int_tanh(x, mu=10.0):
+    """Smooth approximation of int(x) using tanh."""
+    f = np.floor(x.real) + x.imag * 1j
+    frac = x - f
+    t = np.tanh(mu * (frac - 0.5))
+    s = 0.5 * (t + 1)
+    y = f + s
+    return y
+
+
+def d_smooth_int_tanh(x, mu=10.0):
+    """
+    Smooth approximation of int(x) using tanh.
+    Returns (y, dy_dx).
+    """
+    f = np.floor(x.real) + x.imag * 1j
+    frac = x - f
+    t = np.tanh(mu * (frac - 0.5))
+    dy_dx = 0.5 * mu * (1 - t**2)
+    return dy_dx

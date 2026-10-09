@@ -10,7 +10,7 @@ from openmdao.components.interp_util.interp import InterpND
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.engine_deck import normalize
 from aviary.subsystems.propulsion.utils import EngineModelVariables, default_units
-from aviary.utils.conversion_utils import _parse, _read_map, _rep
+from aviary.utils.utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_aviary_resource_path
 from aviary.utils.named_values import NamedValues
