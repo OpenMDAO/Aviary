@@ -76,6 +76,15 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
             desc='Airspeed constraint applied at the end of the phase.',
         )
 
+        self.declare(
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            '_add_user_defined_constraints().',
+        )
+
         # The options below have not yet been revamped.
 
         self.declare(
@@ -142,6 +151,9 @@ class AccelPhase(PhaseBuilder):
         phase.add_boundary_constraint(
             'EAS', loc='final', equals=EAS_constraint_eq, units='kn', ref=EAS_constraint_eq
         )
+
+        constraints = user_options['constraints']
+        self._add_user_defined_constraints(phase, constraints)
 
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, units='ft', val=alt)
 

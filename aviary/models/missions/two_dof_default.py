@@ -259,6 +259,9 @@ phase_info = {
             'time': ([28504.0, 500.0], 's'),
         },
     },
+    'post_mission': {
+        'target_range': (3675.0, 'nmi'),
+    },
 }
 
 
