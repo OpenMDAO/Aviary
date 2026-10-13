@@ -141,8 +141,8 @@ inputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, 1.0)
 
 # Nacelle
 # ---------------------------
-inputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, 7.0, 'ft')
-inputs.set_val(Aircraft.Nacelle.AVG_LENGTH, 11.65, 'ft')
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, 7.0, 'ft')
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, 11.65, 'ft')
 inputs.set_val(Aircraft.Nacelle.MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, 1.0)
 
@@ -169,7 +169,6 @@ inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
 inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SCALE_MASS, True)
 inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
-inputs.set_val(Aircraft.Engine.SCALE_FACTOR, 1.0)
 inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
@@ -322,6 +321,8 @@ outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 7148.277290864326, 'lbm')
 
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([11.65]), 'ft')
 outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.6643]))
+outputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.0]), 'ft')
+outputs.set_val(Aircraft.Nacelle.AVG_LENGTH, np.array([11.65]), 'ft')
 outputs.set_val(Aircraft.Nacelle.TOTAL_WETTED_AREA, 2 * 228.34, 'ft**2')
 outputs.set_val(Aircraft.Nacelle.MASS, 806.0988, 'lbm')
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, np.array([228.34]), 'ft**2')
