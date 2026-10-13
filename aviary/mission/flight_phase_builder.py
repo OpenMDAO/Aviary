@@ -314,7 +314,7 @@ class FlightPhaseBase(PhaseBuilder):
             units='kW',
         )
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL,
             units='lbm/h',
         )
 

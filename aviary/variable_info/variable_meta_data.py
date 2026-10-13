@@ -6695,23 +6695,27 @@ add_meta_data(
     multivalue=True,
 )
 
-add_meta_data(
-    Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='lbm/h',
-    desc='Current rate of fuel consumption of the vehicle, per single instance of each '
-    'engine model. Consumption (i.e. mass reduction) of fuel is defined as negative.',
-    multivalue=True,
-)
+# add_meta_data(
+#     Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
+#     meta_data=_MetaData,
+#     historical_name={'GASP': None, 'FLOPS': None},
+#     units='lbm/h',
+#     desc='Negative rate of fuel flow per instance of each engine model. Consumption (i.e. mass '
+#     'reduction) is defined as negative. Calculated from '
+#     'Dynamic.Vehicle.Proplusion.FUEL_MASS_FLOW_RATE to determine change in aircraft mass over the '
+#     'mission. Not an expected value to be provided in EngineModels.',
+#     multivalue=True,
+# )
 
 add_meta_data(
     Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm/h',
-    desc='Current rate of total fuel consumption of the vehicle. Consumption (i.e. '
-    'mass reduction) of fuel is defined as negative.',
+    desc='Negative current rate of total fuel consumption of the vehicle, the total sum of all '
+    'engines. Consumption (i.e. mass reduction) of fuel is defined as positive. Calculated from '
+    'Dynamic.Vehicle.Proplusion.FUEL_MASS_FLOW_RATE to determine change in aircraft mass over the '
+    'mission.',
     multivalue=True,
 )
 
@@ -6720,8 +6724,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm/h',
-    desc='Current rate of total fuel consumption of the vehicle. Consumption (i.e. '
-    'mass reduction) of fuel is defined as positive.',
+    desc='Current rate of total fuel consumption of the vehicle, the total sum of all engines. '
+    'Consumption (i.e. mass reduction) of fuel is defined as positive.',
     multivalue=True,
 )
 

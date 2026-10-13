@@ -45,8 +45,7 @@ class FuelSummationGroup(om.Group):
         self.add_subsystem(
             'main_mission_fuel',
             om.ExecComp(
-                # mission fuel is currently negative
-                'fuel_burned = taxi_fuel - mission_fuel + takeoff_fuel',  # + landing_fuel',
+                'fuel_burned = taxi_fuel + mission_fuel + takeoff_fuel',  # + landing_fuel',
                 taxi_fuel={'units': 'lbm', 'val': 0},
                 mission_fuel={'units': 'lbm', 'val': 0},
                 takeoff_fuel={'units': 'lbm', 'val': 0},

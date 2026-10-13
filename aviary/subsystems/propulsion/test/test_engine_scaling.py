@@ -76,8 +76,8 @@ class EngineScalingTest(unittest.TestCase):
                 np.array([900.0, 900.0, 900.0, 900.0]),
                 'lbf',
             ),
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE: (
-                np.array([-1755.55, -1755.55, -1755.55, -1755.55]),
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE: (
+                np.array([1755.55, 1755.55, 1755.55, 1755.55]),
                 'lbm/h',
             ),
             Dynamic.Vehicle.Propulsion.NOX_RATE: (

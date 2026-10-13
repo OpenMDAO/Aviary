@@ -650,7 +650,6 @@ class Dynamic:
             ELECTRIC_POWER_IN_TOTAL = 'electric_power_in_total'
             # EXIT_AREA = 'exit_area'
             FUEL_MASS_FLOW_RATE = 'fuel_flow_rate'
-            FUEL_MASS_FLOW_RATE_NEGATIVE = 'fuel_flow_rate_negative'
             FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL = 'fuel_flow_rate_negative_total'
             FUEL_MASS_FLOW_RATE_TOTAL = 'fuel_flow_rate_total'
             HYBRID_THROTTLE = 'hybrid_throttle'

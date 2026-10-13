@@ -181,10 +181,10 @@ class CoreEnergyBuilder(EnergyBuilder):
                 'fix_initial': True,
                 'fix_final': False,
                 'lower': 0.0,
-                'ref': -1e4,
+                'ref': 1e4,
                 'defect_ref': 1e6,
                 'units': 'lbm',
-                'rate_source': Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
+                'rate_source': Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL,
                 'input_initial': 0.0,
                 # 'targets': Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED,
             }
