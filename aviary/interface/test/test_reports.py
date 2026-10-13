@@ -43,7 +43,7 @@ class TestReports(unittest.TestCase):
             'drag (lbf)',
             'drag_coefficient (unitless)',
             'electric_power_in_total (kW)',
-            'fuel_flow_rate_negative_total (lbm/h)',
+            'fuel_flow_rate_total (lbm/h)',
             'lift (lbf)',
             'lift_coefficient (unitless)',
             'mach (unitless)',
@@ -65,7 +65,7 @@ class TestReports(unittest.TestCase):
                 '21108.341035874902',
                 '0.260025166162475',
                 '0.0',
-                '-10492.721631142893',
+                '10492.721631142893',
                 '175399.99981311447',
                 '2.1606820743889306',
                 '0.2',
@@ -129,7 +129,7 @@ class TestReports(unittest.TestCase):
             desc='testing',
         )
 
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             local_phase_info,

@@ -35,7 +35,7 @@ class TestFuelSummation(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         # prob.set_val(Mission.GROSS_MASS, 140_000, units='lbm')
-        prob.set_val('main_mission_fuel.mission_fuel', -20_000, units='lbm')
+        prob.set_val('main_mission_fuel.mission_fuel', 20_000, units='lbm')
         prob.set_val('reserve_mission_fuel.fuel_initial', -20_000, 'lbm')
         prob.set_val('reserve_mission_fuel.fuel_final', -30_000, 'lbm')
         prob.set_val(Mission.TOTAL_FUEL_MASS, 30_000, 'lbm')
