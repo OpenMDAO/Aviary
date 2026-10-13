@@ -552,6 +552,8 @@
             <span class="n">verbosity</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">][</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
             <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
 
+    <span class="n">deprecations</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
+
     <span class="n">preprocess_crewpayload</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">meta_data</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
     <span class="n">preprocess_fuel_capacities</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
 
@@ -634,6 +636,29 @@
         <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
             <span class="n">Mission</span><span class="o">.</span><span class="n">SEA_LEVEL_DENSITY</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">sea_level_density</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="n">sea_level_density</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="deprecations">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/preprocessors.html#aviary.utils.preprocessors.deprecations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">deprecations</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Nacelle</span><span class="o">.</span><span class="n">AVG_DIAMETER</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s1">&#39;Aircraft.Nacelle.AVG_DIAMETER has been changed to Aircraft.Nacelle.REFERENCE_AVG_DIAMETER. To avoid overriding scaled nacelle dimensions update your input file to the new variable name.&#39;</span><span class="p">,</span>
+                <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="p">)</span>  <span class="c1"># Added v1.0.2</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Nacelle</span><span class="o">.</span><span class="n">AVG_LENGTH</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s1">&#39;Aircraft.Nacelle.AVG_LENGTH has been changed to Aircraft.Nacelle.REFERENCE_AVG_LENGTH. To avoid overriding scaled nacelle dimensions update your input file to the new variable name.&#39;</span><span class="p">,</span>
+                <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="p">)</span>  <span class="c1"># Added v1.0.2</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span></div>
 
 
 
