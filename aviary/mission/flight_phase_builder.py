@@ -233,6 +233,11 @@ class FlightPhaseBase(PhaseBuilder):
 
         phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
 
+        if phase_type is not EquationsOfMotion.ENERGY_STATE:
+            phase.set_state_options(
+                Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED, rate_source='dfuelburn_dr'
+            )
+
         ################
         # Add Controls #
         ################
