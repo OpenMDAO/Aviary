@@ -158,6 +158,7 @@ class TakeOffODE(TwoDOFODE):
                 subsystem_options=kwargs,
             )
 
+
             if system is not None:
                 mission_in = subsystem.mission_inputs(
                     aviary_inputs=aviary_options,
@@ -183,6 +184,9 @@ class TakeOffODE(TwoDOFODE):
                         promotes_inputs=mission_in,
                         promotes_outputs=mission_out,
                     )
+            elif isinstance(subsystem, CoreAerodynamicsBuilder):
+                # Core aero is disabled.
+                core_aero = False
 
         if ground_roll:
             eom_name = 'groundroll_eom'

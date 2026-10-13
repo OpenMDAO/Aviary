@@ -83,7 +83,6 @@ class LandingSegment(TwoDOFODE):
                     'retract_flaps': True,
                     'retract_gear': False,
                 }
-                core_aero = True
                 aero_builder = subsystem
                 aero_system = subsystem.build_mission(
                     num_nodes=1,
@@ -91,32 +90,37 @@ class LandingSegment(TwoDOFODE):
                     user_options=user_options,
                     subsystem_options=subsystem_options,
                 )
-                self.add_subsystem(
-                    subsystem.name,
-                    aero_system,
-                    promotes_inputs=[
-                        '*',
-                        Dynamic.Atmosphere.DENSITY,
-                        Dynamic.Atmosphere.SPEED_OF_SOUND,
-                        Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
-                        ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
-                        (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
-                        Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                        ('flap_defl', Aircraft.Wing.FLAP_DEFLECTION_LANDING),
-                        ('t_init_flaps', 't_init_flaps_app'),
-                        ('t_init_gear', 't_init_gear_app'),
-                        ('CL_max_flaps', Mission.Landing.LIFT_COEFFICIENT_MAX),
-                        (
-                            'dCL_flaps_model',
-                            Mission.Landing.LIFT_COEFFICIENT_FLAP_INCREMENT,
-                        ),
-                        (
-                            'dCD_flaps_model',
-                            Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT,
-                        ),
-                    ],
-                    promotes_outputs=['CL_max'],
-                )
+                if subsystem is not None:
+                    core_aero = True
+                    self.add_subsystem(
+                        subsystem.name,
+                        aero_system,
+                        promotes_inputs=[
+                            '*',
+                            Dynamic.Atmosphere.DENSITY,
+                            Dynamic.Atmosphere.SPEED_OF_SOUND,
+                            Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+                            ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
+                            (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
+                            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+                            ('flap_defl', Aircraft.Wing.FLAP_DEFLECTION_LANDING),
+                            ('t_init_flaps', 't_init_flaps_app'),
+                            ('t_init_gear', 't_init_gear_app'),
+                            ('CL_max_flaps', Mission.Landing.LIFT_COEFFICIENT_MAX),
+                            (
+                                'dCL_flaps_model',
+                                Mission.Landing.LIFT_COEFFICIENT_FLAP_INCREMENT,
+                            ),
+                            (
+                                'dCD_flaps_model',
+                                Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT,
+                            ),
+                        ],
+                        promotes_outputs=['CL_max'],
+                    )
+                else:
+                    # Core aero is disabled.
+                    core_aero = False
 
             if isinstance(subsystem, PropulsionBuilder):
                 propulsion_system = subsystem.build_mission(
