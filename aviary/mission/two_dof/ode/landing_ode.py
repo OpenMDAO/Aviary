@@ -21,6 +21,7 @@ class LandingSegment(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
         user_options = self.options['user_options']
+        subsystem_options = self.options['subsystem_options']
 
         self.add_subsystem(
             'approach_alt_comp',
@@ -77,23 +78,28 @@ class LandingSegment(TwoDOFODE):
         # collect the propulsion group names for later use with
         core_aero = False
         for subsystem in subsystems:
+            name = subsystem.name
+
             if isinstance(subsystem, CoreAerodynamicsBuilder):
-                subsystem_options = {
+                kwargs = {
                     'method': 'low_speed',
                     'retract_flaps': True,
                     'retract_gear': False,
                 }
+                if name in subsystem_options:
+                    kwargs.update(subsystem_options[name])
+
                 aero_builder = subsystem
                 aero_system = subsystem.build_mission(
                     num_nodes=1,
                     aviary_inputs=aviary_options,
                     user_options=user_options,
-                    subsystem_options=subsystem_options,
+                    subsystem_options=kwargs,
                 )
                 if subsystem is not None:
                     core_aero = True
                     self.add_subsystem(
-                        subsystem.name,
+                        name,
                         aero_system,
                         promotes_inputs=[
                             '*',
@@ -130,7 +136,7 @@ class LandingSegment(TwoDOFODE):
                     subsystem_options={},
                 )
                 propulsion_mission = self.add_subsystem(
-                    subsystem.name,
+                    name,
                     propulsion_system,
                     promotes_inputs=['*'],
                     promotes_outputs=[(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, 'thrust_idle')],
