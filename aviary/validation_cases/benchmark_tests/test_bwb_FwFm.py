@@ -101,8 +101,8 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
             verbosity=0,
             max_iter=60,
         )
-        with open('temp_vars.txt', 'w') as f:
-            prob.model.list_vars(units=True, print_arrays=True, out_stream=f)
+        # with open('temp_vars.txt', 'w') as f:
+        #     prob.model.list_vars(units=True, print_arrays=True, out_stream=f)
 
         rtol = 1e-3
 
