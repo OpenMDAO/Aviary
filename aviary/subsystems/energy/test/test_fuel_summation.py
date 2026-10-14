@@ -3,6 +3,7 @@ from copy import deepcopy
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.missions.energy_state_default import phase_info
 from aviary.subsystems.energy.fuel_summation import FuelSummationGroup
@@ -11,6 +12,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class TestFuelSummation(unittest.TestCase):
     def test_fuel_group(self):
         local_phase_info = deepcopy(phase_info)
@@ -36,8 +38,8 @@ class TestFuelSummation(unittest.TestCase):
 
         # prob.set_val(Mission.GROSS_MASS, 140_000, units='lbm')
         prob.set_val('main_mission_fuel.mission_fuel', 20_000, units='lbm')
-        prob.set_val('reserve_mission_fuel.fuel_initial', -20_000, 'lbm')
-        prob.set_val('reserve_mission_fuel.fuel_final', -30_000, 'lbm')
+        prob.set_val('reserve_mission_fuel.fuel_initial', 20_000, 'lbm')
+        prob.set_val('reserve_mission_fuel.fuel_final', 30_000, 'lbm')
         prob.set_val(Mission.TOTAL_FUEL_MASS, 30_000, 'lbm')
         prob.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 20_000, units='lbm')
         prob.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 750, units='lbm')
