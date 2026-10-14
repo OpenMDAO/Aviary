@@ -87,7 +87,7 @@ class CruiseODETestCase(unittest.TestCase):
             assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
-# @use_tempdirs
+@use_tempdirs
 class ElectricCruiseODETestCase(unittest.TestCase):
     """This test uses a makeup electrical engine to test electrical Breguet cruise ODE."""
 
@@ -120,7 +120,7 @@ class ElectricCruiseODETestCase(unittest.TestCase):
         setup_model_options(self.prob, aviary_options)
 
     def test_electric_cruise(self):
-        """Test outputs and partial derivatives of the electric Breguet cruise ODE."""
+        # Test outputs and partial derivatives of the electric Breguet cruise ODE.
         self.prob.setup(check=False, force_alloc_complex=True)
 
         self.prob.set_val(Dynamic.Mission.ALTITUDE, val=37500 * np.ones(2), units='ft')

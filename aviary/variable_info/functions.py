@@ -40,7 +40,7 @@ def add_aviary_input(
 
     Parameters
     ----------
-    comp: System
+    comp: Component
         OpenMDAO component the variable `varname` will be added as an input to.
     varname: str
         Name of the variable in this component's namespace.
@@ -121,7 +121,7 @@ def add_aviary_output(
 
     Parameters
     ----------
-    comp: System
+    comp: Component
         OpenMDAO component the variable `varname` will be added as an output to.
     varname: str
         Name of the variable in this component's namespace.

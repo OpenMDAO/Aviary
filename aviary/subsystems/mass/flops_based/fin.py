@@ -38,7 +38,9 @@ class FinMass(om.ExplicitComponent):
             togw = mass_to_force_english((togm, 'lbm'), gravity)
 
             fin_weight = 0.32 * togw**0.3 * area**0.85 * (taper_ratio + 0.5) * num_fins
-            outputs[Aircraft.Fins.MASS] = fin_weight * inputs[Aircraft.Fins.MASS_SCALER]
+            outputs[Aircraft.Fins.MASS] = (
+                fin_weight * inputs[Aircraft.Fins.MASS_SCALER]
+            )  # implied 1 lbf -> lbm conversion here, as FLOPS equations are based on standard gravity
 
     def compute_partials(self, inputs, J):
         num_fins = self.options[Aircraft.Fins.NUM_FINS]
