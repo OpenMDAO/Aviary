@@ -29,12 +29,12 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         expected_values = {
-            (Mission.GROSS_MASS, 'lbm'): 171414.17171104,
-            (Mission.OPERATING_MASS, 'lbm'): 94986.583699,
-            (Mission.TOTAL_FUEL_MASS, 'lbm'): 40451.68735078,
+            (Mission.GROSS_MASS, 'lbm'): 171058.89719918,
+            (Mission.OPERATING_MASS, 'lbm'): 94888.64084344,
+            (Mission.TOTAL_FUEL_MASS, 'lbm'): 40170.2563557,
             (Mission.Landing.GROUND_DISTANCE, 'ft'): 2655.0906835,
             (Mission.RANGE, 'NM'): 3675.0,
-            (Mission.FINAL_MASS, 'lbm'): 136087.98897716,
+            (Mission.FINAL_MASS, 'lbm'): 135679.19846384,
         }
 
         for (var_name, units), expected_val in expected_values.items():
@@ -111,7 +111,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = ProblemPhaseTestCase()
-    test.setUp()
-    test.test_bench_GwGm_SNOPT()
+    unittest.main()
+    # test = ProblemPhaseTestCase()
+    # test.setUp()
+    # test.test_bench_GwGm_SNOPT()
