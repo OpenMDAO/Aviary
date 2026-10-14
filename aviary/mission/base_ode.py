@@ -109,11 +109,8 @@ class BaseODE(om.Group):
                 )
 
                 # ODE couples with propulsion.
-                if (
-                    couple_propulsion
-                    and isinstance(subsystem, PropulsionBuilder)
-                    or couple_aero
-                    and isinstance(subsystem, AerodynamicsBuilder)
+                if (couple_propulsion and isinstance(subsystem, PropulsionBuilder)) or (
+                    couple_aero and isinstance(subsystem, AerodynamicsBuilder)
                 ):
                     needs_solver = True
 
