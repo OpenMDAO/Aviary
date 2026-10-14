@@ -136,7 +136,7 @@ class ThrottleAllocationEnergyTestcase(unittest.TestCase):
         with self.subTest('climb_allocation'):
             assert_near_equal(alloc_climb[0], 0.48777445, tolerance=1e-2)
         with self.subTest('cruise_allocation'):
-            assert_near_equal(alloc_cruise[0], 0.34035731, tolerance=1e-2)
+            assert_near_equal(alloc_cruise[0], 0.33529271, tolerance=1e-2)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_multiengine_dynamic(self):
@@ -177,7 +177,7 @@ class ThrottleAllocationEnergyTestcase(unittest.TestCase):
 
         with self.subTest('cruise_allocation'):
             # Cruise is pretty constant, check exact value.
-            assert_near_equal(alloc_cruise[0], 0.33626162, tolerance=1e-2)
+            assert_near_equal(alloc_cruise[0], 0.33122921, tolerance=1e-2)
 
         with self.subTest('climb_allocation'):
             # Check general trend: favors engine 2.

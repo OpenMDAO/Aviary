@@ -149,12 +149,15 @@ inputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, 1.0)  # FRLGN
 
 # Nacelle
 # ---------------------------
-inputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, 12.569, 'ft')  # DNAC
-inputs.set_val(Aircraft.Nacelle.AVG_LENGTH, 17.297, 'ft')  # XNAC
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, 12.569, 'ft')  # DNAC
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, 17.297, 'ft')  # XNAC
 inputs.set_val(Aircraft.Nacelle.MASS_SCALER, 0.0)  # FRNA
 inputs.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, 1.0)  # SWETN
 inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, 0.0)  # TRLN
 inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_UPPER, 0.0)  # TRUN
+# also outputs but needed by some components as an input
+inputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([12.569 * 1.0082224864725349**0.5]), 'ft')
+inputs.set_val(Aircraft.Nacelle.AVG_LENGTH, np.array([17.297 * 1.0082224864725349**0.5]), 'ft')
 
 # Paint
 # ---------------------------
@@ -365,6 +368,8 @@ outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 30898.996805908242, 'lbm')
 
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([17.367966592445]), 'ft')  # EL(5)
 outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.3761635770546583]))  # FR(5)
+outputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([12.6205684280766]), 'ft')
+outputs.set_val(Aircraft.Nacelle.AVG_LENGTH, np.array([17.367966592445]), 'ft')
 outputs.set_val(Aircraft.Nacelle.MASS, 0.0, 'lbm')  # WNAC
 nacelle_wetted_area = np.array([613.74211034217353])  # SWET(5)
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, 'ft**2')
