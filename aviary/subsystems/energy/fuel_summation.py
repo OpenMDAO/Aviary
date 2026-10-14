@@ -66,7 +66,7 @@ class FuelSummationGroup(om.Group):
         if reserve_phases:
             ecomp = om.ExecComp(
                 # fuel flow is currently always negative
-                'reserve_fuel = -(fuel_final - fuel_initial)',
+                'reserve_fuel = fuel_final - fuel_initial',
                 fuel_initial={'units': 'lbm', 'val': 0},
                 fuel_final={'units': 'lbm', 'val': 0},
                 reserve_fuel={'units': 'lbm', 'val': 0},

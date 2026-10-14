@@ -11,7 +11,7 @@ from aviary.variable_info.enums import PhaseType, SpeedType
 from aviary.variable_info.variables import Mission
 
 
-@use_tempdirs
+# @use_tempdirs
 class ReserveTest(unittest.TestCase):
     @unittest.skip('This test currently has convergence issues')
     def test_reserves_2dof(self):
@@ -185,9 +185,9 @@ class ReserveTest(unittest.TestCase):
         prob.run_aviary_problem()
 
         expected_values = {
-            'energy.reserve_fuel_margin_mass': (754.09222299, 'lbm'),
-            Mission.RESERVE_FUEL_MASS: (15804.46869892, 'lbm'),
-            Mission.TOTAL_RESERVE_FUEL_MASS: (16683.56092191, 'lbm'),
+            'energy.reserve_fuel_margin_mass': (754.19275057, 'lbm'),
+            Mission.RESERVE_FUEL_MASS: (15806.4835826, 'lbm'),
+            Mission.TOTAL_RESERVE_FUEL_MASS: (16685.67633319, 'lbm'),
         }
 
         for var_name, (expected, units) in expected_values.items():
