@@ -469,20 +469,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             # Breguet phase should have nothing else to set.
             return
 
-        control_keys = ['velocity_rate', 'throttle']
-        state_keys = [
-            'altitude',
-            'mass',
-            Dynamic.Mission.DISTANCE,
-            Dynamic.Mission.VELOCITY,
-            'flight_path_angle',
-            Dynamic.Vehicle.ANGLE_OF_ATTACK,
-        ]
-
-        if phase_name == 'ascent':
-            # Alpha is a control for ascent.
-            control_keys.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
-
         prob_keys = ['tau_gear', 'tau_flaps']
 
         for guess_key, guess_data in guesses.items():
@@ -494,30 +480,23 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     # These variables are promoted to the top.
                     target_prob.set_val(Mission.Takeoff.ASCENT_T_INITIAL, val[0], units=units)
                     target_prob.set_val(Mission.Takeoff.ASCENT_DURATION, val[1], units=units)
-                else:
-                    phase.set_time_val(initial=val[0], duration=val[1], units=units)
+                phase.set_time_val(initial=val[0], duration=val[1], units=units)
 
             else:
-                # Set initial guess for control variables
-                if guess_key in control_keys:
-                    phase.set_control_val(
-                        guess_key,
-                        vals=process_guess_var(val, guess_key, phase),
-                        units=units,
-                    )
+                if guess_key == phase.time_options['name']:
+                    phase.set_time_val(initial=val[0], duration=val[1], units=units)
 
-                # Set initial guess for state variables
-                elif guess_key in state_keys:
-                    phase.set_state_val(
-                        guess_key,
-                        vals=process_guess_var(val, guess_key, phase),
-                        units=units,
-                    )
+                elif guess_key in phase.control_options:
+                    phase.set_control_val(guess_key, val, units=units)
+
+                elif guess_key in phase.state_options:
+                    phase.set_state_val(guess_key, val, units=units)
 
                 elif guess_key in prob_keys:
                     target_prob.set_val(parent_prefix + guess_key, val, units=units)
 
                 elif ':' in guess_key:
+                    # These may come from external subsystems.
                     target_prob.set_val(
                         parent_prefix + f'traj.{phase_name}.{guess_key}',
                         process_guess_var(val, guess_key, phase),
