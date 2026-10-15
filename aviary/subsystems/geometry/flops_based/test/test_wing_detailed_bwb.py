@@ -180,7 +180,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         exp3 = [0.0, 0.0, 10.0, 17.0, 17.0, 17.0]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='fd')
+        partial_data = self.prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
     def test_case3(self):
@@ -263,7 +263,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         exp3 = prob.get_val(Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION)
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='fd')
+        partial_data = self.prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
 
@@ -309,7 +309,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         exp3 = [0.0, 15.33732285330093]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
-        # Had to switch to FD checking here because one of the underlying groups is using 'fd'
+        # Had to switch to FD checking here because one of the underlying groups is using 'cs'
         partial_data = self.prob.check_partials(out_stream=None, method='fd', form='central')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
@@ -438,7 +438,7 @@ class BWBWingPrelimTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    z = BWBUpdateDetailedWingDistTest()
-    z.setUp()
-    z.test_case1()
+    unittest.main()
+    # z = BWBUpdateDetailedWingDistTest()
+    # z.setUp()
+    # z.test_case1()
