@@ -146,7 +146,6 @@ class AccelPhase(PhaseBuilder):
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, units='ft', val=alt)
 
         # Timeseries Outputs
-        phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         phase.add_timeseries_output('EAS', units='kn')
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')

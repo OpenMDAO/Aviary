@@ -728,6 +728,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                 Dynamic.Vehicle.DRAG_COEFFICIENT,
                 Dynamic.Vehicle.LIFT_COEFFICIENT,
             ]
+            if self.code_origin is GASP and 'output_alpha' in subsystem_options:
+                timeseries_vars.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 
         return timeseries_vars
 
