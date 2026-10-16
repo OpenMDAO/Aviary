@@ -472,14 +472,8 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         parent_prefix : str
             Location of this trajectory in the hierarchy.
         """
-        control_keys = ['mach', 'altitude']
-        state_keys = ['mass', Dynamic.Mission.DISTANCE]
         prob_keys = ['tau_gear', 'tau_flaps']
-
         options = aviary_group.mission_info[phase_name]['user_options']
-
-        if options['throttle_enforcement'] == 'control':
-            control_keys.append('throttle')
 
         # Let's preserve the original user-specified initial conditions.
         guess_dict = deepcopy(guesses)
@@ -545,13 +539,13 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         for guess_key, guess_data in guess_dict.items():
             val, units = guess_data
 
-            if 'time' == guess_key:
+            if guess_key == phase.time_options['name']:
                 phase.set_time_val(initial=val[0], duration=val[1], units=units)
 
-            elif guess_key in control_keys:
+            elif guess_key in phase.control_options:
                 phase.set_control_val(guess_key, val, units=units)
 
-            elif guess_key in state_keys:
+            elif guess_key in phase.state_options:
                 phase.set_state_val(guess_key, val, units=units)
 
             elif guess_key in prob_keys:

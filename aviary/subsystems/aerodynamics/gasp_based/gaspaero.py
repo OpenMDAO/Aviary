@@ -2570,7 +2570,7 @@ class LowSpeedAero(om.Group):
             'aero_ramps',
             aero_ramps,
             promotes_inputs=[
-                ('time', 't_curr'),
+                ('time', Dynamic.Mission.TIME),
                 ('flap_factor:t_init', 't_init_flaps'),
                 ('flap_factor:t_duration', 'dt_flaps'),
                 ('gear_factor:t_init', 't_init_gear'),

@@ -94,7 +94,7 @@ class TestLowSpeedAero(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3)
         prob.setup()
 
-        prob.set_val('t_curr', [0.0, 1.0, 2.0, 3.0])
+        prob.set_val(Dynamic.Mission.TIME, [0.0, 1.0, 2.0, 3.0])
         prob.set_val(Dynamic.Mission.ALTITUDE, 0)
         prob.set_val(Dynamic.Atmosphere.MACH, [0.0, 0.009, 0.018, 0.026])
         prob.set_val(Aircraft.Design.GROSS_MASS, 175400.0)
@@ -132,7 +132,7 @@ class TestLowSpeedAero(unittest.TestCase):
         prob.setup()
 
         prob.set_val(
-            't_curr',
+            Dynamic.Mission.TIME,
             [37.0, 38.0, 39.0, 40.0, 47.0, 48.0, 49.0, 50.0],
         )
 

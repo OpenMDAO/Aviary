@@ -91,7 +91,6 @@ class GroundrollODE(TwoDOFODE):
             self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.0)
             self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=1.0)
             self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=1.0)
-            self.set_input_defaults('t_curr', val=np.zeros(nn), units='s')
 
         self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='deg')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units='ft')

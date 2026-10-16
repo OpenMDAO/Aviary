@@ -45,7 +45,7 @@ class GroundrollODETestCase(unittest.TestCase):
 
         set_params_for_unit_tests(self.prob)
 
-        self.prob.set_val('t_curr', [1, 2], units='s')
+        self.prob.set_val(Dynamic.Mission.TIME, [1, 2], units='s')
         self.prob.set_val('aircraft:wing:incidence', 0, units='deg')
         self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
         self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
@@ -105,7 +105,7 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units='lbm')
         self.prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, [1.5, 1.5], units='deg')
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units='kn')
-        self.prob.set_val('t_curr', [1, 2], units='s')
+        self.prob.set_val(Dynamic.Mission.TIME, [1, 2], units='s')
         self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
         self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
@@ -168,7 +168,7 @@ class AscentODETestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Mission.VELOCITY, [100, 100], units='kn')
         self.prob.set_val(Dynamic.Vehicle.MASS, [1, 1], units='kg')
 
-        self.prob.set_val('t_curr', [1, 2], units='s')
+        self.prob.set_val(Dynamic.Mission.TIME, [1, 2], units='s')
         self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
         self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)

@@ -297,7 +297,7 @@ class TabularLowSpeedAero(om.Group):
                 ('t_init', 't_init_gear'),
                 ('duration', 'dt_gear'),
                 ('x', 'dCD_gear_full'),
-                't_curr',
+                ('t_curr', Dynamic.Mission.TIME),
             ],
             promotes_outputs=[('y', 'dCD_gear')],
         )
@@ -311,7 +311,7 @@ class TabularLowSpeedAero(om.Group):
                 ('t_init', 't_init_flaps'),
                 ('duration', 'dt_flaps'),
                 ('x', 'dCD_flaps_full'),
-                't_curr',
+                ('t_curr', Dynamic.Mission.TIME),
             ],
             promotes_outputs=[('y', 'dCD_flaps')],
         )
@@ -322,7 +322,7 @@ class TabularLowSpeedAero(om.Group):
                 ('t_init', 't_init_flaps'),
                 ('duration', 'dt_flaps'),
                 ('x', 'dCL_flaps_full'),
-                't_curr',
+                ('t_curr', Dynamic.Mission.TIME),
             ],
             promotes_outputs=[('y', 'dCL_flaps')],
         )

@@ -628,6 +628,7 @@ class Dynamic:
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'
         SPECIFIC_ENERGY_RATE_EXCESS = 'specific_energy_rate_excess'
+        TIME = 'time'
         VELOCITY = 'velocity'
         VELOCITY_RATE = 'velocity_rate'
 
