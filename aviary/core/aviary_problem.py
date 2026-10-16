@@ -77,20 +77,10 @@ class AviaryProblem(om.Problem):
         meta_data=CoreMetaData.copy(),
         **kwargs,
     ):
+        from aviary.interface.reports import AVIARY_DEFAULT_REPORTS
+
         # Modify OpenMDAO's default_reports for this session.
-        new_reports = [
-            'subsystems',
-            'mission',
-            'timeseries_csv',
-            'run_status',
-            'sizing_results',
-            'input_checks',
-            'overridden_variables_setup',
-            'overridden_variables_run_model',
-            'overridden_variables_run_driver',
-            'list_options',
-        ]
-        for report in new_reports:
+        for report in AVIARY_DEFAULT_REPORTS:
             if report not in _default_reports:
                 _default_reports.append(report)
 
