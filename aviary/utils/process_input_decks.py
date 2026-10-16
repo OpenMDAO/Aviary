@@ -23,6 +23,7 @@ from operator import eq, ge, gt, le, lt, ne
 import numpy as np
 from openmdao.utils.units import valid_units
 
+from aviary.interface.variable_deprecations import deprecated_variables
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import convert_strings_to_data, get_path
 from aviary.variable_info.enums import ProblemType, Verbosity
@@ -114,6 +115,7 @@ def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=Verbosity.
             aircraft_values=aircraft_values,
             initialization_guesses=initialization_guesses,
             meta_data=meta_data,
+            verbosity=verbosity,
         )
 
     # make sure verbosity is always set
@@ -220,11 +222,13 @@ def parse_inputs(
                     with warnings.catch_warnings():
                         warnings.simplefilter('always')
                         if new_name == 'removed':
-                            warnings.warn(
-                                f'Variable {var_name} is no longer in meta_data as of {the_date}. '
-                                f'See PR #{the_PRs} for details.',
-                                DeprecationWarning,
-                            )
+                            if verbosity >= Verbosity.BRIEF:
+                                warnings.warn(
+                                    f'Variable {var_name} is no longer in meta_data '
+                                    f'as of {the_date}. '
+                                    f'See PR #{the_PRs} for details.',
+                                    DeprecationWarning,
+                                )
                         else:
                             warnings.warn(
                                 f'Variable {var_name} is replaced by {new_name} as of {the_date} '
@@ -234,11 +238,12 @@ def parse_inputs(
                 else:
                     with warnings.catch_warnings():
                         warnings.simplefilter('always')
-                        warnings.warn(
-                            f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
-                            'It will be ignored.',
-                            UserWarning,
-                        )
+                        if verbosity >= Verbosity.BRIEF:
+                            warnings.warn(
+                                f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
+                                'It will be ignored.',
+                                UserWarning,
+                            )
                 continue
 
     return aircraft_values, initialization_guesses
@@ -579,117 +584,3 @@ dependent_options = [
         },
     ],
 ]
-
-# old_variable_name, (new_variable_name, PR_number, aviary_version, date)
-deprecated_variables = {
-    'aircraft:design:characteristic_lengths': ('removed', '1308', '1.0.0', '9/29/2026'),
-    'aircraft:design:compute_htail_volume_coeff': ('removed', '1285', '1.0.0', '9/11/2026'),
-    'aircraft:design:compute_vtail_volume_coeff': ('removed', '1285', '1.0.0', '9/11/2026'),
-    'aircraft:design:thrust_takeoff_per_eng': ('removed', '1142', '1.0.0', '5/15/2026'),
-    'aircraft:engine:constant_fuel_consumption': (
-        'aircraft:engine:constant_fuel_mass_consumption',
-        '1171',
-        '1.0.0',
-        '6/15/2026',
-    ),
-    'aircraft:engine:position_factor': (
-        'aircraft:wing:engine_position_mass_scaler',
-        '1228|1312',
-        '1.0.0',
-        '9/25/2026',
-    ),
-    'aircraft:fuel:auxiliary_fuel_capacity': (
-        'aircraft:fuel:auxiliary_fuel_mass_capacity',
-        '1171',
-        '1.0.0',
-        '6/15/2026',
-    ),
-    'aircraft:fuel:burn_per_passenger_mile': ('removed', '1223', '1.0.0', '8/19/2026'),
-    'aircraft:fuel:total_capacity': ('aircraft:fuel:max_capacity_mass', '1223', '8/19/2026'),
-    'aircraft:fuel:total_volume': (
-        'aircraft:fuel:max_capacity_volume',
-        '1223',
-        '1.0.0',
-        '8/19/2026',
-    ),
-    'aircraft:fuel:wing_fuel_capacity': (
-        'aircraft:fuel:wing_fuel_mass_capacity',
-        '1171',
-        '1.0.0',
-        '6/15/2026',
-    ),
-    'aircraft:fuel:wing_ref_capacity': ('removed', '1223', '1.0.0', '8/19/2026'),
-    'aircraft:fuel:wing_ref_capacity_area': ('removed', '1223', '1.0.0', '8/19/2026'),
-    'aircraft:fuel:wing_ref_capacity_term_a': ('removed', '1223', '1.0.0', '8/19/2026'),
-    'aircraft:fuel:wing_ref_capacity_term_b': ('removed', '1223', '1.0.0', '8/19/2026'),
-    'aircraft:fuselage:seat_width': (
-        'aircraft.fuselage:seat_width_economy',
-        '1263',
-        '1.0.0',
-        ' 8/20/2026',
-    ),
-    'aircraft:propulsion:engine_position_factor': (
-        'aircraft:wing:engine_position_mass_scaler',
-        '1312',
-        '1.0.0',
-        '9/25/2026',
-    ),
-    'aircraft:wing:max_lift_ref': (
-        'aircraft:wing:reference_clean_max_lift_coefficient',
-        '1312',
-        '1.0.0',
-        '9/25/2026',
-    ),
-    'dynamic:vehicle:Propulsion.fuel_flow_rate,': (
-        'dynamic:vehicle:Propulsion.fuel_flow_rate',
-        '1171',
-        '1.0.0',
-        '6/15/2026',
-    ),
-    'dynamic:vehicle:Propulsion.fuel_flow_rate_negative': (
-        'dynamic:vehicle:Propulsion.fuel_flow_rate_negative',
-        '1171',
-        '1.0.0',
-        '6/15/2026',
-    ),
-    'dynamic:vehicle:Propulsion.fuel_flow_rate_negative_total': (
-        'dynamic:vehicle:Propulsion.fuel_flow_rate_negative_total',
-        '1171',
-        '1.0.0',
-        '6/15/2026',
-    ),
-    'dynamic:vehicle:Propulsion.fuel_flow_rate_total': (
-        'dynamic:vehicle:Propulsion.fuel_flow_rate_total',
-        '1223',
-        '1.0.0',
-        '8/19/2026',
-    ),
-    'mission:block_fuel': ('mission:block_fuel_mass', '1171', '1.0.0', '6/15/2026'),
-    'mission:constraints:excess_fuel_capacity': (
-        'mission:constraints:excess_fuel_mass_capacity',
-        '1171',
-        '1.0.0',
-        '6/15/2026',
-    ),
-    'mission:constraints:max_mach': ('aircraft:design:max_mach', '1250', '1.0.0', '8/27/2026'),
-    'mission:design:thrust_takeoff_per_eng': ('removed', '1035|1050|1142', '1.0.0', '5/15/2026'),
-    'mission:fuel': ('mission:fuel_mass', '1171', '1.0.0', '6/15/2026'),
-    'mission:reserve_fuel': ('removed', '1223', '1.0.0', '8/19/2026'),
-    'mission:reserve_fuel_additional': (
-        'mission:reserve_fuel_mass_additional',
-        '1171',
-        '1.0.0',
-        '6/15/2026',
-    ),
-    'mission:takeoff:fuel': ('mission:takeoff:fuel_mass', '1171', '1.0.0', '6/15/2026'),
-    'mission:taxi:fuel_taxi_in': ('mission:taxi:fuel_mass_taxi_in', '1171', '1.0.0', '6/15/2026'),
-    'mission:taxi:fuel_taxi_out,': (
-        'mission:taxi:fuel_mass_taxi_out',
-        '1171',
-        '1.0.0',
-        '6/15/2026',
-    ),
-    'mission:total_fuel': ('mission:total_fuel_mass', '1171', '1.0.0', '6/15/2026'),
-    'mission:total_reserve_fuel': ('mission:total_reserve_fuel_mass', '1171', '1.0.0', '6/15/2026'),
-    'mission:useful_load': ('mission:operating_items_mass', '1122', '1.0.0', '5/18/2026'),
-}
