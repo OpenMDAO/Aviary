@@ -78,6 +78,10 @@ class EnginePodMass(om.ExplicitComponent):
         eng_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         total_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
 
+        if total_thrust == 0.0:
+            outputs[Aircraft.Engine.POD_MASS] = 0.0
+            return
+
         # NOTE if this value gets needed elsewhere, calculate in pre-mission propulsion
         #      and pass to this component as input
         # add new factor to FLOPS equations, which assumes for multiple engine types that mass of
@@ -129,6 +133,11 @@ class EnginePodMass(om.ExplicitComponent):
 
         eng_thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         total_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
+
+        if total_thrust == 0.0:
+            # All derivs should be zero.
+            return
+
         # TODO this value may be needed elsewhere, if so, calculate in static
         # propulsion and pass to this component as input
         ratio = eng_thrust * num_eng / total_thrust
