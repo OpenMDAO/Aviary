@@ -290,7 +290,6 @@ class TestExternalSubsystems(unittest.TestCase):
                     'enable_cruise': True,
                 }
 
-
         prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs(
