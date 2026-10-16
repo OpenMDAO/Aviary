@@ -6,7 +6,6 @@ NOTE this file cannot be a unittest, as testflo is an optional dependency. Inste
 
 def _setup_installation_test(parser):
     """There are no arguments for `aviary check`."""
-    pass
 
 
 def _exec_installation_test(args, user_args):

@@ -62,7 +62,7 @@ class CorePreMission(om.Group):
         for subsystem in self.options['subsystems']:
             try:
                 self.code_origin_overrides.extend(
-                    getattr(getattr(self, subsystem.name), 'code_origin_overrides')
+                    getattr(self, subsystem.name).code_origin_overrides
                 )
             except:
                 continue

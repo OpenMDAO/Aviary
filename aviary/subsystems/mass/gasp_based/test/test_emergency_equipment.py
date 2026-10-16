@@ -54,7 +54,7 @@ class ElectricalTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
-        import aviary.subsystems.mass.gasp_based.emergency_equipment as emergency_equipment
+        from aviary.subsystems.mass.gasp_based import emergency_equipment
 
         emergency_equipment.GRAV_ENGLISH_LBM = 1.1
 
@@ -63,7 +63,7 @@ class ElectricalTestCase2(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.emergency_equipment as emergency_equipment
+        from aviary.subsystems.mass.gasp_based import emergency_equipment
 
         emergency_equipment.GRAV_ENGLISH_LBM = 1.0
 

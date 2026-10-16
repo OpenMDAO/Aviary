@@ -1,7 +1,6 @@
 import atexit
 from contextlib import ExitStack
 from pathlib import Path
-from typing import Union
 
 import importlib_resources
 
@@ -173,7 +172,7 @@ def promote_aircraft_and_mission_vars(group):
 # "str | Path" which is cleaner but Aviary still supports older versions
 
 
-def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
+def get_path(path: str | Path, verbosity=Verbosity.BRIEF) -> Path:
     """
     Convert a string or Path object to an absolute Path object, prioritizing different locations.
 

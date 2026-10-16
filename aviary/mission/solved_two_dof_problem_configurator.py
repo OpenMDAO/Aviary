@@ -78,7 +78,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
         """
-        pass
 
     def get_phase_builder(self, aviary_group, phase_name, phase_options):
         """

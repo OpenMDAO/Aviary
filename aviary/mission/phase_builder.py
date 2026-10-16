@@ -73,16 +73,16 @@ class PhaseBuilder(ABC):
     """
 
     __slots__ = (
+        'initial_guesses',
+        'meta_data',
         'name',
-        'subsystems',
+        'ode_class',
+        'phase',
         'subsystem_options',
+        'subsystems',
+        'transcription',
         'user_options',
         'user_options_dict',
-        'initial_guesses',
-        'ode_class',
-        'transcription',
-        'meta_data',
-        'phase',
     )
 
     _initial_guesses_meta_data_ = _require_new_initial_guesses_meta_data_class_attr_()

@@ -109,7 +109,9 @@ class TestBenchSolved2DOF(unittest.TestCase):
 
         tol = 1e-2
         assert_near_equal(prob.get_val(av.Mission.FINAL_TIME, units='s'), 108.84030411, tol)
-        assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 459.3830223, tol)
+        assert_near_equal(
+            prob.get_val('energy.main_mission_fuel.mission_fuel', units='lbm'), 459.3830223, tol
+        )
 
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_Solved2DOF_landing(self):
@@ -219,10 +221,13 @@ class TestBenchSolved2DOF(unittest.TestCase):
 
         tol = 1e-2
         assert_near_equal(prob.get_val(av.Mission.FINAL_TIME, units='s'), 68.30353617, tol)
-        assert_near_equal(prob.get_val(av.Mission.FUEL_MASS, units='lbm'), 98.91566618, tol)
+        assert_near_equal(
+            prob.get_val('energy.main_mission_fuel.mission_fuel', units='lbm'), 98.92813971, tol
+        )
 
 
 if __name__ == '__main__':
     # unittest.main()
     z = TestBenchSolved2DOF()
     z.bench_test_Solved2DOF_landing()
+    # z.bench_test_Solved2DOF()

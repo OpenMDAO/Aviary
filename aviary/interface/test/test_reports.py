@@ -5,8 +5,8 @@ from pathlib import Path
 
 import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
-from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 from openmdao.utils.reports_system import _reports_registry
+from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 
 import aviary.api as av
 from aviary.core.aviary_problem import AviaryProblem
@@ -38,11 +38,12 @@ class TestReports(unittest.TestCase):
             'time (s)',
             'altitude (ft)',
             'altitude_rate (ft/s)',
+            'cumulative_fuel_burn (lbm)',
             'distance (m)',
             'drag (lbf)',
             'drag_coefficient (unitless)',
             'electric_power_in_total (kW)',
-            'fuel_flow_rate_negative_total (lbm/h)',
+            'fuel_flow_rate_total (lbm/h)',
             'lift (lbf)',
             'lift_coefficient (unitless)',
             'mach (unitless)',
@@ -60,10 +61,11 @@ class TestReports(unittest.TestCase):
                 '0.0',
                 '8.333333333333337',
                 '1.0',
+                '1.0',
                 '21108.341035874902',
                 '0.260025166162475',
                 '0.0',
-                '-10492.721631142893',
+                '10492.721631142893',
                 '175399.99981311447',
                 '2.1606820743889306',
                 '0.2',
@@ -127,7 +129,7 @@ class TestReports(unittest.TestCase):
             desc='testing',
         )
 
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             local_phase_info,

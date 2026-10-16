@@ -147,10 +147,10 @@ class EngineDeck(EngineModel):
     def __init__(
         self,
         name='engine_deck',
+        meta_data: dict = CoreMetaData,
         options: AviaryValues = None,
         data: NamedValues = None,
         required_variables: set = default_required_variables,
-        meta_data: dict = CoreMetaData,
     ):
         if data is not None:
             self.read_from_file = False
@@ -159,7 +159,7 @@ class EngineDeck(EngineModel):
             # TODO update default name to be based on filename
 
         # also calls _preprocess_inputs() as part of EngineModel __init__
-        super().__init__(name, options, meta_data=meta_data)
+        super().__init__(name, options=options, meta_data=meta_data)
 
         # custom error messages depending on data type
         if self.read_from_file:
@@ -1665,8 +1665,7 @@ class EngineDeck(EngineModel):
                     alt_count += 1
                     data_indices = extend_array(data_indices, [mach_count, alt_count])
 
-                    if data_count > max_data_count:
-                        max_data_count = data_count
+                    max_data_count = max(max_data_count, data_count)
                     # new altitude means reset data counter
                     data_count = 1
                     # count data associated with new altitude
@@ -1690,15 +1689,13 @@ class EngineDeck(EngineModel):
                 mach_count += 1
 
                 # new mach comes with new altitude, record and count it
-                if alt_count > max_alt_count:
-                    max_alt_count = alt_count
+                max_alt_count = max(max_alt_count, alt_count)
                 # new mach means reset altitude counter
                 curr_alt = alt
                 alt_count = 1
                 data_indices = extend_array(data_indices, [mach_count, alt_count])
 
-                if data_count > max_data_count:
-                    max_data_count = data_count
+                max_data_count = max(max_data_count, data_count)
                 # new mach means reset data counter
                 data_count = 1
                 # count data associated with new altitude

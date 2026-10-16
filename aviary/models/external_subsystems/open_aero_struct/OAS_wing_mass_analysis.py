@@ -136,7 +136,7 @@ def user_mesh():
     x_TE[:ny_inboard] = array_for_inboard_trailing_edge_x_coord
     x_TE[ny_inboard : ny_inboard + ny_outboard] = array_for_outboard_trailing_edge_x_coord[1:]
 
-    for i in range(0, ny_inboard + ny_outboard - 1):
+    for i in range(ny_inboard + ny_outboard - 1):
         mesh[:, i, 0] = np.linspace(np.flip(x_LE)[i], np.flip(x_TE)[i], nx)
 
     return mesh
@@ -363,7 +363,7 @@ class OAStructures(om.ExplicitComponent):
         )
         indep_var_comp.add_output('alpha', val=0.0, units='deg')
         indep_var_comp.add_output('alpha_maneuver', val=0.0, units='deg')
-        indep_var_comp.add_output('empty_cg', val=np.zeros((3)), units='m')
+        indep_var_comp.add_output('empty_cg', val=np.zeros(3), units='m')
         indep_var_comp.add_output('fuel_mass', val=fuel, units='kg')
 
         # add the problem variables subsystem
@@ -395,7 +395,7 @@ class OAStructures(om.ExplicitComponent):
 
         # Loop through and add the specified number of aerostruct points
         for i in range(2):
-            point_name = 'AS_point_{}'.format(i)
+            point_name = f'AS_point_{i}'
 
             # Create the aerostruct point group and add it to the model
             AS_point = AerostructPoint(surfaces=surfaces, internally_connect_fuelburn=False)
@@ -570,7 +570,5 @@ class OAStructures(om.ExplicitComponent):
         tm_sec = int(remainder)
         tm_msec = (remainder - tm_sec) * 1000
         print(
-            'Structures OAS Compute End --- execution time {:02}:{:02}:{:02}.{:03}'.format(
-                int(tm_hrs), int(tm_min), int(tm_sec), int(tm_msec)
-            )
+            f'Structures OAS Compute End --- execution time {int(tm_hrs):02}:{int(tm_min):02}:{int(tm_sec):02}.{int(tm_msec):03}'
         )

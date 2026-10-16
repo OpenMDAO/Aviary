@@ -19,8 +19,8 @@ from aviary.subsystems.geometry.flops_based.fuselage import (
     FuselagePrelim,
     SimpleCabinLayout,
 )
-from aviary.subsystems.geometry.flops_based.nacelle import NacellePrelim
 from aviary.subsystems.geometry.flops_based.landing_gear import MainGearLength, NoseGearLength
+from aviary.subsystems.geometry.flops_based.nacelle import NacellePrelim
 from aviary.subsystems.geometry.flops_based.wetted_area_total import (
     TotalWettedArea,
     WettedAreaGroup,

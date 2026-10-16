@@ -75,7 +75,7 @@ class TrappedFuelCapacityCase2(unittest.TestCase):
             promotes=['*'],
         )
 
-        import aviary.subsystems.mass.gasp_based.fuel_capacity as fuel_capacity
+        from aviary.subsystems.mass.gasp_based import fuel_capacity
 
         fuel_capacity.GRAV_ENGLISH_LBM = 1.1
 
@@ -94,7 +94,7 @@ class TrappedFuelCapacityCase2(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.fuel_capacity as fuel_capacity
+        from aviary.subsystems.mass.gasp_based import fuel_capacity
 
         fuel_capacity.GRAV_ENGLISH_LBM = 1.0
 

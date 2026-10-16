@@ -1,7 +1,7 @@
 import unittest
 from copy import deepcopy
 
-from openmdao.utils.testing_utils import require_pyoptsparse
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.large_turboprop_freighter.electrified_phase_info import (
@@ -17,7 +17,7 @@ from aviary.utils.process_input_decks import create_vehicle
 from aviary.variable_info.variables import Aircraft, Settings
 
 
-# @use_tempdirs
+@use_tempdirs
 @require_pyoptsparse(optimizer='IPOPT')
 # TODO need to add asserts with "truth" values
 class LargeHybridTurbopropFreighterBenchmark(unittest.TestCase):

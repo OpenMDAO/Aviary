@@ -12,7 +12,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
-import aviary.constants as constants
+from aviary import constants
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import isiterable
