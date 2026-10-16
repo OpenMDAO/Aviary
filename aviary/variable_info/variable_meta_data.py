@@ -607,7 +607,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Controls.MASS,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFC', 'FLOPS': None},
+    historical_name={'GASP': 'WFC', 'FLOPS': None},
     units='lbm',
     desc='Flight controls group mass. Contains cockpit controls, automatic flight control system '
     'and system controls.',
@@ -1478,7 +1478,7 @@ add_meta_data(
     Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INGASP.CLMWFU', 'INGASP.CLMAX'],
+        'GASP': ['CLMWFU', 'CLMAX'],
         'FLOPS': None,
     },
     units='unitless',
@@ -1489,7 +1489,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.LIFT_CURVE_SLOPE,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CLALPH', 'FLOPS': None},
+    historical_name={'GASP': 'CLALPH', 'FLOPS': None},
     units='1/rad',
     desc='lift curve slope at cruise Mach number',
     default_value=0.0,
@@ -1617,7 +1617,7 @@ add_meta_data(
     Aircraft.Design.RANGE,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.ARNGE',
+        'GASP': 'INGASP.ARNGE',  # read ARNGE(1) only
         # ['&DEFINE.CONFIN.DESRNG', 'CONFIG.DESRNG'],
         'FLOPS': 'CONFIN.DESRNG',
     },
@@ -1831,7 +1831,7 @@ add_meta_data(
     Aircraft.Design.WING_LOADING,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INGASP.WGS', 'INGASP.WOS'],
+        'GASP': ['INGASP.WGS', 'WOS'],
         'FLOPS': None,  # 'MISSA.SWET',
     },
     default_value=0,
@@ -1875,7 +1875,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Electrical.HYBRID_CABLE_LENGTH,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.LCABLE', 'FLOPS': None},
+    historical_name={'GASP': 'LCABLE', 'FLOPS': None},
     units='ft',
     desc='length of cable for hybrid electric augmented system',
     default_value=0.0,
@@ -2357,7 +2357,7 @@ add_meta_data(
     Aircraft.Engine.REFERENCE_SLS_THRUST,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.FN_REF',  # no FN_REF in GASP
+        'GASP': 'INGASP.FN_REF',  # no FN_REF in GASP, but have to keep
         'FLOPS': 'WTIN.THRSO',
     },
     units='lbf',
@@ -2708,7 +2708,7 @@ add_meta_data(
     Aircraft.Engine.Propeller.TIP_SPEED_MAX,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INPROP.TSPDMX', 'INPROP.TPSPDMXe'],
+        'GASP': ['INPROP.TSPDMX', 'INPROP.TSPDMXe'],
         'FLOPS': None,
     },
     units='ft/s',
@@ -2813,7 +2813,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuel.DENSITY,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': 'WTIN.FULDEN'},
+    historical_name={
+        'GASP': 'INGASP.FUELD',
+        'FLOPS': 'WTIN.FULDEN',
+    },  # not in GASP, but have to keep
     units='lbm/galUS',
     desc='Fuel density (jet fuel typical density of 6.7 lbm/galUS used in the calculation of wing_capacity'
     '(if wing_capacity is not input) and in the calculation of fuel system weight.',
@@ -3012,7 +3015,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuel.WING_VOLUME_DESIGN,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FVOLREQ', 'FLOPS': None},
+    historical_name={'GASP': 'FVOLREQ', 'FLOPS': None},
     units='ft**3',
     desc='Wing tank Jet-A fuel volume when carrying design fuel plus fuel margin',
     default_value=0.0,
@@ -3021,7 +3024,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FVOLW_GEOM', 'FLOPS': None},
+    historical_name={'GASP': 'FVOLW_GEOM', 'FLOPS': None},
     units='ft**3',
     desc='wing tank fuel volume based on geometry',
     default_value=0.0,
@@ -3030,7 +3033,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FVOLW_MAX', 'FLOPS': None},
+    historical_name={'GASP': 'FVOLW_MAX', 'FLOPS': None},
     units='ft**3',
     desc='wing tank volume based on maximum wing fuel weight',
     default_value=0.0,
@@ -3145,7 +3148,7 @@ add_meta_data(
     Aircraft.Fuselage.AVG_DIAMETER,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INGASP.WC', 'INGASP.SWF'],
+        'GASP': ['WC', 'SWF'],
         'FLOPS': None,
     },
     units='ft',
@@ -3324,7 +3327,7 @@ add_meta_data(
     Aircraft.Fuselage.LENGTH,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.ELF',
+        'GASP': 'ELF',
         'FLOPS': 'WTIN.XL',
         #  [  # inputs
         #      '&DEFINE.WTIN.XL', 'WTS.XL',
@@ -3614,7 +3617,7 @@ add_meta_data(
     Aircraft.Fuselage.WETTED_AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.SF',
+        'GASP': 'SF',
         'FLOPS': None,  # ['ACTWET.SWTFU', 'MISSA.SWET[4]'],
     },
     units='ft**2',
@@ -3656,7 +3659,7 @@ add_meta_data(
     Aircraft.HorizontalTail.AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.SHT',  # not an input in GASP
+        'GASP': 'SHT',
         'FLOPS': 'WTIN.SHT',  # ['&DEFINE.WTIN.SHT', 'EDETIN.SHT'],
     },
     units='ft**2',
@@ -3680,7 +3683,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.AVERAGE_CHORD,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CBARHT', 'FLOPS': None},
+    historical_name={'GASP': 'CBARHT', 'FLOPS': None},
     units='ft',
     desc='mean aerodynamic chord of horizontal tail',
     default_value=0.0,
@@ -3791,7 +3794,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.MOMENT_ARM,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.ELTH', 'FLOPS': None},
+    historical_name={'GASP': 'ELTH', 'FLOPS': None},
     units='ft',
     desc='moment arm of horizontal tail',
     default_value=0.0,
@@ -3819,7 +3822,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.ROOT_CHORD,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CRCLHT', 'FLOPS': None},
+    historical_name={'GASP': 'CRCLHT', 'FLOPS': None},
     units='ft',
     desc='horizontal tail root chord',
     default_value=0.0,
@@ -3828,7 +3831,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.SPAN,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.BHT', 'FLOPS': None},
+    historical_name={'GASP': 'BHT', 'FLOPS': None},
     units='ft',
     desc='span of horizontal tail',
     default_value=0.0,
@@ -4184,7 +4187,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.LandingGear.TOTAL_MASS,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WLG', 'FLOPS': None},
+    historical_name={'GASP': 'WLG', 'FLOPS': None},
     units='lbm',
     desc='total mass of landing gear',
     default_value=0.0,
@@ -4251,7 +4254,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.CLEARANCE_RATIO,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CLEARqDN', 'FLOPS': None},
+    historical_name={'GASP': 'INGASP.CLEARqDN', 'FLOPS': None},  # hard coded in GASP, have to keep
     units='unitless',
     desc='the minimum number of nacelle diameters above the ground that the bottom of the nacelle must be',
     default_value=0.0,  # should be at least 0.2
@@ -4413,7 +4416,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.SURFACE_AREA,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SN', 'FLOPS': None},  # SN is wetted area
+    historical_name={'GASP': 'SN', 'FLOPS': None},  # SN is nacelle area of all engines in GASP
     units='ft**2',
     desc='surface area of the outside of one entire nacelle, not just the wetted area',
     multivalue=True,
@@ -4596,7 +4599,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Propulsion.TOTAL_ENGINE_MASS,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WEP', 'FLOPS': None},
+    historical_name={'GASP': 'WEP', 'FLOPS': None},
     units='lbm',
     desc='total mass of all engines on aircraft',
     default_value=0.0,
@@ -4720,7 +4723,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Strut.AREA,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.STRTWS', 'FLOPS': None},
+    historical_name={'GASP': 'STRTWS', 'FLOPS': None},
     units='ft**2',
     desc='strut area',
     default_value=0,
@@ -4739,7 +4742,7 @@ add_meta_data(
     Aircraft.Strut.ATTACHMENT_LOCATION,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INGASP.STRUT', 'INGASP.STRUTX', 'INGASP.XSTRUT'],
+        'GASP': ['INGASP.STRUT', 'INGASP.XSTRUT'],
         'FLOPS': None,
     },
     units='ft',
@@ -6679,9 +6682,7 @@ add_meta_data(
 # add_meta_data(
 #     Dynamic.Vehicle.Propulsion.EXIT_AREA,
 #     meta_data=_MetaData,
-#     historical_name={'GASP': None,
-#                     'FLOPS': None,
-#                     },
+#     historical_name={'GASP': None, 'FLOPS': None},
 #     units='kW',
 #     desc='Current nozzle exit area of engines, per single instance of each '
 #          'engine model'
@@ -6770,7 +6771,7 @@ add_meta_data(
 add_meta_data(
     Dynamic.Vehicle.Propulsion.RPM,
     meta_data=_MetaData,
-    historical_name={'GASP': ['RPM', 'RPMe'], 'FLOPS': None},
+    historical_name={'GASP': ['RPM', 'RPMe'], 'FLOPS': None},  # RPMe is not in GASP
     units='rpm',
     desc='Rotational rate of shaft, per engine.',
     multivalue=True,
@@ -6779,7 +6780,7 @@ add_meta_data(
 add_meta_data(
     Dynamic.Vehicle.Propulsion.SHAFT_POWER,
     meta_data=_MetaData,
-    historical_name={'GASP': ['SHP, EHP'], 'FLOPS': None},
+    historical_name={'GASP': ['SHP', 'EHP'], 'FLOPS': None},
     units='hp',
     desc='current shaft power, per engine',
     multivalue=True,
@@ -6968,7 +6969,7 @@ add_meta_data(
     # TODO: check with Aviary and GASPy engineers to ensure these are indeed
     # defined the same way
     historical_name={
-        'GASP': 'INGASP.OWE',
+        'GASP': 'OWE',
         # ['WTS.WSP(33, 2)', '~WEIGHT.WOWE', '~WTSTAT.WSP(33, 2)'],
         'FLOPS': 'MISSIN.DOWE',
     },
@@ -7031,7 +7032,7 @@ add_meta_data(
 add_meta_data(
     Mission.TOTAL_FUEL_MASS,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None},
+    historical_name={'GASP': 'WFA', 'FLOPS': None},
     units='lbm',
     # Note: In GASP, WFA does not include fuel margin.
     desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
@@ -7160,7 +7161,7 @@ add_meta_data(
 add_meta_data(
     Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.DCD', 'FLOPS': None},
+    historical_name={'GASP': 'DCD', 'FLOPS': None},
     units='unitless',
     desc='drag coefficient increment at landing due to flaps',
 )
@@ -7220,7 +7221,7 @@ add_meta_data(
 add_meta_data(
     Mission.Landing.INITIAL_ALTITUDE,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.HIN', 'FLOPS': None},
+    historical_name={'GASP': 'HIN', 'FLOPS': None},
     units='ft',
     desc='altitude where landing calculations begin',
 )
@@ -7238,7 +7239,7 @@ add_meta_data(
     Mission.Landing.INITIAL_VELOCITY,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'VGL',  # DLAND
+        'GASP': 'VGL',  # in dland.f
         'FLOPS': None,  # output: SUMMARY VAPP
     },
     units='ft/s',
@@ -7248,7 +7249,7 @@ add_meta_data(
 add_meta_data(
     Mission.Landing.LIFT_COEFFICIENT_FLAP_INCREMENT,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.DCL', 'FLOPS': None},
+    historical_name={'GASP': 'DCL', 'FLOPS': None},
     units='unitless',
     desc='lift coefficient increment at landing due to flaps',
 )
@@ -7260,7 +7261,7 @@ add_meta_data(
     Mission.Landing.LIFT_COEFFICIENT_MAX,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.CLMWLD',
+        'GASP': 'CLMWLD',
         'FLOPS': 'AERIN.CLLDM',  # ['&DEFINE.AERIN.CLLDM', 'LANDG.CLLDM'],
     },
     units='unitless',
@@ -7334,7 +7335,7 @@ add_meta_data(
 add_meta_data(
     Mission.Landing.STALL_VELOCITY,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.VST', 'FLOPS': None},
+    historical_name={'GASP': 'VST', 'FLOPS': None},
     units='ft/s',
     desc='stall speed during approach',
 )
@@ -7574,7 +7575,7 @@ add_meta_data(
 add_meta_data(
     Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.DCL', 'FLOPS': None},
+    historical_name={'GASP': 'DCL', 'FLOPS': None},
     units='unitless',
     desc='lift coefficient increment at takeoff due to flaps',
 )
@@ -7583,7 +7584,7 @@ add_meta_data(
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.CLMWTO',
+        'GASP': 'CLMWTO',
         # ['&DEFINE.AERIN.CLTOM', 'LANDG.CLTOM', '~DEFTOL.CLTOA'],
         'FLOPS': 'TOLIN.CLTOM',  #'AERIN.CLTOM'
     },
@@ -7644,7 +7645,7 @@ add_meta_data(
 add_meta_data(
     Mission.Takeoff.ROTATION_VELOCITY,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.VR', 'FLOPS': None},
+    historical_name={'GASP': 'VR', 'FLOPS': None},
     units='kn',
     desc='rotation velocity',
 )
