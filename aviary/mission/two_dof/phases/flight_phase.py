@@ -261,7 +261,7 @@ class FlightPhase(PhaseBuilder):
             Dynamic.Mission.ALTITUDE,
             Dynamic.Mission.DISTANCE,
             Dynamic.Vehicle.MASS,
-            'time',
+            Dynamic.Mission.TIME,
         ]
         return linked_vars
 

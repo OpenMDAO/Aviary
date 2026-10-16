@@ -137,7 +137,7 @@ class GroundrollPhase(PhaseBuilder):
         )
 
         self.phase.set_state_options(
-            'time',
+            Dynamic.Mission.TIME,
             rate_source='dt_dv',
             units='s',
             fix_initial=True,
@@ -165,7 +165,7 @@ class GroundrollPhase(PhaseBuilder):
         self.phase.add_timeseries_output(Dynamic.Vehicle.MASS)
         self.phase.add_timeseries_output('normal_force')
         self.phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
-        self.phase.add_timeseries_output('time')
+        self.phase.add_timeseries_output(Dynamic.Mission.TIME)
         self.phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
 
         return self.phase
@@ -200,7 +200,7 @@ class GroundrollPhase(PhaseBuilder):
             Dynamic.Mission.DISTANCE,
             Dynamic.Atmosphere.MACH,
             Dynamic.Vehicle.MASS,
-            'time',
+            Dynamic.Mission.TIME,
         ]
         return linked_vars
 
