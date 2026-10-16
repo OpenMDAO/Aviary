@@ -146,6 +146,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             'taxi',
             TaxiSegment(**(aviary_group.ode_args)),
             promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['mission:*'],
         )
 
     def get_phase_builder(self, aviary_group, phase_name, phase_options):

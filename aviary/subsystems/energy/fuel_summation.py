@@ -3,7 +3,7 @@ import warnings
 import openmdao.api as om
 
 from aviary.mission.utils import separate_reserve_phases
-from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.enums import Verbosity, EquationsOfMotion
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -20,6 +20,7 @@ class FuelSummationGroup(om.Group):
         add_aviary_option(self, Mission.RESERVE_FUEL_MASS_ADDITIONAL, units='lbm')
         add_aviary_option(self, Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT)
 
+        add_aviary_option(self, Settings.EQUATIONS_OF_MOTION)
         add_aviary_option(self, Settings.VERBOSITY)
 
         self.options.declare(
@@ -29,6 +30,7 @@ class FuelSummationGroup(om.Group):
     def setup(self):
         # meta_data = self.options['meta_data']
         mission_info = self.options['mission_info']
+        eom = self.options[Settings.EQUATIONS_OF_MOTION]
         verbosity = self.options[Settings.VERBOSITY]
 
         main_phases, reserve_phases = separate_reserve_phases(mission_info)
@@ -42,26 +44,45 @@ class FuelSummationGroup(om.Group):
             )
 
         # Fuel burn in taxi + takeoff + regular phases + landing
-        self.add_subsystem(
-            'main_mission_fuel',
-            om.ExecComp(
-                'fuel_burned = taxi_fuel + mission_fuel + takeoff_fuel',  # + landing_fuel',
-                taxi_fuel={'units': 'lbm', 'val': 0},
-                mission_fuel={'units': 'lbm', 'val': 0},
-                takeoff_fuel={'units': 'lbm', 'val': 0},
-                # landing_fuel={'units': 'lbm', 'val': 0},
-                fuel_burned={'units': 'lbm', 'val': 0},
-            ),
-            # NOTE taxi and takeoff fuel vars not used for 2DOF takeoff
-            promotes_inputs=[
-                ('taxi_fuel', Mission.Taxi.FUEL_MASS_TAXI_OUT),
-                ('takeoff_fuel', Mission.Takeoff.FUEL_MASS),
-                # no landing mass?
-                # ('landing_fuel', Mission.Landing.FUEL_MASS),
-            ],
-            promotes_outputs=[('fuel_burned', Mission.FUEL_MASS)],
-        )
-
+        if eom is EquationsOfMotion.ENERGY_STATE:
+            self.add_subsystem(
+                'main_mission_fuel',
+                om.ExecComp(
+                    'fuel_burned = taxi_fuel + mission_fuel + takeoff_fuel',
+                    taxi_fuel={'units': 'lbm', 'val': 0},
+                    mission_fuel={'units': 'lbm', 'val': 0},
+                    takeoff_fuel={'units': 'lbm', 'val': 0},
+                    # landing_fuel={'units': 'lbm', 'val': 0},
+                    fuel_burned={'units': 'lbm', 'val': 0},
+                ),
+                # NOTE taxi and takeoff fuel vars not used for 2DOF takeoff
+                promotes_inputs=[
+                    ('taxi_fuel', Mission.Taxi.FUEL_MASS_TAXI_OUT),
+                    ('takeoff_fuel', Mission.Takeoff.FUEL_MASS),
+                    # no landing mass?
+                    # ('landing_fuel', Mission.Landing.FUEL_MASS),
+                ],
+                promotes_outputs=[('fuel_burned', Mission.FUEL_MASS)],
+            )
+        else:
+            # takeoff is part of the trajectory in 2DOF (included in mission_fuel)
+            self.add_subsystem(
+                'main_mission_fuel',
+                om.ExecComp(
+                    'fuel_burned = taxi_fuel + mission_fuel',
+                    taxi_fuel={'units': 'lbm', 'val': 0},
+                    mission_fuel={'units': 'lbm', 'val': 0},
+                    # landing_fuel={'units': 'lbm', 'val': 0},
+                    fuel_burned={'units': 'lbm', 'val': 0},
+                ),
+                # NOTE taxi and takeoff fuel vars not used for 2DOF takeoff
+                promotes_inputs=[
+                    ('taxi_fuel', Mission.Taxi.FUEL_MASS_TAXI_OUT)
+                    # no landing mass?
+                    # ('landing_fuel', Mission.Landing.FUEL_MASS),
+                ],
+                promotes_outputs=[('fuel_burned', Mission.FUEL_MASS)],
+            )
         # Fuel burn in reserve phases
         if reserve_phases:
             ecomp = om.ExecComp(

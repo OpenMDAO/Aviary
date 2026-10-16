@@ -11,7 +11,7 @@ from aviary.validation_cases.benchmark_utils import print_benchmark_results
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-@use_tempdirs
+# @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
@@ -37,14 +37,14 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # TODO: This problem does not always converge.
         # self.assertTrue(prob.result.success)
 
-        rtol = 1e-2
+        rtol = 1e-6
 
         # There are no truth values for these.
         expected_values = {
-            Aircraft.Design.GROSS_MASS: 177536.28,
-            Mission.OPERATING_MASS: 101262.9,
-            Mission.TOTAL_FUEL_MASS: 38812.50859726,
-            Mission.Landing.GROUND_DISTANCE: 2613.4,
+            Aircraft.Design.GROSS_MASS: 176830.97,
+            Mission.OPERATING_MASS: 100615.72,
+            Mission.TOTAL_FUEL_MASS: 38359.25,
+            Mission.Landing.GROUND_DISTANCE: 2610.90,
             'traj.desc2.timeseries.distance': 3675.0,
         }
 
@@ -69,14 +69,14 @@ class ProblemPhaseTestCase(unittest.TestCase):
         print_benchmark_results(prob)
         self.assertTrue(prob.result.success)
 
-        rtol = 1e-2
+        rtol = 1e-4
 
         # There are no truth values for these.
         expected_values = {
-            Aircraft.Design.GROSS_MASS: 177536.28,
-            Mission.OPERATING_MASS: 101262.9,
-            Mission.TOTAL_FUEL_MASS: 38812.50832282,
-            Mission.Landing.GROUND_DISTANCE: 2613.4,
+            Aircraft.Design.GROSS_MASS: 176830.97,
+            Mission.OPERATING_MASS: 100615.72,
+            Mission.TOTAL_FUEL_MASS: 38359.25,
+            Mission.Landing.GROUND_DISTANCE: 2610.90,
             'traj.desc2.timeseries.distance': 3675.0,
         }
 

@@ -111,64 +111,8 @@ class CoreEnergyBuilder(EnergyBuilder):
 
         return post_mission_bus
 
-    # get_constraints() seems to only work for mission constraints?
-    # def get_constraints(
-    #     self,
-    #     aviary_inputs: AviaryValues | None = None,
-    #     user_options: dict | None = None,
-    #     subsystem_options: dict | None = None,
-    # ) -> dict:
-    #     '''
-    #     Returns
-    #     -------
-    #     dict
-    #         A dictionary where the keys are the names of the constraint variables and the values are
-    #         dictionaries with the following keys:
-
-    #         - type : str
-    #             The type of constraint. Must be one of 'path' or 'boundary'.
-    #         - any additional keyword arguments required by OpenMDAO for the constraint
-    #           variable.
-    #     '''
-    #     # determine if the user wants the excess_fuel_capacity constraint active, and if so add it
-    #     # to the problem
-    #     verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
-    #     constraints = {}
-
-    #     if Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT in aviary_inputs:
-    #         # ignore_capacity_constraint = aviary_inputs.get_val(
-    #         #     Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, units='unitless'
-    #         # )
-
-    #         if not aviary_inputs.get_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT):
-    #             constraints[Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY] =
-    #             self.add_constraint(
-    #                 Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY, lower=0, ref=1.0e5, units='lbm'
-    #             )
-
-    #         else:
-    #             if verbosity >= Verbosity.BRIEF:
-    #                 warnings.warn(
-    #                     'Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT = True, therefore '
-    #                     'EXCESS_FUEL_MASS_CAPACITY constraint was not added to the Aviary problem. The '
-    #                     'aircraft may not have enough space for fuel, so check the value of '
-    #                     'Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY for details.'
-    #                 )
-
-    #     # else:
-    #     #     ignore_capacity_constraint = self.meta_data[
-    #     #         Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT
-    #     #     ]['default_value']
-    #     #     aviary_inputs.set_val(
-    #     #         Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
-    #     #         val=ignore_capacity_constraint,
-    #     #         units='unitless',
-    #     #     )
-
-    #     return constraints
-
     ### TODO ###
-    ### v-- The following should only happen when fuel is actually present on the aircraft!! --v ###
+    # v-- The following should only happen when fuel is actually present on the aircraft!! --v
 
     def get_states(
         self,
@@ -181,11 +125,10 @@ class CoreEnergyBuilder(EnergyBuilder):
                 'fix_initial': True,
                 'fix_final': False,
                 'lower': 0.0,
-                'ref': 1e4,
-                'defect_ref': 1e6,
-                'units': 'lbm',
+                'ref': 1e3,
+                'units': 'kg',
                 'rate_source': Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL,
-                'input_initial': 0.0,
+                'val': 0.0,
                 # 'targets': Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED,
             }
         }
