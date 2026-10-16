@@ -11,7 +11,7 @@ from aviary.variable_info.enums import PhaseType, SpeedType
 from aviary.variable_info.variables import Mission
 
 
-# @use_tempdirs
+@use_tempdirs
 class ReserveTest(unittest.TestCase):
     @unittest.skip('This test currently has convergence issues')
     def test_reserves_2dof(self):

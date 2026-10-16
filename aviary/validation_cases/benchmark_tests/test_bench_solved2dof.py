@@ -9,7 +9,7 @@ from aviary.models.missions.solved2dof_landing_default import phase_info as phas
 from aviary.validation_cases.benchmark_utils import print_benchmark_results
 
 
-# @use_tempdirs
+@use_tempdirs
 class TestBenchSolved2DOF(unittest.TestCase):
     """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
