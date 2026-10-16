@@ -8,7 +8,6 @@ import aviary.api as av
 from aviary.models.external_subsystems.simple_aero.simple_aero_builder import SimpleAeroBuilder
 
 
-
 @use_tempdirs
 class TestExternalAero(av.TestSubsystemBuilder):
     """
@@ -20,7 +19,6 @@ class TestExternalAero(av.TestSubsystemBuilder):
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_external_drag(self):
-
         phase_info = deepcopy(av.default_energy_state_phase_info)
 
         # Just do cruise in this example.

@@ -158,7 +158,6 @@ class TakeOffODE(TwoDOFODE):
                 subsystem_options=kwargs,
             )
 
-
             if system is not None:
                 mission_in = subsystem.mission_inputs(
                     aviary_inputs=aviary_options,

@@ -10,7 +10,9 @@ from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.missions.energy_state_default import phase_info as energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 from aviary.subsystems.aerodynamics.aerodynamics_builder import (
-    AERO_2DOF_INPUTS, AERO_LS_2DOF_INPUTS, AERO_CLEAN_2DOF_INPUTS,
+    AERO_2DOF_INPUTS,
+    AERO_LS_2DOF_INPUTS,
+    AERO_CLEAN_2DOF_INPUTS,
 )
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
@@ -173,7 +175,9 @@ class TestExternalSubsystems(unittest.TestCase):
 
                 return promotes
 
-            def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+            def mission_outputs(
+                self, aviary_inputs=None, user_options=None, subsystem_options=None
+            ):
                 if subsystem_options.get('enable_low_speed') is True:
                     promotes = [
                         Dynamic.Vehicle.DRAG,
@@ -241,7 +245,9 @@ class TestExternalSubsystems(unittest.TestCase):
                         if aero_options is None:
                             continue
 
-                        if aero_options.get('enable_low_speed') or aero_options.get('enable_cruise'):
+                        if aero_options.get('enable_low_speed') or aero_options.get(
+                            'enable_cruise'
+                        ):
                             phases.append(name)
 
                     if len(phases) == 0:
@@ -290,7 +296,8 @@ class TestExternalSubsystems(unittest.TestCase):
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv', phase_info
         )
-        prob.load_external_subsystems([SelectiveAeroBuilder(name='new_aero'), ])
+        subs = [SelectiveAeroBuilder(name='new_aero')]
+        prob.load_external_subsystems(subs)
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
