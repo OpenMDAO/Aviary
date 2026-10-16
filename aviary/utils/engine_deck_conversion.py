@@ -14,7 +14,7 @@ from aviary.utils.utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_aviary_resource_path
 from aviary.utils.named_values import NamedValues
-from aviary.utils.utils import round_it
+from aviary.utils.math_utils import round_it
 from aviary.variable_info.enums import EngineDeckType
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Dynamic
