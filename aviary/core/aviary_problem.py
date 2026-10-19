@@ -579,7 +579,7 @@ class AviaryProblem(om.Problem):
                 disp = True
             driver.options['disp'] = disp
             # Optimizer Settings #
-            driver.options['tol'] = 1e-9
+            driver.options['tol'] = 1e-6
             driver.options['maxiter'] = max_iter
 
         # pyoptsparse print settings for both SNOPT, IPOPT
