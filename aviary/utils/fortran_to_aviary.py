@@ -346,9 +346,12 @@ def process_and_store_data(
         skip_variable = True
         var_values = []
 
-    list_of_equivalent_aviary_names, var_ind = update_name(
-        alternate_names, current_namelist + '.' + var_name, verbosity
-    )
+    if current_namelist != 'NONE':  # see the end of gasp_defaults.py
+        list_of_equivalent_aviary_names, var_ind = update_name(
+            alternate_names, current_namelist + '.' + var_name, verbosity
+        )
+    else:
+        list_of_equivalent_aviary_names, var_ind = update_name(alternate_names, var_name, verbosity)
 
     # Fortran uses 1 indexing, Python uses 0 indexing
     fortran_offset = 1 if current_namelist else 0
