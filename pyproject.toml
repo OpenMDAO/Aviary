@@ -11,7 +11,6 @@ requires_python = ">=3.10"
 dependencies = [
     "dymos>=1.14.0",
     "hvplot",
-    "importlib_resources",
     "matplotlib",
     "openmdao>=3.45.0",
     "pandas",

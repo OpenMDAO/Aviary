@@ -1,9 +1,8 @@
 import atexit
 from contextlib import ExitStack
 from pathlib import Path
+import importlib
 from typing import Union
-
-import importlib_resources
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
@@ -28,10 +27,10 @@ def get_aviary_resource_path(resource_name: str) -> Path:
     file_manager = ExitStack()
     atexit.register(file_manager.close)
     if resource_name:
-        ref = importlib_resources.files('aviary') / resource_name
+        ref = importlib.resources.files('aviary') / resource_name
     else:
-        ref = importlib_resources.files('aviary')
-    path = file_manager.enter_context(importlib_resources.as_file(ref))
+        ref = importlib.resources.files('aviary')
+    path = file_manager.enter_context(importlib.resources.as_file(ref))
     return path
 
 
