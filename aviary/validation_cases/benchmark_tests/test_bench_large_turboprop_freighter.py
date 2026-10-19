@@ -61,14 +61,14 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         self.assertTrue(prob.result.success)
         return prob
 
-    def test_bench_2DOF(self):
+    def bench_test_2DOF(self):
         prob = self.build_and_run_problem('2DOF')
         self.assertTrue(prob.result.success)
 
         # TODO asserts
 
     @unittest.skip('Skipping due to convergence issues (possible drag too low in descent?)')
-    def test_bench_energy(self):
+    def bench_test_energy(self):
         prob = self.build_and_run_problem('energy')
         self.assertTrue(prob.result.success)
 

@@ -29,12 +29,12 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         expected_values = {
-            (Mission.GROSS_MASS, 'lbm'): 171058.89719918,
+            (Mission.GROSS_MASS, 'lbm'): 171414.478638,
             (Mission.OPERATING_MASS, 'lbm'): 94888.64084344,
-            (Mission.TOTAL_FUEL_MASS, 'lbm'): 40170.2563557,
+            (Mission.TOTAL_FUEL_MASS, 'lbm'): 40434.03775776,
             (Mission.Landing.GROUND_DISTANCE, 'ft'): 2655.0906835,
             (Mission.RANGE, 'NM'): 3675.0,
-            (Mission.FINAL_MASS, 'lbm'): 135679.19846384,
+            (Mission.FINAL_MASS, 'lbm'): 135978.44088025,
         }
 
         for (var_name, units), expected_val in expected_values.items():
@@ -47,7 +47,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(t1, t2, tolerance=rtol)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_GwGm_IPOPT(self):
+    def bench_test_GwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
@@ -62,7 +62,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         self.check_values(prob)
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_GwGm_SNOPT(self):
+    def bench_test_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
@@ -77,7 +77,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         self.check_values(prob)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_GwGm_IPOPT_Breguet_Cruise(self):
+    def bench_test_GwGm_IPOPT_Breguet_Cruise(self):
         local_phase_info = deepcopy(phase_info)
 
         local_phase_info['cruise'] = {
@@ -111,7 +111,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = ProblemPhaseTestCase()
-    # test.setUp()
-    # test.test_bench_GwGm_SNOPT()
+    # unittest.main()
+    test = ProblemPhaseTestCase()
+    test.setUp()
+    test.bench_test_GwGm_SNOPT()

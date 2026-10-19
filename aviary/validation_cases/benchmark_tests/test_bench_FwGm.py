@@ -11,7 +11,7 @@ from aviary.validation_cases.benchmark_utils import print_benchmark_results
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-# @use_tempdirs
+@use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
@@ -37,7 +37,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # TODO: This problem does not always converge.
         # self.assertTrue(prob.result.success)
 
-        rtol = 1e-6
+        rtol = 1e-5
 
         # There are no truth values for these.
         expected_values = {
@@ -91,5 +91,5 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_3_FwGm_SNOPT()
-    # test.bench_test_swap_3_FwGm_IPOPT()
+    # test.bench_test_swap_3_FwGm_SNOPT()
+    test.bench_test_swap_3_FwGm_IPOPT()

@@ -92,7 +92,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_bwb_FwFm_SNOPT(self):
+    def bench_test_bwb_FwFm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv',
@@ -128,7 +128,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
     # @require_pyoptsparse(optimizer='IPOPT')
-    # def test_bench_bwb_FwFm_IPOPT(self):
+    # def bench_test_bwb_FwFm_IPOPT(self):
     # local_phase_info = deepcopy(phase_info)
     # prob = run_aviary(
     # 'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv',
@@ -178,7 +178,7 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_bwb300_FwFm_SNOPT(self):
+    def bench_test_bwb300_FwFm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/blended_wing_body/bwb300_baseline_FLOPS.csv',
@@ -220,4 +220,4 @@ if __name__ == '__main__':
     # unittest.main()
     test = BWBProblemPhaseTestCase()
     test.setUp()
-    test.test_bench_bwb_FwFm_SNOPT()
+    test.bench_test_bwb_FwFm_SNOPT()

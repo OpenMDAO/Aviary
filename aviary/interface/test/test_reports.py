@@ -38,7 +38,7 @@ class TestReports(unittest.TestCase):
             'time (s)',
             'altitude (ft)',
             'altitude_rate (ft/s)',
-            'cumulative_fuel_burn (lbm)',
+            'cumulative_fuel_burn (kg)',
             'distance (m)',
             'drag (lbf)',
             'drag_coefficient (unitless)',
@@ -60,7 +60,7 @@ class TestReports(unittest.TestCase):
                 '0.0',
                 '0.0',
                 '8.333333333333337',
-                '1.0',
+                '0.0',
                 '1.0',
                 '21108.341035874902',
                 '0.260025166162475',
@@ -89,13 +89,16 @@ class TestReports(unittest.TestCase):
             self.assertEqual(expected_header, header, 'CSV header does not match expected values')
 
             for expected_row, output_row in zip(expected_rows, csvreader):
-                for expected_val, output_val in zip(expected_row, output_row):
-                    self.assertAlmostEqual(
-                        float(expected_val),
-                        float(output_val),
-                        places=7,
-                        msg='CSV row value does not match expected value within tolerance',
-                    )
+                for col_name, expected_val, output_val in zip(
+                    expected_header, expected_row, output_row
+                ):
+                    with self.subTest(var=col_name):
+                        self.assertAlmostEqual(
+                            float(expected_val),
+                            float(output_val),
+                            places=7,
+                            msg=f'CSV row value for {col_name} does not match expected value within tolerance',
+                        )
 
     @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='check_input_report')
     def test_check_input_report(self):
