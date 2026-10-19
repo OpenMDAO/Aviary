@@ -1,7 +1,7 @@
 import atexit
 from contextlib import ExitStack
-from pathlib import Path
 import importlib
+from pathlib import Path
 from typing import Union
 
 from aviary.utils.aviary_values import AviaryValues
