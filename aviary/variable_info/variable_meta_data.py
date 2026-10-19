@@ -2357,7 +2357,7 @@ add_meta_data(
     Aircraft.Engine.REFERENCE_SLS_THRUST,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.FN_REF',  # no FN_REF in GASP, but have to keep
+        'GASP': 'FN_REF',  # no FN_REF in GASP, but have to keep
         'FLOPS': 'WTIN.THRSO',
     },
     units='lbf',
@@ -2814,7 +2814,7 @@ add_meta_data(
     Aircraft.Fuel.DENSITY,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.FUELD',
+        'GASP': 'FUELD',
         'FLOPS': 'WTIN.FULDEN',
     },  # not in GASP, but have to keep
     units='lbm/galUS',
@@ -4254,7 +4254,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.CLEARANCE_RATIO,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CLEARqDN', 'FLOPS': None},  # hard coded in GASP, have to keep
+    historical_name={'GASP': 'CLEARqDN', 'FLOPS': None},  # hard coded in GASP, have to keep
     units='unitless',
     desc='the minimum number of nacelle diameters above the ground that the bottom of the nacelle must be',
     default_value=0.0,  # should be at least 0.2
