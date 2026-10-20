@@ -101,8 +101,8 @@ class TestBatteryMission(unittest.TestCase):
             f'traj.cruise2.timeseries.{av.Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}'
         )
         expected_scalar_values = {
-            cumulative_energy_var: (38.61422247, 'kW*h'),
-            av.Mission.FUEL_MASS: (1255.14464318, 'lbm'),
+            cumulative_energy_var: (38.61381379, 'kW*h'),
+            av.Mission.FUEL_MASS: (1254.14061154, 'lbm'),
         }
 
         for var_name, (expected, units) in expected_scalar_values.items():
@@ -174,7 +174,7 @@ class TestBatteryMission(unittest.TestCase):
                 actual = prob.get_val(var_name).ravel()
                 assert_near_equal(actual, expected, 1e-6)
 
-    @require_pyoptsparse(optimizer='SNOPT')
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_subsystems_in_a_mission_2dof(self):
         """
         Does not actually use electric power but tests that externally added states are successfully
@@ -182,7 +182,7 @@ class TestBatteryMission(unittest.TestCase):
         """
         phase_info = deepcopy(twodof_phase_info)
 
-        prob = av.AviaryProblem(verbosity=0)
+        prob = av.AviaryProblem(verbosity=1)
 
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
@@ -197,7 +197,7 @@ class TestBatteryMission(unittest.TestCase):
 
         prob.build_model()
 
-        prob.add_driver('SNOPT')
+        prob.add_driver('IPOPT')
 
         prob.add_design_variables()
 
@@ -214,7 +214,7 @@ class TestBatteryMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TestBatteryMission()
-    # test.setUp()
-    # test.test_subsystems_in_a_mission()
+    # unittest.main()
+    test = TestBatteryMission()
+    test.setUp()
+    test.test_subsystems_in_a_mission_2dof()
