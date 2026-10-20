@@ -11,7 +11,7 @@ from aviary.variable_info.enums import PhaseType
 from aviary.variable_info.variables import Mission
 
 
-@use_tempdirs
+# @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
@@ -114,4 +114,5 @@ if __name__ == '__main__':
     # unittest.main()
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_GwGm_SNOPT()
+    # test.bench_test_GwGm_SNOPT()
+    test.bench_test_GwGm_IPOPT_Breguet_Cruise()
