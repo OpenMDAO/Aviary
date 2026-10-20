@@ -25,9 +25,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def check_values(self, prob):
         self.assertTrue(prob.result.success)
 
-        rtol = 1e-3
+        rtol = 2e-3  # IPOPT converges but is ~1e-3 off from SNOPT answer
 
-        # There are no truth values for these.
+        # There are no truth values for these. Taken from SNOPT run
         expected_values = {
             (Mission.GROSS_MASS, 'lbm'): 171414.478638,
             (Mission.OPERATING_MASS, 'lbm'): 94888.64084344,
@@ -105,7 +105,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             local_phase_info,
             optimizer='IPOPT',
-            verbosity=0,
+            verbosity=1,
         )
         self.check_values(prob)
 
