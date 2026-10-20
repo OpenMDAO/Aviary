@@ -145,7 +145,7 @@ gasp_default_values = NamedValues(
         'INGASP.SWP_FB': (50.0, 'deg'),
         'INGASP.CLALPH_B0': (1.5708, '1/rad'),
         'INGASP.UWPAX': (200, 'lbm'),
-        # The following variables are either not in GASP or are local variables
+        # The following variables are either not in GASP or are local variables in GASP
         'NONE.FN_REF': (28690, 'lbf'),  # no FN_REF in GASP
         'NONE.FUELD': (6.687, 'lbm/galUS'),
         'NONE.CLEARqDN': (0.2, 'unitless'),
