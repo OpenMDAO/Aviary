@@ -32,11 +32,26 @@ class MetaDataTest(unittest.TestCase):
         assert_no_duplicates(flops_names)
 
     def test_alphabetization(self):
-        # See issue #1181. currently excluding Dynamic variables that do not have proper full
-        #      names mirroring the hierarchy
         metadata_var_names = [key for key in CoreMetaData if ':' in key]
 
         assert_metadata_alphabetization(metadata_var_names)
+
+    def test_dynamic_alphabetization(self):
+        dynamic_classes = (
+            Dynamic.Atmosphere,
+            Dynamic.Mission,
+            Dynamic.Vehicle,
+            Dynamic.Vehicle.Propulsion,
+        )
+
+        for variable_class in dynamic_classes:
+            class_variables = {
+                value for name, value in vars(variable_class).items() if name.isupper()
+            }
+            metadata_var_names = [key for key in CoreMetaData if key in class_variables]
+
+            with self.subTest(variable_class=variable_class.__qualname__):
+                assert_metadata_alphabetization(metadata_var_names)
 
     def test_missing_names(self):
         # Test that all variables inside the metadata exist in the hierarchy, and vice-versa
