@@ -58,26 +58,26 @@ deprecated_variables = {
         '1.0.0',
         '9/25/2026',
     ),
-    'dynamic:vehicle:Propulsion.fuel_flow_rate,': (
-        'dynamic:vehicle:Propulsion.fuel_flow_rate',
+    'dynamic:vehicle:propulsion:fuel_flow_rate,': (
+        'dynamic:vehicle:propulsion:fuel_flow_rate',
         '1171',
         '1.0.0',
         '6/15/2026',
     ),
-    'dynamic:vehicle:Propulsion.fuel_flow_rate_negative': (
-        'dynamic:vehicle:Propulsion.fuel_flow_rate_negative',
+    'dynamic:vehicle:propulsion:fuel_flow_rate_negative': (
+        'dynamic:vehicle:propulsion:fuel_flow_rate_negative',
         '1171',
         '1.0.0',
         '6/15/2026',
     ),
-    'dynamic:vehicle:Propulsion.fuel_flow_rate_negative_total': (
-        'dynamic:vehicle:Propulsion.fuel_flow_rate_negative_total',
+    'dynamic:vehicle:propulsion:fuel_flow_rate_negative_total': (
+        'dynamic:vehicle:propulsion:fuel_flow_rate_negative_total',
         '1171',
         '1.0.0',
         '6/15/2026',
     ),
-    'dynamic:vehicle:Propulsion.fuel_flow_rate_total': (
-        'dynamic:vehicle:Propulsion.fuel_flow_rate_total',
+    'dynamic:vehicle:propulsion:fuel_flow_rate_total': (
+        'dynamic:vehicle:propulsion:fuel_flow_rate_total',
         '1223',
         '1.0.0',
         '8/19/2026',
