@@ -302,8 +302,8 @@ class StrutAndFoldMass(om.ExplicitComponent):
             folding_area = inputs[Aircraft.Wing.FOLDING_AREA]
             c_wing_fold = inputs[Aircraft.Wing.FOLD_MASS_COEFFICIENT]
 
-            wt_per_area = isolated_wing_mass / wing_area
-            temp_fold_mass = folding_area * wt_per_area
+            mass_per_area = isolated_wing_mass / wing_area
+            temp_fold_mass = folding_area * mass_per_area
             fold_mass = c_wing_fold * temp_fold_mass
         else:
             fold_mass = 0
@@ -325,13 +325,13 @@ class StrutAndFoldMass(om.ExplicitComponent):
             folding_area = inputs[Aircraft.Wing.FOLDING_AREA]
             c_wing_fold = inputs[Aircraft.Wing.FOLD_MASS_COEFFICIENT]
 
-            wt_per_area = isolated_wing_mass / wing_area
-            temp_fold_mass = folding_area * wt_per_area
+            mass_per_area = isolated_wing_mass / wing_area
+            temp_fold_mass = folding_area * mass_per_area
 
             J[Aircraft.Wing.FOLD_MASS, Aircraft.Wing.AREA] = (
                 -c_wing_fold * folding_area * isolated_wing_mass / wing_area**2
             )
-            J[Aircraft.Wing.FOLD_MASS, Aircraft.Wing.FOLDING_AREA] = c_wing_fold * wt_per_area
+            J[Aircraft.Wing.FOLD_MASS, Aircraft.Wing.FOLDING_AREA] = c_wing_fold * mass_per_area
             J[Aircraft.Wing.FOLD_MASS, Aircraft.Wing.FOLD_MASS_COEFFICIENT] = temp_fold_mass
             J[Aircraft.Wing.FOLD_MASS, 'isolated_wing_mass'] = (
                 c_wing_fold * folding_area / wing_area
