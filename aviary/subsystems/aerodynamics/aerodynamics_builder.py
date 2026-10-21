@@ -760,7 +760,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         reports_folder : Path
             Location of the subsystems_report folder this report will be placed in
         """
-        filename = self.name + '.txt'
+        filename = self.name + '.md'
         filepath = reports_folder / filename
 
         # TODO drag polar plot should go here!

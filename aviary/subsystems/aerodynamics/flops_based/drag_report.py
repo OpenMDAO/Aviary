@@ -65,7 +65,8 @@ def generate_drag_report(prob):
 
     # Mimic the EDET report
 
-    lines = '# AERODYNAMIC DATA\n'
+    lines = '## AERODYNAMIC DATA\n'
+    lines += '```\n'
 
     val = prob.get_val(Aircraft.Wing.SPAN_EFFICIENCY_FACTOR, units='unitless')[0]
     lines += f' SPAN EFFICIENCY FACTOR =   {val:.5f}\n\n'
@@ -282,4 +283,5 @@ def generate_drag_report(prob):
 
         lines += line + '\n'
 
+    lines += '```\n'
     return lines
