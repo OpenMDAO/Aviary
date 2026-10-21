@@ -129,7 +129,7 @@ class LandingSegment(TwoDOFODE):
                     promotes_inputs=['*'],
                     promotes_outputs=[(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, 'thrust_idle')],
                 )
-                propulsion_mission.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, 0.0)
+                # propulsion_mission.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, 0.0)
 
         self.add_subsystem(
             'glide',
