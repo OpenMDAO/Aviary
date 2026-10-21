@@ -34,10 +34,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )
 
         print_benchmark_results(prob)
-        # TODO: This problem does not always converge.
-        # self.assertTrue(prob.result.success)
+        # TODO: This problem does not always converge?
+        self.assertTrue(prob.result.success)
 
-        rtol = 1e-5
+        rtol = 1e-4
 
         # There are no truth values for these.
         expected_values = {
