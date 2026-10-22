@@ -9,8 +9,8 @@ from aviary.subsystems.propulsion.propeller.hamilton_standard import (
     PostHamiltonStandard,
     PreHamiltonStandard,
 )
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -85,7 +85,7 @@ class HamiltonStandardTest(unittest.TestCase):
     """Test computation in HamiltonStandard class."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
 
         prob = om.Problem()
