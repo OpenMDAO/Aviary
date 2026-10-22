@@ -519,12 +519,14 @@
 <span class="sd">    initialization_guessing(aircraft_values): Set initial guesses for aircraft parameters based on problem type and other factors.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">eq</span><span class="p">,</span> <span class="n">ge</span><span class="p">,</span> <span class="n">gt</span><span class="p">,</span> <span class="n">le</span><span class="p">,</span> <span class="n">lt</span><span class="p">,</span> <span class="n">ne</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">valid_units</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.variable_deprecations</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated_variables</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.aviary_values</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryValues</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_strings_to_data</span><span class="p">,</span> <span class="n">get_path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProblemType</span><span class="p">,</span> <span class="n">Verbosity</span>
@@ -618,6 +620,7 @@
             <span class="n">aircraft_values</span><span class="o">=</span><span class="n">aircraft_values</span><span class="p">,</span>
             <span class="n">initialization_guesses</span><span class="o">=</span><span class="n">initialization_guesses</span><span class="p">,</span>
             <span class="n">meta_data</span><span class="o">=</span><span class="n">meta_data</span><span class="p">,</span>
+            <span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="c1"># make sure verbosity is always set</span>
@@ -642,6 +645,7 @@
     <span class="n">aircraft_values</span><span class="p">:</span> <span class="n">AviaryValues</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">initialization_guesses</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">,</span>
+    <span class="n">verbosity</span><span class="o">=</span><span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the input files and updates the aircraft values and initial guesses. The function reads the</span>
@@ -716,11 +720,38 @@
                 <span class="k">continue</span>
 
             <span class="k">elif</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">var_name</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Variable &#39;</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&#39; is not in meta_data nor in &#39;guess_names&#39;. &quot;</span>
-                    <span class="s1">&#39;It will be ignored.&#39;</span><span class="p">,</span>
-                    <span class="ne">UserWarning</span><span class="p">,</span>
-                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">deprecated_variables</span><span class="p">:</span>
+                    <span class="n">new_name</span> <span class="o">=</span> <span class="n">deprecated_variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">the_PRs</span> <span class="o">=</span> <span class="n">deprecated_variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">the_PRs</span> <span class="o">=</span> <span class="n">the_PRs</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="s1">&#39;, #&#39;</span><span class="p">)</span>
+                    <span class="n">the_date</span> <span class="o">=</span> <span class="n">deprecated_variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+                    <span class="c1"># Warning was ignored somehow, but need to be print out.</span>
+                    <span class="c1"># after it is done, automatically restores the warning settings</span>
+                    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;always&#39;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">new_name</span> <span class="o">==</span> <span class="s1">&#39;removed&#39;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                                    <span class="sa">f</span><span class="s1">&#39;Variable </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1"> is no longer in meta_data &#39;</span>
+                                    <span class="sa">f</span><span class="s1">&#39;as of </span><span class="si">{</span><span class="n">the_date</span><span class="si">}</span><span class="s1">. &#39;</span>
+                                    <span class="sa">f</span><span class="s1">&#39;See PR #</span><span class="si">{</span><span class="n">the_PRs</span><span class="si">}</span><span class="s1"> for details.&#39;</span><span class="p">,</span>
+                                    <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                                <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s1">&#39;Variable </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1"> is replaced by </span><span class="si">{</span><span class="n">new_name</span><span class="si">}</span><span class="s1"> as of </span><span class="si">{</span><span class="n">the_date</span><span class="si">}</span><span class="s1"> &#39;</span>
+                                <span class="sa">f</span><span class="s1">&#39;See PR #</span><span class="si">{</span><span class="n">the_PRs</span><span class="si">}</span><span class="s1"> for details.&#39;</span><span class="p">,</span>
+                                <span class="ne">UserWarning</span><span class="p">,</span>
+                            <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;always&#39;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Variable &#39;</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&#39; is not in meta_data nor in &#39;guess_names&#39;. &quot;</span>
+                                <span class="s1">&#39;It will be ignored.&#39;</span><span class="p">,</span>
+                                <span class="ne">UserWarning</span><span class="p">,</span>
+                            <span class="p">)</span>
                 <span class="k">continue</span>
 
     <span class="k">return</span> <span class="n">aircraft_values</span><span class="p">,</span> <span class="n">initialization_guesses</span></div>

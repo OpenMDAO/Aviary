@@ -11,3 +11,4 @@ orphan: true
 - [reports](interface/reports.md)
 - [run_aviary](interface/run_aviary.md)
 - [utils](interface/utils.md)
+- [variable_deprecations](interface/variable_deprecations.md)
