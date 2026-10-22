@@ -378,12 +378,12 @@ class Test2DOFOffDesign(unittest.TestCase):
 
         expected_values = {
             Mission.RANGE: (1800, 'NM', 1e-6),
-            Mission.TOTAL_FUEL_MASS: (21452.85145652, 'lbm', 1e-6),
-            Mission.OPERATING_MASS: (94980.37339924, 'lbm', 1e-6),
+            Mission.TOTAL_FUEL_MASS: (21452.1600757, 'lbm', 1e-6),
+            Mission.OPERATING_MASS: (94980.07374896, 'lbm', 1e-6),
             Aircraft.CrewPayload.CARGO_MASS: (2100, 'lbm', 1e-12),
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS: (32100, 'lbm', 1e-6),
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS: (30000, 'lbm', 1e-6),
-            Mission.GROSS_MASS: (148533.22485577, 'lbm', 1e-6),
+            Mission.GROSS_MASS: (148532.23382466, 'lbm', 1e-6),
         }
 
         for var_name, (expected, units, tol) in expected_values.items():
@@ -476,7 +476,7 @@ class PayloadRangeTest(unittest.TestCase):
 
         # verify TOGW for each payload range problem
         expected_togw = {
-            'max_fuel_pyld_range_prob': (166539.46027154, 1e-8),
+            'max_fuel_pyld_range_prob': (166539.45043186, 1e-8),
             'ferry_range_prob': (142010.12881933, 1e-8),
         }
 

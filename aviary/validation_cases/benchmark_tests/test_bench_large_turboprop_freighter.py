@@ -25,7 +25,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
             phase_info = deepcopy(two_dof_phase_info)
 
         # Build problem
-        prob = AviaryProblem(verbosity=0)
+        prob = AviaryProblem(verbosity=1)
 
         # load inputs from .csv to build engine
         options, _ = create_vehicle(
@@ -51,7 +51,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
-        prob.add_driver('SNOPT', max_iter=25, verbosity=0)
+        prob.add_driver('SNOPT', max_iter=25, verbosity=1)
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
@@ -76,7 +76,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = LargeTurbopropFreighterBenchmark()
-    # test.build_and_run_problem('2DOF')
+    # unittest.main()
+    test = LargeTurbopropFreighterBenchmark()
+    test.build_and_run_problem('2DOF')
     # test.build_and_run_problem('energy')

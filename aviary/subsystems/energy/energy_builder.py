@@ -125,7 +125,7 @@ class CoreEnergyBuilder(EnergyBuilder):
                 'fix_initial': True,
                 'fix_final': False,
                 'lower': 0.0,
-                'ref': 1e3,
+                'ref': 1e4,
                 'units': 'kg',
                 'rate_source': Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL,
                 'val': 0.0,

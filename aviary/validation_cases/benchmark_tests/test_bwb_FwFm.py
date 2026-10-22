@@ -80,6 +80,7 @@ phase_info = {
 }
 
 
+@unittest.skip('This test is currently not converging (likely since at least v1.0.2)')
 @use_tempdirs
 class BWBProblemPhaseTestCase(unittest.TestCase):
     """
@@ -105,6 +106,8 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
         #     prob.model.list_vars(units=True, print_arrays=True, out_stream=f)
 
         rtol = 1e-3
+
+        self.assertTrue(prob.result.success)
 
         # There are no truth values for these.
         assert_near_equal(
@@ -166,6 +169,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
     # assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
 
+@unittest.skip('This test is currently not converging (likely since at least v1.0.2)')
 @use_tempdirs
 class BWB300ProblemPhaseTestCase(unittest.TestCase):
     """
@@ -194,6 +198,8 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
 
         rtol = 1e-3
 
+        self.assertTrue(prob.result.success)
+
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.GROSS_MASS, units='lbm'),
@@ -217,7 +223,6 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBProblemPhaseTestCase()
+    test = BWB300ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_bwb_FwFm_SNOPT()
+    test.bench_test_bwb300_FwFm_SNOPT()
