@@ -652,6 +652,11 @@ This command normally needs the name of the aircraft csv file and phase_info fil
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1792693555.153879] [runnervmxehtw:4888 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55a15379a910 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1792693555.154189] [runnervmxehtw:4888 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+[runnervmxehtw:04888] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
   &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
@@ -687,12 +692,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813638330255258e+00    1.3813638330255258e+00
-Dual infeasibility......:   3.1079969662533479e-08    3.1079969662533479e-08
-Constraint violation....:   6.2964162949173050e-15    6.2964162949173050e-15
+Objective...............:   1.3813638330255185e+00    1.3813638330255185e+00
+Dual infeasibility......:   3.1079971348684698e-08    3.1079971348684698e-08
+Constraint violation....:   6.5910779689489109e-15    6.5910779689489109e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433392571e-08    9.0922310433392571e-08
-Overall NLP error.......:   9.0922310433392571e-08    9.0922310433392571e-08
+Complementarity.........:   9.0922310433405899e-08    9.0922310433405899e-08
+Overall NLP error.......:   9.0922310433405899e-08    9.0922310433405899e-08
 
 
 Number of objective function evaluations             = 16
@@ -702,7 +707,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.326
+Total seconds in IPOPT                               = 2.507
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -728,6 +733,11 @@ The following command explicitly points to the files used in the above run of th
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1792693565.739917] [runnervmxehtw:4898 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55db0b6aa650 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1792693565.740238] [runnervmxehtw:4898 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+[runnervmxehtw:04898] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
   &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
@@ -763,12 +773,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813638330255140e+00    1.3813638330255140e+00
-Dual infeasibility......:   3.1079970064989299e-08    3.1079970064989299e-08
-Constraint violation....:   7.1341457751976627e-15    7.1341457751976627e-15
+Objective...............:   1.3813638330255200e+00    1.3813638330255200e+00
+Dual infeasibility......:   3.1079969232322004e-08    3.1079969232322004e-08
+Constraint violation....:   6.2708775382826036e-15    6.2708775382826036e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433403477e-08    9.0922310433403477e-08
-Overall NLP error.......:   9.0922310433403477e-08    9.0922310433403477e-08
+Complementarity.........:   9.0922310433395960e-08    9.0922310433395960e-08
+Overall NLP error.......:   9.0922310433395960e-08    9.0922310433395960e-08
 
 
 Number of objective function evaluations             = 16
@@ -778,7 +788,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.323
+Total seconds in IPOPT                               = 2.506
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -804,7 +814,9 @@ EXIT: Optimal Solution Found.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1792693575.093583] [runnervmxehtw:4869 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55b28b911de0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1792693575.093931] [runnervmxehtw:4869 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
   &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
   &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
@@ -825,6 +837,9 @@ EXIT: Optimal Solution Found.
   &#39;aircraft:wing:wetted_area  2210.280228  ft**2
 </pre></div>
 </div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervmxehtw:04869] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
                      variables with only lower bounds:       93
                 variables with lower and upper bounds:        3
@@ -839,12 +854,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813638330255140e+00    1.3813638330255140e+00
-Dual infeasibility......:   3.1079970064989299e-08    3.1079970064989299e-08
-Constraint violation....:   7.1341457751976627e-15    7.1341457751976627e-15
+Objective...............:   1.3813638330255200e+00    1.3813638330255200e+00
+Dual infeasibility......:   3.1079969232322004e-08    3.1079969232322004e-08
+Constraint violation....:   6.2708775382826036e-15    6.2708775382826036e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922310433403477e-08    9.0922310433403477e-08
-Overall NLP error.......:   9.0922310433403477e-08    9.0922310433403477e-08
+Complementarity.........:   9.0922310433395960e-08    9.0922310433395960e-08
+Overall NLP error.......:   9.0922310433395960e-08    9.0922310433395960e-08
 
 
 Number of objective function evaluations             = 16
@@ -854,7 +869,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.326
+Total seconds in IPOPT                               = 2.422
 
 EXIT: Optimal Solution Found.
 </pre></div>
