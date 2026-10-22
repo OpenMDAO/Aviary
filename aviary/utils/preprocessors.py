@@ -1162,6 +1162,13 @@ def preprocess_propulsion(
     # be changed later on (otherwise preprocess_propulsion must be run again)
     num_engine_type = len(engine_models)
 
+    # Remember the user-provided (shared) wing locations before vectorization
+    # replaces them, so the count can be validated afterwards
+    try:
+        shared_wing_locations = aviary_options.get_val(Aircraft.Engine.WING_LOCATIONS, 'unitless')
+    except KeyError:
+        shared_wing_locations = None
+
     complete_options_list = AviaryValues(aviary_options)
     for engine in engine_models:
         complete_options_list.update(engine.options)
@@ -1350,6 +1357,8 @@ def preprocess_propulsion(
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuse_engines_all)
 
+    _validate_wing_engine_locations(engine_models, num_wing_engines_all, shared_wing_locations)
+
     num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
     total_num_engines = int(sum(num_engines_all))
     total_num_fuse_engines = int(sum(num_fuse_engines_all))
@@ -1359,6 +1368,57 @@ def preprocess_propulsion(
     aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, total_num_engines)
     aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, total_num_fuse_engines)
     aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, total_num_wing_engines)
+
+
+def _validate_wing_engine_locations(
+    engine_models, num_wing_engines_all, shared_wing_locations=None
+):
+    """
+    Check that the number of wing locations matches the symmetric wing-engine pairs.
+
+    Values supplied by an EngineModel itself are checked per model. A value shared
+    through aviary_options is only checked when there is a single EngineModel and the
+    value holds more than one entry: a single value is the usual convention for one
+    location broadcast to all engines, and with several models the shared value is
+    flattened by the vectorization, so its length carries no per-model meaning.
+    Models with one or fewer wing engines are skipped because the wing mass components
+    ignore wing locations in that case. An odd wing-engine count uses floor(n / 2)
+    pairs, matching the indexing in the detailed wing bending components.
+    """
+    for engine, num_wing in zip(engine_models, num_wing_engines_all):
+        try:
+            locations = engine.get_val(Aircraft.Engine.WING_LOCATIONS, 'unitless')
+        except KeyError:
+            continue
+
+        if num_wing <= 1:
+            continue
+
+        expected = int(num_wing) // 2
+        actual = np.size(locations)
+        if actual != expected:
+            raise ValueError(
+                f'{Aircraft.Engine.WING_LOCATIONS} for EngineModel <{engine.name}> has '
+                f'{actual} value(s), but {int(num_wing)} wing-mounted engine(s) require '
+                f'{expected} location(s) (one per symmetric engine pair).'
+            )
+
+    if shared_wing_locations is not None and len(engine_models) == 1:
+        try:
+            engine_models[0].get_val(Aircraft.Engine.WING_LOCATIONS, 'unitless')
+            engine_supplies_own = True
+        except KeyError:
+            engine_supplies_own = False
+
+        num_wing = int(num_wing_engines_all[0])
+        expected = num_wing // 2
+        actual = np.size(shared_wing_locations)
+        if not engine_supplies_own and num_wing > 1 and actual > 1 and actual != expected:
+            raise ValueError(
+                f'{Aircraft.Engine.WING_LOCATIONS} has {actual} value(s), but '
+                f'{num_wing} wing-mounted engine(s) require {expected} '
+                'location(s) (one per symmetric engine pair).'
+            )
 
 
 def _get_engine_variables():
