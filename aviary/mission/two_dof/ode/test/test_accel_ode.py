@@ -67,7 +67,7 @@ class AccelerationODETestCase(unittest.TestCase):
 
         self.prob.run_model()
         expected_values = {
-            # Dynamic.Vehicle.LIFT: ([174974, 174878], 'lbf'),
+            Dynamic.Vehicle.LIFT: ([174974, 174878], 'lbf'),
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: (
                 [
                     -13264.88347472,
