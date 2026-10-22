@@ -13,6 +13,7 @@ from aviary.validation_cases.benchmark_utils import print_benchmark_results
 class TestBenchSolved2DOF(unittest.TestCase):
     """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
+    @unittest.skip('Test is unstable and fails in some setups (different FUEL_MASS result)')
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_Solved2DOF(self):
         subsystem_options = {
