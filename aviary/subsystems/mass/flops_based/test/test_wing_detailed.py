@@ -21,7 +21,6 @@ from aviary.validation_cases.validation_tests import (
     print_case,
 )
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Settings
 
 omit_cases = ['LargeSingleAisle2FLOPS']
@@ -417,7 +416,7 @@ class DetailedWingBendingTest(unittest.TestCase):
         Data taken from high_wing_single_aisle.csv
         Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL = 3, 1, 1.5, 2.5, 1.25, 2.75.
         """
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
         options.set_val(Aircraft.Engine.NUM_WING_ENGINES, val=[2], units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, val=2, units='unitless')
