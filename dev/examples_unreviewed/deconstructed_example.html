@@ -1366,9 +1366,20 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1792693590.630503] [runnervmxehtw:4931 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x5577f563c530 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1792693590.630819] [runnervmxehtw:4931 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-The following variables have been overridden by the aircraft definition:
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;climb&#39;: lower, upper, ref
+
+Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;climb&#39;: lower, upper, ref
+
+Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;cruise&#39;: lower, upper, ref
+
+Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;cruise&#39;: lower, upper, ref
+
+Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;descent&#39;: lower, upper, ref
+
+Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;descent&#39;: lower, upper, ref
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
   &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
   &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
@@ -1387,20 +1398,6 @@ The following variables have been overridden by the aircraft definition:
   &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
   &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
   &#39;aircraft:wing:wetted_area  2210.280228  ft**2
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervmxehtw:04931] pml_ucx.c:313  Error: Failed to create UCP worker
-Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;climb&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;climb&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;cruise&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;cruise&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;descent&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;descent&#39;: lower, upper, ref
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
@@ -1436,7 +1433,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 2.417
+Total seconds in IPOPT                               = 4.383
 
 EXIT: Optimal Solution Found.
 

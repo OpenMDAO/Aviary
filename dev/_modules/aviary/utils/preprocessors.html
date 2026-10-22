@@ -1672,6 +1672,13 @@
     <span class="c1"># be changed later on (otherwise preprocess_propulsion must be run again)</span>
     <span class="n">num_engine_type</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">engine_models</span><span class="p">)</span>
 
+    <span class="c1"># Remember the user-provided (shared) wing locations before vectorization</span>
+    <span class="c1"># replaces them, so the count can be validated afterwards</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shared_wing_locations</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">WING_LOCATIONS</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">shared_wing_locations</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="n">complete_options_list</span> <span class="o">=</span> <span class="n">AviaryValues</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">engine</span> <span class="ow">in</span> <span class="n">engine_models</span><span class="p">:</span>
         <span class="n">complete_options_list</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
@@ -1860,6 +1867,8 @@
     <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_WING_ENGINES</span><span class="p">,</span> <span class="n">num_wing_engines_all</span><span class="p">)</span>
     <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_FUSELAGE_ENGINES</span><span class="p">,</span> <span class="n">num_fuse_engines_all</span><span class="p">)</span>
 
+    <span class="n">_validate_wing_engine_locations</span><span class="p">(</span><span class="n">engine_models</span><span class="p">,</span> <span class="n">num_wing_engines_all</span><span class="p">,</span> <span class="n">shared_wing_locations</span><span class="p">)</span>
+
     <span class="n">num_engines</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_ENGINES</span><span class="p">)</span>
     <span class="n">total_num_engines</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">num_engines_all</span><span class="p">))</span>
     <span class="n">total_num_fuse_engines</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">num_fuse_engines_all</span><span class="p">))</span>
@@ -1870,6 +1879,57 @@
     <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">TOTAL_NUM_FUSELAGE_ENGINES</span><span class="p">,</span> <span class="n">total_num_fuse_engines</span><span class="p">)</span>
     <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">TOTAL_NUM_WING_ENGINES</span><span class="p">,</span> <span class="n">total_num_wing_engines</span><span class="p">)</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_wing_engine_locations</span><span class="p">(</span>
+    <span class="n">engine_models</span><span class="p">,</span> <span class="n">num_wing_engines_all</span><span class="p">,</span> <span class="n">shared_wing_locations</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that the number of wing locations matches the symmetric wing-engine pairs.</span>
+
+<span class="sd">    Values supplied by an EngineModel itself are checked per model. A value shared</span>
+<span class="sd">    through aviary_options is only checked when there is a single EngineModel and the</span>
+<span class="sd">    value holds more than one entry: a single value is the usual convention for one</span>
+<span class="sd">    location broadcast to all engines, and with several models the shared value is</span>
+<span class="sd">    flattened by the vectorization, so its length carries no per-model meaning.</span>
+<span class="sd">    Models with one or fewer wing engines are skipped because the wing mass components</span>
+<span class="sd">    ignore wing locations in that case. An odd wing-engine count uses floor(n / 2)</span>
+<span class="sd">    pairs, matching the indexing in the detailed wing bending components.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">engine</span><span class="p">,</span> <span class="n">num_wing</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">engine_models</span><span class="p">,</span> <span class="n">num_wing_engines_all</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">locations</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">WING_LOCATIONS</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">num_wing</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">expected</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_wing</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">locations</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">actual</span> <span class="o">!=</span> <span class="n">expected</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">WING_LOCATIONS</span><span class="si">}</span><span class="s1"> for EngineModel &lt;</span><span class="si">{</span><span class="n">engine</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt; has &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">actual</span><span class="si">}</span><span class="s1"> value(s), but </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">num_wing</span><span class="p">)</span><span class="si">}</span><span class="s1"> wing-mounted engine(s) require &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="s1"> location(s) (one per symmetric engine pair).&#39;</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">shared_wing_locations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">engine_models</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">engine_models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">WING_LOCATIONS</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+            <span class="n">engine_supplies_own</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">engine_supplies_own</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">num_wing</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_wing_engines_all</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="n">num_wing</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">shared_wing_locations</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">engine_supplies_own</span> <span class="ow">and</span> <span class="n">num_wing</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">actual</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">actual</span> <span class="o">!=</span> <span class="n">expected</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">WING_LOCATIONS</span><span class="si">}</span><span class="s1"> has </span><span class="si">{</span><span class="n">actual</span><span class="si">}</span><span class="s1"> value(s), but &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">num_wing</span><span class="si">}</span><span class="s1"> wing-mounted engine(s) require </span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="s1"> &#39;</span>
+                <span class="s1">&#39;location(s) (one per symmetric engine pair).&#39;</span>
+            <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_engine_variables</span><span class="p">():</span>
