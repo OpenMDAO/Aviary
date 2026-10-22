@@ -4742,7 +4742,7 @@ add_meta_data(
     Aircraft.Strut.ATTACHMENT_LOCATION,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INGASP.STRUT', 'INGASP.XSTRUT'],
+        'GASP': 'INGASP.STRUT',
         'FLOPS': None,
     },
     units='ft',
