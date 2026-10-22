@@ -4,12 +4,9 @@ from copy import deepcopy
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.models.missions.two_dof_default import phase_info as ph_in_gasp
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.validation_cases.validation_data.test_models.GwFm_phase_info import (
-    phase_info as ph_in_flops,
-)
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.models.missions.two_dof_default import phase_info as ph_in_gasp
+from aviary.variable_info.variables import Mission
 
 
 # NOTE this test is probably in the wrong place, it isn't really testing a part of the

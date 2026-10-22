@@ -1,10 +1,8 @@
 import numpy as np
 import openmdao.api as om
-from openmdao.core.system import System
 
 from aviary.subsystems.energy.battery_sizing import SizeBattery
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 

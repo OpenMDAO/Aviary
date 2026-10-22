@@ -59,10 +59,10 @@ def compare_inner_classes(class1, class2, show_all=False):
     # separate out a list of string names of the variables belonging to class1, and the inner classes belonging to class1
     for key in class1_vars_inner_classes.keys():
         # just checks if it is a class
-        if type(class1_vars_inner_classes[key]) == type(class1):
+        if type(class1_vars_inner_classes[key]) is type(class1):
             class1_inner_classes.append(key)
         elif (
-            (type(class1_vars_inner_classes[key]) == str)
+            isinstance(class1_vars_inner_classes[key], str)
             and not (key == '__module__')
             and not (key == '__doc__')
         ):
@@ -70,10 +70,10 @@ def compare_inner_classes(class1, class2, show_all=False):
 
     # separate out a list of string names of the variables belonging to class2, and the inner classes belonging to class2
     for key in class2_vars_inner_classes.keys():
-        if type(class2_vars_inner_classes[key]) == type(class2):
+        if type(class2_vars_inner_classes[key]) is type(class2):
             class2_inner_classes.append(key)
         elif (
-            (type(class2_vars_inner_classes[key]) == str)
+            isinstance(class2_vars_inner_classes[key], str)
             and not (key == '__module__')
             and not (key == '__doc__')
         ):

@@ -79,6 +79,44 @@ class TestPercentNotInFuselage(unittest.TestCase):
 
 
 @use_tempdirs
+class MultiEngineTestPercentNotInFuselage(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [3, 2])
+
+        self.prob.model.add_subsystem('perc', PercentNotInFuselage(), promotes=['*'])
+
+        setup_model_options(self.prob, aviary_options)
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_mixed_buried_regions(self):
+        # One engine type fully exposed, the other half buried.
+        self.prob.set_val(
+            Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, [0.0, 0.5], units='unitless'
+        )
+        self.prob.run_model()
+        tol = 1e-7
+        assert_near_equal(self.prob['percent_exposed'], [1.0, 0.5], tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+    def test_all_regions(self):
+        # Exercise the low, mid, and high cubic-blend regions simultaneously.
+        self.prob.set_val(
+            Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE, [0.03, 0.97], units='unitless'
+        )
+        self.prob.run_model()
+        tol = 1e-7
+        assert_near_equal(self.prob['percent_exposed'], [0.89181881, 0.10818119], tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
+@use_tempdirs
 class TestEngineDiameter(
     unittest.TestCase
 ):  # this is the GASP test case, input and output values based on large single aisle 1 v3 without bug fix
@@ -114,7 +152,7 @@ class TestEngineDiameter(
 
 @use_tempdirs
 class BWBTestEngineDiameter(unittest.TestCase):
-    """Test engine size using GASPEngineSize class and BWB data"""
+    """Test engine size using GASPEngineSize class and BWB data."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -179,7 +217,7 @@ class ElectricTestCaseMultiEngineDiameter(unittest.TestCase):
 
 @use_tempdirs
 class GASPEngineSizeGroupTestCase(unittest.TestCase):
-    """this is the GASP BWB test case"""
+    """this is the GASP BWB test case."""
 
     def setUp(self):
         aviary_options = AviaryValues()
@@ -210,7 +248,7 @@ class GASPEngineSizeGroupTestCase(unittest.TestCase):
         Testing GASP data case:
         Aircraft.Nacelle.AVG_DIAMETER -- DBARN = 5.3338151
         Aircraft.Nacelle.AVG_LENGTH -- ELN = 7.24758816
-        Aircraft.Nacelle.SURFACE_AREA -- SN/2 = 121.445763 (for one engine)
+        Aircraft.Nacelle.SURFACE_AREA -- SN/2 = 121.445763 (for one engine).
         """
         self.prob.run_model()
 
@@ -218,6 +256,49 @@ class GASPEngineSizeGroupTestCase(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 5.33382144, tol)
         assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 7.24759657, tol)
         assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 121.44575974, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+
+@use_tempdirs
+class MultiEngineGASPEngineSizeGroupTestCase(unittest.TestCase):
+    def setUp(self):
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [2, 4])
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'group',
+            GASPEngineSizeGroup(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE,
+            [0.0, 0.0],
+            units='unitless',
+        )
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000.0, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.Nacelle.CORE_DIAMETER_RATIO, [1.2205, 1.02], units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Nacelle.FINENESS, [1.3588, 1.5], units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.INLET_AREA_COEFFICIENT, [0.0002, 0.0003], units='unitless'
+        )
+
+        setup_model_options(self.prob, aviary_options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case_multiengine(self):
+        self.prob.run_model()
+
+        tol = 1e-5
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], [5.33382144, 3.86039276], tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)

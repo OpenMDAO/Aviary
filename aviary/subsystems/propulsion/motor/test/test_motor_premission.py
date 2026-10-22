@@ -5,10 +5,10 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.propulsion.motor.model.motor_premission import MotorPreMission
-from aviary.variable_info.variables import Aircraft
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Aircraft
 
 
 class TestGearbox(unittest.TestCase):

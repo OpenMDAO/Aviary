@@ -137,7 +137,6 @@ aircraft:wing:height,8.0,ft
 aircraft:wing:high_lift_mass_coefficient,1.9,unitless
 aircraft:wing:incidence,1.5,deg
 aircraft:wing:mass_coefficient,102.5,unitless
-aircraft:wing:max_lift_ref,1.15,unitless
 aircraft:wing:max_slat_deflection_landing,10.0,deg
 aircraft:wing:max_slat_deflection_takeoff,10.0,deg
 aircraft:wing:max_thickness_location,0.4,unitless
@@ -145,6 +144,7 @@ aircraft:wing:min_pressure_location,0.3,unitless
 aircraft:wing:num_flap_segments,2,unitless
 aircraft:wing:optimum_flap_deflection,55,deg
 aircraft:wing:optimum_slat_deflection,20.0,deg
+aircraft:wing:reference_clean_max_lift_coefficient,1.15,unitless
 aircraft:wing:slat_chord_ratio,0.15,unitless
 aircraft:wing:slat_lift_increment_optimum,0.93,unitless
 aircraft:wing:surface_control_mass_coefficient,0.95,unitless

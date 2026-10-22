@@ -15,15 +15,15 @@ import openmdao.api as om
 
 # from dymos.utils.misc import _unspecified
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import ComputedAeroGroup
+from aviary.subsystems.aerodynamics.flops_based.premission_aero import (
+    PreMissionAero as PreMissionAeroFLOPS,
+)
 from aviary.subsystems.aerodynamics.flops_based.premission_aero import TakeoffLoverD
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import TabularAeroGroup
 from aviary.subsystems.aerodynamics.flops_based.takeoff_aero_group import TakeoffAeroGroup
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
 from aviary.subsystems.aerodynamics.gasp_based.premission_aero import (
     PreMissionAero as PreMissionAeroGASP,
-)
-from aviary.subsystems.aerodynamics.flops_based.premission_aero import (
-    PreMissionAero as PreMissionAeroFLOPS,
 )
 from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     TabularCruiseAero,
@@ -35,7 +35,6 @@ from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import AircraftTypes, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
-
 
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
@@ -74,18 +73,18 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         Generate the report for Aviary core aerodynamics analysis.
     """
 
-    def __init__(self, name=None, meta_data=None, code_origin=None, tabular=False):
+    def __init__(self, name=None, meta_data=None, code_origin=None, all_tabular=False):
         if code_origin not in (FLOPS, GASP):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
 
         self.code_origin = code_origin
-        self.tabular = tabular
+        self.all_tabular = all_tabular
 
         super().__init__(name=name, meta_data=meta_data)
 
     def build_pre_mission(self, aviary_inputs, subsystem_options):
         # pre-mission is not required when exclusively using tabular aero
-        if self.tabular:
+        if self.all_tabular:
             return TakeoffLoverD()
 
         code_origin = self.code_origin
@@ -378,7 +377,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
     def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a dictionary of parameters for the subsystem. (Optional)
+        Return a dictionary of parameters for the subsystem. (Optional).
 
         A parameter is a value that does not vary over the trajectory. Adding a variable name to
         this list promotes the input to the top of the Aviary model, where it is either implicitly
@@ -671,9 +670,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
             elif method == 'cruise':
                 all_vars = set(AERO_2DOF_INPUTS + AERO_CLEAN_2DOF_INPUTS)
             elif method == 'tabular_low_speed':
-                all_vars = AERO_2DOF_TABULAR_LS_INPUTS
+                all_vars = set(AERO_2DOF_TABULAR_LS_INPUTS)
             elif method == 'tabular_cruise':
-                all_vars = TABULAR_CORE_INPUTS
+                all_vars = set(TABULAR_CORE_INPUTS)
             else:
                 raise ValueError(
                     'GASP-based aero method is not one of the following: (cruise, '
@@ -685,7 +684,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
             except KeyError:
                 design_type = AircraftTypes.TRANSPORT
 
-            if design_type is AircraftTypes.BLENDED_WING_BODY:
+            computed_methods = ['cruise', 'low_speed']
+            if design_type is AircraftTypes.BLENDED_WING_BODY and method in computed_methods:
                 all_vars.add(Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0)
                 all_vars.add(Aircraft.Fuselage.HYDRAULIC_DIAMETER)
                 all_vars.add(Aircraft.Fuselage.PLANFORM_AREA)
@@ -732,7 +732,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         return timeseries_vars
 
     def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
-        if self.code_origin is GASP and not self.tabular:
+        if self.code_origin is GASP and not self.all_tabular:
             return {
                 'interference_independent_of_shielded_area': {
                     'mission_name': ['interference_independent_of_shielded_area'],

@@ -1,7 +1,7 @@
 from aviary.subsystems.propulsion.gearbox.model.gearbox_mission import GearboxMission
 from aviary.subsystems.propulsion.gearbox.model.gearbox_premission import GearboxPreMission
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class GearboxBuilder(SubsystemBuilder):

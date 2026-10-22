@@ -5,11 +5,9 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.validation_cases.validation_data.test_models.GwFm_phase_info import (
-    phase_info as ph_in,
-)
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.functions import get_aviary_resource_path
+from aviary.validation_cases.validation_data.test_models.GwFm_phase_info import phase_info as ph_in
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 

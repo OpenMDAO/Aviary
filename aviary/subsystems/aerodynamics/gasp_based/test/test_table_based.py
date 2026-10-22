@@ -1,10 +1,8 @@
 import unittest
 
 import numpy as np
-import openmdao
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from packaging import version
 
 from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     GearDragIncrement,
@@ -12,7 +10,7 @@ from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     TabularLowSpeedAero,
 )
 from aviary.utils.functions import get_aviary_resource_path
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TestCruiseAero(unittest.TestCase):

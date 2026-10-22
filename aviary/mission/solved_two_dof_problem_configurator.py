@@ -1,15 +1,14 @@
 import openmdao.api as om
 
+from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.mission.solved_two_dof.phases.groundroll_phase import (
     GroundrollPhase as GroundrollPhaseVelocityIntegrated,
 )
 from aviary.mission.solved_two_dof.phases.solved_twodof_phase import SolvedTwoDOFPhase
-from aviary.mission.problem_configurator import ProblemConfiguratorBase
-from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.mission.utils import process_guess_var
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.mission.utils import process_guess_var
 
 
 class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
@@ -207,7 +206,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         )
 
     def set_phase_initial_guesses(
-        self, aviary_group, phase_name, phase, guesses, target_prob, parent_prefix
+        self, aviary_group, phase_name, phase_idx, phase, guesses, target_prob, parent_prefix
     ):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
@@ -224,6 +223,8 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Aviary model that owns this configurator.
         phase_name : str
             The name of the phase for which the guesses are being added.
+        phase_idx : int
+            Phase position in aviary_group.phases. Can be used to identify first phase.
         phase : Phase
             The phase object for which the guesses are being added.
         guesses : dict

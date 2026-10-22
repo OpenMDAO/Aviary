@@ -9,12 +9,12 @@ from parameterized import parameterized
 from aviary.subsystems.mass.flops_based.starter import TransportStarterMass
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
+    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_inputs,
     get_flops_options,
     print_case,
-    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
@@ -47,7 +47,6 @@ class TransportStarterMassTest(unittest.TestCase):
             case_name,
             input_keys=[
                 Aircraft.Nacelle.AVG_DIAMETER,
-                Aircraft.Engine.SCALE_FACTOR,
                 Aircraft.Design.MAX_MACH,
             ],
             output_keys=Aircraft.Propulsion.TOTAL_STARTER_MASS,
@@ -73,7 +72,6 @@ class TransportStarterMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
-        prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, 'unitless')
         prob.set_val(Aircraft.Design.MAX_MACH, 0.785, 'unitless')
 
         prob.run_model()
@@ -119,7 +117,6 @@ class TransportStarterMassTest2(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
-        prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, 'unitless')
         prob.set_val(Aircraft.Design.MAX_MACH, 0.875, 'unitless')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')

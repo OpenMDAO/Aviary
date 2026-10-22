@@ -4,10 +4,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.validation_cases.validation_data.test_data.V3_bug_fixed_IO import (
-    V3_bug_fixed_non_metadata,
-    V3_bug_fixed_options,
-)
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
@@ -16,6 +12,10 @@ from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilde
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
+from aviary.validation_cases.validation_data.test_data.V3_bug_fixed_IO import (
+    V3_bug_fixed_non_metadata,
+    V3_bug_fixed_options,
+)
 from aviary.validation_cases.validation_tests import get_flops_case_names, get_flops_inputs
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options

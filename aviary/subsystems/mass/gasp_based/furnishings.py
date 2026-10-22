@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.math import d_smooth_max, dSigmoidXdx, sigmoidX, smooth_max
+from aviary.utils.math_utils import d_smooth_max, dSigmoidXdx, sigmoidX, smooth_max
 from aviary.variable_info.enums import GASPEngineType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
@@ -331,9 +331,7 @@ def common_compute_partials(
 
 
 class FurnishingMass(om.ExplicitComponent):
-    """
-    Computation of furnishing mass.
-    """
+    """Computation of furnishing mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
@@ -421,9 +419,7 @@ class FurnishingMass(om.ExplicitComponent):
 
 
 class BWBFurnishingMass(om.ExplicitComponent):
-    """
-    Computation of furnishing mass for BWB
-    """
+    """Computation of furnishing mass for BWB."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)

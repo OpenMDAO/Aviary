@@ -118,7 +118,18 @@ jobs:
           echo "============================================================="
           echo "Build the docs for ${{ steps.target.outputs.tag }}"
           echo "============================================================="
-          bash build_book.sh
+          # For tag builds we skip notebook re-execution: use the cell outputs
+          # committed at release time. Re-running notebooks against a newer
+          # environment is fragile for historical tags (dependencies shift,
+          # test tolerances drift, unreviewed examples may fail). The committed
+          # outputs were correct when the tag was cut; that's what we publish.
+          #
+          # Jupyter Book v1 only accepts one --config. Patch _config.yml
+          # in-place (sed) to flip execute_notebooks to "off" so we use
+          # committed cell outputs. The checkout is throwaway so this is safe.
+          python build_source_docs.py
+          sed -i 's/execute_notebooks:.*/execute_notebooks: "off"/' _config.yml
+          jupyter-book build -W --keep-going .
 
       - name: Display doc build reports
         continue-on-error: True

@@ -5,12 +5,11 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-
 from aviary.mission.energy_state.ode.mission_EOM import MissionEOM
-from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.variable_info.variables import Dynamic, Mission
-from aviary.variable_info.functions import setup_model_options
 from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.test_utils.variable_test import assert_match_varnames
+from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 @use_tempdirs

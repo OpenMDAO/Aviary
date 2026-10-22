@@ -1049,7 +1049,7 @@ class AviaryMissionEditor(tk.Tk):
                 foreground=self.pallete[self.theme]['foreground_primary'],
             )
             option_label.grid(row=row, column=0, sticky='e')
-            if type(tk.BooleanVar()) == type(option_var):
+            if type(tk.BooleanVar()) is type(option_var):
                 option_checkbox = tk.Checkbutton(
                     content_frame,
                     variable=option_var,
@@ -1062,7 +1062,7 @@ class AviaryMissionEditor(tk.Tk):
                     highlightcolor=self.pallete[self.theme]['background_primary'],
                 )
                 option_checkbox.grid(row=row, column=1, sticky='w')
-            elif type(tk.IntVar()) == type(option_var):
+            elif type(tk.IntVar()) is type(option_var):
                 option_entry = tk.Entry(
                     content_frame,
                     textvariable=option_var,

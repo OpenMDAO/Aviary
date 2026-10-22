@@ -469,9 +469,10 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         )
 
     if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
-        print('\nInitial Guesses')
+        print('Initial Guesses')
         for key, value in initialization_guesses.items():
             print(key, value)
+        print('\n')
 
     return initialization_guesses
 

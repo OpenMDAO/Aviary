@@ -98,7 +98,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
             'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv',
             local_phase_info,
             optimizer='SNOPT',
-            verbosity=1,
+            verbosity=0,
             max_iter=60,
         )
 
@@ -182,7 +182,7 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
             'models/aircraft/blended_wing_body/bwb300_baseline_FLOPS.csv',
             local_phase_info,
             optimizer='SNOPT',
-            verbosity=1,
+            verbosity=0,
             max_iter=60,
         )
         # prob.model.list_vars(units=True, print_arrays=True)

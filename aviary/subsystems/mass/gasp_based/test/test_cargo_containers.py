@@ -123,7 +123,7 @@ class CargoTestCase3(unittest.TestCase):
 
 @use_tempdirs
 class CargoTestCase4(unittest.TestCase):
-    """Non zero Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER case"""
+    """Non zero Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER case."""
 
     def setUp(self):
         self.options = options = AviaryValues()
@@ -138,7 +138,7 @@ class CargoTestCase4(unittest.TestCase):
         )
 
     def test_case1(self):
-        """SMOOTH_MASS_DISCONTINUITIES=False"""
+        """SMOOTH_MASS_DISCONTINUITIES=False."""
         setup_model_options(self.prob, self.options)
         self.prob.setup(check=False, force_alloc_complex=True)
         self.prob.run_model()

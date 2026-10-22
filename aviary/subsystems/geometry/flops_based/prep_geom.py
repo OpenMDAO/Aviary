@@ -19,18 +19,21 @@ from aviary.subsystems.geometry.flops_based.fuselage import (
     FuselagePrelim,
     SimpleCabinLayout,
 )
+from aviary.subsystems.geometry.flops_based.nacelle import NacellePrelim
 from aviary.subsystems.geometry.flops_based.landing_gear import MainGearLength, NoseGearLength
-from aviary.subsystems.geometry.flops_based.wetted_area_total import WettedAreaGroup
-from aviary.subsystems.geometry.flops_based.wetted_area_total import TotalWettedArea
+from aviary.subsystems.geometry.flops_based.wetted_area_total import (
+    TotalWettedArea,
+    WettedAreaGroup,
+)
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
 from aviary.subsystems.geometry.flops_based.wing_detailed_bwb import (
-    BWBUpdateDetailedWingDist,
     BWBComputeDetailedWingDist,
+    BWBUpdateDetailedWingDist,
     BWBWingPrelim,
 )
-from aviary.variable_info.enums import AircraftTypes, Verbosity
+from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.variables import Aircraft
 
 
 class PrepGeom(om.Group):
@@ -113,14 +116,10 @@ class PrepGeom(om.Group):
             )
 
         self.add_subsystem(
-            'wetted_area',
-            WettedAreaGroup(),
-            promotes_inputs=['*'],
+            'nacelle_prelim',
+            NacellePrelim(),
+            promotes_inputs=['aircraft*'],
             promotes_outputs=['*'],
-        )
-
-        self.add_subsystem(
-            'fus_ratios', _FuselageRatios(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
@@ -152,10 +151,19 @@ class PrepGeom(om.Group):
             promotes_outputs=['*'],
         )
 
-        # self.connect(f'prelim.{Names.CROOT}', f'other_characteristic_lengths.{Names.CROOT}')
+        self.add_subsystem(
+            'wetted_area',
+            WettedAreaGroup(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
 
         self.add_subsystem(
             'total_wetted_area', TotalWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
+
+        self.add_subsystem(
+            'fus_ratios', _FuselageRatios(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(

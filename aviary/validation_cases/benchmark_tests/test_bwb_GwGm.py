@@ -5,9 +5,8 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.validation_cases.validation_data.test_data.generic_BWB_2dof_phase_info import phase_info
-
 from aviary.interface.run_aviary import run_aviary
+from aviary.validation_cases.validation_data.test_data.generic_BWB_2dof_phase_info import phase_info
 from aviary.variable_info.variables import Aircraft, Mission
 
 
