@@ -503,10 +503,9 @@
   <h1>Source code for aviary.utils.functions</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">atexit</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExitStack</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">importlib_resources</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.aviary_values</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryValues</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Verbosity</span>
@@ -533,10 +532,10 @@
     <span class="n">file_manager</span> <span class="o">=</span> <span class="n">ExitStack</span><span class="p">()</span>
     <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">file_manager</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">resource_name</span><span class="p">:</span>
-        <span class="n">ref</span> <span class="o">=</span> <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;aviary&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">resource_name</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;aviary&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">resource_name</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">ref</span> <span class="o">=</span> <span class="n">importlib_resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;aviary&#39;</span><span class="p">)</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">file_manager</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">importlib_resources</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">ref</span><span class="p">))</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;aviary&#39;</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">file_manager</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">ref</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">path</span></div>
 
 
