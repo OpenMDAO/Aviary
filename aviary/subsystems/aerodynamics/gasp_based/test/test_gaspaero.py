@@ -33,7 +33,6 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.validation_cases.benchmark_tests.test_bwb_FwFm import phase_info
 from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -815,7 +814,8 @@ class BWBAeroSetupTestCase(unittest.TestCase):
     """Test the BWBAeroSetup group."""
 
     def test_case1(self):
-        options = get_option_defaults()
+        # Explicit options for the BWB aero setup group.
+        options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
         options.set_val(Aircraft.Wing.HAS_STRUT, False)
@@ -1406,7 +1406,8 @@ class BWBCruiseAeroTestCase(unittest.TestCase):
     """Test the CruiseAero group with a BWB aircraft."""
 
     def setUp(self):
-        self.options = options = get_option_defaults()
+        # Explicit options for the BWB cruise aero group.
+        self.options = options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
         options.set_val(Aircraft.Wing.HAS_STRUT, False)
@@ -1623,7 +1624,7 @@ class BWBLowSpeedAeroTestCase(unittest.TestCase):
         retract_gear,
         retract_flaps,
     ):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
         options.set_val(Aircraft.Wing.HAS_STRUT, False)
