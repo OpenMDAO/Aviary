@@ -1,7 +1,6 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
@@ -67,56 +66,6 @@ class TransportInstrumentsMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
-
-
-class TransportInstrumentsMassTest2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.subsystems.mass.flops_based.instruments as instruments
-
-        instruments.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.subsystems.mass.flops_based.instruments as instruments
-
-        instruments.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case(self):
-        prob = om.Problem()
-
-        inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
-
-        options = {
-            Aircraft.CrewPayload.NUM_FLIGHT_CREW: inputs.get_val(
-                Aircraft.CrewPayload.NUM_FLIGHT_CREW
-            ),
-            Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES: inputs.get_val(
-                Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES
-            ),
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
-                Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
-            ),
-        }
-
-        prob.model.add_subsystem(
-            'instruments_tests',
-            TransportInstrumentMass(**options),
-            promotes_outputs=[
-                Aircraft.Instruments.MASS,
-            ],
-            promotes_inputs=[
-                Aircraft.Fuselage.PLANFORM_AREA,
-                Aircraft.Instruments.MASS_SCALER,
-                Aircraft.Design.MAX_MACH,
-            ],
-        )
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Fuselage.PLANFORM_AREA, 1500.0, 'ft**2')
-        prob.set_val(Aircraft.Design.MAX_MACH, 0.82, 'unitless')
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == '__main__':

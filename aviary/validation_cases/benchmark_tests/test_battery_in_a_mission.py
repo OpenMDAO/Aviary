@@ -214,7 +214,7 @@ class TestBatteryMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestBatteryMission()
-    test.setUp()
-    test.test_subsystems_in_a_mission()
+    unittest.main()
+    # test = TestBatteryMission()
+    # test.setUp()
+    # test.test_subsystems_in_a_mission()
