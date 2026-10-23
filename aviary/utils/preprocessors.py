@@ -152,6 +152,16 @@ def deprecations(aviary_options: AviaryValues, verbosity=Verbosity.BRIEF):
         except KeyError:
             pass
 
+    if Mission.RESERVE_FUEL_MARGIN in aviary_options:
+        margin = aviary_options.get_val(Mission.RESERVE_FUEL_MARGIN)
+        if margin > 1:
+            raise DeprecationWarning(
+                'For consistency with all other Aviary variables that define percentages/fractions, '
+                'Mission.RESERVE_FUEL_MARGIN was changed to directly define the multiplicative '
+                f'factor (and not percentage points). Currently reserve margin is defined as '
+                f'{margin}, or {margin * 100} percentage points of main mission fuel.'
+            )
+
 
 def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
     """

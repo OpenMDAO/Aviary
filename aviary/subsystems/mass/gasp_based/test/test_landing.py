@@ -55,12 +55,12 @@ class FixedMassGroupTestCase2(unittest.TestCase):
     """Gravity Modification."""
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.landing as landing
+        from aviary.subsystems.mass.gasp_based import landing
 
         landing.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.landing as landing
+        from aviary.subsystems.mass.gasp_based import landing
 
         landing.GRAV_ENGLISH_LBM = 1.0
 

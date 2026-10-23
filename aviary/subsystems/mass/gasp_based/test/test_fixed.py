@@ -1281,7 +1281,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-7, rtol=1e-12)
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.fixed as fixed
+        from aviary.subsystems.mass.gasp_based import fixed
 
         # Set GRAV_ENGLISH_LBM = 1.1 to find errors that aren't
         # caught when GRAV_ENGLISH_LBM = 1 and is misplaced.
@@ -1289,7 +1289,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
         fixed.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.fixed as fixed
+        from aviary.subsystems.mass.gasp_based import fixed
 
         constants.GRAV_ENGLISH_LBM = 1.0
         fixed.GRAV_ENGLISH_LBM = 1.0

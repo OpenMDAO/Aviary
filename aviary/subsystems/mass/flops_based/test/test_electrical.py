@@ -105,12 +105,12 @@ class ElectricMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.flops_based.electrical as electrical
+        from aviary.subsystems.mass.flops_based import electrical
 
         electrical.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.flops_based.electrical as electrical
+        from aviary.subsystems.mass.flops_based import electrical
 
         electrical.GRAV_ENGLISH_LBM = 1.0
 

@@ -1,0 +1,12 @@
+from openmdao.core.system import System
+
+from aviary.subsystems.energy.fuel_tank_model import FuelTankModel
+from aviary.subsystems.mass.flops_based.fuel_capacity import FuelCapacityGroup
+from aviary.utils.aviary_values import AviaryValues
+
+
+class FuelTankFLOPS(FuelTankModel):
+    def build_pre_mission(
+        self, aviary_inputs: AviaryValues | None = None, subsystem_options: dict | None = None
+    ) -> None | System:
+        return FuelCapacityGroup()
