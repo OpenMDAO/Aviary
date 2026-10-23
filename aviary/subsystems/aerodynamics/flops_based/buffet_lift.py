@@ -9,6 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 DEG2RAD = np.pi / 180.0
 
+
 class BuffetLift(om.ExplicitComponent):
     """Computes lift margin before buffet onset."""
 

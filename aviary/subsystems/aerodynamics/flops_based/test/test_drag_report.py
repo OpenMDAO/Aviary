@@ -9,6 +9,7 @@ from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.missions.energy_state_default import phase_info
 
+
 @use_tempdirs
 class SimpleDragTest(unittest.TestCase):
     def setUp(self):

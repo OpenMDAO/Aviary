@@ -197,7 +197,7 @@ def generate_drag_report(prob):
         lines += line + '\n'
 
     # Drag Polar
-    cls = np.linspace(.2, .9, 15)
+    cls = np.linspace(0.2, 0.9, 15)
     aero_problem.set_val(Dynamic.Mission.ALTITUDE, cruise_alt, units='ft')
 
     # FLOPS computes the polar before scaling any drag components.
