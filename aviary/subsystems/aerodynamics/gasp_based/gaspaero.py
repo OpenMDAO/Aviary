@@ -315,10 +315,8 @@ class Xlifts(om.ExplicitComponent):
         self.add_output('lift_ratio', units='unitless', shape=nn, desc='BARL: Lift ratio')
 
     def setup_partials(self):
-        ar = np.arange(self.options['num_nodes'])
-
         self.declare_partials('lift_ratio', '*', method='cs')
-        self.declare_partials('lift_ratio', Dynamic.Atmosphere.MACH, rows=ar, cols=ar, method='cs')
+        self.declare_partials('lift_ratio', Dynamic.Atmosphere.MACH, method='cs')
         self.declare_partials('lift_curve_slope', '*', method='cs')
         self.declare_partials(
             'lift_curve_slope',
@@ -336,7 +334,7 @@ class Xlifts(om.ExplicitComponent):
             method='cs',
         )
         self.declare_partials(
-            'lift_curve_slope', Dynamic.Atmosphere.MACH, rows=ar, cols=ar, method='cs'
+            'lift_curve_slope', Dynamic.Atmosphere.MACH, method='cs'
         )
 
     def compute(self, inputs, outputs):
@@ -768,8 +766,6 @@ class AeroGeom(om.ExplicitComponent):
 
     def setup_partials(self):
         # self.declare_coloring(method="cs", show_summary=False)
-        self.declare_partials('*', '*', dependent=False)
-        ar = np.arange(self.options['num_nodes'])
 
         self.declare_partials(
             'SA1',
@@ -805,7 +801,7 @@ class AeroGeom(om.ExplicitComponent):
             method='cs',
         )
         self.declare_partials('SA4', [Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], method='cs')
-        self.declare_partials('cf', [Dynamic.Atmosphere.MACH], rows=ar, cols=ar, method='cs')
+        self.declare_partials('cf', [Dynamic.Atmosphere.MACH], method='cs')
 
         # diag partials for SA5-SA7
         self.declare_partials(
@@ -815,8 +811,6 @@ class AeroGeom(om.ExplicitComponent):
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
             ],
-            rows=ar,
-            cols=ar,
             method='cs',
         )
         self.declare_partials(
@@ -826,8 +820,6 @@ class AeroGeom(om.ExplicitComponent):
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
             ],
-            rows=ar,
-            cols=ar,
             method='cs',
         )
         self.declare_partials(
@@ -838,8 +830,6 @@ class AeroGeom(om.ExplicitComponent):
                 Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
                 'ufac',
             ],
-            rows=ar,
-            cols=ar,
             method='cs',
         )
 
@@ -1379,13 +1369,9 @@ class DragCoefClean(om.ExplicitComponent):
         self.add_output(Dynamic.Vehicle.DRAG_COEFFICIENT, units='unitless', shape=nn, desc='Drag coefficient')
 
     def setup_partials(self):
-        ar = np.arange(self.options['num_nodes'])
-
         self.declare_partials(
             Dynamic.Vehicle.DRAG_COEFFICIENT,
             [Dynamic.Atmosphere.MACH, Dynamic.Vehicle.LIFT_COEFFICIENT, 'cf', 'SA1', 'SA2', 'SA5', 'SA6', 'SA7'],
-            rows=ar,
-            cols=ar,
             method='cs',
         )
         self.declare_partials(

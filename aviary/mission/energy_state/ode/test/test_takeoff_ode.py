@@ -9,7 +9,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     detailed_takeoff_climbing,
     detailed_takeoff_ground,
@@ -99,7 +99,9 @@ class TakeoffODETest(unittest.TestCase):
 
         preprocess_options(aviary_options, engine_models=engines)
 
-        default_mission_subsystems = get_default_mission_subsystems('FLOPS', engines)
+        default_mission_subsystems = [
+            get_default_subsystems('FLOPS', engines)[k] for k in ['propulsion', 'aerodynamics']
+        ]
 
         prob.model.add_subsystem(
             'takeoff_ode',

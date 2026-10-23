@@ -84,15 +84,13 @@ class BatteryBuilder(SubsystemBuilder):
                 'fix_initial': True,
                 'fix_final': False,
                 'lower': 0.0,
-                'ref': 1e4,
-                'defect_ref': 1e6,
+                'ref': 1e5,
                 'units': 'kJ',
                 'rate_source': Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
-                'input_initial': 0.0,
+                'val': 0.0,
                 'targets': Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
             }
         }
-
         return state_dict
 
     def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None):

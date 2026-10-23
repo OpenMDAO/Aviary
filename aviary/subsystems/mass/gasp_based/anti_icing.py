@@ -39,8 +39,7 @@ class AntiIcingMass(om.ExplicitComponent):
             mu = self.options['mu']
             icing_wt = smooth_max(icing_wt, 0.0, mu)
         else:
-            if icing_wt < 0.0:
-                icing_wt = 0.0
+            icing_wt = max(icing_wt, 0.0)
 
         outputs[Aircraft.AntiIcing.MASS] = icing_wt / GRAV_ENGLISH_LBM
 

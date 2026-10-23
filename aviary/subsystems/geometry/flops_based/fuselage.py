@@ -326,14 +326,11 @@ class DetailedCabinLayout(om.ExplicitComponent):
 
         # Calculate the number of galleys, lavatories and closets
         num_galleys = int(1 + (num_pax / 100))
-        if num_galleys > max_galleys:
-            num_galleys = max_galleys
+        num_galleys = min(num_galleys, max_galleys)
         num_lavas = int(1 + (num_economy_class_pax / 60)) + int(1 + (num_first_business_pax / 100))
-        if num_lavas > max_lav:
-            num_lavas = max_lav
+        num_lavas = min(num_lavas, max_lav)
         num_closets = int(1 + (num_first_business_pax / 30)) + int(1 + (num_economy_class_pax / 60))
-        if num_closets > max_closets:
-            num_closets = max_closets
+        num_closets = min(num_closets, max_closets)
 
         # Calculate the passenger compartment length
 
@@ -506,7 +503,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         # pick the inputs you want, and it calculates the others. This will involve sorting out
         # when "WF" means max width, and when it means computed width.
         num_bays = np.ceil(0.5 + max_width.real / bay_width_nom)
-        if num_bays.real > num_bays_max and num_bays_max > 0:
+        if num_bays.real > num_bays_max > 0:
             num_bays = num_bays_max
 
         outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
@@ -675,7 +672,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
         # Estimate number of bays based on these areas
         num_bays = int(0.5 + (area_seats + area_service) / 550.0)
-        if num_bays > num_bays_max and num_bays_max > 0:
+        if num_bays > num_bays_max > 0:
             num_bays = num_bays_max
 
         # Loop spans 4246~4314 in BWBFUS in sfwate.py
@@ -701,17 +698,17 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
             # Enforce maximum number of bays
             num_bays_tmp = 0.5 + max_width / bay_width_nom
-            if num_bays_tmp[0].real > num_bays_max and num_bays_max > 0:
+            if num_bays_tmp[0].real > num_bays_max > 0:
                 num_bays = num_bays_max
             else:
                 num_bays = int(num_bays_tmp[0].real)
 
             # Enforce maximum bay width
             bay_width = max_width / num_bays
-            if bay_width > bay_width_max and bay_width_max > 0.0:
+            if bay_width > bay_width_max > 0.0:
                 bay_width = bay_width_max
                 num_bays_tmp = 0.999 + max_width / bay_width
-                if num_bays_tmp.real > num_bays_max and num_bays_max > 0:
+                if num_bays_tmp.real > num_bays_max > 0:
                     num_bays = num_bays_max
                     max_width = num_bays_max * bay_width
                     pax_compart_length = area_cabin / max_width + tan_sweep * max_width / 4.0

@@ -72,20 +72,12 @@ class EngineScaling(om.ExplicitComponent):
                     units=engine_variables[variable],
                 )
 
-                if variable is FUEL_FLOW:
-                    add_aviary_output(
-                        self,
-                        Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
-                        shape=nn,
-                        units=engine_variables[variable],
-                    )
-                else:
-                    add_aviary_output(
-                        self,
-                        variable.value,
-                        shape=nn,
-                        units=engine_variables[variable],
-                    )
+                add_aviary_output(
+                    self,
+                    variable.value,
+                    shape=nn,
+                    units=engine_variables[variable],
+                )
 
                 if variable in max_variables:
                     self.add_input(
@@ -135,12 +127,12 @@ class EngineScaling(om.ExplicitComponent):
 
         scale_factor = engine_scale_factor
 
-        # loop through all variables, singling out fuel flow to have special scaling
+        # loop through all variables, singling out fuel flow with special scaling
         # compute 'max' counterpart of variables that have them
         for variable in engine_variables:
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
-                    outputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE] = -(
+                    outputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE] = (
                         inputs['fuel_flow_rate_unscaled'] * fuel_flow_scale_factor
                         + constant_fuel_flow
                     )
@@ -164,13 +156,13 @@ class EngineScaling(om.ExplicitComponent):
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
                     self.declare_partials(
-                        Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
                         Aircraft.Engine.SCALE_FACTOR,
                         rows=r,
                         cols=c,
                     )
                     self.declare_partials(
-                        Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
                         'fuel_flow_rate_unscaled',
                         rows=r,
                         cols=r,
@@ -230,11 +222,11 @@ class EngineScaling(om.ExplicitComponent):
             )
 
             fuel_flow_deriv = (
-                -engine_scale_factor * fuel_flow_mach_scaling * fuel_flow_equation_scaling
+                engine_scale_factor * fuel_flow_mach_scaling * fuel_flow_equation_scaling
             )
 
             fuel_flow_scale_deriv = (
-                -fuel_flow_mach_scaling
+                fuel_flow_mach_scaling
                 * inputs['fuel_flow_rate_unscaled']
                 * (
                     1
@@ -248,11 +240,11 @@ class EngineScaling(om.ExplicitComponent):
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
                     J[
-                        Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
                         'fuel_flow_rate_unscaled',
                     ] = fuel_flow_deriv
                     J[
-                        Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
+                        Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
                         Aircraft.Engine.SCALE_FACTOR,
                     ] = fuel_flow_scale_deriv
                 else:

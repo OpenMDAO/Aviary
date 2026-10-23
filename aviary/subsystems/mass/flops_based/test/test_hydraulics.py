@@ -78,12 +78,12 @@ class TransportHydraulicsGroupMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.flops_based.hydraulics as hydraulics
+        from aviary.subsystems.mass.flops_based import hydraulics
 
         hydraulics.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.flops_based.hydraulics as hydraulics
+        from aviary.subsystems.mass.flops_based import hydraulics
 
         hydraulics.GRAV_ENGLISH_LBM = 1.0
 
@@ -157,12 +157,12 @@ class AltHydraulicsGroupMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.flops_based.hydraulics as hydraulics
+        from aviary.subsystems.mass.flops_based import hydraulics
 
         hydraulics.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.flops_based.hydraulics as hydraulics
+        from aviary.subsystems.mass.flops_based import hydraulics
 
         hydraulics.GRAV_ENGLISH_LBM = 1.0
 

@@ -69,12 +69,12 @@ class FuselageMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+        from aviary.subsystems.mass.flops_based import fuselage
 
         fuselage.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+        from aviary.subsystems.mass.flops_based import fuselage
 
         fuselage.GRAV_ENGLISH_LBM = 1.0
 
@@ -137,12 +137,12 @@ class AltFuselageMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+        from aviary.subsystems.mass.flops_based import fuselage
 
         fuselage.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+        from aviary.subsystems.mass.flops_based import fuselage
 
         fuselage.GRAV_ENGLISH_LBM = 1.0
 
@@ -204,12 +204,12 @@ class BWBFuselageMassTest2(unittest.TestCase):
     """Tests fuselage mass calculation for BWB. check mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+        from aviary.subsystems.mass.flops_based import fuselage
 
         fuselage.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+        from aviary.subsystems.mass.flops_based import fuselage
 
         fuselage.GRAV_ENGLISH_LBM = 1.0
 
@@ -289,12 +289,12 @@ class BWBAftBodyMassTest2(unittest.TestCase):
     """Tests aft body mass calculation for BWB."""
 
     def setUp(self):
-        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+        from aviary.subsystems.mass.flops_based import fuselage
 
         fuselage.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+        from aviary.subsystems.mass.flops_based import fuselage
 
         fuselage.GRAV_ENGLISH_LBM = 1.0
 
