@@ -701,7 +701,7 @@
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s1">&#39;Non-numerical value found in data file &lt;</span><span class="si">{</span><span class="n">filepath</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt; on &#39;</span>
-                    <span class="sa">f</span><span class="s1">&#39;line </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">line_count</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;line </span><span class="si">{</span><span class="n">line_count</span><span class="si">!s}</span><span class="s1">&#39;</span>
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">items</span>
@@ -825,7 +825,7 @@
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s1">&#39;Non-numerical value found in data file &lt;</span><span class="si">{</span><span class="n">filepath</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt; on &#39;</span>
-                        <span class="sa">f</span><span class="s1">&#39;line </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">line_count</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;line </span><span class="si">{</span><span class="n">line_count</span><span class="si">!s}</span><span class="s1">&#39;</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">raw_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_data</span><span class="p">)</span>

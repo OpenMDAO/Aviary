@@ -739,16 +739,13 @@
   &#39;aircraft:wing:slat_span_ratio  0.9  unitless
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>req_fuel_mass &gt; max_wingfuel_mass, adding a body tank
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      225
-                     variables with only lower bounds:       75
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      289
+                     variables with only lower bounds:      139
                 variables with lower and upper bounds:      149
                      variables with only upper bounds:        0
-Total number of equality constraints.................:      221
-Total number of inequality constraints...............:       54
-        inequality constraints with only lower bounds:        2
+Total number of equality constraints.................:      284
+Total number of inequality constraints...............:       58
+        inequality constraints with only lower bounds:        6
    inequality constraints with lower and upper bounds:       52
         inequality constraints with only upper bounds:        0
 
@@ -757,8 +754,8 @@ Number of Iterations....: 0
 
                                    (scaled)                 (unscaled)
 Objective...............:   5.1722886909006149e+00    5.1722886909006149e+00
-Dual infeasibility......:   1.3412327478482144e-01    1.3412327478482144e-01
-Constraint violation....:   8.8081681383747128e+00    8.8081681383747128e+00
+Dual infeasibility......:   1.6500000000000000e+01    1.6500000000000000e+01
+Constraint violation....:   1.2513860757844089e+00    1.2513860757844089e+00
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
 Complementarity.........:   2.9553974865183619e+01    2.9553974865183619e+01
 Overall NLP error.......:   2.9553974865183619e+01    2.9553974865183619e+01
@@ -771,7 +768,7 @@ Number of inequality constraint evaluations          = 1
 Number of equality constraint Jacobian evaluations   = 1
 Number of inequality constraint Jacobian evaluations = 1
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 1.201
+Total seconds in IPOPT                               = 2.355
 
 EXIT: Maximum Number of Iterations Exceeded.
 </pre></div>
@@ -1250,9 +1247,6 @@ There is a special objective type: <code class="docutils literal notranslate"><s
 <p class="expanded admonition-title">Hide code cell output</p>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>req_fuel_mass &gt; max_wingfuel_mass, adding a body tank
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
 </pre></div>
 </div>
@@ -1359,11 +1353,11 @@ done
   &#39;mission:takeoff:lift_over_drag  17.354  unitless
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
-                     variables with only lower bounds:       93
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      141
+                     variables with only lower bounds:      138
                 variables with lower and upper bounds:        3
                      variables with only upper bounds:        0
-Total number of equality constraints.................:       94
+Total number of equality constraints.................:      139
 Total number of inequality constraints...............:       61
         inequality constraints with only lower bounds:        1
    inequality constraints with lower and upper bounds:       60
@@ -1374,7 +1368,7 @@ Number of Iterations....: 0
 
                                    (scaled)                 (unscaled)
 Objective...............:   3.9800875570924603e+00    3.9800875570924603e+00
-Dual infeasibility......:   7.8792026331667775e-01    7.8792026331667775e-01
+Dual infeasibility......:   1.2497499453426779e+00    1.2497499453426779e+00
 Constraint violation....:   1.9006004373650107e+00    1.9006004373650107e+00
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
 Complementarity.........:   7.9560101797999998e+00    7.9560101797999998e+00
@@ -1388,7 +1382,7 @@ Number of inequality constraint evaluations          = 1
 Number of equality constraint Jacobian evaluations   = 1
 Number of inequality constraint Jacobian evaluations = 1
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 0.559
+Total seconds in IPOPT                               = 0.846
 
 EXIT: Maximum Number of Iterations Exceeded.
 </pre></div>

@@ -658,7 +658,17 @@
                 <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span>
             <span class="p">)</span>  <span class="c1"># Added v1.0.2</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">pass</span></div>
+            <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MARGIN</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+        <span class="n">margin</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MARGIN</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">margin</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">DeprecationWarning</span><span class="p">(</span>
+                <span class="s1">&#39;For consistency with all other Aviary variables that define percentages/fractions, &#39;</span>
+                <span class="s1">&#39;Mission.RESERVE_FUEL_MARGIN was changed to directly define the multiplicative &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;factor (and not percentage points). Currently reserve margin is defined as &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">margin</span><span class="si">}</span><span class="s1">, or </span><span class="si">{</span><span class="n">margin</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">}</span><span class="s1"> percentage points of main mission fuel.&#39;</span>
+            <span class="p">)</span></div>
 
 
 

@@ -543,15 +543,9 @@
     <span class="n">update_GASP_options</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">wrapped_convert_units</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">EquationsOfMotion</span><span class="p">,</span>
-    <span class="n">LegacyCode</span><span class="p">,</span>
-    <span class="n">PhaseType</span><span class="p">,</span>
-    <span class="n">ProblemType</span><span class="p">,</span>
-    <span class="n">Verbosity</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">EquationsOfMotion</span><span class="p">,</span> <span class="n">LegacyCode</span><span class="p">,</span> <span class="n">ProblemType</span><span class="p">,</span> <span class="n">Verbosity</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_trajectory_params</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variables</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span><span class="p">,</span> <span class="n">Mission</span><span class="p">,</span> <span class="n">Settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variables</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span><span class="p">,</span> <span class="n">Dynamic</span><span class="p">,</span> <span class="n">Mission</span><span class="p">,</span> <span class="n">Settings</span>
 
 <span class="n">TWO_DEGREES_OF_FREEDOM</span> <span class="o">=</span> <span class="n">EquationsOfMotion</span><span class="o">.</span><span class="n">TWO_DEGREES_OF_FREEDOM</span>
 <span class="n">ENERGY_STATE</span> <span class="o">=</span> <span class="n">EquationsOfMotion</span><span class="o">.</span><span class="n">ENERGY_STATE</span>
@@ -854,7 +848,7 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;phase_info_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase_info_file</span>
             <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">phase_info_file</span><span class="p">)</span>
 
-            <span class="n">phase_info</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">phase_info_file</span><span class="p">,</span> <span class="s1">&#39;phase_info&#39;</span><span class="p">)</span>
+            <span class="n">phase_info</span> <span class="o">=</span> <span class="n">phase_info_file</span><span class="o">.</span><span class="n">phase_info</span>
 
         <span class="k">if</span> <span class="n">phase_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">phase_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">configurator</span><span class="o">.</span><span class="n">get_default_phase_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -1543,8 +1537,9 @@
                 <span class="c1"># If the user specifies a specific initial mach/altitude for the first reserve phase,</span>
                 <span class="c1"># allow discontinuities for those variables between the main and reserve mission</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserve_phases</span> <span class="ow">and</span> <span class="n">phase2</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">reserve_phases</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                    <span class="k">if</span> <span class="n">phase_info2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">_initial&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))[</span><span class="mi">0</span><span class="p">]:</span>
-                        <span class="n">common</span> <span class="o">=</span> <span class="n">common</span> <span class="o">-</span> <span class="p">{</span><span class="n">var</span><span class="p">}</span>
+                    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">phase_info2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">_initial&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="n">common</span> <span class="o">=</span> <span class="n">common</span> <span class="o">-</span> <span class="p">{</span><span class="n">var</span><span class="p">}</span>
 
             <span class="c1"># Sort because of MPI</span>
             <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">common</span><span class="p">):</span>

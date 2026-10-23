@@ -505,9 +505,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">StringVar</span><span class="p">,</span> <span class="n">filedialog</span><span class="p">,</span> <span class="n">messagebox</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tkinter.ttk</span><span class="w"> </span><span class="kn">import</span> <span class="n">Combobox</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.cm</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cm</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">cm</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.backends.backend_tkagg</span><span class="w"> </span><span class="kn">import</span> <span class="n">FigureCanvasTkAgg</span><span class="p">,</span> <span class="n">NavigationToolbar2Tk</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.csv_data_file</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_data_file</span>
@@ -538,7 +538,7 @@
         <span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">messagebox</span><span class="o">.</span><span class="n">showerror</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Failed to read the file: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">messagebox</span><span class="o">.</span><span class="n">showerror</span><span class="p">(</span><span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Failed to read the file: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="n">mach</span> <span class="o">=</span> <span class="n">polar_data</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;mach_number&#39;</span><span class="p">)</span>
@@ -706,7 +706,6 @@
 <span class="sd">    parser : argparse subparser</span>
 <span class="sd">        The parser we&#39;re adding options to.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_exec_plot_drag_polar</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">user_args</span><span class="p">):</span>

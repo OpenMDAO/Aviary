@@ -506,8 +506,12 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tk</span>  <span class="c1"># base tkinter</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">tkinter.ttk</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ttk</span>  <span class="c1"># used for combobox</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="kn">import</span> <span class="n">filedialog</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">messagebox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">filedialog</span><span class="p">,</span>
+    <span class="n">font</span><span class="p">,</span>
+    <span class="n">messagebox</span><span class="p">,</span>
+    <span class="n">ttk</span><span class="p">,</span>  <span class="c1"># used for combobox</span>
+<span class="p">)</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.backend_bases</span><span class="w"> </span><span class="kn">import</span> <span class="n">MouseButton</span>
@@ -2408,7 +2412,6 @@
 <span class="sd">    parser : argparse.ArgumentParser</span>
 <span class="sd">        The parser instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_exec_flight_profile</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">user_args</span><span class="p">):</span>

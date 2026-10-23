@@ -521,14 +521,14 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Collection</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.core.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_UNDEFINED</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">wrapped_convert_units</span>
 
 <span class="n">Units</span> <span class="o">=</span> <span class="nb">str</span>
-<span class="n">ValueAndUnits</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Units</span><span class="p">]</span>
+<span class="n">ValueAndUnits</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Units</span><span class="p">]</span>
 <span class="n">OptionalValueAndUnits</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueAndUnits</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 
 

@@ -725,7 +725,6 @@
                     <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># remove current_namelist from line (if any)</span>
                 <span class="k">except</span><span class="p">:</span>
                     <span class="n">line</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-                    <span class="k">pass</span>
 
             <span class="c1"># remove all white space and trailing commas</span>
             <span class="n">line</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
@@ -1263,8 +1262,8 @@
     <span class="k">if</span> <span class="n">reserve_fuel_mass_additional</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># This is a percentage of mission fuel</span>
         <span class="n">input_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-            <span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MARGIN</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">reserve_fuel_mass_additional</span> <span class="o">*</span> <span class="mi">100</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span>
-        <span class="p">)</span>  <span class="c1"># flip the value and multipy by 100 because it is a percentage</span>
+            <span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MARGIN</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">reserve_fuel_mass_additional</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span>
+        <span class="p">)</span>  <span class="c1"># flip the value</span>
         <span class="n">input_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
             <span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MASS_ADDITIONAL</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span>
         <span class="p">)</span>  <span class="c1"># then clear out the unused value</span>
@@ -1283,7 +1282,7 @@
     <span class="k">if</span> <span class="n">reserve_fuel_volume</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s1">&#39;&quot;FVOL_MRG&quot; is not valid below 0. Cannot set fuel volume reserves to less than zero&#39;</span>
-        <span class="p">)</span>  <span class="c1">#</span>
+        <span class="p">)</span>
         <span class="n">input_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">VOLUME_MARGIN</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
 
     <span class="c1"># FLARE LOAD FACTOR ##</span>

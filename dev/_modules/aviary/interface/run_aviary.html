@@ -655,7 +655,7 @@
         <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;phase_info_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase_info_file</span>
         <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">phase_info_file</span><span class="p">)</span>
 
-        <span class="n">phase_info</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">phase_info_file</span><span class="p">,</span> <span class="s1">&#39;phase_info&#39;</span><span class="p">)</span>
+        <span class="n">phase_info</span> <span class="o">=</span> <span class="n">phase_info_file</span><span class="o">.</span><span class="n">phase_info</span>
 
     <span class="n">prob</span> <span class="o">=</span> <span class="n">run_aviary</span><span class="p">(</span><span class="n">input_deck</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 

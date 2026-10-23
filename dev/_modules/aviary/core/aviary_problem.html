@@ -514,7 +514,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">dymos</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">openmdao.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">om</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">openmdao.utils.hooks</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">hooks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">hooks</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.reports_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">_default_reports</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_units</span>
 
@@ -1113,7 +1113,7 @@
                 <span class="n">disp</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;disp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">disp</span>
             <span class="c1"># Optimizer Settings #</span>
-            <span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;tol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-9</span>
+            <span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;tol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-6</span>
             <span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;maxiter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_iter</span>
 
         <span class="c1"># pyoptsparse print settings for both SNOPT, IPOPT</span>
@@ -1299,10 +1299,10 @@
             <span class="c1"># If &#39;ref&#39; is not specified, assign a default value</span>
             <span class="n">ref</span> <span class="o">=</span> <span class="n">ref</span> <span class="k">if</span> <span class="n">ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">1</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">FUEL</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">)</span>
-
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MIN_FUEL</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span>
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MIN_FUEL</span>
+            <span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">FUEL</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">)</span>
 
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MAX_RANGE</span><span class="p">:</span>
@@ -1467,9 +1467,10 @@
                     <span class="n">model</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">default_model</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">default_weight</span>
 
             <span class="c1"># in some cases the users provides no input and we can derive the objectie from the problem type:</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">:</span>
-                <span class="n">model</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">default_model</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">FUEL</span><span class="p">,</span> <span class="n">default_weight</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MIN_FUEL</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span>
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MIN_FUEL</span>
+            <span class="p">):</span>
                 <span class="n">model</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">default_model</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">FUEL</span><span class="p">,</span> <span class="n">default_weight</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MAX_RANGE</span><span class="p">:</span>
                 <span class="n">model</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">default_model</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">default_weight</span>
