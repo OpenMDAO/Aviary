@@ -115,8 +115,8 @@ class AtmosphereComp(om.ExplicitComponent):
         # https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
 
         Rs = 8314.32  # J/(kmol*K), Ideal Gas constant
-        M_air = 0  #
-        gamma = 0  #
+        M_air = 0
+        gamma = 0
 
         # The constants below are used as a simplification to enable calculation of properties not given by by source data tables
         if self.planet == 'Earth':

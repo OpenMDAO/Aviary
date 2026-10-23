@@ -646,7 +646,6 @@ class FullSubsystemBuilder(SubsystemBuilder):
         }
         return bus_dict
 
-    #
     def build_post_mission(
         self,
         aviary_inputs=None,
@@ -661,7 +660,7 @@ class FullSubsystemBuilder(SubsystemBuilder):
         filepath = reports_folder / filename
 
         with open(filepath, mode='w') as f:
-            f.write(f'Test Report Written')
+            f.write('Test Report Written')
 
 
 class TestPreOnly(TestSubsystemBuilder):

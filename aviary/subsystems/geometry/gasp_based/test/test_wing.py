@@ -50,12 +50,12 @@ class WingSizeTestCase2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.geometry.gasp_based.wing as wing
+        from aviary.subsystems.geometry.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.geometry.gasp_based.wing as wing
+        from aviary.subsystems.geometry.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.0
 

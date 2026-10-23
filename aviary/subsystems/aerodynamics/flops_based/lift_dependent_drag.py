@@ -140,7 +140,7 @@ class LiftDependentDrag(om.ExplicitComponent):
         DELM = mach - MDES
         A = self.A = AR * TC ** (1.0 / 3.0)
 
-        for i in range(0, nn):
+        for i in range(nn):
             x = np.array([DELM[i], DELCL[i]])
 
             if DELM[i].real <= 0.075:

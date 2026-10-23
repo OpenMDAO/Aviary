@@ -79,6 +79,9 @@ class CorePropulsionBuilder(PropulsionBuilder):
     def __init__(self, name=None, meta_data=None, engine_models=None, **kwargs):
         super().__init__(name=name, meta_data=meta_data)
 
+        if engine_models is None:
+            engine_models = []
+
         if not isinstance(engine_models, (list, np.ndarray)):
             engine_models = [engine_models]
 

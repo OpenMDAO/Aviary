@@ -195,7 +195,7 @@ class ControlGroupTestCase1(unittest.TestCase):
 
 class ControlGroupTestCase2(unittest.TestCase):
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.control as control
+        from aviary.subsystems.mass.gasp_based import control
 
         # Set GRAV_ENGLISH_LBM = 1.1 to find errors that aren't
         # caught when GRAV_ENGLISH_LBM = 1 and is misplaced.
@@ -250,7 +250,7 @@ class ControlGroupTestCase2(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.control as control
+        from aviary.subsystems.mass.gasp_based import control
 
         constants.GRAV_ENGLISH_LBM = 1.0
         control.GRAV_ENGLISH_LBM = 1.0

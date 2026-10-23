@@ -82,12 +82,12 @@ class WingMassSolveTestCase(unittest.TestCase):
 
 class WingMassSolveTestCase2(unittest.TestCase):
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.0
 
@@ -289,12 +289,12 @@ class TotalWingMassTestCase5(unittest.TestCase):
     """
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.0
 
@@ -323,12 +323,12 @@ class TotalWingMassTestCase6(unittest.TestCase):
     """
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.0
 
@@ -368,12 +368,12 @@ class TotalWingMassTestCase7(unittest.TestCase):
     """
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.0
 
@@ -409,12 +409,12 @@ class TotalWingMassTestCase8(unittest.TestCase):
     """
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.0
 
@@ -734,12 +734,12 @@ class BWBWingMassSolveTestCase2(unittest.TestCase):
     """this is BWB test case, Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.wing as wing
+        from aviary.subsystems.mass.gasp_based import wing
 
         wing.GRAV_ENGLISH_LBM = 1.0
 
