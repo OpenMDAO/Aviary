@@ -1159,11 +1159,5 @@
         175399.99999999997,
         "lbm",
         "<class 'float'>"
-    ],
-    [
-        "mission:range",
-        1906.0,
-        "NM",
-        "<class 'float'>"
     ]
 ]

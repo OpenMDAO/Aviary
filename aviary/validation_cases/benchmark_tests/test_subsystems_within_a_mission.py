@@ -53,6 +53,7 @@ class TestSubsystemsMission(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
+                'target_range': (3500.0, 'nmi'),
             },
         }
         # 2dof currently hardcoded requires an ascent phase (configurator add_post_mission_systems)

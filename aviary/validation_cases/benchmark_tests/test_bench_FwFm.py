@@ -183,7 +183,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': True,
-                'constrain_range': True,
                 'target_range': (3375.0, 'nmi'),
             },
         }
