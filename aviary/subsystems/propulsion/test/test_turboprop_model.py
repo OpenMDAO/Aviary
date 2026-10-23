@@ -15,7 +15,6 @@ from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -148,7 +147,7 @@ class TurbopropMissionTest(unittest.TestCase):
             ),
         ]
 
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(
             Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS,
             val=True,
@@ -225,7 +224,7 @@ class TurbopropMissionTest(unittest.TestCase):
             ),
         ]
 
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
         options.set_val(
             Aircraft.Engine.FIXED_RPM,
@@ -290,7 +289,7 @@ class TurbopropMissionTest(unittest.TestCase):
             ),
         ]
 
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
         options.set_val(
             Aircraft.Engine.FIXED_RPM,
@@ -331,7 +330,7 @@ class TurbopropMissionTest(unittest.TestCase):
         # test case using electric motor and default HS prop model and fixed RPM.
         test_points = [(0, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
 
-        options = get_option_defaults()
+        options = AviaryValues()
 
         shp_file = get_path('electric_motor_1800Nm_6000rpm.csv')
         options.set_val(Aircraft.Engine.Motor.DATA_FILE, shp_file)
@@ -384,13 +383,13 @@ class TurbopropMissionTest(unittest.TestCase):
         # test case using electric motor and default HS prop model and RPM that scales with throttle.
         test_points = [(0, 0, 0.01), (0, 0, 0.5), (0, 0, 1)]
 
-        options = get_option_defaults()
+        options = AviaryValues()
 
         shp_file = get_path('electric_motor_1800Nm_6000rpm.csv')
         options.set_val(Aircraft.Engine.Motor.DATA_FILE, shp_file)
         options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
         options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
-        options.delete(Aircraft.Engine.FIXED_RPM)
+        # FIXED_RPM intentionally left unset so RPM scales with throttle.
 
         self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True)
 
@@ -438,10 +437,10 @@ class TurbopropMissionTest(unittest.TestCase):
             (778.20881977, 21.3, 558.33473407, 579.63473407, -839.7),
         ]
 
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
         options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
-        options.delete(Aircraft.Engine.FIXED_RPM)
+        # FIXED_RPM intentionally left unset to simulate RPM as a dymos control.
 
         self.prepare_model(options, test_points)
 
