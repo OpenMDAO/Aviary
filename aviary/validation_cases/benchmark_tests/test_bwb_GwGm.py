@@ -23,7 +23,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
     @unittest.skip('Not converging in CI for unknown reasons - requires additional investigation')
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_bwb_GwGm_SNOPT(self):
+    def bench_test_bwb_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/blended_wing_body/generic_BWB_GASP.csv',

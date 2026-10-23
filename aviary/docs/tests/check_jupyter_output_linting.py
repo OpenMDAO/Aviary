@@ -49,13 +49,12 @@ class LintJupyterOutputsTestCase(unittest.TestCase):
     def test_output(self):
         """Check that output has been cleaned out of all cells."""
         for file in _get_files():
-            with self.subTest(file):
-                with open(file) as f:
-                    json_data = json.load(f)
-                    for cell in json_data['cells']:
-                        if 'execution_count' in cell and cell['execution_count'] is not None:
-                            msg = "Clear output with 'reset_notebook path_to_notebook.ipynb'"
-                            self.fail(f'Output found in {file}.\n{msg}')
+            with self.subTest(file), open(file) as f:
+                json_data = json.load(f)
+                for cell in json_data['cells']:
+                    if 'execution_count' in cell and cell['execution_count'] is not None:
+                        msg = "Clear output with 'reset_notebook path_to_notebook.ipynb'"
+                        self.fail(f'Output found in {file}.\n{msg}')
 
     def test_assert(self):
         """Make sure any code cells with asserts are hidden."""

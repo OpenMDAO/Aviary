@@ -4,10 +4,9 @@ import openmdao.api as om
 from aviary.mission.base_ode import BaseODE as _BaseODE
 from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.variable_info.enums import AlphaModes
-from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.variable_info.enums import SpeedType, ThrottleAllocation
 from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
+from aviary.variable_info.enums import AlphaModes, ThrottleAllocation
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TwoDOFODE(_BaseODE):

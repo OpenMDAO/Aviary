@@ -11,7 +11,7 @@ from pathlib import Path
 import dymos as dm
 import numpy as np
 import openmdao.api as om
-import openmdao.utils.hooks as hooks
+from openmdao.utils import hooks
 from openmdao.utils.reports_system import _default_reports
 from openmdao.utils.units import convert_units
 
@@ -579,7 +579,7 @@ class AviaryProblem(om.Problem):
                 disp = True
             driver.options['disp'] = disp
             # Optimizer Settings #
-            driver.options['tol'] = 1e-9
+            driver.options['tol'] = 1e-6
             driver.options['maxiter'] = max_iter
 
         # pyoptsparse print settings for both SNOPT, IPOPT
@@ -759,10 +759,10 @@ class AviaryProblem(om.Problem):
             # If 'ref' is not specified, assign a default value
             ref = ref if ref is not None else 1
 
-            if self.problem_type is ProblemType.SIZING:
-                self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
-
-            elif self.problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
+            if (
+                self.problem_type is ProblemType.SIZING
+                or self.problem_type is ProblemType.OFF_DESIGN_MIN_FUEL
+            ):
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
             elif self.problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
@@ -918,9 +918,10 @@ class AviaryProblem(om.Problem):
                     model, output, weight = default_model, arg, default_weight
 
             # in some cases the users provides no input and we can derive the objectie from the problem type:
-            elif self.model.problem_type is ProblemType.SIZING:
-                model, output, weight = default_model, Mission.Objectives.FUEL, default_weight
-            elif self.model.problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
+            elif (
+                self.model.problem_type is ProblemType.SIZING
+                or self.model.problem_type is ProblemType.OFF_DESIGN_MIN_FUEL
+            ):
                 model, output, weight = default_model, Mission.Objectives.FUEL, default_weight
             elif self.model.problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
                 model, output, weight = default_model, Mission.Objectives.RANGE, default_weight
