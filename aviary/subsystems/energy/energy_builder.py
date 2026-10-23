@@ -19,6 +19,7 @@ from aviary.subsystems.energy.fuel_summation import FuelSummationGroup
 from aviary.subsystems.energy.gasp_based.gasp_tank import FuelTankGASP
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Dynamic, Settings
 
@@ -120,7 +121,7 @@ class CoreEnergyBuilder(EnergyBuilder):
         user_options: dict | None = None,
         subsystem_options: dict | None = None,
     ) -> dict:
-        mass_ref = user_options.get_val('mass_ref', units='kg')
+        mass_ref = wrapped_convert_units(user_options['mass_ref'], 'kg')
         if mass_ref is None:
             mass_ref = 1.0e4
         state_dict = {
