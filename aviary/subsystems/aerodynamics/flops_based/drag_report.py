@@ -76,14 +76,16 @@ def generate_drag_report(prob):
     cruise_alt = prob.aviary_inputs.get_val(Aircraft.Design.CRUISE_ALTITUDE, units='ft')
     area = prob.get_val(Aircraft.Wing.AREA, units='ft**2')[0]
     tec = prob.aviary_inputs.get_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, units='unitless')
-    lines += f'     {mach:.2f}     {cruise_alt:>9.0f}. FT    {area:>9.2f} SQ FT           {tec:.2f}\n\n'
+    lines += f'     {mach:.2f}     {cruise_alt:>9.0f}. FT'
+    lines += f'    {area:>9.2f} SQ FT           {tec:.2f}\n\n'
 
     # Run the design mission point
     aero_problem.set_val(Dynamic.Atmosphere.MACH, mach, units='unitless')
     aero_problem.set_val(Dynamic.Mission.ALTITUDE, cruise_alt, units='ft')
     aero_problem.run_model()
 
-    lines += '   COMPONENT              SWET      LENGTH    FINENESS     FORM       RN       CF         CDF\n'
+    lines += '   COMPONENT              SWET      LENGTH    FINENESS     FORM       RN'
+    lines += '       CF         CDF\n'
     lines += 26 * ' ' + 'SQ FT       FT        RATIO     FACTOR   MILLIONS\n'
 
     nvtail = prob.aviary_inputs.get_val(Aircraft.VerticalTail.NUM_TAILS)
@@ -106,7 +108,8 @@ def generate_drag_report(prob):
     swet = aero_problem.get_val(Aircraft.Wing.WETTED_AREA, units='ft**2')[0]
     length = aero_problem.get_val(Aircraft.Wing.CHARACTERISTIC_LENGTH, units='ft')[0]
     fine = aero_problem.get_val(Aircraft.Wing.FINENESS, units='unitless')[0]
-    lines += f' WING            {swet:>14.2f} {length:>10.2f} {fine:>10.4f} {form[j]:>10.3f} {rn[0, j]:>8.1f} {cf[0, j]:>10.5f} {cdf[0, j]:>10.5f}\n'
+    lines += f' WING            {swet:>14.2f} {length:>10.2f} {fine:>10.4f} {form[j]:>10.3f} '
+    lines += f'{rn[0, j]:>8.1f} {cf[0, j]:>10.5f} {cdf[0, j]:>10.5f}\n'
 
     # Skin Friction: Horizontal Tail
     for ii in range(nhtail):
@@ -114,7 +117,8 @@ def generate_drag_report(prob):
         swet = aero_problem.get_val(Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')[0]
         length = aero_problem.get_val(Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, units='ft')[0]
         fine = aero_problem.get_val(Aircraft.HorizontalTail.FINENESS, units='unitless')[0]
-        lines += f' HORIZONTAL TAIL {swet:>14.2f} {length:>10.2f} {fine:>10.4f} {form[j]:>10.3f} {rn[0, j]:>8.1f} {cf[0, j]:>10.5f} {cdf[0, j]:>10.5f}\n'
+        lines += f' HORIZONTAL TAIL {swet:>14.2f} {length:>10.2f} {fine:>10.4f} {form[j]:>10.3f} '
+        lines += f'{rn[0, j]:>8.1f} {cf[0, j]:>10.5f} {cdf[0, j]:>10.5f}\n'
 
     # Skin Friction: Vertical Tail
     for ii in range(nvtail):
@@ -122,7 +126,8 @@ def generate_drag_report(prob):
         swet = aero_problem.get_val(Aircraft.VerticalTail.WETTED_AREA, units='ft**2')[0]
         length = aero_problem.get_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, units='ft')[0]
         fine = aero_problem.get_val(Aircraft.VerticalTail.FINENESS, units='unitless')[0]
-        lines += f' VERTICAL TAIL   {swet:>14.2f} {length:>10.2f} {fine:>10.4f} {form[j]:>10.3f} {rn[0, j]:>8.1f} {cf[0, j]:>10.5f} {cdf[0, j]:>10.5f}\n'
+        lines += f' VERTICAL TAIL   {swet:>14.2f} {length:>10.2f} {fine:>10.4f} {form[j]:>10.3f} '
+        lines += f'{rn[0, j]:>8.1f} {cf[0, j]:>10.5f} {cdf[0, j]:>10.5f}\n'
 
     # Skin Friction: Fuselage
     for ii in range(nfuse):
@@ -130,7 +135,8 @@ def generate_drag_report(prob):
         swet = aero_problem.get_val(Aircraft.Fuselage.WETTED_AREA, units='ft**2')[0]
         length = aero_problem.get_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, units='ft')[0]
         fine = aero_problem.get_val(Aircraft.Fuselage.FINENESS, units='unitless')[0]
-        lines += f' FUSELAGE        {swet:>14.2f} {length:>10.2f} {fine:>10.4f} {form[j]:>10.3f} {rn[0, j]:>8.1f} {cf[0, j]:>10.5f} {cdf[0, j]:>10.5f}\n'
+        lines += f' FUSELAGE        {swet:>14.2f} {length:>10.2f} {fine:>10.4f} {form[j]:>10.3f} '
+        lines += f'{rn[0, j]:>8.1f} {cf[0, j]:>10.5f} {cdf[0, j]:>10.5f}\n'
 
     # Skin Friction: Nacelles
     for num_this_type in num_engines:
@@ -139,7 +145,8 @@ def generate_drag_report(prob):
             swet = aero_problem.get_val(Aircraft.Nacelle.WETTED_AREA, units='ft**2')[ii]
             length = aero_problem.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, units='ft')[ii]
             fine = aero_problem.get_val(Aircraft.Nacelle.FINENESS, units='unitless')[ii]
-            lines += f' NACELLE         {swet:>14.2f} {length:>10.2f} {fine:>10.4f} {form[j]:>10.3f} {rn[0, j]:>8.1f} {cf[0, j]:>10.5f} {cdf[0, j]:>10.5f}\n'
+            lines += f' NACELLE         {swet:>14.2f} {length:>10.2f} {fine:>10.4f} '
+            lines += f'{form[j]:>10.3f} {rn[0, j]:>8.1f} {cf[0, j]:>10.5f} {cdf[0, j]:>10.5f}\n'
 
     # Skin Friction Misc
     cdftot = aero_problem.get_val('SkinFrictionDrag.skin_friction_drag_coeff', units='unitless')[0]
@@ -180,7 +187,10 @@ def generate_drag_report(prob):
             aero_problem.set_val(Dynamic.Atmosphere.MACH, mach, units='unitless')
             aero_problem.run_model()
 
-            CD = aero_problem.get_val('SkinFrictionDrag.skin_friction_drag_coeff', units='unitless')[0]
+            CD = aero_problem.get_val(
+                'SkinFrictionDrag.skin_friction_drag_coeff',
+                units='unitless',
+            )[0]
             delta = CD - base_CD[j]
             line += f'{delta:>9.5f}'
 
@@ -230,7 +240,10 @@ def generate_drag_report(prob):
         aero_problem.set_val(Dynamic.Atmosphere.MACH, mach, units='unitless')
         aero_problem.run_model()
 
-        cdf = aero_problem.get_val('SkinFrictionDrag.skin_friction_drag_coeff', units='unitless')[0]
+        cdf = aero_problem.get_val(
+            'SkinFrictionDrag.skin_friction_drag_coeff',
+            units='unitless',
+        )[0]
         line += f'{cdf:>19.5f} '
 
         cdc = aero_problem.get_val('CompressibilityDrag.compress_drag_coeff', units='unitless')[0]
