@@ -766,7 +766,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         # TODO drag polar plot should go here!
         if self.code_origin is FLOPS:
             # FLOPS aero report goes here
-            subsystem_options = prob.model.pre_mission_info
+            if hasattr(prob, 'pre_mission_info'):
+                subsystem_options = prob.pre_mission_info
+            else:
+                subsystem_options = prob.model.pre_mission_info
             aero_options = subsystem_options.get('aerodynamics', {})
             flops_report = aero_options.get('flops_report', False)
             if flops_report:
