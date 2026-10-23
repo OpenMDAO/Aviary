@@ -4,7 +4,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
-from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.missions.energy_state_default import phase_info
@@ -15,6 +15,7 @@ class SimpleDragTest(unittest.TestCase):
         om.clear_reports()
         _clear_problem_names()
 
+    @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='subsystems')
     def test_transport(self):
         prob = AviaryProblem(name='p1', verbosity=0)
 
@@ -40,12 +41,6 @@ class SimpleDragTest(unittest.TestCase):
 
         report_path = Path(prob.get_reports_dir()) / 'subsystems' / 'aerodynamics.md'
 
-        import os
-        data=''
-        for path in Path(os.getcwd()).rglob('*'):
-            data += str(path)
-        raise RuntimeError(data)
-
         with open(report_path, mode='r') as aerofile:
             lines = aerofile.readlines()
 
@@ -54,6 +49,7 @@ class SimpleDragTest(unittest.TestCase):
         self.assertTrue('SPAN EFFICIENCY FACTOR' in lines[2])
         self.assertTrue('PRESSURE DRAG' in lines[-15])
 
+    @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='subsystems')
     def test_bwb(self):
         prob = AviaryProblem(verbosity=0)
 
