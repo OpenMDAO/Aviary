@@ -120,12 +120,15 @@ class CoreEnergyBuilder(EnergyBuilder):
         user_options: dict | None = None,
         subsystem_options: dict | None = None,
     ) -> dict:
+        mass_ref = user_options.get_val('mass_ref', units='kg')
+        if mass_ref is None:
+            mass_ref = 1.0e4
         state_dict = {
             Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED: {
                 'fix_initial': True,
                 'fix_final': False,
                 'lower': 0.0,
-                'ref': 1e4,
+                'ref': mass_ref,
                 'units': 'kg',
                 'rate_source': Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL,
                 'val': 0.0,
