@@ -74,7 +74,10 @@ class FlightCrewMassTest(unittest.TestCase):
             self,
             prob,
             case_name,
-            input_keys=Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,
+            input_keys=[
+                Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW,
+                Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,
+            ],
             output_keys=Aircraft.CrewPayload.FLIGHT_CREW_MASS,
             version=Version.TRANSPORT_and_BWB,
             atol=1e-11,
