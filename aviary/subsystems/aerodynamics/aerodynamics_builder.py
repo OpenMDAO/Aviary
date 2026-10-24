@@ -15,6 +15,7 @@ import openmdao.api as om
 
 # from dymos.utils.misc import _unspecified
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import ComputedAeroGroup
+from aviary.subsystems.aerodynamics.flops_based.drag_report import generate_drag_report
 from aviary.subsystems.aerodynamics.flops_based.premission_aero import (
     PreMissionAero as PreMissionAeroFLOPS,
 )
@@ -759,10 +760,24 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         reports_folder : Path
             Location of the subsystems_report folder this report will be placed in
         """
+        filename = self.name + '.md'
+        filepath = reports_folder / filename
+
         # TODO drag polar plot should go here!
         if self.code_origin is FLOPS:
             # FLOPS aero report goes here
+            if hasattr(prob, 'pre_mission_info'):
+                subsystem_options = prob.pre_mission_info
+            else:
+                subsystem_options = prob.model.pre_mission_info
+            aero_options = subsystem_options.get('aerodynamics', {})
+            flops_report = aero_options.get('flops_report', False)
+            if flops_report:
+                output = generate_drag_report(prob)
+                with open(filepath, mode='w') as f:
+                    f.write(output)
             return
+
         elif self.code_origin is GASP:
             # GASP aero report goes here
             return
