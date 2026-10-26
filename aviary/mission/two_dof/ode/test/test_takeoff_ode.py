@@ -233,14 +233,10 @@ class AscentODETestCase(unittest.TestCase):
 class RequiredLiftTestCase(unittest.TestCase):
     """Test the RequiredLift component used by AlphaModes.REQUIRED_LIFT."""
 
-    def setUp(self):
+    def test_required_lift(self):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('required_lift', RequiredLift(num_nodes=2), promotes=['*'])
 
-        aviary_options = get_option_defaults()
-        setup_model_options(self.prob, aviary_options)
-
-    def test_required_lift(self):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         # mass and wing incidence borrowed from RotationODETestCase
