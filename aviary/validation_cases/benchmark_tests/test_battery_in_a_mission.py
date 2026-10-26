@@ -67,8 +67,6 @@ class TestBatteryMission(unittest.TestCase):
 
     def test_subsystems_in_a_mission(self):
         phase_info = deepcopy(self.phase_info)
-        phase_info
-
         prob = av.AviaryProblem(verbosity=0)
 
         prob.load_inputs(

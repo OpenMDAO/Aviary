@@ -428,7 +428,7 @@ class PayloadRangeTest(unittest.TestCase):
     @require_pyoptsparse(optimizer='SNOPT')
     def test_payload_range(self):
         # run design case
-        prob = self.prob = AviaryProblem(verbosity=1)
+        prob = self.prob = AviaryProblem(verbosity=0)
         phase_info = deepcopy(energy_phase_info)
 
         phase_info['post_mission']['target_range'] = (2500.0, 'nmi')

@@ -1331,7 +1331,7 @@ class AviaryGroup(om.Group):
         upper bound, and a residual mass constraint is added to ensure that the mass balances.
 
         In all cases, except for OFF_DESIGN_MAX_RANGE, the final Mission.RANGE is constrained to the
-        value specified in 'constrain_range' in the phase_info.
+        value specified in 'target_range' in the phase_info.
         """
         verbosity = self._override_verbosity(verbosity)
 
