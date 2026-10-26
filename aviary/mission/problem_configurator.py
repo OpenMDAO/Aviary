@@ -15,7 +15,6 @@ class ProblemConfiguratorBase:
         aviary_group : AviaryGroup
             Aviary model that owns this builder.
         """
-        pass
 
     def get_default_phase_info(self, aviary_group):
         """
@@ -48,7 +47,6 @@ class ProblemConfiguratorBase:
         LegacyCode
             Code origin enum.
         """
-        pass
 
     def add_takeoff_systems(self, aviary_group):
         """
@@ -59,7 +57,6 @@ class ProblemConfiguratorBase:
         aviary_group : AviaryGroup
             Aviary model that owns this builder.
         """
-        pass
 
     def get_phase_builder(self, aviary_group, phase_name, phase_options):
         """
@@ -105,7 +102,6 @@ class ProblemConfiguratorBase:
         comm : MPI.Comm or <FakeComm>
             MPI Communicator from OpenMDAO problem.
         """
-        pass
 
     def configure_trajectory(self, aviary_group, phases):
         """
@@ -120,7 +116,6 @@ class ProblemConfiguratorBase:
         phases : list[Phase]
             List of all phases in the trajectory.
         """
-        pass
 
     def check_trajectory(self, aviary_group):
         """
@@ -131,7 +126,6 @@ class ProblemConfiguratorBase:
         aviary_group : AviaryGroup
             Aviary model that owns this builder.
         """
-        pass
 
     def add_post_mission_systems(self, aviary_group):
         """
@@ -146,7 +140,6 @@ class ProblemConfiguratorBase:
         aviary_group : AviaryGroup
             Aviary model that owns this builder.
         """
-        pass
 
     def add_objective(self, aviary_group):
         """
@@ -157,7 +150,6 @@ class ProblemConfiguratorBase:
         aviary_group : AviaryGroup
             Aviary model that owns this builder.
         """
-        pass
 
     def set_phase_initial_guesses(
         self, aviary_group, phase_name, phase_idx, phase, guesses, target_prob, parent_prefix
@@ -188,4 +180,3 @@ class ProblemConfiguratorBase:
         parent_prefix : str
             Location of this trajectory in the hierarchy.
         """
-        pass

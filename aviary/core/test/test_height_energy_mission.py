@@ -5,7 +5,6 @@ import unittest
 from copy import deepcopy
 from io import StringIO
 
-
 import dymos
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.reports_system import clear_reports
@@ -13,11 +12,9 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.interface.run_aviary import run_aviary
-from aviary.interface.run_aviary import run_aviary
 from aviary.mission.energy_state.phases.energy_phase import EnergyPhase
 from aviary.subsystems.test.dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.variable_info.enums import Transcription
-from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.variables import Dynamic
 
 
@@ -152,7 +149,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         try:
             subprocess.check_output(cmd.split())
         except subprocess.CalledProcessError as err:
-            self.fail("Command '{}' failed.  Return code: {}".format(cmd, err.returncode))
+            self.fail(f"Command '{cmd}' failed.  Return code: {err.returncode}")
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_mission_basic_pyopt(self):

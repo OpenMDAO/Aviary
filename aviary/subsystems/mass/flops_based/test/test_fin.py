@@ -78,12 +78,12 @@ class FinMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.flops_based.fin as fin
+        from aviary.subsystems.mass.flops_based import fin
 
         fin.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.flops_based.fin as fin
+        from aviary.subsystems.mass.flops_based import fin
 
         fin.GRAV_ENGLISH_LBM = 1.0
 

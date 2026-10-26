@@ -76,7 +76,7 @@ class AntiIcingTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
-        import aviary.subsystems.mass.gasp_based.anti_icing as anti_icing
+        from aviary.subsystems.mass.gasp_based import anti_icing
 
         anti_icing.GRAV_ENGLISH_LBM = 1.1
 
@@ -95,7 +95,7 @@ class AntiIcingTestCase2(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.anti_icing as anti_icing
+        from aviary.subsystems.mass.gasp_based import anti_icing
 
         anti_icing.GRAV_ENGLISH_LBM = 1.0
 

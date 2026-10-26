@@ -1,5 +1,4 @@
 import unittest
-import unittest
 from copy import deepcopy
 
 import numpy as np
@@ -204,7 +203,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TestSubsystemsMission()
-    # test.setUp()
-    # test.test_subsystems_in_a_mission_2dof()
+    # unittest.main()
+    test = TestSubsystemsMission()
+    test.setUp()
+    test.test_subsystems_in_a_mission_2dof()

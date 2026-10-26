@@ -309,7 +309,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         exp3 = [0.0, 15.33732285330093]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
-        # Had to switch to FD checking here because one of the underlying groups is using 'CS'
+        # Had to switch to FD checking here because one of the underlying groups is using 'cs'
         partial_data = self.prob.check_partials(out_stream=None, method='fd', form='central')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
@@ -441,4 +441,4 @@ if __name__ == '__main__':
     unittest.main()
     # z = BWBUpdateDetailedWingDistTest()
     # z.setUp()
-    # z.test_case2()
+    # z.test_case1()

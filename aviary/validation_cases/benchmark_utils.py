@@ -27,7 +27,7 @@ def print_benchmark_results(prob):
     print(
         f' Obj: {obj:.4f}   Time: {dt:.2f} s   Obj Calls: {nobj}   Sens Calls: {nsen}   Status: {code} - {msg}'
     )
-    print('', flush=True)
+    print(flush=True)
 
 
 def compare_against_expected_values(prob, expected_dict):

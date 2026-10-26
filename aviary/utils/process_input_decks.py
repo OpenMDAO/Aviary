@@ -16,12 +16,14 @@ Functions:
     initialization_guessing(aircraft_values): Set initial guesses for aircraft parameters based on problem type and other factors.
 """
 
+import csv
 import warnings
 from operator import eq, ge, gt, le, lt, ne
 
 import numpy as np
 from openmdao.utils.units import valid_units
 
+from aviary.interface.variable_deprecations import deprecated_variables
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import convert_strings_to_data, get_path
 from aviary.variable_info.enums import ProblemType, Verbosity
@@ -108,6 +110,7 @@ def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=Verbosity.
             aircraft_values=aircraft_values,
             initialization_guesses=initialization_guesses,
             meta_data=meta_data,
+            verbosity=verbosity,
         )
 
     # make sure verbosity is always set
@@ -129,6 +132,7 @@ def parse_inputs(
     aircraft_values: AviaryValues = None,
     initialization_guesses=None,
     meta_data=CoreMetaData,
+    verbosity=Verbosity.BRIEF,
 ):
     """
     Parses the input files and updates the aircraft values and initial guesses. The function reads the
@@ -203,11 +207,38 @@ def parse_inputs(
                 continue
 
             elif ':' in var_name:
-                warnings.warn(
-                    f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
-                    'It will be ignored.',
-                    UserWarning,
-                )
+                if var_name in deprecated_variables:
+                    new_name = deprecated_variables[var_name][0]
+                    the_PRs = deprecated_variables[var_name][1]
+                    the_PRs = the_PRs.replace('|', ', #')
+                    the_date = deprecated_variables[var_name][3]
+                    # Warning was ignored somehow, but need to be print out.
+                    # after it is done, automatically restores the warning settings
+                    with warnings.catch_warnings():
+                        warnings.simplefilter('always')
+                        if new_name == 'removed':
+                            if verbosity >= Verbosity.BRIEF:
+                                warnings.warn(
+                                    f'Variable {var_name} is no longer in meta_data '
+                                    f'as of {the_date}. '
+                                    f'See PR #{the_PRs} for details.',
+                                    DeprecationWarning,
+                                )
+                        else:
+                            warnings.warn(
+                                f'Variable {var_name} is replaced by {new_name} as of {the_date} '
+                                f'See PR #{the_PRs} for details.',
+                                UserWarning,
+                            )
+                else:
+                    with warnings.catch_warnings():
+                        warnings.simplefilter('always')
+                        if verbosity >= Verbosity.BRIEF:
+                            warnings.warn(
+                                f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
+                                'It will be ignored.',
+                                UserWarning,
+                            )
                 continue
 
     return aircraft_values, initialization_guesses

@@ -112,12 +112,12 @@ class BodyCalculationTestCase3(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 
@@ -436,12 +436,12 @@ class FuelAndOEMTestCase2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 
@@ -505,12 +505,12 @@ class FuelSysAndFullFusMassTestCase2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 
@@ -580,12 +580,12 @@ class FuselageMassTestCase2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 
@@ -657,12 +657,12 @@ class FuelMassTestCase2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 
@@ -759,12 +759,12 @@ class BWBFuselageMassTestCase2(unittest.TestCase):
     """GASP data. Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+        from aviary.subsystems.mass.gasp_based import fuel
 
         fuel.GRAV_ENGLISH_LBM = 1.0
 

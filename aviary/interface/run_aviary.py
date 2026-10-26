@@ -147,7 +147,7 @@ def run_aviary_cmd(
         sys.modules['phase_info_file'] = phase_info_file
         spec.loader.exec_module(phase_info_file)
 
-        phase_info = getattr(phase_info_file, 'phase_info')
+        phase_info = phase_info_file.phase_info
 
     prob = run_aviary(input_deck, phase_info, **kwargs)
 

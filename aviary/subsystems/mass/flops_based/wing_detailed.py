@@ -308,8 +308,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         # LEAPS updated multiengine routine applies each engine pod's factor
         # multiplicatively, and enforces a minimum bound of 0.84
         inertia_factor_prod = np.prod(inertia_factor)
-        if inertia_factor_prod < 0.84:
-            inertia_factor_prod = 0.84
+        inertia_factor_prod = max(inertia_factor_prod, 0.84)
 
         outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = inertia_factor_prod
 
@@ -616,8 +615,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             # LEAPS updated multiengine routine applies each engine pod's factor
             # multiplicatively, and enforces a minimum bound of 0.84
             inertia_factor_prod = np.prod(inertia_factor)
-            if inertia_factor_prod < 0.84:
-                inertia_factor_prod = 0.84
+            inertia_factor_prod = max(inertia_factor_prod, 0.84)
         else:
             inertia_factor_prod = 1.0
 

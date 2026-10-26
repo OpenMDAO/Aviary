@@ -196,7 +196,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
     """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_FwFm_IPOPT(self):
+    def bench_test_FwFm_IPOPT(self):
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             self.phase_info,
@@ -209,7 +209,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_FwFm_SNOPT(self):
+    def bench_test_FwFm_SNOPT(self):
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             self.phase_info,
@@ -235,7 +235,7 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
     N_PROCS = 3
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_FwFm_IPOPT_MPI(self):
+    def bench_test_FwFm_IPOPT_MPI(self):
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             self.phase_info,
@@ -251,5 +251,5 @@ if __name__ == '__main__':
     # unittest.main()
     test = TestBenchFwFmSerial()
     test.setUp()
-    # test.test_bench_FwFm_IPOPT()
-    test.test_bench_FwFm_SNOPT()
+    # test.bench_test_FwFm_IPOPT()
+    test.bench_test_FwFm_SNOPT()

@@ -818,7 +818,7 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
                     data_by_varname_and_phase[name][phase] = val
 
             # determine the initial variables used for X and Y
-            varname_options = list(sorted(varnames, key=str.casefold))
+            varname_options = sorted(varnames, key=str.casefold)
             if 'distance' in varname_options:
                 x_varname_default = 'distance'
             elif 'time' in varname_options:
