@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-import openmdao.utils.hooks as hooks
+from openmdao.utils import hooks
 from openmdao.utils.file_utils import _load_and_exec, is_python_file
 
 

@@ -18,14 +18,14 @@ class NamedValues
 
 import copy
 from collections.abc import Collection
-from typing import Any, Tuple, Union
+from typing import Any, Union
 
 from openmdao.core.constants import _UNDEFINED
 
 from aviary.utils.utils import wrapped_convert_units
 
 Units = str
-ValueAndUnits = Tuple[Any, Units]
+ValueAndUnits = tuple[Any, Units]
 OptionalValueAndUnits = Union[ValueAndUnits, Any]
 
 

@@ -247,10 +247,10 @@ class TakeoffPhase(PhaseBuilder):
             normal_ref = user_options.get_val('normal_ref', units='lbf')
             normal_ref0 = user_options.get_val('normal_ref0', units='lbf')
 
-            phase.add_boundary_constraint(
+            phase.add_path_constraint(
                 'normal_force',
-                loc='final',
-                equals=0,
+                'normal_force',
+                lower=0,
                 units='lbf',
                 ref=normal_ref,
                 ref0=normal_ref0,

@@ -90,7 +90,7 @@ class GroundrollPhase(PhaseBuilder):
     This is used exclusively by the Solved 2DOF Phase Builder.
     """
 
-    __slots__ = ('subsystems', 'meta_data', 'phase')
+    __slots__ = ('meta_data', 'phase', 'subsystems')
 
     _initial_guesses_meta_data_ = {}
 
@@ -148,6 +148,10 @@ class GroundrollPhase(PhaseBuilder):
         )
         self.add_state(name='mass', target=Dynamic.Vehicle.MASS, rate_source='dmass_dv')
         self.add_state(name='distance', target=Dynamic.Mission.DISTANCE, rate_source='over_a')
+
+        self.phase.set_state_options(
+            Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED, rate_source='dfuelburn_dv'
+        )
 
         self.phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=32.3)
         self.phase.add_parameter('t_init_flaps', units='s', static_target=True, opt=False, val=44.0)

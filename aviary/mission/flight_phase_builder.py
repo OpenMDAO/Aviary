@@ -175,7 +175,7 @@ class FlightPhaseBase(PhaseBuilder):
     SolvedTwoDOFPhase.
     """
 
-    __slots__ = ('subsystems', 'meta_data')
+    __slots__ = ('meta_data', 'subsystems')
 
     _initial_guesses_meta_data_ = {}
     default_name = 'cruise'
@@ -232,6 +232,11 @@ class FlightPhaseBase(PhaseBuilder):
             self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
         phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
+
+        if phase_type is not EquationsOfMotion.ENERGY_STATE:
+            phase.set_state_options(
+                Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED, rate_source='dfuelburn_dr'
+            )
 
         ################
         # Add Controls #
@@ -314,7 +319,7 @@ class FlightPhaseBase(PhaseBuilder):
             units='kW',
         )
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL,
             units='lbm/h',
         )
 

@@ -35,7 +35,7 @@ class CLmaxCalculationTestCase(unittest.TestCase):
         self.prob.set_val('VLAM13', 1.03512)
         self.prob.set_val('VLAM14', 0.99124)
 
-        self.prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units='ft/s')  #
+        self.prob.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, 1118.21948771, units='ft/s')
         self.prob.set_val(Aircraft.Design.WING_LOADING, 128.0, units='lbf/ft**2')
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')

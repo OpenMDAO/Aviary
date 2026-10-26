@@ -1,8 +1,8 @@
 import math
+from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import IntEnum
 from string import Template
-from typing import Iterator, List, Tuple
 
 import openmdao.api as om
 from openmdao.utils.om_warnings import issue_warning
@@ -94,7 +94,7 @@ class Quad3D:
         A list of the Point3Ds that define the quadrilateral.
     """
 
-    vertices: List[Point3D]
+    vertices: list[Point3D]
 
     def __post_init__(self):
         if len(self.vertices) != 4:
@@ -110,7 +110,7 @@ class Quad3D:
         reflected_vertices = [vertex.reflected_copy(axis) for vertex in self.vertices]
         return Quad3D(reflected_vertices)
 
-    def edges(self) -> Iterator[Tuple[Point3D, Point3D]]:
+    def edges(self) -> Iterator[tuple[Point3D, Point3D]]:
         """Yield each pair of adjacent vertices as edges."""
         for i in range(4):
             yield self.vertices[i], self.vertices[(i + 1) % 4]
@@ -206,7 +206,7 @@ class AircraftModelReaderError(Exception):
         self.msg = msg
 
 
-class AircraftModelReader(object):
+class AircraftModelReader:
     """
     Class used to read a case recorder file and provide methods to get Aviary variables.
 
@@ -333,7 +333,7 @@ class AircraftModelReader(object):
         return value
 
 
-class Fuselage(object):
+class Fuselage:
     """
     Class used to represent the fuselage of the aircraft.
 
@@ -388,7 +388,7 @@ class Fuselage(object):
         return self._radius
 
 
-class VerticalTail(object):
+class VerticalTail:
     """
     Class used to represent the vertical tail of the aircraft.
 
@@ -498,7 +498,7 @@ class VerticalTail(object):
         return entities
 
 
-class HorizontalWing(object):
+class HorizontalWing:
     """
     Class used to represent a horizontal (main or tail) wing of the aircraft.
 
@@ -695,7 +695,7 @@ class HorizontalWing(object):
         return self._vertical_position
 
 
-class Engines(object):
+class Engines:
     """
     Class used to represent the engines of the aircraft.
 
@@ -813,7 +813,7 @@ class Engines(object):
         return entities
 
 
-class Aircraft3DModel(object):
+class Aircraft3DModel:
     """
     Class used to represent the 3D model of the aircraft. The A-Frame library
     is used to draw the 3D model in the Web page.
