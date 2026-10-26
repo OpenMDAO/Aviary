@@ -38,8 +38,7 @@ class AntiIcingMass(om.ExplicitComponent):
             mu = self.options['mu']
             icing_mass = smooth_max(icing_mass, 0.0, mu)
         else:
-            if icing_mass < 0.0:
-                icing_mass = 0.0
+            icing_mass = max(icing_mass, 0.0)
 
         outputs[Aircraft.AntiIcing.MASS] = icing_mass
 

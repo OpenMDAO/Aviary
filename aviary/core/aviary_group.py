@@ -42,7 +42,7 @@ from aviary.utils.process_input_decks import (
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 ENERGY_STATE = EquationsOfMotion.ENERGY_STATE
@@ -335,7 +335,7 @@ class AviaryGroup(om.Group):
             sys.modules['phase_info_file'] = phase_info_file
             spec.loader.exec_module(phase_info_file)
 
-            phase_info = getattr(phase_info_file, 'phase_info')
+            phase_info = phase_info_file.phase_info
 
         if phase_info is None:
             phase_info = self.configurator.get_default_phase_info(self)
@@ -1006,8 +1006,9 @@ class AviaryGroup(om.Group):
                 # If the user specifies a specific initial mach/altitude for the first reserve phase,
                 # allow discontinuities for those variables between the main and reserve mission
                 if self.reserve_phases and phase2 == self.reserve_phases[0]:
-                    if phase_info2.get(f'{var}_initial', (None, None))[0]:
-                        common = common - {var}
+                    for var in (Dynamic.Mission.ALTITUDE, Dynamic.Atmosphere.MACH):
+                        if phase_info2.get(f'{var}_initial', (None, None))[0]:
+                            common = common - {var}
 
             # Sort because of MPI
             for var in sorted(common):

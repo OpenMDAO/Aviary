@@ -1,4 +1,4 @@
-import openmdao.utils.units as units
+from openmdao.utils import units
 
 units.add_unit('distance_units', '1*m')
 
@@ -40,3 +40,6 @@ PSLS_PSF = 2116.22
 # Earth sea level standard temperature in deg R
 # TODO get this value from loaded atmosphere
 TSLS_DEGR = 518.67
+
+# fuel properties
+DENSITY_JET_A = (6.7, 'lbm/galUS')

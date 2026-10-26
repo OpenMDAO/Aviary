@@ -114,8 +114,6 @@ class BuffetLift(om.ExplicitComponent):
         partials['DELCLB', Aircraft.Wing.SWEEP] = dCLB_dSW25
         partials['DELCLB', Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = dCLB_dCAM
 
-        return
-
 
 BUFT = np.array(
     [

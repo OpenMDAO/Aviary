@@ -235,7 +235,7 @@ class FlightPhase(PhaseBuilder):
         phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
         phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL, units='lbm/h'
         )
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')

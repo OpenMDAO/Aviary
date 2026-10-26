@@ -195,7 +195,7 @@ def _load_flops_aero_table(filepath: Path):
             except ValueError:
                 raise ValueError(
                     f'Non-numerical value found in data file <{filepath.name}> on '
-                    f'line {str(line_count)}'
+                    f'line {line_count!s}'
                 )
 
         return items
@@ -319,7 +319,7 @@ def _load_gasp_aero_table(filepath: Path):
                 except ValueError:
                     raise ValueError(
                         f'Non-numerical value found in data file <{filepath.name}> on '
-                        f'line {str(line_count)}'
+                        f'line {line_count!s}'
                     )
                 else:
                     raw_data.append(line_data)

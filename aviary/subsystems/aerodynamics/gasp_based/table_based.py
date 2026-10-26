@@ -100,7 +100,6 @@ class TabularCruiseAero(om.Group):
             ],
         )
 
-        #
         self.add_subsystem('simple_CD', ScaledCD(num_nodes=nn), promotes=['*'])
 
         self.add_subsystem('forces', AeroForces(num_nodes=nn), promotes=['*'])

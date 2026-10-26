@@ -39,13 +39,14 @@ class EngineModel(SubsystemBuilder):
     """
 
     _default_name = 'engine_model'
+
     # Flag that sets if this engine computes maximum values (e.g. max thrust, shaft power) for a
     # given flight condition. If False, during mission Aviary will create a duplicate copy of the
     # engine that is given max throttle and hybrid throttle (1.0) to compute max values.
     compute_max_values = False
 
     def __init__(
-        self, name: str = None, options: AviaryValues = None, meta_data: dict = None, **kwargs
+        self, name: str = None, meta_data: dict = None, options: AviaryValues = None, **kwargs
     ):
         super().__init__(name, meta_data=meta_data)
         if options is not None:
@@ -86,7 +87,7 @@ class EngineModel(SubsystemBuilder):
             the pre-mission part of the Aviary problem. This
             includes sizing, design, and other non-mission parameters.
         """
-        return None
+        return
 
     def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """
@@ -128,7 +129,7 @@ class EngineModel(SubsystemBuilder):
             being integrated as well as any other variables that vary after
             the mission.
         """
-        return None
+        return
 
     def _preprocess_inputs(self):
         """

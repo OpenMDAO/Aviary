@@ -10,7 +10,7 @@ from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
@@ -33,9 +33,10 @@ class GroundrollODETestCase(unittest.TestCase):
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         # aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
         aviary_options.set_val(Settings.VERBOSITY, Verbosity.QUIET)
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', [build_engine_deck(aviary_options)]
-        )
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [build_engine_deck(aviary_options)])[k]
+            for k in ['propulsion', 'aerodynamics']
+        ]
 
         self.prob.model = TakeOffODE(
             num_nodes=2,
@@ -104,9 +105,10 @@ class RotationODETestCase(unittest.TestCase):
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         # aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
         aviary_options.set_val(Settings.VERBOSITY, Verbosity.QUIET)
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', [build_engine_deck(aviary_options)]
-        )
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [build_engine_deck(aviary_options)])[k]
+            for k in ['propulsion', 'aerodynamics']
+        ]
 
         self.prob.model = TakeOffODE(
             num_nodes=2,
@@ -174,9 +176,10 @@ class AscentODETestCase(unittest.TestCase):
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         # aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
         aviary_options.set_val(Settings.VERBOSITY, Verbosity.QUIET)
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', [build_engine_deck(aviary_options)]
-        )
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [build_engine_deck(aviary_options)])[k]
+            for k in ['propulsion', 'aerodynamics']
+        ]
 
         self.prob.model = TakeOffODE(
             num_nodes=2, aviary_options=aviary_options, subsystems=default_mission_subsystems

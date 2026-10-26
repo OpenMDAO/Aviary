@@ -11,7 +11,6 @@ from aviary.subsystems.mass.gasp_based.fuel import (
     FuelMass,
     FuelSysAndFullFuselageMass,
     FuselageMass,
-    TankCapacity,
     WingFuelMin,
 )
 from aviary.subsystems.mass.gasp_based.mass_summation import MassSummation
@@ -127,12 +126,12 @@ class MassPremission(om.Group):
             promotes_outputs=['*'],
         )
 
-        self.add_subsystem(
-            'tank_capacity',
-            TankCapacity(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
+        # self.add_subsystem(
+        #     'tank_capacity',
+        #     TankCapacity(),
+        #     promotes_inputs=['*'],
+        #     promotes_outputs=['*'],
+        # )
 
         newton = self.nonlinear_solver = om.NewtonSolver()
         newton.options['atol'] = 1e-10

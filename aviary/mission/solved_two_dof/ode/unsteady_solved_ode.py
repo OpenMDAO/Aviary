@@ -206,7 +206,8 @@ class UnsteadySolvedODE(TwoDOFODE):
         self.add_subsystem(
             'mass_rate',
             om.ExecComp(
-                'dmass_dr = fuelflow * dt_dr',
+                ['dmass_dr = fuelflow_neg * dt_dr', 'dfuelburn_dr = fuelflow * dt_dr'],
+                fuelflow_neg={'units': 'lbm/s', 'shape': nn},
                 fuelflow={'units': 'lbm/s', 'shape': nn},
                 dt_dr={'units': 's/distance_units', 'shape': nn},
                 dmass_dr={
@@ -214,13 +215,22 @@ class UnsteadySolvedODE(TwoDOFODE):
                     'shape': nn,
                     'tags': ['dymos.state_rate_source:mass', 'dymos.state_units:lbm'],
                 },
+                dfuelburn_dr={
+                    'units': 'lbm/distance_units',
+                    'shape': nn,
+                    'tags': [
+                        'dymos.state_rate_source:cumulative_fuel_burn',
+                        'dymos.state_units:lbm',
+                    ],
+                },
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('fuelflow', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
+                ('fuelflow_neg', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
+                ('fuelflow', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL),
                 'dt_dr',
             ],
-            promotes_outputs=['dmass_dr'],
+            promotes_outputs=['dmass_dr', 'dfuelburn_dr'],
         )
 
         onn = np.ones(nn)

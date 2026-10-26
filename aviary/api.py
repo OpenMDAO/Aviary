@@ -63,9 +63,9 @@ from aviary.subsystems.test.subsystem_tester import (
 )
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
-###################
-# Level 3 Imports #
-###################
+####################
+# Advanced Imports #
+####################
 # Model Setup
 from aviary.variable_info.functions import (
     override_aviary_vars,
@@ -184,6 +184,9 @@ from aviary.subsystems.geometry.geometry_builder import GeometryBuilder, CoreGeo
 # Mass
 from aviary.subsystems.mass.mass_builder import MassBuilder, CoreMassBuilder
 
+# Energy
+from aviary.subsystems.energy.energy_builder import EnergyBuilder, CoreEnergyBuilder
+
 # Performance
 from aviary.subsystems.performance.performance_builder import (
     PerformanceBuilder,
@@ -193,7 +196,6 @@ from aviary.subsystems.performance.performance_builder import (
 # Propulsion
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.engine_model import EngineModel
-from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.propulsion_builder import (
     PropulsionBuilder,
     CorePropulsionBuilder,

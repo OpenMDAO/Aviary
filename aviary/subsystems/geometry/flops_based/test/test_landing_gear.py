@@ -1,10 +1,10 @@
 import unittest
 
-import openmdao.api as om
-from openmdao.utils.testing_utils import use_tempdirs
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from parameterized import parameterized
 import numpy as np
+import openmdao.api as om
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
+from parameterized import parameterized
 
 from aviary.subsystems.geometry.flops_based.landing_gear import MainGearLength, NoseGearLength
 from aviary.utils.test_utils.variable_test import assert_match_varnames

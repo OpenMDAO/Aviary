@@ -109,8 +109,7 @@ class WingFuelMin(om.ExplicitComponent):
         if smooth:
             wingfuel_mass_min = wingfuel_mass_min * sigmoidX(wingfuel_mass_min, 0)
         else:
-            if wingfuel_mass_min < 0.0:
-                wingfuel_mass_min = 0.0
+            wingfuel_mass_min = max(wingfuel_mass_min, 0.0)
 
         outputs['wingfuel_mass_min'] = wingfuel_mass_min
 
@@ -229,17 +228,24 @@ class TankCapacity(om.ExplicitComponent):
 
         # WFXTRA: extra amount of fuel that is required but does not fit in wings
         add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, units='lbm')
+
+        # NOTE this is not used in Aviary
         self.add_output(
             'extra_fuel_volume',
             units='ft**3',
             desc='FVOLXTRA: excess required design fuel volume (including fuel margin) greater than geometric fuel volume of wings',
         )  # there is no FVOLXTRA in GASP
+
+        # NOTE this is not used in Aviary
         self.add_output(
             'max_extra_fuel_mass',
             units='lbm',
             desc='WFXTRAMX: mass of fuel that fits in extra_fuel_volume',
         )  # there is no WFXTRAMX in GASP
+
         add_aviary_output(self, Aircraft.Fuel.MAX_CAPACITY_MASS, units='lbm', desc='WFAMAX')
+
+        # NOTE this is not used in Aviary
         self.add_output(
             'payload_mass_max_fuel',
             units='lbm',
@@ -329,8 +335,7 @@ class TankCapacity(om.ExplicitComponent):
         if smooth:
             extra_fuel_mass = extra_fuel_mass * sigmoidX(extra_fuel_mass, 0, 1 / 50)
         else:
-            if extra_fuel_mass < 0:
-                extra_fuel_mass = 0
+            extra_fuel_mass = max(extra_fuel_mass, 0)
 
         max_fuel_avail_est = fuel_mass_des + extra_fuel_mass
         max_fuel_avail_new = gross_mass_initial - OEM

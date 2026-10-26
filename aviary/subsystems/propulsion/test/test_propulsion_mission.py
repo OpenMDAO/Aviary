@@ -161,8 +161,8 @@ class PropulsionMissionTest(unittest.TestCase):
             np.array([[602.11, 3554], [100, 9000]]),
         )
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
-            np.array([[123, -221.44], [-765.2, -1]]),
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
+            np.array([[-123, 221.44], [765.2, 1]]),
         )
         self.prob.set_val(
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN, np.array([[3.01, -12], [484.2, 8123]])

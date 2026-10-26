@@ -10,7 +10,7 @@ from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
@@ -32,9 +32,13 @@ class DLandTestCase(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, Verbosity.QUIET)
 
         engines = [build_engine_deck(options)]
-        subsystems = get_default_mission_subsystems('GASP', engines)
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', engines)[k] for k in ['propulsion', 'aerodynamics']
+        ]
 
-        self.prob.model = LandingSegment(aviary_options=options, subsystems=subsystems)
+        self.prob.model = LandingSegment(
+            aviary_options=options, subsystems=default_mission_subsystems
+        )
 
         setup_model_options(self.prob, options)
         self.prob.model.set_input_defaults(Mission.Landing.AIRPORT_ALTITUDE, 0, units='ft')

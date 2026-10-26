@@ -237,7 +237,6 @@ class TakeoffEOM(om.ExplicitComponent):
         if ground_roll or rotation:
             mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
             normal_force = weight - incremented_lift - thrust_across_flightpath
-            normal_force[normal_force < 0] = 0.0
             outputs['normal_force'] = normal_force
 
         else:
@@ -333,20 +332,10 @@ class TakeoffEOM(om.ExplicitComponent):
         else:
             normal_force = np.zeros(nn, dtype=TAS.dtype)
 
-        idx = np.where(normal_force < 0)
-        normal_force[idx] = 0.0
-
         dNF_dWeight = np.ones(nn, dtype=TAS.dtype)
-        dNF_dWeight[idx] = 0
-
         dNF_dLift = -np.ones(nn, dtype=TAS.dtype)
-        dNF_dLift[idx] = 0
-
         dNF_dThrust = -np.ones(nn, dtype=TAS.dtype) * dTAcF_dThrust
-        dNF_dThrust[idx] = 0
-
         dNF_dIwing = -np.ones(nn, dtype=TAS.dtype) * dTAcF_dIwing
-        dNF_dIwing[idx] = 0
 
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
             dTAlF_dThrust - mu * dNF_dThrust
@@ -404,7 +393,6 @@ class TakeoffEOM(om.ExplicitComponent):
 
             # WRT angle of attack
             dNF_dAlpha = -np.ones(nn, dtype=TAS.dtype) * dTAcF_dAlpha
-            dNF_dAlpha[idx] = 0
 
             J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.ANGLE_OF_ATTACK] = (
                 dTAlF_dAlpha - mu * dNF_dAlpha
