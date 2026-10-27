@@ -37,8 +37,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/version_switcher.css?v=516df71e" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3683e473" />
+    <link rel="stylesheet" type="text/css" href="../_static/version_switcher.css?v=516df71e" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -988,7 +988,12 @@ Aviary internally handles the connections for Mach and altitude between the phas
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Sizing mission does not include a target range.
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793132538.284650] [runnervm48cm3:4909 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55ab578d0cd0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1793132538.285173] [runnervm48cm3:4909 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:04909] pml_ucx.c:313  Error: Failed to create UCP worker
+Warning: Sizing mission does not include a target range.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
@@ -1029,25 +1034,25 @@ Total number of inequality constraints...............:       46
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 63
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 65
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.0885410726348682e+02    1.0885410726348682e+02
-Dual infeasibility......:   1.5282400456229084e-08    1.5282400456229084e-08
-Constraint violation....:   4.5245466632574488e-11    4.5245466632574488e-11
-Variable bound violation:   5.2826529817195933e-09    5.2826529817195933e-09
-Complementarity.........:   9.5409780416671033e-08    9.5409780416671033e-08
-Overall NLP error.......:   9.5409780416671033e-08    9.5409780416671033e-08
+Objective...............:   1.0885410723647250e+02    1.0885410723647250e+02
+Dual infeasibility......:   8.7208882101964998e-09    8.7208882101964998e-09
+Constraint violation....:   4.5246532446678126e-11    4.5246532446678126e-11
+Variable bound violation:   5.2826520935411736e-09    5.2826520935411736e-09
+Complementarity.........:   9.5409598209751261e-08    9.5409598209751261e-08
+Overall NLP error.......:   9.5409598209751261e-08    9.5409598209751261e-08
 
 
-Number of objective function evaluations             = 77
-Number of objective gradient evaluations             = 61
-Number of equality constraint evaluations            = 77
-Number of inequality constraint evaluations          = 77
-Number of equality constraint Jacobian evaluations   = 66
-Number of inequality constraint Jacobian evaluations = 66
+Number of objective function evaluations             = 75
+Number of objective gradient evaluations             = 63
+Number of equality constraint evaluations            = 75
+Number of inequality constraint evaluations          = 75
+Number of equality constraint Jacobian evaluations   = 68
+Number of inequality constraint Jacobian evaluations = 68
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 38.732
+Total seconds in IPOPT                               = 29.608
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -1129,7 +1134,7 @@ rotate VELOCITY End  : 132.28
 rotate Time Start    : 21.94
 rotate Time End      : 22.85
 *****    Phase: BC    *****
-BC ALTITUDE Start: -0.00
+BC ALTITUDE Start: 0.00
 BC ALTITUDE End  : 50.00
 BC DISTANCE Start: 2604.45
 BC DISTANCE End  : 3746.51
@@ -1397,6 +1402,28 @@ P3 corresponds to the microphone location used for acoustic certification.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
+  &#39;aircraft:engine:mass  [7400.]  lbm
+  &#39;aircraft:fins:mass  0.0  lbm
+  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
+  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
+  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
+  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
+  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
+  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
+  &#39;aircraft:wing:control_surface_area  137.0  ft**2
+  &#39;aircraft:wing:wetted_area  2396.56  ft**2
+  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/problem.py:384: OpenMDAOWarning:The problem name &#39;aircraft_for_bench_solved2dof&#39; already exists
 /home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;scaling&#39; for instance &#39;aircraft_for_bench_solved2dof.driver&#39; is already active.
 /home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;total_coloring&#39; for instance &#39;aircraft_for_bench_solved2dof.driver&#39; is already active.
@@ -1420,26 +1447,6 @@ P3 corresponds to the microphone location used for acoustic certification.</p>
 Warning: Sizing mission does not include a target range.
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
-  &#39;aircraft:engine:mass  [7400.]  lbm
-  &#39;aircraft:fins:mass  0.0  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
-  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
-  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
-  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
-  &#39;aircraft:wing:control_surface_area  137.0  ft**2
-  &#39;aircraft:wing:wetted_area  2396.56  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.354  unitless
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/driver.py:1454: DriverWarning:pyOptSparseDriver: constraint(s) [&#39;mission:constraints:excess_fuel_mass_capacity&#39;] do not depend on any design variables. Please check your problem formulation.
 </pre></div>
 </div>
@@ -1458,25 +1465,25 @@ Total number of inequality constraints...............:       62
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 37
 
                                    (scaled)                 (unscaled)
-Objective...............:   6.8303920535675076e+01    6.8303920535675076e+01
-Dual infeasibility......:   3.6095888397270150e-10    3.6095888397270150e-10
-Constraint violation....:   9.9056082455511608e-09    9.9056082455511608e-09
-Variable bound violation:   9.9056082455511608e-09    9.9056082455511608e-09
-Complementarity.........:   9.3380622497581365e-08    9.3380622497581365e-08
-Overall NLP error.......:   9.3380622497581365e-08    9.3380622497581365e-08
+Objective...............:   6.8303854417863761e+01    6.8303854417863761e+01
+Dual infeasibility......:   5.3134602244252122e-07    5.3134602244252122e-07
+Constraint violation....:   2.8421709430404007e-13    2.8421709430404007e-13
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   9.0929925579619140e-08    9.0929925579619140e-08
+Overall NLP error.......:   5.3134602244252122e-07    5.3134602244252122e-07
 
 
-Number of objective function evaluations             = 40
-Number of objective gradient evaluations             = 16
-Number of equality constraint evaluations            = 40
-Number of inequality constraint evaluations          = 40
-Number of equality constraint Jacobian evaluations   = 16
-Number of inequality constraint Jacobian evaluations = 16
+Number of objective function evaluations             = 47
+Number of objective gradient evaluations             = 19
+Number of equality constraint evaluations            = 47
+Number of inequality constraint evaluations          = 47
+Number of equality constraint Jacobian evaluations   = 39
+Number of inequality constraint Jacobian evaluations = 39
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 6.799
+Total seconds in IPOPT                               = 9.692
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -1517,9 +1524,9 @@ HI Time Start    : 12.11
 HI Time End      : 51.40
 *****    Phase: IJ    *****
 IJ ALTITUDE Start: 50.00
-IJ ALTITUDE End  : -0.00
+IJ ALTITUDE End  : 0.00
 IJ DISTANCE Start: 8586.51
-IJ DISTANCE End  : 11416.98
+IJ DISTANCE End  : 11416.97
 IJ VELOCITY Start: 99.20
 IJ VELOCITY End  : 99.21
 IJ Time Start    : 51.40

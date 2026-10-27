@@ -37,8 +37,8 @@
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/version_switcher.css?v=516df71e" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=3683e473" />
+    <link rel="stylesheet" type="text/css" href="../../_static/version_switcher.css?v=516df71e" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -586,13 +586,13 @@
 <p>We start with the assumption that we have an external component called <code class="docutils literal notranslate"><span class="pre">ExternalAero</span></code> that can compute the lift and drag at any given altitude, Mach number, and angle of attack. The details of such a component may be highly complicated and not important for the purposes of this example. We will be using a structured grid, which assumes the data table is regularly spaced in all dimensions. We want to compute lift and drag over a grid of altitudes (in ‘ft’), Mach numbers, and angles of attack given by:</p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Altitude (ft) [    0.  3000.  6000.  9000. 12000. 15000. 18000. 21000. 24000. 27000.
  30000. 33000. 36000. 38000. 42000.]
 Mach [0.   0.2  0.4  0.5  0.6  0.7  0.75 0.8  0.85 0.9 ]
 Angle of Attack (deg) [-2.  0.  2.  4.  6.  8. 10.]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
 </div>
@@ -704,7 +704,12 @@ Angle of Attack (deg) [-2.  0.  2.  4.  6.  8. 10.]
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793133133.797114] [runnervm48cm3:5872 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x560432f59690 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1793133133.797423] [runnervm48cm3:5872 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05872] pml_ucx.c:313  Error: Failed to create UCP worker
+Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
@@ -773,17 +778,17 @@ NL: Newton Converged in 0 iterations
 ======================================
 traj.phases.climb.rhs_all.aerodynamics
 ======================================
-NL: Newton 0 ; 3.31871119e-06 1
-NL: Newton 1 ; 5.56774142e-10 0.000167768182
-NL: Newton 2 ; 1.25863617e-16 3.79254505e-11
+NL: Newton 0 ; 3.3187112e-06 1
+NL: Newton 1 ; 5.56774148e-10 0.000167768183
+NL: Newton 2 ; 1.2586072e-16 3.79245773e-11
 NL: Newton Converged
 
 ====================================
 traj.phases.climb.rhs_all.solver_sub
 ====================================
-NL: Newton 0 ; 0.0742113916 1
+NL: Newton 0 ; 0.0742113915 1
 NL: Newton 1 ; 1.44200747e-05 0.000194310798
-NL: Newton 2 ; 7.27595761e-18 9.80436758e-17
+NL: Newton 2 ; 4.45559589e-18 6.00392446e-17
 NL: Newton Converged
 
 ===============================
@@ -794,19 +799,19 @@ NL: Newton Converged in 0 iterations
 =======================================
 traj.phases.cruise.rhs_all.aerodynamics
 =======================================
-NL: Newton 0 ; 2.79973531e-06 1
-NL: Newton 1 ; 4.7494371e-10 0.00016963879
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NL: Newton 2 ; 1.63709129e-17 5.84730736e-12
+NL: Newton 0 ; 2.79973532e-06 1
+NL: Newton 1 ; 4.74943705e-10 0.000169638788
+NL: Newton 2 ; 1.63711136e-17 5.84737904e-12
 NL: Newton Converged
 
 =====================================
 traj.phases.cruise.rhs_all.solver_sub
 =====================================
 NL: Newton 0 ; 0.0114655688 1
-NL: Newton 1 ; 5.58865462e-07 4.87429338e-05
-NL: Newton 2 ; 5.14487897e-18 4.48724267e-16
+NL: Newton 1 ; 5.58865463e-07 4.87429338e-05
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NL: Newton 2 ; 5.14487897e-18 4.48724266e-16
 NL: Newton Converged
 
 ================================
@@ -818,8 +823,8 @@ NL: Newton Converged in 0 iterations
 traj.phases.descent.rhs_all.aerodynamics
 ========================================
 NL: Newton 0 ; 2.88331882e-06 1
-NL: Newton 1 ; 2.76091002e-10 9.57545869e-05
-NL: Newton 2 ; 2.49268862e-17 8.64520635e-12
+NL: Newton 1 ; 2.76091005e-10 9.57545876e-05
+NL: Newton 2 ; 2.49274421e-17 8.64539916e-12
 NL: Newton Converged
 
 ======================================
@@ -827,8 +832,8 @@ traj.phases.descent.rhs_all.solver_sub
 ======================================
 NL: Newton 0 ; 0.123936174 1
 NL: Newton 1 ; 0.00368329355 0.0297192776
-NL: Newton 2 ; 1.81425003e-05 0.000146385836
-NL: Newton 3 ; 1.11462393e-18 8.9935319e-18
+NL: Newton 2 ; 1.81425028e-05 0.000146385856
+NL: Newton 3 ; 8.6627953e-19 6.98972306e-18
 NL: Newton Converged
 </pre></div>
 </div>

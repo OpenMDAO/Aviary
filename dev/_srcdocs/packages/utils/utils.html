@@ -37,8 +37,8 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/version_switcher.css?v=516df71e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3683e473" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/version_switcher.css?v=516df71e" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -600,6 +600,46 @@ index.</p>
 <li><p><strong>valid_iterables</strong> (<em>tuple</em><em> of </em><em>types</em>) – Which iterable types val will be checked against. By default, lists, numpy arrays and tuples
 are supported types</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">aviary.utils.utils.</span></span><span class="sig-name descname"><span class="pre">mass_to_force_english</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gravity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/utils.html#mass_to_force_english"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Convert mass into force in the english unit system.
+Uses the basic equation lbf = lbm * (g_current / g_earth).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mass</strong> (<em>tuple</em>) – mass to be converted, in the form of a tuple containing (val, units)</p></li>
+<li><p><strong>gravity</strong> (<em>tuple</em>) – current gravitational acceleration, in the form of a tuple containing (val, units)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>force</strong> – converted force in lbf</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">aviary.utils.utils.</span></span><span class="sig-name descname"><span class="pre">mass_to_force_english_derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gravity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/utils.html#mass_to_force_english_derivative"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Compute the derivative of outputs computed using forces with respect to mass, which is the
+ratio of gravities. The purpose of this function is to make sure units are always consistent
+and reduce repeated code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gravity</strong> (<em>tuple</em>) – current gravitational acceleration, in the form of a tuple containing (val, units)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>deriv</strong> – gravity ratio</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 </dd></dl>

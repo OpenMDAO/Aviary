@@ -37,8 +37,8 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/version_switcher.css?v=516df71e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3683e473" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/version_switcher.css?v=516df71e" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -552,8 +552,7 @@
   <section class="tex2jax_ignore mathjax_ignore" id="math-utils-py">
 <h1>math_utils.py<a class="headerlink" href="#math-utils-py" title="Link to this heading">#</a></h1>
 <blockquote>
-<div><p>Smooth functions and their derivatives.</p>
-<dl class="py function">
+<div><dl class="py function">
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">dSigmoidXdx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#dSigmoidXdx"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Derivative of sigmoid function.</p>
@@ -625,6 +624,12 @@ Returns (y, dy_dx).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">deg2rad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#deg2rad"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Complex step safe deg2rad.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">dydx_sin_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#dydx_sin_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Define the derivative (dy/dx) of sin_int, at x = val.</p>
 </dd></dl>
@@ -633,6 +638,12 @@ Returns (y, dy_dx).</p>
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">dydx_sin_int4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#dydx_sin_int4"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Define the derivative (dy/dx) of sin_int4, at x = val.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">rad2deg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#rad2deg"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Complex step safe rad2deg.</p>
 </dd></dl>
 
 <dl class="py function">

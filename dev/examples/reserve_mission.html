@@ -37,8 +37,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../_static/version_switcher.css?v=516df71e" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3683e473" />
+    <link rel="stylesheet" type="text/css" href="../_static/version_switcher.css?v=516df71e" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -721,7 +721,12 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793132432.929498] [runnervm48cm3:4792 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55a240ee31e0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1793132432.929834] [runnervm48cm3:4792 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:04792] pml_ucx.c:313  Error: Failed to create UCP worker
+Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
@@ -759,12 +764,12 @@ Total number of inequality constraints...............:      105
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 30
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.9306323772840304e+00    1.9306323772840304e+00
-Dual infeasibility......:   4.0185531295170355e-08    4.0185531295170355e-08
-Constraint violation....:   2.3174504024632529e-11    2.3174504024632529e-11
+Objective...............:   1.9306323772840290e+00    1.9306323772840290e+00
+Dual infeasibility......:   4.0185538345094846e-08    4.0185538345094846e-08
+Constraint violation....:   2.3172506149836399e-11    2.3172506149836399e-11
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0920529875010256e-08    9.0920529875010256e-08
-Overall NLP error.......:   9.0920529875010256e-08    9.0920529875010256e-08
+Complementarity.........:   9.0920529875014558e-08    9.0920529875014558e-08
+Overall NLP error.......:   9.0920529875014558e-08    9.0920529875014558e-08
 
 
 Number of objective function evaluations             = 42
@@ -774,7 +779,7 @@ Number of inequality constraint evaluations          = 42
 Number of equality constraint Jacobian evaluations   = 32
 Number of inequality constraint Jacobian evaluations = 32
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 20.312
+Total seconds in IPOPT                               = 16.190
 
 EXIT: Optimal Solution Found.
 </pre></div>

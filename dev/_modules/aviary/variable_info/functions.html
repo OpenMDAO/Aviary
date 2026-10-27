@@ -36,8 +36,8 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/version_switcher.css?v=516df71e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3683e473" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/version_switcher.css?v=516df71e" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -509,6 +509,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">openmdao.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">om</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dymos.utils.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">_unspecified</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.core.component</span><span class="w"> </span><span class="kn">import</span> <span class="n">Component</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.core.system</span><span class="w"> </span><span class="kn">import</span> <span class="n">System</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.aviary_options_dict</span><span class="w"> </span><span class="kn">import</span> <span class="n">units_setter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.aviary_values</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryValues</span>
@@ -692,7 +693,7 @@
 <div class="viewcode-block" id="add_aviary_option">
 <a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/functions.html#aviary.variable_info.functions.add_aviary_option">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">add_aviary_option</span><span class="p">(</span>
-    <span class="n">comp</span><span class="p">:</span> <span class="n">Component</span><span class="p">,</span>
+    <span class="n">comp</span><span class="p">:</span> <span class="n">System</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">val</span><span class="o">=</span><span class="n">_unspecified</span><span class="p">,</span>
     <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -706,7 +707,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    comp: Component</span>
+<span class="sd">    comp: System</span>
 <span class="sd">        OpenMDAO component to add this option.</span>
 <span class="sd">    name: str</span>
 <span class="sd">        Name of variable.</span>

@@ -36,8 +36,8 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/version_switcher.css?v=516df71e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3683e473" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/version_switcher.css?v=516df71e" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -501,9 +501,23 @@
                 <article class="bd-article">
                   
   <h1>Source code for aviary.utils.math_utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Smooth functions and their derivatives.&quot;&quot;&quot;</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<div class="viewcode-block" id="deg2rad">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.deg2rad">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">deg2rad</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Complex step safe deg2rad.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">d</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span></div>
+
+
+
+<div class="viewcode-block" id="rad2deg">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/math_utils.html#aviary.utils.math_utils.rad2deg">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rad2deg</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Complex step safe rad2deg.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">r</span> <span class="o">*</span> <span class="mf">180.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span></div>
+
 
 
 <div class="viewcode-block" id="sigmoidX">

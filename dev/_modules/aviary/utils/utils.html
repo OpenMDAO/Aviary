@@ -36,8 +36,8 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/version_switcher.css?v=516df71e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3683e473" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/version_switcher.css?v=516df71e" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -513,6 +513,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_units</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">GRAV_EARTH</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variable_meta_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">CoreMetaData</span>
 
 
@@ -815,6 +816,60 @@
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sig</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="mass_to_force_english">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/utils.html#aviary.utils.utils.mass_to_force_english">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mass_to_force_english</span><span class="p">(</span><span class="n">mass</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">gravity</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert mass into force in the english unit system.</span>
+<span class="sd">    Uses the basic equation lbf = lbm * (g_current / g_earth).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mass: tuple</span>
+<span class="sd">        mass to be converted, in the form of a tuple containing (val, units)</span>
+<span class="sd">    gravity: tuple</span>
+<span class="sd">        current gravitational acceleration, in the form of a tuple containing (val, units)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    force: float</span>
+<span class="sd">        converted force in lbf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mass_val</span> <span class="o">=</span> <span class="n">convert_units</span><span class="p">(</span><span class="n">mass</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mass</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+    <span class="n">gravity_val</span> <span class="o">=</span> <span class="n">convert_units</span><span class="p">(</span><span class="n">gravity</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gravity</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">GRAV_EARTH</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">force</span> <span class="o">=</span> <span class="n">mass_val</span> <span class="o">*</span> <span class="p">(</span><span class="n">gravity_val</span> <span class="o">/</span> <span class="n">GRAV_EARTH</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">force</span></div>
+
+
+
+<div class="viewcode-block" id="mass_to_force_english_derivative">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/utils.html#aviary.utils.utils.mass_to_force_english_derivative">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mass_to_force_english_derivative</span><span class="p">(</span><span class="n">gravity</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the derivative of outputs computed using forces with respect to mass, which is the</span>
+<span class="sd">    ratio of gravities. The purpose of this function is to make sure units are always consistent</span>
+<span class="sd">    and reduce repeated code.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gravity: tuple</span>
+<span class="sd">        current gravitational acceleration, in the form of a tuple containing (val, units)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    deriv: float</span>
+<span class="sd">        gravity ratio</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gravity_val</span> <span class="o">=</span> <span class="n">convert_units</span><span class="p">(</span><span class="n">gravity</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gravity</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">GRAV_EARTH</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">deriv</span> <span class="o">=</span> <span class="n">gravity_val</span> <span class="o">/</span> <span class="n">GRAV_EARTH</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">deriv</span></div>
 
 </pre></div>
 
