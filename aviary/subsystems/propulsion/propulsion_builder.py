@@ -293,7 +293,7 @@ class CorePropulsionBuilder(PropulsionBuilder):
     # NOTE no unittests!
     def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_timeseries() on all engine models and return combined result."""
-        outputs = []
+        outputs = [Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL]
         for engine in self.engine_models:
             engine_outputs = engine.get_timeseries(
                 aviary_inputs=aviary_inputs,
