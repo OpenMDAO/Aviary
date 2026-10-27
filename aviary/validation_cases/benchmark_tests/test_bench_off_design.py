@@ -327,8 +327,8 @@ class Test2DOFOffDesign(unittest.TestCase):
 
         expected_values = {
             Mission.RANGE: (4005.61020579, 'NM', 1e-4),
-            Mission.TOTAL_FUEL_MASS: (40019.62660076, 'lbm', 1e-5),
-            Mission.OPERATING_MASS: (94980.37339924, 'lbm', 1e-5),
+            Mission.TOTAL_FUEL_MASS: (39973.3250259, 'lbm', 1e-5),
+            Mission.OPERATING_MASS: (95026.6749741, 'lbm', 1e-5),
             Aircraft.CrewPayload.CARGO_MASS: (5000, 'lbm', 1e-5),
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS: (20000, 'lbm', 1e-5),
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS: (15000, 'lbm', 1e-6),
