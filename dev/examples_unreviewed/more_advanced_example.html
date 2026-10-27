@@ -680,7 +680,6 @@ Later in this example, we increase this order which will allow the optimizer to 
     <span class="p">},</span>
     <span class="s1">&#39;post_mission&#39;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;include_landing&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s1">&#39;constrain_range&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="s1">&#39;target_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1915</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">),</span>
     <span class="p">},</span>
 <span class="p">}</span>
@@ -703,6 +702,9 @@ Later in this example, we increase this order which will allow the optimizer to 
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
   &#39;aircraft:engine:mass  [7400.]  lbm
@@ -738,25 +740,25 @@ Total number of inequality constraints...............:       27
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 25
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5497020995462432e+00    2.5497020995462432e+00
-Dual infeasibility......:   4.6566374695255669e-08    4.6566374695255669e-08
-Constraint violation....:   7.7343438720850172e-15    7.7343438720850172e-15
+Objective...............:   2.5497020994737776e+00    2.5497020994737776e+00
+Dual infeasibility......:   5.9732260391826707e-08    5.9732260391826707e-08
+Constraint violation....:   7.1830033727101770e-15    7.1830033727101770e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0949001219893267e-08    9.0949001219893267e-08
-Overall NLP error.......:   9.0949001219893267e-08    9.0949001219893267e-08
+Complementarity.........:   9.0945571350736112e-08    9.0945571350736112e-08
+Overall NLP error.......:   9.0945571350736112e-08    9.0945571350736112e-08
 
 
-Number of objective function evaluations             = 39
-Number of objective gradient evaluations             = 24
-Number of equality constraint evaluations            = 39
-Number of inequality constraint evaluations          = 39
-Number of equality constraint Jacobian evaluations   = 28
-Number of inequality constraint Jacobian evaluations = 28
+Number of objective function evaluations             = 27
+Number of objective gradient evaluations             = 22
+Number of equality constraint evaluations            = 27
+Number of inequality constraint evaluations          = 27
+Number of equality constraint Jacobian evaluations   = 24
+Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 7.449
+Total seconds in IPOPT                               = 6.075
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -797,7 +799,7 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.477071271554
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.477070942869
 </pre></div>
 </div>
 </div>
@@ -810,7 +812,7 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.02099546241
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.02099473778
 </pre></div>
 </div>
 </div>
@@ -871,6 +873,9 @@ We’ll use the same <code class="docutils literal notranslate"><span class="pre
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
   &#39;aircraft:engine:mass  [7400.]  lbm
@@ -906,25 +911,25 @@ Total number of inequality constraints...............:       27
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 25
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5637089675009861e+00    2.5637089675009861e+00
-Dual infeasibility......:   7.7006406070774538e-08    7.7006406070774538e-08
-Constraint violation....:   6.7771550357635795e-15    6.7771550357635795e-15
+Objective...............:   2.5637089673954789e+00    2.5637089673954789e+00
+Dual infeasibility......:   8.0299258102695154e-08    8.0299258102695154e-08
+Constraint violation....:   9.8137568552892888e-15    9.8137568552892888e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0974204977792643e-08    9.0974204977792643e-08
-Overall NLP error.......:   9.0974204977792643e-08    9.0974204977792643e-08
+Complementarity.........:   9.0972478544994289e-08    9.0972478544994289e-08
+Overall NLP error.......:   9.0972478544994289e-08    9.0972478544994289e-08
 
 
-Number of objective function evaluations             = 38
-Number of objective gradient evaluations             = 24
-Number of equality constraint evaluations            = 38
-Number of inequality constraint evaluations          = 38
-Number of equality constraint Jacobian evaluations   = 28
-Number of inequality constraint Jacobian evaluations = 28
+Number of objective function evaluations             = 27
+Number of objective gradient evaluations             = 22
+Number of equality constraint evaluations            = 27
+Number of inequality constraint evaluations          = 27
+Number of equality constraint Jacobian evaluations   = 24
+Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 6.921
+Total seconds in IPOPT                               = 5.744
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -952,7 +957,7 @@ Let’s take a look at the fuel burn value:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.011155590248
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.011155111682
 </pre></div>
 </div>
 </div>
@@ -984,6 +989,9 @@ We’ll use the original aircraft configuration for this run.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
   &#39;aircraft:engine:mass  [7400.]  lbm
@@ -1022,12 +1030,12 @@ Total number of inequality constraints...............:       27
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 50
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5146485811303023e+00    2.5146485811303023e+00
-Dual infeasibility......:   1.4218008332525123e-03    1.4218008332525123e-03
-Constraint violation....:   8.0652618762177981e-11    8.0652618762177981e-11
+Objective...............:   2.5146485811362886e+00    2.5146485811362886e+00
+Dual infeasibility......:   1.4218013009854808e-03    1.4218013009854808e-03
+Constraint violation....:   8.0650370226882983e-11    8.0650370226882983e-11
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
 Complementarity.........:   1.0000000000000001e-05    1.0000000000000001e-05
-Overall NLP error.......:   1.4218008332525123e-03    1.4218008332525123e-03
+Overall NLP error.......:   1.4218013009854808e-03    1.4218013009854808e-03
 
 
 Number of objective function evaluations             = 60
@@ -1037,7 +1045,7 @@ Number of inequality constraint evaluations          = 60
 Number of equality constraint Jacobian evaluations   = 51
 Number of inequality constraint Jacobian evaluations = 51
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 12.613
+Total seconds in IPOPT                               = 13.319
 
 EXIT: Maximum Number of Iterations Exceeded.
 </pre></div>
@@ -1065,7 +1073,7 @@ Aviary run failed. See the dashboard for more details.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10045.47698632033
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10045.476986347485
 </pre></div>
 </div>
 </div>

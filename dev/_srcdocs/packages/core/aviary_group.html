@@ -587,13 +587,13 @@ type:
 - the initial altitude of the aircraft with gear extended is constrained to be 50 ft
 - the initial altitude of the aircraft with flaps extended is constrained to be 400 ft</p>
 <p>If solving a sizing problem, a design variable is added for the gross mass of the aircraft,
-and another for the gross mass of the aircraft computed during the mission. A constraint is
-also added to ensure that the residual range is zero.</p>
+and another for the gross mass of the aircraft computed during the mission.</p>
 <p>If solving an OFF_DESIGN_MIN_FUEL problem, only a design variable for the gross mass of the aircraft
-computed during the mission is added. A constraint is also added to ensure that the residual
-range is zero.</p>
+computed during the mission is added.</p>
 <p>In all cases, a design variable is added for the final cruise mass of the aircraft, with no
 upper bound, and a residual mass constraint is added to ensure that the mass balances.</p>
+<p>In all cases, except for OFF_DESIGN_MAX_RANGE, the final Mission.RANGE is constrained to the
+value specified in ‘target_range’ in the phase_info.</p>
 </dd></dl>
 
 <dl class="py method">

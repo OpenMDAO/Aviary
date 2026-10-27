@@ -710,9 +710,6 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 <span class="k">for</span> <span class="n">phase_name</span> <span class="ow">in</span> <span class="n">phase_info</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">phase_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pre_mission&#39;</span><span class="p">,</span> <span class="s1">&#39;post_mission&#39;</span><span class="p">]:</span>
         <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mission_info</span><span class="p">[</span><span class="n">phase_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase_info</span><span class="p">[</span><span class="n">phase_name</span><span class="p">]</span>
-<span class="n">aviary_inputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="mf">1906.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;NM&#39;</span><span class="p">)</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">require_range_residual</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">target_range</span> <span class="o">=</span> <span class="mf">1906.0</span>
 
 <span class="c1">#####</span>
 <span class="c1"># prob.check_and_preprocess_inputs()</span>
@@ -1050,22 +1047,8 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
     <span class="n">flat_src_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;range_constraint&#39;</span><span class="p">,</span>
-    <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
-        <span class="s1">&#39;range_resid = target_range - actual_range&#39;</span><span class="p">,</span>
-        <span class="n">target_range</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="n">prob</span><span class="o">.</span><span class="n">target_range</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;NM&#39;</span><span class="p">},</span>
-        <span class="n">actual_range</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="n">prob</span><span class="o">.</span><span class="n">target_range</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;NM&#39;</span><span class="p">},</span>
-        <span class="n">range_resid</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;NM&#39;</span><span class="p">},</span>
-    <span class="p">),</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">(</span><span class="s1">&#39;actual_range&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">RANGE</span><span class="p">),</span>
-        <span class="s1">&#39;target_range&#39;</span><span class="p">,</span>
-    <span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;range_resid&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">RANGE_RESIDUAL</span><span class="p">)],</span>
-<span class="p">)</span>
-
-<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">MASS_RESIDUAL</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">1.0e5</span><span class="p">)</span>
+<span class="n">target_range</span> <span class="o">=</span> <span class="mf">1906.0</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="n">target_range</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">target_range</span><span class="p">)</span>
 <span class="c1"># for reference this is the end of builder.add_post_mission_systems()</span>
 
 <span class="n">ecomp</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
@@ -1262,7 +1245,6 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
         <span class="p">(</span><span class="s1">&#39;rhs:GTOW&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
     <span class="p">],</span>
 <span class="p">)</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">RANGE_RESIDUAL</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="c1">#####</span>
 <span class="c1"># prob.add_objective()</span>
@@ -1288,7 +1270,7 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
         <span class="s1">&#39;reg_objective = -actual_range/1000 + ascent_duration/30.&#39;</span><span class="p">,</span>
         <span class="n">reg_objective</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;unitless&#39;</span><span class="p">},</span>
         <span class="n">ascent_duration</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-        <span class="n">actual_range</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="n">prob</span><span class="o">.</span><span class="n">target_range</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;NM&#39;</span><span class="p">},</span>
+        <span class="n">actual_range</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="n">target_range</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;NM&#39;</span><span class="p">},</span>
     <span class="p">),</span>
     <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
         <span class="p">(</span><span class="s1">&#39;actual_range&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">RANGE</span><span class="p">),</span>
@@ -1396,42 +1378,10 @@ Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#3
   &#39;aircraft:wing:wetted_area  2210.280228  ft**2
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
-  traj.climb.t_initial, inds=[0]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
-                     variables with only lower bounds:       93
-                variables with lower and upper bounds:        3
-                     variables with only upper bounds:        0
-Total number of equality constraints.................:       94
-Total number of inequality constraints...............:       61
-        inequality constraints with only lower bounds:        1
-   inequality constraints with lower and upper bounds:       60
-        inequality constraints with only upper bounds:        0
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 15
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Exception of type: TOO_FEW_DOF in file &quot;../../src/Interfaces/IpIpoptApplication.cpp&quot; at line 662:
+ Exception message: status != TOO_FEW_DEGREES_OF_FREEDOM evaluated false: Too few degrees of freedom (rethrown)!
 
-                                   (scaled)                 (unscaled)
-Objective...............:   1.3234110395965095e+00    1.3234110395965095e+00
-Dual infeasibility......:   3.6143605402644979e-08    3.6143605402644979e-08
-Constraint violation....:   2.2737367544323207e-14    2.2737367544323207e-14
-Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0924049294871723e-08    9.0924049294871723e-08
-Overall NLP error.......:   9.0924049294871723e-08    9.0924049294871723e-08
-
-
-Number of objective function evaluations             = 16
-Number of objective gradient evaluations             = 16
-Number of equality constraint evaluations            = 16
-Number of inequality constraint evaluations          = 16
-Number of equality constraint Jacobian evaluations   = 16
-Number of inequality constraint Jacobian evaluations = 16
-Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 4.565
-
-EXIT: Optimal Solution Found.
+EXIT: Problem has too few degrees of freedom.
 
 
 Optimization Problem -- Optimization using pyOpt_sparse
@@ -1441,19 +1391,187 @@ Optimization Problem -- Optimization using pyOpt_sparse
 
    Objectives
       Index  Name                               Value
-          0  mission:objectives:fuel     1.323411E+00
+          0  mission:objectives:fuel     0.000000E+00
 
    Variables (c - continuous, i - integer, d - discrete)
       Index  Name                              Type      Lower Bound            Value      Upper Bound     Status
           2  traj.climb.t_initial_0               c     0.000000E+00     0.000000E+00     0.000000E+00         lu
-          3  traj.climb.t_duration_0              c     5.000000E-01     5.000006E-01     1.500000E+00          l
+          3  traj.climb.t_duration_0              c     5.000000E-01     5.000000E-01     1.500000E+00          l
+         20  traj.climb.states:distance_0         c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         21  traj.climb.states:distance_1         c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         22  traj.climb.states:distance_2         c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         23  traj.climb.states:distance_3         c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         24  traj.climb.states:distance_4         c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         25  traj.climb.states:distance_5         c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         26  traj.climb.states:distance_6         c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         27  traj.climb.states:distance_7         c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         28  traj.climb.states:distance_8         c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         29  traj.climb.states:distance_9         c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         30  traj.climb.states:distance_10        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         31  traj.climb.states:distance_11        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         32  traj.climb.states:distance_12        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         33  traj.climb.states:distance_13        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         34  traj.climb.states:distance_14        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         35  traj.cruise.t_duration_0             c     3.169705E-01     3.169705E-01     1.683029E+00          l
+         51  traj.cruise.states:distance_0        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         52  traj.cruise.states:distance_1        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         53  traj.cruise.states:distance_2        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         54  traj.cruise.states:distance_3        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         55  traj.cruise.states:distance_4        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         56  traj.cruise.states:distance_5        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         57  traj.cruise.states:distance_6        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         58  traj.cruise.states:distance_7        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         59  traj.cruise.states:distance_8        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         60  traj.cruise.states:distance_9        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         61  traj.cruise.states:distance_10       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         62  traj.cruise.states:distance_11       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         63  traj.cruise.states:distance_12       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         64  traj.cruise.states:distance_13       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         65  traj.cruise.states:distance_14       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         66  traj.descent.t_duration_0            c     5.000000E-01     5.000000E-01     1.500000E+00          l
+         82  traj.descent.states:distance_0       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         83  traj.descent.states:distance_1       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         84  traj.descent.states:distance_2       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         85  traj.descent.states:distance_3       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         86  traj.descent.states:distance_4       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         87  traj.descent.states:distance_5       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         88  traj.descent.states:distance_6       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         89  traj.descent.states:distance_7       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         90  traj.descent.states:distance_8       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         91  traj.descent.states:distance_9       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         92  traj.descent.states:distance_10      c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         93  traj.descent.states:distance_11      c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         94  traj.descent.states:distance_12      c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         95  traj.descent.states:distance_13      c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         96  traj.descent.states:distance_14      c     0.000000E+00     1.000000E-06     1.000000E+24          l
 
    Constraints (i - inequality, e - equality)
       Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
-        154  traj.descent.throttle[path]                             i   0.000000E+00    5.221349E-07    1.000000E+00         l    9.00000E+100
+          0  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+          1  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+          2  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+          3  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+          4  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+          5  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+          6  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+          7  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+          8  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+          9  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+         10  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+         11  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+         12  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+         13  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+         14  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+         15  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+         16  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+         17  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+         18  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+         19  mission:range                                           e   1.000000E+00    5.246590E-04    1.000000E+00         E    9.00000E+100
+         21  link_climb_mass.mass                                    e   0.000000E+00   -5.040000E-01    0.000000E+00         E    9.00000E+100
+         22  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.416625E-02    0.000000E+00         E    9.00000E+100
+         23  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.290187E-02    0.000000E+00         E    9.00000E+100
+         24  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.174341E-02    0.000000E+00         E    9.00000E+100
+         25  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.342733E-02    0.000000E+00         E    9.00000E+100
+         26  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.172378E-02    0.000000E+00         E    9.00000E+100
+         27  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.066144E-02    0.000000E+00         E    9.00000E+100
+         28  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.428696E-02    0.000000E+00         E    9.00000E+100
+         29  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.374105E-02    0.000000E+00         E    9.00000E+100
+         30  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.386129E-02    0.000000E+00         E    9.00000E+100
+         31  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.015110E-02    0.000000E+00         E    9.00000E+100
+         32  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.047743E-02    0.000000E+00         E    9.00000E+100
+         33  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.099251E-02    0.000000E+00         E    9.00000E+100
+         34  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.035922E-02    0.000000E+00         E    9.00000E+100
+         35  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.042770E-02    0.000000E+00         E    9.00000E+100
+         36  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.054689E-02    0.000000E+00         E    9.00000E+100
+         37  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -1.533828E-02    0.000000E+00         E    9.00000E+100
+         38  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -1.692552E-02    0.000000E+00         E    9.00000E+100
+         39  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -1.908952E-02    0.000000E+00         E    9.00000E+100
+         40  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.037206E-02    0.000000E+00         E    9.00000E+100
+         41  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.677011E-02    0.000000E+00         E    9.00000E+100
+         42  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -5.537116E-02    0.000000E+00         E    9.00000E+100
+         43  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -6.900124E-02    0.000000E+00         E    9.00000E+100
+         44  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -7.746934E-02    0.000000E+00         E    9.00000E+100
+         45  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -8.875504E-02    0.000000E+00         E    9.00000E+100
+         46  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -7.757492E-02    0.000000E+00         E    9.00000E+100
+         47  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -8.308906E-02    0.000000E+00         E    9.00000E+100
+         48  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -9.044768E-02    0.000000E+00         E    9.00000E+100
+         49  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.539785E-02    0.000000E+00         E    9.00000E+100
+         50  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.662540E-02    0.000000E+00         E    9.00000E+100
+         51  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.828864E-02    0.000000E+00         E    9.00000E+100
+         52  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    7.382893E-03    0.000000E+00         E    9.00000E+100
+         53  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    7.369773E-03    0.000000E+00         E    9.00000E+100
+         54  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    7.351938E-03    0.000000E+00         E    9.00000E+100
+         55  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.500335E-02    0.000000E+00         E    9.00000E+100
+         56  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.495089E-02    0.000000E+00         E    9.00000E+100
+         57  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.488078E-02    0.000000E+00         E    9.00000E+100
+         58  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.766604E-02    0.000000E+00         E    9.00000E+100
+         59  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.759756E-02    0.000000E+00         E    9.00000E+100
+         60  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.750855E-02    0.000000E+00         E    9.00000E+100
+         61  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.470444E-02    0.000000E+00         E    9.00000E+100
+         62  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.466272E-02    0.000000E+00         E    9.00000E+100
+         63  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.460751E-02    0.000000E+00         E    9.00000E+100
+         64  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    7.144499E-03    0.000000E+00         E    9.00000E+100
+         65  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    7.136043E-03    0.000000E+00         E    9.00000E+100
+         66  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    7.124548E-03    0.000000E+00         E    9.00000E+100
+         67  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.309092E-02    0.000000E+00         E    9.00000E+100
+         68  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.307513E-02    0.000000E+00         E    9.00000E+100
+         69  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.305334E-02    0.000000E+00         E    9.00000E+100
+         70  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -8.791306E-02    0.000000E+00         E    9.00000E+100
+         71  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -8.784712E-02    0.000000E+00         E    9.00000E+100
+         72  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -8.775605E-02    0.000000E+00         E    9.00000E+100
+         73  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -1.042990E-01    0.000000E+00         E    9.00000E+100
+         74  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -1.042056E-01    0.000000E+00         E    9.00000E+100
+         75  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -1.040766E-01    0.000000E+00         E    9.00000E+100
+         76  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -8.750576E-02    0.000000E+00         E    9.00000E+100
+         77  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -8.743952E-02    0.000000E+00         E    9.00000E+100
+         78  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -8.734804E-02    0.000000E+00         E    9.00000E+100
+         79  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.275559E-02    0.000000E+00         E    9.00000E+100
+         80  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.273968E-02    0.000000E+00         E    9.00000E+100
+         81  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.271771E-02    0.000000E+00         E    9.00000E+100
+         82  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.495142E-03    0.000000E+00         E    9.00000E+100
+         83  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.423682E-03    0.000000E+00         E    9.00000E+100
+         84  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.321006E-03    0.000000E+00         E    9.00000E+100
+         85  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.633531E-03    0.000000E+00         E    9.00000E+100
+         86  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.348910E-03    0.000000E+00         E    9.00000E+100
+         87  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.914355E-03    0.000000E+00         E    9.00000E+100
+         88  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.094449E-03    0.000000E+00         E    9.00000E+100
+         89  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.569265E-03    0.000000E+00         E    9.00000E+100
+         90  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.326178E-03    0.000000E+00         E    9.00000E+100
+         91  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.525209E-03    0.000000E+00         E    9.00000E+100
+         92  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.117140E-03    0.000000E+00         E    9.00000E+100
+         93  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.799090E-03    0.000000E+00         E    9.00000E+100
+         94  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    8.235764E-04    0.000000E+00         E    9.00000E+100
+         95  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    7.641268E-04    0.000000E+00         E    9.00000E+100
+         96  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    6.844861E-04    0.000000E+00         E    9.00000E+100
+         97  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.191414E-02    0.000000E+00         E    9.00000E+100
+         98  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.159049E-02    0.000000E+00         E    9.00000E+100
+         99  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.113329E-02    0.000000E+00         E    9.00000E+100
+        100  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.285946E-02    0.000000E+00         E    9.00000E+100
+        101  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.142034E-02    0.000000E+00         E    9.00000E+100
+        102  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -3.934751E-02    0.000000E+00         E    9.00000E+100
+        103  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.597574E-02    0.000000E+00         E    9.00000E+100
+        104  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.372660E-02    0.000000E+00         E    9.00000E+100
+        105  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.048477E-02    0.000000E+00         E    9.00000E+100
+        106  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -3.316166E-02    0.000000E+00         E    9.00000E+100
+        107  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -3.140955E-02    0.000000E+00         E    9.00000E+100
+        108  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.891377E-02    0.000000E+00         E    9.00000E+100
+        109  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -1.376166E-02    0.000000E+00         E    9.00000E+100
+        110  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -1.331261E-02    0.000000E+00         E    9.00000E+100
+        111  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -1.268412E-02    0.000000E+00         E    9.00000E+100
+        167  traj.descent.throttle[path]                             i   0.000000E+00   -3.395342E-02    1.000000E+00         L    9.00000E+100
+        168  traj.descent.throttle[path]                             i   0.000000E+00   -4.597057E-02    1.000000E+00         L    9.00000E+100
+        169  traj.descent.throttle[path]                             i   0.000000E+00   -4.597057E-02    1.000000E+00         L    9.00000E+100
+        170  traj.descent.throttle[path]                             i   0.000000E+00   -5.902633E-02    1.000000E+00         L    9.00000E+100
+        171  traj.descent.throttle[path]                             i   0.000000E+00   -7.601254E-02    1.000000E+00         L    9.00000E+100
+        172  traj.descent.throttle[path]                             i   0.000000E+00   -8.093719E-02    1.000000E+00         L    9.00000E+100
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
+  traj.climb.t_initial, inds=[0]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 
+Aviary run failed. See the dashboard for more details.
 </pre></div>
 </div>
 <div class="output text_html">

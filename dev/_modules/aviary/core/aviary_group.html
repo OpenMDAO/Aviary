@@ -989,7 +989,6 @@
 
         <span class="c1"># This function sets all the following defaults if they were not already set:</span>
         <span class="c1"># self.pre_mission_info, self_post_mission_info,</span>
-        <span class="c1"># self.require_range_residual, self.target_range</span>
         <span class="c1"># Other specific self.*** are defined in here as well that are specific to each builder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">configurator</span><span class="o">.</span><span class="n">initial_guesses</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -1857,27 +1856,52 @@
 <span class="sd">        - the initial altitude of the aircraft with flaps extended is constrained to be 400 ft</span>
 
 <span class="sd">        If solving a sizing problem, a design variable is added for the gross mass of the aircraft,</span>
-<span class="sd">        and another for the gross mass of the aircraft computed during the mission. A constraint is</span>
-<span class="sd">        also added to ensure that the residual range is zero.</span>
+<span class="sd">        and another for the gross mass of the aircraft computed during the mission.</span>
 
 <span class="sd">        If solving an OFF_DESIGN_MIN_FUEL problem, only a design variable for the gross mass of the aircraft</span>
-<span class="sd">        computed during the mission is added. A constraint is also added to ensure that the residual</span>
-<span class="sd">        range is zero.</span>
+<span class="sd">        computed during the mission is added.</span>
 
 <span class="sd">        In all cases, a design variable is added for the final cruise mass of the aircraft, with no</span>
 <span class="sd">        upper bound, and a residual mass constraint is added to ensure that the mass balances.</span>
+
+<span class="sd">        In all cases, except for OFF_DESIGN_MAX_RANGE, the final Mission.RANGE is constrained to the</span>
+<span class="sd">        value specified in &#39;target_range&#39; in the phase_info.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">verbosity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_override_verbosity</span><span class="p">(</span><span class="n">verbosity</span><span class="p">)</span>
 
         <span class="n">all_subsystems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsystems</span>
 
-        <span class="c1"># loop through all_subsystems and call `get_design_vars` on each subsystem</span>
+        <span class="c1"># Add all design variables requested by the subsystem builders.</span>
         <span class="k">for</span> <span class="n">subsystem</span> <span class="ow">in</span> <span class="n">all_subsystems</span><span class="p">:</span>
             <span class="n">dv_dict</span> <span class="o">=</span> <span class="n">subsystem</span><span class="o">.</span><span class="n">get_design_vars</span><span class="p">(</span><span class="n">aviary_inputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">dv_name</span><span class="p">,</span> <span class="n">dv_dict</span> <span class="ow">in</span> <span class="n">dv_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">dv_name</span><span class="p">,</span> <span class="o">**</span><span class="n">dv_dict</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_method</span> <span class="ow">is</span> <span class="n">SOLVED_2DOF</span><span class="p">:</span>  <span class="c1"># TODO: to be removed soon</span>
+        <span class="c1"># Constrain Mission.RANGE if requested.</span>
+        <span class="k">if</span> <span class="s1">&#39;target_range&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_mission_info</span><span class="p">:</span>
+            <span class="n">target_range</span> <span class="o">=</span> <span class="n">wrapped_convert_units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">post_mission_info</span><span class="p">[</span><span class="s1">&#39;target_range&#39;</span><span class="p">],</span> <span class="s1">&#39;NM&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MAX_RANGE</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Disabling range constraint for max range mission.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span>
+                    <span class="n">Mission</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span>
+                    <span class="n">equals</span><span class="o">=</span><span class="n">target_range</span><span class="p">,</span>
+                    <span class="n">ref</span><span class="o">=</span><span class="n">target_range</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">des_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span> <span class="ow">and</span> <span class="n">des_range</span> <span class="o">!=</span> <span class="n">target_range</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;Design range </span><span class="si">{</span><span class="n">des_range</span><span class="si">}</span><span class="s1"> differs from target_range </span><span class="si">{</span><span class="n">target_range</span><span class="si">}</span><span class="s1"> (NM).&#39;</span>
+                    <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Sizing mission does not include a target range.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># TODO: Solved 2dof is a special case that doesn&#39;t support off design.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_method</span> <span class="ow">is</span> <span class="n">SOLVED_2DOF</span><span class="p">:</span>
             <span class="n">optimize_mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_mission_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;optimize_mass&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">optimize_mass</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span>
@@ -1887,117 +1911,106 @@
                     <span class="n">upper</span><span class="o">=</span><span class="mf">900.0e3</span><span class="p">,</span>
                     <span class="n">ref</span><span class="o">=</span><span class="mf">175.0e3</span><span class="p">,</span>
                 <span class="p">)</span>
+            <span class="k">return</span>
 
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_method</span> <span class="ow">in</span> <span class="p">(</span>
-            <span class="n">ENERGY_STATE</span><span class="p">,</span>
-            <span class="n">TWO_DEGREES_OF_FREEDOM</span><span class="p">,</span>
-        <span class="p">):</span>  <span class="c1"># TODO: This becomes generic as soon as SOLVED_2DOF is removed</span>
-            <span class="c1"># vehicle sizing problem</span>
-            <span class="c1"># size the vehicle (via design GTOW) to meet a target range using all fuel</span>
-            <span class="c1"># capacity</span>
-            <span class="k">if</span> <span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span>
-                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span>
-                    <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
-                    <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
-                    <span class="n">ref</span><span class="o">=</span><span class="mf">175e3</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span>
-                    <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span>
-                    <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
-                    <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
-                    <span class="n">ref</span><span class="o">=</span><span class="mf">175e3</span><span class="p">,</span>
-                <span class="p">)</span>
+        <span class="c1"># Add mass balance design variables and constraints for each problem type.</span>
+        <span class="k">if</span> <span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span>
+                <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+                <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+                <span class="n">ref</span><span class="o">=</span><span class="mf">175e3</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span>
+                <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span>
+                <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+                <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+                <span class="n">ref</span><span class="o">=</span><span class="mf">175e3</span><span class="p">,</span>
+            <span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-                    <span class="s1">&#39;gtow_constraint&#39;</span><span class="p">,</span>
-                    <span class="n">om</span><span class="o">.</span><span class="n">EQConstraintComp</span><span class="p">(</span>
-                        <span class="s1">&#39;GTOW&#39;</span><span class="p">,</span>
-                        <span class="n">eq_units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
-                        <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                        <span class="n">add_constraint</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="p">),</span>
-                    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
-                        <span class="p">(</span><span class="s1">&#39;lhs:GTOW&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
-                        <span class="p">(</span><span class="s1">&#39;rhs:GTOW&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
-                    <span class="p">],</span>
-                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
+                <span class="s1">&#39;gtow_constraint&#39;</span><span class="p">,</span>
+                <span class="n">om</span><span class="o">.</span><span class="n">EQConstraintComp</span><span class="p">(</span>
+                    <span class="s1">&#39;GTOW&#39;</span><span class="p">,</span>
+                    <span class="n">eq_units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+                    <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">add_constraint</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">(</span><span class="s1">&#39;lhs:GTOW&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;rhs:GTOW&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
+                <span class="p">],</span>
+            <span class="p">)</span>
 
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">require_range_residual</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">RANGE_RESIDUAL</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MIN_FUEL</span><span class="p">:</span>
+            <span class="c1"># target range problem</span>
+            <span class="c1"># fixed vehicle (design GTOW) but variable actual GTOW for off-design</span>
+            <span class="c1"># get the design gross mass and set as the upper bound for the gross mass design variable</span>
+            <span class="n">MTOW</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span>
+                <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span>
+                <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+                <span class="n">upper</span><span class="o">=</span><span class="n">MTOW</span><span class="p">,</span>
+                <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+                <span class="n">ref</span><span class="o">=</span><span class="n">MTOW</span><span class="p">,</span>
+            <span class="p">)</span>
 
-            <span class="k">elif</span> <span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MIN_FUEL</span><span class="p">:</span>
-                <span class="c1"># target range problem</span>
-                <span class="c1"># fixed vehicle (design GTOW) but variable actual GTOW for off-design</span>
-                <span class="c1"># get the design gross mass and set as the upper bound for the gross mass design variable</span>
-                <span class="n">MTOW</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span>
-                    <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span>
-                    <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
-                    <span class="n">upper</span><span class="o">=</span><span class="n">MTOW</span><span class="p">,</span>
-                    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
-                    <span class="n">ref</span><span class="o">=</span><span class="n">MTOW</span><span class="p">,</span>
-                <span class="p">)</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">RANGE_RESIDUAL</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-
-            <span class="k">elif</span> <span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MAX_RANGE</span><span class="p">:</span>
-                <span class="c1"># fixed vehicle gross mass aviary finds optimal trajectory and maximum range</span>
-                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span>
-                        <span class="s1">&#39;No additional aircraft design variables added for OFF_DESIGN_MAX_RANGE missions&#39;</span>
-                    <span class="p">)</span>
-
-            <span class="k">elif</span> <span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">MULTI_MISSION</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span>
-                    <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span>
-                    <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
-                    <span class="n">upper</span><span class="o">=</span><span class="mf">900e3</span><span class="p">,</span>
-                    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
-                    <span class="n">ref</span><span class="o">=</span><span class="mf">175e3</span><span class="p">,</span>
+        <span class="k">elif</span> <span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MAX_RANGE</span><span class="p">:</span>
+            <span class="c1"># fixed vehicle gross mass aviary finds optimal trajectory and maximum range</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s1">&#39;No additional aircraft design variables added for OFF_DESIGN_MAX_RANGE missions&#39;</span>
                 <span class="p">)</span>
 
-                <span class="c1"># TODO: RANGE_RESIDUAL constraint should be added based on what the</span>
-                <span class="c1"># user sets as the objective. if Objective is not range or Mission.RANGE,</span>
-                <span class="c1"># the range constriant should be added to make target rage = summary range</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">RANGE_RESIDUAL</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_GENERAL</span><span class="p">:</span>
+            <span class="c1"># No mass variables are added.</span>
+            <span class="k">pass</span>
 
-                <span class="c1"># We must ensure that design.gross_mass is greater than  Mission.GROSS_MASS</span>
-                <span class="c1"># and this must hold true for each of the different missions that is flown the</span>
-                <span class="c1"># result will be the design.gross_mass should be equal to the</span>
-                <span class="c1"># Mission.GROSS_MASS of the heaviest mission</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-                    <span class="s1">&#39;GROSS_MASS_constraint&#39;</span><span class="p">,</span>
-                    <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
-                        <span class="s1">&#39;gross_mass_resid = design_mass - actual_mass&#39;</span><span class="p">,</span>
-                        <span class="n">design_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg&#39;</span><span class="p">},</span>
-                        <span class="n">actual_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg&#39;</span><span class="p">},</span>
-                        <span class="n">gross_mass_resid</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg&#39;</span><span class="p">},</span>
-                    <span class="p">),</span>
-                    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
-                        <span class="p">(</span><span class="s1">&#39;design_mass&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
-                        <span class="p">(</span><span class="s1">&#39;actual_mass&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
-                    <span class="p">],</span>
-                    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;gross_mass_resid&#39;</span><span class="p">],</span>
-                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">MULTI_MISSION</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span>
+                <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span>
+                <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+                <span class="n">upper</span><span class="o">=</span><span class="mf">900e3</span><span class="p">,</span>
+                <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+                <span class="n">ref</span><span class="o">=</span><span class="mf">175e3</span><span class="p">,</span>
+            <span class="p">)</span>
 
-                <span class="c1"># ref scales gross_mass_resid = design_mass - actual_mass to O(1).</span>
-                <span class="c1"># For fleet missions much lighter than design, residuals can be</span>
-                <span class="c1"># 10-20% of design mass. GROSS_MASS/4 puts scaled values ~0.2-0.6.</span>
-                <span class="n">_gm_ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">&#39;kg&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.0</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;gross_mass_resid&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">_gm_ref</span><span class="p">)</span>
+            <span class="c1"># We must ensure that design.gross_mass is greater than  Mission.GROSS_MASS</span>
+            <span class="c1"># and this must hold true for each of the different missions that is flown the</span>
+            <span class="c1"># result will be the design.gross_mass should be equal to the</span>
+            <span class="c1"># Mission.GROSS_MASS of the heaviest mission</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
+                <span class="s1">&#39;GROSS_MASS_constraint&#39;</span><span class="p">,</span>
+                <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
+                    <span class="s1">&#39;gross_mass_resid = design_mass - actual_mass&#39;</span><span class="p">,</span>
+                    <span class="n">design_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg&#39;</span><span class="p">},</span>
+                    <span class="n">actual_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg&#39;</span><span class="p">},</span>
+                    <span class="n">gross_mass_resid</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg&#39;</span><span class="p">},</span>
+                <span class="p">),</span>
+                <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">(</span><span class="s1">&#39;design_mass&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s1">&#39;actual_mass&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
+                <span class="p">],</span>
+                <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;gross_mass_resid&#39;</span><span class="p">],</span>
+            <span class="p">)</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_method</span> <span class="ow">is</span> <span class="n">TWO_DEGREES_OF_FREEDOM</span><span class="p">:</span>
-                <span class="c1"># TODO: This should be moved into the problem configurator b/c it&#39;s 2DOF specific</span>
-                <span class="c1"># problem formulation to make the trajectory work</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">ASCENT_T_INITIAL</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">30.0</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">ASCENT_DURATION</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;tau_gear&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;tau_flaps&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;h_fit.h_init_gear&#39;</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;h_fit.h_init_flaps&#39;</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mf">400.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">400.0</span><span class="p">)</span></div>
+            <span class="c1"># ref scales gross_mass_resid = design_mass - actual_mass to O(1).</span>
+            <span class="c1"># For fleet missions much lighter than design, residuals can be</span>
+            <span class="c1"># 10-20% of design mass. GROSS_MASS/4 puts scaled values ~0.2-0.6.</span>
+            <span class="n">_gm_ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">&#39;kg&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;gross_mass_resid&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">_gm_ref</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_method</span> <span class="ow">is</span> <span class="n">TWO_DEGREES_OF_FREEDOM</span><span class="p">:</span>
+            <span class="c1"># TODO: This should be moved into the problem configurator b/c it&#39;s 2DOF specific</span>
+            <span class="c1"># problem formulation to make the trajectory work</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">ASCENT_T_INITIAL</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">30.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">ASCENT_DURATION</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;tau_gear&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="s1">&#39;tau_flaps&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;h_fit.h_init_gear&#39;</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">50.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="s1">&#39;h_fit.h_init_flaps&#39;</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mf">400.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">400.0</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AviaryGroup.set_initial_guesses">
