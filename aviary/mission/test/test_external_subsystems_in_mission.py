@@ -311,6 +311,13 @@ class TestExternalSubsystems(unittest.TestCase):
         # If everything is working correctly, we can setup and run without any errors.
         prob.run_model()
 
+        # Low speed areo at the top of the ODE.
+        has_new_aero = hasattr(prob.model.traj.phases.groundroll.rhs_all, 'new_aero')
+        self.assertTrue(has_new_aero)
+
+        # Cruise aero in the solver subsystem.
+        has_new_aero = hasattr(prob.model.traj.phases.cruise.rhs_all.solver_sub, 'new_aero')
+        self.assertTrue(has_new_aero)
 
 class ExternNoSolve(om.ExplicitComponent):
     """This component should not have a solver above it."""
