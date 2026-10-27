@@ -1,10 +1,10 @@
 import openmdao.api as om
 from openmdao.components.ks_comp import KSfunction
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class LandingMass(om.ExplicitComponent):
@@ -43,6 +43,7 @@ class TotalLandingGearMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
@@ -74,12 +75,16 @@ class TotalLandingGearMass(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        gravity = self.options[Mission.GRAVITY]
+
         wing_loc = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
         c_gear_mass = inputs[Aircraft.LandingGear.MASS_COEFFICIENT]
-        landing_wt = inputs[Aircraft.Design.TOUCHDOWN_MASS_MAX] * GRAV_ENGLISH_LBM
+        landing_mass = inputs[Aircraft.Design.TOUCHDOWN_MASS_MAX]
         clearance_ratio = inputs[Aircraft.Nacelle.CLEARANCE_RATIO]
         nacelle_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
         CK12 = inputs[Aircraft.LandingGear.TOTAL_MASS_SCALER]
+
+        landing_wt = mass_to_force_english((landing_mass, 'lbm'), gravity)
 
         # When there are multiple engine types, use the largest required clearance
         # TODO this does not match variable description (e.g. clearance ratio of 1.0 is
@@ -105,14 +110,21 @@ class TotalLandingGearMass(om.ExplicitComponent):
 
         landing_gear_wt = c_gear_mass_modified * landing_wt
 
-        outputs[Aircraft.LandingGear.TOTAL_MASS] = CK12 * landing_gear_wt / GRAV_ENGLISH_LBM
+        outputs[Aircraft.LandingGear.TOTAL_MASS] = (
+            CK12 * landing_gear_wt
+        )  # implied 1 lbf -> 1 lbm conversion at standard Earth gravity
 
     def compute_partials(self, inputs, J):
+        gravity = self.options[Mission.GRAVITY]
+
         c_gear_mass = inputs[Aircraft.LandingGear.MASS_COEFFICIENT]
-        landing_wt = inputs[Aircraft.Design.TOUCHDOWN_MASS_MAX] * GRAV_ENGLISH_LBM
+        landing_mass = inputs[Aircraft.Design.TOUCHDOWN_MASS_MAX]
         wing_loc = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
         clearance_ratio = inputs[Aircraft.Nacelle.CLEARANCE_RATIO]
         nacelle_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
+
+        landing_wt = mass_to_force_english((landing_mass, 'lbm'), gravity)
+        dforce_dmass = mass_to_force_english_derivative(gravity)
 
         val = (1.0 + clearance_ratio) * nacelle_diam
         gear_height_temp = KSfunction.compute(val, 50.0)
@@ -155,25 +167,19 @@ class TotalLandingGearMass(om.ExplicitComponent):
             * sigmoidX(wing_loc, 0.005, -0.01 / 320.0)
         )
 
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.MASS_COEFFICIENT] = (
-            dLGW_dCGW / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.MASS_COEFFICIENT] = dLGW_dCGW
 
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.Nacelle.CLEARANCE_RATIO] = (
-            dLGW_dCR / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.Nacelle.CLEARANCE_RATIO] = dLGW_dCR
 
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.Nacelle.AVG_DIAMETER] = (
-            dLGW_dND / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.Nacelle.AVG_DIAMETER] = dLGW_dND
 
         J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.Design.TOUCHDOWN_MASS_MAX] = (
             c_gear_mass_modified
-        )
+        ) * dforce_dmass
 
         J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.TOTAL_MASS_SCALER] = (
             c_gear_mass_modified * landing_wt
-        ) / GRAV_ENGLISH_LBM
+        )
 
 
 class LandingGearMass(om.ExplicitComponent):

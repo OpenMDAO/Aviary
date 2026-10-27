@@ -5,7 +5,6 @@ equipment.
 
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -42,14 +41,12 @@ class PassengerServiceMass(om.ExplicitComponent):
 
         passenger_service_mass_scaler = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER]
 
-        passenger_service_weight = (
+        passenger_service_mass = (
             (5.164 * first_class_count + 3.846 * business_class_count + 2.529 * economy_class_count)
             * (design_range / max_mach) ** 0.225
         ) * passenger_service_mass_scaler
 
-        outputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = (
-            passenger_service_weight / GRAV_ENGLISH_LBM
-        )
+        outputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = passenger_service_mass
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         first_class_count = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
@@ -70,13 +67,12 @@ class PassengerServiceMass(om.ExplicitComponent):
             * 0.225
             * ((design_range / max_mach) ** -0.775)
             / max_mach
-            / GRAV_ENGLISH_LBM
         )
 
         J[
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER,
-        ] = (passenger_service_mass_ini * (design_range / max_mach) ** 0.225) / GRAV_ENGLISH_LBM
+        ] = passenger_service_mass_ini * (design_range / max_mach) ** 0.225
 
         J[
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
@@ -87,7 +83,7 @@ class PassengerServiceMass(om.ExplicitComponent):
             * (design_range / max_mach) ** -0.775
             * (design_range / max_mach**2)
             * passenger_service_mass_scaler
-        ) / GRAV_ENGLISH_LBM
+        )
 
 
 class AltPassengerServiceMass(om.ExplicitComponent):
@@ -113,11 +109,9 @@ class AltPassengerServiceMass(om.ExplicitComponent):
 
         passenger_service_mass_scaler = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER]
 
-        passenger_service_weight = 31.7 * passenger_count * passenger_service_mass_scaler
+        passenger_service_mass = 31.7 * passenger_count * passenger_service_mass_scaler
 
-        outputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = (
-            passenger_service_weight / GRAV_ENGLISH_LBM
-        )
+        outputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = passenger_service_mass
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         passenger_count = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
@@ -125,4 +119,4 @@ class AltPassengerServiceMass(om.ExplicitComponent):
         J[
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER,
-        ] = 31.7 * passenger_count / GRAV_ENGLISH_LBM
+        ] = 31.7 * passenger_count

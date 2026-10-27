@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -119,13 +118,12 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         fuse_max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         fuse_max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
 
-        weight = (
+        mass = (
             127.0 * flight_crew_count
             + 112.0 * first_class_count
             + 78.0 * business_class_count
             + 44.0 * economy_class_count
         )
-        # outputs[Aircraft.Furnishings.MASS] = weight / GRAV_ENGLISH_LBM
 
         if not self.options[Aircraft.Fuselage.MILITARY_CARGO_FLOOR]:
             acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
@@ -133,12 +131,12 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
 
             cos = np.cos(np.pi / 180 * (inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]))
 
-            weight += 2.6 * (
+            mass += 2.6 * (
                 (acabin / fuse_max_width) * (fuse_max_width + fuse_max_height * nbay)
                 + (fuse_max_width * (1.0 + 1.0 / cos) * fuse_max_height)
             )
 
-        outputs[Aircraft.Furnishings.MASS] = weight * scaler / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Furnishings.MASS] = mass * scaler
 
     def compute_partials(self, inputs, J):
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
@@ -153,7 +151,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
             + 112.0 * first_class_count
             + 78.0 * business_class_count
             + 44.0 * economy_class_count
-        ) / GRAV_ENGLISH_LBM
+        )
 
         if self.options[Aircraft.Fuselage.MILITARY_CARGO_FLOOR]:
             J[Aircraft.Furnishings.MASS, Aircraft.Fuselage.CABIN_AREA] = 0.0
@@ -175,18 +173,14 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
             fuse_max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
             cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
 
-            J[Aircraft.Furnishings.MASS, Aircraft.Furnishings.MASS_SCALER] += (
-                2.6
-                * (
-                    (acabin / fuse_max_width) * (fuse_max_width + fuse_max_height * nbay)
-                    + (fuse_max_width * (1.0 + 1.0 / cos) * fuse_max_height)
-                )
-                / GRAV_ENGLISH_LBM
+            J[Aircraft.Furnishings.MASS, Aircraft.Furnishings.MASS_SCALER] += 2.6 * (
+                (acabin / fuse_max_width) * (fuse_max_width + fuse_max_height * nbay)
+                + (fuse_max_width * (1.0 + 1.0 / cos) * fuse_max_height)
             )
 
             J[Aircraft.Furnishings.MASS, Aircraft.Fuselage.CABIN_AREA] = (
                 2.6 * scaler * (fuse_max_width + fuse_max_height * nbay) / fuse_max_width
-            ) / GRAV_ENGLISH_LBM
+            )
 
             J[Aircraft.Furnishings.MASS, Aircraft.Fuselage.MAX_WIDTH] = (
                 2.6
@@ -195,21 +189,21 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
                     -cabin_area * fuse_max_height * nbay / (fuse_max_width * fuse_max_width)
                     + (1.0 + 1.0 / cos) * fuse_max_height
                 )
-            ) / GRAV_ENGLISH_LBM
+            )
 
             J[Aircraft.Furnishings.MASS, Aircraft.Fuselage.MAX_HEIGHT] = (
                 2.6
                 * scaler
                 * ((cabin_area / fuse_max_width) * nbay + fuse_max_width * (1.0 + 1.0 / cos))
-            ) / GRAV_ENGLISH_LBM
+            )
 
             J[Aircraft.Furnishings.MASS, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = (
                 2.6 * scaler * fuse_max_width * fuse_max_height * tan / cos / (180 / np.pi)
-            ) / GRAV_ENGLISH_LBM
+            )
 
             J[Aircraft.Furnishings.MASS, Aircraft.BWB.NUM_BAYS] = (
                 2.6 * scaler * (acabin / fuse_max_width) * (fuse_max_height)
-            ) / GRAV_ENGLISH_LBM
+            )
 
 
 class AltFurnishingsGroupMassBase(om.ExplicitComponent):

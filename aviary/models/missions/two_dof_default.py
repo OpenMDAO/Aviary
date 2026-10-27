@@ -86,8 +86,8 @@ phase_info = {
             'altitude_final': (500, 'ft'),
             'altitude_constraint_ref': (500, 'ft'),
             'flight_path_angle_bounds': ((-10.0, 20.0), 'deg'),
-            'flight_path_angle_ref': (57.2958, 'deg'),
-            'flight_path_angle_defect_ref': (57.2958, 'deg'),
+            'flight_path_angle_ref': (1, 'rad'),  # find better ref
+            'flight_path_angle_defect_ref': (1, 'rad'),
             'flight_path_angle_initial': (0.0, 'deg'),
             'pitch_constraint_bounds': ((0.0, 15.0), 'deg'),
             'pitch_constraint_ref': (15.0, 'deg'),
