@@ -16,8 +16,8 @@ def generate_drag_report(prob, aero_builder):
     ----------
     prob : AivaryProblem
         The problem to report.
-    aero_builder : CoreAerodynamicsBuilder
-        The builder that is generating this report.
+    aero_builder: SubsystemBuilder
+        The core aerodynamics builder used to generate the report.
 
     Returns
     -------
