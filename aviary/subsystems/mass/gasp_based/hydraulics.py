@@ -43,8 +43,8 @@ class HydraulicsMass(om.ExplicitComponent):
         )
 
     def compute_partials(self, inputs, J):
-        landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS]
-        control_wt = inputs[Aircraft.Controls.MASS]
+        landing_gear_mass = inputs[Aircraft.LandingGear.TOTAL_MASS]
+        control_mass = inputs[Aircraft.Controls.MASS]
         flight_control_mass_coeff = inputs[Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT]
         gear_mass_coeff = inputs[Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT]
 
@@ -53,8 +53,8 @@ class HydraulicsMass(om.ExplicitComponent):
         J[Aircraft.Hydraulics.MASS, Aircraft.LandingGear.TOTAL_MASS] = gear_mass_coeff * gear_val
         J[Aircraft.Hydraulics.MASS, Aircraft.Controls.MASS] = flight_control_mass_coeff
         J[Aircraft.Hydraulics.MASS, Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT] = (
-            control_wt
+            control_mass
         )
         J[Aircraft.Hydraulics.MASS, Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT] = (
-            landing_gear_wt * gear_val
+            landing_gear_mass * gear_val
         )

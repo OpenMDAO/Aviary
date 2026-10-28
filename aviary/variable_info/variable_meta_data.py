@@ -5335,7 +5335,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.CHOOSE_FOLD_LOCATION,
+    Aircraft.Wing.CHOOSE_FOLD_LOCATION,  # TODO this variable name is highly misleading
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='unitless',
@@ -7122,25 +7122,6 @@ add_meta_data(
     '(within acceptable tolerance)',
 )
 
-add_meta_data(
-    Mission.Constraints.RANGE_RESIDUAL,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='NM',
-    desc='residual to make sure aircraft range is equal to the targeted '
-    'range, value should be zero at convergence (within acceptable '
-    'tolerance)',
-)
-
-add_meta_data(
-    Mission.Constraints.RANGE_RESIDUAL_RESERVE,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='NM',
-    desc='residual to make sure aircraft reserve mission range is equal to the targeted '
-    'range, value should be zero at convergence (within acceptable '
-    'tolerance)',
-)
 
 #  _                            _   _
 # | |                          | | (_)
