@@ -901,6 +901,25 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
                 Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, pax_mass_with_bag, 'lbm'
             )
 
+        if (
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS in aviary_options
+            and aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, 'lbm')
+            == 0
+        ):
+            if verbosity >= Verbosity.VERBOSE:
+                warnings.warn(
+                    'Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS is set to 0 lbm by user.'
+                )
+        elif (
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS not in aviary_options
+            or aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, 'lbm') <= 0
+        ):
+            aviary_options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, 200.0, 'lbm')
+            if verbosity >= Verbosity.VERBOSE:
+                warnings.warn(
+                    'Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS is set to 200.0 lbm.'
+                )
+
         # calculate and check total payload
         # NOTE this is only used for error messaging, the calculations for analysis are subsystems/mass/gasp_based
         # No actual "preprocessing" happens here - a simple error message might be better suited
@@ -1032,23 +1051,32 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
             )
 
         if (
+            Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW in aviary_options
+            and aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW, 'lbm') == 0
+        ):
+            if verbosity >= Verbosity.VERBOSE:
+                warnings.warn('Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW is set to 0 lbm by user.')
+        elif (
             Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW not in aviary_options
-            or aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW, 'lbm') <= 0
+            or aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW, 'lbm') < 0
         ):
             aviary_options.set_val(Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW, 225.0, 'lbm')
+            if verbosity >= Verbosity.VERBOSE:
+                warnings.warn('Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW is set to 225.0 lbm.')
+
         if (
+            Aircraft.CrewPayload.MASS_PER_PASSENGER in aviary_options
+            and aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 'lbm') == 0
+        ):
+            if verbosity >= Verbosity.VERBOSE:
+                warnings.warn('Aircraft.CrewPayload.MASS_PER_PASSENGER is set to 0 lbm by user.')
+        elif (
             Aircraft.CrewPayload.MASS_PER_PASSENGER not in aviary_options
-            or aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 'lbm') <= 0
+            or aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 'lbm') < 0
         ):
             aviary_options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 165.0, 'lbm')
-
-    # Process GASP based crew variables
-    if mass_method == LegacyCode.GASP:
-        if (
-            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS not in aviary_options
-            or aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, 'lbm') <= 0
-        ):
-            aviary_options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, 200.0, 'lbm')
+            if verbosity >= Verbosity.VERBOSE:
+                warnings.warn('Aircraft.CrewPayload.MASS_PER_PASSENGER is set to 165.0 lbm.')
 
     return aviary_options
 
