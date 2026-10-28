@@ -75,7 +75,7 @@ class AviaryGroup(om.Group):
         self.engine_models = []
         self.main_phases = []
         self.reserve_phases = []
-        self.subsystem_builders= []
+        self.subsystem_builders = []
 
         self.aviary_inputs = None
         self.meta_data = None
@@ -529,7 +529,7 @@ class AviaryGroup(om.Group):
             meta_data=self.meta_data,
         )
 
-        subsystems = self.subsystem_builders= [prop, geom, energy, mass, aero, perf]
+        subsystems = self.subsystem_builders = [prop, geom, energy, mass, aero, perf]
         subsystems.extend(self.external_subsystems)
 
         self.ode_args = {
