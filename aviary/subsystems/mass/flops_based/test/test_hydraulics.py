@@ -1,7 +1,6 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
@@ -74,49 +73,6 @@ class TransportHydraulicsGroupMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
-class TransportHydraulicsGroupMassTest2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.subsystems.mass.flops_based.hydraulics as hydraulics
-
-        hydraulics.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.subsystems.mass.flops_based.hydraulics as hydraulics
-
-        hydraulics.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case(self):
-        prob = om.Problem()
-
-        inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
-
-        options = {
-            Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES: inputs.get_val(
-                Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES
-            ),
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
-                Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
-            ),
-        }
-
-        prob.model.add_subsystem(
-            'hydraulics',
-            TransportHydraulicsGroupMass(**options),
-            promotes_outputs=['*'],
-            promotes_inputs=['*'],
-        )
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Fuselage.PLANFORM_AREA, 1500.0, 'ft**2')
-        prob.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 5000.0, 'psi')
-        prob.set_val(Aircraft.Wing.AREA, 1000.0, 'ft**2')
-        prob.set_val(Aircraft.Design.MAX_MACH, 0.9, 'unitless')
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
 @use_tempdirs
 class AltHydraulicsGroupMassTest(unittest.TestCase):
     """Tests alternate hydraulics mass calculation."""
@@ -151,34 +107,6 @@ class AltHydraulicsGroupMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
-
-
-class AltHydraulicsGroupMassTest2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.subsystems.mass.flops_based.hydraulics as hydraulics
-
-        hydraulics.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.subsystems.mass.flops_based.hydraulics as hydraulics
-
-        hydraulics.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case(self):
-        prob = om.Problem()
-        prob.model.add_subsystem(
-            'hydraulics', AltHydraulicsGroupMass(), promotes_outputs=['*'], promotes_inputs=['*']
-        )
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Wing.AREA, 10.0, 'ft**2')
-        prob.set_val(Aircraft.HorizontalTail.WETTED_AREA, 10.0, 'ft**2')
-        prob.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.1, 'unitless')
-        prob.set_val(Aircraft.VerticalTail.AREA, 10.0, 'ft**2')
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 @use_tempdirs

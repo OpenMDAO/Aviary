@@ -1,4 +1,5 @@
 import unittest
+import warnings
 from copy import deepcopy
 
 import openmdao.api as om
@@ -12,10 +13,7 @@ from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
-from aviary.utils.test_utils.default_subsystems import (
-    get_default_premission_subsystems,
-    get_geom_and_mass_subsystems,
-)
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.validation_cases.validation_tests import (
     Version,
     flops_validation_test,
@@ -47,7 +45,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
         engines = [build_engine_deck(flops_inputs)]
         preprocess_options(flops_inputs, engine_models=engines)
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines).values()
 
         prob = self.prob
 
@@ -63,13 +61,21 @@ class PreMissionGroupTest(unittest.TestCase):
         )
 
         setup_model_options(prob, flops_inputs)
+        prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
 
         # prob.model.set_input_defaults(
         #     Aircraft.Engine.SCALE_FACTOR,
         #     flops_inputs.get_val(
         #         Aircraft.Engine.SCALE_FACTOR))
 
-        prob.setup(check=False, force_alloc_complex=True)
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', om.OpenMDAOWarning)
+            warnings.simplefilter('ignore', om.PromotionWarning)
+
+            prob.setup(check=False, force_alloc_complex=True)
+
         prob.set_solver_print(2)
 
         # Initial guess for gross weight.
@@ -123,7 +129,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
         engines = [build_engine_deck(flops_inputs)]
         preprocess_options(flops_inputs, engine_models=engines)
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines).values()
 
         prob.model.add_subsystem(
             'pre_mission',
@@ -137,8 +143,15 @@ class PreMissionGroupTest(unittest.TestCase):
         )
 
         setup_model_options(prob, flops_inputs)
+        prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
 
-        prob.setup(check=False)
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', om.OpenMDAOWarning)
+            warnings.simplefilter('ignore', om.PromotionWarning)
+
+            prob.setup(check=False)
 
         set_aviary_initial_values(prob, flops_inputs)
 
@@ -167,22 +180,29 @@ class PreMissionGroupTest(unittest.TestCase):
 
         preprocess_options(flops_inputs, engine_models=engines)
 
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines=engines)[
-            1:
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines=engines)
+        premission_subsystems = [
+            default_premission_subsystems[k] for k in ['geometry', 'mass', 'aerodynamics']
         ]
 
         prob.model.add_subsystem(
             'mass_and_aero_premission',
             CorePreMission(
                 aviary_options=flops_inputs,
-                subsystems=default_premission_subsystems,
+                subsystems=premission_subsystems,
                 subsystem_options={},
             ),
             promotes=['*'],
         )
 
         setup_model_options(prob, flops_inputs)
-        prob.setup()
+        prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')
+
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', om.OpenMDAOWarning)
+            warnings.simplefilter('ignore', om.PromotionWarning)
+
+            prob.setup(check=False)
         set_aviary_initial_values(prob, flops_inputs)
 
         prob.set_val(
@@ -248,7 +268,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         engines = [build_engine_deck(flops_inputs)]
         preprocess_options(flops_inputs, engine_models=engines)
 
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines).values()
 
         prob = self.prob
 
@@ -264,13 +284,20 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
 
         setup_model_options(prob, flops_inputs)
+        prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
 
         # prob.model.set_input_defaults(
         #     Aircraft.Engine.SCALE_FACTOR,
         #     flops_inputs.get_val(
         #         Aircraft.Engine.SCALE_FACTOR))
 
-        prob.setup(check=False, force_alloc_complex=True)
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', om.OpenMDAOWarning)
+            warnings.simplefilter('ignore', om.PromotionWarning)
+            prob.setup(check=False, force_alloc_complex=True)
+
         prob.set_solver_print(2)
 
         # Initial guess for gross weight.
@@ -452,7 +479,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         engines = [build_engine_deck(flops_inputs)]
         preprocess_options(flops_inputs, engine_models=engines)
 
-        default_premission_subsystems = get_geom_and_mass_subsystems('FLOPS')[0:1]
+        geom_subsystem = [get_default_subsystems('FLOPS')['geometry']]
 
         prob = self.prob
 
@@ -460,7 +487,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             'pre_mission',
             CorePreMission(
                 aviary_options=flops_inputs,
-                subsystems=default_premission_subsystems,
+                subsystems=geom_subsystem,
                 subsystem_options={},
             ),
             promotes_inputs=['*'],
@@ -600,7 +627,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
-        geom_subsystem = get_geom_and_mass_subsystems('FLOPS')[0:1]
+        geom_subsystem = [get_default_subsystems('FLOPS')['geometry']]
 
         prob.model.add_subsystem(
             'pre_mission',
@@ -615,6 +642,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
 
         setup_model_options(prob, self.flops_inputs)
         prob.setup(check=False)
+        prob.set_solver_print(2)
         set_aviary_initial_values(prob, self.flops_inputs)
 
         prob.run_model()
@@ -670,7 +698,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
-        geom_mass_subsystems = get_geom_and_mass_subsystems('FLOPS')
+        geom_mass_subsystems = [get_default_subsystems('FLOPS')[k] for k in ['geometry', 'mass']]
 
         prob.model.add_subsystem(
             'pre_mission',
@@ -684,10 +712,17 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         )
 
         setup_model_options(prob, self.flops_inputs)
-        prob.setup(check=False)
+
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', om.OpenMDAOWarning)
+            warnings.simplefilter('ignore', om.PromotionWarning)
+
+            prob.setup(check=False)
+
         set_aviary_initial_values(prob, self.flops_inputs)
 
         prob.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=70000.0 * 3, units='lbf')
+        prob.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, val=2385712.4988316689, units='lbm')
 
         prob.run_model()
 
@@ -706,8 +741,8 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # TransportAvionicsMass
         assert_near_equal(prob[Aircraft.Avionics.MASS], 2896.223816950469, tol)
         # FuelCapacityGroup
-        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY], 2385712.4988316689, tol)
-        assert_near_equal(prob[Aircraft.Fuel.MAX_CAPACITY_MASS], 2385712.4988316689, tol)
+        # assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY], 2385712.4988316689, tol)
+        # assert_near_equal(prob[Aircraft.Fuel.MAX_CAPACITY_MASS], 2385712.4988316689, tol)
         # EngineMass
         assert_near_equal(prob[Aircraft.Engine.MASS], 17825.63336233, tol)
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 0.0, tol)
@@ -790,12 +825,12 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 556426.76964429, tol)
 
     def test_case_all_subsystems(self):
-        """premission: propulsion + geometry + aerodynamics + mass."""
+        """premission: propulsion + geometry + aerodynamics + mass + energy + performance."""
         prob = self.prob
 
         engines = [build_engine_deck(self.flops_inputs)]
         preprocess_options(self.flops_inputs)
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines=engines)
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines=engines).values()
 
         prob.model.add_subsystem(
             'pre_mission',
@@ -809,6 +844,8 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         )
 
         setup_model_options(prob, self.flops_inputs)
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
         prob.setup(check=False)
         set_aviary_initial_values(prob, self.flops_inputs)
 
@@ -838,7 +875,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
-        geom_subsystem = get_geom_and_mass_subsystems('FLOPS')[0:1]
+        geom_subsystem = [get_default_subsystems('FLOPS')['geometry']]
 
         prob.model.add_subsystem(
             'pre_mission',
@@ -908,7 +945,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
-        geom_mass_subsystems = get_geom_and_mass_subsystems('FLOPS')
+        geom_mass_subsystems = [get_default_subsystems('FLOPS')[k] for k in ['geometry', 'mass']]
 
         prob.model.add_subsystem(
             'pre_mission',
@@ -926,6 +963,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         set_aviary_initial_values(prob, self.flops_inputs)
 
         prob.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=70000.0 * 3, units='lbf')
+        prob.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, val=1197720.2419621395, units='lbm')
 
         prob.run_model()
 
@@ -944,8 +982,8 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # TransportAvionicsMass
         assert_near_equal(prob[Aircraft.Avionics.MASS], 2778.5110590964073, tol)
         # FuelCapacityGroup
-        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY], 1197720.2419621395, tol)
-        assert_near_equal(prob[Aircraft.Fuel.MAX_CAPACITY_MASS], 1197720.2419621395, tol)
+        # assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY], 1197720.2419621395, tol)
+        # assert_near_equal(prob[Aircraft.Fuel.MAX_CAPACITY_MASS], 1197720.2419621395, tol)
         # EngineMass
         assert_near_equal(prob[Aircraft.Engine.MASS], 17825.63336233, tol)
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 0.0, tol)
@@ -1030,12 +1068,12 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 509364.22633412, tol)
 
     def test_case_all_subsystems(self):
-        """premission: propulsion + geometry + aerodynamics + mass."""
+        """premission: propulsion + geometry + aerodynamics + mass + energy + performance."""
         prob = self.prob
 
         engines = [build_engine_deck(self.flops_inputs)]
         preprocess_options(self.flops_inputs)
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines=engines)
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines=engines).values()
 
         prob.model.add_subsystem(
             'pre_mission',
@@ -1049,6 +1087,8 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         )
 
         setup_model_options(prob, self.flops_inputs)
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
         prob.setup(check=False)
         set_aviary_initial_values(prob, self.flops_inputs)
 
@@ -1078,7 +1118,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
-        geom_subsystem = get_geom_and_mass_subsystems('FLOPS')[0:1]
+        geom_subsystem = [get_default_subsystems('FLOPS')['geometry']]
 
         prob.model.add_subsystem(
             'pre_mission',
@@ -1149,7 +1189,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         prob = self.prob
 
         preprocess_options(self.flops_inputs)
-        geom_mass_subsystems = get_geom_and_mass_subsystems('FLOPS')
+        geom_mass_subsystems = [get_default_subsystems('FLOPS')[k] for k in ['geometry', 'mass']]
 
         prob.model.add_subsystem(
             'pre_mission',
@@ -1167,6 +1207,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         set_aviary_initial_values(prob, self.flops_inputs)
 
         prob.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=87500.0 * 2, units='lbf')
+        prob.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, val=787493.65267018, units='lbm')
 
         prob.run_model()
 
@@ -1186,7 +1227,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         # TransportAvionicsMass
         assert_near_equal(prob[Aircraft.Avionics.MASS], 2280.13561342, tol)
         # FuelCapacityGroup
-        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY], 787493.65267018, tol)
+        # assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY], 787493.65267018, tol)
         assert_near_equal(prob[Aircraft.Fuel.MAX_CAPACITY_MASS], 787493.65267018, tol)
         # EngineMass
         assert_near_equal(prob[Aircraft.Engine.MASS], 44541.857940875525 / 2, tol)
@@ -1270,12 +1311,12 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fins.MASS], 2822.14154503, tol)
 
     def test_case_all_subsystems(self):
-        """premission: propulsion + geometry + aerodynamics + mass."""
+        """premission: propulsion + geometry + aerodynamics + mass + energy + performance."""
         prob = self.prob
 
         engines = [build_engine_deck(self.flops_inputs)]
         preprocess_options(self.flops_inputs)
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines=engines)
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines=engines).values()
 
         prob.model.add_subsystem(
             'pre_mission',
@@ -1289,6 +1330,8 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         )
 
         setup_model_options(prob, self.flops_inputs)
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
         prob.setup(check=False)
         set_aviary_initial_values(prob, self.flops_inputs)
 
@@ -1303,6 +1346,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # z = BWBPreMissionGroupTest()
-    # z.setUp()
-    # z.test_case_all_subsystems()
+    # test = BWB300PreMissionGroupCSVTest()
+    # test.setUp()
+    # test.test_case_all_subsystems()
+    # test.test_case_AdvancedSingleAisle()

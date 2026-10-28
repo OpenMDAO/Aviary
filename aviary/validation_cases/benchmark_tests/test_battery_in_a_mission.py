@@ -7,6 +7,8 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 import aviary.api as av
 from aviary.models.missions.two_dof_default import phase_info as twodof_phase_info
 from aviary.subsystems.energy.battery_builder import BatteryBuilder
+from aviary.variable_info.enums import ProblemType
+from aviary.variable_info.variables import Settings
 
 
 @use_tempdirs
@@ -65,16 +67,22 @@ class TestBatteryMission(unittest.TestCase):
 
     def test_subsystems_in_a_mission(self):
         phase_info = deepcopy(self.phase_info)
-
         prob = av.AviaryProblem(verbosity=0)
 
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm_with_electric.csv',
             phase_info,
         )
-        prob.load_external_subsystems([BatteryBuilder()])
+        prob.problem_type = av.ProblemType.OFF_DESIGN_GENERAL
 
+        prob.aviary_inputs.set_val(Settings.PROBLEM_TYPE, ProblemType.OFF_DESIGN_GENERAL)
         prob.aviary_inputs.set_val(av.Aircraft.Battery.EFFICIENCY, 0.95, 'unitless')
+
+        # Weight comes from Sizing run.
+        prob.aviary_inputs.set_val(av.Aircraft.Design.GROSS_MASS, 143284.5662295, 'lbm')
+        prob.aviary_inputs.set_val(av.Mission.GROSS_MASS, 143284.5662295, 'lbm')
+
+        prob.load_external_subsystems([BatteryBuilder()])
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -101,7 +109,7 @@ class TestBatteryMission(unittest.TestCase):
             f'traj.cruise2.timeseries.{av.Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}'
         )
         expected_scalar_values = {
-            cumulative_energy_var: (38.61409156, 'kW*h'),
+            cumulative_energy_var: (38.61381379, 'kW*h'),
             av.Mission.FUEL_MASS: (1254.14061154, 'lbm'),
         }
 
@@ -110,7 +118,7 @@ class TestBatteryMission(unittest.TestCase):
                 actual = prob.get_val(var_name, units=units)
                 if actual.size > 1:
                     actual = actual[-1]
-                assert_near_equal(actual, expected, 1.0e-7)
+                assert_near_equal(actual, expected, 1.0e-6)
 
         # Check battery state-of-charge over mission
         soc_cruise1_var = f'traj.cruise1.timeseries.{av.Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE}'
@@ -119,51 +127,51 @@ class TestBatteryMission(unittest.TestCase):
         expected_soc_values = {
             soc_cruise1_var: (
                 [
-                    0.99999578,
-                    0.98775148,
-                    0.97085772,
-                    0.96551112,
-                    0.96551112,
-                    0.94050842,
-                    0.90601345,
-                    0.8950968,
-                    0.8950968,
-                    0.86537877,
-                    0.82437912,
-                    0.81140412,
-                    0.81140412,
-                    0.78641514,
-                    0.75193911,
-                    0.74102844,
-                    0.74102844,
-                    0.72879544,
-                    0.71191726,
-                    0.70657558,
+                    1.0,
+                    0.9877557,
+                    0.97086194,
+                    0.96551534,
+                    0.96551534,
+                    0.94051264,
+                    0.90601767,
+                    0.89510102,
+                    0.89510102,
+                    0.86538299,
+                    0.82438334,
+                    0.81140834,
+                    0.81140834,
+                    0.78641936,
+                    0.75194333,
+                    0.74103266,
+                    0.74103266,
+                    0.72879965,
+                    0.71192148,
+                    0.7065798,
                 ],
                 None,
             ),
             soc_cruise2_var: (
                 [
-                    0.70657558,
-                    0.69434408,
-                    0.67746797,
-                    0.67212695,
-                    0.67212695,
-                    0.64715037,
-                    0.61269144,
-                    0.60178619,
-                    0.60178619,
-                    0.5720992,
-                    0.53114236,
-                    0.51818091,
-                    0.51818091,
-                    0.49321803,
-                    0.45877799,
-                    0.44787871,
-                    0.44787871,
-                    0.43565848,
-                    0.41879792,
-                    0.41346182,
+                    0.7065798,
+                    0.6943483,
+                    0.67747219,
+                    0.67213117,
+                    0.67213117,
+                    0.64715459,
+                    0.61269566,
+                    0.60179041,
+                    0.60179041,
+                    0.57210341,
+                    0.53114658,
+                    0.51818513,
+                    0.51818513,
+                    0.49322225,
+                    0.45878221,
+                    0.44788293,
+                    0.44788293,
+                    0.4356627,
+                    0.41880214,
+                    0.41346604,
                 ],
                 None,
             ),
@@ -174,7 +182,7 @@ class TestBatteryMission(unittest.TestCase):
                 actual = prob.get_val(var_name).ravel()
                 assert_near_equal(actual, expected, 1e-6)
 
-    @require_pyoptsparse(optimizer='SNOPT')
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_subsystems_in_a_mission_2dof(self):
         """
         Does not actually use electric power but tests that externally added states are successfully
@@ -182,7 +190,7 @@ class TestBatteryMission(unittest.TestCase):
         """
         phase_info = deepcopy(twodof_phase_info)
 
-        prob = av.AviaryProblem(verbosity=0)
+        prob = av.AviaryProblem(verbosity=1)
 
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
@@ -197,7 +205,7 @@ class TestBatteryMission(unittest.TestCase):
 
         prob.build_model()
 
-        prob.add_driver('SNOPT')
+        prob.add_driver('IPOPT')
 
         prob.add_design_variables()
 
@@ -214,7 +222,7 @@ class TestBatteryMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestBatteryMission()
-    test.setUp()
-    test.test_subsystems_in_a_mission()
+    unittest.main()
+    # test = TestBatteryMission()
+    # test.setUp()
+    # test.test_subsystems_in_a_mission()

@@ -36,7 +36,7 @@ class TaxiFuelComponentTestCase(unittest.TestCase):
 
         self.prob.run_model()
 
-        assert_near_equal(self.prob['taxi_fuel_consumed'], 1512 * 0.1677, 1e-6)
+        assert_near_equal(self.prob[Mission.Taxi.FUEL_MASS_TAXI_OUT], 1512 * 0.1677, 1e-6)
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 

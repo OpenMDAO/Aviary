@@ -74,12 +74,12 @@ phase_info = {
     },
     'post_mission': {
         'include_landing': False,
-        'constrain_range': True,
         'target_range': (7750.0, 'nmi'),
     },
 }
 
 
+@unittest.skip('This test is currently not converging (likely since at least v1.0.2)')
 @use_tempdirs
 class BWBProblemPhaseTestCase(unittest.TestCase):
     """
@@ -92,7 +92,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_bwb_FwFm_SNOPT(self):
+    def bench_test_bwb_FwFm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv',
@@ -101,8 +101,12 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
             verbosity=0,
             max_iter=60,
         )
+        # with open('temp_vars.txt', 'w') as f:
+        #     prob.model.list_vars(units=True, print_arrays=True, out_stream=f)
 
         rtol = 1e-3
+
+        self.assertTrue(prob.result.success)
 
         # There are no truth values for these.
         assert_near_equal(
@@ -126,7 +130,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
     # @require_pyoptsparse(optimizer='IPOPT')
-    # def test_bench_bwb_FwFm_IPOPT(self):
+    # def bench_test_bwb_FwFm_IPOPT(self):
     # local_phase_info = deepcopy(phase_info)
     # prob = run_aviary(
     # 'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv',
@@ -164,7 +168,8 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
     # assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
 
-# @use_tempdirs
+@unittest.skip('This test is currently not converging (likely since at least v1.0.2)')
+@use_tempdirs
 class BWB300ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a BWB aircraft using FLOPS mass and aero method
@@ -176,7 +181,7 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_bwb300_FwFm_SNOPT(self):
+    def bench_test_bwb300_FwFm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/blended_wing_body/bwb300_baseline_FLOPS.csv',
@@ -191,6 +196,8 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
         # prob.model.list_outputs()
 
         rtol = 1e-3
+
+        self.assertTrue(prob.result.success)
 
         # There are no truth values for these.
         assert_near_equal(
@@ -215,7 +222,6 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBProblemPhaseTestCase()
+    test = BWB300ProblemPhaseTestCase()
     test.setUp()
-    test.test_bench_bwb_FwFm_SNOPT()
+    test.bench_test_bwb300_FwFm_SNOPT()

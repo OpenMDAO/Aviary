@@ -1,17 +1,13 @@
-"""Define utilities to calculate the estimated mass of emergency equipment mass."""
-
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
 class EmergencyEquipment(om.ExplicitComponent):
     """
-    Define the default component to calculate the estimated mass of emergency
-    service equipment. The methodology is based on the
-    GASP weight equations, modified to output mass instead of weight.
+    Define the default component to calculate the estimated mass of emergency service equipment. The
+    methodology is based on the GASP weight equations, modified to output mass instead of weight.
     """
 
     def initialize(self):
@@ -37,12 +33,12 @@ class EmergencyEquipment(om.ExplicitComponent):
         if num_pax >= 251.0:
             num_flight_attendants = 6
 
-        emergency_wt = 0.0
+        emergency_mass = 0.0
         if num_pax > 5.0:
-            emergency_wt = 10.0
+            emergency_mass = 10.0
         if num_pax > 9.0:
-            emergency_wt = 15.0
+            emergency_mass = 15.0
         if num_pax >= 35.0:
-            emergency_wt = 25.0 * num_flight_attendants + 15.0
+            emergency_mass = 25.0 * num_flight_attendants + 15.0
 
-        outputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = emergency_wt / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = emergency_mass

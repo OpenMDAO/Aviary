@@ -62,6 +62,15 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            '_add_user_defined_constraints().',
+        )
+
+        self.declare(
             name='altitude_direct_link',
             default=False,
             types=bool,
@@ -186,6 +195,9 @@ class SimpleCruisePhase(PhaseBuilder):
 
         phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
 
+        constraints = user_options['constraints']
+        self._add_user_defined_constraints(phase, constraints)
+
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, val=alt_cruise, units=alt_units)
         phase.add_parameter(Dynamic.Atmosphere.MACH, opt=False, val=mach_cruise)
         phase.add_parameter(
@@ -238,7 +250,7 @@ class SimpleCruisePhase(PhaseBuilder):
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         phase.add_timeseries_output('EAS', units='kn')
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL, units='lbm/h'
         )
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')

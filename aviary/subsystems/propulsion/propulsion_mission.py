@@ -250,7 +250,7 @@ class PropulsionMission(om.Group):
             units='lbf',
         )
         perf_mux.add_var(
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
             val=0,
             shape=(nn,),
             axis=1,
@@ -330,7 +330,7 @@ class PropulsionMission(om.Group):
 
         supported_outputs = [
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
             Dynamic.Vehicle.Propulsion.NOX_RATE,
             Dynamic.Vehicle.Propulsion.SHAFT_POWER,
             Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
@@ -390,19 +390,15 @@ class PropulsionMission(om.Group):
                 base_promoted_inputs = [
                     key for key in base_inputs if '.' not in max_inputs[key]['prom_name']
                 ]
-                input_dict[comp.name] = dict(
-                    (base_inputs[key]['prom_name'], base_inputs[key])
-                    for key in base_promoted_inputs
-                )
+                input_dict[comp.name] = {
+                    base_inputs[key]['prom_name']: base_inputs[key] for key in base_promoted_inputs
+                }
 
                 max_promoted_inputs = [
                     key for key in max_inputs if '.' not in max_inputs[key]['prom_name']
                 ]
                 input_dict[comp.name].update(
-                    dict(
-                        (max_inputs[key]['prom_name'], max_inputs[key])
-                        for key in max_promoted_inputs
-                    )
+                    {max_inputs[key]['prom_name']: max_inputs[key] for key in max_promoted_inputs}
                 )
 
                 # don't grab "max" variables that might be floating around in the base component
@@ -412,10 +408,10 @@ class PropulsionMission(om.Group):
                     if '.' not in base_outputs[key]['prom_name']
                     and max_outputs[key]['prom_name'] not in [var for var in max_variables.values()]
                 ]
-                output_dict[comp.name] = dict(
-                    (base_outputs[key]['prom_name'], base_outputs[key])
+                output_dict[comp.name] = {
+                    base_outputs[key]['prom_name']: base_outputs[key]
                     for key in base_promoted_outputs
-                )
+                }
 
                 # only grab variables from max component that have a "max" counterpart to alias
                 max_promoted_outputs = [
@@ -425,13 +421,12 @@ class PropulsionMission(om.Group):
                     and max_outputs[key]['prom_name'] in [var.value for var in max_variables.keys()]
                 ]
                 output_dict[comp.name].update(
-                    dict(
-                        (
-                            max_variables[EngineModelVariables(max_outputs[key]['prom_name'])],
-                            max_outputs[key],
-                        )
+                    {
+                        max_variables[
+                            EngineModelVariables(max_outputs[key]['prom_name'])
+                        ]: max_outputs[key]
                         for key in max_promoted_outputs
-                    )
+                    }
                 )
 
                 # Promote the correct inputs and outputs from each component to top of group #
@@ -474,17 +469,15 @@ class PropulsionMission(om.Group):
                     # won't appear in aliased_outputs and components are otherwise perfect matches
                     # Throttles are already aliased, so do not promote it here
                     promoted_inputs = list(
-                        set(
-                            [
-                                max_inputs[key]['prom_name']
-                                for key in max_promoted_inputs
-                                if max_inputs[key]['prom_name'] not in promoted_outputs
-                                and max_inputs[key]['prom_name']
-                                is not Dynamic.Vehicle.Propulsion.THROTTLE
-                                and max_inputs[key]['prom_name']
-                                is not Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE
-                            ]
-                        )
+                        {
+                            max_inputs[key]['prom_name']
+                            for key in max_promoted_inputs
+                            if max_inputs[key]['prom_name'] not in promoted_outputs
+                            and max_inputs[key]['prom_name']
+                            is not Dynamic.Vehicle.Propulsion.THROTTLE
+                            and max_inputs[key]['prom_name']
+                            is not Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE
+                        }
                     )
                     comp.promotes('max', inputs=promoted_inputs)
 
@@ -497,21 +490,20 @@ class PropulsionMission(om.Group):
                 promoted_outputs = [
                     key for key in comp_outputs if '.' not in comp_outputs[key]['prom_name']
                 ]
-                output_dict[comp.name] = dict(
-                    (comp_outputs[key]['prom_name'], comp_outputs[key]) for key in promoted_outputs
-                )
+                output_dict[comp.name] = {
+                    comp_outputs[key]['prom_name']: comp_outputs[key] for key in promoted_outputs
+                }
 
         # add variables to the mux component and make connections to individual component outputs
         for i, comp in enumerate(output_dict):
             for output in output_dict[comp]:
                 # promote/alias outputs for each comp that has relevant outputs
-                if output in supported_outputs:
-                    if output in output_dict[comp]:
-                        # if this component provides the output, connect it to the correct mux input
-                        self.connect(
-                            comp + '.' + output,
-                            'vectorize_performance.' + output + '_' + str(i),
-                        )
+                if output in supported_outputs and output in output_dict[comp]:
+                    # if this component provides the output, connect it to the correct mux input
+                    self.connect(
+                        comp + '.' + output,
+                        'vectorize_performance.' + output + '_' + str(i),
+                    )
             # TODO handle setting of other variables from engine outputs (e.g. Aircraft.Engine.****)
 
         if num_engine_type > 1:
@@ -568,7 +560,7 @@ class PropulsionSum(om.ExplicitComponent):
             units='lbf',
         )
         self.add_input(
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
             val=np.zeros((nn, num_engine_type)),
             units='lbm/h',
         )
@@ -591,6 +583,11 @@ class PropulsionSum(om.ExplicitComponent):
         )
         self.add_output(
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
+            val=np.zeros(nn),
+            units='lbm/h',
+        )
+        self.add_output(
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL,
             val=np.zeros(nn),
             units='lbm/h',
         )
@@ -626,9 +623,16 @@ class PropulsionSum(om.ExplicitComponent):
             cols=c,
         )
         self.declare_partials(
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
             val=deriv,
+            rows=r,
+            cols=c,
+        )
+        self.declare_partials(
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
+            val=-deriv,
             rows=r,
             cols=c,
         )
@@ -652,14 +656,16 @@ class PropulsionSum(om.ExplicitComponent):
 
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST]
         thrust_max = inputs[Dynamic.Vehicle.Propulsion.THRUST_MAX]
-        fuel_flow = inputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE]
+        fuel_flow = inputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE]
         electric = inputs[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN]
         nox = inputs[Dynamic.Vehicle.Propulsion.NOX_RATE]
 
         outputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = np.dot(thrust, num_engines)
         outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL] = np.dot(thrust_max, num_engines)
-        outputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL] = np.dot(
-            fuel_flow, num_engines
-        )
+
+        total_fuel_flow = np.dot(fuel_flow, num_engines)
+        outputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL] = total_fuel_flow
+        outputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL] = -total_fuel_flow
+
         outputs[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL] = np.dot(electric, num_engines)
         outputs[Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL] = np.dot(nox, num_engines)

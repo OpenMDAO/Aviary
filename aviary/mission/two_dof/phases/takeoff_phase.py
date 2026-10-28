@@ -151,6 +151,15 @@ class TakeoffPhaseOptions(AviaryOptionsDictionary):
             desc='Scale factor ref for the pitch constraint.',
         )
 
+        self.declare(
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            '_add_user_defined_constraints().',
+        )
+
 
 class TakeoffPhase(PhaseBuilder):
     """
@@ -216,6 +225,9 @@ class TakeoffPhase(PhaseBuilder):
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
             )
 
+        constraints = user_options['constraints']
+        self._add_user_defined_constraints(phase, constraints)
+
         # Add parameters
         # TODO: These are backdoor defaults.
         # Although, I can see how this is useful for keeping flaps/gear from engaging before
@@ -247,10 +259,10 @@ class TakeoffPhase(PhaseBuilder):
             normal_ref = user_options.get_val('normal_ref', units='lbf')
             normal_ref0 = user_options.get_val('normal_ref0', units='lbf')
 
-            phase.add_boundary_constraint(
+            phase.add_path_constraint(
                 'normal_force',
-                loc='final',
-                equals=0,
+                'normal_force',
+                lower=0,
                 units='lbf',
                 ref=normal_ref,
                 ref0=normal_ref0,
@@ -274,7 +286,7 @@ class TakeoffPhase(PhaseBuilder):
         phase.add_timeseries_output('fuselage_pitch', output_name='theta', units='deg')
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
-        phase.add_timeseries_output('normal_force')
+        phase.add_timeseries_output('normal_force', units='lbf')
         phase.add_timeseries_output('time', units='s', output_name='time')
         phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 

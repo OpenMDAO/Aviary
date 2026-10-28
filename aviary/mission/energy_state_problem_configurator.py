@@ -45,22 +45,6 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             units='lbm',
         )
 
-        if 'target_range' in aviary_group.post_mission_info:
-            aviary_inputs.set_val(
-                Mission.RANGE,
-                wrapped_convert_units(aviary_group.post_mission_info['target_range'], 'NM'),
-                units='NM',
-            )
-            aviary_group.require_range_residual = True
-            aviary_group.target_range = wrapped_convert_units(
-                aviary_group.post_mission_info['target_range'], 'NM'
-            )
-        else:
-            aviary_group.require_range_residual = False
-            # still instantiate target_range because it is used for default guesses
-            # for phase comps
-            aviary_group.target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
-
     def get_default_phase_info(self, aviary_group):
         """
         Return a default phase_info for this type or problem.
@@ -278,6 +262,10 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
                     continue
 
                 if initial != final:
+                    # the first reserve mission phase is allowed to have discontinuous mach and alt
+                    if aviary_group.reserve_phases and right_name == aviary_group.reserve_phases[0]:
+                        if stem in (Dynamic.Atmosphere.MACH, Dynamic.Mission.ALTITUDE):
+                            continue
                     msg += '  Constraint mismatch across phase boundary:\n'
                     msg += f'    {left_name} {stem}_final: {final}\n'
                     msg += f'    {right_name} {stem}_initial: {initial}\n'
@@ -350,21 +338,6 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         if aviary_group.post_mission_info['include_landing']:
             self._add_landing_systems(aviary_group)
-
-        aviary_group.add_subsystem(
-            'range_constraint',
-            om.ExecComp(
-                'range_resid = target_range - actual_range',
-                target_range={'val': aviary_group.target_range, 'units': 'NM'},
-                actual_range={'val': aviary_group.target_range, 'units': 'NM'},
-                range_resid={'val': 30, 'units': 'NM'},
-            ),
-            promotes_inputs=[
-                ('actual_range', Mission.RANGE),
-                'target_range',
-            ],
-            promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
-        )
 
     def _add_post_mission_takeoff_systems(self, aviary_group):
         """

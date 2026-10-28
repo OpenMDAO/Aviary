@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.accel_ode import AccelODE
@@ -10,8 +10,7 @@ from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
-from aviary.utils.test_utils.IO_test_util import check_prob_outputs
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
@@ -33,9 +32,10 @@ class AccelerationODETestCase(unittest.TestCase):
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
         aviary_options.set_val(Settings.VERBOSITY, Verbosity.QUIET)
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', [build_engine_deck(aviary_options)]
-        )
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [build_engine_deck(aviary_options)])[k]
+            for k in ['propulsion', 'aerodynamics']
+        ]
 
         subsystem_options = {'aerodynamics': {'method': 'cruise', 'output_alpha': True}}
 
@@ -67,14 +67,21 @@ class AccelerationODETestCase(unittest.TestCase):
         set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
-        testvals = {
-            Dynamic.Vehicle.LIFT: [174974, 174878],
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: [
-                -13264.88347472,
-                -13567.32077887,
-            ],  # lbm/h
+        expected_values = {
+            Dynamic.Vehicle.LIFT: ([174974, 174878], 'lbf'),
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: (
+                [
+                    -13264.88347472,
+                    -13567.32077887,
+                ],
+                'lbm/h',
+            ),
         }
-        check_prob_outputs(self.prob, testvals, rtol=1e-6)
+
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, 1e-8)
 
         partial_data = self.prob.check_partials(
             method='cs', out_stream=None, excludes=['*params*', '*aero*']

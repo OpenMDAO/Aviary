@@ -1,5 +1,4 @@
 import unittest
-import unittest
 from copy import deepcopy
 
 import numpy as np
@@ -53,6 +52,7 @@ class TestSubsystemsMission(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
+                'target_range': (3500.0, 'nmi'),
             },
         }
         # 2dof currently hardcoded requires an ascent phase (configurator add_post_mission_systems)
@@ -203,7 +203,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TestSubsystemsMission()
-    # test.setUp()
-    # test.test_subsystems_in_a_mission_2dof()
+    # unittest.main()
+    test = TestSubsystemsMission()
+    test.setUp()
+    test.test_subsystems_in_a_mission_2dof()

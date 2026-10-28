@@ -3,8 +3,12 @@ import json
 import os
 import platform
 import tkinter as tk  # base tkinter
-import tkinter.ttk as ttk  # used for combobox
-from tkinter import filedialog, font, messagebox
+from tkinter import (
+    filedialog,
+    font,
+    messagebox,
+    ttk,  # used for combobox
+)
 
 import numpy as np
 from matplotlib.backend_bases import MouseButton
@@ -1698,7 +1702,6 @@ def create_phase_info(
 
     phase_info['post_mission'] = {
         'include_landing': user_choices['include_landing'],
-        'constrain_range': True,
         'target_range': (0.0, 'nmi'),
     }
 
@@ -1711,9 +1714,6 @@ def create_phase_info(
                 'distance_solve_segments': user_choices.get('distance_solve_segments', False),
             }
         )
-
-    # Apply global settings if required
-    phase_info['post_mission']['constrain_range'] = user_choices.get('constrain_range', True)
 
     # Calculate the total range
     total_range, range_unit = estimate_total_range_trapezoidal(times, mach_values, units)
@@ -1764,7 +1764,6 @@ def _setup_flight_profile_parser(parser):
     parser : argparse.ArgumentParser
         The parser instance.
     """
-    pass
 
 
 def _exec_flight_profile(options, user_args):

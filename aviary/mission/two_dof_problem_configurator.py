@@ -57,21 +57,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         aviary_group.cruise_mass_final = aviary_group.initialization_guesses['cruise_mass_final']
 
-        if 'target_range' in aviary_group.post_mission_info:
-            aviary_group.target_range = wrapped_convert_units(
-                aviary_group.post_mission_info['target_range'], 'NM'
-            )
-            aviary_inputs.set_val(Mission.RANGE, aviary_group.target_range, units='NM')
-        else:
-            aviary_group.target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
-            aviary_inputs.set_val(
-                Mission.RANGE,
-                aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM'),
-                units='NM',
-            )
-
         aviary_group.cruise_mach = aviary_inputs.get_val(Aircraft.Design.MACH)
-        aviary_group.require_range_residual = True
 
     def get_default_phase_info(self, aviary_group):
         """
@@ -146,6 +132,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             'taxi',
             TaxiSegment(**(aviary_group.ode_args)),
             promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['mission:*'],
         )
 
     def get_phase_builder(self, aviary_group, phase_name, phase_options):
@@ -369,28 +356,13 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         if aviary_group.post_mission_info['include_landing']:
             self._add_landing_systems(aviary_group)
 
-        ascent_phase = getattr(aviary_group.traj.phases, 'ascent')
+        ascent_phase = aviary_group.traj.phases.ascent
         ascent_tx = ascent_phase.options['transcription']
         ascent_num_nodes = ascent_tx.grid_data.num_nodes
         aviary_group.add_subsystem(
             'h_fit',
             PolynomialFit(N_cp=ascent_num_nodes),
             promotes_inputs=['t_init_gear', 't_init_flaps'],
-        )
-
-        aviary_group.add_subsystem(
-            'range_constraint',
-            om.ExecComp(
-                'range_resid = target_range - actual_range',
-                target_range={'val': aviary_group.target_range, 'units': 'NM'},
-                actual_range={'val': aviary_group.target_range, 'units': 'NM'},
-                range_resid={'val': 30, 'units': 'NM'},
-            ),
-            promotes_inputs=[
-                ('actual_range', Mission.RANGE),
-                'target_range',
-            ],
-            promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
         )
 
     def _add_landing_systems(self, aviary_group):

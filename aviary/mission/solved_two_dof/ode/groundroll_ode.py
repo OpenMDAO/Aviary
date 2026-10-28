@@ -69,17 +69,21 @@ class GroundrollODE(TwoDOFODE):
         self.add_subsystem(
             'exec3',
             om.ExecComp(
-                'dmass_dv = mass_rate * dt_dv',
+                ['dmass_dv = mass_rate * dt_dv', 'dfuelburn_dv = fuelburn_rate * dt_dv'],
                 mass_rate={'units': 'lbm/s', 'val': np.ones(nn)},
+                fuelburn_rate={'units': 'lbm/s', 'val': np.ones(nn)},
                 dt_dv={'units': 's/kn', 'val': np.ones(nn)},
                 dmass_dv={'units': 'lbm/kn', 'val': np.ones(nn)},
+                dfuelburn_dv={'units': 'lbm/kn', 'val': np.ones(nn)},
                 has_diag_partials=True,
             ),
             promotes_outputs=[
                 'dmass_dv',
+                'dfuelburn_dv',
             ],
             promotes_inputs=[
                 ('mass_rate', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
+                ('fuelburn_rate', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL),
                 'dt_dv',
             ],
         )

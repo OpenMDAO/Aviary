@@ -175,7 +175,7 @@ class FlightPhaseBase(PhaseBuilder):
     SolvedTwoDOFPhase.
     """
 
-    __slots__ = ('subsystems', 'meta_data')
+    __slots__ = ('meta_data', 'subsystems')
 
     _initial_guesses_meta_data_ = {}
     default_name = 'cruise'
@@ -232,6 +232,11 @@ class FlightPhaseBase(PhaseBuilder):
             self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
         phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
+
+        if phase_type is not EquationsOfMotion.ENERGY_STATE:
+            phase.set_state_options(
+                Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED, rate_source='dfuelburn_dr'
+            )
 
         ################
         # Add Controls #
@@ -314,7 +319,7 @@ class FlightPhaseBase(PhaseBuilder):
             units='kW',
         )
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL,
             units='lbm/h',
         )
 
@@ -330,8 +335,8 @@ class FlightPhaseBase(PhaseBuilder):
         phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='m/s')
 
         if phase_type is EquationsOfMotion.SOLVED_2DOF:
-            phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
-            phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+            phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
+            phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
             phase.add_timeseries_output('fuselage_pitch', output_name='theta', units='deg')
             phase.add_timeseries_output('thrust_req', units='lbf')
             phase.add_timeseries_output('normal_force')

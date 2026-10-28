@@ -90,7 +90,7 @@ class GroundrollPhase(PhaseBuilder):
     This is used exclusively by the Solved 2DOF Phase Builder.
     """
 
-    __slots__ = ('subsystems', 'meta_data', 'phase')
+    __slots__ = ('meta_data', 'phase', 'subsystems')
 
     _initial_guesses_meta_data_ = {}
 
@@ -149,6 +149,10 @@ class GroundrollPhase(PhaseBuilder):
         self.add_state(name='mass', target=Dynamic.Vehicle.MASS, rate_source='dmass_dv')
         self.add_state(name='distance', target=Dynamic.Mission.DISTANCE, rate_source='over_a')
 
+        self.phase.set_state_options(
+            Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED, rate_source='dfuelburn_dv'
+        )
+
         self.phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=32.3)
         self.phase.add_parameter('t_init_flaps', units='s', static_target=True, opt=False, val=44.0)
         self.phase.add_parameter(
@@ -157,13 +161,13 @@ class GroundrollPhase(PhaseBuilder):
 
         self._add_user_defined_constraints(phase, constraints)
 
-        self.phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK)
-        self.phase.add_timeseries_output(Dynamic.Vehicle.DRAG)
+        self.phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
+        self.phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         self.phase.add_timeseries_output('EAS', units='kn')
-        self.phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
+        self.phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
         self.phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
-        self.phase.add_timeseries_output(Dynamic.Vehicle.MASS)
-        self.phase.add_timeseries_output('normal_force')
+        self.phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
+        self.phase.add_timeseries_output('normal_force', units='lbf')
         self.phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         self.phase.add_timeseries_output('time')
         self.phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
