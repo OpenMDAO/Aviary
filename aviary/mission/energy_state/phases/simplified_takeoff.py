@@ -1,7 +1,7 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -12,9 +12,12 @@ class StallSpeed(om.ExplicitComponent):
     v_stall = (2 * weight / (density * planform_area * Cl_max)) ** 0.5.
     """
 
+    def initialize(self):
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
+
     def setup(self):
         """Setup the inputs and output to calculate the stall speed of the aircraft."""
-        self.add_input('mass', val=150_000, units='lbm', desc='current mass of the aircraft')
+        self.add_input('mass', val=70000, units='kg', desc='current mass of the aircraft')
 
         add_aviary_input(self, Dynamic.Atmosphere.DENSITY, units='kg/m**3')
 
@@ -29,11 +32,10 @@ class StallSpeed(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        weight = inputs['mass'] * GRAV_ENGLISH_LBM
-        # # convert from pounds to newtons.
-        # This is only necessary because the equation expects newtons,
-        # but the mission expects pounds mass instead of pounds force.
-        weight = weight * 4.44822
+        gravity = self.options[Mission.GRAVITY]
+
+        weight = inputs['mass'] * gravity[0]
+
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs['Cl_max']
@@ -43,25 +45,23 @@ class StallSpeed(om.ExplicitComponent):
         outputs['v_stall'] = v_stall
 
     def compute_partials(self, inputs, J):
-        weight = inputs['mass'] * GRAV_ENGLISH_LBM
+        gravity = self.options[Mission.GRAVITY][0]
+
+        weight = inputs['mass'] * gravity
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs['Cl_max']
 
         rad = 2 * weight / (rho * S * Cl_max)
 
-        J['v_stall', 'mass'] = (
-            0.5 * 4.44822**0.5 * rad ** (-0.5) * 2 * GRAV_ENGLISH_LBM / (rho * S * Cl_max)
-        )
+        J['v_stall', 'mass'] = 0.5 * rad ** (-0.5) * 2 * gravity / (rho * S * Cl_max)
         J['v_stall', Dynamic.Atmosphere.DENSITY] = (
-            0.5 * 4.44822**0.5 * rad ** (-0.5) * (-2 * weight) / (rho**2 * S * Cl_max)
+            0.5 * rad ** (-0.5) * (-2 * weight) / (rho**2 * S * Cl_max)
         )
         J['v_stall', Aircraft.Wing.AREA] = (
-            0.5 * 4.44822**0.5 * rad ** (-0.5) * (-2 * weight) / (rho * S**2 * Cl_max)
+            0.5 * rad ** (-0.5) * (-2 * weight) / (rho * S**2 * Cl_max)
         )
-        J['v_stall', 'Cl_max'] = (
-            0.5 * 4.44822**0.5 * rad ** (-0.5) * (-2 * weight) / (rho * S * Cl_max**2)
-        )
+        J['v_stall', 'Cl_max'] = 0.5 * rad ** (-0.5) * (-2 * weight) / (rho * S * Cl_max**2)
 
 
 class FinalTakeoffConditions(om.ExplicitComponent):
@@ -72,6 +72,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='kg/m**3')
+        add_aviary_option(self, Mission.GRAVITY)
 
     def setup(self):
         self.add_input(
@@ -138,10 +139,11 @@ class FinalTakeoffConditions(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         rho_SL = self.options[Mission.SEA_LEVEL_DENSITY][0]
+        gravity = self.options[Mission.GRAVITY]
 
         v_stall = inputs['v_stall']
         gross_mass = inputs['mass']
-        ramp_weight = gross_mass * GRAV_ENGLISH_LBM
+        ramp_weight = mass_to_force_english(mass=(gross_mass, 'lbm'), gravity=gravity)
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
@@ -182,8 +184,11 @@ class FinalTakeoffConditions(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         rho_SL = self.options[Mission.SEA_LEVEL_DENSITY][0]
+        gravity = self.options[Mission.GRAVITY]
 
-        ramp_weight = inputs['mass'] * GRAV_ENGLISH_LBM
+        dforce_dmass = mass_to_force_english_derivative(gravity)
+
+        ramp_weight = mass_to_force_english(mass=(inputs['mass'], 'lbm'), gravity=gravity)
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
@@ -205,7 +210,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
             * S
             * Cl_max
             * (-thrust / ramp_weight**2 - (0.00550 / S) / L_over_D)
-        ) * GRAV_ENGLISH_LBM
+        ) * dforce_dmass
         dRD_dS = (
             den_RD * 0
             - 17
@@ -242,7 +247,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         )
         dRD_dRho = 0
 
-        dRot_dM = 140 * 0.5 * rad_Rot ** (-0.5) / (S * Cl_max * rho_ratio) * GRAV_ENGLISH_LBM
+        dRot_dM = 140 * 0.5 * rad_Rot ** (-0.5) / (S * Cl_max * rho_ratio) * dforce_dmass
         dRot_dS = 140 * 0.5 * rad_Rot ** (-0.5) * (-ramp_weight / (S**2 * Cl_max * rho_ratio))
         dRot_dClMax = 140 * 0.5 * rad_Rot ** (-0.5) * (-ramp_weight / (S * Cl_max**2 * rho_ratio))
         dRot_dThrust = 0
@@ -252,7 +257,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         dCout_dM = (
             140 * 0.5 * (ramp_weight / S) ** (-0.5) / S / den_Cout
             - 140 * (ramp_weight / S) ** 0.5 / (den_Cout) ** 2 * (-climbout_thrust / ramp_weight**2)
-        ) * GRAV_ENGLISH_LBM
+        ) * dforce_dmass
         dCout_dS = 140 * 0.5 * (ramp_weight / S) ** (-0.5) * (-ramp_weight) / S**2 / den_Cout
         dCout_dClMax = 0
         dCout_dThrust = (

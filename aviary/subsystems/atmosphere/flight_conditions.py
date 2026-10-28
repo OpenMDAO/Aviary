@@ -20,7 +20,7 @@ class FlightConditions(om.ExplicitComponent):
             types=SpeedType,
             desc='defines input airspeed as equivalent airspeed, true airspeed, or Mach number',
         )
-        add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='slug/ft**3')
+        add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='kg/m**3')
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -30,20 +30,20 @@ class FlightConditions(om.ExplicitComponent):
         self.add_input(
             Dynamic.Atmosphere.DENSITY,
             val=np.zeros(nn),
-            units='slug/ft**3',
+            units='kg/m**3',
             desc='density of air',
         )
         self.add_input(
             Dynamic.Atmosphere.SPEED_OF_SOUND,
             val=np.zeros(nn),
-            units='ft/s',
+            units='m/s',
             desc='speed of sound',
         )
 
         self.add_output(
             Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             val=np.zeros(nn),
-            units='lbf/ft**2',
+            units='N/m**2',
             desc='dynamic pressure',
         )
 
@@ -51,13 +51,13 @@ class FlightConditions(om.ExplicitComponent):
             self.add_input(
                 Dynamic.Mission.VELOCITY,
                 val=np.zeros(nn),
-                units='ft/s',
+                units='m/s',
                 desc='true air speed',
             )
             self.add_output(
                 'EAS',
                 val=np.zeros(nn),
-                units='ft/s',
+                units='m/s',
                 desc='equivalent air speed',
             )
             self.add_output(
@@ -89,13 +89,13 @@ class FlightConditions(om.ExplicitComponent):
             self.add_input(
                 'EAS',
                 val=np.zeros(nn),
-                units='ft/s',
+                units='m/s',
                 desc='equivalent air speed at',
             )
             self.add_output(
                 Dynamic.Mission.VELOCITY,
                 val=np.zeros(nn),
-                units='ft/s',
+                units='m/s',
                 desc='true air speed',
             )
             self.add_output(
@@ -107,7 +107,7 @@ class FlightConditions(om.ExplicitComponent):
 
             self.declare_partials(
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                [Dynamic.Atmosphere.DENSITY, 'EAS'],
+                'EAS',
                 rows=arange,
                 cols=arange,
             )
@@ -137,13 +137,13 @@ class FlightConditions(om.ExplicitComponent):
             self.add_output(
                 'EAS',
                 val=np.zeros(nn),
-                units='ft/s',
+                units='m/s',
                 desc='equivalent air speed',
             )
             self.add_output(
                 Dynamic.Mission.VELOCITY,
                 val=np.zeros(nn),
-                units='ft/s',
+                units='m/s',
                 desc='true air speed',
             )
 

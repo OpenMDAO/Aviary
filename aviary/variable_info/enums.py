@@ -225,6 +225,9 @@ class ProblemType(Enum):
     gross weight, it will then find the maximum distance the off-design
     aircraft can fly.
 
+    OFF_DESIGN_GENERAL: Requires a pre-sized aircraft. Design gross mass is held constant.
+    Use this for non-standard missions.
+
     MULTI_MISSION: Similar to a SIZING mission, however it varies the
     design gross weight and actual gross weight across multiple missions
     to and closes design range for each mission. This causes the empty
@@ -236,6 +239,7 @@ class ProblemType(Enum):
     SIZING = 'sizing'
     OFF_DESIGN_MIN_FUEL = 'off_design_min_fuel'
     OFF_DESIGN_MAX_RANGE = 'off_design_max_range'
+    OFF_DESIGN_GENERAL = 'off_design_general'
     MULTI_MISSION = 'multimission'
 
 

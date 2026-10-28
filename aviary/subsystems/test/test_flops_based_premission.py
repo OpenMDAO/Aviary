@@ -62,6 +62,8 @@ class PreMissionGroupTest(unittest.TestCase):
 
         setup_model_options(prob, flops_inputs)
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
 
         # prob.model.set_input_defaults(
         #     Aircraft.Engine.SCALE_FACTOR,
@@ -142,6 +144,8 @@ class PreMissionGroupTest(unittest.TestCase):
 
         setup_model_options(prob, flops_inputs)
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', om.OpenMDAOWarning)
@@ -281,6 +285,8 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
         setup_model_options(prob, flops_inputs)
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
 
         # prob.model.set_input_defaults(
         #     Aircraft.Engine.SCALE_FACTOR,
@@ -838,6 +844,8 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         )
 
         setup_model_options(prob, self.flops_inputs)
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
         prob.setup(check=False)
         set_aviary_initial_values(prob, self.flops_inputs)
 
@@ -1079,6 +1087,8 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         )
 
         setup_model_options(prob, self.flops_inputs)
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
         prob.setup(check=False)
         set_aviary_initial_values(prob, self.flops_inputs)
 
@@ -1320,6 +1330,8 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         )
 
         setup_model_options(prob, self.flops_inputs)
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
         prob.setup(check=False)
         set_aviary_initial_values(prob, self.flops_inputs)
 

@@ -40,11 +40,19 @@ class FlightConstraintTestCase(unittest.TestCase):
         tol = 1e-6
         self.prob.run_model()
 
-        assert_near_equal(self.prob['theta'], np.array([0.2260201, 0.2260201]), tol)  # from GASP
-        assert_near_equal(
-            self.prob['TAS_violation'], np.array([-99.39848181, -99.39848181]), tol
-        )  # note: output value isn't in GASP
-        assert_near_equal(self.prob['TAS_min'], np.array([325.9296, 325.9296]), tol)
+        expected_values = {
+            'theta': (np.array([0.2260201, 0.2260201]), 'rad'),  # from GASP
+            'TAS_violation': (
+                np.array([-99.39848181, -99.39848181]),
+                'ft/s',
+            ),  # note: output value isn't in GASP
+            'TAS_min': (np.array([325.9296, 325.9296]), 'ft/s'),
+        }
+
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
