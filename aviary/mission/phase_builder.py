@@ -379,6 +379,10 @@ class PhaseBuilder(ABC):
 
         initial, _ = options[f'{name}_initial']
         final, _ = options[f'{name}_final']
+
+        # NOTE units of bounds here are later used to add the state - this could mean the ref values
+        #      get applied with the wrong units (if the state's default units are different than the
+        #      bound's)
         bounds, units = options[f'{name}_bounds']
         ref, _ = options[f'{name}_ref']
         ref0, _ = options[f'{name}_ref0']
@@ -420,7 +424,7 @@ class PhaseBuilder(ABC):
                 loc='final',
                 equals=final,
                 units=units,
-                ref=final,
+                ref=constraint_ref,
             )
 
     def add_control(self, name, target, rate_targets=None, rate2_targets=None):
