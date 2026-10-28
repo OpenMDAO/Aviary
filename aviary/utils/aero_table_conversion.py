@@ -8,11 +8,11 @@ import numpy as np
 from openmdao.components.interp_util.interp import InterpND
 from scipy.interpolate import interp1d
 
-from aviary.utils.utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 from aviary.utils.math_utils import round_it
+from aviary.utils.utils import _parse, _read_map, _rep
 from aviary.variable_info.enums import CodeOrigin
 
 _gasp_keys = ['Altitude', 'Mach', 'Angle of Attack']
