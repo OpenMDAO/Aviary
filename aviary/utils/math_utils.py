@@ -42,6 +42,16 @@ def round_it(x, sig=None):
         return 0
 
 
+def deg2rad(d):
+    """Complex step safe deg2rad."""
+    return d * np.pi / 180.0
+
+
+def rad2deg(r):
+    """Complex step safe rad2deg."""
+    return r * 180.0 / np.pi
+
+
 def sigmoidX(x, x0, mu=1.0):
     """
     Sigmoid used to smoothly transition between piecewise functions.

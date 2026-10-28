@@ -10,6 +10,7 @@ import itertools
 import numpy as np
 from openmdao.utils.units import convert_units
 
+from aviary.constants import GRAV_EARTH
 from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
@@ -330,3 +331,51 @@ def cast_type(key, val, meta_data=CoreMetaData):
                     break
 
     return cast_val
+
+
+def mass_to_force_english(mass: tuple, gravity: tuple):
+    """
+    Convert mass into force in the english unit system.
+    Uses the basic equation lbf = lbm * (g_current / g_earth).
+
+    Parameters
+    ----------
+    mass: tuple
+        mass to be converted, in the form of a tuple containing (val, units)
+    gravity: tuple
+        current gravitational acceleration, in the form of a tuple containing (val, units)
+
+    Returns
+    -------
+    force: float
+        converted force in lbf
+    """
+    mass_val = convert_units(mass[0], mass[1], 'lbm')
+    gravity_val = convert_units(gravity[0], gravity[1], GRAV_EARTH[1])
+
+    force = mass_val * (gravity_val / GRAV_EARTH[0])
+
+    return force
+
+
+def mass_to_force_english_derivative(gravity: tuple):
+    """
+    Compute the derivative of outputs computed using forces with respect to mass, which is the
+    ratio of gravities. The purpose of this function is to make sure units are always consistent
+    and reduce repeated code.
+
+    Parameters
+    ----------
+    gravity: tuple
+        current gravitational acceleration, in the form of a tuple containing (val, units)
+
+    Returns
+    -------
+    deriv: float
+        gravity ratio
+    """
+    gravity_val = convert_units(gravity[0], gravity[1], GRAV_EARTH[1])
+
+    deriv = gravity_val / GRAV_EARTH[0]
+
+    return deriv

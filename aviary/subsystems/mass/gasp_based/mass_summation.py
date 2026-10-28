@@ -91,7 +91,7 @@ class StructureMass(om.ExplicitComponent):
         landing_gear_mass = inputs[Aircraft.LandingGear.TOTAL_MASS]
         pod_mass = inputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS]
         wing_mass = inputs[Aircraft.Wing.MASS]
-        delta_struct_wt = inputs[Aircraft.Design.STRUCTURAL_MASS_INCREMENT]
+        delta_struct_mass = inputs[Aircraft.Design.STRUCTURAL_MASS_INCREMENT]
 
         outputs[Aircraft.Design.STRUCTURE_MASS] = (
             wing_mass
@@ -99,7 +99,7 @@ class StructureMass(om.ExplicitComponent):
             + fuselage_mass
             + landing_gear_mass
             + pod_mass
-            + delta_struct_wt
+            + delta_struct_mass
         )
 
 
