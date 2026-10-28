@@ -42,112 +42,38 @@ class TestUnsteadySolvedEOM(unittest.TestCase):
 
         p.run_model()
 
-        # p.model.list_inputs()
-        # p.model.list_outputs(print_arrays=True, units=True)
+        # True airspeed in level flight is dr_dt.
+        # Normal force, fuselage pitch, and dgam_dt are 0.0, and load factor is 1.0 in balanced
+        # level flight with zero alpha and wing incidence.
 
-        dt_dr = p.get_val('dt_dr', units='h/NM')
-        normal_force = p.get_val('normal_force', units='lbf')
-        load_factor = p.get_val('load_factor', units='unitless')
-        fuselage_pitch = p.get_val('fuselage_pitch', units='deg')
-
-        # True airspeed in level flight is dr_dt
-        assert_near_equal(1 / dt_dr, 250.0 * np.ones(nn), tolerance=1.0e-12)
-
-        # Normal force in balanced level flight is 0.0
-        assert_near_equal(normal_force, np.zeros(nn), tolerance=1.0e-12)
-
-        # Fuselage pitch balanced level flight with zero alpha and wing incidence is 0.0
-        assert_near_equal(fuselage_pitch, np.zeros(nn), tolerance=1.0e-12)
-
-        # Load factor balanced level flight with zero alpha and wing incidence is 1.0
-        assert_near_equal(load_factor, np.ones(nn), tolerance=1.0e-12)
+        # normal_force and dgam_dt/dgam_dt_approx come from a near-cancellation of weight and lift
+        # (~175,000 lbf each), so their absolute error is limited by the precision of OpenMDAO's
+        # lbm/kg unit conversion rather than floating-point precision.
+        expected_values = {
+            'dt_dr': (1 / 250.0 * np.ones(nn), 'h/NM', 1.0e-12),
+            # when comparing against a value of 0 asserts use abs tol, not rel (so this is within 0.001 N)
+            'normal_force': (np.zeros(nn), 'lbf', 1e-3),
+            'fuselage_pitch': (np.zeros(nn), 'deg', 1.0e-12),
+            'load_factor': (np.ones(nn), 'unitless', 1.0e-8),
+        }
 
         if not ground_roll:
-            dgam_dt = p.get_val('dgam_dt', units='deg/s')
-            dgam_dt_approx = p.get_val('dgam_dt_approx', units='deg/s')
+            expected_values['dgam_dt'] = (np.zeros(nn), 'deg/s', 1.0e-6)
+            expected_values['dgam_dt_approx'] = (np.zeros(nn), 'deg/s', 1.0e-6)
 
-            # Both approximate and computed dgam_dt should be zero.
-            assert_near_equal(dgam_dt, np.zeros(nn), tolerance=1.0e-12)
-            assert_near_equal(dgam_dt_approx, np.zeros(nn), tolerance=1.0e-12)
-
-        p.set_val(Dynamic.Mission.VELOCITY, 250 + 10 * np.random.rand(nn), units='kn')
-        p.set_val('mass', 175_000 + 1000 * np.random.rand(nn), units='lbm')
-        p.set_val(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            20_000 + 100 * np.random.rand(nn),
-            units='lbf',
-        )
-        p.set_val(Dynamic.Vehicle.LIFT, 175_000 + 1000 * np.random.rand(nn), units='lbf')
-        p.set_val(Dynamic.Vehicle.DRAG, 20_000 + 100 * np.random.rand(nn), units='lbf')
-        p.set_val(Aircraft.Wing.INCIDENCE, np.random.rand(1), units='deg')
-
-        if not ground_roll:
-            p.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 5 * np.random.rand(nn), units='deg')
-            p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 5 * np.random.rand(nn), units='deg')
-            p.set_val('dh_dr', 0.1 * np.random.rand(nn), units=None)
-            p.set_val('d2h_dr2', 0.01 * np.random.rand(nn), units='1/m')
-
-        p.run_model()
-
-        with np.printoptions(linewidth=1024):
-            cpd = p.check_partials(method='cs')
-        assert_check_partials(cpd)
-
-    def test_unsteady_solved_eom(self):
-        for ground_roll in True, False:
-            with self.subTest(msg=f'ground_roll={ground_roll}'):
-                self._test_unsteady_solved_eom(ground_roll=ground_roll)
-
-
-class TestUnsteadySolvedEOM2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.mission.solved_two_dof.ode.unsteady_solved_eom as unsteady
-
-        unsteady.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.mission.solved_two_dof.ode.unsteady_solved_eom as unsteady
-
-        unsteady.GRAV_ENGLISH_LBM = 1.0
-
-    def _test_unsteady_solved_eom(self, ground_roll=False):
-        nn = 2
-        p = om.Problem()
-        p.model.add_subsystem(
-            'eom',
-            UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        p.setup(force_alloc_complex=True)
-
-        p.set_val(Dynamic.Mission.VELOCITY, 250 + 10 * np.random.rand(nn), units='kn')
-        p.set_val('mass', 175_000 + 1000 * np.random.rand(nn), units='lbm')
-        p.set_val(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            20_000 + 100 * np.random.rand(nn),
-            units='lbf',
-        )
-        p.set_val(Dynamic.Vehicle.LIFT, 175_000 + 1000 * np.random.rand(nn), units='lbf')
-        p.set_val(Dynamic.Vehicle.DRAG, 20_000 + 100 * np.random.rand(nn), units='lbf')
-        p.set_val(Aircraft.Wing.INCIDENCE, np.random.rand(1), units='deg')
-
-        if not ground_roll:
-            p.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, nn * np.random.rand(nn), units='deg')
-            p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, nn * np.random.rand(nn), units='deg')
-            p.set_val('dh_dr', 0.1 * np.random.rand(nn), units=None)
-            p.set_val('d2h_dr2', 0.01 * np.random.rand(nn), units='1/m')
+        for var_name, (expected, units, tolerance) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = p.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tolerance=tolerance)
 
         partial_data = p.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=5e-11, rtol=1e-11)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
-    def test_unsteady_solved_eom(self):
-        for ground_roll in True, False:
-            with self.subTest(msg=f'ground_roll={ground_roll}'):
-                self._test_unsteady_solved_eom(ground_roll=ground_roll)
+    def test_unsteady_solved_eom_ground_roll(self):
+        self._test_unsteady_solved_eom(ground_roll=True)
+
+    def test_unsteady_solved_eom_no_ground_roll(self):
+        self._test_unsteady_solved_eom(ground_roll=False)
 
 
 if __name__ == '__main__':

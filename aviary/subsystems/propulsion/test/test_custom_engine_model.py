@@ -175,6 +175,7 @@ phase_info = {
     },
     'post_mission': {
         'include_landing': False,
+        'target_range': (3500.0, 'nmi'),
     },
 }
 

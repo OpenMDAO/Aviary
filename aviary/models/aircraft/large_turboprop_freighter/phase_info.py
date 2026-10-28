@@ -68,7 +68,6 @@ energy_phase_info = {
     },
     'post_mission': {
         'include_landing': False,
-        'constrain_range': True,
         'target_range': (2_020.0, 'nmi'),
     },
 }
@@ -157,8 +156,8 @@ two_dof_phase_info = {
             'altitude_final': (500, 'ft'),
             'altitude_constraint_ref': (500, 'ft'),
             'flight_path_angle_bounds': ((0.0, 20.0), 'rad'),
-            'flight_path_angle_ref': (57.2958, 'deg'),
-            'flight_path_angle_defect_ref': (57.2958, 'deg'),
+            'flight_path_angle_ref': (1, 'rad'),  # find beter ref
+            'flight_path_angle_defect_ref': (1, 'rad'),
             'flight_path_angle_initial': (0.0, 'deg'),
             'pitch_constraint_bounds': ((0.0, 15.0), 'deg'),
             'pitch_constraint_ref': (1.0, 'deg'),
@@ -334,5 +333,8 @@ two_dof_phase_info = {
             'distance': ([0.96 * 2_020, 2_020], 'NM'),
             'time': ([22000.0, 500.0], 's'),
         },
+    },
+    'post_mission': {
+        'target_range': (2020.0, 'nmi'),
     },
 }

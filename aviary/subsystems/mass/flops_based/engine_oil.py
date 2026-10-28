@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_engine_count_factor,
     distributed_thrust_factor,
@@ -42,7 +41,7 @@ class TransportEngineOilMass(om.ExplicitComponent):
         thrust_factor = distributed_thrust_factor(max_sls_thrust, num_eng)
 
         outputs[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS] = (
-            0.082 * num_eng_fact * thrust_factor**0.65 * scaler / GRAV_ENGLISH_LBM
+            0.082 * num_eng_fact * thrust_factor**0.65 * scaler
         )
 
     def compute_partials(self, inputs, J):
@@ -53,12 +52,12 @@ class TransportEngineOilMass(om.ExplicitComponent):
         thrust_factor = distributed_thrust_factor(max_sls_thrust, num_eng)
 
         J[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER] = (
-            0.082 * num_eng_fact * thrust_factor**0.65 / GRAV_ENGLISH_LBM
+            0.082 * num_eng_fact * thrust_factor**0.65
         )
 
         J[
             Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST
-        ] = 0.0533 * thrust_factor**-0.35 * scaler / GRAV_ENGLISH_LBM
+        ] = 0.0533 * thrust_factor**-0.35 * scaler
 
 
 class AltEngineOilMass(om.ExplicitComponent):
@@ -84,13 +83,11 @@ class AltEngineOilMass(om.ExplicitComponent):
 
         scaler = inputs[Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER]
 
-        outputs[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS] = (
-            240.0 * ((pax + 39) // 40) * scaler / GRAV_ENGLISH_LBM
-        )
+        outputs[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS] = 240.0 * ((pax + 39) // 40) * scaler
 
     def compute_partials(self, inputs, J):
         pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         J[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER] = (
-            240.0 * ((pax + 39) // 40) / GRAV_ENGLISH_LBM
+            240.0 * ((pax + 39) // 40)
         )

@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import nacelle_count_factor
 from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
@@ -78,7 +77,7 @@ class NacelleMass(om.ExplicitComponent):
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
         outputs[Aircraft.Nacelle.MASS] = (
-            0.25 * count_factor * avg_diam * avg_length * thrust**0.36 * scaler / GRAV_ENGLISH_LBM
+            0.25 * count_factor * avg_diam * avg_length * thrust**0.36 * scaler
         )
 
     def compute_partials(self, inputs, J):
@@ -98,14 +97,14 @@ class NacelleMass(om.ExplicitComponent):
         thrust_exp = thrust**0.36
 
         J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_DIAMETER] = (
-            0.25 * count_factor * avg_length * thrust_exp * scaler / GRAV_ENGLISH_LBM
+            0.25 * count_factor * avg_length * thrust_exp * scaler
         )
         J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.AVG_LENGTH] = (
-            0.25 * count_factor * avg_diam * thrust_exp * scaler / GRAV_ENGLISH_LBM
+            0.25 * count_factor * avg_diam * thrust_exp * scaler
         )
         J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SCALER] = (
-            0.25 * count_factor * avg_diam * avg_length * thrust_exp / GRAV_ENGLISH_LBM
+            0.25 * count_factor * avg_diam * avg_length * thrust_exp
         )
         J[Aircraft.Nacelle.MASS, Aircraft.Engine.SCALED_SLS_THRUST] = (
-            0.09 * count_factor * avg_diam * avg_length * thrust**-0.64 * scaler / GRAV_ENGLISH_LBM
+            0.09 * count_factor * avg_diam * avg_length * thrust**-0.64 * scaler
         )

@@ -23,14 +23,14 @@ class DistanceComp(om.ExplicitComponent):
         self.add_input(
             'cruise_distance_initial',
             val=0.0,
-            units='NM',
+            units='m',
             desc='Total distance at the start of the cruise phase.',
         )
 
         self.add_input(
             'TAS_cruise',
             val=0.0001 * np.ones(nn),
-            units='NM/s',
+            units='m/s',
             desc='Constant true airspeed at each point in cruise.',
         )
 
@@ -38,7 +38,7 @@ class DistanceComp(om.ExplicitComponent):
             self,
             Dynamic.Mission.DISTANCE,
             shape=(nn,),
-            units='NM',
+            units='m',
             desc='Computed distance at each point in the cruise phase.',
         )
 
@@ -70,7 +70,9 @@ class DistanceComp(om.ExplicitComponent):
         self.declare_partials(Dynamic.Mission.DISTANCE, 'time', rows=all_row, cols=all_col)
 
     def compute(self, inputs, outputs):
-        v_x = inputs['TAS_cruise']
+        v_x = inputs[
+            'TAS_cruise'
+        ]  # TODO to compute distance we want speed relative to ground not airspeed
         r0 = inputs['cruise_distance_initial']
         t = inputs['time']
         t0 = t[0]
