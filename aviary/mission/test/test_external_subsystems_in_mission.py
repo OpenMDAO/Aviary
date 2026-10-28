@@ -314,11 +314,11 @@ class TestExternalSubsystems(unittest.TestCase):
         # Low speed areo at the top of the ODE.
         has_new_aero = hasattr(prob.model.traj.phases.groundroll.rhs_all, 'new_aero')
         self.assertTrue(has_new_aero)
-        has_new_aero = hasattr(prob.model.traj.phases.accel.rhs_all, 'new_aero')
+        has_new_aero = hasattr(prob.model.traj.phases.accel.rhs_all.solver_sub, 'new_aero')
         self.assertTrue(has_new_aero)
 
         # Cruise aero in the solver subsystem.
-        has_new_aero = hasattr(prob.model.traj.phases.climb1.rhs_all.solver_sub, 'new_aero')
+        has_new_aero = hasattr(prob.model.traj.phases.climb1.rhs_all.lift_balance_group, 'new_aero')
         self.assertTrue(has_new_aero)
         has_new_aero = hasattr(prob.model.traj.phases.cruise.rhs_all.solver_sub, 'new_aero')
         self.assertTrue(has_new_aero)
