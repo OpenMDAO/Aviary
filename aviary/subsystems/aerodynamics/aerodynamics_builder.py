@@ -773,7 +773,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
             aero_options = subsystem_options.get('aerodynamics', {})
             flops_report = aero_options.get('flops_report', False)
             if flops_report:
-                output = generate_drag_report(prob)
+                output = generate_drag_report(prob, self)
                 with open(filepath, mode='w') as f:
                     f.write(output)
             return

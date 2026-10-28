@@ -6,7 +6,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-def generate_drag_report(prob):
+def generate_drag_report(prob, aero_builder):
     """
     Reproduces the FLOPS drag report for the given Aviary model.
 
@@ -16,15 +16,14 @@ def generate_drag_report(prob):
     ----------
     prob : AivaryProblem
         The problem to report.
+    aero_builder : CoreAerodynamicsBuilder
+        The builder that is generating this report.
 
     Returns
     -------
     str
         Report content.
     """
-    # Pull builder from the problem.
-    aero_builder = prob.model.subsystem_builders[4]
-
     aero_mission = aero_builder.build_mission(
         num_nodes=1,
         aviary_inputs=prob.aviary_inputs,
