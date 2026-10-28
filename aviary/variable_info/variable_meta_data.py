@@ -2979,7 +2979,7 @@ add_meta_data(
     Aircraft.Engine.Propeller.TIP_SPEED_MAX,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INPROP.TSPDMX', 'INPROP.TSPDMXe'],
+        'GASP': ['INPROP.TSPDMX', 'INPROP.TSPDMXe'],  # 'TSPDMXe' is not in GASP
         'FLOPS': None,
     },
     units='ft/s',
@@ -7797,18 +7797,18 @@ add_meta_data(
     Mission.FINAL_MASS,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'None',
+        'GASP': None,
         'FLOPS': None,
     },  # TODO: Check on these
     units='lbm',
-    desc='The final weight of the vehicle at the end of the last regular_phase (does not include reserve phases).',
+    desc='The final mass of the vehicle at the end of the last regular_phase (does not include reserve phases).',
 )
 
 add_meta_data(
     Mission.FINAL_TIME,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'None',
+        'GASP': None,
         'FLOPS': None,
     },  # TODO: Check on these
     units='min',
