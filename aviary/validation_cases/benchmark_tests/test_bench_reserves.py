@@ -97,7 +97,7 @@ class ReserveTest(unittest.TestCase):
             }
         )
 
-        prob = AviaryProblem(verbosity=1)
+        prob = AviaryProblem(verbosity=0)
         prob.load_inputs(
             'large_single_aisle_1_GASP.csv',
             phase_info_local,
