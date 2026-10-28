@@ -231,7 +231,7 @@ class LandingSegment(TwoDOFODE):
         self.set_input_defaults('t_init_gear_td', 1e10)  # ensure gear down
 
         self.add_subsystem(
-            'landinggroundroll',
+            'landing_ground_roll',
             LandingGroundRollComponent(),
             promotes_inputs=[
                 'touchdown_CD',
@@ -274,3 +274,5 @@ class LandingSegment(TwoDOFODE):
         self.set_input_defaults(
             Dynamic.Vehicle.Propulsion.THROTTLE, np.zeros((1, num_engine_types))
         )
+
+        self.set_input_defaults('mass', units='lbm')

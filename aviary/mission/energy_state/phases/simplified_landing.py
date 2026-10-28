@@ -1,16 +1,20 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingCalc(om.ExplicitComponent):
-    """Calculate the distance covered over the ground and approach velocity during landing."""
+    """
+    Calculate the distance covered over the ground and approach velocity during landing.
+    This mission component is kept in english units due to use of calibration factors.
+    """
 
     def initialize(self):
         add_aviary_option(self, Mission.SEA_LEVEL_DENSITY, units='slug/ft**3')
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         add_aviary_input(self, Mission.FINAL_MASS, units='lbm')
@@ -26,8 +30,11 @@ class LandingCalc(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         rho_SL = self.options[Mission.SEA_LEVEL_DENSITY][0]
+        gravity = self.options[Mission.GRAVITY]
 
-        landing_weight = inputs[Mission.FINAL_MASS] * GRAV_ENGLISH_LBM
+        landing_weight = mass_to_force_english(
+            mass=(inputs[Mission.FINAL_MASS], 'lbm'), gravity=gravity
+        )
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         planform_area = inputs[Aircraft.Wing.AREA]
         Cl_ldg_max = inputs[Mission.Landing.LIFT_COEFFICIENT_MAX]
@@ -47,8 +54,12 @@ class LandingCalc(om.ExplicitComponent):
         outputs[Mission.Landing.INITIAL_VELOCITY] = V_app
 
     def compute_partials(self, inputs, J):
+        gravity = self.options[Mission.GRAVITY]
         rho_SL = self.options[Mission.SEA_LEVEL_DENSITY][0]
-        landing_weight = inputs[Mission.FINAL_MASS] * GRAV_ENGLISH_LBM
+
+        landing_weight = mass_to_force_english(
+            mass=(inputs[Mission.FINAL_MASS], 'lbm'), gravity=gravity
+        )
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         planform_area = inputs[Aircraft.Wing.AREA]
         Cl_ldg_max = inputs[Mission.Landing.LIFT_COEFFICIENT_MAX]
@@ -57,12 +68,14 @@ class LandingCalc(om.ExplicitComponent):
 
         Cl_app = Cl_ldg_max / 1.3**2
 
+        dforce_dmass = mass_to_force_english_derivative(gravity)
+
         # INITIAL_VELOCITY (V_app) Partials
         V_app = ((2 * landing_weight) / (rho * planform_area * Cl_app)) ** 0.5
         d_sqrt = 0.5 / V_app
 
         J[Mission.Landing.INITIAL_VELOCITY, Mission.FINAL_MASS] = (
-            d_sqrt * (2 * GRAV_ENGLISH_LBM) / (rho * planform_area * Cl_app)
+            d_sqrt * 2 / (rho * planform_area * Cl_app) * dforce_dmass
         )
 
         J[Mission.Landing.INITIAL_VELOCITY, Dynamic.Atmosphere.DENSITY] = (
@@ -79,7 +92,7 @@ class LandingCalc(om.ExplicitComponent):
 
         # GROUND DISTANCE Partials:
         J[Mission.Landing.GROUND_DISTANCE, Mission.FINAL_MASS] = (
-            105 * GRAV_ENGLISH_LBM / (planform_area * rho_ratio * Cl_app * 1.69)
+            105 / (planform_area * rho_ratio * Cl_app * 1.69) * dforce_dmass
         )
         J[Mission.Landing.GROUND_DISTANCE, Aircraft.Wing.AREA] = (
             -105 * landing_weight / (planform_area**2 * rho_ratio * Cl_app * 1.69)
