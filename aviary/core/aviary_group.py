@@ -75,7 +75,7 @@ class AviaryGroup(om.Group):
         self.engine_models = []
         self.main_phases = []
         self.reserve_phases = []
-        self.subsystems = []
+        self.subsystem_builders= []
 
         self.aviary_inputs = None
         self.meta_data = None
@@ -529,7 +529,7 @@ class AviaryGroup(om.Group):
             meta_data=self.meta_data,
         )
 
-        subsystems = self.subsystems = [prop, geom, energy, mass, aero, perf]
+        subsystems = self.subsystem_builders= [prop, geom, energy, mass, aero, perf]
         subsystems.extend(self.external_subsystems)
 
         self.ode_args = {
@@ -565,7 +565,7 @@ class AviaryGroup(om.Group):
         )
 
         # TODO temporary until way to merge StaticGroup and CorePreMission group is found
-        core_subsystems = self.subsystems[0:6]
+        core_subsystems = self.subsystem_builders[0:6]
 
         # Propulsion isn't included in core pre-mission group to avoid override step in
         # configure() - instead add it now
@@ -671,7 +671,7 @@ class AviaryGroup(om.Group):
     def _get_phase(self, phase_name, phase_idx, comm):
         phase_options = self.mission_info[phase_name]
 
-        subsystems = self.subsystems
+        subsystems = self.subsystem_builders
 
         phase_builder = self.configurator.get_phase_builder(self, phase_name, phase_options)
 
@@ -726,7 +726,7 @@ class AviaryGroup(om.Group):
         # Get all post_mission bus vars once.
         # TODO: This method returns a dictionary keyed by phase name, but our
         # philosophy is moving away from this.
-        all_subsystems = self.subsystems
+        all_subsystems = self.subsystem_builders
         mbvars_by_sys = {}
         for subsystem in all_subsystems:
             mbvars_by_sys[subsystem.name] = subsystem.get_post_mission_bus_variables(
@@ -847,7 +847,7 @@ class AviaryGroup(om.Group):
         # Add all post-mission subsystems.
         all_subsystem_options = self.pre_mission_info.get('subsystem_options', {})
         phase_mission_bus_lengths = get_phase_mission_bus_lengths(self.traj)
-        for subsystem in self.subsystems:
+        for subsystem in self.subsystem_builders:
             name = subsystem.name
             subsystem_options = all_subsystem_options.get(name, {})
 
@@ -965,7 +965,7 @@ class AviaryGroup(om.Group):
             all_subsystem_options = phase_info.get('subsystem_options', {})
 
             link_vars = set()
-            for subsys in self.subsystems:
+            for subsys in self.subsystem_builders:
                 sub_vars = subsys.get_linked_variables(
                     aviary_inputs=self.aviary_inputs,
                     user_options=self.mission_info[phase_name]['user_options'],
@@ -1194,7 +1194,7 @@ class AviaryGroup(om.Group):
         return kwargs
 
     def _add_bus_variables_and_connect(self):
-        all_subsystems = self.subsystems
+        all_subsystems = self.subsystem_builders
 
         base_phases = list(self.mission_info.keys())
 
@@ -1281,7 +1281,7 @@ class AviaryGroup(om.Group):
                             )
 
     def _connect_mission_bus_variables(self):
-        all_subsystems = self.subsystems
+        all_subsystems = self.subsystem_builders
 
         # Loop through all external subsystems.
         for subsystem in all_subsystems:
@@ -1335,7 +1335,7 @@ class AviaryGroup(om.Group):
         """
         verbosity = self._override_verbosity(verbosity)
 
-        all_subsystems = self.subsystems
+        all_subsystems = self.subsystem_builders
 
         # Add all design variables requested by the subsystem builders.
         for subsystem in all_subsystems:
@@ -1545,7 +1545,7 @@ class AviaryGroup(om.Group):
         phase : Phase
             The phase object for which the subsystem guesses are being added.
         """
-        all_subsystems = self.subsystems
+        all_subsystems = self.subsystem_builders
         phase_info = self.mission_info[phase_name]
         user_options = phase_info.get('user_options', {})
         all_subsystem_options = phase_info.get('subsystem_options', {})
