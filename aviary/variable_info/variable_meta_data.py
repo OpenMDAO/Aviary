@@ -4426,19 +4426,10 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Nacelle.SURFACE_AREA,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SN', 'FLOPS': None},  # SN is wetted area
-    units='ft**2',
-    desc='surface area of the outside of one entire nacelle, not just the wetted area',
-    multivalue=True,
-)
-
-add_meta_data(
     Aircraft.Nacelle.TOTAL_WETTED_AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'INGASP.SN',
         'FLOPS': None,  # 'ACTWET.SWTNA',
     },
     units='ft**2',
