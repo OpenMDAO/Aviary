@@ -1003,10 +1003,8 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
     meta_data=_MetaData,
-    # note: this GASP variable does not include cargo, but it does include
-    # passenger baggage
     historical_name={
-        'GASP': 'INGASP.WPL',
+        'GASP': 'INGASP.WPL',  # does not include cargo, but it does include passenger baggage
         'FLOPS': None,
     },
     units='lbm',
@@ -1342,9 +1340,8 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.CRUISE_ALTITUDE,
     meta_data=_MetaData,
-    # In GASP, it is HNCRU, not CRALT
     historical_name={
-        'GASP': 'INGASP.CRALT',
+        'GASP': 'INGASP.CRALT',  # In GASP, it is HNCRU, not CRALT
         'FLOPS': None,
     },
     units='ft',
@@ -3085,9 +3082,9 @@ add_meta_data(
     Aircraft.Fuel.DENSITY,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'FUELD',
+        'GASP': 'FUELD',  # not in GASP, but have to keep
         'FLOPS': 'WTIN.FULDEN',
-    },  # not in GASP, but have to keep
+    },
     units='lbm/galUS',
     desc='Fuel density (jet fuel typical density of 6.7 lbm/galUS used in the calculation of wing_capacity'
     '(if wing_capacity is not input) and in the calculation of fuel system weight.',
@@ -4479,9 +4476,9 @@ add_meta_data(
     Aircraft.LandingGear.DRAG_COEFFICIENT,
     meta_data=_MetaData,
     historical_name={
+        'GASP': None,
         # ['&DEFTOL.TOLIN.CDGEAR', '~DEFTOL.CDGEAR', 'ROTDAT.CDGEAR'],
         'FLOPS': 'TOLIN.CDGEAR',
-        'GASP': None,
     },
     option=True,
     default_value=0.0,
@@ -4676,10 +4673,8 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.AVG_LENGTH,
     meta_data=_MetaData,
-    # NOTE this is not specified as an average in GASP, but calculations make
-    # it appear to be one
     historical_name={
-        'GASP': 'INGASP.ELN',
+        'GASP': 'INGASP.ELN',  # not specified as an average, but calculations make it appear to be one
         'FLOPS': None,
     },
     units='ft',
@@ -5415,7 +5410,7 @@ add_meta_data(
     Aircraft.VerticalTail.AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.SVT',  # not an input in GASP
+        'GASP': 'SVT',
         'FLOPS': 'WTIN.SVT',  # ['&DEFINE.WTIN.SVT', 'EDETIN.SVT'],
     },
     units='ft**2',
@@ -7980,11 +7975,10 @@ add_meta_data(
     Mission.TOTAL_FUEL_MASS,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': None,  # Note: In GASP, WFA does not include fuel margin.
         'FLOPS': None,
     },
     units='lbm',
-    # Note: In GASP, WFA does not include fuel margin.
     desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
     'reserve fuel and fuel margin',
 )
@@ -8413,9 +8407,9 @@ add_meta_data(
     Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY,
     meta_data=_MetaData,
     historical_name={
+        'GASP': None,
         # ['&DEFTOL.TOLIN.ALPRUN', 'BALFLD.ALPRUN', '~CLGRAD.ALPRUN'],
         'FLOPS': 'TOLIN.ALPRUN',
-        'GASP': None,
     },
     option=True,
     default_value=0.0,
@@ -8451,8 +8445,8 @@ add_meta_data(
     meta_data=_MetaData,
     # NOTE: FLOPS uses the same value for both takeoff and landing
     historical_name={
-        'FLOPS': 'TOLIN.BRAKMU',  # ['&DEFTOL.TOLIN.BRAKMU', 'BALFLD.BRAKMU'],
         'GASP': None,
+        'FLOPS': 'TOLIN.BRAKMU',  # ['&DEFTOL.TOLIN.BRAKMU', 'BALFLD.BRAKMU'],
     },
     default_value=0.3,
     units='unitless',
