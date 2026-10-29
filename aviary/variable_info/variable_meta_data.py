@@ -2979,7 +2979,7 @@ add_meta_data(
     Aircraft.Engine.Propeller.TIP_SPEED_MAX,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INPROP.TSPDMX', 'INPROP.TSPDMXe'],  # 'TSPDMXe' is not in GASP
+        'GASP': ['INPROP.TSPDMX'],
         'FLOPS': None,
     },
     units='ft/s',
@@ -7635,7 +7635,7 @@ add_meta_data(
     Dynamic.Vehicle.Propulsion.RPM,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['RPM', 'RPMe'],  # RPMe is not in GASP
+        'GASP': ['RPM'],
         'FLOPS': None,
     },
     units='rpm',
