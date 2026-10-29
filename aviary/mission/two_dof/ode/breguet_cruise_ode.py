@@ -47,7 +47,7 @@ class BreguetCruiseODE(TwoDOFODE):
             ],
             promotes_outputs=[
                 ('cruise_range', Dynamic.Mission.DISTANCE),
-                ('cruise_time', 'time'),
+                ('cruise_time', Dynamic.Mission.TIME),
             ],
         )
 
