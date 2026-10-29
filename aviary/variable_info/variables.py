@@ -640,6 +640,7 @@ class Dynamic:
         BATTERY_STATE_OF_CHARGE = 'battery_state_of_charge'
         CUMULATIVE_ELECTRIC_ENERGY_USED = 'cumulative_electric_energy_used'
         CUMULATIVE_FUEL_BURNED = 'cumulative_fuel_burn'
+        CUMULATIVE_NOX_PRODUCED = 'cumulative_nox_produced'
         DRAG = 'drag'
         DRAG_COEFFICIENT = 'drag_coefficient'
         LIFT = 'lift'

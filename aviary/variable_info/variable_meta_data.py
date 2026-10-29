@@ -6628,6 +6628,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='Total amount of nitrogen oxides (NOx) produced by the vehicle up until this point in the '
+    'mission',
+    multivalue=True,
+)
+
+add_meta_data(
     Dynamic.Vehicle.DRAG,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},

@@ -20,7 +20,7 @@ from aviary.subsystems.subsystem_builder import SubsystemBuilder
 #      Ideally, an alternate solution to loop through the hierarchy will be created and
 #      these can be replaced.
 from aviary.utils.preprocessors import _get_engine_variables
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class PropulsionBuilder(SubsystemBuilder):
@@ -125,7 +125,17 @@ class CorePropulsionBuilder(PropulsionBuilder):
     # NOTE no unittests!
     def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_states() on all engine models and return combined result."""
-        states = {}
+        states = {
+            Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED: {
+                'fix_initial': True,
+                'fix_final': False,
+                'lower': 0.0,
+                'ref': 1e1,
+                'units': 'kg',
+                'rate_source': Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL,
+                'val': 0.0,
+            }
+        }
         for engine in self.engine_models:
             engine_states = engine.get_states(
                 aviary_inputs=aviary_inputs,
@@ -208,14 +218,14 @@ class CorePropulsionBuilder(PropulsionBuilder):
     # NOTE no unittests!
     def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_linked_variables() on all engine models and return combined result."""
-        linked_vars = {}
+        linked_vars = [Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED]
         for engine in self.engine_models:
             engine_linked_vars = engine.get_linked_variables(
                 aviary_inputs=aviary_inputs,
                 user_options=user_options,
                 subsystem_options=subsystem_options,
             )
-            linked_vars.update(engine_linked_vars)
+            linked_vars = linked_vars + engine_linked_vars
 
         return linked_vars
 
@@ -283,14 +293,14 @@ class CorePropulsionBuilder(PropulsionBuilder):
     # NOTE no unittests!
     def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_timeseries() on all engine models and return combined result."""
-        outputs = []
+        outputs = [Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL]
         for engine in self.engine_models:
             engine_outputs = engine.get_timeseries(
                 aviary_inputs=aviary_inputs,
                 user_options=user_options,
                 subsystem_options=subsystem_options,
             )
-            outputs.append(engine_outputs)
+            outputs = outputs + engine_outputs
 
         return outputs
 
