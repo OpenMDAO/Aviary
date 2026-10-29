@@ -6562,6 +6562,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Mission.TIME,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='s',
+    # None is used in some initial conditions where either duration or initial are set.
+    types=(float, int, type(None)),
+    desc='Time since start of mission.',
+    multivalue=True,
+)
+
+add_meta_data(
     Dynamic.Mission.VELOCITY,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
