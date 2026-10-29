@@ -508,13 +508,86 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">floor</span><span class="p">,</span> <span class="n">log10</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_units</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">GRAV_EARTH</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variable_meta_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">CoreMetaData</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rep</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Shorthand for ``itertools.repeat`` with the multiplier first.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fmt</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a line from file ``f`` and parse it according to the given ``fmt``.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_strparse</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">(),</span> <span class="n">fmt</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_strparse</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fmt</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a string into fixed-width numeric fields.</span>
+<span class="sd">    ``fmt`` should be a list of tuples specifying (type, length) for each field in</span>
+<span class="sd">    string ``s``. Use None for the type to skip (i.e. not yield) that field.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">typ</span><span class="p">,</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">fmt</span><span class="p">:</span>
+        <span class="n">sub</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">p</span> <span class="p">:</span> <span class="n">p</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">typ</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">typ</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">+=</span> <span class="n">length</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_map</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">is_turbo_prop</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a single map of a table from the engine deck or propeller map file.</span>
+<span class="sd">    The map data is returned in the same format as in ``read_table`` except</span>
+<span class="sd">    there is a single altitude value per map in the case of engine deck and</span>
+<span class="sd">    there is a single Mach number per map in the case of propeller map.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># map dimensions: FORMAT(/2I5,F10.1,10X))</span>
+    <span class="n">npts</span><span class="p">,</span> <span class="n">nline</span><span class="p">,</span> <span class="n">amap</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">*</span><span class="n">_rep</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="mi">10</span><span class="p">)])</span>
+
+    <span class="n">map_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">npts</span> <span class="o">*</span> <span class="n">nline</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">map_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">amap</span>
+
+    <span class="c1"># number of points on a single line - wrapped if more than 6</span>
+    <span class="n">max_columns</span> <span class="o">=</span> <span class="mi">6</span>
+
+    <span class="c1"># point vals: FORMAT(10X,6F10.4,10X)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">npts_remaining</span> <span class="o">=</span> <span class="n">npts</span>
+    <span class="k">while</span> <span class="n">npts_remaining</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">npts_to_read</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_columns</span><span class="p">,</span> <span class="n">npts_remaining</span><span class="p">)</span>
+        <span class="c1"># remaining vals on wrapped line</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">_parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="o">*</span><span class="n">_rep</span><span class="p">(</span><span class="n">npts_to_read</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="mi">10</span><span class="p">))])))</span>
+        <span class="n">npts_remaining</span> <span class="o">-=</span> <span class="n">npts_to_read</span>
+
+    <span class="n">map_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">nline</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nline</span><span class="p">):</span>
+        <span class="n">npts_remaining</span> <span class="o">=</span> <span class="n">npts</span>
+        <span class="n">npts_to_read</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_columns</span><span class="p">,</span> <span class="n">npts_remaining</span><span class="p">)</span>
+        <span class="c1"># line (y) val then z vals: FORMAT(F10.4,6F10.1,10X,/(6F10.1,10X))</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[(</span><span class="nb">float</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="o">*</span><span class="n">_rep</span><span class="p">(</span><span class="n">npts_to_read</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="mi">10</span><span class="p">))]))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">npts_remaining</span> <span class="o">-=</span> <span class="n">npts_to_read</span>
+        <span class="k">while</span> <span class="n">npts_remaining</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">npts_to_read</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_columns</span><span class="p">,</span> <span class="n">npts_remaining</span><span class="p">)</span>
+            <span class="c1"># add remaining vals on warapped line</span>
+            <span class="n">line_format</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">_rep</span><span class="p">(</span><span class="n">npts_to_read</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="mi">10</span><span class="p">))]</span>
+            <span class="k">if</span> <span class="n">is_turbo_prop</span><span class="p">:</span>
+                <span class="n">line_format</span> <span class="o">=</span> <span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="o">*</span><span class="n">line_format</span><span class="p">]</span>
+            <span class="n">z</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">_parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">line_format</span><span class="p">)))</span>
+            <span class="n">npts_remaining</span> <span class="o">-=</span> <span class="n">npts_to_read</span>
+
+        <span class="n">sl</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">j</span> <span class="o">*</span> <span class="n">npts</span><span class="p">,</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">npts</span><span class="p">)</span>
+        <span class="n">map_data</span><span class="p">[</span><span class="n">sl</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="n">map_data</span><span class="p">[</span><span class="n">sl</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span>
+
+    <span class="k">return</span> <span class="n">map_data</span>
 
 
 <div class="viewcode-block" id="isiterable">
@@ -775,47 +848,6 @@
                     <span class="k">break</span>
 
     <span class="k">return</span> <span class="n">cast_val</span></div>
-
-
-
-<div class="viewcode-block" id="round_it">
-<a class="viewcode-back" href="../../../_srcdocs/packages/utils/utils.html#aviary.utils.utils.round_it">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">round_it</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Round a float to a specified significance.</span>
-<span class="sd">    If the number is equal to zero, &quot;0&quot; will be returned, regardless of the number of significant digits specified</span>
-<span class="sd">    If the number is NaN, directly returns it (stays NaN).</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    x : str or float</span>
-<span class="sd">        the float that needs to be rounded.</span>
-<span class="sd">    sig : int</span>
-<span class="sd">        the number of significant digits to include (If this is unspecified, the number will be rounded to two decimal places).</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">        The rounded number, or provided string if not convertible to float, or original</span>
-<span class="sd">        number if it is NaN</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># default sig figs to 2 decimal places out</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">x</span>
-
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="c1"># return NaNs directly back to markdown report</span>
-        <span class="k">return</span> <span class="n">x</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">sig</span><span class="p">:</span>
-        <span class="n">sig</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="o">+</span> <span class="mi">2</span>
-
-    <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sig</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mi">0</span></div>
 
 
 

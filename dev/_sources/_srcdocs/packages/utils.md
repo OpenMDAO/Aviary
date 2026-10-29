@@ -10,7 +10,6 @@ orphan: true
 - [aviary_options_dict](utils/aviary_options_dict.md)
 - [aviary_values](utils/aviary_values.md)
 - [compare_hierarchies](utils/compare_hierarchies.md)
-- [conversion_utils](utils/conversion_utils.md)
 - [csv_data_file](utils/csv_data_file.md)
 - [data_interpolator_builder](utils/data_interpolator_builder.md)
 - [develop_metadata](utils/develop_metadata.md)

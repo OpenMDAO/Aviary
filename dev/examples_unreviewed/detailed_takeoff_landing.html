@@ -988,11 +988,12 @@ Aviary internally handles the connections for Mach and altitude between the phas
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793292385.380620] [runnervm48cm3:5009 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x5625abdf9950 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793292385.380910] [runnervm48cm3:5009 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793304182.505079] [runnervm48cm3:5255 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55bc83e0d930 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1793304182.505384] [runnervm48cm3:5255 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05009] pml_ucx.c:313  Error: Failed to create UCP worker
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05255] pml_ucx.c:313  Error: Failed to create UCP worker
+Warning: Sizing mission does not include a target range.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
@@ -1015,9 +1016,6 @@ Aviary internally handles the connections for Mach and altitude between the phas
   &#39;mission:takeoff:lift_over_drag  17.354  unitless
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Sizing mission does not include a target range.
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/driver.py:1454: DriverWarning:pyOptSparseDriver: constraint(s) [&#39;mission:constraints:excess_fuel_mass_capacity&#39;] do not depend on any design variables. Please check your problem formulation.
 </pre></div>
 </div>
@@ -1036,25 +1034,25 @@ Total number of inequality constraints...............:       46
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 66
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 67
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.0885410723647746e+02    1.0885410723647746e+02
-Dual infeasibility......:   1.0059763607419001e-08    1.0059763607419001e-08
-Constraint violation....:   4.5245466632574488e-11    4.5245466632574488e-11
-Variable bound violation:   5.2826707452879873e-09    5.2826707452879873e-09
-Complementarity.........:   9.5410023861369161e-08    9.5410023861369161e-08
-Overall NLP error.......:   9.5410023861369161e-08    9.5410023861369161e-08
+Objective...............:   1.0885410719774053e+02    1.0885410719774053e+02
+Dual infeasibility......:   8.9351686265165693e-07    8.9351686265165693e-07
+Constraint violation....:   3.5242262441670389e-10    3.5242262441670389e-10
+Variable bound violation:   8.1136155571925883e-09    8.1136155571925883e-09
+Complementarity.........:   1.4426596946373058e-07    1.4426596946373058e-07
+Overall NLP error.......:   8.9351686265165693e-07    8.9351686265165693e-07
 
 
-Number of objective function evaluations             = 76
-Number of objective gradient evaluations             = 64
-Number of equality constraint evaluations            = 76
-Number of inequality constraint evaluations          = 76
-Number of equality constraint Jacobian evaluations   = 69
-Number of inequality constraint Jacobian evaluations = 69
+Number of objective function evaluations             = 77
+Number of objective gradient evaluations             = 65
+Number of equality constraint evaluations            = 77
+Number of inequality constraint evaluations          = 77
+Number of equality constraint Jacobian evaluations   = 70
+Number of inequality constraint Jacobian evaluations = 70
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 21.472
+Total seconds in IPOPT                               = 29.721
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -1405,7 +1403,9 @@ P3 corresponds to the microphone location used for acoustic certification.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
   &#39;aircraft:engine:mass  [7400.]  lbm
   &#39;aircraft:fins:mass  0.0  lbm
   &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
@@ -1483,7 +1483,7 @@ Number of inequality constraint evaluations          = 47
 Number of equality constraint Jacobian evaluations   = 39
 Number of inequality constraint Jacobian evaluations = 39
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 6.656
+Total seconds in IPOPT                               = 9.507
 
 EXIT: Optimal Solution Found.
 </pre></div>

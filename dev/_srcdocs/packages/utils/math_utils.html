@@ -552,7 +552,8 @@
   <section class="tex2jax_ignore mathjax_ignore" id="math-utils-py">
 <h1>math_utils.py<a class="headerlink" href="#math-utils-py" title="Link to this heading">#</a></h1>
 <blockquote>
-<div><dl class="py function">
+<div><p>Smooth functions and their derivatives.</p>
+<dl class="py function">
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">dSigmoidXdx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#dSigmoidXdx"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Derivative of sigmoid function.</p>
@@ -644,6 +645,29 @@ Returns (y, dy_dx).</p>
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">rad2deg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#rad2deg"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Complex step safe rad2deg.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">aviary.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">round_it</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/utils/math_utils.html#round_it"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Round a float to a specified significance.
+If the number is equal to zero, “0” will be returned, regardless of the number of significant digits specified
+If the number is NaN, directly returns it (stays NaN).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>str</em><em> or </em><em>float</em>) – the float that needs to be rounded.</p></li>
+<li><p><strong>sig</strong> (<em>int</em>) – the number of significant digits to include (If this is unspecified, the number will be rounded to two decimal places).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>The rounded number, or provided string if not convertible to float, or original</em></p></li>
+<li><p><em>number if it is NaN</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

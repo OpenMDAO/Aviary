@@ -776,11 +776,12 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793292465.275550] [runnervm48cm3:5098 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55c84778a670 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793292465.275841] [runnervm48cm3:5098 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793304297.811161] [runnervm48cm3:5315 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x5647ef523780 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1793304297.811493] [runnervm48cm3:5315 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05098] pml_ucx.c:313  Error: Failed to create UCP worker
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05315] pml_ucx.c:313  Error: Failed to create UCP worker
+Warning: Design range 2960.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
@@ -799,9 +800,6 @@
   &#39;aircraft:wing:mass  15288.0  lbm
   &#39;aircraft:wing:wetted_area  2423.02  ft**2
   &#39;mission:takeoff:lift_over_drag  17.35  unitless
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 2960.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
@@ -836,12 +834,12 @@ Total number of inequality constraints...............:      124
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 45
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.7361570208899727e+02    2.5517140288904073e+04
-Dual infeasibility......:   8.2072946473677698e-10    1.2062658295843570e-07
+Objective...............:   1.7361570208899721e+02    2.5517140288904062e+04
+Dual infeasibility......:   8.2073701425334443e-10    1.2062769254743626e-07
 Constraint violation....:   1.0521976016045161e-11    1.0521976016045161e-11
 Variable bound violation:   2.1964623897474667e-08    2.1964623897474667e-08
-Complementarity.........:   6.1853509164814160e-08    9.0909097030319905e-06
-Overall NLP error.......:   6.1853509164814160e-08    9.0909097030319905e-06
+Complementarity.........:   6.1853509164839227e-08    9.0909097030356751e-06
+Overall NLP error.......:   6.1853509164839227e-08    9.0909097030356751e-06
 
 
 Number of objective function evaluations             = 85
@@ -851,7 +849,7 @@ Number of inequality constraint evaluations          = 85
 Number of equality constraint Jacobian evaluations   = 50
 Number of inequality constraint Jacobian evaluations = 50
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 18.137
+Total seconds in IPOPT                               = 24.980
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -1046,6 +1044,9 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 2960.0 differs from target_range 1906.0 (NM).
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
   &#39;aircraft:engine:mass  [8071.35]  lbm
@@ -1062,9 +1063,6 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
   &#39;aircraft:wing:mass  15288.0  lbm
   &#39;aircraft:wing:wetted_area  2423.02  ft**2
   &#39;mission:takeoff:lift_over_drag  17.35  unitless
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 2960.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
@@ -1119,12 +1117,12 @@ Total number of inequality constraints...............:      124
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 45
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.7361570208899704e+02    2.5517140288904036e+04
-Dual infeasibility......:   8.2073834652097398e-10    1.2062788835725989e-07
-Constraint violation....:   1.0521976016045161e-11    1.0521976016045161e-11
+Objective...............:   1.7361570208899730e+02    2.5517140288904076e+04
+Dual infeasibility......:   8.2072546793388833e-10    1.2062599552896482e-07
+Constraint violation....:   1.0521974638528014e-11    1.0521974638528014e-11
 Variable bound violation:   2.1964623897474667e-08    2.1964623897474667e-08
-Complementarity.........:   6.1853509164815232e-08    9.0909097030321481e-06
-Overall NLP error.......:   6.1853509164815232e-08    9.0909097030321481e-06
+Complementarity.........:   6.1853509164819970e-08    9.0909097030328443e-06
+Overall NLP error.......:   6.1853509164819970e-08    9.0909097030328443e-06
 
 
 Number of objective function evaluations             = 85
@@ -1134,7 +1132,7 @@ Number of inequality constraint evaluations          = 85
 Number of equality constraint Jacobian evaluations   = 50
 Number of inequality constraint Jacobian evaluations = 50
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 17.777
+Total seconds in IPOPT                               = 24.844
 
 EXIT: Optimal Solution Found.
 </pre></div>
