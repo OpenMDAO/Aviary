@@ -586,13 +586,13 @@
 <p>We start with the assumption that we have an external component called <code class="docutils literal notranslate"><span class="pre">ExternalAero</span></code> that can compute the lift and drag at any given altitude, Mach number, and angle of attack. The details of such a component may be highly complicated and not important for the purposes of this example. We will be using a structured grid, which assumes the data table is regularly spaced in all dimensions. We want to compute lift and drag over a grid of altitudes (in ‘ft’), Mach numbers, and angles of attack given by:</p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Altitude (ft) [    0.  3000.  6000.  9000. 12000. 15000. 18000. 21000. 24000. 27000.
  30000. 33000. 36000. 38000. 42000.]
 Mach [0.   0.2  0.4  0.5  0.6  0.7  0.75 0.8  0.85 0.9 ]
 Angle of Attack (deg) [-2.  0.  2.  4.  6.  8. 10.]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/constants.py:16: OMDeprecationWarning:The INF_BOUND sentinel in OpenMDAO is deprecated. Infinite bounds should now be specified using None or +/-np.inf.
 </pre></div>
 </div>
 </div>
@@ -704,15 +704,9 @@ Angle of Attack (deg) [-2.  0.  2.  4.  6.  8. 10.]
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793133133.797114] [runnervm48cm3:5872 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x560432f59690 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793133133.797423] [runnervm48cm3:5872 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05872] pml_ucx.c:313  Error: Failed to create UCP worker
-Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793286135.494593] [runnervm48cm3:6009 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x5647a445c060 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+[1793286135.494899] [runnervm48cm3:6009 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+The following variables have been overridden by the aircraft definition:
   &#39;aircraft:anti_icing:mass  551.0  lbm
   &#39;aircraft:apu:mass  928.0  lbm
   &#39;aircraft:avionics:mass  1959.0  lbm
@@ -726,6 +720,10 @@ Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
   &#39;aircraft:vertical_tail:moment_ratio  2.362  unitless
   &#39;aircraft:vertical_tail:volume_coefficient  0.145  unitless
   &#39;mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:06009] pml_ucx.c:313  Error: Failed to create UCP worker
+Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>================================
@@ -809,9 +807,7 @@ traj.phases.cruise.rhs_all.solver_sub
 =====================================
 NL: Newton 0 ; 0.0114655688 1
 NL: Newton 1 ; 5.58865463e-07 4.87429338e-05
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NL: Newton 2 ; 5.14487897e-18 4.48724266e-16
+NL: Newton 2 ; 5.14487897e-18 4.48724266e-16
 NL: Newton Converged
 
 ================================
@@ -824,7 +820,9 @@ traj.phases.descent.rhs_all.aerodynamics
 ========================================
 NL: Newton 0 ; 2.88331882e-06 1
 NL: Newton 1 ; 2.76091005e-10 9.57545876e-05
-NL: Newton 2 ; 2.49274421e-17 8.64539916e-12
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NL: Newton 2 ; 2.49274421e-17 8.64539916e-12
 NL: Newton Converged
 
 ======================================
