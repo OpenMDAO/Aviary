@@ -61,6 +61,7 @@ inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 150)
 inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 165.0, 'lbm')
 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0.0, 'lbm')
+inputs.set_val(Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW, 225.0, 'lbm')
 
 # Electrical
 # ---------------------------
