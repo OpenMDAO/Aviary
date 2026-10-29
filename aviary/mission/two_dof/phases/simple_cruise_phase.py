@@ -245,7 +245,6 @@ class SimpleCruisePhase(PhaseBuilder):
                 )
 
         phase.add_timeseries_output(Dynamic.Mission.ALTITUDE, units=alt_units)
-        phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
         phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         phase.add_timeseries_output('EAS', units='kn')
