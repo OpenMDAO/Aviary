@@ -158,7 +158,6 @@ class AccelPhase(PhaseBuilder):
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, units='ft', val=alt)
 
         # Timeseries Outputs
-        phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         phase.add_timeseries_output('EAS', units='kn')
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
@@ -170,9 +169,9 @@ class AccelPhase(PhaseBuilder):
     def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         linked_vars = [
             Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.TIME,
             Dynamic.Mission.VELOCITY,
             Dynamic.Vehicle.MASS,
-            'time',
         ]
         return linked_vars
 

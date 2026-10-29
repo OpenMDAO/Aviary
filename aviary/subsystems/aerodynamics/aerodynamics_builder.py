@@ -728,21 +728,51 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                 Dynamic.Vehicle.DRAG_COEFFICIENT,
                 Dynamic.Vehicle.LIFT_COEFFICIENT,
             ]
+            if self.code_origin is GASP and 'output_alpha' in subsystem_options:
+                timeseries_vars.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 
         return timeseries_vars
 
     def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         if self.code_origin is GASP and not self.all_tabular:
+            # Bus variables found in 'cruise' and 'low_speed'.
+            kwargs = {}
+
+            if mission_info is not None:
+                phases = []
+                methods = ['cruise', 'low_speed']
+
+                for name, phase in mission_info.items():
+                    subsystem_options = phase.get('subsystem_options')
+
+                    if subsystem_options is None:
+                        continue
+
+                    aero_options = subsystem_options.get('aerodynamics')
+
+                    if aero_options is None:
+                        continue
+
+                    if aero_options.get('method') in methods:
+                        phases.append(name)
+
+                if len(phases) == 0:
+                    return {}
+
+                kwargs = {'phases': phases}
+
             return {
                 'interference_independent_of_shielded_area': {
                     'mission_name': ['interference_independent_of_shielded_area'],
                     # "post_mission_name": ['interference_independent_of_shielded_area'],
                     'units': 'unitless',
+                    **kwargs,
                 },
                 'drag_loss_due_to_shielded_wing_area': {
                     'mission_name': ['drag_loss_due_to_shielded_wing_area'],
                     # "post_mission_name": ['drag_loss_due_to_shielded_wing_area'],
                     'units': 'unitless',
+                    **kwargs,
                 },
             }
         else:
