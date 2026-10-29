@@ -190,7 +190,7 @@ class TestBatteryMission(unittest.TestCase):
         """
         phase_info = deepcopy(twodof_phase_info)
 
-        prob = av.AviaryProblem(verbosity=1)
+        prob = av.AviaryProblem(verbosity=0)
 
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
