@@ -398,7 +398,7 @@ add_meta_data(
     Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INGASP.SWP_FB'],
+        'GASP': 'INGASP.SWP_FB',
         # ['&DEFINE.FUSEIN.SWPLE', 'FUSDTA.SWPLE'],
         'FLOPS': 'FUSEIN.SWPLE',
     },
@@ -2976,7 +2976,7 @@ add_meta_data(
     Aircraft.Engine.Propeller.TIP_SPEED_MAX,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INPROP.TSPDMX'],
+        'GASP': 'INPROP.TSPDMX',
         'FLOPS': None,
     },
     units='ft/s',
