@@ -10,7 +10,7 @@ from openmdao.core.driver import Driver
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.core_premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options
