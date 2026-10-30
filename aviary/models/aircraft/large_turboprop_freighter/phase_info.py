@@ -68,7 +68,6 @@ energy_phase_info = {
     },
     'post_mission': {
         'include_landing': False,
-        'constrain_range': True,
         'target_range': (2_020.0, 'nmi'),
     },
 }
@@ -76,6 +75,7 @@ energy_phase_info = {
 # 2DOF
 two_dof_phase_info = {
     'groundroll': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'ground_roll': True,
@@ -102,6 +102,7 @@ two_dof_phase_info = {
         },
     },
     'rotation': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'rotation': True,
@@ -133,6 +134,7 @@ two_dof_phase_info = {
         },
     },
     'ascent': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,
@@ -154,8 +156,8 @@ two_dof_phase_info = {
             'altitude_final': (500, 'ft'),
             'altitude_constraint_ref': (500, 'ft'),
             'flight_path_angle_bounds': ((0.0, 20.0), 'rad'),
-            'flight_path_angle_ref': (57.2958, 'deg'),
-            'flight_path_angle_defect_ref': (57.2958, 'deg'),
+            'flight_path_angle_ref': (1, 'rad'),  # find beter ref
+            'flight_path_angle_defect_ref': (1, 'rad'),
             'flight_path_angle_initial': (0.0, 'deg'),
             'pitch_constraint_bounds': ((0.0, 15.0), 'deg'),
             'pitch_constraint_ref': (1.0, 'deg'),
@@ -173,6 +175,7 @@ two_dof_phase_info = {
         },
     },
     'accel': {
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.ACCEL,
             'num_segments': 1,
@@ -234,15 +237,14 @@ two_dof_phase_info = {
             'time_duration_ref': (5000, 's'),
             'altitude_final': (21_000, 'ft'),
             'altitude_bounds': ((9000.0, 22_000.0), 'ft'),
-            'altitude_ref': (20_000, 'ft'),
+            'altitude_ref': (22_000, 'ft'),
             'altitude_ref0': (0, 'ft'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
-            'distance_bounds': ((10.0, 1000.0), 'NM'),
-            'distance_ref': (500, 'NM'),
-            'distance_ref0': (0, 'NM'),
-            'distance_defect_ref': (500, 'NM'),
+            'distance_bounds': ((10.0, 100.0), 'NM'),
+            'distance_ref': (100.0, 'NM'),
+            'distance_defect_ref': (100.0, 'NM'),
         },
         'initial_guesses': {
             'time': ([216.0, 1300.0], 's'),
@@ -252,6 +254,7 @@ two_dof_phase_info = {
         },
     },
     'cruise': {
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.SIMPLE_CRUISE,
             'num_segments': 1,
@@ -283,14 +286,16 @@ two_dof_phase_info = {
             'altitude_ref': (20_000, 'ft'),
             'altitude_ref0': (0, 'ft'),
             'altitude_constraint_ref': (10000, 'ft'),
+            'altitude_direct_link': False,
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (140_000, 'lbm'),
             'mass_ref0': (0, 'lbm'),
             'mass_defect_ref': (140_000, 'lbm'),
             'distance_bounds': ((1_000.0, 3_000.0), 'NM'),
-            'distance_ref': (2_020, 'NM'),
+            'distance_ref': (3200.0, 'NM'),
             'distance_ref0': (0, 'NM'),
             'distance_defect_ref': (100, 'NM'),
+            'distance_direct_link': False,
         },
         'initial_guesses': {
             'mass': (136000.0, 'lbm'),
@@ -328,5 +333,8 @@ two_dof_phase_info = {
             'distance': ([0.96 * 2_020, 2_020], 'NM'),
             'time': ([22000.0, 500.0], 's'),
         },
+    },
+    'post_mission': {
+        'target_range': (2020.0, 'nmi'),
     },
 }

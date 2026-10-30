@@ -1,7 +1,10 @@
 """
 Preprocessors are utility functions that handle issues with Aviary inputs before model
-setup and execution. These tasks include consistency checking between related variables,.
+setup and execution. These tasks include consistency checking between related variables.
 
+A general rule of thumb for verbosity is VERBOSE or higher is preferred if no user-set values are
+being replaced. BRIEF is the default, so it should only be used when it is actually important the
+user is notified at run-time that something happened.
 """
 
 import warnings
@@ -17,7 +20,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 # TODO document what kwargs are used, and by which preprocessors in docstring?
-# TODO preprocess needed for design range vs phase_info range in sizing missions? (should be the same)
+# TODO preprocess needed to check design range equals phase_info range in sizing missions?
 def preprocess_options(
     aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None, **kwargs
 ):
@@ -44,6 +47,8 @@ def preprocess_options(
             verbosity = meta_data[Settings.VERBOSITY]['default_value']
             aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
+    deprecations(aviary_options, verbosity)
+
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
     preprocess_fuel_capacities(aviary_options, verbosity)
 
@@ -60,10 +65,10 @@ def preprocess_options(
             if Aircraft.Wing.ASPECT_RATIO in aviary_options:
                 ar = aviary_options.get_val(Aircraft.Wing.ASPECT_RATIO)
                 aviary_options.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, ar, 'unitless')
-                if verbosity >= Verbosity.BRIEF:
+                if verbosity >= Verbosity.VERBOSE:
                     warnings.warn(
-                        'Assume Aircraft.Wing.ASPECT_RATIO_REFERENCE is the same '
-                        f'as Aircraft.Wing.ASPECT_RATIO {ar}.'
+                        'Setting Aircraft.Wing.ASPECT_RATIO_REFERENCE to the same value as '
+                        f'Aircraft.Wing.ASPECT_RATIO ({ar}).'
                     )
 
     # TODO also move zero value behavior to fortran_to_aviary and rewrite this case to cover when variable is not provided
@@ -73,10 +78,508 @@ def preprocess_options(
             if Aircraft.Wing.THICKNESS_TO_CHORD in aviary_options:
                 tc = aviary_options.get_val(Aircraft.Wing.THICKNESS_TO_CHORD)
                 aviary_options.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, tc, 'unitless')
+                if verbosity >= Verbosity.VERBOSE:
+                    warnings.warn(
+                        'Setting Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE to the same value as '
+                        f'Aircraft.Wing.THICKNESS_TO_CHORD ({tc}).'
+                    )
+
+    if Aircraft.Design.PERCENT_EXCRESCENCE_DRAG not in aviary_options:
+        # In FLOPS, excrescence drag percentage is not able to be set via the input file
+        # Therefore, it appears to have been hardcoded into the method
+        # Here we set the default value to that fixed value
+        if (
+            Settings.AERODYNAMICS_METHOD in aviary_options
+            and aviary_options.get_val(Settings.AERODYNAMICS_METHOD) is LegacyCode.FLOPS
+        ):
+            aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
+
+    if Settings.MASS_METHOD in aviary_options:
+        mass_method = aviary_options.get_val(Settings.MASS_METHOD)
+    else:
+        raise UserWarning('MASS_METHOD not specified. Cannot preprocess inputs.')
+
+    if Aircraft.Design.TYPE in aviary_options:
+        design_type = aviary_options.get_val(Aircraft.Design.TYPE)
+    else:
+        design_type = AircraftTypes.TRANSPORT
+        aviary_options.set_val(Aircraft.Design.TYPE, design_type, 'unitless')
+        if verbosity > Verbosity.BRIEF:
+            warnings.warn('Setting Aircraft.Design.TYPE = AircraftTypes.TRANSPORT.')
+
+    preprocess_fuselage_layout(aviary_options, verbosity)
+
+    # preprocess atmosphere / GRAV??
+    # Set the gravity model based on the atmosphere model to enable calculation of weight from mass
+    from aviary.subsystems.atmosphere.utils.get_atmosphere_data import get_atmosphere_data
+
+    if Settings.ATMOSPHERE_MODEL not in aviary_options:
+        aviary_options.set_val(
+            Settings.ATMOSPHERE_MODEL, meta_data[Settings.ATMOSPHERE_MODEL]['default_value']
+        )
+    _, _, _, planet_gravity, sea_level_density = get_atmosphere_data(
+        aviary_options.get_val(Settings.ATMOSPHERE_MODEL)
+    )
+
+    if Mission.GRAVITY not in aviary_options:  # Check to see if the user has set a gravity profile.
+        # No gravity profile is set, set it now.
+        aviary_options.set_val(
+            Mission.GRAVITY, val=planet_gravity[0], units=planet_gravity[1]
+        )  # contains both value and units as a tuple.
+
+    if Mission.SEA_LEVEL_DENSITY not in aviary_options:
+        aviary_options.set_val(
+            Mission.SEA_LEVEL_DENSITY, val=sea_level_density[0], units=sea_level_density[1]
+        )
+
+
+def deprecations(aviary_options: AviaryValues, verbosity=Verbosity.BRIEF):
+    if verbosity >= Verbosity.BRIEF:
+        try:
+            aviary_options.get_val(Aircraft.Nacelle.AVG_DIAMETER, units='ft')
+            warnings.warn(
+                'Aircraft.Nacelle.AVG_DIAMETER has been changed to Aircraft.Nacelle.REFERENCE_AVG_DIAMETER. To avoid overriding scaled nacelle dimensions update your input file to the new variable name.',
+                category=DeprecationWarning,
+            )  # Added v1.0.2
+        except KeyError:
+            pass
+        try:
+            aviary_options.get_val(Aircraft.Nacelle.AVG_LENGTH, units='ft')
+            warnings.warn(
+                'Aircraft.Nacelle.AVG_LENGTH has been changed to Aircraft.Nacelle.REFERENCE_AVG_LENGTH. To avoid overriding scaled nacelle dimensions update your input file to the new variable name.',
+                category=DeprecationWarning,
+            )  # Added v1.0.2
+        except KeyError:
+            pass
+
+    if Mission.RESERVE_FUEL_MARGIN in aviary_options:
+        margin = aviary_options.get_val(Mission.RESERVE_FUEL_MARGIN)
+        if margin > 1:
+            raise DeprecationWarning(
+                'For consistency with all other Aviary variables that define percentages/fractions, '
+                'Mission.RESERVE_FUEL_MARGIN was changed to directly define the multiplicative '
+                f'factor (and not percentage points). Currently reserve margin is defined as '
+                f'{margin}, or {margin * 100} percentage points of main mission fuel.'
+            )
+
+
+def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
+    """
+    Set default values that are needed for fuselage layout computation but not provided by the user.
+
+    Parameters
+    ----------
+    aviary_options : AviaryValues
+        Options to be updated
+
+    Verbosity, optional
+        Sets level of printouts for this function.
+    """
+    mass_method = aviary_options.get_val(Settings.MASS_METHOD)
+    design_type = aviary_options.get_val(Aircraft.Design.TYPE)
+
+    # check aircraft type
+    if Aircraft.Fuselage.SIMPLE_LAYOUT not in aviary_options:
+        if mass_method == LegacyCode.FLOPS:
+            aviary_options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, True, 'unitless')
+            simple_layout = True
+        elif mass_method == LegacyCode.GASP:
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                simple_layout = False
+            else:
+                simple_layout = True
+            aviary_options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, simple_layout, 'unitless')
+    else:
+        simple_layout = aviary_options.get_val(Aircraft.Fuselage.SIMPLE_LAYOUT)
+
+    if not simple_layout:
+        if Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS in aviary_options:
+            num_economy_class_pax = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS
+            )
+        else:
+            num_economy_class_pax = 0
+
+        if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in aviary_options:
+            num_business_class_pax = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS
+            )
+        else:
+            num_business_class_pax = 0
+
+        if Aircraft.CrewPayload.Design.NUM_FIRST_CLASS in aviary_options:
+            num_first_class_pax = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.NUM_FIRST_CLASS
+            )
+        else:
+            num_first_class_pax = 0
+
+        # flags for whether values were user inputs.
+        num_seat_abreast_economy_set_user = False
+        num_seat_abreast_business_set_user = False
+        num_seat_abreast_first_set_user = False
+        seat_width_economy_set_user = False
+        seat_width_business_set_user = False
+        seat_width_first_set_user = False
+        seat_pitch_economy_set_user = False
+        seat_pitch_business_set_user = False
+        seat_pitch_first_set_user = False
+
+        # Sanity check on provided values #
+
+        # Only FLOPS cares about seats abreast
+        if mass_method is LegacyCode.FLOPS:
+            if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY in aviary_options:
+                num_seat_abreast_economy_set_user = True
+                num_seat_abreast_economy = aviary_options.get_val(
+                    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 'unitless'
+                )
+                if num_economy_class_pax > 0 and num_seat_abreast_economy <= 0:
+                    raise ValueError(
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY ('
+                        f'{num_seat_abreast_economy}) must be greater than 0.'
+                    )
+            if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS in aviary_options:
+                num_seat_abreast_business_set_user = True
+                num_seat_abreast_business = aviary_options.get_val(
+                    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 'unitless'
+                )
+                if num_business_class_pax > 0 and num_seat_abreast_business <= 0:
+                    raise ValueError(
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS ('
+                        f'{num_seat_abreast_business}) must be greater than 0.'
+                    )
+            if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST in aviary_options:
+                num_seat_abreast_first_set_user = True
+                num_seat_abreast_first = aviary_options.get_val(
+                    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 'unitless'
+                )
+                if num_first_class_pax > 0 and num_seat_abreast_first <= 0:
+                    raise ValueError(
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST ('
+                        f'{num_seat_abreast_first}) must be greater than 0.'
+                    )
+
+        # Seat Widths
+        if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY in aviary_options:
+            seat_width_economy_set_user = True
+            seat_width_economy = aviary_options.get_val(
+                Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 'inch'
+            )
+            if num_economy_class_pax > 0 and seat_width_economy <= 0:
+                raise ValueError(
+                    f'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY ({seat_width_economy}) must be '
+                    'greater than 0.'
+                )
+        if Aircraft.Fuselage.SEAT_WIDTH_BUSINESS in aviary_options:
+            seat_width_business_set_user = True
+            seat_width_business = aviary_options.get_val(
+                Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 'inch'
+            )
+            if num_business_class_pax > 0 and seat_width_business <= 0:
+                raise ValueError(
+                    f'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS ({seat_width_business}) must be '
+                    'greater than 0.'
+                )
+        if Aircraft.Fuselage.SEAT_WIDTH_FIRST in aviary_options:
+            seat_width_first_set_user = True
+            seat_width_first = aviary_options.get_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 'inch')
+            if num_first_class_pax > 0 and seat_width_first <= 0:
+                raise ValueError(
+                    f'Aircraft.Fuselage.SEAT_WIDTH_FIRST ({seat_width_first}) must be greater '
+                    f'than 0.'
+                )
+
+        # Seat Pitches
+        if Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY in aviary_options:
+            seat_pitch_economy_set_user = True
+            seat_pitch_economy = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 'inch'
+            )
+            if num_economy_class_pax > 0 and seat_pitch_economy <= 0:
+                raise ValueError(
+                    f'Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY ({seat_pitch_economy}) '
+                    'must be greater than 0.'
+                )
+        if Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS in aviary_options:
+            seat_pitch_business_set_user = True
+            seat_pitch_business = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 'inch'
+            )
+            if num_business_class_pax > 0 and seat_pitch_business <= 0:
+                raise ValueError(
+                    f'Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS ({seat_pitch_business}) '
+                    'must be greater than 0.'
+                )
+        if Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST in aviary_options:
+            seat_pitch_first_set_user = True
+            seat_pitch_first = aviary_options.get_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 'inch'
+            )
+            if num_first_class_pax > 0 and seat_pitch_first <= 0:
+                raise ValueError(
+                    f'Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST ({seat_pitch_first}) must '
+                    'be greater than 0.'
+                )
+
+        # Set correct default values for each legacy code
+        if mass_method == LegacyCode.FLOPS:
+            # Defaults based on aircraft type and size:
+            if design_type == AircraftTypes.TRANSPORT:
+                # Set defaults for seats abreast:
+                # Less than 60 pax
+                if num_economy_class_pax < 60:
+                    num_seat_abreast_economy = 5
+                    num_seat_abreast_business = 4
+                    num_seat_abreast_first = 4
+                # 60-200 pax
+                elif num_economy_class_pax <= 200:
+                    num_seat_abreast_economy = 6
+                    num_seat_abreast_business = 5
+                    num_seat_abreast_first = 4
+                # Greater than 200 pax
+                else:
+                    num_seat_abreast_economy = 8
+                    if num_seat_abreast_economy_set_user:
+                        num_seat_abreast_economy = aviary_options.get_val(
+                            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY
+                        )
+                    # Default is num_abreast_economy - 2
+                    num_seat_abreast_first = num_seat_abreast_economy - 2
+
+                    # Business class not originally modeled in FLOPS fuselage (oversight?), assuming
+                    # same as first class
+                    num_seat_abreast_business = num_seat_abreast_economy - 2
+
+                # set defaults for seat pitch
+                seat_pitch_economy = 34
+                seat_pitch_first = 38
+                # Not modeled in FLOPS, assuming in-between economy and first
+                seat_pitch_business = 36
+
+                # set defaults for seat width
+                seat_width_economy = 20
+                seat_width_first = 25
+                # Not modeled in FLOPS, assuming in-between economy and first
+                seat_width_business = 22
+
+            elif design_type == AircraftTypes.BLENDED_WING_BODY:
+                # BWB defaults for seats abreast:
+                num_seat_abreast_economy = 6
+                num_seat_abreast_business = 5
+                num_seat_abreast_first = 4
+
+                # BWB defaults for seat pitch
+                seat_pitch_economy = 32
+                seat_pitch_business = 39
+                seat_pitch_first = 61
+
+                # FLOPS BWB does not use seat width
+
+            # Set default values and warn user
+            if not num_seat_abreast_economy_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY,
+                    num_seat_abreast_economy,
+                    units='unitless',
+                )
                 if verbosity >= Verbosity.BRIEF:
                     warnings.warn(
-                        'Assume Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE is the same '
-                        f'as Aircraft.Wing.THICKNESS_TO_CHORD {tc}.'
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY not set, using FLOPS '
+                        f'default of {num_seat_abreast_economy}.'
+                    )
+            if not num_seat_abreast_business_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS,
+                    num_seat_abreast_business,
+                    units='unitless',
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS not set, using FLOPS '
+                        f'default of {num_seat_abreast_business}.'
+                    )
+            if not num_seat_abreast_first_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST,
+                    num_seat_abreast_first,
+                    units='unitless',
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST not set, using FLOPS '
+                        f'default of {num_seat_abreast_first}.'
+                    )
+
+            if design_type is not AircraftTypes.BLENDED_WING_BODY:
+                if not seat_width_economy_set_user:
+                    aviary_options.set_val(
+                        Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, seat_width_economy, units='inch'
+                    )
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, using FLOPS default of '
+                            f'{seat_width_economy} inches.'
+                        )
+                if not seat_width_business_set_user:
+                    aviary_options.set_val(
+                        Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, seat_width_business, units='inch'
+                    )
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, using FLOPS default of '
+                            f'{seat_width_business} inches.'
+                        )
+                if not seat_width_first_set_user:
+                    aviary_options.set_val(
+                        Aircraft.Fuselage.SEAT_WIDTH_FIRST, seat_width_first, units='inch'
+                    )
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, using FLOPS default of '
+                            f'{seat_width_first} inches.'
+                        )
+
+            if not seat_pitch_economy_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, seat_pitch_economy, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY not set, using FLOPS default '
+                        f'of {seat_pitch_economy} inches.'
+                    )
+            if not seat_pitch_business_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS,
+                    seat_pitch_business,
+                    units='inch',
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS not set, using FLOPS '
+                        f'default of {seat_pitch_business} inches.'
+                    )
+            if not seat_pitch_first_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, seat_pitch_first, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST not set, using FLOPS default '
+                        f'of {seat_pitch_first} inches.'
+                    )
+
+        elif mass_method == LegacyCode.GASP:
+            # Defaults based on aircraft type and size:
+            if design_type == AircraftTypes.TRANSPORT:
+                # Transport defaults for seat pitch
+                # Required input in GASP, here we default to FLOPS value
+                seat_pitch_economy = 34
+                if seat_pitch_economy_set_user:
+                    seat_pitch_economy = aviary_options.get_val(
+                        Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY
+                    )
+
+                # Default is seat_pitch_economy * 1.25
+                seat_pitch_first = round(seat_pitch_economy * 1.25)
+
+                # GASP doesn't model separately, assume same as first
+                seat_pitch_business = round(seat_pitch_economy * 1.25)
+
+                # Transport defaults for seat width
+                # Required input in GASP, here we default to FLOPS value
+                seat_width_economy = 20
+                if seat_width_economy_set_user:
+                    seat_width_economy = aviary_options.get_val(
+                        Aircraft.Fuselage.SEAT_WIDTH_ECONOMY
+                    )
+
+                # GASP uses same value as economy
+                seat_width_first = seat_width_economy
+
+                # GASP doesn't model separately, assume same as first
+                seat_width_business = seat_width_economy
+
+            elif design_type == AircraftTypes.BLENDED_WING_BODY:
+                # BWB defaults for seat pitch
+                # Required input in GASP, here we default to FLOPS value
+                seat_pitch_economy = 32
+                # Not modeled in GASP, here we use FLOPS economy value (FLOPS BWB business pitch
+                # greater than GASP BWB first class)
+                seat_pitch_business = 32
+
+                # Hardcoded GASP default
+                seat_pitch_first = 36
+
+                # BWB defaults for seat width
+                # Required input in GASP, here we default to FLOPS transport value
+                seat_width_economy = 20
+
+                # Not modeled in GASP, here we use FLOPS transport economy value (FLOPS BWB business
+                # width greater than GASP BWB first class)
+                seat_width_business = 22
+
+                # Hardcoded GASP default
+                seat_width_first = 28
+
+            # Set default values and warn user
+            if not seat_width_economy_set_user:
+                aviary_options.set_val(
+                    Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, seat_width_economy, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not set, using GASP default of '
+                        f'{seat_width_economy} inches.'
+                    )
+            if not seat_width_business_set_user:
+                aviary_options.set_val(
+                    Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, seat_width_business, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, using GASP default of '
+                        f'{seat_width_business} inches.'
+                    )
+            if not seat_width_first_set_user:
+                aviary_options.set_val(
+                    Aircraft.Fuselage.SEAT_WIDTH_FIRST, seat_width_first, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, using GASP default of '
+                        f'{seat_width_first} inches.'
+                    )
+
+            if not seat_pitch_economy_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, seat_pitch_economy, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY not set, using GASP default '
+                        f'of {seat_pitch_economy} inches.'
+                    )
+            if not seat_pitch_business_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS,
+                    seat_pitch_business,
+                    units='inch',
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS not set, using GASP '
+                        f'default of {seat_pitch_business} inches.'
+                    )
+            if not seat_pitch_first_set_user:
+                aviary_options.set_val(
+                    Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, seat_pitch_first, units='inch'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST not set, using GASP default '
+                        f'of {seat_pitch_first} inches.'
                     )
 
 
@@ -91,7 +594,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
     aviary_options : AviaryValues
         Options to be updated
 
-    meta_data : dict
+    f : dict
         Variable metadata being used with this set of aviary_options
 
     Verbosity, optional
@@ -109,7 +612,9 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
     else:
         verbosity = aviary_options.get_val(Settings.VERBOSITY)
     pax_provided = False
+    pax_sum_provided = False
     design_pax_provided = False
+    design_pax_sum_provided = False
 
     if mass_method == LegacyCode.FLOPS:
         pax_keys = [
@@ -125,7 +630,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
             Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS,
         ]
-    else:
+    elif mass_method is LegacyCode.GASP:
         pax_keys = [Aircraft.CrewPayload.NUM_PASSENGERS]
 
         design_pax_keys = [Aircraft.CrewPayload.Design.NUM_PASSENGERS]
@@ -134,6 +639,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
         if key in aviary_options:
             # mark that the user provided any information on mission passenger count
             pax_provided = True
+            if key == Aircraft.CrewPayload.NUM_PASSENGERS:
+                pax_sum_provided = True
         else:
             # default all non-provided passenger info to 0
             aviary_options.set_val(key, 0)
@@ -142,36 +649,39 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
         if key in aviary_options:
             # mark that the user provided any information on design passenger count
             design_pax_provided = True
+            if key == Aircraft.CrewPayload.Design.NUM_PASSENGERS:
+                design_pax_sum_provided = True
         else:
             # default all non-provided passenger info to 0
             aviary_options.set_val(key, 0)
 
     # no passenger info provided
     if not pax_provided and not design_pax_provided:
-        if verbosity >= 1:
+        if verbosity >= Verbosity.VERBOSE:
             warnings.warn(
-                'No passenger information has been provided for the aircraft, assuming '
-                'that this aircraft is not designed to carry passengers.'
+                'No passenger information has been provided for the aircraft, assuming that this '
+                'aircraft is not designed to carry passengers.'
             )
     # only mission passenger info provided
     if pax_provided and not design_pax_provided:
-        if verbosity >= 1:
+        if verbosity >= Verbosity.BRIEF:
             warnings.warn(
-                'Passenger information for the aircraft as designed was not provided. '
-                'Assuming that the design passenger count is the same as the passenger '
-                'count for the flown mission.'
+                'Passenger information for the aircraft as designed was not provided. Assuming that '
+                'the design passenger count is the same as the passenger count for the flown mission.'
             )
         # set design passengers to mission passenger values
         for i in range(len(pax_keys)):
             mission_val = aviary_options.get_val(pax_keys[i])
             aviary_options.set_val(design_pax_keys[i], mission_val)
+
     # only design passenger info provided
     if not pax_provided and design_pax_provided:
-        if verbosity >= 1:
+        # Assuming mission uses design pax is less serious than assuming design uses mission pax
+        # Only warning for VERBOSE or higher
+        if verbosity >= Verbosity.VERBOSE:
             warnings.warn(
-                'Passenger information for the flown mission was not provided. '
-                'Assuming that the mission passenger count is the same as the design '
-                'passenger count.'
+                'Passenger information for the flown mission was not provided. Assuming that the '
+                'mission passenger count is the same as the design passenger count.'
             )
         # set mission passengers to design passenger values
         for i in range(len(pax_keys)):
@@ -191,23 +701,22 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
     # Resolve conflicts between seat class totals and num_passengers
     # Specific beats general - trust the individual class counts over the total provided, unless
     #    the class counts are all zero, in which case trust the total provided and assume all economy
-    # design num_passengers does not match sum of seat classes for design
     if design_pax != design_sum:
         # if sum of seat classes is zero (design pax is not), assume all economy
         if design_sum == 0:
-            if verbosity >= 1:
+            if verbosity >= Verbosity.VERBOSE:
                 warnings.warn(
-                    'Information on seat class distribution for aircraft design was '
-                    f'not provided - assuming that all passengers {design_pax} are economy class.'
+                    'Information on seat class distribution for aircraft design was not provided - '
+                    f'assuming all {design_pax} passengers are economy class.'
                 )
             aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, design_pax)
         else:
-            if verbosity >= 1:
+            if design_pax_sum_provided and verbosity >= Verbosity.BRIEF:
                 warnings.warn(
-                    f'Sum of all passenger classes {design_sum} does not equal total number of '
-                    f'passengers provided for aircraft design {design_pax}. Overriding '
+                    f'Sum of all passenger classes ({design_sum}) does not equal total number of '
+                    f'passengers provided for aircraft design ({design_pax}). Overriding '
                     'Aircraft.CrewPayload.Design.NUM_PASSENGERS with the sum of '
-                    f'passenger classes for design {design_sum}.'
+                    f'passenger classes for design ({design_sum}).'
                 )
             aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, design_sum)
 
@@ -215,19 +724,19 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
     if mission_pax != mission_sum:
         # if sum of seat classes is zero (mission pax is not), assume all economy
         if mission_sum == 0:
-            if verbosity >= 1:
+            if verbosity >= Verbosity.VERBOSE:
                 warnings.warn(
-                    'Information on seat class distribution for current mission was '
-                    f'not provided - assuming that all passengers {mission_pax} are economy class.'
+                    'Information on seat class distribution for current mission was not provided - '
+                    f'assuming that all {mission_pax} passengers are economy class.'
                 )
             aviary_options.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, mission_pax)
         else:
-            if verbosity >= 1:
+            if pax_sum_provided and verbosity >= Verbosity.BRIEF:
                 warnings.warn(
-                    f'Sum of all passenger classes {mission_sum} does not equal total number of '
-                    f'passengers provided for current mission {mission_pax}. Overriding '
-                    'Aircraft.CrewPayload.NUM_PASSENGERS with the sum of '
-                    f'passenger classes for the flown mission {mission_sum}.'
+                    f'Sum of all passenger classes ({mission_sum}) does not equal total number of '
+                    f'passengers provided for current mission ({mission_pax}). Setting '
+                    'Aircraft.CrewPayload.NUM_PASSENGERS with the sum of passenger classes for flown '
+                    f'mission ({mission_sum}).'
                 )
             aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, mission_sum)
 
@@ -235,12 +744,12 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
     design_pax = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
     mission_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
     if mission_pax > design_pax:
-        if verbosity >= 1:
+        if verbosity >= Verbosity.VERBOSE:
             warnings.warn(
-                f'The aircraft is designed for {design_pax} passengers but the current '
-                f'mission is being flown with {mission_pax} passengers. The mission '
-                'will be flown using the mass of these extra passengers and baggage, '
-                'but this mission may not be realistic due to lack of room.'
+                f'The aircraft is designed for {design_pax} passengers but the current mission is '
+                f'being flown with {mission_pax} passengers. The mission will be flown using the '
+                'mass of these extra passengers and baggage, and it is assumed there is still room '
+                'on the aircraft.'
             )
 
     if mass_method == LegacyCode.FLOPS:
@@ -248,32 +757,31 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
         des_num_first = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
         num_first = aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)
         if num_first > des_num_first:
-            if verbosity >= 1:
+            if verbosity >= Verbosity.VERBOSE:
                 warnings.warn(
-                    f'More first class passengers {num_first} are flying in this mission than there are '
-                    f'available first class seats on the aircraft {des_num_first}. Assuming these passengers '
-                    'have the same mass as other first class passengers, but are sitting in '
-                    'different seats.'
+                    f'More first class passengers ({num_first}) are flying in this mission than '
+                    f'available first class seats ({des_num_first}). Assuming these passengers have '
+                    'the same mass as other first class passengers, but are sitting in different seats.'
                 )
         # Business Class
         des_num_business = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         num_business = aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS)
         if num_business > des_num_business:
-            if verbosity >= 1:
+            if verbosity >= Verbosity.VERBOSE:
                 warnings.warn(
-                    f'More business class passengers {num_business} are flying in this mission than there are '
-                    f'available business class seats on the aircraft {des_num_business}. Assuming these passengers '
-                    'have the same mass as other business class passengers, but are sitting in '
-                    'different seats.'
+                    f'More business class passengers ({num_business}) are flying in this mission '
+                    f'than available business class seats ({des_num_business}). Assuming these '
+                    'passengers have the same mass as other business class passengers, but are '
+                    'sitting in different seats.'
                 )
         # Economy Class
         des_num_econ = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
         num_econ = aviary_options.get_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS)
         if num_econ > des_num_econ:
-            if verbosity >= 1:
+            if verbosity >= Verbosity.VERBOSE:
                 warnings.warn(
-                    f'More economy class passengers {num_econ} are flying in this mission than there are '
-                    f'available economy class seats on the aircraft {des_num_econ}. Assuming these passengers '
+                    f'More economy class passengers ({num_econ}) are flying in this mission than '
+                    f'available economy class seats ({des_num_econ}). Assuming these passengers '
                     'have the same mass as other economy class passengers, but are sitting in '
                     'different seats.'
                 )
@@ -298,31 +806,33 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
         else:
             problem_type = ProblemType.SIZING
 
+        # TODO GASP cargo preprocessing does not fully account for *which* mission type is being
+        #      flown (make sure that as-flown cargo matches design cargo for sizing missions)
         if cargo is not None:
             if max_cargo is not None:
                 if des_cargo is not None:
                     if problem_type == ProblemType.SIZING and cargo != des_cargo:
-                        # user has set all three check if self consistent
+                        # user has set all three check, if self consistent
                         cargo = des_cargo
                         if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
                             warnings.warn(
-                                f'Aircraft.CrewPayload.CARGO_MASS ({cargo}) does not equal '
-                                f'Aircraft.CrewPayload.Design.CARGO_MASS ({des_cargo}) for SIZING '
-                                'mission. Setting as-flown CARGO_MASS equal to Design.CARGO_MASS '
-                                f'({des_cargo})'
+                                f'Aircraft.CrewPayload.CARGO_MASS ({cargo} lbm) does not equal '
+                                f'Aircraft.CrewPayload.Design.CARGO_MASS ({des_cargo} lbm) for '
+                                'SIZING mission. Setting as-flown CARGO_MASS equal to '
+                                f'Design.CARGO_MASS ({des_cargo} lbm)'
                             )
                 else:
                     # user has set cargo & max: assume des = max
                     des_cargo = max_cargo
                     if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
                         warnings.warn(
-                            'Aircraft.CrewPayload.Design.CARGO_MASS missing, assume '
-                            f'Design.CARGO_MASS = Design.MAX_CARGO_MASS ({max_cargo})'
+                            'Aircraft.CrewPayload.Design.CARGO_MASS not set, assuming design cargo '
+                            f'mass equals Design.MAX_CARGO_MASS ({max_cargo} lbm)'
                         )
             elif des_cargo is not None:
                 # user has set cargo & des: assume max = des
                 max_cargo = des_cargo
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                if verbosity >= Verbosity.VERBOSE:  # BRIEF, VERBOSE, DEBUG
                     warnings.warn(
                         'Aircraft.CrewPayload.Design.MAX_CARGO_MASS is missing, assuming '
                         f'Design.MAX_CARGO_MASS equals Design.CARGO_MASS ({des_cargo})'
@@ -335,18 +845,17 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
             if des_cargo is not None:
                 # user has set max & des: assume flown = 0
                 cargo = 0
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
+                if verbosity >= Verbosity.VERBOSE:  # BRIEF, VERBOSE, DEBUG:
                     warnings.warn(
-                        'Aircraft.CrewPayload.CARGO_MASS is missing, assuming CARGO_MASS = 0'
+                        'Aircraft.CrewPayload.CARGO_MASS not set, assuming no cargo flown on mission'
                     )
             else:
                 # user has set max only: assume flown = des = 0
                 cargo = des_cargo = 0
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
+                if verbosity >= Verbosity.VERBOSE:  # BRIEF, VERBOSE, DEBUG:
                     warnings.warn(
-                        'Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.CARGO_MASS '
-                        'missing, assume CARGO_MASS and Design.CARGO_MASS = 0. No Cargo is flown on '
-                        'mission.'
+                        'Aircraft has a maximum cargo capacity but no design cargo capacity. No '
+                        'cargo will be flown on the mission.'
                     )
 
         elif des_cargo is not None:
@@ -356,24 +865,25 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
             if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
                 warnings.warn(
                     'Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.MAX_CARGO_MASS '
-                    'missing, assume CARGO_MASS = 0 and Design.MAX_CARGO_MASS = Design.CARGO_MASS '
-                    f'({des_cargo}).'
+                    'not set, assuming maximum cargo capacity equals design cargo mass'
+                    f'({des_cargo} lbm).'
                 )
 
         else:
             # user has input no cargo information
             cargo = max_cargo = des_cargo = 0
-            if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
-                warnings.warn(
-                    'No CARGO variables detected, assume CARGO_MASS, Design.MAX_CARGO_MASS, and '
-                    'Design.CARGO_MASS equal to 0.'
-                )
 
-        if cargo > max_cargo or des_cargo > max_cargo:
+        # TODO add logic to handle these edge cases. Max cargo should probably get set to higher
+        #      value (with warning)
+        if cargo > max_cargo:
             raise UserWarning(
-                f'Aircraft.CrewPayload.CARGO_MASS ({cargo}) and/or '
-                f'Aircraft.CrewPayload.Design.CARGO_MASS ({des_cargo}) is greater than'
-                f'Aircraft.CrewPayload.Design.MAX_CARGO_MASS ({max_cargo})'
+                f'Aircraft.CrewPayload.CARGO_MASS ({cargo} lbm) is greater than'
+                f'Aircraft.CrewPayload.Design.MAX_CARGO_MASS ({max_cargo} lbm)'
+            )
+        if des_cargo > max_cargo:
+            raise UserWarning(
+                f'Aircraft.CrewPayload.Design.CARGO_MASS ({des_cargo} lbm) is greater than'
+                f'Aircraft.CrewPayload.Design.MAX_CARGO_MASS ({max_cargo} lbm)'
             )
 
         # calculate passenger mass with bags based on user inputs.
@@ -392,15 +902,17 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
             )
 
         # calculate and check total payload
-        # NOTE this is only used for error messaging the calculations for analysis are subsystems/mass/gasp_based
+        # NOTE this is only used for error messaging, the calculations for analysis are subsystems/mass/gasp_based
+        # No actual "preprocessing" happens here - a simple error message might be better suited
+        # inside the calculation component itself (with a flag to make sure it only triggers once)
         design_passenger_payload_mass = design_pax * pax_mass_with_bag
         max_payload = design_passenger_payload_mass + max_cargo
         as_flown_passenger_payload_mass = mission_pax * pax_mass_with_bag
         as_flown_payload = as_flown_passenger_payload_mass + cargo
         if as_flown_payload > max_payload and verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
             warnings.warn(
-                f'As-flown payload ({as_flown_payload}) is greater than maximum payload '
-                f'({max_payload}). The aircraft will be undersized for this payload!'
+                f'As-flown payload ({as_flown_payload} lbm) is greater than maximum payload '
+                f'({max_payload} lbm). The aircraft will be undersized for this payload!'
             )
 
         # set assumed cargo mass variables:
@@ -460,11 +972,12 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
             cabin_crew_calc = flight_attendants_count + galley_crew_count
             cabin_crew_provided = aviary_options.get_val(Aircraft.CrewPayload.NUM_CABIN_CREW)
             if cabin_crew_calc != cabin_crew_provided:
-                warnings.warn(
-                    f'Number of cabin crew ({cabin_crew_provided}) does not equal sum of flight '
-                    f'attendants and galley crew ({cabin_crew_calc}). Setting '
-                    f'aircraft:crew_and_payload:num_cabin_crew to {cabin_crew_calc}'
-                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        f'Total number of cabin crew specified ({cabin_crew_provided}) does not '
+                        f'equal sum of flight attendants and galley crew ({cabin_crew_calc}).'
+                        f'Setting aircraft:crew_and_payload:num_cabin_crew to {cabin_crew_calc}'
+                    )
                 aviary_options.set_val(Aircraft.CrewPayload.NUM_CABIN_CREW, cabin_crew_calc)
 
         if Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options:
@@ -497,20 +1010,21 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData,
                 and aviary_options.get_val(Aircraft.Design.TYPE) == AircraftTypes.TRANSPORT
             ):
                 HHT = 1
-                warnings.warn(
-                    'Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not specified and '
-                    'Aircraft.Engine.NUM_FUSELAGE_ENGINES = '
-                    f'{aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES)}'
-                    ' assume T-Tail configuration. Setting '
-                    ' Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION = 1'
-                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not specified and '
+                        'fuselage-mounted engines present. Assuming T-Tail configuration '
+                        '(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION = 1)'
+                    )
             else:
+                # TODO this is the default, so it probably doesn't need to be called out here
                 HHT = 0
-                warnings.warn(
-                    'Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not specified '
-                    'assume conventional tail configuration. Setting '
-                    'Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION = 0'
-                )
+                if verbosity >= Verbosity.VERBOSE:
+                    warnings.warn(
+                        'Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not specified - '
+                        'assuming conventional tail configuration '
+                        '(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION = 0)'
+                    )
             aviary_options.set_val(
                 Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
                 val=HHT,
@@ -543,32 +1057,29 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
 
     if mass_method == LegacyCode.FLOPS:
         # find which fuel capacity variables the user has set:
-        if Aircraft.Fuel.TOTAL_CAPACITY not in aviary_options:
+        if Aircraft.Fuel.MAX_CAPACITY_MASS not in aviary_options:
             # Aviary will need to calculate the total capacity and can only do so if we assume any missing subsystem capacities are zero
-            if Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY not in aviary_options:
-                aviary_options.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')
-                if verbosity >= Verbosity.VERBOSE:
-                    warnings.warn(f'Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY is missing assume = 0')
+            # TODO these are default values, double check they need to actually be set here
+            if Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY not in aviary_options:
+                aviary_options.set_val(Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 
-            if Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY not in aviary_options:
-                aviary_options.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
-                if verbosity >= Verbosity.VERBOSE:
-                    warnings.warn(f'Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY is missing assume = 0')
+            if Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY not in aviary_options:
+                aviary_options.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
         else:
-            total_capacity = aviary_options.get_val(Aircraft.Fuel.TOTAL_CAPACITY, 'lbm')
+            total_capacity = aviary_options.get_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 'lbm')
             try:
-                wing_capacity = aviary_options.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')
+                wing_capacity = aviary_options.get_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 'lbm')
             except KeyError:
                 wing_capacity = None
             try:
                 fuselage_capacity = aviary_options.get_val(
-                    Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 'lbm'
+                    Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 'lbm'
                 )
             except KeyError:
                 fuselage_capacity = None
             try:
                 auxiliary_capacity = aviary_options.get_val(
-                    Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 'lbm'
+                    Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 'lbm'
                 )
             except KeyError:
                 auxiliary_capacity = None
@@ -584,18 +1095,22 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
                 if capacity is not None
             )
 
-            # check if the user inputs are self consistent (as far as possible at this stage!) Aviary can still calculate -ve outputs at runtime.
+            # check if the user inputs are self consistent (as far as possible at this stage!) Aviary can still calculate outputs at runtime.
             if capacity_count == 3 and capacity_check != total_capacity:
                 raise UserWarning(
-                    f'Aircraft.Fuel.TOTAL_CAPACITY ({total_capacity}) != Aircraft.Fuel.WING_FUEL_CAPACITY ({wing_capacity})'
-                    f'+ Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity}) + Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity})'
-                    f' = {capacity_check}'
+                    f'Aircraft.Fuel.MAX_CAPACITY_MASS ({total_capacity} lbm) is not equal to sum of '
+                    f'Aircraft.Fuel.WING_FUEL_CAPACITY ({wing_capacity} lbm), '
+                    f'+ Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity} lbm), and'
+                    f'Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity} lbm)'
+                    f'(total of {capacity_check} lbm)'
                 )
             elif capacity_count < 3 and capacity_check > total_capacity:
                 raise UserWarning(
-                    f'Aircraft.Fuel.TOTAL_CAPACITY ({total_capacity}) < Aircraft.Fuel.WING_FUEL_CAPACITY ({wing_capacity})'
-                    f' + Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity}) + Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity})'
-                    f' = {capacity_check}'
+                    f'Aircraft.Fuel.MAX_CAPACITY_MASS ({total_capacity}) is less than sum of '
+                    f'Aircraft.Fuel.WING_FUEL_CAPACITY ({wing_capacity} lbm), '
+                    f'Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity} lbm), and '
+                    f'Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity} lbm) '
+                    f'(total of {capacity_check} lbm)'
                 )
 
     return aviary_options
@@ -646,6 +1161,13 @@ def preprocess_propulsion(
     # It is assumed that all EngineModels are up-to-date at this point and will NOT
     # be changed later on (otherwise preprocess_propulsion must be run again)
     num_engine_type = len(engine_models)
+
+    # Remember the user-provided (shared) wing locations before vectorization
+    # replaces them, so the count can be validated afterwards
+    try:
+        shared_wing_locations = aviary_options.get_val(Aircraft.Engine.WING_LOCATIONS, 'unitless')
+    except KeyError:
+        shared_wing_locations = None
 
     complete_options_list = AviaryValues(aviary_options)
     for engine in engine_models:
@@ -753,8 +1275,10 @@ def preprocess_propulsion(
     # Input/Option Consistency Checks #
     ###################################
     # Make sure number of engines based on mount location match expected total
+    sum_engines_provided = False
     try:
         num_engines_all = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
+        sum_engines_provided = True
     except KeyError:
         num_engines_all = np.zeros(num_engine_type).astype(int)
     try:
@@ -780,22 +1304,22 @@ def preprocess_propulsion(
                 num_wing_engines_all[i] = num_engines
                 if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
                     warnings.warn(
-                        f'Mount location for engines of type <{eng_name}> not '
-                        'specified. Wing-mounted engines are assumed.'
+                        f'Mount location for engines of type <{eng_name}> not specified. Wing-'
+                        'mounted engines are assumed.'
                     )
             else:
                 num_fuse_engines_all[i] = num_engines
                 if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
                     warnings.warn(
-                        f'Mount location for single engine of type <{eng_name}> not '
-                        'specified. Assuming it is fuselage-mounted.'
+                        f'Mount location for single engine of type <{eng_name}> not specified.'
+                        'Assuming it is fuselage-mounted.'
                     )
 
         # If wing mount type are specified but inconsistent, handle it
         elif total_engines_calc > num_engines:
             # more defined engine locations than number of engines - increase num engines
             num_engines_all[i] = total_engines_calc
-            if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+            if sum_engines_provided and verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
                 warnings.warn(
                     'Sum of user-specified fuselage-mounted and wing-mounted engines do '
                     f'not match total number of engines for EngineModel <{eng_name}>. '
@@ -833,6 +1357,8 @@ def preprocess_propulsion(
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuse_engines_all)
 
+    _validate_wing_engine_locations(engine_models, num_wing_engines_all, shared_wing_locations)
+
     num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
     total_num_engines = int(sum(num_engines_all))
     total_num_fuse_engines = int(sum(num_fuse_engines_all))
@@ -844,10 +1370,65 @@ def preprocess_propulsion(
     aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, total_num_wing_engines)
 
 
+def _validate_wing_engine_locations(
+    engine_models, num_wing_engines_all, shared_wing_locations=None
+):
+    """
+    Check that the number of wing locations matches the symmetric wing-engine pairs.
+
+    Values supplied by an EngineModel itself are checked per model. A value shared
+    through aviary_options is only checked when there is a single EngineModel and the
+    value holds more than one entry: a single value is the usual convention for one
+    location broadcast to all engines, and with several models the shared value is
+    flattened by the vectorization, so its length carries no per-model meaning.
+    Models with one or fewer wing engines are skipped because the wing mass components
+    ignore wing locations in that case. An odd wing-engine count uses floor(n / 2)
+    pairs, matching the indexing in the detailed wing bending components.
+    """
+    for engine, num_wing in zip(engine_models, num_wing_engines_all):
+        try:
+            locations = engine.get_val(Aircraft.Engine.WING_LOCATIONS, 'unitless')
+        except KeyError:
+            continue
+
+        if num_wing <= 1:
+            continue
+
+        expected = int(num_wing) // 2
+        actual = np.size(locations)
+        if actual != expected:
+            raise ValueError(
+                f'{Aircraft.Engine.WING_LOCATIONS} for EngineModel <{engine.name}> has '
+                f'{actual} value(s), but {int(num_wing)} wing-mounted engine(s) require '
+                f'{expected} location(s) (one per symmetric engine pair).'
+            )
+
+    if shared_wing_locations is not None and len(engine_models) == 1:
+        try:
+            engine_models[0].get_val(Aircraft.Engine.WING_LOCATIONS, 'unitless')
+            engine_supplies_own = True
+        except KeyError:
+            engine_supplies_own = False
+
+        num_wing = int(num_wing_engines_all[0])
+        expected = num_wing // 2
+        actual = np.size(shared_wing_locations)
+        if not engine_supplies_own and num_wing > 1 and actual > 1 and actual != expected:
+            raise ValueError(
+                f'{Aircraft.Engine.WING_LOCATIONS} has {actual} value(s), but '
+                f'{num_wing} wing-mounted engine(s) require {expected} '
+                'location(s) (one per symmetric engine pair).'
+            )
+
+
 def _get_engine_variables():
     """Yields all propulsion-related variables in Aircraft that need to be vectorized."""
     for item in get_names_from_hierarchy(Aircraft.Engine):
         yield item
 
+    excluded_names = [
+        Aircraft.Nacelle.TOTAL_WETTED_AREA,
+    ]
     for item in get_names_from_hierarchy(Aircraft.Nacelle):
-        yield item
+        if item not in excluded_names:
+            yield item

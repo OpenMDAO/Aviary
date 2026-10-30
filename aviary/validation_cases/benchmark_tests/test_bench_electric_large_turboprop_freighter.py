@@ -1,7 +1,6 @@
 import unittest
 from copy import deepcopy
 
-from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
@@ -14,10 +13,10 @@ from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.functions import get_path
 from aviary.utils.process_input_decks import create_vehicle
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Settings
 
 
-# @use_tempdirs
+@use_tempdirs
 @require_pyoptsparse(optimizer='IPOPT')
 # TODO need to add asserts with "truth" values
 class LargeElectricTurbopropFreighterBenchmark(unittest.TestCase):
@@ -29,6 +28,7 @@ class LargeElectricTurbopropFreighterBenchmark(unittest.TestCase):
             phase_info = deepcopy(two_dof_phase_info)
 
         # del phase_info['climb']
+        # del phase_info['cruise']
         # del phase_info['descent']
 
         # Build problem
@@ -54,7 +54,7 @@ class LargeElectricTurbopropFreighterBenchmark(unittest.TestCase):
         # match propeller RPM of gas turboprop
         options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
         options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
-        options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1_000, 'W*h/kg')
+        options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 10_000, 'W*h/kg')
 
         options.set_val(
             Aircraft.Engine.Motor.DATA_FILE, get_path('electric_motor_1800Nm_6000rpm.csv')
@@ -81,18 +81,18 @@ class LargeElectricTurbopropFreighterBenchmark(unittest.TestCase):
 
         prob.add_driver('SNOPT', max_iter=100, verbosity=1)
         prob.add_design_variables()
+        # prob.model.add_design_var(
+        #     Aircraft.Engine.SCALE_FACTOR,
+        #     units='unitless',
+        #     lower=0.5,
+        #     upper=4,
+        #     ref=1,
+        # )
         prob.model.add_design_var(
-            Aircraft.Engine.SCALE_FACTOR,
-            units='unitless',
-            lower=0.25,
-            upper=2,
-            ref=1,
-        )
-        prob.model.add_design_var(
-            Aircraft.Battery.PACK_MASS, units='lbm', lower=10_000, upper=75_000, ref=10_000
+            Aircraft.Battery.PACK_MASS, units='lbm', lower=1_000, upper=80_000, ref=10_000
         )
 
-        final_phase_name = prob.model.regular_phases[-1]
+        final_phase_name = prob.model.main_phases[-1]
         prob.model.add_objective(
             f'traj.{final_phase_name}.timeseries.cumulative_electric_energy_used',
             index=-1,
@@ -103,21 +103,25 @@ class LargeElectricTurbopropFreighterBenchmark(unittest.TestCase):
         prob.setup()
 
         # initial guess for pack mass.
-        prob.set_val(Aircraft.Battery.PACK_MASS, val=25_000.0, units='lbm')
+        prob.set_val(Aircraft.Battery.PACK_MASS, val=10_000.0, units='lbm')
+        prob.set_val(Aircraft.Engine.SCALE_FACTOR, val=1.4)
 
         prob.run_aviary_problem()
+
+        print(f'motor scale: {prob.get_val(Aircraft.Engine.SCALE_FACTOR)}')
+        print(f'battery size: {prob.get_val(Aircraft.Battery.PACK_MASS, "lbm")}')
 
         # prob.model.list_vars(units=True, print_arrays=True)
         return prob
 
     @unittest.skip('Skipping until subsystems with states can be used in 2DOF cruise')
-    def test_bench_2DOF(self):
+    def bench_test_2DOF(self):
         prob = self.build_and_run_problem('2DOF')
         self.assertTrue(prob.result.success)
         # TODO asserts
 
     @unittest.skip('Skipping due to convergence issues (possible drag too low in descent?)')
-    def test_bench_energy(self):
+    def bench_test_energy(self):
         prob = self.build_and_run_problem('energy')
         prob.model.list_vars()
         self.assertTrue(prob.result.success)
@@ -125,6 +129,6 @@ class LargeElectricTurbopropFreighterBenchmark(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = LargeElectricTurbopropFreighterBenchmark()
-    test.build_and_run_problem('2DOF')
+    unittest.main()
+    # test = LargeElectricTurbopropFreighterBenchmark()
+    # test.build_and_run_problem('energy')

@@ -1,16 +1,16 @@
-from copy import deepcopy
 import os
 import unittest
 import warnings
+from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal, assert_warning
 from openmdao.utils.testing_utils import use_tempdirs
 
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.csv_data_file import read_data_file, write_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 from aviary.utils.process_input_decks import parse_inputs
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variable_meta_data import CoreMetaData, add_meta_data
 
 
@@ -95,7 +95,9 @@ class TestAviaryCSV(unittest.TestCase):
 
     @use_tempdirs
     def test_parse_input(self):
-        aircraft_values = get_option_defaults(engine=False)
+        # parse_inputs only writes to aircraft_values (never reads pre-existing options),
+        # so an empty AviaryValues is sufficient here.
+        aircraft_values = AviaryValues()
         # create a temporary csv file for testing non-existing variable name
         file_name = 'aircraft_for_invalid_var.csv'
         with open(file_name, 'w') as file:
@@ -106,6 +108,26 @@ class TestAviaryCSV(unittest.TestCase):
 
         msg = "Variable 'aircraft:wing:mass_scalar' is not in meta_data nor in 'guess_names'. It will be ignored."
         with assert_warning(UserWarning, msg):
+            parse_inputs(vehicle_deck, aircraft_values)
+
+        # remove the temporary csv file
+        os.remove(file_name)
+
+    @use_tempdirs
+    def test_parse_input2(self):
+        # parse_inputs only writes to aircraft_values (never reads pre-existing options),
+        # so an empty AviaryValues is sufficient here.
+        aircraft_values = AviaryValues()
+        # create a temporary csv file for testing deprecated Aviary variable name
+        file_name = 'aircraft_for_invalid_var.csv'
+        with open(file_name, 'w') as file:
+            file.write('test_string,0\n')  # be ignored
+            file.write('aircraft:design:characteristic_lengths,1,ft\n')  # raise a warning
+            file.write('aircraft:anti_icing:mass,551,lbm\n')  # a good variable
+        vehicle_deck = get_path(file_name)
+
+        msg = 'Variable aircraft:design:characteristic_lengths is no longer in meta_data as of 9/29/2026. See PR #1308 for details.'
+        with assert_warning(DeprecationWarning, msg):
             parse_inputs(vehicle_deck, aircraft_values)
 
         # remove the temporary csv file

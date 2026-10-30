@@ -3,7 +3,6 @@ from pathlib import Path
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.aerodynamics.flops_based.drag import ScaledCD
 from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces, TimeRamp
 from aviary.utils.csv_data_file import read_data_file
@@ -11,7 +10,7 @@ from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 # Map of variable names to allowed headers for data files (only lowercase required,
 # spaces are replaced with underscores when data tables are read)
@@ -23,8 +22,8 @@ aliases = {
     Dynamic.Vehicle.ANGLE_OF_ATTACK: ['alpha', 'angle_of_attack', 'AoA'],
     'flap_deflection': ['flap_deflection'],
     'hob': ['hob'],
-    'lift_coefficient': ['cl', 'lift_coefficient'],
-    'drag_coefficient': ['cd', 'drag_coefficient'],
+    Dynamic.Vehicle.LIFT_COEFFICIENT: ['cl', 'lift_coefficient'],
+    Dynamic.Vehicle.DRAG_COEFFICIENT: ['cd', 'drag_coefficient'],
     'delta_lift_coefficient': ['delta_cl', 'dcl'],
     'delta_drag_coefficient': ['delta_cd', 'dcd'],
 }
@@ -95,10 +94,12 @@ class TabularCruiseAero(om.Group):
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ]
             + extra_promotes,
-            promotes_outputs=[('lift_coefficient', 'CL'), ('drag_coefficient', 'CD_prescaled')],
+            promotes_outputs=[
+                ('lift_coefficient', Dynamic.Vehicle.LIFT_COEFFICIENT),
+                ('drag_coefficient', 'CD_prescaled'),
+            ],
         )
 
-        #
         self.add_subsystem('simple_CD', ScaledCD(num_nodes=nn), promotes=['*'])
 
         self.add_subsystem('forces', AeroForces(num_nodes=nn), promotes=['*'])
@@ -294,7 +295,7 @@ class TabularLowSpeedAero(om.Group):
                 ('t_init', 't_init_gear'),
                 ('duration', 'dt_gear'),
                 ('x', 'dCD_gear_full'),
-                't_curr',
+                ('t_curr', Dynamic.Mission.TIME),
             ],
             promotes_outputs=[('y', 'dCD_gear')],
         )
@@ -308,7 +309,7 @@ class TabularLowSpeedAero(om.Group):
                 ('t_init', 't_init_flaps'),
                 ('duration', 'dt_flaps'),
                 ('x', 'dCD_flaps_full'),
-                't_curr',
+                ('t_curr', Dynamic.Mission.TIME),
             ],
             promotes_outputs=[('y', 'dCD_flaps')],
         )
@@ -319,7 +320,7 @@ class TabularLowSpeedAero(om.Group):
                 ('t_init', 't_init_flaps'),
                 ('duration', 'dt_flaps'),
                 ('x', 'dCL_flaps_full'),
-                't_curr',
+                ('t_curr', Dynamic.Mission.TIME),
             ],
             promotes_outputs=[('y', 'dCL_flaps')],
         )
@@ -330,7 +331,7 @@ class TabularLowSpeedAero(om.Group):
             'CL', vec_size=nn, units='unitless', input_names=['CL_free', 'dCL_ground', 'dCL_flaps']
         )
         adder.add_equation(
-            'CD',
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
             vec_size=nn,
             units='unitless',
             input_names=['CD_free', 'dCD_ground', 'dCD_flaps', 'dCD_gear'],
@@ -341,7 +342,11 @@ class TabularLowSpeedAero(om.Group):
             units='unitless',
             input_names=['CL_max_free', 'dCL_max_flaps', 'dCL_max_ground'],
         )
-        self.add_subsystem('coef_sum', adder, promotes=['*'])
+        self.add_subsystem(
+            'coef_sum',
+            adder,
+            promotes=['*', ('CL', Dynamic.Vehicle.LIFT_COEFFICIENT)],
+        )
 
         # convert coefficients to forces
         self.add_subsystem(
@@ -372,9 +377,11 @@ class TabularLowSpeedAero(om.Group):
 
 
 class GearDragIncrement(om.ExplicitComponent):
-    """Gear drag coefficient increment.
+    """
+    Gear drag coefficient increment.
 
     Constant for a given *full* flap deflection.
+    The methodology is modified to use mass instead of weight.
     """
 
     def initialize(self):
@@ -411,10 +418,9 @@ class GearDragIncrement(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         gross_mass_initial, wing_area, flap_defl = inputs.values()
-        gross_wt_initial = gross_mass_initial * GRAV_ENGLISH_LBM
 
         # landing gear flat plate area
-        grfe = 0.0033 * gross_wt_initial**0.785
+        grfe = 0.0033 * gross_mass_initial**0.785
         # landing gear CD increment for zero flap deflection
         grcd = grfe / wing_area
 
@@ -422,15 +428,12 @@ class GearDragIncrement(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         gross_mass_initial, wing_area, flap_defl = inputs.values()
-        gross_wt_initial = gross_mass_initial * GRAV_ENGLISH_LBM
-        grfe = 0.0033 * gross_wt_initial**0.785
+        grfe = 0.0033 * gross_mass_initial**0.785
         grcd = grfe / wing_area
 
         J['dCD', Aircraft.Design.GROSS_MASS] = (
-            (0.0033 * 0.785 * gross_wt_initial ** (0.785 - 1) / wing_area)
-            * (1 - 0.454545 * flap_defl / 50)
-            * GRAV_ENGLISH_LBM
-        )
+            0.0033 * 0.785 * gross_mass_initial ** (0.785 - 1) / wing_area
+        ) * (1 - 0.454545 * flap_defl / 50)
         J['dCD', Aircraft.Wing.AREA] = -(grfe / wing_area**2) * (1 - 0.454545 * flap_defl / 50)
         J['dCD', 'flap_defl'] = -grcd * 0.454545 / 50
 

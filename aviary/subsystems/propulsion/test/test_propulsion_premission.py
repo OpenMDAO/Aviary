@@ -5,13 +5,13 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
+from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission, PropulsionSum
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_data.test_data.multi_engine_single_aisle_data import (
     engine_1_inputs,
     engine_2_inputs,
 )
-from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission, PropulsionSum
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Settings
@@ -32,6 +32,12 @@ class PropulsionPreMissionTest(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
+        reference_sls_thrust = options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, reference_sls_thrust, units='lbf'
+        )
+        engine_scale_factor = options.get_val(Aircraft.Engine.SCALE_FACTOR, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, engine_scale_factor)
 
         setup_model_options(self.prob, options)
 
@@ -58,6 +64,13 @@ class PropulsionPreMissionTest(unittest.TestCase):
         engine2 = build_engine_deck(engine_2_inputs)
         engine_models = [engine1, engine2]
         preprocess_options(options, engine_models=engine_models)
+
+        reference_sls_thrust = options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, reference_sls_thrust, units='lbf'
+        )
+        engine_scale_factor = options.get_val(Aircraft.Engine.SCALE_FACTOR, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, engine_scale_factor)
 
         setup_model_options(self.prob, options, engine_models=engine_models)
 
@@ -116,7 +129,7 @@ class BWBPropulsionPreMissionTest(unittest.TestCase):
         self.prob = om.Problem()
 
     def test_case(self):
-        """work in progress"""
+        """Work in progress."""
         options = get_flops_inputs('BWBsimpleFLOPS')
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]))
@@ -125,13 +138,16 @@ class BWBPropulsionPreMissionTest(unittest.TestCase):
             aviary_options=options, engine_models=[build_engine_deck(options)]
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, [0.8096304384])
+        reference_sls_thrust = options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, reference_sls_thrust, units='lbf'
+        )
+        engine_scale_factor = options.get_val(Aircraft.Engine.SCALE_FACTOR, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, engine_scale_factor)
 
         setup_model_options(self.prob, options)
 
         self.prob.setup(force_alloc_complex=True)
-        # self.prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, options.get_val(
-        #     Aircraft.Engine.SCALED_SLS_THRUST, units='lbf'))
 
         self.prob.run_model()
 

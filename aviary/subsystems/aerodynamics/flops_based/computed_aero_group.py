@@ -13,7 +13,7 @@ from aviary.subsystems.aerodynamics.flops_based.lift_dependent_drag import LiftD
 from aviary.subsystems.aerodynamics.flops_based.mux_component import MuxComponent
 from aviary.subsystems.aerodynamics.flops_based.skin_friction import SkinFriction
 from aviary.subsystems.aerodynamics.flops_based.skin_friction_drag import SkinFrictionDrag
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class ComputedAeroGroup(om.Group):
@@ -62,7 +62,7 @@ class ComputedAeroGroup(om.Group):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
-            promotes_outputs=['cl', Dynamic.Vehicle.LIFT],
+            promotes_outputs=[Dynamic.Vehicle.LIFT_COEFFICIENT, Dynamic.Vehicle.LIFT],
         )
 
         comp = LiftDependentDrag(num_nodes=num_nodes, gamma=gamma)
@@ -144,6 +144,7 @@ class ComputedAeroGroup(om.Group):
                 'laminar_fractions_upper',
                 'laminar_fractions_lower',
                 Aircraft.Wing.AREA,
+                Aircraft.Design.PERCENT_EXCRESCENCE_DRAG,
             ],
         )
 
@@ -160,7 +161,7 @@ class ComputedAeroGroup(om.Group):
                 Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
                 Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
             ],
-            promotes_outputs=['CDI', 'CD0', 'CD', Dynamic.Vehicle.DRAG],
+            promotes_outputs=['CDI', 'CD0', Dynamic.Vehicle.DRAG_COEFFICIENT, Dynamic.Vehicle.DRAG],
         )
 
         buf = BuffetLift(num_nodes=num_nodes)
@@ -177,7 +178,7 @@ class ComputedAeroGroup(om.Group):
             ],
         )
 
-        self.connect('PressureDrag.CD', 'Drag.pressure_drag_coeff')
+        self.connect('PressureDrag.pressure_drag_coeff', 'Drag.pressure_drag_coeff')
         self.connect('InducedDrag.induced_drag_coeff', 'Drag.induced_drag_coeff')
         self.connect('CompressibilityDrag.compress_drag_coeff', 'Drag.compress_drag_coeff')
         self.connect('SkinFrictionDrag.skin_friction_drag_coeff', 'Drag.skin_friction_drag_coeff')
@@ -225,7 +226,7 @@ class ComputedDrag(om.Group):
                 Dynamic.Atmosphere.MACH,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
-            promotes_outputs=['CD', Dynamic.Vehicle.DRAG],
+            promotes_outputs=[Dynamic.Vehicle.DRAG_COEFFICIENT, Dynamic.Vehicle.DRAG],
         )
 
         self.set_input_defaults(Aircraft.Wing.AREA, 1.0, 'ft**2')

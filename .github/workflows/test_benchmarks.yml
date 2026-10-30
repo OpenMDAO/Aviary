@@ -37,7 +37,7 @@ jobs:
         uses: ./actions/.github/actions/prepare_environment
         with:
           NAME: 'latest'
-          OPENMDAO_PIXI_ENVIRONMENT: 'py313'
+          OPENMDAO_PIXI_ENVIRONMENT: 'py314'
           OPENMDAO_INSTALL_FROM: 'pypi'
           OPENMDAO: ''
           SNOPT: '7.7'
@@ -49,7 +49,7 @@ jobs:
       - name: Run benchmarks
         shell: bash -l {0}
         run: |
-          eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
+          eval "$(pixi shell-hook -e py314 --manifest-path=${{ env.PIXI_MANIFEST }})"
           echo "============================================================="
           echo "Run Benchmarks"
           echo "============================================================="

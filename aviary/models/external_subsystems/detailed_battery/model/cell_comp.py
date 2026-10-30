@@ -15,81 +15,77 @@ class CellComp(ExplicitComponent):
         self.options.declare('num_nodes', types=int)
 
     def setup(self):
-        n = self.options['num_nodes']
+        nn = self.options['num_nodes']
 
         # Inputs
         add_aviary_input(
             self,
             Dynamic.Battery.CURRENT,
-            val=3.25 * np.ones(n),
+            shape=nn,
             meta_data=ExtendedMetaData,
         )
         # Static Constants
         add_aviary_input(
             self, Aircraft.Battery.Cell.ENERGY_CAPACITY_MAX, meta_data=ExtendedMetaData
         )
-        add_aviary_input(self, Aircraft.Battery.N_PARALLEL, val=40.0, meta_data=ExtendedMetaData)
-        add_aviary_input(self, Aircraft.Battery.N_SERIES, val=128.0, meta_data=ExtendedMetaData)
+        add_aviary_input(self, Aircraft.Battery.N_PARALLEL, meta_data=ExtendedMetaData)
+        add_aviary_input(self, Aircraft.Battery.N_SERIES, meta_data=ExtendedMetaData)
         # Integrated State Variables
         add_aviary_input(
             self,
             Dynamic.Battery.STATE_OF_CHARGE,
-            val=0.98 * np.ones(n),
+            shape=nn,
             meta_data=ExtendedMetaData,
         )
         add_aviary_input(
             self,
             Dynamic.Battery.VOLTAGE_THEVENIN,
-            val=np.ones(n),
+            shape=nn,
             meta_data=ExtendedMetaData,
         )
         # Map Inputs From The Interpolation Component
-        self.add_input('U_oc', val=4.16 * np.ones(n), units='V', desc='Open-circuit voltage')
+        self.add_input('U_oc', val=4.16 * np.ones(nn), units='V', desc='Open-circuit voltage')
         self.add_input(
             'C_Th',
-            val=2000.0 * np.ones(n),
+            val=2000.0 * np.ones(nn),
             units='F',
             desc='Thevenin RC parallel capacitance (polarization)',
         )
         self.add_input(
             'R_Th',
-            val=0.01 * np.ones(n),
+            val=0.01 * np.ones(nn),
             units='ohm',
             desc='Thevenin RC parallel resistance (polarization)',
         )
         self.add_input(
-            'R_0', val=0.01 * np.ones(n), units='ohm', desc='Internal resistance of the battery'
+            'R_0', val=0.01 * np.ones(nn), units='ohm', desc='Internal resistance of the battery'
         )
 
         # Outputs
         add_aviary_output(
             self,
             Dynamic.Battery.STATE_OF_CHARGE_RATE,
-            val=np.ones(n),
+            shape=nn,
             meta_data=ExtendedMetaData,
         )
         add_aviary_output(
             self,
             Dynamic.Battery.VOLTAGE_THEVENIN_RATE,
-            val=np.ones(n),
+            shape=nn,
             meta_data=ExtendedMetaData,
         )
         add_aviary_output(
             self,
             Dynamic.Battery.VOLTAGE,
-            val=416 * np.ones(n),
+            shape=nn,
             meta_data=ExtendedMetaData,
         )
-        add_aviary_output(
-            self, Dynamic.Battery.HEAT_OUT, val=np.ones(n), meta_data=ExtendedMetaData
-        )
-        add_aviary_output(
-            self, Dynamic.Battery.EFFICIENCY, val=np.ones(n), meta_data=ExtendedMetaData
-        )
+        add_aviary_output(self, Dynamic.Battery.HEAT_OUT, shape=nn, meta_data=ExtendedMetaData)
+        add_aviary_output(self, Dynamic.Battery.EFFICIENCY, shape=nn, meta_data=ExtendedMetaData)
 
         # Partials
         self.declare_partials(of='*', wrt='*', dependent=False)
-        ar = np.arange(n)
+        ar = np.arange(nn)
 
         self.declare_partials(
             of=Dynamic.Battery.STATE_OF_CHARGE_RATE,

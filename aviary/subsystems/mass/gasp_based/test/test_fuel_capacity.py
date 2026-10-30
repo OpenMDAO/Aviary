@@ -5,17 +5,17 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.fuel_capacity import TrappedFuelCapacity
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 
 @use_tempdirs
 class TrappedFuelCapacityCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
-        options = self.options = get_option_defaults()
+        options = self.options = AviaryValues()
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -62,57 +62,11 @@ class TrappedFuelCapacityCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class TrappedFuelCapacityCase2(unittest.TestCase):
-    """Gravity Modification"""
-
-    def setUp(self):
-        options = get_option_defaults()
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'trapped_fuel',
-            TrappedFuelCapacity(),
-            promotes=['*'],
-        )
-
-        import aviary.subsystems.mass.gasp_based.fuel_capacity as fuel_capacity
-
-        fuel_capacity.GRAV_ENGLISH_LBM = 1.1
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, val=12, units='unitless'
-        )  # large_single_aisle_1_GASP.csv
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.AREA, val=1370.0, units='ft**2'
-        )  # large_single_aisle_1_FLOPS.csv
-        self.prob.model.set_input_defaults(
-            Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6, units='unitless'
-        )  # large_single_aisle_1_GASP.csv
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.fuel_capacity as fuel_capacity
-
-        fuel_capacity.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS], 563.41919564, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
-
-
 class TrappedFuelCapacityCase3(unittest.TestCase):
-    """BWB Parameters"""
+    """BWB Parameters."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(

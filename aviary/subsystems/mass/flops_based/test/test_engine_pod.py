@@ -9,11 +9,11 @@ from parameterized import parameterized
 from aviary.subsystems.mass.flops_based.engine_pod import EnginePodMass
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
+    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_inputs,
     print_case,
-    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
@@ -93,7 +93,7 @@ class EnginePodMassTest(unittest.TestCase):
         prob.run_model()
 
         mass = prob.get_val(Aircraft.Engine.POD_MASS)
-        expected_mass = np.array([525.0, 60.0, 362.14285714])
+        expected_mass = np.array([575.0, 75.0, 416.4285714])
 
         assert_near_equal(mass, expected_mass, tolerance=1e-10)
 

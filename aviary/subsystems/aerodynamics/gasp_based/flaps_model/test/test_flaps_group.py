@@ -3,13 +3,13 @@ import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.aerodynamics.gasp_based.flaps_model.flaps_model import FlapsGroup
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
     BasicFlapsGeometry,
 )
+from aviary.subsystems.aerodynamics.gasp_based.flaps_model.flaps_model import FlapsGroup
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 """
@@ -21,7 +21,10 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # Only FlapsGroup and MetaModelGroup declare an aviary option, both Aircraft.Wing.FLAP_TYPE.
+        # BasicFlapsGeometry, CLmaxCalculation, LiftAndDragIncrements, FlapsDeflectionRatios
+        # declare no aviary options.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.TRIPLE_SLOTTED, units='unitless')
 
         self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
@@ -79,7 +82,7 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
-        self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
+        self.prob.set_val(Aircraft.Wing.REFERENCE_CLEAN_MAX_LIFT_COEFFICIENT, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val('fus_lift', 0.05498)
         self.prob.set_val(Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM, 1.500)
@@ -122,7 +125,8 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # FlapsGroup/MetaModelGroup declare only Aircraft.Wing.FLAP_TYPE.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.SPLIT, units='unitless')
 
         self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
@@ -180,7 +184,7 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
-        self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
+        self.prob.set_val(Aircraft.Wing.REFERENCE_CLEAN_MAX_LIFT_COEFFICIENT, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val('fus_lift', 0.05498)
         self.prob.set_val(Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM, 1.500)
@@ -223,7 +227,8 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # FlapsGroup/MetaModelGroup declare only Aircraft.Wing.FLAP_TYPE.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.SINGLE_SLOTTED, units='unitless')
 
         self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
@@ -282,7 +287,7 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
-        self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
+        self.prob.set_val(Aircraft.Wing.REFERENCE_CLEAN_MAX_LIFT_COEFFICIENT, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val('fus_lift', 0.05498)
         self.prob.set_val(Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM, 1.500)
@@ -325,7 +330,8 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # FlapsGroup/MetaModelGroup declare only Aircraft.Wing.FLAP_TYPE.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.PLAIN, units='unitless')
 
         self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
@@ -383,7 +389,7 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
-        self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
+        self.prob.set_val(Aircraft.Wing.REFERENCE_CLEAN_MAX_LIFT_COEFFICIENT, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val('fus_lift', 0.05498)
         self.prob.set_val(Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM, 1.500)
@@ -426,7 +432,8 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # FlapsGroup/MetaModelGroup declare only Aircraft.Wing.FLAP_TYPE.
+        options = AviaryValues()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.FOWLER, units='unitless')
 
         self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
@@ -484,7 +491,7 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
-        self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
+        self.prob.set_val(Aircraft.Wing.REFERENCE_CLEAN_MAX_LIFT_COEFFICIENT, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val('fus_lift', 0.05498)
         self.prob.set_val(Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM, 1.500)
@@ -527,7 +534,8 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # FlapsGroup/MetaModelGroup declare only Aircraft.Wing.FLAP_TYPE.
+        options = AviaryValues()
         options.set_val(
             Aircraft.Wing.FLAP_TYPE, val=FlapType.DOUBLE_SLOTTED_FOWLER, units='unitless'
         )
@@ -587,7 +595,7 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
         self.prob.set_val(Dynamic.Atmosphere.STATIC_PRESSURE, (14.696 * 144), units='lbf/ft**2')
         self.prob.set_val(Aircraft.Wing.AVERAGE_CHORD, 12.61, units='ft')
         self.prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, 0.15723e-3, units='ft**2/s')
-        self.prob.set_val(Aircraft.Wing.MAX_LIFT_REF, 1.150)
+        self.prob.set_val(Aircraft.Wing.REFERENCE_CLEAN_MAX_LIFT_COEFFICIENT, 1.150)
         self.prob.set_val(Aircraft.Wing.SLAT_LIFT_INCREMENT_OPTIMUM, 0.930)
         self.prob.set_val('fus_lift', 0.05498)
         self.prob.set_val(Aircraft.Wing.FLAP_LIFT_INCREMENT_OPTIMUM, 1.500)

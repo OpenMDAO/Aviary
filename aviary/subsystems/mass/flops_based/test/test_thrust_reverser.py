@@ -12,11 +12,11 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
+    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_inputs,
     print_case,
-    Version,
 )
 from aviary.variable_info.variables import Aircraft, Settings
 
@@ -116,37 +116,6 @@ class ThrustReverserMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
-
-
-@use_tempdirs
-class ThrustReverserMassTest2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.subsystems.mass.flops_based.thrust_reverser as reverser
-
-        reverser.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.subsystems.mass.flops_based.thrust_reverser as reverser
-
-        reverser.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case(self):
-        prob = om.Problem()
-
-        inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
-
-        options = {
-            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
-        }
-
-        prob.model.add_subsystem('thrust_rev', ThrustReverserMass(**options), promotes=['*'])
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 10000.0, 'lbf')
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == '__main__':

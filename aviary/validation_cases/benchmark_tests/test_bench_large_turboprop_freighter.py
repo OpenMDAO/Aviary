@@ -1,7 +1,6 @@
 import unittest
 from copy import deepcopy
 
-from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
@@ -11,7 +10,7 @@ from aviary.models.aircraft.large_turboprop_freighter.phase_info import (
 )
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Settings
 
 
 @use_tempdirs
@@ -26,7 +25,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
             phase_info = deepcopy(two_dof_phase_info)
 
         # Build problem
-        prob = AviaryProblem(verbosity=0)
+        prob = AviaryProblem(verbosity=1)
 
         # load inputs from .csv to build engine
         options, _ = create_vehicle(
@@ -52,7 +51,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
-        prob.add_driver('SNOPT', max_iter=20, verbosity=1)
+        prob.add_driver('SNOPT', max_iter=25, verbosity=1)
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
@@ -62,14 +61,14 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         self.assertTrue(prob.result.success)
         return prob
 
-    def test_bench_2DOF(self):
+    def bench_test_2DOF(self):
         prob = self.build_and_run_problem('2DOF')
         self.assertTrue(prob.result.success)
 
         # TODO asserts
 
     @unittest.skip('Skipping due to convergence issues (possible drag too low in descent?)')
-    def test_bench_energy(self):
+    def bench_test_energy(self):
         prob = self.build_and_run_problem('energy')
         self.assertTrue(prob.result.success)
 

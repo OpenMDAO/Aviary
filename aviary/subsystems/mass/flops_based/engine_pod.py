@@ -80,6 +80,8 @@ class EnginePodMass(om.ExplicitComponent):
 
         # NOTE if this value gets needed elsewhere, calculate in pre-mission propulsion
         #      and pass to this component as input
+        # add new factor to FLOPS equations, which assumes for multiple engine types that mass of
+        # "extra" items in the pod are distributed according to engine thrust
         engine_thrust_ratio = (eng_thrust * num_eng) / total_thrust
 
         m_eng = inputs[Aircraft.Engine.MASS]
@@ -103,10 +105,13 @@ class EnginePodMass(om.ExplicitComponent):
         pod_mass = np.array([])
 
         # calculate engine pod mass for single engine of each type
+        # note num_eng/nacelle_count is 1 or less - this is because for centerline nacelles, not
+        # all nacelle mass is bookkept as part of the engine pod
         for i in range(len(num_eng)):
             pod_mass = np.append(
                 pod_mass,
-                nacelle_content_mass[i] / max(1, num_eng[i]) + m_nac[i] / max(1, nacelle_count[i]),
+                nacelle_content_mass[i] / max(1, num_eng[i])
+                + m_nac[i] * num_eng[i] / max(1, nacelle_count[i]),
             )
 
         outputs[Aircraft.Engine.POD_MASS] = pod_mass
@@ -151,7 +156,7 @@ class EnginePodMass(om.ExplicitComponent):
 
         partials[Aircraft.Engine.POD_MASS, Aircraft.Fuel.FUEL_SYSTEM_MASS] = 0.25 * fact1 * ratio
 
-        partials[Aircraft.Engine.POD_MASS, Aircraft.Nacelle.MASS] = fact2
+        partials[Aircraft.Engine.POD_MASS, Aircraft.Nacelle.MASS] = fact2 * num_eng
 
         partials[Aircraft.Engine.POD_MASS, Aircraft.Engine.SCALED_SLS_THRUST] = (
             num_eng * nac_fact * fact1

@@ -1,6 +1,6 @@
 import unittest
+from copy import deepcopy
 
-import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
@@ -16,9 +16,11 @@ class Test2DOFMissionPromotion(unittest.TestCase):
     def test_promotion(self):
         prob = AviaryProblem()
 
+        local_phase_info = deepcopy(phase_info)
+
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
-            phase_info,
+            local_phase_info,
             verbosity=0,
         )
 

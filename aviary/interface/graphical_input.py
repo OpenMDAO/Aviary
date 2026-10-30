@@ -2,12 +2,13 @@ import importlib.util  # used for opening existing phase info file
 import json
 import os
 import platform
-import pprint
-import shutil
-import subprocess
 import tkinter as tk  # base tkinter
-import tkinter.ttk as ttk  # used for combobox
-from tkinter import filedialog, font, messagebox
+from tkinter import (
+    filedialog,
+    font,
+    messagebox,
+    ttk,  # used for combobox
+)
 
 import numpy as np
 from matplotlib.backend_bases import MouseButton
@@ -22,6 +23,32 @@ try:
 except ImportError:
     # Trapz is deprecated in the latest numpy
     from numpy import trapezoid as trapz
+
+
+def _format_phase_info_value(value, indent_level):
+    indent = '    ' * indent_level
+    inner = '    ' * (indent_level + 1)
+
+    if isinstance(value, dict):
+        if not value:
+            return '{}'
+        lines = ['{\n']
+        for k, v in value.items():
+            lines.append(f'{inner}{k!r}: {_format_phase_info_value(v, indent_level + 1)},\n')
+        lines.append(f'{indent}}}')
+        return ''.join(lines)
+
+    if isinstance(value, (list, tuple)):
+        open_b, close_b = ('[', ']') if isinstance(value, list) else ('(', ')')
+        if not value:
+            return open_b + close_b
+        items = [_format_phase_info_value(item, indent_level + 1) for item in value]
+        one_line = open_b + ', '.join(items) + close_b
+        if len(one_line) <= 60:
+            return one_line
+        return open_b + '\n' + ''.join(f'{inner}{item},\n' for item in items) + f'{indent}{close_b}'
+
+    return repr(value)
 
 
 def get_screen_geometry():
@@ -1026,7 +1053,7 @@ class AviaryMissionEditor(tk.Tk):
                 foreground=self.pallete[self.theme]['foreground_primary'],
             )
             option_label.grid(row=row, column=0, sticky='e')
-            if type(tk.BooleanVar()) == type(option_var):
+            if type(tk.BooleanVar()) is type(option_var):
                 option_checkbox = tk.Checkbutton(
                     content_frame,
                     variable=option_var,
@@ -1039,7 +1066,7 @@ class AviaryMissionEditor(tk.Tk):
                     highlightcolor=self.pallete[self.theme]['background_primary'],
                 )
                 option_checkbox.grid(row=row, column=1, sticky='w')
-            elif type(tk.IntVar()) == type(option_var):
+            elif type(tk.IntVar()) is type(option_var):
                 option_entry = tk.Entry(
                     content_frame,
                     textvariable=option_var,
@@ -1675,7 +1702,6 @@ def create_phase_info(
 
     phase_info['post_mission'] = {
         'include_landing': user_choices['include_landing'],
-        'constrain_range': True,
         'target_range': (0.0, 'nmi'),
     }
 
@@ -1689,9 +1715,6 @@ def create_phase_info(
             }
         )
 
-    # Apply global settings if required
-    phase_info['post_mission']['constrain_range'] = user_choices.get('constrain_range', True)
-
     # Calculate the total range
     total_range, range_unit = estimate_total_range_trapezoidal(times, mach_values, units)
     print(f'Total range is estimated to be {total_range} {range_unit}')
@@ -1701,21 +1724,8 @@ def create_phase_info(
     # write a python file with the phase information
     with open(filename, 'w') as f:
         f.write('phase_info = ')
-        pp = pprint.PrettyPrinter(indent=4, stream=f, sort_dicts=False)
-        pp.pprint(phase_info)
-
-    # Check for 'ruff' and format the file
-    if shutil.which('ruff'):
-        subprocess.run(['ruff', filename])
-    else:
-        if shutil.which('autopep8'):
-            subprocess.run(['autopep8', '--in-place', '--aggressive', filename])
-            print("File formatted using 'autopep8'")
-        else:
-            print(
-                "'ruff' or 'autopep8' are not installed. Please consider installing one of them "
-                'for better formatting.'
-            )
+        f.write(_format_phase_info_value(phase_info, 0))
+        f.write('\n')
 
     print(f'Phase info has been saved and formatted in {filename}')
 
@@ -1754,7 +1764,6 @@ def _setup_flight_profile_parser(parser):
     parser : argparse.ArgumentParser
         The parser instance.
     """
-    pass
 
 
 def _exec_flight_profile(options, user_args):

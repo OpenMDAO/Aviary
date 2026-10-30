@@ -32,12 +32,6 @@ class TestFLOPSGeomBuilder(av.TestSubsystemBuilder):
         self.aviary_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, False, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_FOLD, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_STRUT, True, units='unitless')
-        self.aviary_values.set_val(
-            Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, True, units='unitless'
-        )
-        self.aviary_values.set_val(
-            Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, True, units='unitless'
-        )
         self.aviary_values.set_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, True, units='unitless')
         self.aviary_values.set_val(
@@ -67,12 +61,6 @@ class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilder):
         self.aviary_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_FOLD, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.HAS_STRUT, True, units='unitless')
-        self.aviary_values.set_val(
-            Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF, True, units='unitless'
-        )
-        self.aviary_values.set_val(
-            Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF, True, units='unitless'
-        )
         self.aviary_values.set_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, True, units='unitless')
         self.aviary_values.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, True, units='unitless')
         self.aviary_values.set_val(

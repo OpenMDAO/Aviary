@@ -7,8 +7,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.models.missions.energy_state_default import phase_info
 from aviary.core.aviary_problem import AviaryProblem
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.core_premission import CorePreMission
@@ -16,11 +16,11 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.named_values import NamedValues
-from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs, print_case
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
@@ -636,6 +636,7 @@ def _run_computed_aero_harness(flops_inputs, dynamic_inputs, num_nodes):
     varnames = [
         Aircraft.Fuselage.WETTED_AREA,
         Aircraft.HorizontalTail.WETTED_AREA,
+        Aircraft.Nacelle.WETTED_AREA,
         Aircraft.VerticalTail.WETTED_AREA,
         Aircraft.Wing.AREA,
         Aircraft.Wing.ASPECT_RATIO,
@@ -680,14 +681,17 @@ class _ComputedAeroHarness(om.Group):
 
         engines = [build_engine_deck(aviary_options)]
         # don't need mass, skip it
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)[:-1]
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines)
+        premission_subsystems = [
+            default_premission_subsystems[k] for k in ['propulsion', 'geometry', 'aerodynamics']
+        ]
 
         # Upstream pre-mission analysis for aero
         pre_mission: om.Group = self.add_subsystem(
             'pre_mission',
             CorePreMission(
                 aviary_options=aviary_options,
-                subsystems=default_premission_subsystems,
+                subsystems=premission_subsystems,
                 subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],

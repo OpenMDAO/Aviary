@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.aerodynamics.flops_based.lift_dependent_drag import LiftDependentDrag
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 @use_tempdirs
@@ -45,7 +45,7 @@ class LiftDependentDragTest(unittest.TestCase):
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         assert_near_equal(
-            prob.get_val('CD'),
+            prob.get_val('pressure_drag_coeff'),
             [0.01445345, 0.01278088, 0.01124887, 0.00982434, 0.00844742, 0.0],
             1e-6,
         )
@@ -84,7 +84,7 @@ class LiftDependentDragTest(unittest.TestCase):
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         assert_near_equal(
-            prob.get_val('CD'),
+            prob.get_val('pressure_drag_coeff'),
             [0.01333307, 0.02305564, 0.0465636, 0.51400999, 0.79391369, 0.82316212],
             1e-6,
         )

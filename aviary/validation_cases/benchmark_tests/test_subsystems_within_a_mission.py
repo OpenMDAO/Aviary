@@ -1,19 +1,19 @@
 import unittest
+from copy import deepcopy
 
 import numpy as np
 from numpy.testing import assert_almost_equal, assert_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.subsystems.test.test_dummy_subsystem import (
+from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
+from aviary.subsystems.test.dummy_subsystem import (
     AdditionalArrayGuessSubsystemBuilder,
-    Aircraft,
     ArrayGuessSubsystemBuilder,
     Mission,
     MoreMission,
     PostOnlyBuilder,
 )
-from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 
 
 @use_tempdirs
@@ -52,6 +52,7 @@ class TestSubsystemsMission(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
+                'target_range': (3500.0, 'nmi'),
             },
         }
         # 2dof currently hardcoded requires an ascent phase (configurator add_post_mission_systems)
@@ -127,9 +128,11 @@ class TestSubsystemsMission(unittest.TestCase):
     def test_subsystems_in_a_mission_2dof(self):
         prob = AviaryProblem(verbosity=0)
 
+        local_phase_info = deepcopy(two_dof_phase_info)
+
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
-            two_dof_phase_info,
+            local_phase_info,
         )
 
         prob.load_external_subsystems(
@@ -200,7 +203,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TestSubsystemsMission()
-    # test.setUp()
-    # test.test_subsystems_in_a_mission_2dof()
+    # unittest.main()
+    test = TestSubsystemsMission()
+    test.setUp()
+    test.test_subsystems_in_a_mission_2dof()

@@ -1,9 +1,10 @@
 import csv
-import numpy as np
 import getpass
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from datetime import datetime
+
+import numpy as np
 
 
 def save_to_csv_file(filename, aviary_inputs):

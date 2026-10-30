@@ -4,6 +4,7 @@ import sys
 import time
 from pathlib import Path
 
+import networkx as nx
 import numpy as np
 import pandas as pd
 from openmdao.utils.mpi import MPI
@@ -14,79 +15,6 @@ from aviary.interface.utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import ProblemType
-
-
-def register_custom_reports():
-    """
-    Registers Aviary reports with OpenMDAO, so they are automatically generated and
-    added to the same reports folder as other default reports.
-    """
-    # TODO top-level aircraft report?
-    # TODO add flag to skip registering reports?
-
-    # register per-subsystem report generation
-    register_report(
-        name='subsystems',
-        func=subsystem_report,
-        desc='Generates reports for each subsystem builder in the Aviary Problem',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='mission',
-        func=mission_report,
-        desc='Generates report for mission results from Aviary problem',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='timeseries_csv',
-        func=timeseries_csv,
-        desc='Generates an output .csv file for variables in the timeseries of the trajectory',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='run_status',
-        func=run_status,
-        desc='Generates a report on the status of the run',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='sizing_results',
-        func=sizing_results,
-        desc='Generates an output file containing all variables in a completed sizing problem',
-        class_name='AviaryProblem',
-        method='run_driver',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='input_checks',
-        func=input_check_report,
-        desc='Generates a report on the aviary inputs',
-        class_name='AviaryProblem',
-        method='final_setup',
-        pre_or_post='post',
-    )
-
-    register_report(
-        name='overridden_variables',
-        func=overridden_variables_report,
-        desc='Generates a report on the overridden variables',
-        class_name='AviaryProblem',
-        method='final_setup',
-        pre_or_post='post',
-    )
 
 
 def run_status(prob: AviaryProblem):
@@ -162,7 +90,7 @@ def subsystem_report(prob: AviaryProblem):
 
     multi_mission = prob.problem_type is ProblemType.MULTI_MISSION
     if multi_mission:
-        # TODO: We need to rewrite the reports to support multimission. This may require
+        # See issue #1186. We need to rewrite the reports to support multimission. This may require
         # standardizing how all attributes work in AviaryProblem (things like prob.model.get_val
         # don't work with multi-mission but does for normal problems). End goal is to loop through
         # each mission and get reports for each mission. Show in dashboard in nested tabs (new
@@ -172,7 +100,7 @@ def subsystem_report(prob: AviaryProblem):
     else:
         model = prob.model
 
-    subsystems = model.subsystems  # TODO: redo for multimissions
+    subsystems = model.subsystems  # See issue #1186. redo for multimissions
 
     for subsystem in subsystems:
         subsystem.report(prob, reports_folder)
@@ -242,7 +170,7 @@ def mission_report(prob: AviaryProblem, **kwargs):
     for name, model in models.items():
         # read per-phase data from trajectory
         data = {}
-        for idx, phase in enumerate(model.mission_info):  # TODO: redo for multimissions
+        for idx, phase in enumerate(model.mission_info):  # See issue #1186. redo for multimissions
             # TODO for traj in trajectories, currently assuming single one named "traj"
             # TODO delta mass and fuel consumption need to be tracked separately
             fuel_burn = _get_phase_diff(model, 'traj', phase, 'mass', 'lbm', [-1, 0])
@@ -274,18 +202,20 @@ def mission_report(prob: AviaryProblem, **kwargs):
 
             totals.set_val(
                 'Total Fuel Burn',
-                prob.get_val(f'{var_name}mission:fuel', units='lbm')[0],
+                prob.get_val(f'{var_name}mission:fuel_mass', units='lbm')[0],
                 units='lbm',
             )
 
             totals.set_val(
                 'Total Fuel Capacity',
-                prob.get_val(f'{var_name}aircraft:fuel:total_capacity', units='lbm')[0],
+                prob.get_val(f'{var_name}aircraft:fuel:max_capacity_mass', units='lbm')[0],
                 units='lbm',
             )
             totals.set_val(
                 'Excess Fuel Capacity',
-                prob.get_val(f'{var_name}mission:constraints:excess_fuel_capacity', units='lbm')[0],
+                prob.get_val(
+                    f'{var_name}mission:constraints:excess_fuel_mass_capacity', units='lbm'
+                )[0],
                 units='lbm',
             )
             totals.set_val('Total Time', final_time - initial_time, 'min')
@@ -497,7 +427,7 @@ def timeseries_csv(prob: AviaryProblem, **kwargs):
     multi_mission = prob.problem_type == ProblemType.MULTI_MISSION
     if multi_mission:
         for _, model in prob.aviary_groups_dict.items():
-            # TODO: We need to rewrite this report to support multimission
+            # See issue #1186. We need to rewrite this report to support multimission
             # For now, just write the first mission's csv file.
             break
     else:
@@ -606,7 +536,6 @@ def overridden_variables_report(prob: AviaryProblem, **kwargs):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
-
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'overridden_variables.md'
     with open(report_file, mode='w') as f:
@@ -664,6 +593,31 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
             val = group.aviary_inputs.get_val(aircraft_variable_name, units=units)
             non_external_overridden_variables.append((aircraft_variable_name, val, units))
 
+    var_abs = group.list_outputs(out_stream=None, val=False)
+    var_prom = [v['prom_name'] for k, v in var_abs]
+    prom2abs = prob.model._resolver.absnames
+    abs2prom = prob.model._resolver.abs2prom
+    graph = prob.model._relevance._graph
+    all_desvars = prob.driver._designvars
+    all_responses = [z['source'] for z in prob.driver._responses.values()]
+
+    overridden_prom = [v for v in var_prom if 'OVERRIDE' in v]
+
+    overriding_abs = {}
+    for prom_name in overridden_prom:
+        adh_prom = prom_name.partition(':')[-1]
+
+        try:
+            targets = prom2abs(adh_prom, 'input')
+        except:
+            continue
+        try:
+            srcs = prom2abs(prom_name, 'output')
+        except:
+            continue
+
+        overriding_abs[adh_prom] = (srcs, targets)
+
     if MPI and prob.comm.rank != 0:
         # All collective calls are completed. Reports only generated on rank 0.
         return
@@ -671,6 +625,64 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
     # Now that we have collected all overridden variables, write the report
     if mission_name:
         f.write(f'# MULTIMISSION: {mission_name}\n\n')
+
+    f.write('## Potential Problems\n')
+    problems_found = False
+    for name, data in overriding_abs.items():
+        srcs, targets = data
+        src = srcs[0]
+
+        relevant_targets = [t.rpartition('.')[0] for t in targets]
+
+        if relevant_targets:
+            # True variable relevancy check for design vars.
+            upstream_nodes = nx.ancestors(graph, src)
+            up_leaves = [abs2prom(node) for node in upstream_nodes if '_auto_ivc.' in node]
+            up_leaves = [node for node in up_leaves if node in all_desvars]
+
+            if len(up_leaves) < 1:
+                continue
+
+            # True variable relevancy check for responses.
+            abs_names = prom2abs(name)
+            downstream_nodes = set()
+            for abs_name in abs_names:
+                downstream_nodes.update(nx.descendants(graph, abs_name))
+
+            down_leaves = [node for node in downstream_nodes if node in all_responses]
+
+            if len(down_leaves) < 1:
+                continue
+
+            v1 = prob.get_val(name)
+            v2 = prob.get_val(src)
+            problems_found = True
+
+            f.write('\n')
+            f.write(f'Override: **{name}**\n')
+            f.write('```\n')
+            f.write(f'  Override Value:{v1},  Computed Value:{v2}\n')
+            f.write('\n')
+
+            f.write('  depends on:\n')
+            for leaf in sorted(up_leaves):
+                f.write(f'    {leaf}\n')
+            f.write('\n')
+
+            f.write('  feeds:\n')
+            for target in sorted(relevant_targets):
+                f.write(f'    {target}\n')
+            f.write('\n')
+
+            f.write('  impacts:\n')
+            for leaf in sorted(down_leaves):
+                f.write(f'    {leaf}\n')
+            f.write('```\n')
+
+    if not problems_found:
+        f.write('  None\n\n')
+    else:
+        f.write('\n\n')
 
     f.write('## Internal Overrides\n')
     if non_external_overridden_variables:
@@ -700,3 +712,129 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
         f.write('\n')
     else:
         f.write('No external subsystem overrides found.\n')
+
+
+def _list_options_report(prob: AviaryProblem, **kwargs):
+    """
+    Writes a report with the output of the Problem.list_options method.
+
+    Parameters
+    ----------
+    prob : AviaryProblem
+        The AviaryProblem instance
+    **kwargs : dict
+        Additional keyword arguments, not used in this function
+    """
+    reports_folder = Path(prob.get_reports_dir())
+    report_file = reports_folder / 'options.txt'
+    with open(report_file, mode='w') as f:
+        prob.model.list_options(out_stream=f, include_default=False, include_solvers=False)
+
+
+REPORT_REGISTRY = {
+    'subsystems_run_model': {
+        'func': subsystem_report,
+        'desc': 'Generates reports for each subsystem builder in the Aviary Problem',
+        'class_name': 'AviaryProblem',
+        'method': 'run_model',
+        'pre_or_post': 'post',
+    },
+    'subsystems_run_driver': {
+        'func': subsystem_report,
+        'desc': 'Generates reports for each subsystem builder in the Aviary Problem',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'mission': {
+        'func': mission_report,
+        'desc': 'Generates report for mission results from Aviary problem',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'timeseries_csv': {
+        'func': timeseries_csv,
+        'desc': 'Generates an output .csv file for variables in the timeseries of the trajectory',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'run_status': {
+        'func': run_status,
+        'desc': 'Generates a report on the status of the run',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'sizing_results': {
+        'func': sizing_results,
+        'desc': 'Generates an output file containing all variables in a completed sizing problem',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'input_checks': {
+        'func': input_check_report,
+        'desc': 'Generates a report on the aviary inputs',
+        'class_name': 'AviaryProblem',
+        'method': 'final_setup',
+        'pre_or_post': 'post',
+    },
+    'overridden_variables_setup': {
+        'func': overridden_variables_report,
+        'desc': 'Generates a report on the overridden variables',
+        'class_name': 'AviaryProblem',
+        'method': 'final_setup',
+        'pre_or_post': 'post',
+    },
+    'overridden_variables_run_model': {
+        'func': overridden_variables_report,
+        'desc': 'Generates a report on the overridden variables',
+        'class_name': 'AviaryProblem',
+        'method': 'run_model',
+        'pre_or_post': 'post',
+    },
+    'overridden_variables_run_driver': {
+        'func': overridden_variables_report,
+        'desc': 'Generates a report on the overridden variables',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+    'list_options_final_setup': {
+        'func': _list_options_report,
+        'desc': 'Generates a report on the Problem options',
+        'class_name': 'AviaryProblem',
+        'method': 'final_setup',
+        'pre_or_post': 'post',
+    },
+    'list_options_run_model': {
+        'func': _list_options_report,
+        'desc': 'Generates a report on the Problem options',
+        'class_name': 'AviaryProblem',
+        'method': 'run_model',
+        'pre_or_post': 'post',
+    },
+    'list_options_run_driver': {
+        'func': _list_options_report,
+        'desc': 'Generates a report on the Problem options',
+        'class_name': 'AviaryProblem',
+        'method': 'run_driver',
+        'pre_or_post': 'post',
+    },
+}
+
+AVIARY_DEFAULT_REPORTS = list(REPORT_REGISTRY.keys())
+
+
+def register_custom_reports():
+    """
+    Registers Aviary reports with OpenMDAO, so they are automatically generated and
+    added to the same reports folder as other default reports.
+    """
+    # TODO top-level aircraft report?
+    # TODO add flag to skip registering reports?
+
+    for report_name, report_kwargs in REPORT_REGISTRY.items():
+        register_report(name=report_name, **report_kwargs)

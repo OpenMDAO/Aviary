@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.solved_two_dof.ode.unsteady_solved_eom import UnsteadySolvedEOM
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
@@ -140,11 +139,6 @@ class UnsteadyControlIterGroup(om.Group):
 
         # Set common default values for promoted inputs
         onn = np.ones(nn)
-        self.set_input_defaults(
-            name=Dynamic.Atmosphere.DENSITY,
-            val=RHO_SEA_LEVEL_ENGLISH * onn,
-            units='slug/ft**3',
-        )
         self.set_input_defaults(
             name=Dynamic.Atmosphere.SPEED_OF_SOUND, val=1116.4 * onn, units='ft/s'
         )

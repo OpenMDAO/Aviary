@@ -101,7 +101,7 @@ class FlightCrewMass(om.ExplicitComponent):
         Return the mass, in pounds, of one member of the flight crew and
         their baggage.
         """
-        # TODO this should be its own variable
+        # See issue #1190. This should be its own variable
         mass_per_flight_crew = 225.0  # lbm
 
         return mass_per_flight_crew

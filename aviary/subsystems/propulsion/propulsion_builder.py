@@ -79,6 +79,9 @@ class CorePropulsionBuilder(PropulsionBuilder):
     def __init__(self, name=None, meta_data=None, engine_models=None, **kwargs):
         super().__init__(name=name, meta_data=meta_data)
 
+        if engine_models is None:
+            engine_models = []
+
         if not isinstance(engine_models, (list, np.ndarray)):
             engine_models = [engine_models]
 
@@ -89,6 +92,19 @@ class CorePropulsionBuilder(PropulsionBuilder):
                 )
 
         self.engine_models = engine_models
+
+    def needs_mission_solver(self, aviary_inputs, user_options, subsystem_options):
+        """Call needs_mission_solver() on all engine models and return combined result."""
+        needs_solver = False
+        for engine in self.engine_models:
+            engine_needs_solver = engine.needs_mission_solver(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            needs_solver = needs_solver or engine_needs_solver
+
+        return needs_solver
 
     def build_pre_mission(self, aviary_inputs, subsystem_options):
         return PropulsionPreMission(
@@ -190,11 +206,15 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return constraints
 
     # NOTE no unittests!
-    def get_linked_variables(self, aviary_inputs=None):
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_linked_variables() on all engine models and return combined result."""
         linked_vars = {}
         for engine in self.engine_models:
-            engine_linked_vars = engine.get_linked_variables(aviary_inputs=aviary_inputs)
+            engine_linked_vars = engine.get_linked_variables(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
             linked_vars.update(engine_linked_vars)
 
         return linked_vars

@@ -1,8 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.variables import Dynamic, Mission
 
 
 class EOMRates(om.ExplicitComponent):
@@ -10,63 +10,57 @@ class EOMRates(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
 
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.VELOCITY,
-            val=np.zeros(nn),
-            units='ft/s',
-            desc='true air speed',
+            shape=nn,
+            units='m/s',
         )
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            val=np.zeros(nn),
-            units='lbf',
-            desc='net thrust',
+            shape=nn,
+            units='N',
         )
-        self.add_input(
-            Dynamic.Vehicle.DRAG, val=np.zeros(nn), units='lbf', desc='net drag on aircraft'
-        )
-        self.add_input(
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, units='N')
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.MASS,
-            val=np.zeros(nn),
-            units='lbm',
-            desc='mass of aircraft',
+            shape=nn,
+            units='kg',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            val=np.ones(nn),
+            shape=nn,
             units='rad',
-            desc='angle of attack of aircraft',
         )
 
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.ALTITUDE_RATE,
-            val=np.zeros(nn),
-            units='ft/s',
-            desc='rate of change of altitude',
+            shape=nn,
+            units='m/s',
         )
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.DISTANCE_RATE,
-            val=np.zeros(nn),
-            units='ft/s',
-            desc='rate of change of horizontal distance covered',
+            shape=nn,
+            units='m/s',
         )
         self.add_output(
             'required_lift',
-            val=np.zeros(nn),
-            units='lbf',
+            shape=nn,
+            units='N',
             desc='lift required in order to maintain calculated flight path angle',
         )
-        self.add_output(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            val=np.ones(nn),
-            units='rad',
-            desc='flight path angle',
-        )
+        add_aviary_output(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
 
     def setup_partials(self):
         nn = self.options['num_nodes']
@@ -117,10 +111,12 @@ class EOMRates(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        gravity = self.options[Mission.GRAVITY][0]
+
         TAS = inputs[Dynamic.Mission.VELOCITY]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
-        weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
+        weight = inputs[Dynamic.Vehicle.MASS] * gravity
         alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         gamma = np.arcsin((thrust - drag) / weight)
@@ -131,10 +127,12 @@ class EOMRates(om.ExplicitComponent):
         outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = gamma
 
     def compute_partials(self, inputs, J):
+        gravity = self.options[Mission.GRAVITY][0]
+
         TAS = inputs[Dynamic.Mission.VELOCITY]
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
         drag = inputs[Dynamic.Vehicle.DRAG]
-        weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
+        weight = inputs[Dynamic.Vehicle.MASS] * gravity
         alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         gamma = np.arcsin((thrust - drag) / weight)
@@ -150,7 +148,7 @@ class EOMRates(om.ExplicitComponent):
         )
         J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Vehicle.DRAG] = TAS * np.cos(gamma) * dGamma_dDrag
         J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Vehicle.MASS] = (
-            TAS * np.cos(gamma) * dGamma_dWeight * GRAV_ENGLISH_LBM
+            TAS * np.cos(gamma) * dGamma_dWeight * gravity
         )
 
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.VELOCITY] = np.cos(gamma)
@@ -159,12 +157,12 @@ class EOMRates(om.ExplicitComponent):
         )
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.DRAG] = -TAS * np.sin(gamma) * dGamma_dDrag
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.MASS] = (
-            -TAS * np.sin(gamma) * dGamma_dWeight * GRAV_ENGLISH_LBM
+            -TAS * np.sin(gamma) * dGamma_dWeight * gravity
         )
 
         J['required_lift', Dynamic.Vehicle.MASS] = (
             np.cos(gamma) - weight * np.sin(gamma) * dGamma_dWeight
-        ) * GRAV_ENGLISH_LBM
+        ) * gravity
         J['required_lift', Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = -weight * np.sin(
             gamma
         ) * dGamma_dThrust - np.sin(alpha)
@@ -175,6 +173,4 @@ class EOMRates(om.ExplicitComponent):
             dGamma_dThrust
         )
         J[Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.DRAG] = dGamma_dDrag
-        J[Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.MASS] = (
-            dGamma_dWeight * GRAV_ENGLISH_LBM
-        )
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Vehicle.MASS] = dGamma_dWeight * gravity

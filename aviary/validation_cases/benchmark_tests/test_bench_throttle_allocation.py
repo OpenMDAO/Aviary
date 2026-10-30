@@ -1,0 +1,321 @@
+import unittest
+from copy import deepcopy
+
+import numpy as np
+import openmdao.api as om
+from openmdao.core.problem import _clear_problem_names
+from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+
+from aviary.core.aviary_problem import AviaryProblem
+from aviary.models.missions.energy_state_default import phase_info
+from aviary.models.missions.two_dof_default import phase_info as twodof_phase_info
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.validation_cases.validation_data.test_data.multi_engine_single_aisle_data import (
+    engine_1_inputs,
+    engine_2_inputs,
+    inputs,
+)
+from aviary.variable_info.enums import ThrottleAllocation
+from aviary.variable_info.variables import Aircraft
+
+# Build problem
+local_phase_info = deepcopy(phase_info)
+
+local_phase_info['climb']['user_options']['mach_optimize'] = False
+local_phase_info['climb']['user_options']['mach_polynomial_order'] = 1
+local_phase_info['climb']['user_options']['altitude_optimize'] = False
+local_phase_info['climb']['user_options']['altitude_polynomial_order'] = 1
+local_phase_info['climb']['user_options']['no_descent'] = True
+
+local_phase_info['cruise']['user_options']['mach_optimize'] = False
+local_phase_info['cruise']['user_options']['mach_polynomial_order'] = 1
+local_phase_info['cruise']['user_options']['altitude_optimize'] = False
+local_phase_info['cruise']['user_options']['altitude_polynomial_order'] = 1
+local_phase_info['cruise']['user_options']['altitude_bounds'] = ((32000.0, 34000.0), 'ft')
+local_phase_info['cruise']['user_options']['throttle_enforcement'] = 'path_constraint'
+
+local_phase_info['descent']['user_options']['mach_optimize'] = False
+local_phase_info['descent']['user_options']['mach_polynomial_order'] = 1
+local_phase_info['descent']['user_options']['altitude_optimize'] = False
+local_phase_info['descent']['user_options']['altitude_polynomial_order'] = 1
+local_phase_info['descent']['user_options']['no_climb'] = True
+
+inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, np.zeros(2))
+inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_UPPER, np.zeros(2))
+
+
+@use_tempdirs
+class ThrottleAllocationEnergyTestcase(unittest.TestCase):
+    """Test the different throttle allocation methods for models with multiple, unique EngineModels."""
+
+    def setUp(self):
+        om.clear_reports()
+        _clear_problem_names()  # need to reset these to simulate separate runs
+
+    @require_pyoptsparse(optimizer='SNOPT')
+    def test_multiengine_fixed(self):
+        test_phase_info = deepcopy(local_phase_info)
+        method = ThrottleAllocation.FIXED
+
+        test_phase_info['climb']['user_options']['throttle_allocation'] = method
+        test_phase_info['cruise']['user_options']['throttle_allocation'] = method
+        test_phase_info['descent']['user_options']['throttle_allocation'] = method
+
+        engine1 = build_engine_deck(engine_1_inputs)
+        engine1.name = 'engine_1'
+        engine2 = build_engine_deck(engine_2_inputs)
+        engine2.name = 'engine_2'
+
+        prob = AviaryProblem(verbosity=0)
+
+        prob.load_inputs(inputs, test_phase_info)
+
+        prob.load_external_subsystems([engine1, engine2])
+
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+
+        prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
+
+        prob.add_design_variables()
+        prob.add_objective()
+
+        prob.setup()
+
+        prob.run_aviary_problem(suppress_solver_print=True)
+
+        self.assertTrue(prob.result.success)
+
+        alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
+        alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
+        alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
+
+        assert_near_equal(alloc_climb[0], 0.5, tolerance=1e-3)
+        assert_near_equal(alloc_cruise[0], 0.5, tolerance=1e-3)
+        assert_near_equal(alloc_descent[0], 0.5, tolerance=1e-3)
+
+    @require_pyoptsparse(optimizer='SNOPT')
+    def test_multiengine_static(self):
+        test_phase_info = deepcopy(local_phase_info)
+        method = ThrottleAllocation.STATIC
+
+        test_phase_info['climb']['user_options']['throttle_allocation'] = method
+        test_phase_info['cruise']['user_options']['throttle_allocation'] = method
+        test_phase_info['descent']['user_options']['throttle_allocation'] = method
+
+        engine1 = build_engine_deck(engine_1_inputs)
+        engine2 = build_engine_deck(engine_2_inputs)
+
+        prob = AviaryProblem(verbosity=0)
+
+        prob.load_inputs(inputs, test_phase_info)
+
+        prob.load_external_subsystems([engine1, engine2])
+
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+
+        prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
+
+        prob.add_design_variables()
+        prob.add_objective()
+
+        prob.setup()
+
+        prob.run_aviary_problem(suppress_solver_print=True)
+
+        self.assertTrue(prob.result.success)
+
+        alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
+        alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
+        alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
+
+        with self.subTest('climb_allocation'):
+            assert_near_equal(alloc_climb[0], 0.48777445, tolerance=1e-2)
+        with self.subTest('cruise_allocation'):
+            assert_near_equal(alloc_cruise[0], 0.33529271, tolerance=1e-2)
+
+    @require_pyoptsparse(optimizer='SNOPT')
+    def test_multiengine_dynamic(self):
+        test_phase_info = deepcopy(local_phase_info)
+        method = ThrottleAllocation.DYNAMIC
+
+        test_phase_info['climb']['user_options']['throttle_allocation'] = method
+        test_phase_info['cruise']['user_options']['throttle_allocation'] = method
+        test_phase_info['descent']['user_options']['throttle_allocation'] = method
+
+        prob = AviaryProblem(verbosity=0)
+
+        engine1 = build_engine_deck(engine_1_inputs)
+        engine2 = build_engine_deck(engine_2_inputs)
+
+        prob.load_inputs(inputs, test_phase_info)
+
+        prob.load_external_subsystems([engine1, engine2])
+
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+
+        prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
+
+        prob.add_design_variables()
+        prob.add_objective()
+
+        prob.setup()
+
+        prob.run_aviary_problem(suppress_solver_print=True)
+
+        self.assertTrue(prob.result.success)
+
+        alloc_climb = prob.get_val('traj.climb.controls:throttle_allocations')
+        alloc_cruise = prob.get_val('traj.cruise.controls:throttle_allocations')
+        alloc_descent = prob.get_val('traj.descent.controls:throttle_allocations')
+
+        with self.subTest('cruise_allocation'):
+            # Cruise is pretty constant, check exact value.
+            assert_near_equal(alloc_cruise[0], 0.33122921, tolerance=1e-2)
+
+        with self.subTest('climb_allocation'):
+            # Check general trend: favors engine 2.
+            self.assertLess(alloc_climb[2], 0.22)
+
+
+@use_tempdirs
+class ThrottleAllocation2DOFTestcase(unittest.TestCase):
+    """Test the different throttle allocation methods for models with multiple, unique EngineModels."""
+
+    def setUp(self):
+        om.clear_reports()
+        _clear_problem_names()  # need to reset these to simulate separate runs
+        self.phase_info = test_phase_info = deepcopy(twodof_phase_info)
+        for phase in test_phase_info:
+            if phase not in ['cruise', 'pre_mission', 'post_mission']:
+                # phase_info[phase]['user_options']['throttle_allocation'] = method
+                throttle_guess = test_phase_info[phase]['initial_guesses']['throttle']
+                test_phase_info[phase]['initial_guesses']['throttle'] = [
+                    [[throttle_guess[0][0]] * 2, [throttle_guess[0][1]] * 2],
+                    throttle_guess[1],
+                ]
+
+        prob = AviaryProblem()
+        prob.load_inputs('large_single_aisle_1_GASP.csv', test_phase_info)
+
+        options = prob.model.aviary_inputs
+
+        options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.6)
+
+        engine1 = build_engine_deck(options)
+        engine1.name = 'engine_1'
+
+        engine2 = build_engine_deck(engine_2_inputs)
+        engine2.name = 'engine_2'
+
+        self.engines = [engine1, engine2]
+
+    @require_pyoptsparse(optimizer='SNOPT')
+    def test_multiengine_fixed(self):
+        test_phase_info = deepcopy(self.phase_info)
+        method = ThrottleAllocation.FIXED
+
+        test_phase_info['cruise']['user_options']['throttle_allocation'] = method
+
+        prob = AviaryProblem(verbosity=0)
+
+        prob.load_inputs('large_single_aisle_1_GASP.csv', test_phase_info)
+
+        prob.load_external_subsystems(self.engines)
+
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+
+        prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
+
+        prob.add_design_variables()
+        prob.add_objective()
+
+        prob.setup()
+
+        prob.run_aviary_problem(suppress_solver_print=True)
+
+        self.assertTrue(prob.result.success)
+
+        alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
+
+        assert_near_equal(alloc_cruise[0], 0.5, tolerance=1e-3)
+
+    @require_pyoptsparse(optimizer='SNOPT')
+    def test_multiengine_static(self):
+        test_phase_info = deepcopy(self.phase_info)
+        method = ThrottleAllocation.STATIC
+
+        test_phase_info['cruise']['user_options']['throttle_allocation'] = method
+
+        prob = AviaryProblem(verbosity=0)
+
+        prob.load_inputs('large_single_aisle_1_GASP.csv', test_phase_info)
+
+        prob.load_external_subsystems(self.engines)
+
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+
+        prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
+
+        prob.add_design_variables()
+        prob.add_objective()
+
+        prob.setup()
+
+        prob.run_aviary_problem(suppress_solver_print=True)
+
+        self.assertTrue(prob.result.success)
+
+        alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
+
+        assert_near_equal(alloc_cruise[0], 0.47132271, tolerance=1e-2)
+
+    @require_pyoptsparse(optimizer='SNOPT')
+    def test_multiengine_dynamic(self):
+        test_phase_info = deepcopy(self.phase_info)
+        method = ThrottleAllocation.DYNAMIC
+
+        test_phase_info['cruise']['user_options']['throttle_allocation'] = method
+
+        prob = AviaryProblem(verbosity=0)
+
+        prob.load_inputs('large_single_aisle_1_GASP.csv', test_phase_info)
+
+        prob.load_external_subsystems(self.engines)
+
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+
+        prob.add_driver('SNOPT', max_iter=50, use_coloring=True)
+
+        prob.add_design_variables()
+        prob.add_objective()
+
+        prob.setup()
+
+        prob.run_aviary_problem(suppress_solver_print=True)
+
+        self.assertTrue(prob.result.success)
+
+        alloc_cruise = prob.get_val('traj.cruise.controls:throttle_allocations')
+
+        assert_near_equal(alloc_cruise[0], 0.47127303, tolerance=1e-2)
+
+
+if __name__ == '__main__':
+    unittest.main()
+    # test = ThrottleAllocation2DOFTestcase()
+    # test.setUp()
+    # test.test_multiengine_dynamic()
+    # test.test_multiengine_static()

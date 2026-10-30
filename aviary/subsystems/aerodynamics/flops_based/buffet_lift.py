@@ -5,7 +5,7 @@ import scipy.constants as _units
 from openmdao.components.interp_util.interp import InterpND
 
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BuffetLift(om.ExplicitComponent):
@@ -113,8 +113,6 @@ class BuffetLift(om.ExplicitComponent):
         partials['DELCLB', Aircraft.Wing.THICKNESS_TO_CHORD] = dCLB_dTC
         partials['DELCLB', Aircraft.Wing.SWEEP] = dCLB_dSW25
         partials['DELCLB', Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = dCLB_dCAM
-
-        return
 
 
 BUFT = np.array(

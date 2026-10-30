@@ -3,11 +3,13 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.constraints.flight_constraints import FlightConstraints
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
+@use_tempdirs
 class FlightConstraintTestCase(unittest.TestCase):
     """Test minimum TAS computation."""
 
@@ -38,36 +40,22 @@ class FlightConstraintTestCase(unittest.TestCase):
         tol = 1e-6
         self.prob.run_model()
 
-        assert_near_equal(self.prob['theta'], np.array([0.2260201, 0.2260201]), tol)  # from GASP
-        assert_near_equal(
-            self.prob['TAS_violation'], np.array([-99.39848181, -99.39848181]), tol
-        )  # note: output value isn't in GASP
-        assert_near_equal(self.prob['TAS_min'], np.array([325.9296, 325.9296]), tol)
+        expected_values = {
+            'theta': (np.array([0.2260201, 0.2260201]), 'rad'),  # from GASP
+            'TAS_violation': (
+                np.array([-99.39848181, -99.39848181]),
+                'ft/s',
+            ),  # note: output value isn't in GASP
+            'TAS_min': (np.array([325.9296, 325.9296]), 'ft/s'),
+        }
+
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-11, rtol=1e-12)
-
-
-class FlightConstraintTestCase2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.mission.two_dof.ode.constraints.flight_constraints as constraints
-
-        constraints.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.mission.two_dof.ode.constraints.flight_constraints as constraints
-
-        constraints.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case1(self):
-        prob = om.Problem()
-        prob.model.add_subsystem('group', FlightConstraints(num_nodes=2), promotes=['*'])
-        prob.setup(check=False, force_alloc_complex=True)
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == '__main__':

@@ -12,14 +12,12 @@ class TestBatteryDerivs(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-        self.options = av.AviaryValues()
-
         self.battery = BatteryBuilder()
 
     def test_battery_premission(self):
         prob = self.prob
         prob.model.add_subsystem(
-            'battery_premission', self.battery.build_pre_mission(self.options), promotes=['*']
+            'battery_premission', self.battery.build_pre_mission(), promotes=['*']
         )
 
         prob.setup(force_alloc_complex=True)
@@ -46,9 +44,7 @@ class TestBatteryDerivs(unittest.TestCase):
         prob = self.prob
         prob.model.add_subsystem(
             'battery_mission',
-            subsys=self.battery.build_mission(
-                num_nodes=4, aviary_inputs={}, user_options={}, subsystem_options={}
-            ),
+            subsys=self.battery.build_mission(num_nodes=4),
             promotes=['*'],
         )
 

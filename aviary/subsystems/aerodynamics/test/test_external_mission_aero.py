@@ -7,8 +7,6 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 import aviary.api as av
 from aviary.models.external_subsystems.simple_aero.simple_aero_builder import SimpleAeroBuilder
 
-phase_info = deepcopy(av.default_energy_state_phase_info)
-
 
 @use_tempdirs
 class TestExternalAero(av.TestSubsystemBuilder):
@@ -21,6 +19,8 @@ class TestExternalAero(av.TestSubsystemBuilder):
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_external_drag(self):
+        phase_info = deepcopy(av.default_energy_state_phase_info)
+
         # Just do cruise in this example.
         phase_info.pop('climb')
         phase_info.pop('descent')
@@ -31,7 +31,7 @@ class TestExternalAero(av.TestSubsystemBuilder):
             'method': 'external',
         }
 
-        prob = av.AviaryProblem()
+        prob = av.AviaryProblem(verbosity=0)
 
         # Load aircraft and options data from user
         prob.load_inputs(

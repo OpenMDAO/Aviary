@@ -1,17 +1,14 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import RHO_SEA_LEVEL_ENGLISH as rho_sl
-from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.solved_two_dof.ode.gamma_comp import GammaComp
 from aviary.mission.solved_two_dof.ode.unsteady_solved_eom import UnsteadySolvedEOM
 from aviary.mission.solved_two_dof.ode.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
 )
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
+from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
-from aviary.variable_info.enums import LegacyCode, SpeedType
+from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Dynamic
 
@@ -78,10 +75,6 @@ class UnsteadySolvedODE(TwoDOFODE):
         nn = self.options['num_nodes']
         ground_roll = self.options['ground_roll']
         input_speed_type = self.options['input_speed_type']
-        aviary_options = self.options['aviary_options']
-        subsystem_options = self.options['subsystem_options']
-        user_options = self.options['user_options']
-        subsystems = self.options['subsystems']
         throttle_enforcement = self.options['throttle_enforcement']
 
         self.add_subsystem(
@@ -123,6 +116,7 @@ class UnsteadySolvedODE(TwoDOFODE):
         throttle_balance_group = self.add_subsystem(
             'throttle_balance_group', om.Group(), promotes=['*']
         )
+        throttle_balance_group.options['auto_order'] = True
 
         throttle_balance_comp = om.BalanceComp()
         throttle_balance_comp.add_balance(
@@ -154,60 +148,12 @@ class UnsteadySolvedODE(TwoDOFODE):
         throttle_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
         throttle_balance_group.nonlinear_solver.options['err_on_non_converge'] = True
 
-        kwargs = {
-            'method': 'low_speed',
-        }
-        if self.options['clean']:
-            kwargs['method'] = 'cruise'
-        for subsystem in subsystems:
-            # check if subsystem_options has entry for a subsystem of this name
-            if subsystem.name in subsystem_options:
-                kwargs.update(subsystem_options[subsystem.name])
-            system = subsystem.build_mission(
-                num_nodes=nn,
-                aviary_inputs=aviary_options,
-                user_options=user_options,
-                subsystem_options=kwargs,
-            )
-            if system is not None:
-                mission_in = subsystem.mission_inputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                mission_out = subsystem.mission_outputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                if isinstance(subsystem, AerodynamicsBuilder):
-                    mission_inputs = mission_in.copy()
-                    if (
-                        subsystem.code_origin is LegacyCode.FLOPS
-                        and 'angle_of_attack' in mission_inputs
-                    ):
-                        mission_inputs.remove('angle_of_attack')
-                        mission_inputs.append(('angle_of_attack', Dynamic.Vehicle.ANGLE_OF_ATTACK))
-                    control_iter_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=mission_inputs,
-                        promotes_outputs=mission_out,
-                    )
-                elif isinstance(subsystem, PropulsionBuilder):
-                    throttle_balance_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=mission_in,
-                        promotes_outputs=mission_out,
-                    )
-                else:
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=mission_in,
-                        promotes_outputs=mission_out,
-                    )
+        self.add_subsystems_and_solver(
+            solver_sub=throttle_balance_group,
+            couple_propulsion=True,
+            couple_aero=True,
+            aero_solver_sub=control_iter_group,
+        )
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
@@ -260,7 +206,8 @@ class UnsteadySolvedODE(TwoDOFODE):
         self.add_subsystem(
             'mass_rate',
             om.ExecComp(
-                'dmass_dr = fuelflow * dt_dr',
+                ['dmass_dr = fuelflow_neg * dt_dr', 'dfuelburn_dr = fuelflow * dt_dr'],
+                fuelflow_neg={'units': 'lbm/s', 'shape': nn},
                 fuelflow={'units': 'lbm/s', 'shape': nn},
                 dt_dr={'units': 's/distance_units', 'shape': nn},
                 dmass_dr={
@@ -268,22 +215,25 @@ class UnsteadySolvedODE(TwoDOFODE):
                     'shape': nn,
                     'tags': ['dymos.state_rate_source:mass', 'dymos.state_units:lbm'],
                 },
+                dfuelburn_dr={
+                    'units': 'lbm/distance_units',
+                    'shape': nn,
+                    'tags': [
+                        'dymos.state_rate_source:cumulative_fuel_burn',
+                        'dymos.state_units:lbm',
+                    ],
+                },
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('fuelflow', Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL),
+                ('fuelflow_neg', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
+                ('fuelflow', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL),
                 'dt_dr',
             ],
-            promotes_outputs=['dmass_dr'],
+            promotes_outputs=['dmass_dr', 'dfuelburn_dr'],
         )
 
         onn = np.ones(nn)
-        self.set_input_defaults(
-            name=Dynamic.Atmosphere.DENSITY, val=rho_sl * onn, units='slug/ft**3'
-        )
-        self.set_input_defaults(
-            name=Dynamic.Atmosphere.SPEED_OF_SOUND, val=1116.4 * onn, units='ft/s'
-        )
         if not self.options['ground_roll']:
             self.set_input_defaults(
                 name=Dynamic.Mission.FLIGHT_PATH_ANGLE, val=0.0 * onn, units='rad'

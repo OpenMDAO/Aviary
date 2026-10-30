@@ -34,10 +34,7 @@ from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
-from aviary.utils.test_utils.default_subsystems import (
-    get_default_mission_subsystems,
-    get_default_premission_subsystems,
-)
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
@@ -51,6 +48,7 @@ inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.01498)
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.84)
 inputs.set_val(Aircraft.Design.GROSS_MASS, 129734.0, 'lbm')
+inputs.set_val(Aircraft.Design.MAX_MACH, 0.785)
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.93)
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 0.95)
@@ -106,10 +104,10 @@ inputs.set_val(Aircraft.Fins.NUM_FINS, 0)
 
 # Fuel
 # ---------------------------
-inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.7752)
 inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
-inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 0.93202)
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)
@@ -171,8 +169,8 @@ inputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, 0.8846)
 
 # Nacelle
 # ---------------------------
-inputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, 7.2, 'ft')
-inputs.set_val(Aircraft.Nacelle.AVG_LENGTH, 35.0, 'ft')
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, 7.2, 'ft')
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, 35.0, 'ft')
 inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_LOWER, 0.0)
 inputs.set_val(Aircraft.Nacelle.LAMINAR_FLOW_UPPER, 0.0)
 inputs.set_val(Aircraft.Nacelle.MASS_SCALER, 0.0)
@@ -216,8 +214,8 @@ inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
 inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
-inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
-inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lb/h')
+inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)
+inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lb/h')
 inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
 inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
 inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
@@ -295,7 +293,6 @@ inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
 # ---------------------------
 inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.785)
 inputs.set_val(Aircraft.Design.RANGE, 3500, 'NM')
-inputs.set_val(Mission.Constraints.MAX_MACH, 0.785)
 inputs.set_val(Mission.Landing.DRAG_COEFFICIENT_MIN, 0.045, 'unitless')
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 2.0, 'unitless')
 inputs.set_val(Mission.Takeoff.AIRPORT_ALTITUDE, 0.0, 'ft')
@@ -315,7 +312,7 @@ inputs.set_val(Mission.Landing.OBSTACLE_HEIGHT, 50.0, 'ft')
 inputs.set_val(Mission.Landing.SPOILER_DRAG_COEFFICIENT, 0.085000)
 inputs.set_val(Mission.Landing.SPOILER_LIFT_COEFFICIENT, -0.810000)
 inputs.set_val(Mission.Takeoff.THRUST_INCIDENCE, 0.0, 'deg')
-inputs.set_val(Mission.Takeoff.FUEL, 577.0, 'lbm')
+inputs.set_val(Mission.Takeoff.FUEL_MASS, 577.0, 'lbm')
 
 # Settings
 # ---------------------------
@@ -361,9 +358,9 @@ outputs.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 30800.0, 'lbm')
 outputs.set_val(Aircraft.Electrical.MASS, 2375.0, 'lbm')
 
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 518.0, 'lbm')
-outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 33136.4, 'lbm')
+outputs.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 33136.4, 'lbm')
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 462.0, 'lbm')
-outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 33136.4, 'lbm')
+outputs.set_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 33136.4, 'lbm')
 
 outputs.set_val(Aircraft.Fins.MASS, 0.0, 'lbm')
 
@@ -398,6 +395,8 @@ outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 5353.06534955, 'lbm')
 
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([35.0]), 'ft')
 outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([4.8611]))
+outputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.2]), 'ft')
+outputs.set_val(Aircraft.Nacelle.AVG_LENGTH, np.array([35.0]), 'ft')
 outputs.set_val(Aircraft.Nacelle.MASS, 0.0, 'lbm')
 
 outputs.set_val(Aircraft.Paint.MASS, 0.0, 'lbm')
@@ -448,8 +447,10 @@ engines = [build_engine_deck(options=inputs)]
 # preprocess_options(inputs, engine_models=engine)
 
 # build subsystems
-default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
-default_mission_subsystems = get_default_mission_subsystems('FLOPS', engines)
+default_premission_subsystems = get_default_subsystems('FLOPS', engines).values()
+default_mission_subsystems = [
+    get_default_subsystems('FLOPS', engines)[k] for k in ['propulsion', 'aerodynamics']
+]
 
 # region - detailed takeoff
 takeoff_trajectory_builder = TakeoffTrajectory('detailed_takeoff')

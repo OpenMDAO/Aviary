@@ -99,12 +99,12 @@ def build_akima_coefs(out_stream, raw_data, units):
     with np.printoptions(linewidth=100, threshold=np.inf):
         # Print altitude in correct units:
         if out_stream is not None:
-            print(f'atm_data.alt = \\', file=out_stream)
+            print('atm_data.alt = \\', file=out_stream)
             print(
                 textwrap.indent(repr(atm_data.alt).replace('array', 'np.array'), '    '),
                 file=out_stream,
             )
-            print('', file=out_stream)
+            print(file=out_stream)
         input('Press Enter to continue: ')
 
     vars = ['T', 'P', 'rho', 'dT']
@@ -127,7 +127,7 @@ def build_akima_coefs(out_stream, raw_data, units):
                     textwrap.indent(repr(coeff_array).replace('array', 'np.array'), '    '),
                     file=out_stream,
                 )
-                print('', file=out_stream)
+                print(file=out_stream)
 
             coeff_data[f'atm_data.akima_{var}'] = coeff_array
             input('Press Enter to continue: ')

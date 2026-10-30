@@ -7,13 +7,12 @@ name = "aviary"
 dynamic = ["version"]
 readme = "README.md"
 license = "Apache-2.0"
-requires_python = ">=3.10"
+requires_python = ">=3.11"
 dependencies = [
     "dymos>=1.14.0",
     "hvplot",
-    "importlib_resources",
     "matplotlib",
-    "openmdao>=3.43.0",
+    "openmdao>=3.45.0",
     "pandas",
     "panel>=1.0.0",
     "parameterized",
@@ -27,7 +26,6 @@ docs = [
 dev = [
     "pre-commit",
     "testflo",
-    "ambiance",
     "openaerostruct",
 ]
 all = [
@@ -81,7 +79,8 @@ convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
 # Ignore `F401` (unused import) in api and doc files.
+# Ignore `F403` (undefined local with import star) in api
 # Ignore `I001` (sort and format imports) in api.
 # Ignore `E402` (module import not at top of file) for doc cells.
-"api.py" = ["F401", "I001"]
+"api.py" = ["F401", "I001", "F403"]
 "*.ipynb" = ["F401", "E402"]

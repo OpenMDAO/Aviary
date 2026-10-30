@@ -1,7 +1,6 @@
 import unittest
 from copy import deepcopy
 
-from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
@@ -15,10 +14,10 @@ from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.process_input_decks import create_vehicle
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Settings
 
 
-# @use_tempdirs
+@use_tempdirs
 @require_pyoptsparse(optimizer='IPOPT')
 # TODO need to add asserts with "truth" values
 class LargeHybridTurbopropFreighterBenchmark(unittest.TestCase):
@@ -52,8 +51,8 @@ class LargeHybridTurbopropFreighterBenchmark(unittest.TestCase):
         electroprop_options.set_val(
             Aircraft.Engine.RPM_DESIGN, 6_000, 'rpm'
         )  # max RPM of motor map
-        # electroprop_options.delete(Aircraft.Engine.FIXED_RPM)
-        options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
+        options.delete(Aircraft.Engine.FIXED_RPM)
+        # electroprop_options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
         electroprop_options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
         electroprop_options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
         electroprop_options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1_000, 'W*h/kg')
@@ -111,7 +110,7 @@ class LargeHybridTurbopropFreighterBenchmark(unittest.TestCase):
             Aircraft.Battery.PACK_MASS, units='lbm', lower=10_000, upper=75_000, ref=10_000
         )
 
-        final_phase_name = prob.model.regular_phases[-1]
+        final_phase_name = prob.model.main_phases[-1]
         prob.model.add_objective(
             f'traj.{final_phase_name}.timeseries.cumulative_electric_energy_used',
             index=-1,
@@ -130,13 +129,13 @@ class LargeHybridTurbopropFreighterBenchmark(unittest.TestCase):
         return prob
 
     @unittest.skip('Skipping until subsystems with states can be used in 2DOF cruise')
-    def test_bench_2DOF(self):
+    def bench_test_2DOF(self):
         prob = self.build_and_run_problem('2DOF')
         self.assertTrue(prob.result.success)
         # TODO asserts
 
     @unittest.skip('Skipping due to convergence issues (possible drag too low in descent?)')
-    def test_bench_energy(self):
+    def bench_test_energy(self):
         prob = self.build_and_run_problem('energy')
         prob.model.list_vars()
         self.assertTrue(prob.result.success)

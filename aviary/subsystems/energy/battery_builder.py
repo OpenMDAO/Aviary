@@ -31,14 +31,16 @@ class BatteryBuilder(SubsystemBuilder):
     _default_name = 'battery'
 
     def build_pre_mission(self, aviary_inputs=None, subsystem_options=None):
-        return SizeBattery(aviary_inputs=aviary_inputs)
+        return SizeBattery()
 
     # Special Case: Aviary directly looks for battery mass as part of mass buildup, rather then
     # letting it get summed with other external subsystem masses
     # def get_mass_names(self, aviary_inputs=None):
     # return [Aircraft.Battery.MASS]
 
-    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options) -> om.Group:
+    def build_mission(
+        self, num_nodes, aviary_inputs=None, user_options=None, subsystem_options=None
+    ):
         battery_group = om.Group()
         # Here, the efficiency variable is used as an overall efficiency for the battery
         soc = om.ExecComp(
@@ -82,15 +84,13 @@ class BatteryBuilder(SubsystemBuilder):
                 'fix_initial': True,
                 'fix_final': False,
                 'lower': 0.0,
-                'ref': 1e4,
-                'defect_ref': 1e6,
+                'ref': 1e5,
                 'units': 'kJ',
                 'rate_source': Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
-                'input_initial': 0.0,
+                'val': 0.0,
                 'targets': Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
             }
         }
-
         return state_dict
 
     def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None):
@@ -118,6 +118,6 @@ class BatteryBuilder(SubsystemBuilder):
         }
         return params
 
-    def get_linked_variables(self, aviary_inputs=None):
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         # link cumulative electric energy between phases
         return [Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED]

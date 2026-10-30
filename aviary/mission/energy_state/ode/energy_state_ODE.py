@@ -3,10 +3,9 @@ import openmdao.api as om
 
 from aviary.mission.base_ode import BaseODE as _BaseODE
 from aviary.mission.energy_state.ode.mission_EOM import MissionEOM
-
 from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
 from aviary.variable_info.enums import SpeedType, ThrottleAllocation
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class EnergyStateODE(_BaseODE):
@@ -58,11 +57,11 @@ class EnergyStateODE(_BaseODE):
 
         throttle_enforcement = options['throttle_enforcement']
 
-        sub1 = self.add_subsystem('solver_sub', om.Group(), promotes=['*'])
+        ode_sub = self.add_subsystems_and_solver(
+            couple_propulsion=throttle_enforcement != 'control'
+        )
 
-        use_mission_solver = self.add_subsystems(solver_group=sub1)
-
-        sub1.add_subsystem(
+        ode_sub.add_subsystem(
             name='mission_EOM',
             subsys=MissionEOM(num_nodes=nn),
             promotes_inputs=[
@@ -87,8 +86,7 @@ class EnergyStateODE(_BaseODE):
         thrust_res_ref = 1.0e6
         if num_engine_type > 1:
             # Multi Engine
-
-            sub1.add_subsystem(
+            ode_sub.add_subsystem(
                 name='throttle_balance',
                 subsys=om.BalanceComp(
                     name='aggregate_throttle',
@@ -104,7 +102,7 @@ class EnergyStateODE(_BaseODE):
                 promotes_outputs=['*'],
             )
 
-            sub1.add_subsystem(
+            ode_sub.add_subsystem(
                 'throttle_allocator',
                 ThrottleAllocator(
                     num_nodes=nn, throttle_allocation=self.options['throttle_allocation']
@@ -115,7 +113,6 @@ class EnergyStateODE(_BaseODE):
 
         else:
             # Single Engine
-
             if throttle_enforcement == 'control':
                 self.add_subsystem(
                     'throttle_balance',
@@ -135,7 +132,7 @@ class EnergyStateODE(_BaseODE):
                 self.add_constraint('thrust_residual', ref=thrust_res_ref, equals=0.0)
             else:
                 # Add a balance comp to compute throttle based on the required thrust.
-                sub1.add_subsystem(
+                ode_sub.add_subsystem(
                     name='throttle_balance',
                     subsys=om.BalanceComp(
                         name=Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -162,18 +159,3 @@ class EnergyStateODE(_BaseODE):
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='m/s')
-
-        if use_mission_solver or throttle_enforcement != 'control':
-            sub1.nonlinear_solver = om.NewtonSolver(
-                solve_subsystems=True,
-                atol=1.0e-10,
-                rtol=1.0e-10,
-            )
-            print_level = 2
-
-            sub1.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-            sub1.linear_solver = om.DirectSolver(assemble_jac=True)
-            sub1.nonlinear_solver.options['err_on_non_converge'] = True
-            sub1.nonlinear_solver.options['iprint'] = print_level
-
-        self.options['auto_order'] = True

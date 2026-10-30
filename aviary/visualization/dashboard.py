@@ -294,7 +294,7 @@ def create_report_frame(documentation, format, text_filepath):
                 # need to deal with some encoding errors
                 file_text = file_text.decode('latin-1')
             if format == 'markdown':
-                report_pane = pn.pane.Markdown(file_text)
+                report_pane = pn.pane.Markdown(file_text, hard_line_break=True)
             elif format == 'text':
                 report_pane = pn.pane.Str(file_text)
             report_pane = pn.Column(
@@ -760,9 +760,7 @@ def create_optimization_history_plot(case_recorder, df):
 
 @_handle_pane_creation_errors()
 def _create_interactive_xy_plot_mission_variables(documentation, problem_recorder_path):
-    """
-    Create a pane showing an XY plot of mission variables.
-    """
+    """Create a pane showing an XY plot of mission variables."""
     if problem_recorder_path:
         if os.path.exists(problem_recorder_path):
             cr = om.CaseReader(problem_recorder_path)
@@ -820,7 +818,7 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
                     data_by_varname_and_phase[name][phase] = val
 
             # determine the initial variables used for X and Y
-            varname_options = list(sorted(varnames, key=str.casefold))
+            varname_options = sorted(varnames, key=str.casefold)
             if 'distance' in varname_options:
                 x_varname_default = 'distance'
             elif 'time' in varname_options:
@@ -1025,7 +1023,7 @@ def dashboard(script_name, port=0, run_in_background=False):
     if not os.path.isfile(problem_recorder_path):
         issue_warning(f'Problem case recorder file {problem_recorder_path} does not exist.')
 
-    # TODO - use lists and functions to do this with a lot less code
+    # See issue #1174. Use lists and functions to do this with a lot less code
     ####### Model Tab #######
     model_tabs_list = []
 
@@ -1133,6 +1131,17 @@ def dashboard(script_name, port=0, run_in_background=False):
         """,
         'html',
         reports_dir / 'driver_scaling_report.html',
+    )
+
+    #  Options List
+    create_report_frame(
+        'Model Options List',
+        model_tabs_list,
+        """
+        A plain text display of the options for the Problem.
+        """,
+        'text',
+        reports_dir / 'options.txt',
     )
 
     ####### Optimization Tab #######
@@ -1457,6 +1466,7 @@ def dashboard(script_name, port=0, run_in_background=False):
 
 if __name__ == '__main__':
     import argparse
+
     from aviary.visualization.dashboard_cmd import _dashboard_cmd, _dashboard_setup_parser
 
     parser = argparse.ArgumentParser()

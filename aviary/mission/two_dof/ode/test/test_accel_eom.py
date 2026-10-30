@@ -3,11 +3,14 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
+from aviary.constants import GRAV_EARTH
 from aviary.mission.two_dof.ode.accel_eom import AccelerationRates
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
 
 
+@use_tempdirs
 class AccelerationTestCase(unittest.TestCase):
     """
     These tests compare the output of the accel EOM to the output from GASP. There are some discrepancies.
@@ -17,7 +20,10 @@ class AccelerationTestCase(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group', AccelerationRates(num_nodes=2), promotes=['*'])
+        options = {Mission.GRAVITY: GRAV_EARTH}
+        self.prob.model.add_subsystem(
+            'group', AccelerationRates(num_nodes=2, **options), promotes=['*']
+        )
 
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, np.array([174878, 174878]), units='lbm'
@@ -42,38 +48,18 @@ class AccelerationTestCase(unittest.TestCase):
 
         # note: values were finite differenced from GASP
         # fd values are: VELOCITY_RATE=[5.2353365, 5.2353365], DISTANCE_RATE=[441.6439, 441.6439]
+        # Here we have slightly different values due to OM unit conversion not using NIST standards
         expected_values = {
-            Dynamic.Mission.VELOCITY_RATE: np.array([5.51533958, 5.51533958]),
-            Dynamic.Mission.DISTANCE_RATE: np.array([425.32808399, 425.32808399]),
+            Dynamic.Mission.VELOCITY_RATE: (np.array([5.51089452, 5.51089452]), 'ft/s**2'),
+            Dynamic.Mission.DISTANCE_RATE: (np.array([425.32808399, 425.32808399]), 'ft/s'),
         }
 
-        for var_name, expected in expected_values.items():
+        for var_name, (expected, units) in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected, tol)
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
-class AccelerationTestCase2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.mission.two_dof.ode.accel_eom as accel
-
-        accel.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.mission.two_dof.ode.accel_eom as accel
-
-        accel.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case1(self):
-        prob = om.Problem()
-        prob.model.add_subsystem('group', AccelerationRates(num_nodes=2), promotes=['*'])
-        prob.setup(check=False, force_alloc_complex=True)
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 

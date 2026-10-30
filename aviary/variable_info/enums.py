@@ -62,6 +62,14 @@ class AtmosphereModel(Enum):
     HOT = 'hot'
     TROPICAL = 'tropical'
     POLAR = 'polar'
+    MARS_REFERENCE = 'mars_reference'
+    MARS_HELLAS_HOT = 'mars_hellas_hot'
+    MARS_HELLAS_COLD = 'mars_hellas_cold'
+    MARS_EQUATOR_HOT = 'mars_equator_hot'
+    MARS_EQUATOR_COLD = 'mars_equator_cold'
+    MARS_POLAR_HOT = 'mars_polar_hot'
+    MARS_POLAR_COLD = 'mars_polar_cold'
+    VENUS_REFERENCE = 'venus_reference'
 
 
 class CodeOrigin(Enum):
@@ -155,6 +163,14 @@ class FlapType(Enum):
         return next((c for c in cls if c.name == val), None)
 
 
+class FuelType(Enum):
+    HYDROGEN_GASEOUS = 'hydrogen_liquid'
+    HYDROGEN_LIQUID = 'hydrogen_gaseous'
+    JET_A = 'jet_a'
+    METHANE_GASEOUS = 'methane_gaseous'
+    METHANE_LIQUID = 'methane_liquid'  # LNG
+
+
 class LegacyCode(Enum):
     """Flag for legacy codebases."""
 
@@ -209,6 +225,9 @@ class ProblemType(Enum):
     gross weight, it will then find the maximum distance the off-design
     aircraft can fly.
 
+    OFF_DESIGN_GENERAL: Requires a pre-sized aircraft. Design gross mass is held constant.
+    Use this for non-standard missions.
+
     MULTI_MISSION: Similar to a SIZING mission, however it varies the
     design gross weight and actual gross weight across multiple missions
     to and closes design range for each mission. This causes the empty
@@ -220,6 +239,7 @@ class ProblemType(Enum):
     SIZING = 'sizing'
     OFF_DESIGN_MIN_FUEL = 'off_design_min_fuel'
     OFF_DESIGN_MAX_RANGE = 'off_design_max_range'
+    OFF_DESIGN_GENERAL = 'off_design_general'
     MULTI_MISSION = 'multimission'
 
 

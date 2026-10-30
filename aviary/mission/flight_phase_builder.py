@@ -2,10 +2,7 @@ import dymos as dm
 import numpy as np
 
 from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
-from aviary.mission.initial_guess_builders import (
-    InitialGuessState,
-    InitialGuessControl,
-)
+from aviary.mission.initial_guess_builders import InitialGuessControl, InitialGuessState
 from aviary.mission.phase_builder import PhaseBuilder, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
@@ -44,6 +41,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         defaults = {
             'mass_ref': 1e4,
             'mass_bounds': (0.0, None),
+            'mass_direct_link': True,
         }
         self.add_state_options('mass', units='kg', defaults=defaults)
 
@@ -51,18 +49,26 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         defaults = {
             'distance_ref': 1e6,
             'distance_bounds': (0.0, None),
+            'distance_direct_link': True,
         }
         self.add_state_options('distance', units='m', defaults=defaults)
 
-        self.add_control_options('altitude', units='ft')
+        defaults = {
+            'altitude_direct_link': False,
+        }
+        self.add_control_options('altitude', units='ft', defaults=defaults)
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
             'mach_ref': 0.5,
+            'mach_direct_link': False,
         }
         self.add_control_options('mach', units='unitless', defaults=defaults)
 
-        self.add_time_options(units='s')
+        defaults = {
+            'initial_time_direct_link': True,
+        }
+        self.add_time_options(units='s', defaults=defaults)
 
         self.declare(
             name='throttle_enforcement',
@@ -169,7 +175,7 @@ class FlightPhaseBase(PhaseBuilder):
     SolvedTwoDOFPhase.
     """
 
-    __slots__ = ('subsystems', 'meta_data')
+    __slots__ = ('meta_data', 'subsystems')
 
     _initial_guesses_meta_data_ = {}
     default_name = 'cruise'
@@ -201,7 +207,6 @@ class FlightPhaseBase(PhaseBuilder):
         dymos.Phase
         """
         phase: dm.Phase = super().build_phase(aviary_options)
-        self.phase = phase
 
         num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
 
@@ -217,7 +222,7 @@ class FlightPhaseBase(PhaseBuilder):
         # Add States #
         ##############
         if phase_type is EquationsOfMotion.ENERGY_STATE:
-            rate_source = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
+            rate_source = Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL
         else:
             rate_source = 'dmass_dr'
 
@@ -227,6 +232,11 @@ class FlightPhaseBase(PhaseBuilder):
             self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
         phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
+
+        if phase_type is not EquationsOfMotion.ENERGY_STATE:
+            phase.set_state_options(
+                Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED, rate_source='dfuelburn_dr'
+            )
 
         ################
         # Add Controls #
@@ -240,7 +250,6 @@ class FlightPhaseBase(PhaseBuilder):
             'mach',
             Dynamic.Atmosphere.MACH,
             rate_targets,
-            add_constraints=Dynamic.Atmosphere.MACH not in constraints,
         )
 
         if phase_type is EquationsOfMotion.ENERGY_STATE and not ground_roll:
@@ -255,7 +264,6 @@ class FlightPhaseBase(PhaseBuilder):
             Dynamic.Mission.ALTITUDE,
             rate_targets,
             rate2_targets=rate2_targets,
-            add_constraints=Dynamic.Mission.ALTITUDE not in constraints,
         )
 
         if throttle_enforcement == 'control':
@@ -263,7 +271,6 @@ class FlightPhaseBase(PhaseBuilder):
                 'throttle',
                 Dynamic.Vehicle.Propulsion.THROTTLE,
                 rate_targets=None,
-                add_constraints=True,
             )
 
         # For heterogeneous-engine cases, we may have throttle allocation control.
@@ -287,70 +294,49 @@ class FlightPhaseBase(PhaseBuilder):
                 )
 
             else:
+                opt = allocation == ThrottleAllocation.STATIC
+                kwargs = {}
+                if opt:
+                    kwargs['lower'] = 0.0
+                    kwargs['upper'] = 1.0
+
                 phase.add_parameter(
                     'throttle_allocations',
                     units='unitless',
                     val=val,
                     shape=(num_engine_type - 1,),
-                    opt=allocation == ThrottleAllocation.STATIC,
-                    lower=0.0,
-                    upper=1.0,
+                    opt=opt,
+                    **kwargs,
                 )
 
         ##################
         # Add Timeseries #
         ##################
+        phase.add_timeseries_output(Dynamic.Mission.ALTITUDE_RATE, units='ft/s')
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+            units='kW',
         )
-
         phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
-
-        if phase_type is EquationsOfMotion.ENERGY_STATE:
-            phase.add_timeseries_output(
-                Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
-                output_name=Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
-                units='m/s',
-            )
-
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL,
             units='lbm/h',
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
-            units='kW',
-        )
-
-        phase.add_timeseries_output(
-            Dynamic.Mission.ALTITUDE_RATE,
-            output_name=Dynamic.Mission.ALTITUDE_RATE,
-            units='ft/s',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
 
         if throttle_enforcement != 'control':
-            phase.add_timeseries_output(
-                Dynamic.Vehicle.Propulsion.THROTTLE,
-                output_name=Dynamic.Vehicle.Propulsion.THROTTLE,
-                units='unitless',
-            )
+            phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless')
 
-        phase.add_timeseries_output(
-            Dynamic.Mission.VELOCITY,
-            output_name=Dynamic.Mission.VELOCITY,
-            units='m/s',
-        )
+        if phase_type is EquationsOfMotion.ENERGY_STATE:
+            phase.add_timeseries_output(Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS, units='m/s')
+
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
+        phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='m/s')
 
         if phase_type is EquationsOfMotion.SOLVED_2DOF:
-            phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
-            phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+            phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
+            phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
             phase.add_timeseries_output('fuselage_pitch', output_name='theta', units='deg')
             phase.add_timeseries_output('thrust_req', units='lbf')
             phase.add_timeseries_output('normal_force')
@@ -438,6 +424,16 @@ class FlightPhaseBase(PhaseBuilder):
             )
 
         return transcription
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Vehicle.MASS,
+            Dynamic.Mission.TIME,
+        ]
+        return linked_vars
 
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""

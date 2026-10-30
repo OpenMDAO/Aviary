@@ -3,18 +3,20 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.mission.solved_two_dof.ode.unsteady_solved_ode import UnsteadySolvedODE
+from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
-from aviary.variable_info.enums import SpeedType
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import get_path
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
+from aviary.variable_info.enums import SpeedType, Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
+@use_tempdirs
 class TestUnsteadySolvedODE(unittest.TestCase):
     """Test the unsteady solved ODE in steady level flight."""
 
@@ -25,10 +27,20 @@ class TestUnsteadySolvedODE(unittest.TestCase):
 
         p = om.Problem()
 
-        aviary_options = get_option_defaults()
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', [build_engine_deck(aviary_options)]
+        # Explicit options for the GASP-based unsteady solved ODE.
+        aviary_options = AviaryValues()
+        aviary_options.set_val(
+            Aircraft.Engine.DATA_FILE, get_path('models/engines/turbofan_23k_1.csv')
         )
+        aviary_options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 28690.0, units='lbf')
+        aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+        aviary_options.set_val(Settings.VERBOSITY, Verbosity.QUIET)
+
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [build_engine_deck(aviary_options)])[k]
+            for k in ['propulsion', 'aerodynamics']
+        ]
 
         ode = UnsteadySolvedODE(
             num_nodes=nn,
@@ -85,9 +97,9 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         gamma = (
             0 if ground_roll else p.model.get_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
         )
-        weight = p.model.get_val('mass', units='lbm') * GRAV_ENGLISH_LBM
+        mass = p.model.get_val('mass', units='lbm')
         fuelflow = p.model.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
         )
         dmass_dr = p.model.get_val('dmass_dr', units='lbm/ft')
         dt_dr = p.model.get_val('dt_dr', units='s/ft')
@@ -107,7 +119,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
             assert_near_equal(drag + thrust_req * s_gamma, thrust_req * c_alphai, tolerance=1.0e-12)
 
             # 2. Test that forces balance normal to the velocity axis
-            assert_near_equal(lift + thrust_req * s_alphai, weight * c_gamma, tolerance=1.0e-12)
+            assert_near_equal(lift + thrust_req * s_alphai, mass * c_gamma, tolerance=1.0e-8)
 
             # 3. Test that dt_dr is the inverse of true airspeed
             assert_near_equal(tas, 1 / dt_dr, tolerance=1.0e-12)
@@ -118,7 +130,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
             # 5. Test that fuelflow (lbf/s) * dt_dr (s/ft) is equal to dmass_dr
             assert_near_equal(fuelflow * dt_dr, dmass_dr, tolerance=1.0e-12)
 
-        cpd = p.check_partials(compact_print=True, method='cs', excludes=['*params*', '*aero*'])
+        cpd = p.check_partials(out_stream=None, method='cs', excludes=['*params*', '*aero*'])
         assert_check_partials(cpd, atol=1e-6, rtol=1e-6)
 
     def test_steady_level_flight(self):

@@ -8,12 +8,12 @@ from aviary.subsystems.mass.flops_based.payload import PayloadGroup
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
+    Version,
     do_validation_test,
     flops_validation_test,
     get_flops_case_names,
     get_flops_options,
     print_case,
-    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
@@ -26,12 +26,14 @@ cargo_test_data['1'] = AviaryValues(
         Aircraft.CrewPayload.PASSENGER_MASS_TOTAL: (33120.0, 'lbm'),  # custom
         Aircraft.CrewPayload.CARGO_MASS: (3000.0, 'lbm'),  # custom
         Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS: (45320.0, 'lbm'),  # custom
+        Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER: (50.0, 'lbm'),
+        Aircraft.CrewPayload.MASS_PER_PASSENGER: (180.0, 'lbm'),
     }
 )
 
 cargo_data_sets = [key for key in cargo_test_data]
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS', 'BWB300FLOPS']
 
 
 @use_tempdirs
@@ -52,8 +54,6 @@ class PayloadGroupTest(unittest.TestCase):
         )
 
         prob.model_options['*'] = {
-            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER: (50, 'lbm'),
-            Aircraft.CrewPayload.MASS_PER_PASSENGER: (180.0, 'lbm'),
             Aircraft.CrewPayload.NUM_PASSENGERS: 184,  # custom
         }
 
@@ -64,7 +64,12 @@ class PayloadGroupTest(unittest.TestCase):
             prob,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
-            input_keys=[Aircraft.CrewPayload.MISC_CARGO, Aircraft.CrewPayload.WING_CARGO],
+            input_keys=[
+                Aircraft.CrewPayload.MISC_CARGO,
+                Aircraft.CrewPayload.WING_CARGO,
+                Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
+                Aircraft.CrewPayload.MASS_PER_PASSENGER,
+            ],
             output_keys=[
                 Aircraft.CrewPayload.BAGGAGE_MASS,
                 Aircraft.CrewPayload.PASSENGER_MASS_TOTAL,
@@ -79,7 +84,7 @@ class PayloadGroupTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBCargoMassTest(unittest.TestCase):
-    """Test BWB cargo mass"""
+    """Test BWB cargo mass."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -103,7 +108,12 @@ class BWBCargoMassTest(unittest.TestCase):
             self,
             prob,
             case_name,
-            input_keys=[Aircraft.CrewPayload.MISC_CARGO, Aircraft.CrewPayload.WING_CARGO],
+            input_keys=[
+                Aircraft.CrewPayload.MISC_CARGO,
+                Aircraft.CrewPayload.WING_CARGO,
+                Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
+                Aircraft.CrewPayload.MASS_PER_PASSENGER,
+            ],
             output_keys=[
                 Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
                 Aircraft.CrewPayload.BAGGAGE_MASS,

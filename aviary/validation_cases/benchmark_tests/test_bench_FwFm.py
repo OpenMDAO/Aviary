@@ -183,7 +183,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': True,
-                'constrain_range': True,
                 'target_range': (3375.0, 'nmi'),
             },
         }
@@ -197,7 +196,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
     """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_FwFm_IPOPT(self):
+    def bench_test_FwFm_IPOPT(self):
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             self.phase_info,
@@ -210,11 +209,11 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_FwFm_SNOPT(self):
+    def bench_test_FwFm_SNOPT(self):
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             self.phase_info,
-            verbosity=1,
+            verbosity=0,
             max_iter=50,
             optimizer='SNOPT',
         )
@@ -223,7 +222,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         compare_against_expected_values(prob, self.expected_dict)
 
         # This is one of the few places we test energy-state + simple takeoff.
-        overall_fuel = prob.get_val(Mission.TOTAL_FUEL)
+        overall_fuel = prob.get_val(Mission.TOTAL_FUEL_MASS)
 
         # Making sure we include the fuel mass consumed in take-off and taxi.
         self.assertGreater(overall_fuel, 40000.0)
@@ -236,7 +235,7 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
     N_PROCS = 3
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_FwFm_IPOPT_MPI(self):
+    def bench_test_FwFm_IPOPT_MPI(self):
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             self.phase_info,
@@ -252,5 +251,5 @@ if __name__ == '__main__':
     # unittest.main()
     test = TestBenchFwFmSerial()
     test.setUp()
-    # test.test_bench_FwFm_IPOPT()
-    test.test_bench_FwFm_SNOPT()
+    # test.bench_test_FwFm_IPOPT()
+    test.bench_test_FwFm_SNOPT()

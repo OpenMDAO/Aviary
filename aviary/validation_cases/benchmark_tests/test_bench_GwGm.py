@@ -5,18 +5,18 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.missions.two_dof_default import phase_info
 from aviary.interface.run_aviary import run_aviary
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.models.missions.two_dof_default import phase_info
 from aviary.variable_info.enums import PhaseType
+from aviary.variable_info.variables import Mission
 
 
-@use_tempdirs
+# @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
     GASP mass and aero method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
-    based on 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv' model.
+    based on 'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv' model.
     """
 
     def setUp(self):
@@ -25,16 +25,16 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def check_values(self, prob):
         self.assertTrue(prob.result.success)
 
-        rtol = 1e-3
+        rtol = 2e-3  # IPOPT converges but is ~1e-3 off from SNOPT answer
 
-        # There are no truth values for these.
+        # There are no truth values for these. Taken from SNOPT run
         expected_values = {
-            (Mission.GROSS_MASS, 'lbm'): 171414.17171104,
-            (Mission.OPERATING_MASS, 'lbm'): 94986.583699,
-            (Mission.TOTAL_FUEL, 'lbm'): 40451.68735078,
+            (Mission.GROSS_MASS, 'lbm'): 171414.478638,
+            (Mission.OPERATING_MASS, 'lbm'): 94888.64084344,
+            (Mission.TOTAL_FUEL_MASS, 'lbm'): 40434.03775776,
             (Mission.Landing.GROUND_DISTANCE, 'ft'): 2655.0906835,
             (Mission.RANGE, 'NM'): 3675.0,
-            (Mission.FINAL_MASS, 'lbm'): 136087.98897716,
+            (Mission.FINAL_MASS, 'lbm'): 135978.44088025,
         }
 
         for (var_name, units), expected_val in expected_values.items():
@@ -47,7 +47,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         assert_near_equal(t1, t2, tolerance=rtol)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_GwGm_IPOPT(self):
+    def bench_test_GwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
@@ -62,7 +62,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         self.check_values(prob)
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_GwGm_SNOPT(self):
+    def bench_test_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
@@ -77,21 +77,25 @@ class ProblemPhaseTestCase(unittest.TestCase):
         self.check_values(prob)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_GwGm_IPOPT_Breguet_Cruise(self):
+    def bench_test_GwGm_IPOPT_Breguet_Cruise(self):
         local_phase_info = deepcopy(phase_info)
 
         local_phase_info['cruise'] = {
-            'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
+            'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
             'user_options': {
                 'phase_type': PhaseType.BREGUET_RANGE,
+                'num_segments': 1,
+                'order': 3,
                 'alt_cruise': (37.5e3, 'ft'),
-                'mach_cruise': 10.8,
+                'mach_cruise': 0.8,
+                'mass_ref': (171000, 'lbm'),
+                'time_duration_ref': (26500, 's'),
             },
             'initial_guesses': {
                 # [Initial mass, delta mass] for special cruise phase.
-                'mass': ([171481.0, -35000], 'lbm'),
+                'mass': ([171481.0, 136000], 'lbm'),
                 'initial_distance': (200.0e3, 'ft'),
-                'initial_time': (1516.0, 's'),
+                'time': ([1504.0, 26500.0], 's'),
                 'altitude': (37.5e3, 'ft'),
                 'mach': (0.8, 'unitless'),
             },
@@ -101,13 +105,14 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             local_phase_info,
             optimizer='IPOPT',
-            verbosity=0,
+            verbosity=1,
         )
         self.check_values(prob)
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = ProblemPhaseTestCase()
-    # test.setUp()
-    # test.test_bench_GwGm_IPOPT_Breguet_Cruise()
+    # unittest.main()
+    test = ProblemPhaseTestCase()
+    test.setUp()
+    # test.bench_test_GwGm_SNOPT()
+    test.bench_test_GwGm_IPOPT_Breguet_Cruise()

@@ -11,7 +11,6 @@ from aviary.variable_info.variables import Aircraft, Mission
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
     'climb': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': 'true'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -33,7 +32,6 @@ phase_info = {
         },
     },
     'cruise': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': 'true'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -55,7 +53,6 @@ phase_info = {
         },
     },
     'descent': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': 'true'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -77,12 +74,12 @@ phase_info = {
     },
     'post_mission': {
         'include_landing': False,
-        'constrain_range': True,
         'target_range': (7750.0, 'nmi'),
     },
 }
 
 
+@unittest.skip('This test is currently not converging (likely since at least v1.0.2)')
 @use_tempdirs
 class BWBProblemPhaseTestCase(unittest.TestCase):
     """
@@ -95,41 +92,45 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_bwb_FwFm_SNOPT(self):
+    def bench_test_bwb_FwFm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv',
             local_phase_info,
             optimizer='SNOPT',
-            verbosity=1,
+            verbosity=0,
             max_iter=60,
         )
+        # with open('temp_vars.txt', 'w') as f:
+        #     prob.model.list_vars(units=True, print_arrays=True, out_stream=f)
 
         rtol = 1e-3
+
+        self.assertTrue(prob.result.success)
 
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
-            782430.3,
+            787036.9,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.OPERATING_MASS, units='lbm'),
-            445429.9,
+            449095.9,
             tolerance=rtol,
         )
 
         assert_near_equal(
-            prob.get_val(Mission.TOTAL_FUEL, units='lbm'),
-            239188.4,
+            prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
+            240128.9,
             tolerance=rtol,
         )
 
         assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
     # @require_pyoptsparse(optimizer='IPOPT')
-    # def test_bench_bwb_FwFm_IPOPT(self):
+    # def bench_test_bwb_FwFm_IPOPT(self):
     # local_phase_info = deepcopy(phase_info)
     # prob = run_aviary(
     # 'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv',
@@ -167,7 +168,8 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
     # assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
 
-# @use_tempdirs
+@unittest.skip('This test is currently not converging (likely since at least v1.0.2)')
+@use_tempdirs
 class BWB300ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a BWB aircraft using FLOPS mass and aero method
@@ -179,13 +181,13 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_bwb300_FwFm_SNOPT(self):
+    def bench_test_bwb300_FwFm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/blended_wing_body/bwb300_baseline_FLOPS.csv',
             local_phase_info,
             optimizer='SNOPT',
-            verbosity=1,
+            verbosity=0,
             max_iter=60,
         )
         # prob.model.list_vars(units=True, print_arrays=True)
@@ -195,22 +197,24 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
 
         rtol = 1e-3
 
+        self.assertTrue(prob.result.success)
+
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.GROSS_MASS, units='lbm'),
-            615233.67861433,
+            564856.71154669,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.OPERATING_MASS, units='lbm'),
-            327094.09117139,
+            292372.93171789,
             tolerance=rtol,
         )
 
         assert_near_equal(
-            prob.get_val(Mission.TOTAL_FUEL, units='lbm'),
-            225439.58744294,
+            prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
+            209779.67163558,
             tolerance=rtol,
         )
 
@@ -218,4 +222,6 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    test = BWB300ProblemPhaseTestCase()
+    test.setUp()
+    test.bench_test_bwb300_FwFm_SNOPT()

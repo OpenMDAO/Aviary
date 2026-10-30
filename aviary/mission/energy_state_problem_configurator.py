@@ -2,9 +2,7 @@ from copy import deepcopy
 
 import numpy as np
 import openmdao.api as om
-from dymos.transcriptions.transcription_base import TranscriptionBase
 
-from aviary.mission.flight_phase_builder import FlightPhaseOptions
 from aviary.mission.energy_state.phases.build_landing import Landing
 from aviary.mission.energy_state.phases.build_takeoff import Takeoff
 from aviary.mission.energy_state.phases.energy_phase import EnergyPhase
@@ -47,22 +45,6 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             units='lbm',
         )
 
-        if 'target_range' in aviary_group.post_mission_info:
-            aviary_inputs.set_val(
-                Mission.RANGE,
-                wrapped_convert_units(aviary_group.post_mission_info['target_range'], 'NM'),
-                units='NM',
-            )
-            aviary_group.require_range_residual = True
-            aviary_group.target_range = wrapped_convert_units(
-                aviary_group.post_mission_info['target_range'], 'NM'
-            )
-        else:
-            aviary_group.require_range_residual = False
-            # still instantiate target_range because it is used for default guesses
-            # for phase comps
-            aviary_group.target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
-
     def get_default_phase_info(self, aviary_group):
         """
         Return a default phase_info for this type or problem.
@@ -86,14 +68,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         return phase_info
 
-    def get_code_origin(self, aviary_group):
+    def get_code_origin(self):
         """
         Return the legacy of this problem configurator.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -228,12 +205,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             **extra_options,
         )
 
-    def link_phases(self, aviary_group, phases, connect_directly=True):
+    def configure_trajectory(self, aviary_group, phases):
         """
-        Apply any additional phase linking.
-
-        Note that some phase variables are handled in the AviaryProblem. Only
-        problem-specific ones need to be linked here.
+        Link or configure phase connections to other upstream or downstream components.
 
         This is called from AviaryProblem.link_phases
 
@@ -241,61 +215,10 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         ----------
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
-        phases : Phase
-            Phases to be linked.
-        connect_directly : bool
-            When True, then connected=True. This allows the connections to be
-            handled by constraints if `phases` is a parallel group under MPI.
+        phases : list[Phase]
+            List of all phases in the trajectory.
         """
-        # connect regular_phases with each other if you are optimizing alt or mach
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.regular_phases,
-            'altitude_optimize',
-            Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
-        )
-        self.link_phases_helper_with_options(
-            aviary_group, aviary_group.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
-        )
-
-        # connect reserve phases with each other if you are optimizing alt or mach
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.reserve_phases,
-            'altitude_optimize',
-            Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
-        )
-        self.link_phases_helper_with_options(
-            aviary_group, aviary_group.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
-        )
-
-        # connect mass and distance between all phases regardless of reserve /
-        # non-reserve status
-        aviary_group.traj.link_phases(
-            phases, ['time'], ref=None if connect_directly else 1e3, connected=connect_directly
-        )
-        aviary_group.traj.link_phases(
-            phases,
-            [Dynamic.Vehicle.MASS],
-            ref=None if connect_directly else 1e6,
-            connected=connect_directly,
-        )
-        aviary_group.traj.link_phases(
-            phases,
-            [Dynamic.Mission.DISTANCE],
-            ref=None if connect_directly else 1e3,
-            connected=connect_directly,
-        )
-
-        # Under MPI, the states aren't directly connected.
-        if not connect_directly:
-            for phase_name in phases[1:]:
-                phase = aviary_group.traj._phases[phase_name]
-                phase.set_state_options(Dynamic.Vehicle.MASS, input_initial=False)
-                phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=False)
-
+        # Boundary conditions for the first phase.
         phase = aviary_group.traj._phases[phases[0]]
 
         # Currently expects Distance to be an input.
@@ -339,6 +262,10 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
                     continue
 
                 if initial != final:
+                    # the first reserve mission phase is allowed to have discontinuous mach and alt
+                    if aviary_group.reserve_phases and right_name == aviary_group.reserve_phases[0]:
+                        if stem in (Dynamic.Atmosphere.MACH, Dynamic.Mission.ALTITUDE):
+                            continue
                     msg += '  Constraint mismatch across phase boundary:\n'
                     msg += f'    {left_name} {stem}_final: {final}\n'
                     msg += f'    {right_name} {stem}_initial: {initial}\n'
@@ -384,8 +311,8 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
                 ),
                 promotes_inputs=[
                     ('gross_mass', Mission.GROSS_MASS),
-                    ('taxi_out_fuel_burn', Mission.Taxi.FUEL_TAXI_OUT),
-                    ('takeoff_fuel_burn', Mission.Takeoff.FUEL),
+                    ('taxi_out_fuel_burn', Mission.Taxi.FUEL_MASS_TAXI_OUT),
+                    ('takeoff_fuel_burn', Mission.Takeoff.FUEL_MASS),
                 ],
                 promotes_outputs=[('takeoff_mass', Mission.Takeoff.FINAL_MASS)],
             )
@@ -410,26 +337,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             )
 
         if aviary_group.post_mission_info['include_landing']:
-            if 'aircraft:wing:area' in aviary_group.aviary_inputs:
-                self._add_landing_systems(aviary_group)
-            else:
-                print('Aircraft.Wing.AREA is not given. Set include_landing = False')
-                aviary_group.post_mission_info['include_landing'] = False
-
-        aviary_group.add_subsystem(
-            'range_constraint',
-            om.ExecComp(
-                'range_resid = target_range - actual_range',
-                target_range={'val': aviary_group.target_range, 'units': 'NM'},
-                actual_range={'val': aviary_group.target_range, 'units': 'NM'},
-                range_resid={'val': 30, 'units': 'NM'},
-            ),
-            promotes_inputs=[
-                ('actual_range', Mission.RANGE),
-                'target_range',
-            ],
-            promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
-        )
+            self._add_landing_systems(aviary_group)
 
     def _add_post_mission_takeoff_systems(self, aviary_group):
         """
@@ -491,14 +399,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             )
 
     def _add_landing_systems(self, aviary_group):
-        landing_options = Landing(
-            ref_wing_area=aviary_group.aviary_inputs.get_val(Aircraft.Wing.AREA, units='ft**2'),
-            Cl_max_ldg=aviary_group.aviary_inputs.get_val(
-                Mission.Landing.LIFT_COEFFICIENT_MAX
-            ),  # no units
-        )
+        landing_options = Landing()
 
-        landing = landing_options.build_phase(False)
+        landing = landing_options.build_phase(use_detailed=False)
 
         aviary_group.add_subsystem(
             'landing',
@@ -507,7 +410,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             promotes_outputs=['mission:*'],
         )
 
-        last_regular_phase = aviary_group.regular_phases[-1]
+        last_regular_phase = aviary_group.main_phases[-1]
         aviary_group.connect(
             f'traj.{last_regular_phase}.control_values:altitude',
             Mission.Landing.INITIAL_ALTITUDE,
@@ -515,7 +418,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         )
 
     def set_phase_initial_guesses(
-        self, aviary_group, phase_name, phase, guesses, target_prob, parent_prefix
+        self, aviary_group, phase_name, phase_idx, phase, guesses, target_prob, parent_prefix
     ):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
@@ -528,8 +431,12 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         Parameters
         ----------
+        aviary_group : AviaryGroup
+            Aviary model that owns this configurator.
         phase_name : str
             The name of the phase for which the guesses are being added.
+        phase_idx : int
+            Phase position in aviary_group.phases. Can be used to identify first phase.
         phase : Phase
             The phase object for which the guesses are being added.
         guesses : dict
@@ -539,14 +446,8 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         parent_prefix : str
             Location of this trajectory in the hierarchy.
         """
-        control_keys = ['mach', 'altitude']
-        state_keys = ['mass', Dynamic.Mission.DISTANCE]
         prob_keys = ['tau_gear', 'tau_flaps']
-
         options = aviary_group.mission_info[phase_name]['user_options']
-
-        if options['throttle_enforcement'] == 'control':
-            control_keys.append('throttle')
 
         # Let's preserve the original user-specified initial conditions.
         guess_dict = deepcopy(guesses)
@@ -562,11 +463,16 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             altitude_final = wrapped_convert_units(options['altitude_final'], 'ft')
 
             if altitude_initial is None:
-                # TODO: Pull from downstream phase.
+                # TODO: Pull from upstream phase.
                 altitude_initial = wrapped_convert_units(options['altitude_bounds'], 'ft')[0]
 
-            if altitude_final is None:
-                # TODO: Pull from downstream phase.
+            if altitude_initial is None and altitude_final is None:
+                # No way to get an IC, so just some nominal values.
+                altitude_initial = 0.0
+                altitude_final = 0.0
+            elif altitude_initial is None:
+                altitude_initial = altitude_final
+            elif altitude_final is None:
                 altitude_final = altitude_initial
 
             guess_dict['altitude'] = ([altitude_initial, altitude_final], 'ft')
@@ -577,11 +483,16 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             mach_final = wrapped_convert_units(options['mach_final'], 'unitless')
 
             if mach_initial is None:
-                # TODO: Pull from downstream phase.
+                # TODO: Pull from upstream phase.
                 mach_initial = wrapped_convert_units(options['mach_bounds'], 'unitless')[0]
 
-            if mach_final is None:
-                # TODO: Pull from downstream phase.
+            if mach_initial is None and mach_final is None:
+                # No way to get an IC, so just some nominal values.
+                mach_initial = 0.1
+                mach_final = 0.1
+            elif mach_initial is None:
+                mach_initial = mach_final
+            elif mach_final is None:
                 mach_final = mach_initial
 
             guess_dict['mach'] = ([mach_initial, mach_final], 'unitless')
@@ -602,13 +513,13 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         for guess_key, guess_data in guess_dict.items():
             val, units = guess_data
 
-            if 'time' == guess_key:
+            if guess_key == phase.time_options['name']:
                 phase.set_time_val(initial=val[0], duration=val[1], units=units)
 
-            elif guess_key in control_keys:
+            elif guess_key in phase.control_options:
                 phase.set_control_val(guess_key, val, units=units)
 
-            elif guess_key in state_keys:
+            elif guess_key in phase.state_options:
                 phase.set_state_val(guess_key, val, units=units)
 
             elif guess_key in prob_keys:

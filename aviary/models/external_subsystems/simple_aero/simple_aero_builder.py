@@ -39,12 +39,14 @@ class SimpleAeroBuilder(SubsystemBuilder):
         promotes = [
             Dynamic.Vehicle.DRAG,
             Dynamic.Vehicle.LIFT,
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
         ]
         return promotes
 
     def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a dictionary of parameters for the subsystem. (Optional)
+        Return a dictionary of parameters for the subsystem. (Optional).
 
         A parameter is a value that does not vary over the trajectory. Adding a variable name to
         this list promotes the input to the top of the Aviary model, where it is either implicitly
@@ -82,7 +84,7 @@ class SimpleAeroBuilder(SubsystemBuilder):
         }
         return params
 
-    def needs_mission_solver(self, aviary_inputs, subsystem_options):
+    def needs_mission_solver(self, aviary_inputs, user_options, subsystem_options):
         """
         Return True if the mission subsystem needs to be in the solver loop in mission, otherwise
         return False. Aviary will only place it in the solver loop when True. The default is

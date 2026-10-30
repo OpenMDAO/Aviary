@@ -11,7 +11,7 @@ from aviary.subsystems.propulsion.propeller.hamilton_standard import (
 )
 from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.math import d_smooth_min, smooth_min
+from aviary.utils.math_utils import d_smooth_min, smooth_min
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -35,26 +35,26 @@ class TipSpeed(om.ExplicitComponent):
     def setup(self):
         num_nodes = self.options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Mission.VELOCITY, val=np.zeros(num_nodes), units='ft/s')
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, shape=num_nodes, units='ft/s')
         add_aviary_input(
             self,
             Dynamic.Atmosphere.SPEED_OF_SOUND,
-            val=np.zeros(num_nodes),
+            shape=num_nodes,
             units='ft/s',
         )
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.RPM, val=np.zeros(num_nodes), units='rpm')
-        add_aviary_input(self, Aircraft.Engine.Propeller.TIP_MACH_MAX, val=1.0, units='unitless')
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.RPM, shape=num_nodes, units='rpm')
+        add_aviary_input(self, Aircraft.Engine.Propeller.TIP_MACH_MAX, units='unitless')
 
-        add_aviary_input(self, Aircraft.Engine.Propeller.TIP_SPEED_MAX, val=0.0, units='ft/s')
-        add_aviary_input(self, Aircraft.Engine.Propeller.DIAMETER, val=0.0, units='ft')
+        add_aviary_input(self, Aircraft.Engine.Propeller.TIP_SPEED_MAX, units='ft/s')
+        add_aviary_input(self, Aircraft.Engine.Propeller.DIAMETER, units='ft')
 
         add_aviary_output(
             self,
             Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
-            val=np.zeros(num_nodes),
+            shape=num_nodes,
             units='ft/s',
         )
-        self.add_output('propeller_tip_speed_limit', val=np.zeros(num_nodes), units='ft/s')
+        self.add_output('propeller_tip_speed_limit', shape=num_nodes, units='ft/s')
 
     def setup_partials(self):
         num_nodes = self.options['num_nodes']

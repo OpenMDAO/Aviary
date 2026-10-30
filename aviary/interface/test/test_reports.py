@@ -5,15 +5,17 @@ from pathlib import Path
 
 import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
+from openmdao.utils.reports_system import _reports_registry
 from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 
-from aviary.models.missions.energy_state_default import phase_info
-from aviary.interface.run_aviary import run_aviary
+import aviary.api as av
 from aviary.core.aviary_problem import AviaryProblem
+from aviary.interface.reports import AVIARY_DEFAULT_REPORTS
+from aviary.interface.run_aviary import run_aviary
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.variable_meta_data import CoreMetaData
-import aviary.api as av
 
 
 @use_tempdirs
@@ -36,10 +38,14 @@ class TestReports(unittest.TestCase):
             'time (s)',
             'altitude (ft)',
             'altitude_rate (ft/s)',
+            'cumulative_fuel_burn (kg)',
             'distance (m)',
             'drag (lbf)',
+            'drag_coefficient (unitless)',
             'electric_power_in_total (kW)',
-            'fuel_flow_rate_negative_total (lbm/h)',
+            'fuel_flow_rate_total (lbm/h)',
+            'lift (lbf)',
+            'lift_coefficient (unitless)',
             'mach (unitless)',
             'mach_rate (1/s)',
             'mass (kg)',
@@ -54,10 +60,14 @@ class TestReports(unittest.TestCase):
                 '0.0',
                 '0.0',
                 '8.333333333333337',
+                '0.0',
                 '1.0',
                 '21108.341035874902',
+                '0.260025166162475',
                 '0.0',
-                '-10492.721631142893',
+                '10492.721631142893',
+                '175399.99981311447',
+                '2.1606820743889306',
                 '0.2',
                 '0.0001354166666666668',
                 '79560.101698',
@@ -79,13 +89,16 @@ class TestReports(unittest.TestCase):
             self.assertEqual(expected_header, header, 'CSV header does not match expected values')
 
             for expected_row, output_row in zip(expected_rows, csvreader):
-                for expected_val, output_val in zip(expected_row, output_row):
-                    self.assertAlmostEqual(
-                        float(expected_val),
-                        float(output_val),
-                        places=7,
-                        msg='CSV row value does not match expected value within tolerance',
-                    )
+                for col_name, expected_val, output_val in zip(
+                    expected_header, expected_row, output_row
+                ):
+                    with self.subTest(var=col_name):
+                        self.assertAlmostEqual(
+                            float(expected_val),
+                            float(output_val),
+                            places=7,
+                            msg=f'CSV row value for {col_name} does not match expected value within tolerance',
+                        )
 
     @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='check_input_report')
     def test_check_input_report(self):
@@ -119,7 +132,7 @@ class TestReports(unittest.TestCase):
             desc='testing',
         )
 
-        prob = AviaryProblem()
+        prob = AviaryProblem(verbosity=0)
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             local_phase_info,
@@ -138,9 +151,12 @@ class TestReports(unittest.TestCase):
 
     @set_env_vars(TESTFLO_RUNNING='0')
     def test_multiple_off_design_report_directories(self):
+        local_phase_info = deepcopy(phase_info)
+
         prob = av.AviaryProblem(verbosity=0)
         prob.load_inputs(
-            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
+            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
+            local_phase_info,
         )
         prob.check_and_preprocess_inputs()
         prob.build_model()
@@ -160,8 +176,69 @@ class TestReports(unittest.TestCase):
         assert Path(f'{stem}_off_design_1_out').is_dir()
         assert Path(f'{stem}_off_design_out').is_dir()
 
+    def test_reports_are_registered_and_sync(self):
+        """
+        Ensures all reports in AVIARY_DEFAULT_REPORTS are registered in the
+        OpenMDAO reporting system to prevent initialization warnings.
+        """
+        # NOTE: We do NOT need to call register_custom_reports() manually here.
+        # OpenMDAO automatically executes it on startup via pyproject.toml entry points.
+
+        registered_reports = list(_reports_registry.keys())
+
+        # Assert every default Aviary report was properly registered
+        for report_name in AVIARY_DEFAULT_REPORTS:
+            self.assertIn(
+                report_name,
+                registered_reports,
+                f"Report '{report_name}' is in AVIARY_DEFAULT_REPORTS but was not registered in OpenMDAO!",
+            )
+
+    @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='default')
+    def test_all_default_reports_generated(self):
+        """
+        Test to ensure the reports actually get created on disk when the problem runs.
+        """
+        local_phase_info = deepcopy(phase_info)
+        prob = run_aviary(
+            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
+            local_phase_info,
+            optimizer='SLSQP',
+            max_iter=0,
+        )
+
+        reports_dir = Path(prob.get_reports_dir())
+
+        self.assertTrue(reports_dir.exists(), 'Reports directory was not created!')
+
+        generated_files = [
+            str(f.relative_to(reports_dir)).replace('\\', '/')
+            for f in reports_dir.rglob('*')
+            if f.is_file()
+        ]
+
+        expected_files = [
+            'subsystems/geometry.md',
+            'subsystems/mass.md',
+            'subsystems/propulsion.md',
+            'mission_summary.md',
+            'mission_timeseries_data.csv',
+            'status.json',
+            'sizing_results.json',
+            'input_checks.md',
+            'overridden_variables.md',
+            'options.txt',
+        ]
+
+        for expected_file in expected_files:
+            self.assertIn(
+                expected_file,
+                generated_files,
+                f"Expected report file '{expected_file}' was not found in the reports directory.",
+            )
+
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestReports()
-    test.test_multiple_off_design_report_directories()
+    unittest.main()
+    # test = TestReports()
+    # test.test_multiple_off_design_report_directories()

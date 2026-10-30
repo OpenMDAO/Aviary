@@ -125,7 +125,7 @@ def fortran_to_aviary(
     if legacy_code is GASP:
         vehicle_data = update_gasp_options(vehicle_data, verbosity)
     elif legacy_code is FLOPS:
-        vehicle_data = update_flops_options(vehicle_data, verbosity)
+        vehicle_data = update_flops_options(vehicle_data, comments, verbosity)
     vehicle_data = update_aviary_options(vehicle_data)
 
     # Add settings and engine data file
@@ -208,16 +208,22 @@ def parse_input_file(
             tmp = [*line.split('!', 1), '']
             line, comment = tmp[0], tmp[1]  # anything after the first ! is a comment
 
+            line = line.lstrip()
+            # Track when namelists are opened and closed
+            if len(line.split()) > 0 and line[0] in ['$', '&'] and current_tag == '':
+                current_tag = line.lstrip()[0]
+                current_namelist = line.split(current_tag)[1].split()[0]
+                try:
+                    line = line.split(maxsplit=1)[1]  # remove current_namelist from line (if any)
+                except:
+                    line = ''
+
             # remove all white space and trailing commas
             line = ''.join(line.split()).rstrip(',')
             if len(line.split()) == 0:
                 continue  # skip line if it contains only white space
 
-            # Track when namelists are opened and closed
-            if (line.lstrip()[0] in ['$', '&']) and current_tag == '':
-                current_tag = line.lstrip()[0]
-                current_namelist = line.split(current_tag)[1].split()[0]
-            elif (line.lstrip()[0] == current_tag) or (line.rstrip()[-1] == '/'):
+            if (line.lstrip()[0] == current_tag) or (line.rstrip()[-1] == '/'):
                 line = line.replace('/', '')
                 terminate_namelist = True
 
@@ -319,6 +325,11 @@ def process_and_store_data(
     guess_names = list(initialization_guesses.keys())
     var_ind = data_units = None
     skip_variable = False
+
+    if current_namelist:
+        current_namelist = current_namelist.upper()
+        var_name = var_name.upper()
+
     # skip any variables that shouldn't get converted
     if re.search(current_namelist + '.' + var_name, str(unused_vars), re.IGNORECASE):
         return vehicle_data
@@ -349,9 +360,9 @@ def process_and_store_data(
         vehicle_data['input_values'] = set_value(
             Aircraft.Engine.Gearbox.GEAR_RATIO,
             var_values,
+            'unitless',
             vehicle_data['input_values'],
             var_ind=var_ind,
-            units=data_units,
         )
 
     for name in list_of_equivalent_aviary_names:
@@ -722,22 +733,24 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         input_values.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, [num_flap_segments], 'unitless')
 
     ## FUEL RESERVES ##
-    reserve_fuel_additional = input_values.get_val(Mission.RESERVE_FUEL_ADDITIONAL, units='lbm')[0]
-    if reserve_fuel_additional <= 0:
+    reserve_fuel_mass_additional = input_values.get_val(
+        Mission.RESERVE_FUEL_MASS_ADDITIONAL, units='lbm'
+    )[0]
+    if reserve_fuel_mass_additional <= 0:
         # This is a percentage of mission fuel
         input_values.set_val(
-            Mission.RESERVE_FUEL_MARGIN, [-reserve_fuel_additional * 100], units='unitless'
-        )  # flip the value and multipy by 100 because it is a percentage
+            Mission.RESERVE_FUEL_MARGIN, [-reserve_fuel_mass_additional], units='unitless'
+        )  # flip the value
         input_values.set_val(
-            Mission.RESERVE_FUEL_ADDITIONAL, [0], units='lbm'
+            Mission.RESERVE_FUEL_MASS_ADDITIONAL, [0], units='lbm'
         )  # then clear out the unused value
-    if reserve_fuel_additional > 0 and reserve_fuel_additional < 10:
+    if reserve_fuel_mass_additional > 0 and reserve_fuel_mass_additional < 10:
         ValueError(
             '"FRESF" is not valid between 0 and 10. To set a reserve mission flight time you must setup a reserve mission definition with a target_duration.'
         )
-        input_values.set_val(Mission.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
-    if reserve_fuel_additional >= 10:
-        # we leave reserve_fuel_additional as it is
+        input_values.set_val(Mission.RESERVE_FUEL_MASS_ADDITIONAL, [0], units='lbm')
+    if reserve_fuel_mass_additional >= 10:
+        # we leave reserve_fuel_mass_additional as it is
         pass
 
     # Wing Fuel Tank Sizing ##
@@ -746,7 +759,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     if reserve_fuel_volume < 0:
         ValueError(
             '"FVOL_MRG" is not valid below 0. Cannot set fuel volume reserves to less than zero'
-        )  #
+        )
         input_values.set_val(Aircraft.Fuel.VOLUME_MARGIN, [0], units='lbm')
 
     # FLARE LOAD FACTOR ##
@@ -814,11 +827,12 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         input_values.set_val(Aircraft.Design.TYPE, 'transport')
     if Aircraft.Engine.TYPE in input_values:
         engine_type = input_values.get_val(Aircraft.Engine.TYPE, 'unitless')[0]
-        if verbosity > Verbosity.BRIEF:
-            warnings.warn(
-                f'Engine type {engine_type} was provided; currently only TURBOPROP(6) and '
-                'TURBOJET(7) are supported by Aviary'
-            )
+        if engine_type not in [6, 7]:
+            if verbosity > Verbosity.BRIEF:
+                warnings.warn(
+                    f'Engine type {engine_type} was provided; currently only TURBOPROP(6) and '
+                    'TURBOJET(7) are supported by Aviary'
+                )
 
     # FURNISHING
     if Aircraft.Furnishings.MASS in input_values:
@@ -956,14 +970,13 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     if Aircraft.VerticalTail.THICKNESS_TO_CHORD not in input_values:
         missing_vars.append('TCVT')
     if Aircraft.Nacelle.MASS_SPECIFIC not in input_values:
-        missing_vars.append('UWNAC')
-    if Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS not in input_values:
-        missing_vars.append('UWPAX')
+        if knac != 2:
+            missing_vars.append('UWNAC')
     if Aircraft.Design.MAX_STRUCTURAL_SPEED not in input_values:
         missing_vars.append('VMLFSL')
     if Aircraft.Fuselage.AISLE_WIDTH not in input_values:
         missing_vars.append('WAS')
-    if Aircraft.Fuselage.SEAT_WIDTH not in input_values:
+    if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not in input_values:
         missing_vars.append('WS')
     if Aircraft.LandingGear.MAIN_GEAR_LOCATION not in input_values:
         missing_vars.append('YMG')
@@ -972,15 +985,16 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in input_values:
         missing_vars.append('SAH')
     if len(missing_vars) > 0:
-        raise RuntimeError(
-            f'The following variables are required but are not provided:\n {missing_vars}'
+        warnings.warn(
+            f'The following variables are required but are not provided:\n {missing_vars}\n'
+            'Default values are assumed if needed.'
         )
 
     vehicle_data['input_values'] = input_values
     return vehicle_data
 
 
-def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
+def update_flops_options(vehicle_data, cmts, verbosity=Verbosity.BRIEF):
     """Handles variables that are affected by the values of others."""
     input_values: NamedValues = vehicle_data['input_values']
 
@@ -1024,10 +1038,10 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         )
     # else: not required as jet fuel is assumed and default value in metadata is 6.7
 
-    if Aircraft.Fuel.WING_FUEL_CAPACITY in input_values:
-        if input_values.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')[0] < 50:
+    if Aircraft.Fuel.WING_FUEL_MASS_CAPACITY in input_values:
+        if input_values.get_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 'lbm')[0] < 50:
             # Interpret value equivalently to FWMAX = wing_fuel_fraction * fuel_density * 2/3
-            FWMAX = input_values.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')[0]
+            FWMAX = input_values.get_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 'lbm')[0]
             if FWMAX < 0.0:
                 FWMAX = 23.0
             if Aircraft.Fuel.DENSITY in input_values:
@@ -1044,7 +1058,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             input_values.set_val(
                 Aircraft.Fuel.WING_FUEL_FRACTION, [FWMAX / (FULDEN * (2 / 3))], 'unitless'
             )
-            input_values.delete(Aircraft.Fuel.WING_FUEL_CAPACITY)
+            input_values.delete(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY)
 
     # Set detailed wing flag if model supports it
     if Aircraft.Wing.INPUT_STATION_DISTRIBUTION in input_values:
@@ -1059,6 +1073,12 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         except KeyError:
             CLLDM = 3.0
         input_values.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, [CLLDM])
+
+    if 'AERIN.CLTOM' in vehicle_data['unused_values']:
+        if Mission.Takeoff.LIFT_COEFFICIENT_MAX not in input_values:
+            values, units = vehicle_data['unused_values'].get_item('AERIN.CLTOM')
+            input_values.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, values, units)
+            vehicle_data['unused_values'].delete('AERIN.CLTOM')
 
     design_type, design_units = input_values.get_item(Aircraft.Design.TYPE)
     if design_type[0] == 0:
@@ -1234,7 +1254,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         Aircraft.HorizontalTail.SWEEP not in input_values
         or input_values.get_val(Aircraft.HorizontalTail.SWEEP, units='deg')[0] < -90.0
     ):
-        if Aircraft.WING.SWEEP in input_values:
+        if Aircraft.Wing.SWEEP in input_values:
             SWEEP = input_values.get_val(Aircraft.Wing.SWEEP, units='deg')[0]
             input_values.set_val(Aircraft.HorizontalTail.SWEEP, [SWEEP], 'deg')
 
@@ -1245,7 +1265,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         if Aircraft.HorizontalTail.SWEEP in input_values:
             SWPHT = input_values.get_val(Aircraft.HorizontalTail.SWEEP, units='deg')[0]
             input_values.set_val(Aircraft.VerticalTail.SWEEP, [SWPHT], 'deg')
-        elif Aircraft.WING.SWEEP in input_values:
+        elif Aircraft.Wing.SWEEP in input_values:
             SWEEP = input_values.get_val(Aircraft.Wing.SWEEP, units='deg')[0]
             input_values.set_val(Aircraft.VerticalTail.SWEEP, [SWEEP], 'deg')
 
@@ -1253,8 +1273,8 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         Aircraft.HorizontalTail.ASPECT_RATIO not in input_values
         or input_values.get_val(Aircraft.HorizontalTail.ASPECT_RATIO)[0] < 0
     ):
-        if Aircraft.WING.ASPECT_RATIO in input_values:
-            AR = input_values.get_val(Aircraft.WING.ASPECT_RATIO)
+        if Aircraft.Wing.ASPECT_RATIO in input_values:
+            AR = input_values.get_val(Aircraft.Wing.ASPECT_RATIO)
             input_values.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, [AR], 'unitless')
 
     if (
@@ -1264,6 +1284,19 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         if Aircraft.HorizontalTail.ASPECT_RATIO in input_values:
             ARHT = input_values.get_val(Aircraft.HorizontalTail.ASPECT_RATIO)[0]
             input_values.set_val(Aircraft.VerticalTail.ASPECT_RATIO, [ARHT / 2.0], 'unitless')
+
+    if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in input_values and design_type[0] != 3:
+        if input_values.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)[0] > 0:
+            if not input_values.get_val(Aircraft.Fuselage.SIMPLE_LAYOUT):
+                cmts.append(
+                    '# business class seats are included. Fuselage layout may be different '
+                    'from FLOPS.'
+                )
+                if verbosity >= Verbosity.BRIEF:
+                    print(
+                        '# business class seats are included. Fuselage layout may be different '
+                        'from FLOPS.'
+                    )
 
     # if mission-wide fuel flow factor provided, combine into sub and supersonic fuel flow factors
     if 'MISSIN.fact' in vehicle_data['unused_values']:

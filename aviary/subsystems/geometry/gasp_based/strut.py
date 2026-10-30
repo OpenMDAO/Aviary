@@ -16,7 +16,7 @@ class StrutGeom(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Strut.ATTACHMENT_LOCATION, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
 
-        self.add_output('strut_y', val=30, units='ft', desc='YSTRUT: attachment location of strut')
+        self.add_output('strut_y', units='ft', desc='YSTRUT: attachment location of strut')
         add_aviary_output(self, Aircraft.Strut.LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Strut.AREA, units='ft**2')
         add_aviary_output(self, Aircraft.Strut.CHORD, units='ft')

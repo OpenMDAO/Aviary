@@ -44,6 +44,7 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
             'mass_ref': 1e4,
             'mass_defect_ref': 1e6,
             'mass_bounds': (0.0, None),
+            'mass_direct_link': True,
         }
         self.add_state_options('mass', units='lbm', defaults=defaults)
 
@@ -52,29 +53,36 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
             'distance_ref': 1e6,
             'distance_defect_ref': 1e8,
             'distance_bounds': (0.0, None),
-            'mass_bounds': (0.0, None),
+            'distance_direct_link': False,
         }
         self.add_state_options('distance', units='m', defaults=defaults)
 
-        self.add_control_options('altitude', units='ft')
+        defaults = {
+            'altitude_direct_link': False,
+        }
+        self.add_control_options('altitude', units='ft', defaults=defaults)
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
             'mach_ref': 0.5,
+            'mach_direct_link': False,
         }
         self.add_control_options('mach', units='unitless', defaults=defaults)
 
         defaults = {
             'angle_of_attack_polynomial_order': 1,
             'angle_of_attack_optimize': True,
-            'angle_of_attack_ref': 10.0,
+            'angle_of_attack_ref': 15.0,
             'angle_of_attack_bounds': (0.0, 15.0),
-            'angle_of_attack_optimize': True,
             'angle_of_attack_initial': 0.0,
+            'angle_of_attack_direct_link': False,
         }
         self.add_control_options('angle_of_attack', units='deg', defaults=defaults)
 
-        self.add_time_options(units='ft')
+        defaults = {
+            'time_initial_direct_link': False,
+        }
+        self.add_time_options(units='ft', defaults=defaults)
 
         self.declare(
             'reserve',
@@ -251,9 +259,10 @@ class SolvedTwoDOFPhase(FlightPhaseBase):
             )
 
         phase.add_timeseries_output('EAS', units='kn')
-        phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
-        phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
         phase.add_timeseries_output('thrust_req', units='lbf')
+        phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
 
         return phase
 
@@ -284,6 +293,17 @@ class SolvedTwoDOFPhase(FlightPhaseBase):
             'ground_roll': self.user_options.get_val('ground_roll'),
             'throttle_enforcement': self.user_options.get_val('throttle_enforcement'),
         }
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Vehicle.MASS,
+            'time',
+        ]
+        return linked_vars
 
     def get_parameters(self):
         params = {}

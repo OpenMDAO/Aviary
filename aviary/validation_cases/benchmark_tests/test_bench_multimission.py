@@ -10,7 +10,7 @@ import aviary.api as av
 from aviary.models.missions.energy_state_default import phase_info
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.enums import ProblemType
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 def multi_mission_example():
@@ -39,7 +39,7 @@ def multi_mission_example():
     # merged_meta_data = av.merge_hierarchies(meta_data1, meta_data2)
     # merge all metata data hierarchies here
 
-    prob = av.AviaryProblem(problem_type=ProblemType.MULTI_MISSION)
+    prob = av.AviaryProblem(problem_type=ProblemType.MULTI_MISSION, verbosity=0)
     # set constraints in the background. Currently works with every objective type except Range.
     # can accept meta_data = merged_meta_data
 
@@ -91,13 +91,13 @@ def multi_mission_example():
     # This both adds the design variable AND sets the default value. This value can be over-written after-setup using set_val.
 
     prob.add_composite_objective(
-        ('mission1', Mission.FUEL, 2),
-        ('mission2', Mission.FUEL, 1),
+        ('mission1', Mission.FUEL_MASS, 2),
+        ('mission2', Mission.FUEL_MASS, 1),
         ref=1,
     )
     # Adds an objective where mission 1 is flown 2x more times than mission2
     # Alternative way that users could specify the same objective:
-    # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.FUEL],  ref=1)
+    # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.FUEL_MASS],  ref=1)
     # TODO: MULTI_MISSION cannot handle RANGE objectives correctly at the moment.
 
     # optimizer and iteration limit are optional provided here
@@ -138,10 +138,10 @@ class MultiMissionTestcase(unittest.TestCase):
         objective = prob.get_val('composite_objective', units=None)
         objective_expected_value = 25517.15
 
-        mission1_fuel = prob.get_val('mission1.mission:fuel', units='lbm')
+        mission1_fuel = prob.get_val('mission1.mission:fuel_mass', units='lbm')
         mission1_fuel_expected_value = 26877.7  # includes takeoff
 
-        mission2_fuel = prob.get_val('mission2.mission:fuel', units='lbm')
+        mission2_fuel = prob.get_val('mission2.mission:fuel_mass', units='lbm')
         mission2_fuel_expected_value = 22795.9  # includes takeoff
 
         mission1_cargo = prob.get_val(

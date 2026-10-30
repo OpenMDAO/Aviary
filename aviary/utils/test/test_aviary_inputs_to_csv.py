@@ -1,11 +1,10 @@
-import os
-import unittest
 import importlib.util
+import unittest
+
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.aviary_inputs_to_csv import save_to_csv_file
 from aviary.utils.functions import get_path
-
-from openmdao.utils.testing_utils import use_tempdirs
 
 
 @use_tempdirs
@@ -13,7 +12,7 @@ class PythonModelToCSV(unittest.TestCase):
     def find_all_inputs(self, directory_path):
         """
         This function collects all specified 'inputs' from python modules in the specified directory (recursively)
-        The output is a dict containing the names of the modules storing 'inputs', and the values of the 'inputs'
+        The output is a dict containing the names of the modules storing 'inputs', and the values of the 'inputs'.
         """
         # variable storing all inputs and their original module names
         collected_inputs = {}

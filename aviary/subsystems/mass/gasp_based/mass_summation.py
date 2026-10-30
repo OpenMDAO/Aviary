@@ -1,7 +1,6 @@
-import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -92,7 +91,7 @@ class StructureMass(om.ExplicitComponent):
         landing_gear_mass = inputs[Aircraft.LandingGear.TOTAL_MASS]
         pod_mass = inputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS]
         wing_mass = inputs[Aircraft.Wing.MASS]
-        delta_struct_wt = inputs[Aircraft.Design.STRUCTURAL_MASS_INCREMENT]
+        delta_struct_mass = inputs[Aircraft.Design.STRUCTURAL_MASS_INCREMENT]
 
         outputs[Aircraft.Design.STRUCTURE_MASS] = (
             wing_mass
@@ -100,7 +99,7 @@ class StructureMass(om.ExplicitComponent):
             + fuselage_mass
             + landing_gear_mass
             + pod_mass
-            + delta_struct_wt
+            + delta_struct_mass
         )
 
 
@@ -110,8 +109,8 @@ class PropulsionMass(om.ExplicitComponent):
         # TODO These variables need cleanup, proper names, etc.
         #      They should probably be removed and we pass the couple individual masses that make it
         #      up here instead
-        self.add_input('eng_comb_mass', units='lbm')
-        self.add_input('prop_mass_all', units='lbm')
+        self.add_input('eng_comb_mass', units='lbm', desc='WPSTAR as in WingMountEngineMass')
+        self.add_input('prop_mass_sum', units='lbm', desc='WPROP: mass of all propellers')
         add_aviary_input(self, Aircraft.Battery.MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Propulsion.MASS, units='lbm')
@@ -122,11 +121,11 @@ class PropulsionMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         fuel_sys_mass = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS]
         eng_comb_mass = inputs['eng_comb_mass']
-        prop_mass_all = inputs['prop_mass_all']
+        prop_mass_sum = inputs['prop_mass_sum']
         battery_mass = inputs[Aircraft.Battery.MASS]
 
         outputs[Aircraft.Propulsion.MASS] = (
-            fuel_sys_mass + eng_comb_mass + prop_mass_all + battery_mass
+            fuel_sys_mass + eng_comb_mass + prop_mass_sum + battery_mass
         )
 
 
@@ -206,6 +205,7 @@ class OperatingItemsMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS)
+        add_aviary_input(self, Mission.OPERATING_ITEMS_MASS_ADDITIONAL, units='lbm')
 
         add_aviary_output(self, Mission.OPERATING_ITEMS_MASS, units='lbm')
 
@@ -220,6 +220,7 @@ class OperatingItemsMass(om.ExplicitComponent):
         pass_service_mass = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS]
         unusable_fuel_mass = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
         emergency_equip_mass = inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS]
+        additional_operating_mass = inputs[Mission.OPERATING_ITEMS_MASS_ADDITIONAL]
 
         outputs[Mission.OPERATING_ITEMS_MASS] = (
             cabin_crew_mass
@@ -229,6 +230,7 @@ class OperatingItemsMass(om.ExplicitComponent):
             + pass_service_mass
             + cargo_container_mass
             + emergency_equip_mass
+            + additional_operating_mass
         )
 
 

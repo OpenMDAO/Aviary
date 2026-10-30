@@ -4,9 +4,9 @@ from copy import deepcopy
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import inputs
 from aviary.models.missions.energy_state_default import phase_info as energy_state_phase_info
 from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
+from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import inputs
 
 
 class BaseProblemPhaseTestCase(unittest.TestCase):

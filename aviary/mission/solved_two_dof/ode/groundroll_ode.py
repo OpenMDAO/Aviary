@@ -3,7 +3,6 @@ import openmdao.api as om
 
 from aviary.mission.solved_two_dof.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -23,10 +22,6 @@ class GroundrollODE(TwoDOFODE):
 
     def setup(self):
         nn = self.options['num_nodes']
-        aviary_options = self.options['aviary_options']
-        subsystems = self.options['subsystems']
-        subsystem_options = self.options['subsystem_options']
-        user_options = self.options['user_options']
 
         self.add_atmosphere()
 
@@ -44,43 +39,7 @@ class GroundrollODE(TwoDOFODE):
             ],
         )
 
-        kwargs = {
-            'method': 'low_speed',
-        }
-        for subsystem in subsystems:
-            # check if subsystem_options has entry for a subsystem of this name
-            if subsystem.name in subsystem_options:
-                kwargs.update(subsystem_options[subsystem.name])
-            system = subsystem.build_mission(
-                num_nodes=nn,
-                aviary_inputs=aviary_options,
-                user_options=user_options,
-                subsystem_options=kwargs,
-            )
-            if system is not None:
-                mission_in = subsystem.mission_inputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                mission_out = subsystem.mission_outputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                self.add_subsystem(
-                    subsystem.name,
-                    system,
-                    promotes_inputs=mission_in,
-                    promotes_outputs=mission_out,
-                )
-
-            if isinstance(subsystem, AerodynamicsBuilder):
-                self.promotes(
-                    subsystem.name,
-                    inputs=[Dynamic.Vehicle.ANGLE_OF_ATTACK],
-                    src_indices=np.zeros(nn, dtype=int),
-                )
+        self.add_subsystems_and_solver()
 
         self.add_subsystem('groundroll_eom', GroundrollEOM(num_nodes=nn), promotes=['*'])
 
@@ -110,17 +69,21 @@ class GroundrollODE(TwoDOFODE):
         self.add_subsystem(
             'exec3',
             om.ExecComp(
-                'dmass_dv = mass_rate * dt_dv',
+                ['dmass_dv = mass_rate * dt_dv', 'dfuelburn_dv = fuelburn_rate * dt_dv'],
                 mass_rate={'units': 'lbm/s', 'val': np.ones(nn)},
+                fuelburn_rate={'units': 'lbm/s', 'val': np.ones(nn)},
                 dt_dv={'units': 's/kn', 'val': np.ones(nn)},
                 dmass_dv={'units': 'lbm/kn', 'val': np.ones(nn)},
+                dfuelburn_dv={'units': 'lbm/kn', 'val': np.ones(nn)},
                 has_diag_partials=True,
             ),
             promotes_outputs=[
                 'dmass_dv',
+                'dfuelburn_dv',
             ],
             promotes_inputs=[
-                ('mass_rate', Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL),
+                ('mass_rate', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
+                ('fuelburn_rate', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL),
                 'dt_dv',
             ],
         )
@@ -132,7 +95,6 @@ class GroundrollODE(TwoDOFODE):
             self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.0)
             self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=1.0)
             self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=1.0)
-            self.set_input_defaults('t_curr', val=np.zeros(nn), units='s')
 
         self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='deg')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units='ft')

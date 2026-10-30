@@ -1,13 +1,11 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.two_dof.ode.simple_cruise_eom import DistanceComp
-from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
+from aviary.mission.two_dof.ode.simple_cruise_eom import DistanceComp
+from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
@@ -17,10 +15,6 @@ class SimpleCruiseODE(TwoDOFODE):
 
     def setup(self):
         nn = self.options['num_nodes']
-        aviary_options = self.options['aviary_options']
-        subsystems = self.options['subsystems']
-        subsystem_options = self.options['subsystem_options']
-        user_options = self.options['user_options']
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
@@ -31,88 +25,18 @@ class SimpleCruiseODE(TwoDOFODE):
             promotes_outputs=['weight'],
         )
 
-        prop_group = om.Group()
+        prop_group = self.add_subsystems_and_solver(couple_propulsion=True)
 
-        for subsystem in subsystems:
-            kwargs = {}
+        self.add_throttle_control(propulsion_group=prop_group, lhs_name=Dynamic.Vehicle.DRAG)
 
-            # check if subsystem_options has entry for a subsystem of this name
-            if subsystem.name in subsystem_options:
-                kwargs = subsystem_options[subsystem.name]
-            if isinstance(subsystem, AerodynamicsBuilder):
-                # set default options for Aero if not specified by user
-                base_kwargs = {'method': 'cruise', 'output_alpha': True}
-                kwargs.update(base_kwargs)
-
-            system = subsystem.build_mission(
-                num_nodes=nn,
-                aviary_inputs=aviary_options,
-                user_options=user_options,
-                subsystem_options=kwargs,
-            )
-
-            if system is not None:
-                mission_in = subsystem.mission_inputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                mission_out = subsystem.mission_outputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                if isinstance(subsystem, PropulsionBuilder):
-                    prop_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=mission_in,
-                        promotes_outputs=mission_out,
-                    )
-                else:
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=mission_in,
-                        promotes_outputs=mission_out,
-                    )
-
-        bal = om.BalanceComp(
-            name=Dynamic.Vehicle.Propulsion.THROTTLE,
-            val=np.ones(nn),
-            # upper=1.0,
-            # lower=0.0,
-            units='unitless',
-            lhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            rhs_name=Dynamic.Vehicle.DRAG,
-            eq_units='lbf',
-        )
-
-        prop_group.add_subsystem(
-            'thrust_balance', subsys=bal, promotes_inputs=['*'], promotes_outputs=['*']
-        )
-
+        # Preserving original options.
+        prop_group.nonlinear_solver.options['rtol'] = 1e-12
+        prop_group.nonlinear_solver.options['atol'] = 1e-12
+        prop_group.nonlinear_solver.options['maxiter'] = 20
+        prop_group.nonlinear_solver.options['err_on_non_converge'] = False
         prop_group.linear_solver = om.DirectSolver()
 
-        prop_group.nonlinear_solver = om.NewtonSolver(
-            solve_subsystems=True,
-            maxiter=20,
-            rtol=1e-12,
-            atol=1e-12,
-            err_on_non_converge=False,
-        )
-        prop_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
-
-        prop_group.nonlinear_solver.options['iprint'] = 2
-        prop_group.linear_solver.options['iprint'] = 2
-
-        self.add_subsystem(
-            'prop_group', subsys=prop_group, promotes_inputs=['*'], promotes_outputs=['*']
-        )
-
-        #
         # collect initial/final outputs
-        #
         self.add_subsystem(
             'distance_eom',
             DistanceComp(num_nodes=nn),

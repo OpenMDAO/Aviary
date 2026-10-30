@@ -17,7 +17,7 @@ energy_phase_info = {
             'no_descent': True,
             'mass_ref': (154000, 'lbm'),
             'throttle_enforcement': 'control',
-            'throttle_bounds': ((0.2, 1), 'unitless'),
+            'throttle_bounds': ((0.4, 1), 'unitless'),
             'time_initial_bounds': ((0.0, 0.0), 'min'),
             'time_duration_bounds': ((24.0, 128.0), 'min'),
         },
@@ -40,14 +40,14 @@ energy_phase_info = {
             'altitude_bounds': ((20_000.0, 22_000.0), 'ft'),
             'mass_ref': (154000, 'lbm'),
             'throttle_enforcement': 'control',
-            'throttle_bounds': ((0.2, 1), 'unitless'),
+            'throttle_bounds': ((0.3, 1), 'unitless'),
             'time_initial_bounds': ((24.0, 128.0), 'min'),
             'time_duration_bounds': ((56.5, 1000.0), 'min'),
         },
         'initial_guesses': {
             'altitude': ([21_000, 21_000.0], 'ft'),
             'mach': ([0.475, 0.475], 'unitless'),
-            'throttle': ([1, 1], 'unitless'),
+            'throttle': ([1.0, 1.0], 'unitless'),
         },
     },
     'descent': {
@@ -66,7 +66,7 @@ energy_phase_info = {
             'mass_ref': (154000, 'lbm'),
             'no_climb': True,
             'throttle_enforcement': 'control',
-            'throttle_bounds': ((0.15, 1), 'unitless'),
+            'throttle_bounds': ((0.15, 0.5), 'unitless'),
             'time_initial_bounds': ((80, 1056.5), 'min'),
             'time_duration_bounds': ((29.0, 128.0), 'min'),
         },
@@ -74,7 +74,6 @@ energy_phase_info = {
     },
     'post_mission': {
         'include_landing': False,
-        'constrain_range': True,
         'target_range': (2_020.0, 'nmi'),
     },
 }
@@ -82,6 +81,7 @@ energy_phase_info = {
 # 2DOF
 two_dof_phase_info = {
     'groundroll': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'ground_roll': True,
@@ -108,6 +108,7 @@ two_dof_phase_info = {
         },
     },
     'rotation': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'rotation': True,
@@ -139,6 +140,7 @@ two_dof_phase_info = {
         },
     },
     'ascent': {
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,
@@ -159,8 +161,8 @@ two_dof_phase_info = {
             'altitude_final': (500, 'ft'),
             'altitude_constraint_ref': (500, 'ft'),
             'flight_path_angle_bounds': ((-10.0, 20.0), 'rad'),
-            'flight_path_angle_ref': (57.2958, 'deg'),
-            'flight_path_angle_defect_ref': (57.2958, 'deg'),
+            'flight_path_angle_ref': (1, 'rad'),  # find better ref
+            'flight_path_angle_defect_ref': (1, 'rad'),
             'flight_path_angle_initial': (0.0, 'deg'),
             'pitch_constraint_bounds': ((0.0, 15.0), 'deg'),
             'pitch_constraint_ref': (1.0, 'deg'),
@@ -178,6 +180,7 @@ two_dof_phase_info = {
         },
     },
     'accel': {
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.ACCEL,
             'num_segments': 1,
@@ -257,6 +260,7 @@ two_dof_phase_info = {
         },
     },
     'cruise': {
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'output_alpha': True}},
         'user_options': {
             'phase_type': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (21_000, 'ft'),
@@ -331,5 +335,8 @@ two_dof_phase_info = {
             'distance': ([0.96 * 2_020, 2_020], 'NM'),
             'time': ([22000.0, 500.0], 's'),
         },
+    },
+    'post_mission': {
+        'target_range': (2020.0, 'nmi'),
     },
 }

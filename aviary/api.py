@@ -55,15 +55,7 @@ from aviary.utils.functions import (
 )
 from aviary.utils.options import list_options
 from aviary.constants import (
-    GRAV_ENGLISH_FLOPS,
-    GRAV_ENGLISH_GASP,
-    GRAV_ENGLISH_LBM,
-    GRAV_METRIC_FLOPS,
-    GRAV_METRIC_GASP,
     PSLS_PSF,
-    RADIUS_EARTH_METRIC,
-    RHO_SEA_LEVEL_ENGLISH,
-    RHO_SEA_LEVEL_METRIC,
     TSLS_DEGR,
 )
 from aviary.subsystems.test.subsystem_tester import (
@@ -71,9 +63,9 @@ from aviary.subsystems.test.subsystem_tester import (
 )
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
-###################
-# Level 3 Imports #
-###################
+####################
+# Advanced Imports #
+####################
 # Model Setup
 from aviary.variable_info.functions import (
     override_aviary_vars,
@@ -196,6 +188,9 @@ from aviary.subsystems.geometry.geometry_builder import GeometryBuilder, CoreGeo
 # Mass
 from aviary.subsystems.mass.mass_builder import MassBuilder, CoreMassBuilder
 
+# Energy
+from aviary.subsystems.energy.energy_builder import EnergyBuilder, CoreEnergyBuilder
+
 # Performance
 from aviary.subsystems.performance.performance_builder import (
     PerformanceBuilder,
@@ -205,12 +200,10 @@ from aviary.subsystems.performance.performance_builder import (
 # Propulsion
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.engine_model import EngineModel
-from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.propulsion_builder import (
     PropulsionBuilder,
     CorePropulsionBuilder,
 )
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
-from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.propeller.propeller_builder import PropellerBuilder

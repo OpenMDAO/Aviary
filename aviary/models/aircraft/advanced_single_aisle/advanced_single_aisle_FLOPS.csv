@@ -1,5 +1,6 @@
 # created unknown date
 # FLOPS-derived aircraft input deck converted from N3CC_generic_low_speed_polars_FLOPSinp.txt
+# business class seats are included. Fuselage layout will be different from FLOPS.
 
 # Input Values
 aircraft:air_conditioning:mass_scaler,0.98094,unitless
@@ -32,17 +33,18 @@ aircraft:design:lift_dependent_drag_coeff_factor,0.93,unitless
 aircraft:design:subsonic_drag_coeff_factor,0.95,unitless
 aircraft:design:supersonic_drag_coeff_factor,1,unitless
 aircraft:design:touchdown_mass_max,108976.4,lbm
+aircraft:design:type,transport
 aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.96,unitless
 aircraft:electrical:mass_scaler,1.1976,unitless
 aircraft:engine:data_file,models/engines/turbofan_22k.csv,unitless
 aircraft:engine:additional_mass_fraction,0,unitless
-aircraft:engine:constant_fuel_consumption,0,lbm/h
+aircraft:engine:constant_fuel_mass_consumption,0,lbm/h
 aircraft:engine:flight_idle_max_fraction,1,unitless
 aircraft:engine:flight_idle_min_fraction,0.08,unitless
 aircraft:engine:flight_idle_thrust_fraction,0,unitless
 aircraft:engine:fuel_flow_scaler_constant_term,0,unitless
-aircraft:engine:fuel_flow_scaler_linear_term,1,unitless
+aircraft:engine:fuel_flow_scaler_linear_term,0,unitless
 aircraft:engine:generate_flight_idle,True,unitless
 aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
@@ -55,7 +57,6 @@ aircraft:engine:reference_mass,6293.8,lbm
 aircraft:engine:reference_sls_thrust,22200.5,lbf
 aircraft:engine:scale_factor,0.99997747798473,unitless
 aircraft:engine:scale_mass,True,unitless
-aircraft:engine:scaled_sls_thrust,22200,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1,unitless
 aircraft:engine:wing_locations,0.289682918,unitless
@@ -63,14 +64,14 @@ aircraft:fins:area,0,ft**2
 aircraft:fins:mass_scaler,1,unitless
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,-10,unitless
-aircraft:fuel:auxiliary_fuel_capacity,0,lbm
+aircraft:fuel:auxiliary_fuel_mass_capacity,0,lbm
 aircraft:fuel:wing_fuel_fraction,0.7752,unitless
 aircraft:fuel:fuel_system_mass_scaler,0.93202,unitless
-aircraft:fuel:fuselage_fuel_capacity,0,lbm
+aircraft:fuel:fuselage_fuel_mass_capacity,0,lbm
 aircraft:fuel:num_tanks,7,unitless
-aircraft:fuel:total_capacity,33136.4,lbm
+aircraft:fuel:max_capacity_mass,33136.4,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,1,unitless
-aircraft:fuel:wing_fuel_capacity,33136.4,lbm
+aircraft:fuel:wing_fuel_mass_capacity,33136.4,lbm
 aircraft:furnishings:mass_scaler,0.81859,unitless
 aircraft:fuselage:laminar_flow_lower,0,unitless
 aircraft:fuselage:laminar_flow_upper,0,unitless
@@ -87,6 +88,7 @@ aircraft:horizontal_tail:aspect_ratio,5.22699386503068,unitless
 aircraft:horizontal_tail:laminar_flow_lower,0,unitless
 aircraft:horizontal_tail:laminar_flow_upper,29,unitless
 aircraft:horizontal_tail:mass_scaler,1.42225,unitless
+aircraft:horizontal_tail:num_tails,1,unitless
 aircraft:horizontal_tail:sweep,30.5853213018973,deg
 aircraft:horizontal_tail:taper_ratio,0.2734375,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.115,unitless
@@ -101,8 +103,8 @@ aircraft:landing_gear:main_gear_mass_scaler,0.8846,unitless
 aircraft:landing_gear:main_gear_oleo_length,106.94,inch
 aircraft:landing_gear:nose_gear_mass_scaler,0.8846,unitless
 aircraft:landing_gear:nose_gear_oleo_length,74.86,inch
-aircraft:nacelle:avg_diameter,7.2,ft
-aircraft:nacelle:avg_length,35,ft
+aircraft:nacelle:reference_avg_diameter,7.2,ft
+aircraft:nacelle:reference_avg_length,35,ft
 aircraft:nacelle:laminar_flow_lower,0,unitless
 aircraft:nacelle:laminar_flow_upper,0,unitless
 aircraft:nacelle:mass_scaler,0,unitless
@@ -164,7 +166,7 @@ aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0,unitless
 aircraft:wing:wetted_area,2210.280228,ft**2
 aircraft:wing:wetted_area_scaler,1,unitless
-mission:constraints:max_mach,0.785,unitless
+aircraft:design:max_mach,0.785,unitless
 aircraft:design:gross_mass,130000,lbm
 aircraft:design:range,3500,NM
 mission:landing:airport_altitude,0,ft
@@ -183,7 +185,7 @@ mission:takeoff:angle_of_attack_runway,0,deg
 mission:takeoff:braking_friction_coefficient,0.35,unitless
 mission:takeoff:drag_coefficient_min,0.05,unitless
 mission:takeoff:final_altitude,35,ft
-mission:takeoff:fuel,577,lbm
+mission:takeoff:fuel_mass,577,lbm
 mission:takeoff:lift_coefficient_max,2,unitless
 mission:takeoff:obstacle_height,35,ft
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless

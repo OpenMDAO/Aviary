@@ -6,10 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.subsystems.mass.flops_based.mass_summation import (
-    MassSummation,
-    StructureMass,
-)
+from aviary.subsystems.mass.flops_based.mass_summation import MassSummation, StructureMass
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
@@ -223,7 +220,7 @@ class StructureMassTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.MASS, val=30.0, units='lbm')
         prob.set_val(Aircraft.Design.EMPENNAGE_MASS, 150.0, units='lbm')
         prob.set_val(Aircraft.LandingGear.TOTAL_MASS, 110.0, units='lbm')
-        prob.set_val(Aircraft.Nacelle.MASS, val=np.array([1000.0, 500.0, 1500.0]), units='lbm')
+        prob.set_val(Aircraft.Nacelle.MASS, val=np.array([250.0, 250.0, 750.0]), units='lbm')
         prob.set_val(Aircraft.Paint.MASS, val=70.0, units='lbm')
         prob.set_val(Aircraft.Wing.MASS, val=90.0, units='lbm')
 

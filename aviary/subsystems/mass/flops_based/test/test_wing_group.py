@@ -2,9 +2,10 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
+
 from aviary.subsystems.mass.flops_based.wing_group import WingMassGroup
-from aviary.variable_info.variables import Aircraft, Mission
-from aviary.validation_cases.validation_tests import flops_validation_test, get_flops_data, Version
+from aviary.validation_cases.validation_tests import Version, flops_validation_test, get_flops_data
+from aviary.variable_info.variables import Aircraft
 
 
 @use_tempdirs
@@ -52,8 +53,12 @@ class BWBWingGroupTest(unittest.TestCase):
         prob.model.set_input_defaults(
             'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', [137.5, 91.3717, 14.2848], units='unitless'
         )
-        prob.model.set_input_defaults('Rear_spar_percent_chord', 0.7, units='unitless')
-        prob.model.set_input_defaults('Rear_spar_percent_chord_centerline', 0.7, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE, 0.7, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT, 0.7, units='unitless'
+        )
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -85,7 +90,6 @@ class BWBWingGroupTest(unittest.TestCase):
                 Aircraft.Fuselage.MAX_WIDTH,
                 # WingMiscMass
                 Aircraft.Wing.COMPOSITE_FRACTION,
-                # Aircraft.Wing.AREA,
                 Aircraft.Wing.MISC_MASS_SCALER,
                 # WingShearControlMass
                 Aircraft.Wing.CONTROL_SURFACE_AREA,

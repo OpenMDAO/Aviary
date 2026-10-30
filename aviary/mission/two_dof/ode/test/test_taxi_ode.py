@@ -1,31 +1,41 @@
 import unittest
 
-import openmdao
+import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
-from packaging import version
+from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
+from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import get_path
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
+@use_tempdirs
 class TaxiTestCase(unittest.TestCase):
     """Test computation of taxi group."""
 
     def setUp(self):
         self.prob = om.Problem()
 
-        options = get_option_defaults()
+        # Explicit options for the GASP-based taxi ODE.
+        options = AviaryValues()
+        options.set_val(Aircraft.Engine.DATA_FILE, get_path('models/engines/turbofan_23k_1.csv'))
+        options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 28690.0, units='lbf')
+        options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
+        options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+        options.set_val(Settings.VERBOSITY, Verbosity.QUIET)
         options.set_val(Mission.Taxi.DURATION, 0.1677, units='h')
-        default_mission_subsystems = get_default_mission_subsystems(
-            'GASP', [build_engine_deck(options)]
-        )
+        default_mission_subsystems = [
+            get_default_subsystems('GASP', [build_engine_deck(options)])[k]
+            for k in ['propulsion', 'aerodynamics']
+        ]
 
         self.prob.model = TaxiSegment(aviary_options=options, subsystems=default_mission_subsystems)
 
@@ -36,10 +46,6 @@ class TaxiTestCase(unittest.TestCase):
             0.0,
         )
 
-    @unittest.skipIf(
-        version.parse(openmdao.__version__) < version.parse('3.26'),
-        'Skipping due to OpenMDAO version being too low (<3.26)',
-    )
     def test_taxi(self):
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -48,7 +54,7 @@ class TaxiTestCase(unittest.TestCase):
         self.prob.set_val(Mission.Takeoff.AIRPORT_ALTITUDE, 0, units='ft')
         self.prob.set_val(Mission.Taxi.MACH, 0.1, units='unitless')
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -1512,
             units='lbm/h',
         )

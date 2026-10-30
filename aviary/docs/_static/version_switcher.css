@@ -1,0 +1,55 @@
+/* Aviary version switcher — sidebar dropdown + non-latest banner. */
+
+.aviary-version-switcher {
+  padding: 0.75rem 1rem;
+  margin: 0 0 0.5rem;
+  border-bottom: 1px solid var(--pst-color-border, #dfe4e8);
+}
+
+.aviary-version-switcher label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pst-color-text-muted, #6c757d);
+  margin-bottom: 0.35rem;
+}
+
+.aviary-version-switcher select {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--pst-color-border, #ced4da);
+  border-radius: 4px;
+  background: var(--pst-color-background, #fff);
+  color: var(--pst-color-text-base, inherit);
+}
+
+/* Yellow "you are viewing an old / dev version" strip. */
+.aviary-version-banner {
+  background: #fff8c4;
+  color: #4a3b00;
+  border-bottom: 1px solid #e6d97a;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.aviary-version-banner a {
+  color: #0b5cff;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* Dark-mode friendliness — inherit PyData-Sphinx variables where available. */
+@media (prefers-color-scheme: dark) {
+  .aviary-version-banner {
+    background: #4a3b00;
+    color: #fff8c4;
+    border-bottom-color: #7a6900;
+  }
+  .aviary-version-banner a {
+    color: #6ea8ff;
+  }
+}

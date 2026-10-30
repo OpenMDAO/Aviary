@@ -15,8 +15,11 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.run_aviary import run_aviary
+from aviary.validation_cases.benchmark_utils import (
+    compare_against_expected_values,
+    print_benchmark_results,
+)
 from aviary.validation_cases.validation_data.test_models.GwFm_phase_info import phase_info
-from aviary.validation_cases.benchmark_utils import compare_against_expected_values
 
 
 @use_tempdirs
@@ -124,8 +127,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
             self.phase_info,
             max_iter=50,
             optimizer='IPOPT',
-            verbosity=0,
+            verbosity=1,
         )
+        print_benchmark_results(prob)
         # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
 
@@ -138,6 +142,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             optimizer='SNOPT',
             verbosity=1,
         )
+        print_benchmark_results(prob)
         # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
         self.assertTrue(prob.result.success)

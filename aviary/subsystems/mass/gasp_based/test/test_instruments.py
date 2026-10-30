@@ -2,19 +2,21 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.instruments import InstrumentMass
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import GASPEngineType
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class InstrumentTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless'
         )  # large_single_aisle_1_GASP.csv
@@ -58,10 +60,10 @@ class InstrumentTestCase1(unittest.TestCase):
 
 
 class InstrumentTestCase2(unittest.TestCase):
-    """BWB Parameters"""
+    """BWB Parameters."""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = AviaryValues()
         options.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless'
         )  # large_single_aisle_1_GASP.csv

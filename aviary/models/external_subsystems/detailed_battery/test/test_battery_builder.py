@@ -3,7 +3,9 @@ import unittest
 import aviary.api as av
 from aviary.subsystems.test.subsystem_tester import skipIfMissingDependencies
 
-BatteryBuilder = av.TestSubsystemBuilder.import_builder('battery.battery_builder.BatteryBuilder')
+BatteryBuilder = av.TestSubsystemBuilder.import_builder(
+    'detailed_battery.detailed_battery_builder.DetailedBatteryBuilder'
+)
 
 
 @skipIfMissingDependencies(BatteryBuilder)

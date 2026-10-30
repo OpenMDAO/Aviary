@@ -347,14 +347,14 @@ class TestExternalSubsystemBus(unittest.TestCase):
         zzz_actual = prob.model.get_val('test.climb_zzz')
         xx = prob.model.get_val('pre_mission.test.for_climb')
         zz = prob.model.get_val('traj.climb.mission_bus_variables.zz')
-        velocity = prob.model.get_val('traj.climb.mission_bus_variables.velocity')
+        velocity = prob.model.get_val('traj.climb.mission_bus_variables.velocity', units='ft/s')
         zzz_expected = np.sum(xx) * np.sum(zz * velocity)
         assert_near_equal(zzz_actual, zzz_expected)
 
         zzz_actual = prob.model.get_val('test2.climb_test2_zzz')
         xx = prob.model.get_val('pre_mission.test2.test2_for_climb')
         zz = prob.model.get_val('traj.climb.mission_bus_variables.test2_zz')
-        velocity = prob.model.get_val('traj.climb.mission_bus_variables.velocity')
+        velocity = prob.model.get_val('traj.climb.mission_bus_variables.velocity', units='ft/s')
         zzz_expected = np.sum(xx) * np.sum(zz * velocity)
         assert_near_equal(zzz_actual, zzz_expected)
 

@@ -1,42 +1,18 @@
 import openmdao.api as om
 
+from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.mission.solved_two_dof.phases.groundroll_phase import (
     GroundrollPhase as GroundrollPhaseVelocityIntegrated,
 )
 from aviary.mission.solved_two_dof.phases.solved_twodof_phase import SolvedTwoDOFPhase
-from aviary.mission.problem_configurator import ProblemConfiguratorBase
-from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.mission.utils import process_guess_var
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.mission.utils import process_guess_var
 
 
 class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
     """The Solved 2DOF builder is used for detailed take-off and landing."""
-
-    def initial_guesses(self, aviary_group):
-        """
-        Set any initial guesses for variables in the aviary problem.
-
-        This is called at the end of AivaryProblem.load_inputs.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
-        """
-        # This doesn't really have much value, but is needed for initializing
-        # an objective-related component that still lives in level 2.
-
-        if 'target_range' in aviary_group.post_mission_info:
-            aviary_group.target_range = wrapped_convert_units(
-                aviary_group.post_mission_info['target_range'], 'NM'
-            )
-        else:
-            aviary_group.target_range = aviary_group.aviary_inputs.get_val(
-                Aircraft.Design.RANGE, units='NM'
-            )
 
     def get_default_phase_info(self, aviary_group):
         """
@@ -59,14 +35,9 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         raise RuntimeError('Solved 2DOF requires that a phase_info is specified.')
 
-    def get_code_origin(self, aviary_group):
+    def get_code_origin(self):
         """
         Return the legacy of this problem configurator.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -84,7 +55,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
         """
-        pass
 
     def get_phase_builder(self, aviary_group, phase_name, phase_options):
         """
@@ -174,81 +144,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             **extra_options,
         )
 
-    def link_phases(self, aviary_group, phases, connect_directly=True):
-        """
-        Apply any additional phase linking.
-
-        Note that some phase variables are handled in the AviaryProblem. Only
-        problem-specific ones need to be linked here.
-
-        This is called from AviaryProblem.link_phases
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
-        phases : Phase
-            Phases to be linked.
-        connect_directly : bool
-            When True, then connected=True. This allows the connections to be
-            handled by constraints if `phases` is a parallel group under MPI.
-        """
-        # connect regular_phases with each other if you are optimizing alt or mach
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.regular_phases,
-            'altitude_optimize',
-            Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
-        )
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.regular_phases,
-            'mach_optimize',
-            Dynamic.Atmosphere.MACH,
-        )
-
-        # connect reserve phases with each other if you are optimizing alt or mach
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.reserve_phases,
-            'altitude_optimize',
-            Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
-        )
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.reserve_phases,
-            'mach_optimize',
-            Dynamic.Atmosphere.MACH,
-        )
-
-        aviary_group.traj.link_phases(phases, [Dynamic.Vehicle.MASS], connected=True)
-        aviary_group.traj.link_phases(
-            phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.0e3, connected=False
-        )
-        aviary_group.traj.link_phases(phases, ['time'], connected=False)
-
-        if len(phases) > 2:
-            aviary_group.traj.link_phases(
-                phases[1:],
-                [Dynamic.Vehicle.ANGLE_OF_ATTACK],
-                units='deg',
-                ref=15.0,
-                connected=False,
-            )
-
-    def check_trajectory(self, aviary_group):
-        """
-        Checks the phase_info user options for any inconsistency.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
-        """
-        pass
-
     def add_post_mission_systems(self, aviary_group):
         """
         Add any post mission systems.
@@ -287,7 +182,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         )
 
     def set_phase_initial_guesses(
-        self, aviary_group, phase_name, phase, guesses, target_prob, parent_prefix
+        self, aviary_group, phase_name, phase_idx, phase, guesses, target_prob, parent_prefix
     ):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
@@ -304,6 +199,8 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Aviary model that owns this configurator.
         phase_name : str
             The name of the phase for which the guesses are being added.
+        phase_idx : int
+            Phase position in aviary_group.phases. Can be used to identify first phase.
         phase : Phase
             The phase object for which the guesses are being added.
         guesses : dict
@@ -337,25 +234,8 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
             # Set initial guess for control variables
             if guess_key in control_keys:
-                try:
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
-                        process_guess_var(val, guess_key, phase),
-                        units=units,
-                    )
-
-                except KeyError:
-                    try:
-                        target_prob.set_val(
-                            parent_prefix + f'traj.{phase_name}.polynomial_controls:{guess_key}',
-                            process_guess_var(val, guess_key, phase),
-                            units=units,
-                        )
-
-                    except KeyError:
-                        target_prob.set_val(
-                            parent_prefix + f'traj.{phase_name}.bspline_controls:',
-                            {guess_key},
-                            process_guess_var(val, guess_key, phase),
-                            units=units,
-                        )
+                phase.set_control_val(
+                    guess_key,
+                    vals=process_guess_var(val, guess_key, phase),
+                    units=units,
+                )

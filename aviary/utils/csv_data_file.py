@@ -59,7 +59,7 @@ def read_data_file(
     """
     verbosity = Verbosity(verbosity)
 
-    filepath = get_path(filename)
+    filepath = get_path(filename, verbosity)
 
     data = NamedValues()
     comments = []
@@ -186,12 +186,12 @@ def read_data_file(
 
                     if len(header) > 0:
                         check_for_header = False
-                        raw_data = {key: [] for key in header.keys()}
+                        raw_data = {key: [] for key in header}
                         continue
 
                 # only raise error if not checking for header, or invalid header found
                 raise ValueError(
-                    f'Non-numerical value found in data file <{filepath}> on line {str(line_count)}'
+                    f'Non-numerical value found in data file <{filepath}> on line {line_count!s}'
                 )
 
             # This point is reached when the first valid numerical entry in data file is found. Stop
@@ -204,7 +204,7 @@ def read_data_file(
                 raw_data[variable].append(line_data[valid_indices[idx]])
 
     # store data in NamedValues object
-    for variable in header.keys():
+    for variable in header:
         data.set_val(variable, val=np.array(raw_data[variable]), units=header[variable])
 
     if save_comments:

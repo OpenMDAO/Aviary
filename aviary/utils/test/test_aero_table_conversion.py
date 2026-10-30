@@ -1,9 +1,6 @@
-import tempfile
 import unittest
 from pathlib import Path
 
-import numpy as np
-from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.aero_table_conversion import convert_aero_table

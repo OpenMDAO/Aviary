@@ -1,9 +1,12 @@
-from aviary.mission.two_dof.ode.simple_cruise_ode import SimpleCruiseODE
+import numpy as np
+
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 from aviary.mission.phase_builder import PhaseBuilder
+from aviary.mission.two_dof.ode.simple_cruise_ode import SimpleCruiseODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.enums import ThrottleAllocation
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
@@ -12,9 +15,7 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
             name='num_segments',
             types=int,
             default=5,
-            desc='The number of segments in transcription creation in Dymos. '
-            'While this phase is usually an analytic phase, this option is '
-            'needed if an external subsystem requires a dynamic transcription.',
+            desc='The number of segments in transcription creation in Dymos. ',
         )
 
         self.declare(
@@ -22,16 +23,21 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
             types=int,
             default=3,
             desc='The order of polynomials for interpolation in the transcription '
-            'created in Dymos. While this phase is usually an analytic phase, this option is '
-            'needed if an external subsystem requires a dynamic transcription.',
+            'created in Dymos.',
         )
 
         defaults = {
             'mass_bounds': (0.0, None),
+            'mass_direct_link': False,
         }
         self.add_state_options('mass', units='lbm', defaults=defaults)
 
-        self.add_time_options(units='s')
+        defaults = {
+            'time_duration_bounds': (0, 3600),
+            'time_initial_bounds': (0.0, 100.0),
+            'initial_time_direct_link': True,
+        }
+        self.add_time_options(units='s', defaults=defaults)
 
         self.declare(name='alt_cruise', default=0.0, units='ft', desc='Cruise altitude.')
 
@@ -56,28 +62,58 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'time_duration',
-            default=None,
-            units='s',
-            desc='The amount of time taken by this phase added as a constraint.',
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            '_add_user_defined_constraints().',
         )
 
         self.declare(
-            name='time_duration_bounds',
-            default=(0, 3600),
-            units='s',
-            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
+            name='altitude_direct_link',
+            default=False,
+            types=bool,
+            desc='When True, directly link the initial altitude parameter to the previous '
+            'phase. When False, use a constraint.',
         )
 
         self.declare(
-            'time_initial_bounds',
-            types=tuple,
-            default=(0.0, 100.0),
-            units='s',
-            desc='Lower and upper bounds on the starting time for this phase relative to the '
-            'starting time of the mission, i.e., ((25, 45), "min") constrians this phase to '
-            'start between 25 and 45 minutes after the start of the mission.',
+            name='distance_direct_link',
+            default=False,
+            types=bool,
+            desc='When True, directly link the initial distance parameter to the previous '
+            'phase. When False, use a constraint.',
+        )
+
+        self.declare(
+            name='mach_direct_link',
+            default=True,
+            types=bool,
+            desc='When True, directly link the initial mach parameter to the previous '
+            'phase. When False, use a constraint.',
+        )
+
+        self.declare(
+            name='throttle_enforcement',
+            default='path_constraint',
+            values=['path_constraint', 'boundary_constraint', 'bounded', 'control', None],
+            desc='Flag to enforce engine throttle bounds as path constraints, boundary '
+            'constraints, solver bounds. You can also select "control" to turn throttle into a '
+            'control, which allows you to assign a value or let the optimizer choose it.',
+        )
+
+        self.declare(
+            name='throttle_allocation',
+            default=ThrottleAllocation.FIXED,
+            values=[
+                ThrottleAllocation.FIXED,
+                ThrottleAllocation.STATIC,
+                ThrottleAllocation.DYNAMIC,
+            ],
+            desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
+            'user-specified value. STATIC is specified by the optimizer as one value for the '
+            'whole phase. DYNAMIC is specified by the optimizer at each point in the phase.',
         )
 
 
@@ -141,7 +177,7 @@ class SimpleCruisePhase(PhaseBuilder):
         -------
         dymos.Phase
         """
-        phase = self.phase = super().build_phase(aviary_options)
+        phase = super().build_phase(aviary_options)
 
         # Custom configurations for the climb phase
         user_options = self.user_options
@@ -150,7 +186,7 @@ class SimpleCruisePhase(PhaseBuilder):
         self.add_state(
             'mass',
             Dynamic.Vehicle.MASS,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
         )
 
         # These are constant.
@@ -158,6 +194,9 @@ class SimpleCruisePhase(PhaseBuilder):
         alt_cruise, alt_units = user_options['alt_cruise']
 
         phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
+
+        constraints = user_options['constraints']
+        self._add_user_defined_constraints(phase, constraints)
 
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, val=alt_cruise, units=alt_units)
         phase.add_parameter(Dynamic.Atmosphere.MACH, opt=False, val=mach_cruise)
@@ -169,35 +208,103 @@ class SimpleCruisePhase(PhaseBuilder):
             static_target=True,
         )
 
-        phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
-        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
-        phase.add_timeseries_output(Dynamic.Mission.ALTITUDE, units=alt_units)
-        phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
+        num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        if num_engine_type > 1:
+            allocation = user_options['throttle_allocation']
 
-        phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
+            # Allocation should default to an even split so that we don't start
+            # with an allocation that might not produce enough thrust.
+            val = np.ones(num_engine_type - 1) * (1.0 / num_engine_type)
+
+            if allocation == ThrottleAllocation.DYNAMIC:
+                phase.add_control(
+                    'throttle_allocations',
+                    shape=(num_engine_type - 1,),
+                    val=val,
+                    targets='throttle_allocations',
+                    units='unitless',
+                    opt=True,
+                    lower=0.0,
+                    upper=1.0,
+                )
+
+            else:
+                opt = allocation == ThrottleAllocation.STATIC
+                kwargs = {}
+                if opt:
+                    kwargs['lower'] = 0.0
+                    kwargs['upper'] = 1.0
+
+                phase.add_parameter(
+                    'throttle_allocations',
+                    units='unitless',
+                    val=val,
+                    shape=(num_engine_type - 1,),
+                    opt=opt,
+                    **kwargs,
+                )
+
+        phase.add_timeseries_output(Dynamic.Mission.ALTITUDE, units=alt_units)
+        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
+        phase.add_timeseries_output('EAS', units='kn')
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL, units='lbm/h'
         )
-        phase.add_timeseries_output(
-            Dynamic.Mission.VELOCITY,
-            output_name=Dynamic.Mission.VELOCITY,
-            units='kn',
-        )
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            output_name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            units='deg',
-        )
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
-        # TODO: These should be promoted in the 2dof mission outputs.
-        phase.add_timeseries_output('aerodynamics.CL', output_name='CL', units='unitless')
-        phase.add_timeseries_output('aerodynamics.CD', output_name='CD', units='unitless')
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
+        phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
+        phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
+
+        throttle_enforcement = user_options['throttle_enforcement']
+
+        if throttle_enforcement != 'control':
+            phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless')
+
+        # Keep each engine's throttle in [0, 1], required for multi-engine cases to prevent
+        # the allocator from running engines above 1
+        if throttle_enforcement == 'boundary_constraint':
+            phase.add_boundary_constraint(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                loc='initial',
+                lower=0.0,
+                upper=1.0,
+                units='unitless',
+            )
+            phase.add_boundary_constraint(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                loc='final',
+                lower=0.0,
+                upper=1.0,
+                units='unitless',
+            )
+        elif throttle_enforcement == 'path_constraint':
+            phase.add_path_constraint(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                lower=0.0,
+                upper=1.0,
+                units='unitless',
+            )
 
         return phase
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            'time',
+            'initial_distance',
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Vehicle.MASS,
+        ]
+        return linked_vars
+
+    def _extra_ode_init_kwargs(self):
+        """Return extra kwargs required for initializing the ODE."""
+        return {
+            'throttle_enforcement': self.user_options['throttle_enforcement'],
+            'throttle_allocation': self.user_options['throttle_allocation'],
+        }
 
 
 SimpleCruisePhase._add_initial_guess_meta_data(

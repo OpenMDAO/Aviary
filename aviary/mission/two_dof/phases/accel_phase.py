@@ -1,10 +1,10 @@
-from aviary.mission.two_dof.ode.accel_ode import AccelODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessIntegrationVariable,
     InitialGuessState,
 )
 from aviary.mission.phase_builder import PhaseBuilder, register
+from aviary.mission.two_dof.ode.accel_ode import AccelODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
@@ -30,20 +30,26 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
 
         defaults = {
             'mass_bounds': (0.0, None),
+            'mass_direct_link': False,
         }
         self.add_state_options('mass', units='lbm', defaults=defaults)
 
         defaults = {
             'distance_bounds': (0.0, None),
+            'distance_direct_link': True,
         }
         self.add_state_options('distance', units='NM', defaults=defaults)
 
         defaults = {
             'velocity_bounds': (0.0, None),
+            'velocity_direct_link': True,
         }
         self.add_state_options('velocity', units='kn', defaults=defaults)
 
-        self.add_time_options(units='s')
+        defaults = {
+            'initial_time_direct_link': True,
+        }
+        self.add_time_options(units='s', defaults=defaults)
 
         self.declare(
             'reserve',
@@ -68,6 +74,15 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
             default=250.0,
             units='kn',
             desc='Airspeed constraint applied at the end of the phase.',
+        )
+
+        self.declare(
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            '_add_user_defined_constraints().',
         )
 
         # The options below have not yet been revamped.
@@ -114,7 +129,7 @@ class AccelPhase(PhaseBuilder):
         -------
         dymos.Phase
         """
-        phase = self.phase = super().build_phase(aviary_options)
+        phase = super().build_phase(aviary_options)
         user_options = self.user_options
 
         # Extracting and setting options
@@ -126,7 +141,7 @@ class AccelPhase(PhaseBuilder):
         self.add_state(
             'mass',
             Dynamic.Vehicle.MASS,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
@@ -137,31 +152,28 @@ class AccelPhase(PhaseBuilder):
             'EAS', loc='final', equals=EAS_constraint_eq, units='kn', ref=EAS_constraint_eq
         )
 
+        constraints = user_options['constraints']
+        self._add_user_defined_constraints(phase, constraints)
+
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, units='ft', val=alt)
 
         # Timeseries Outputs
-        phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
-        phase.add_timeseries_output(
-            Dynamic.Atmosphere.MACH,
-            output_name=Dynamic.Atmosphere.MACH,
-            units='unitless',
-        )
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            output_name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            units='deg',
-        )
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
-
-        # TODO: These should be promoted in the 2dof mission outputs.
-        phase.add_timeseries_output('aerodynamics.CL', output_name='CL', units='unitless')
-        phase.add_timeseries_output('aerodynamics.CD', output_name='CD', units='unitless')
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
+        phase.add_timeseries_output('EAS', units='kn')
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         return phase
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.TIME,
+            Dynamic.Mission.VELOCITY,
+            Dynamic.Vehicle.MASS,
+        ]
+        return linked_vars
 
 
 AccelPhase._add_initial_guess_meta_data(

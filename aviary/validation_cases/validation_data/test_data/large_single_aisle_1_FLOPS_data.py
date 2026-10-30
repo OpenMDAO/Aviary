@@ -15,6 +15,7 @@ inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.0)
 inputs.set_val(Aircraft.Design.TOUCHDOWN_MASS_MAX, 152800.0, 'lbm')
 inputs.set_val(Aircraft.Design.GROSS_MASS, 181200.0, 'lbm')
+inputs.set_val(Aircraft.Design.MAX_MACH, 0.785)
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.909839381134961)
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)
@@ -79,12 +80,12 @@ inputs.set_val(Aircraft.Fins.MASS_SCALER, 1.0)
 
 # Fuel
 # ---------------------------
-inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)
-inputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 45694.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.MAX_CAPACITY_MASS, 45694.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)
 
 # Furnishings
@@ -133,10 +134,13 @@ inputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, 1.0)
 
 # Nacelle
 # ---------------------------
-inputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, 7.94, 'ft')
-inputs.set_val(Aircraft.Nacelle.AVG_LENGTH, 12.3, 'ft')
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_DIAMETER, 7.94, 'ft')
+inputs.set_val(Aircraft.Nacelle.REFERENCE_AVG_LENGTH, 12.3, 'ft')
 inputs.set_val(Aircraft.Nacelle.MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, 1.0)
+# these are outputs, but some components require them as inputs.
+inputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
+inputs.set_val(Aircraft.Nacelle.AVG_LENGTH, np.array([12.3]), 'ft')
 
 # Paint
 # ---------------------------
@@ -166,7 +170,7 @@ inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)
-inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
+inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lbm/h')
 inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
 inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
 inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
@@ -229,10 +233,9 @@ inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
 # ---------------------------
 inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.785)
 inputs.set_val(Aircraft.Design.RANGE, 3500, 'NM')
-inputs.set_val(Mission.Constraints.MAX_MACH, 0.785)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
-inputs.set_val(Mission.Takeoff.FUEL, 577, 'lbm')
+inputs.set_val(Mission.Takeoff.FUEL_MASS, 577, 'lbm')
 
 # region TODO: should this come from aero?
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3)
@@ -248,6 +251,7 @@ inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.0175)
 # ---------------------------
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
+inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 
 # ---------------------------
 #          OUTPUTS
@@ -321,14 +325,16 @@ outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 8780.91, 'lbm')
 
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([12.30]), 'ft')
 outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.5491]))
-outputs.set_val(Aircraft.Nacelle.MASS, 1971.4, 'lbm')
+outputs.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
+outputs.set_val(Aircraft.Nacelle.AVG_LENGTH, np.array([12.3]), 'ft')
+outputs.set_val(Aircraft.Nacelle.MASS, 985.691, 'lbm')
 
 nacelle_wetted_area = np.array([273.45])
 nacelle_wetted_area_units = 'ft**2'
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wetted_area_units)
 
 outputs.set_val(
-    Aircraft.Nacelle.TOTAL_WETTED_AREA, 2 * nacelle_wetted_area, nacelle_wetted_area_units
+    Aircraft.Nacelle.TOTAL_WETTED_AREA, 2 * nacelle_wetted_area[0], nacelle_wetted_area_units
 )
 
 outputs.set_val(Aircraft.Paint.MASS, 306.2, 'lbm')

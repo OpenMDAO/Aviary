@@ -16,12 +16,14 @@ Functions:
     initialization_guessing(aircraft_values): Set initial guesses for aircraft parameters based on problem type and other factors.
 """
 
+import csv
 import warnings
 from operator import eq, ge, gt, le, lt, ne
 
 import numpy as np
 from openmdao.utils.units import valid_units
 
+from aviary.interface.variable_deprecations import deprecated_variables
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import convert_strings_to_data, get_path
 from aviary.variable_info.enums import ProblemType, Verbosity
@@ -36,11 +38,6 @@ operation_dict = {
     '>=': ge,
     '>': gt,
     'isinstance': isinstance,
-}
-problem_types = {
-    'sizing': ProblemType.SIZING,
-    'off_design_min_fuel': ProblemType.OFF_DESIGN_MIN_FUEL,
-    'off_design_max_range': ProblemType.OFF_DESIGN_MAX_RANGE,
 }
 
 
@@ -82,7 +79,7 @@ def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=Verbosity.
     # TODO setting defaults for variables needed outside OM problem during load_inputs()
     aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=0)
-    aircraft_values.set_val(Mission.RESERVE_FUEL_ADDITIONAL, val=0, units='lbm')
+    aircraft_values.set_val(Mission.RESERVE_FUEL_MASS_ADDITIONAL, val=0, units='lbm')
     aircraft_values.set_val(Mission.RESERVE_FUEL_MARGIN, val=0)
     # these are used in initialization_guessing()
     aircraft_values.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
@@ -107,16 +104,13 @@ def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=Verbosity.
                 initialization_guesses[key.removeprefix('initialization_guesses:')] = val
         aircraft_values.update(vehicle_deck)
     else:
-        if verbosity >= Verbosity.BRIEF:
-            verbose = True
-        else:
-            verbose = False
-        vehicle_deck = get_path(vehicle_deck, verbose)
+        vehicle_deck = get_path(vehicle_deck, verbosity)
         aircraft_values, initialization_guesses = parse_inputs(
             vehicle_deck=vehicle_deck,
             aircraft_values=aircraft_values,
             initialization_guesses=initialization_guesses,
             meta_data=meta_data,
+            verbosity=verbosity,
         )
 
     # make sure verbosity is always set
@@ -138,6 +132,7 @@ def parse_inputs(
     aircraft_values: AviaryValues = None,
     initialization_guesses=None,
     meta_data=CoreMetaData,
+    verbosity=Verbosity.BRIEF,
 ):
     """
     Parses the input files and updates the aircraft values and initial guesses. The function reads the
@@ -212,11 +207,38 @@ def parse_inputs(
                 continue
 
             elif ':' in var_name:
-                warnings.warn(
-                    f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
-                    'It will be ignored.',
-                    UserWarning,
-                )
+                if var_name in deprecated_variables:
+                    new_name = deprecated_variables[var_name][0]
+                    the_PRs = deprecated_variables[var_name][1]
+                    the_PRs = the_PRs.replace('|', ', #')
+                    the_date = deprecated_variables[var_name][3]
+                    # Warning was ignored somehow, but need to be print out.
+                    # after it is done, automatically restores the warning settings
+                    with warnings.catch_warnings():
+                        warnings.simplefilter('always')
+                        if new_name == 'removed':
+                            if verbosity >= Verbosity.BRIEF:
+                                warnings.warn(
+                                    f'Variable {var_name} is no longer in meta_data '
+                                    f'as of {the_date}. '
+                                    f'See PR #{the_PRs} for details.',
+                                    DeprecationWarning,
+                                )
+                        else:
+                            warnings.warn(
+                                f'Variable {var_name} is replaced by {new_name} as of {the_date} '
+                                f'See PR #{the_PRs} for details.',
+                                UserWarning,
+                            )
+                else:
+                    with warnings.catch_warnings():
+                        warnings.simplefilter('always')
+                        if verbosity >= Verbosity.BRIEF:
+                            warnings.warn(
+                                f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
+                                'It will be ignored.',
+                                UserWarning,
+                            )
                 continue
 
     return aircraft_values, initialization_guesses
@@ -328,7 +350,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
     """
     problem_type = aircraft_values.get_val(Settings.PROBLEM_TYPE)
     num_pax = aircraft_values.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
-    reserve_val = aircraft_values.get_val(Mission.RESERVE_FUEL_ADDITIONAL, units='lbm')
+    reserve_val = aircraft_values.get_val(Mission.RESERVE_FUEL_MASS_ADDITIONAL, units='lbm')
     reserve_frac = aircraft_values.get_val(Mission.RESERVE_FUEL_MARGIN, units='unitless')
     if initialization_guesses['fuel_burn_per_passenger_mile'] <= 0:
         initialization_guesses['fuel_burn_per_passenger_mile'] = 0.1
@@ -444,7 +466,10 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i]
         total_thrust += thrust * num_engines
 
-    gamma_guess = np.arcsin(0.5 * total_thrust / mission_mass)
+    # 0.5 * thrust/weight can exceed 1 for very high thrust-to-weight aircraft (e.g.
+    # small electric UAVs); clip to stay in arcsin's domain since this is only an
+    # initial-guess heuristic, not a hard constraint.
+    gamma_guess = np.arcsin(np.clip(0.5 * total_thrust / mission_mass, -1.0, 1.0))
     avg_speed_guess = 0.5 * 667 * cruise_mach  # kts
 
     if initialization_guesses['time_to_climb'] <= 0:  # no guess given
@@ -470,9 +495,10 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         )
 
     if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
-        print('\nInitial Guesses')
+        print('Initial Guesses')
         for key, value in initialization_guesses.items():
             print(key, value)
+        print('\n')
 
     return initialization_guesses
 
@@ -548,26 +574,6 @@ dependent_options = [
             'val': 0,
             'relation': '<',
             'target': Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER,
-            'result': True,
-            'alternate': False,
-        },
-    ],
-    [
-        Aircraft.HorizontalTail.VOLUME_COEFFICIENT,
-        {
-            'val': 0,
-            'relation': '==',
-            'target': Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
-            'result': True,
-            'alternate': False,
-        },
-    ],
-    [
-        Aircraft.VerticalTail.VOLUME_COEFFICIENT,
-        {
-            'val': 0,
-            'relation': '==',
-            'target': Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF,
             'result': True,
             'alternate': False,
         },

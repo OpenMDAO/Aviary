@@ -1,4 +1,4 @@
-# Aviary -- NASA's aircraft design tool
+# Aviary: NASA's aircraft design tool
 
 Aviary is an aircraft analysis, design, and optimization tool built on top of the Python-based optimization framework [OpenMDAO](https://github.com/OpenMDAO/OpenMDAO). 
 Aviary incorporates aircraft sizing equations from its predecessors [GASP (General Aviation Synthesis Program)](https://ntrs.nasa.gov/api/citations/19810010563/downloads/19810010563.pdf) and [FLOPS (Flight Optimization System)](https://software.nasa.gov/software/LAR-18934-1).
@@ -10,11 +10,8 @@ Aviary is under active development! While the base features of the code are rela
 
 If you are using Aviary, please [Cite](#citing-aviary) us!
 
-
-
 ## Documentation
-
-[Read the Docs](https://openmdao.github.io/Aviary/introduction.html).
+[Read the Docs](https://openmdao.github.io/Aviary/dev/introduction.html).
 
 [Overview Slide Slow](https://ntrs.nasa.gov/citations/20240009217) is a great place to get started if you are wondering what Aviary is at a high level.
 
@@ -24,8 +21,6 @@ If you are using Aviary, please [Cite](#citing-aviary) us!
 
 [How NASA uses aviary to model Aircraft by Aretskin-Hariton et al.](https://ntrs.nasa.gov/api/citations/20230016987/downloads/TTBW_SciTech_2024_Final_12_5_2023.pdf) describes how aviary was applied to model a Transonic Truss-Braced Wing (TTBW) aircraft.
 
-
-
 ## Installation
 
 ### Pip Install
@@ -33,23 +28,18 @@ The simplest installation method for users is to install via pip:
 
     pip install aviary
 
-Please see the [installation doc page](https://openmdao.github.io/Aviary/getting_started/installation.html) for more detailed instructions.
-The minimum supported Python version for Aviary is 3.9.
+Please see the [installation doc page](https://openmdao.github.io/Aviary/dev/getting_started/installation.html) for more detailed instructions.
 
 ### Docker Install
 You can also install aviary as a package/image using docker:
 
     docker pull ghcr.io/openmdao/aviary:latest
 
-
-
 ## Validation
-
 This code has been validated using output and data from the GASP and FLOPS codes themselves. The GASP-based weight calculations in this code include in their comments which versions of the GASP standalone weights module were used in validation. The aero and EOM subsystem validations were based on runs of the entire GASP and FLOPS code as they stood in the summer of 2021 and the summer of 2022 respectively.
 
 ### Quick testing
-
-The repository installation can be tested using the command ``testflo .`` at the top-level Aviary folder. If you have both SNOPT and IPOPT installed the output should look something like this:
+The repository installation can be tested using the command ``testflo`` at the top-level Aviary folder. If you have both SNOPT and IPOPT installed the output should look something like this:
 
         OK
 
@@ -62,29 +52,20 @@ The repository installation can be tested using the command ``testflo .`` at the
         Wall clock time:   00:00:16.97
 
 ### Full testing
-
 In addition to all of the quicker tests, we include multiple integration tests within Aviary.
 These have also been known as "benchmarks".
 Due to their length, these tests are not run when using the above command.
 Instead, you can use the `run_all_benchmarks.py` file in the `Aviary/aviary` folder, which is just a light wrapper around the `testflo` call.
 This will run all of the longer tests in parallel using all of your available CPU cores.
 
-
-
 ## Package versions
-
 Information on the versions of the packages required for Aviary can be found in the most recent [GitHub Actions runs](https://github.com/OpenMDAO/Aviary/actions).
 We have also provided a static version of the `environment.yml` at the top level of the Aviary repo.
-
-
 
 ## Contact Us
 **Get in touch with the Aviary team at agency-aviary@mail.nasa.gov or the GitHub [discussions page](https://github.com/OpenMDAO/Aviary/discussions)** 
 
-
-
 ## Citing Aviary
-
 If you use Aviary in your research, please cite:
 
 Gratz, J., Kirk, J., Recine, C., Jasa, J., Aretskin-Hariton, E., Moore, K., & Marfatia, K. (2024). [Aviary: An Open-Source Multidisciplinary Design, Analysis, and Optimization Tool for Modeling Aircraft With Analytic Gradients](https://arc.aiaa.org/doi/abs/10.2514/6.2024-4219). *AIAA AVIATION FORUM AND ASCEND 2024*. https://doi.org/10.2514/6.2024-4219
@@ -103,8 +84,6 @@ year = {2024},
 }
 ```
 </details>
-
-
 
 ## Contributors ✨
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->

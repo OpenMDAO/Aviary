@@ -5,7 +5,6 @@ from aviary.mission.two_dof.ode.constraints.flight_constraints import FlightCons
 from aviary.mission.two_dof.ode.constraints.speed_constraints import SpeedConstraints
 from aviary.mission.two_dof.ode.flight_eom import EOMRates
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import AlphaModes, SpeedType
@@ -33,20 +32,8 @@ class FlightODE(TwoDOFODE):
         self.options.declare('EAS_target', desc='Targeted EAS in knots')
 
     def setup(self):
-        self.options['auto_order'] = True
         nn = self.options['num_nodes']
-        aviary_options = self.options['aviary_options']
-        subsystems = self.options['subsystems']
-        subsystem_options = self.options['subsystem_options']
-        user_options = self.options['user_options']
         input_speed_type = self.options['input_speed_type']
-
-        if input_speed_type is SpeedType.EAS:
-            speed_inputs = ['EAS']
-            speed_outputs = ['mach', Dynamic.Mission.VELOCITY]
-        elif input_speed_type is SpeedType.MACH:
-            speed_inputs = ['mach']
-            speed_outputs = ['EAS', Dynamic.Mission.VELOCITY]
 
         self.add_subsystem(
             name='atmosphere',
@@ -75,8 +62,8 @@ class FlightODE(TwoDOFODE):
             mach_balance_group.nonlinear_solver = om.NewtonSolver()
             mach_balance_group.nonlinear_solver.options['solve_subsystems'] = True
             mach_balance_group.nonlinear_solver.options['iprint'] = 0
-            mach_balance_group.nonlinear_solver.options['atol'] = 1e-7
-            mach_balance_group.nonlinear_solver.options['rtol'] = 1e-7
+            mach_balance_group.nonlinear_solver.options['atol'] = 1e-10
+            mach_balance_group.nonlinear_solver.options['rtol'] = 1e-10
             mach_balance_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
             mach_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
@@ -134,8 +121,8 @@ class FlightODE(TwoDOFODE):
         lift_balance_group.nonlinear_solver = om.NewtonSolver()
         lift_balance_group.nonlinear_solver.options['solve_subsystems'] = True
         lift_balance_group.nonlinear_solver.options['iprint'] = 0
-        lift_balance_group.nonlinear_solver.options['atol'] = 1e-7
-        lift_balance_group.nonlinear_solver.options['rtol'] = 1e-7
+        lift_balance_group.nonlinear_solver.options['atol'] = 1e-10
+        lift_balance_group.nonlinear_solver.options['rtol'] = 1e-10
         lift_balance_group.nonlinear_solver.linesearch = om.BoundsEnforceLS()
         lift_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
@@ -172,48 +159,11 @@ class FlightODE(TwoDOFODE):
             promotes_outputs=['theta', 'TAS_violation'],
         )
 
-        # collect the propulsion group names for later use
-        for subsystem in subsystems:
-            kwargs = {}
+        self.add_subsystems_and_solver(
+            solver_sub=lift_balance_group,
+            couple_aero=True,
+        )
 
-            # check if subsystem_options has entry for a subsystem of this name
-            if subsystem.name in subsystem_options:
-                kwargs = subsystem_options[subsystem.name]
-            if isinstance(subsystem, AerodynamicsBuilder):
-                # set default options for Aero if not specified by user
-                base_kwargs = {
-                    'method': 'cruise',
-                }
-                kwargs.update(base_kwargs)
-
-            system = subsystem.build_mission(
-                num_nodes=nn,
-                aviary_inputs=aviary_options,
-                user_options=user_options,
-                subsystem_options=kwargs,
-            )
-
-            if system is not None:
-                if isinstance(subsystem, AerodynamicsBuilder):
-                    target = lift_balance_group
-                else:
-                    target = self
-                mission_in = subsystem.mission_inputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                mission_out = subsystem.mission_outputs(
-                    aviary_inputs=aviary_options,
-                    user_options=user_options,
-                    subsystem_options=kwargs,
-                )
-                target.add_subsystem(
-                    subsystem.name,
-                    system,
-                    promotes_inputs=mission_in,
-                    promotes_outputs=mission_out,
-                )
         self.add_alpha_control(
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,
@@ -221,14 +171,18 @@ class FlightODE(TwoDOFODE):
             num_nodes=nn,
         )
 
+        # TODO throttle currently comes from phase_info initial conditions, not a true control.
+        #      If in the future we make it a real control, it can use existing code.
+        # self.add_throttle_control(propulsion_group=lift_balance_group)
+
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='ft')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='lbm')
         self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
-        self.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THROTTLE, val=np.ones(nn), units='unitless'
-        )
+        # self.set_input_defaults(
+        #     Dynamic.Vehicle.Propulsion.THROTTLE, val=np.ones(nn), units='unitless'
+        # )
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')

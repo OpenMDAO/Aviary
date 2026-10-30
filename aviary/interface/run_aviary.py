@@ -1,10 +1,7 @@
 """This file contains functions needed to run Aviary using the Level 1 interface."""
 
-from importlib.util import spec_from_file_location, module_from_spec
-import os
-from pathlib import Path
-import subprocess
 import sys
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
 from aviary.utils.functions import get_path
@@ -144,13 +141,13 @@ def run_aviary_cmd(
     }
 
     if isinstance(phase_info, str):
-        phase_info_path = get_path(phase_info)
+        phase_info_path = get_path(phase_info, verbosity)
         spec = spec_from_file_location('phase_info_file', str(phase_info_path))
         phase_info_file = module_from_spec(spec)
         sys.modules['phase_info_file'] = phase_info_file
         spec.loader.exec_module(phase_info_file)
 
-        phase_info = getattr(phase_info_file, 'phase_info')
+        phase_info = phase_info_file.phase_info
 
     prob = run_aviary(input_deck, phase_info, **kwargs)
 

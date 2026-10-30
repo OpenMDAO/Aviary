@@ -11,6 +11,7 @@ from aviary.subsystems.propulsion.utils import EngineModelVariables, build_engin
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
@@ -60,13 +61,14 @@ class TurbopropModel(EngineModel):
     def __init__(
         self,
         name='turboprop_model',
+        meta_data=CoreMetaData,
         options: AviaryValues = None,
         shaft_power_model: SubsystemBuilder = None,
         propeller_model: SubsystemBuilder = None,
         gearbox_model: SubsystemBuilder = None,
     ):
         # also calls _preprocess_inputs() as part of EngineModel __init__
-        super().__init__(name, options)
+        super().__init__(name, meta_data=meta_data, options=options)
 
         self.shaft_power_model = shaft_power_model
         self.propeller_model = propeller_model
@@ -95,10 +97,11 @@ class TurbopropModel(EngineModel):
         if propeller_model is None:
             self.propeller_model = PropellerBuilder(name='propeller')
 
-    def needs_mission_solver(self, aviary_inputs=None, subsystem_options=None):
+    def needs_mission_solver(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         if self.shaft_power_model is not None:
             shp_solver = self.shaft_power_model.needs_mission_solver(
                 aviary_inputs=aviary_inputs,
+                user_options=user_options,
                 subsystem_options=subsystem_options,
             )
         else:
@@ -106,6 +109,7 @@ class TurbopropModel(EngineModel):
         if self.gearbox_model is not None:
             gearbox_solver = self.gearbox_model.needs_mission_solver(
                 aviary_inputs=aviary_inputs,
+                user_options=user_options,
                 subsystem_options=subsystem_options,
             )
         else:
@@ -113,6 +117,7 @@ class TurbopropModel(EngineModel):
         if self.propeller_model is not None:
             prop_solver = self.propeller_model.needs_mission_solver(
                 aviary_inputs=aviary_inputs,
+                user_options=user_options,
                 subsystem_options=subsystem_options,
             )
         else:
@@ -417,14 +422,26 @@ class TurbopropModel(EngineModel):
 
         return params
 
-    def get_linked_variables(self, aviary_inputs=None):
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         linked_vars = super().get_linked_variables()  # calls from EngineModel
         if self.shaft_power_model is not None:
-            linked_vars += self.shaft_power_model.get_linked_variables(aviary_inputs=aviary_inputs)
+            linked_vars += self.shaft_power_model.get_linked_variables(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
         if self.gearbox_model is not None:
-            linked_vars += self.gearbox_model.get_linked_variables(aviary_inputs=aviary_inputs)
+            linked_vars += self.gearbox_model.get_linked_variables(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
         if self.propeller_model is not None:
-            linked_vars += self.propeller_model.get_linked_variables(aviary_inputs=aviary_inputs)
+            linked_vars += self.propeller_model.get_linked_variables(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
 
         return linked_vars
 
@@ -702,7 +719,7 @@ class TurbopropMission(om.Group):
         # system, also having it as an input causes feedback loop problem at the propulsion level
         skipped_inputs = [
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
             Dynamic.Vehicle.Propulsion.NOX_RATE,
             Dynamic.Vehicle.Propulsion.SHAFT_POWER,
             Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,

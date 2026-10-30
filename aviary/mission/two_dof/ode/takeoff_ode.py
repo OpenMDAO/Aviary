@@ -3,10 +3,11 @@ import openmdao.api as om
 
 from aviary.mission.two_dof.ode.takeoff_eom import TakeoffEOM
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
-from aviary.subsystems.mass.mass_to_weight import MassToWeight
+from aviary.mission.two_dof.ode.v_rotate_comp import VRotateComp
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import AlphaModes, SpeedType
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -70,8 +71,13 @@ class TakeOffODE(TwoDOFODE):
             Dynamic.Mission.VELOCITY,
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
         ] + ['aircraft:*']
-        if not self.options['ground_roll']:
+
+        if not ground_roll:
             EOM_inputs.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+        else:
+            EOM_inputs.append(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT)
+        if rotation:
+            EOM_inputs.append(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT)
 
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
@@ -99,31 +105,12 @@ class TakeOffODE(TwoDOFODE):
         else:
             if alpha_mode is AlphaModes.REQUIRED_LIFT:
                 self.add_subsystem(
-                    'calc_weight',
-                    MassToWeight(num_nodes=nn),
-                    promotes_inputs=[('mass', Dynamic.Vehicle.MASS)],
-                    promotes_outputs=['weight'],
+                    'required_lift',
+                    RequiredLift(num_nodes=nn),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
                 )
-                self.add_subsystem(
-                    'calc_lift',
-                    om.ExecComp(
-                        'required_lift = weight*cos(alpha + gamma) - thrust*sin(i_wing)',
-                        required_lift={'val': 0, 'units': 'lbf'},
-                        weight={'val': 0, 'units': 'lbf'},
-                        thrust={'val': 0, 'units': 'lbf'},
-                        alpha={'val': 0, 'units': 'rad'},
-                        gamma={'val': 0, 'units': 'rad'},
-                        i_wing={'val': 0, 'units': 'rad'},
-                    ),
-                    promotes_inputs=[
-                        'weight',
-                        ('thrust', Dynamic.Vehicle.Propulsion.THRUST_TOTAL),
-                        ('alpha', Dynamic.Vehicle.ANGLE_OF_ATTACK),
-                        ('gamma', Dynamic.Mission.FLIGHT_PATH_ANGLE),
-                        ('i_wing', Aircraft.Wing.INCIDENCE),
-                    ],
-                    promotes_outputs=['required_lift'],
-                )
+
             self.add_alpha_control(
                 alpha_mode=alpha_mode,
                 target_load_factor=1,
@@ -133,19 +120,14 @@ class TakeOffODE(TwoDOFODE):
                 print_level=0,
             )
 
+        core_aero = False
         for subsystem in subsystems:
             name = subsystem.name
             kwargs = {}
 
-            if isinstance(subsystem, AerodynamicsBuilder):
+            if isinstance(subsystem, CoreAerodynamicsBuilder):
                 kwargs = {'method': 'low_speed'}
-                if self.options['clean']:
-                    kwargs['method'] = 'cruise'
-                    kwargs['output_alpha'] = False
-
-                if not (ground_roll or rotation):
-                    kwargs['retract_gear'] = True
-                    kwargs['retract_flaps'] = True
+                core_aero = True
 
             if name in subsystem_options:
                 kwargs.update(subsystem_options[name])
@@ -182,6 +164,9 @@ class TakeOffODE(TwoDOFODE):
                         promotes_inputs=mission_in,
                         promotes_outputs=mission_out,
                     )
+            elif isinstance(subsystem, CoreAerodynamicsBuilder):
+                # Core aero is disabled.
+                core_aero = False
 
         if ground_roll:
             eom_name = 'groundroll_eom'
@@ -247,34 +232,140 @@ class TakeOffODE(TwoDOFODE):
                     'dmass_dv',
                 ],
                 promotes_inputs=[
-                    ('mass_rate', Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL),
+                    ('mass_rate', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
                     'dt_dv',
                 ],
+            )
+
+            # Calculate speed at which to initiate rotation.
+            self.add_subsystem(
+                'vrot',
+                VRotateComp(),
+                promotes_inputs=[
+                    Aircraft.Wing.AREA,
+                    ('dV1', Mission.Takeoff.DECISION_SPEED_INCREMENT),
+                    ('dVR', Mission.Takeoff.ROTATION_SPEED_INCREMENT),
+                    ('CL_max', Mission.Takeoff.LIFT_COEFFICIENT_MAX),
+                ],
+                promotes_outputs=[('Vrot', Mission.Takeoff.ROTATION_VELOCITY)],
+            )
+            self.connect(Dynamic.Vehicle.MASS, 'vrot.mass', src_indices=[-1], flat_src_indices=True)
+            self.connect(
+                Dynamic.Atmosphere.DENSITY, 'vrot.density', src_indices=[-1], flat_src_indices=True
+            )
+
+            self.add_subsystem(
+                'groundroll_boundary',
+                om.EQConstraintComp(
+                    'velocity',
+                    eq_units='m/s',
+                    normalize=True,
+                    add_constraint=True,
+                ),
+            )
+            self.connect(Mission.Takeoff.ROTATION_VELOCITY, 'groundroll_boundary.rhs:velocity')
+            self.connect(
+                Dynamic.Mission.VELOCITY,
+                'groundroll_boundary.lhs:velocity',
+                src_indices=[-1],
+                flat_src_indices=True,
             )
 
         if not (ground_roll or rotation):
             self.add_excess_rate_comps(nn)
 
-        self.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
+        self.set_input_defaults(Aircraft.Wing.AREA, units='ft**2')
         self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='deg')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='kn')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.zeros(nn), units='ft')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.zeros(nn), units='lbm')
 
-        # TODO: Some of these are backdoor defaults.
-        if not self.options['clean']:
-            self.set_input_defaults('t_init_flaps', val=47.5, units='s')
-            self.set_input_defaults('t_init_gear', val=37.3, units='s')
-            self.set_input_defaults('t_curr', val=np.zeros(nn), units='s')
-            if ground_roll or rotation:
-                self.set_input_defaults('aero_ramps.flap_factor:final_val', val=1.0)
-                self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.0)
-            else:
-                self.set_input_defaults('aero_ramps.flap_factor:final_val', val=0.0)
-                self.set_input_defaults('aero_ramps.gear_factor:final_val', val=0.0)
-            self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=1.0)
-            self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=1.0)
+        if not ground_roll:
+            self.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
+
+        if core_aero:
+            if not self.options['clean']:
+                # These are initial guesses. In 2dof, the optimizer chooses these.
+                self.set_input_defaults('t_init_flaps', val=47.5, units='s')
+                self.set_input_defaults('t_init_gear', val=37.3, units='s')
+                if ground_roll or rotation:
+                    # This disables gear and flap retraction for groundroll and rotation.
+                    self.set_input_defaults('aero_ramps.flap_factor:final_val', val=1.0)
+                    self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.0)
+                else:
+                    self.set_input_defaults('aero_ramps.flap_factor:final_val', val=0.0)
+                    self.set_input_defaults('aero_ramps.gear_factor:final_val', val=0.0)
+                self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=1.0)
+                self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=1.0)
 
         if ground_roll:
             self.set_input_defaults(Dynamic.Mission.VELOCITY_RATE, val=np.zeros(nn), units='kn/s')
             self.set_input_defaults(Aircraft.Wing.INCIDENCE, val=1.0, units='deg')
+        if ground_roll or rotation:
+            self.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
+
+
+class RequiredLift(om.ExplicitComponent):
+    """Component to calculate required lift for 2DOF equations of motion."""
+
+    def initialize(self):
+        self.options.declare('num_nodes', types=int)
+        add_aviary_option(self, Mission.GRAVITY, units='m/s**2')
+
+    def setup(self):
+        nn = self.options['num_nodes']
+
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=(nn,), units='kg')
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=(nn,), units='N')
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=(nn,), units='rad')
+        add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='rad')
+        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=(nn,), units='rad')
+
+        self.add_output('required_lift', val=np.zeros(nn), units='N')
+
+    def setup_partials(self):
+        nn = self.options['num_nodes']
+        rows_cols = np.arange(nn)
+
+        self.declare_partials(
+            'required_lift',
+            [
+                Dynamic.Vehicle.MASS,
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Mission.FLIGHT_PATH_ANGLE,
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            ],
+            rows=rows_cols,
+            cols=rows_cols,
+        )
+        self.declare_partials('required_lift', Aircraft.Wing.INCIDENCE)
+
+    def compute(self, inputs, outputs):
+        gravity = self.options[Mission.GRAVITY][0]
+
+        weight = inputs[Dynamic.Vehicle.MASS] * gravity
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
+        i_wing = inputs[Aircraft.Wing.INCIDENCE]
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
+
+        outputs['required_lift'] = weight * np.cos(alpha + gamma) - thrust * np.sin(i_wing)
+
+    def compute_partials(self, inputs, partials):
+        gravity = self.options[Mission.GRAVITY][0]
+
+        weight = inputs[Dynamic.Vehicle.MASS] * gravity
+        thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
+        gamma = inputs[Dynamic.Mission.FLIGHT_PATH_ANGLE]
+        i_wing = inputs[Aircraft.Wing.INCIDENCE]
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
+
+        partials['required_lift', Dynamic.Vehicle.MASS] = gravity * np.cos(alpha + gamma)
+        partials['required_lift', Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = -np.sin(i_wing)
+        partials['required_lift', Dynamic.Mission.FLIGHT_PATH_ANGLE] = -weight * np.sin(
+            alpha + gamma
+        )
+        partials['required_lift', Aircraft.Wing.INCIDENCE] = (-thrust * np.cos(i_wing)).reshape(
+            -1, 1
+        )
+        partials['required_lift', Dynamic.Vehicle.ANGLE_OF_ATTACK] = -weight * np.sin(alpha + gamma)

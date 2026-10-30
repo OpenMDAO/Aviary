@@ -1,49 +1,62 @@
 """
 OpenMDAO component for aerostructural analysis using OpenAeroStruct.
 
-This analysis is based on the aircraft_for_bench_FwFm.csv input data representing a
-single-aisle commercial transport aircraft.  The user_mesh method is currently
-hard-coded with values taken from the aircraft_for_bench_FwFm data, but should be coded
-to use the Aircraft.Wing.* variables for a more general capability.
+This analysis is based on the aircraft_for_bench_FwFm.csv input data representing a single-aisle
+commercial transport aircraft.  The user_mesh method is currently hard-coded with values taken from
+the aircraft_for_bench_FwFm data, but should be coded to use the Aircraft.Wing.* variables for a
+more general capability.
 
-The OAStructures class performs a structural analysis of the given wing
-by applying aeroelastic loads computed at the cruise condition and a
-2.5g maneuver at Mach 0.64 at sea level.  The optimization determines
-the optimum wing skin thickness, spar cap thickness, wing twist, wing t/c
+The OAStructures class performs a structural analysis of the given wing by applying aeroelastic
+loads computed at the cruise condition and a 2.5g maneuver at Mach 0.64 at sea level. The
+optimization determines the optimum wing skin thickness, spar cap thickness, wing twist, wing t/c
 and maneuver angle of attack that satisfies strength constraints.
 
-The only Aviary input driving the design is fuel mass, but other variables
-may be included as well.
+The only Aviary input driving the design is fuel mass, but other variables may be included as well.
 
-OAStructures returns the optimized wing mass and the fuel mass burned.
-Currently, only the wing mass is used to override the Aviary variable
-Aircraft.Wing.MASS.
-
+OAStructures returns the optimized wing mass and the fuel mass burned. Currently, only the wing mass
+is used to override the Aviary variable Aircraft.Wing.MASS.
 """
 
 import time
 import warnings
+from importlib.util import find_spec
 
 import numpy as np
 import openmdao.api as om
+from openaerostruct.integration.aerostruct_groups import AerostructGeometry, AerostructPoint
+from openaerostruct.structures.wingbox_fuel_vol_delta import WingboxFuelVolDelta
 
-try:
-    import ambiance
-except ImportError:
-    raise ImportError(
-        "ambiance package not found. You can install it by running 'pip install ambiance'."
-    )
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
+from aviary.variable_info.variables import Dynamic
 
-try:
-    import openaerostruct
-except ImportError:
+spec = find_spec('openaerostruct')
+if spec is None:
     raise ImportError(
         "openaerostruct package not found. You can install it by running 'pip install openaerostruct'."
     )
 
-from ambiance import Atmosphere
-from openaerostruct.integration.aerostruct_groups import AerostructGeometry, AerostructPoint
-from openaerostruct.structures.wingbox_fuel_vol_delta import WingboxFuelVolDelta
+
+def _get_atmospheric_properties(altitude):
+    """
+    Compute speed of sound, density, and dynamic viscosity at the given
+    altitude(s) [m] using Aviary's own Atmosphere group, in place of the
+    external ambiance package.
+    """
+    atmos_prob = om.Problem()
+    atmos_prob.model.add_subsystem(
+        name='atmosphere',
+        subsys=Atmosphere(num_nodes=len(altitude)),
+        promotes=['*'],
+    )
+    atmos_prob.setup()
+    atmos_prob.set_val(Dynamic.Mission.ALTITUDE, altitude, units='m')
+    atmos_prob.run_model()
+
+    speed_of_sound = atmos_prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s')
+    density = atmos_prob.get_val(Dynamic.Atmosphere.DENSITY, units='kg/m**3')
+    dynamic_viscosity = atmos_prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s')
+
+    return speed_of_sound, density, dynamic_viscosity
 
 
 def user_mesh():
@@ -123,7 +136,7 @@ def user_mesh():
     x_TE[:ny_inboard] = array_for_inboard_trailing_edge_x_coord
     x_TE[ny_inboard : ny_inboard + ny_outboard] = array_for_outboard_trailing_edge_x_coord[1:]
 
-    for i in range(0, ny_inboard + ny_outboard - 1):
+    for i in range(ny_inboard + ny_outboard - 1):
         mesh[:, i, 0] = np.linspace(np.flip(x_LE)[i], np.flip(x_TE)[i], nx)
 
     return mesh
@@ -305,11 +318,7 @@ class OAStructures(om.ExplicitComponent):
         altitude = np.array([inputs['cruise_altitude'][0], 0.0])
         cruise_range = inputs['cruise_range'][0]
 
-        atmos = Atmosphere(altitude)
-
-        speed_of_sound = atmos.speed_of_sound
-        rho = atmos.density
-        dynamic_viscosity = atmos.dynamic_viscosity
+        speed_of_sound, rho, dynamic_viscosity = _get_atmospheric_properties(altitude)
 
         velocity = np.array([mach[0] * speed_of_sound[0], mach[1] * speed_of_sound[1]])
 
@@ -354,7 +363,7 @@ class OAStructures(om.ExplicitComponent):
         )
         indep_var_comp.add_output('alpha', val=0.0, units='deg')
         indep_var_comp.add_output('alpha_maneuver', val=0.0, units='deg')
-        indep_var_comp.add_output('empty_cg', val=np.zeros((3)), units='m')
+        indep_var_comp.add_output('empty_cg', val=np.zeros(3), units='m')
         indep_var_comp.add_output('fuel_mass', val=fuel, units='kg')
 
         # add the problem variables subsystem
@@ -386,7 +395,7 @@ class OAStructures(om.ExplicitComponent):
 
         # Loop through and add the specified number of aerostruct points
         for i in range(2):
-            point_name = 'AS_point_{}'.format(i)
+            point_name = f'AS_point_{i}'
 
             # Create the aerostruct point group and add it to the model
             AS_point = AerostructPoint(surfaces=surfaces, internally_connect_fuelburn=False)
@@ -561,7 +570,5 @@ class OAStructures(om.ExplicitComponent):
         tm_sec = int(remainder)
         tm_msec = (remainder - tm_sec) * 1000
         print(
-            'Structures OAS Compute End --- execution time {:02}:{:02}:{:02}.{:03}'.format(
-                int(tm_hrs), int(tm_min), int(tm_sec), int(tm_msec)
-            )
+            f'Structures OAS Compute End --- execution time {int(tm_hrs):02}:{int(tm_min):02}:{int(tm_sec):02}.{int(tm_msec):03}'
         )

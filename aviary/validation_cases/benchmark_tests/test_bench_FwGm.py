@@ -5,8 +5,9 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.missions.two_dof_default import phase_info
 from aviary.interface.run_aviary import run_aviary
+from aviary.models.missions.two_dof_default import phase_info
+from aviary.validation_cases.benchmark_utils import print_benchmark_results
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -32,17 +33,18 @@ class ProblemPhaseTestCase(unittest.TestCase):
             optimizer='IPOPT',
         )
 
-        # TODO: This problem does not always converge.
-        # self.assertTrue(prob.result.success)
+        print_benchmark_results(prob)
+        # TODO: This problem does not always converge?
+        self.assertTrue(prob.result.success)
 
-        rtol = 1e-2
+        rtol = 1e-4
 
         # There are no truth values for these.
         expected_values = {
-            Aircraft.Design.GROSS_MASS: 177536.28,
-            Mission.OPERATING_MASS: 101262.9,
-            Mission.TOTAL_FUEL: 38417.3,
-            Mission.Landing.GROUND_DISTANCE: 2613.4,
+            Aircraft.Design.GROSS_MASS: 176830.97,
+            Mission.OPERATING_MASS: 100615.72,
+            Mission.TOTAL_FUEL_MASS: 38359.25,
+            Mission.Landing.GROUND_DISTANCE: 2610.90,
             'traj.desc2.timeseries.distance': 3675.0,
         }
 
@@ -59,21 +61,22 @@ class ProblemPhaseTestCase(unittest.TestCase):
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwGm.csv',
             local_phase_info,
-            verbosity=1,
+            verbosity=0,
             optimizer='SNOPT',
             max_iter=60,
         )
 
+        print_benchmark_results(prob)
         self.assertTrue(prob.result.success)
 
-        rtol = 1e-2
+        rtol = 1e-4
 
         # There are no truth values for these.
         expected_values = {
-            Aircraft.Design.GROSS_MASS: 177536.28,
-            Mission.OPERATING_MASS: 101262.9,
-            Mission.TOTAL_FUEL: 38417.3,
-            Mission.Landing.GROUND_DISTANCE: 2613.4,
+            Aircraft.Design.GROSS_MASS: 176830.97,
+            Mission.OPERATING_MASS: 100615.72,
+            Mission.TOTAL_FUEL_MASS: 38359.25,
+            Mission.Landing.GROUND_DISTANCE: 2610.90,
             'traj.desc2.timeseries.distance': 3675.0,
         }
 
@@ -84,11 +87,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 else:
                     assert_near_equal(prob.get_val(var_name), expected_val, tolerance=rtol)
 
-        self.assertTrue(prob.result.success)
-
 
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_3_FwGm_SNOPT()
-    # test.bench_test_swap_3_FwGm_IPOPT()
+    # test.bench_test_swap_3_FwGm_SNOPT()
+    test.bench_test_swap_3_FwGm_IPOPT()

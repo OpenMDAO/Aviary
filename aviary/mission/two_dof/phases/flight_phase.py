@@ -1,13 +1,13 @@
-from aviary.mission.two_dof.ode.flight_ode import FlightODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessIntegrationVariable,
     InitialGuessState,
 )
 from aviary.mission.phase_builder import PhaseBuilder
+from aviary.mission.two_dof.ode.flight_ode import FlightODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import SpeedType, ThrottleAllocation
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -31,20 +31,26 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
         defaults = {
             'mass_bounds': (0.0, None),
+            'mass_direct_link': False,
         }
         self.add_state_options('mass', units='lbm', defaults=defaults)
 
         defaults = {
             'distance_bounds': (0.0, None),
+            'distance_direct_link': True,
         }
         self.add_state_options('distance', units='NM', defaults=defaults)
 
         defaults = {
             'altitude_bounds': (0.0, None),
+            'altitude_direct_link': True,
         }
         self.add_state_options('altitude', units='ft', defaults=defaults)
 
-        self.add_time_options(units='s')
+        defaults = {
+            'initial_time_direct_link': True,
+        }
+        self.add_time_options(units='s', defaults=defaults)
 
         self.declare(
             'reserve',
@@ -104,6 +110,19 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             '_add_user_defined_constraints().',
         )
 
+        self.declare(
+            name='throttle_allocation',
+            default=ThrottleAllocation.FIXED,
+            values=[
+                ThrottleAllocation.FIXED,
+                ThrottleAllocation.STATIC,
+                ThrottleAllocation.DYNAMIC,
+            ],
+            desc='Specifies how to handle the throttles for multiple engines. FIXED is a '
+            'user-specified value. STATIC is specified by the optimizer as one value for the '
+            'whole phase. DYNAMIC is specified by the optimizer at each point in the phase.',
+        )
+
 
 class FlightPhase(PhaseBuilder):
     """
@@ -129,7 +148,7 @@ class FlightPhase(PhaseBuilder):
     _initial_guesses_meta_data_ = {}
 
     def build_phase(self, aviary_options: AviaryValues = None):
-        phase = self.phase = super().build_phase(aviary_options)
+        phase = super().build_phase(aviary_options)
 
         # Retrieve user options values
         user_options = self.user_options
@@ -144,7 +163,7 @@ class FlightPhase(PhaseBuilder):
         self.add_state(
             'mass',
             Dynamic.Vehicle.MASS,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
@@ -168,41 +187,61 @@ class FlightPhase(PhaseBuilder):
         if input_speed_type == SpeedType.EAS:
             phase.add_parameter('EAS', opt=False, units='kn', val=EAS_target)
 
+        # TODO throttle currently comes from phase_info initial conditions, not a true control.
+        #      If in the future we make it a real control, we can use this code.
+        # num_engine_type = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))
+        # if num_engine_type > 1:
+        #     allocation = user_options['throttle_allocation']
+        #     val = np.ones(num_engine_type - 1) * (1.0 / num_engine_type)
+        #
+        #     if allocation == ThrottleAllocation.DYNAMIC:
+        #         phase.add_control(
+        #             'throttle_allocations',
+        #             shape=(num_engine_type - 1,),
+        #             val=val,
+        #             targets='throttle_allocations',
+        #             units='unitless',
+        #             opt=True,
+        #             lower=0.0,
+        #             upper=1.0,
+        #         )
+        #     else:
+        #         opt = allocation == ThrottleAllocation.STATIC
+        #         kwargs = {}
+        #         if opt:
+        #             kwargs['lower'] = 0.0
+        #             kwargs['upper'] = 1.0
+        #
+        #         phase.add_parameter(
+        #             'throttle_allocations',
+        #             units='unitless',
+        #             val=val,
+        #             shape=(num_engine_type - 1,),
+        #             opt=opt,
+        #             **kwargs,
+        #         )
+        #
+        #     # Constrain throttle for each engine within bounds
+        #     phase.add_path_constraint(
+        #         Dynamic.Vehicle.Propulsion.THROTTLE,
+        #         lower=0.0,
+        #         upper=1.0,
+        #         units='unitless',
+        #     )
+
         # Add timeseries outputs
-        phase.add_timeseries_output(
-            Dynamic.Atmosphere.MACH,
-            output_name=Dynamic.Atmosphere.MACH,
-            units='unitless',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
+        phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL, units='lbm/h'
         )
-        phase.add_timeseries_output(
-            Dynamic.Mission.VELOCITY,
-            output_name=Dynamic.Mission.VELOCITY,
-            units='kn',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
         phase.add_timeseries_output('TAS_violation', output_name='TAS_violation', units='kn')
-        phase.add_timeseries_output(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            units='deg',
-        )
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            output_name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            units='deg',
-        )
         phase.add_timeseries_output('theta', output_name='theta', units='deg')
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
-        # TODO: These should be promoted in the 2dof mission outputs.
-        phase.add_timeseries_output('aerodynamics.CL', output_name='CL', units='unitless')
-        phase.add_timeseries_output('aerodynamics.CD', output_name='CD', units='unitless')
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
+        phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
 
         return phase
 
@@ -213,7 +252,18 @@ class FlightPhase(PhaseBuilder):
             'input_speed_type': self.user_options.get_val('input_speed_type'),
             'mach_target': self.user_options.get_val('mach_target'),
             'EAS_target': self.user_options.get_val('EAS_target', 'kn'),
+            # TODO Enable along with add_throttle_control in FlightODE.
+            # 'throttle_allocation': self.user_options.get_val('throttle_allocation'),
         }
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Vehicle.MASS,
+            Dynamic.Mission.TIME,
+        ]
+        return linked_vars
 
     def get_parameters(self):
         params = {}

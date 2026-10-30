@@ -1,5 +1,5 @@
-import numpy as np
 import unittest
+
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
@@ -16,9 +16,7 @@ from aviary.variable_info.variables import Aircraft, Settings
 
 @use_tempdirs
 class BWBUpdateDetailedWingDistTest(unittest.TestCase):
-    """
-    For BWB, test the updated detailed wing information when detailed wing information is given.
-    """
+    """For BWB, test the updated detailed wing information when detailed wing information is given."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -29,7 +27,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
         options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            [0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
         prob.model.add_subsystem(
@@ -40,7 +38,6 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.set_val(
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
             val=[
-                -1.0,
                 58.03,
                 0.4491,
                 0.3884,
@@ -60,7 +57,6 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.set_val(
             Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             val=[
-                -1.0,
                 0.15,
                 0.1132,
                 0.0928,
@@ -79,13 +75,14 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         )
         prob.set_val(
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
-            val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
+            val=[0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
         )
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=80.220756073526772)
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=112.3001936860821)
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11)
-        prob.set_val(Aircraft.Wing.ROOT_CHORD, 38.5)
+        prob.set_val(Aircraft.Wing.ROOT_CHORD, 55.0)
+        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.335)
         prob.run_model()
 
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
@@ -110,7 +107,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
 
         out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DISTRIBUTION')
         exp2 = [
-            0.11,
+            0.335,
             0.11,
             0.1132,
             0.0928,
@@ -132,17 +129,17 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
-        # partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        # assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
+        partial_data = self.prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
+        assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
     def test_case2(self):
-        """bwb300_baseline"""
+        """bwb300_baseline."""
         prob = self.prob
         options = self.aviary_options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
         options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
+            [0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
             units='unitless',
         )  # ETAW
         prob.model.add_subsystem(
@@ -152,21 +149,23 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
-            val=[-1.0, 48.25, 33.20, 18.97, 14.19, 10.20, 3.220],
+            val=[48.25, 33.20, 18.97, 14.19, 10.20, 3.220],
         )  # CHD
         prob.set_val(
             Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
-            val=[-1.0, 0.125, 0.125, 0.076, 0.076, 0.076, 0.06],
+            val=[0.125, 0.125, 0.076, 0.076, 0.076, 0.06],
         )  # TOC
         prob.set_val(
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
-            val=[0.0, 0.0, 0.0, 17.0, 17.0, 17.0],
+            val=[0.0, 10.0, 17.0, 17.0, 17.0],
         )  # SWL
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=49.77182929)
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=68.43)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=116.57609631)
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.1792)
-        prob.set_val(Aircraft.Wing.ROOT_CHORD, 38.5)
+        prob.set_val(Aircraft.Wing.ROOT_CHORD, 55.0)
+        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.335)
+
         prob.run_model()
 
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
@@ -174,22 +173,103 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         assert_near_equal(out1, exp1, tolerance=1e-8)
 
         out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DISTRIBUTION')
-        exp2 = [0.1792, 0.1792, 0.125, 0.076, 0.076, 0.076, 0.06]
+        exp2 = [0.335, 0.1792, 0.125, 0.076, 0.076, 0.076, 0.06]
         assert_near_equal(out2, exp2, tolerance=1e-10)
 
         out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DISTRIBUTION')
-        exp3 = [0.0, 0.0, 0.0, 17.0, 17.0, 17.0]
+        exp3 = [0.0, 0.0, 10.0, 17.0, 17.0, 17.0]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
-        # partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        # assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
+        partial_data = self.prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
+        assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
+
+    def test_case3(self):
+        # Tests wing_root_index>0
+        prob = self.prob
+
+        options = self.aviary_options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        options.set_val(
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
+            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            units='unitless',
+        )
+        options.set_val(Aircraft.BWB.WING_ROOT_INDEX, 1, units='unitless')
+
+        prob.model.add_subsystem(
+            'dist', BWBUpdateDetailedWingDist(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        setup_model_options(self.prob, options)
+        prob.setup(check=False, force_alloc_complex=True)
+
+        prob.set_val(
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
+            val=[
+                99.1,
+                58.03,
+                0.4491,
+                0.3884,
+                0.3317,
+                0.2886,
+                0.2537,
+                0.2269,
+                0.2121,
+                0.1983,
+                0.1843,
+                0.1704,
+                0.1565,
+                0.1426,
+                0.1287,
+            ],
+        )
+        prob.set_val(
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
+            val=[
+                0.18,
+                0.15,
+                0.1132,
+                0.0928,
+                0.0822,
+                0.0764,
+                0.0742,
+                0.0746,
+                0.0758,
+                0.0758,
+                0.0756,
+                0.0756,
+                0.0758,
+                0.076,
+                0.076,
+            ],
+        )
+        prob.set_val(
+            Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
+            val=[0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
+        )
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=80.220756073526772)
+        prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
+
+        prob.run_model()
+
+        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
+        exp1 = prob.get_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION)
+        assert_near_equal(out1, exp1, tolerance=1e-8)
+
+        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DISTRIBUTION')
+        exp2 = prob.get_val(Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION)
+        assert_near_equal(out2, exp2, tolerance=1e-10)
+
+        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DISTRIBUTION')
+        exp3 = prob.get_val(Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION)
+        assert_near_equal(out3, exp3, tolerance=1e-10)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs', step=1.1e-40)
+        assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
 
 @use_tempdirs
 class BWBComputeDetailedWingDistTest(unittest.TestCase):
-    """
-    For BWB, test the updated detailed wing information when detailed wing information is not given.
-    """
+    """For BWB, test the updated detailed wing information when detailed wing information is not given."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -200,11 +280,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
         self.aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [
-                0.0,
-                0.5,
-                1.0,
-            ],  # always set [0, 0.5, 1] but actual value in the middle will be computed
+            [0.5, 1.0],
             units='unitless',
         )
         prob.model.add_subsystem(
@@ -217,7 +293,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.LENGTH, val=137.5)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11)
-        prob.set_val(Aircraft.Wing.ROOT_CHORD, 63.96)
+        prob.set_val(Aircraft.Wing.ROOT_CHORD, 63.96 / 0.7)
         prob.set_val(Aircraft.Wing.SWEEP, 35.7, units='deg')
         prob.run_model()
 
@@ -233,28 +309,26 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         exp3 = [0.0, 15.33732285330093]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
-        # Had to switch to FD checking here because one of the underlying groups is using 'CS'
+        # Had to switch to FD checking here because one of the underlying groups is using 'cs'
         partial_data = self.prob.check_partials(out_stream=None, method='fd', form='central')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
 @use_tempdirs
 class BWBWingPrelimTest(unittest.TestCase):
-    """
-    For BWB with given detailed wing information, test the computation of wing parameters.
-    """
+    """For BWB with given detailed wing information, test the computation of wing parameters."""
 
     def setUp(self):
         self.prob = om.Problem()
 
     def test_case1(self):
-        """Computed detailed wing case"""
+        """Computed detailed wing case."""
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
         self.aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [0.0, 0.5, 1.0],
+            [0.5, 1.0],
             units='unitless',
         )
         prob.model.add_subsystem(
@@ -281,13 +355,13 @@ class BWBWingPrelimTest(unittest.TestCase):
         )
 
     def test_case2(self):
-        """Provided detailed wing case"""
+        """Provided detailed wing case."""
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
         self.aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            [0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
         prob.model.add_subsystem(
@@ -330,13 +404,13 @@ class BWBWingPrelimTest(unittest.TestCase):
         )
 
     def test_case3(self):
-        """Provided detailed wing case for bwb300_baseline"""
+        """Provided detailed wing case for bwb300_baseline."""
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
         self.aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
+            [0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
             units='unitless',
         )
         prob.model.add_subsystem(
@@ -365,3 +439,6 @@ class BWBWingPrelimTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # z = BWBUpdateDetailedWingDistTest()
+    # z.setUp()
+    # z.test_case1()

@@ -113,7 +113,6 @@ class LiftAndDragIncrements(om.ExplicitComponent):
             ],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
         self.declare_partials(
             'delta_CL',
@@ -130,7 +129,6 @@ class LiftAndDragIncrements(om.ExplicitComponent):
             ],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
 
     def compute(self, inputs, outputs):

@@ -5,9 +5,8 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.validation_cases.validation_data.test_data.generic_BWB_2dof_phase_info import phase_info
-
 from aviary.interface.run_aviary import run_aviary
+from aviary.validation_cases.validation_data.test_data.generic_BWB_2dof_phase_info import phase_info
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -24,7 +23,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
     @unittest.skip('Not converging in CI for unknown reasons - requires additional investigation')
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_bwb_GwGm_SNOPT(self):
+    def bench_test_bwb_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/blended_wing_body/generic_BWB_GASP.csv',
@@ -53,7 +52,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )
 
         assert_near_equal(
-            prob.get_val(Mission.TOTAL_FUEL, units='lbm'),
+            prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
             26154.38155505,
             tolerance=rtol,
         )

@@ -49,7 +49,9 @@ At this level, users need a strong understanding of Python, object-oriented prog
 ### Familiarity With Dependencies
 
 As users dig deeper into the Aviary code, they will encounter the various dependencies that Aviary relies on.
-The most important of these is OpenMDAO, which is the optimization framework that Aviary is built on top of. In addition to its [basic user guide](https://openmdao.org/newdocs/versions/latest/basic_user_guide/basic_user_guide.html), users are encouraged to learn more about the following topics in the [OpenMDAO Advanced User Guide](https://openmdao.org/newdocs/versions/latest/advanced_user_guide/advanced_user_guide.html):
+The most important of these is OpenMDAO, which is the optimization framework that Aviary is built on top of. 
+For more advanced users, or if you want to incorporate custom analysis into Aviary, basic OpenMDAO proficiency is essential.
+In addition to its [basic user guide](https://openmdao.org/newdocs/versions/latest/basic_user_guide/basic_user_guide.html), users are encouraged to learn more about the following topics in the [OpenMDAO Advanced User Guide](https://openmdao.org/newdocs/versions/latest/advanced_user_guide/advanced_user_guide.html):
 <!-- TODO: Review this list -->
   - [Implicit Components](https://openmdao.org/newdocs/versions/latest/features/core_features/working_with_components/implicit_component.html)
   - [N<sup>2</sup> Diagram](https://openmdao.org/newdocs/versions/latest/features/model_visualization/n2_details/n2_details.html)
@@ -64,6 +66,6 @@ Aviary also relies on [Dymos](https://github.com/OpenMDAO/Dymos) for its traject
   - [Phases and Segments](https://openmdao.github.io/dymos/getting_started/intro_to_dymos/intro_segments.html)
   - [Aircraft Balanced Field Length Calculation Example](https://openmdao.github.io/dymos/examples/balanced_field/balanced_field.html)
 
-For most Aviary models an understanding of these dependencies is not strictly required.
+For most Aviary models an understanding of these dependencies is not required.
 Experience with OpenMDAO and Dymos will be helpful when using Aviary's Python API and for diagnosing failed optimizations.
 For example, knowing how to scale variables in OpenMDAO or choosing a reasonable number of nodes in Dymos can help solve optimization convergence issues.
