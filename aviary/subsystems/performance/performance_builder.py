@@ -1,3 +1,6 @@
+from aviary.subsystems.performance.balanced_field_submodel import (
+    create_balance_field_subprob,
+)
 from aviary.subsystems.performance.performance_premission import PerformancePremission
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
@@ -23,3 +26,15 @@ class CorePerformanceBuilder(PerformanceBuilder):
 
     def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         return PerformancePremission()
+
+    def build_post_mission(
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
+    ):
+        if subsystem_options.get('balanced_field', False):
+            return create_balance_field_subprob(aviary_inputs)
+
+        return

@@ -1,0 +1,29 @@
+import openmdao.api as om
+
+import aviary.api as av
+from aviary.api import Mission
+from aviary.examples.external_subsystems.balanced_field.balanced_field_submodel import (
+    create_balance_field_subprob,
+)
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
+
+
+class BalancedFieldBuilder(SubsystemBuilder):
+    def __init__(self, name=None, meta_data=None):
+        if name is None:
+            name = 'balanced_field_length'
+
+        super().__init__(name=name, meta_data=meta_data)
+
+    def build_post_mission(
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
+    ):
+        return create_balance_field_subprob(aviary_inputs)
+
+
+if __name__ == '__main__':
+    unittest.main()
