@@ -21,7 +21,7 @@ class StaticGroup(om.Group):
         """
         external_outputs = promote_aircraft_and_mission_vars(self)
 
-        if not hasattr(self, 'core_subsystems'):
+        if self.name == 'post_mission':
             # TODO Post mission doesn't support core subsystems yet.
             return
 
