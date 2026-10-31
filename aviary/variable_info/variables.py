@@ -417,7 +417,6 @@ class Aircraft:
         PYLON_DRAG_FACTOR = 'aircraft:nacelle:pylon_drag_factor'
         REFERENCE_AVG_DIAMETER = 'aircraft:nacelle:reference_avg_diameter'
         REFERENCE_AVG_LENGTH = 'aircraft:nacelle:reference_avg_length'
-        SURFACE_AREA = 'aircraft:nacelle:surface_area'
         TOTAL_WETTED_AREA = 'aircraft:nacelle:total_wetted_area'
         WETTED_AREA = 'aircraft:nacelle:wetted_area'
         WETTED_AREA_SCALER = 'aircraft:nacelle:wetted_area_scaler'

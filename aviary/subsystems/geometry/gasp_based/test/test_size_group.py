@@ -153,7 +153,7 @@ class SizeGroupTestCase1(unittest.TestCase):
             Aircraft.VerticalTail.MOMENT_ARM: (49.9, 'ft'),
             Aircraft.Nacelle.AVG_DIAMETER: (7.35, 'ft'),
             Aircraft.Nacelle.AVG_LENGTH: (14.7, 'ft'),
-            Aircraft.Nacelle.SURFACE_AREA: (339.58, 'ft**2'),
+            Aircraft.Nacelle.WETTED_AREA: (339.58, 'ft**2'),
         }
 
         for var_name, (expected_val, units) in expected_values.items():
@@ -290,7 +290,7 @@ class SizeGroupTestCase2(unittest.TestCase):
             Aircraft.VerticalTail.MOMENT_ARM: (49.88094115, 'ft'),  # not actual GASP value
             Aircraft.Nacelle.AVG_DIAMETER: (7.35163168, 'ft'),  # may not be actual GASP value
             Aircraft.Nacelle.AVG_LENGTH: (14.70326336, 'ft'),  # may not be actual GASP value
-            Aircraft.Nacelle.SURFACE_AREA: (339.58410134, 'ft**2'),  # may not be actual GASP value
+            Aircraft.Nacelle.WETTED_AREA: (339.58410134, 'ft**2'),  # may not be actual GASP value
         }
 
         for var_name, (expected_val, units) in expected_values.items():
@@ -423,7 +423,7 @@ class SizeGroupTestCase3(unittest.TestCase):
             Aircraft.VerticalTail.MOMENT_ARM: (49.88094115, 'ft'),  # not actual GASP value
             Aircraft.Nacelle.AVG_DIAMETER: (7.35163168, 'ft'),  # may not be actual GASP value
             Aircraft.Nacelle.AVG_LENGTH: (14.70326336, 'ft'),  # may not be actual GASP value
-            Aircraft.Nacelle.SURFACE_AREA: (339.58410134, 'ft**2'),  # may not be actual GASP value
+            Aircraft.Nacelle.WETTED_AREA: (339.58410134, 'ft**2'),  # may not be actual GASP value
             Aircraft.Electrical.HYBRID_CABLE_LENGTH: (50.6032, 'ft'),  # not actual GASP value
         }
 
@@ -552,7 +552,7 @@ class SizeGroupTestCase4(unittest.TestCase):
             Aircraft.VerticalTail.MOMENT_ARM: (49.88094115, 'ft'),  # not actual GASP value
             Aircraft.Nacelle.AVG_DIAMETER: (7.35163168, 'ft'),  # may not be actual GASP value
             Aircraft.Nacelle.AVG_LENGTH: (14.70326336, 'ft'),  # may not be actual GASP value
-            Aircraft.Nacelle.SURFACE_AREA: (339.58410134, 'ft**2'),  # may not be actual GASP value
+            Aircraft.Nacelle.WETTED_AREA: (339.58410134, 'ft**2'),  # may not be actual GASP value
         }
 
         for var_name, (expected_val, units) in expected_values.items():
@@ -686,7 +686,7 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         Aircraft.VerticalTail.MOMENT_ARM -- ELTV = 27.8
         Aircraft.Nacelle.AVG_DIAMETER -- DBARN = 6.95
         Aircraft.Nacelle.AVG_LENGTH -- ELN = 9.44
-        Aircraft.Nacelle.SURFACE_AREA -- SN = 205.965 (for one engine)
+        Aircraft.Nacelle.WETTED_AREA -- SN = 205.965 (for one engine)
         """
         prob.run_model()
 
@@ -720,7 +720,7 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
             Aircraft.VerticalTail.MOMENT_ARM: (27.82191598, 'ft'),
             Aircraft.Nacelle.AVG_DIAMETER: (5.33382144, 'ft'),
             Aircraft.Nacelle.AVG_LENGTH: (7.24759657, 'ft'),
-            Aircraft.Nacelle.SURFACE_AREA: (121.44575974, 'ft**2'),
+            Aircraft.Nacelle.WETTED_AREA: (121.44575974, 'ft**2'),
         }
 
         for var_name, (expected_val, units) in expected_values.items():

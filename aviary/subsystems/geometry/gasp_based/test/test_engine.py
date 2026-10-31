@@ -248,14 +248,14 @@ class GASPEngineSizeGroupTestCase(unittest.TestCase):
         Testing GASP data case:
         Aircraft.Nacelle.AVG_DIAMETER -- DBARN = 5.3338151
         Aircraft.Nacelle.AVG_LENGTH -- ELN = 7.24758816
-        Aircraft.Nacelle.SURFACE_AREA -- SN/2 = 121.445763 (for one engine).
+        Aircraft.Nacelle.WETTED_AREA -- SN/2 = 121.445763 (for one engine).
         """
         self.prob.run_model()
 
         tol = 1e-6
         assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 5.33382144, tol)
         assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 7.24759657, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 121.44575974, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.WETTED_AREA], 121.44575974, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
