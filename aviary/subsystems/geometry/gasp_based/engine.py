@@ -421,9 +421,9 @@ class GASPEngineSizeGroup(om.Group):
             promotes_outputs=['*'],
         )
 
-        self.add_subsystem(
-            'nacelles_total_swet',
-            GASPEngineTotalWettedArea(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
+        # self.add_subsystem(
+        #     'eng_tot_swet',
+        #     GASPEngineTotalWettedArea(),
+        #     promotes_inputs=['*'],
+        #     promotes_outputs=['*'],
+        # )
