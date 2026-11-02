@@ -514,7 +514,7 @@
 <div class="viewcode-block" id="get_aviary_resource_path">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/functions.html#aviary.utils.functions.get_aviary_resource_path">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_aviary_resource_path</span><span class="p">(</span><span class="n">resource_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the file path of a resource in the Aviary package.</span>
 
 <span class="sd">    Parameters</span>
@@ -527,25 +527,25 @@
 <span class="sd">        path : Path</span>
 <span class="sd">            The file path of the resource.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">file_manager</span> <span class="o">=</span> <span class="n">ExitStack</span><span class="p">()</span>
     <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">file_manager</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">resource_name</span><span class="p">:</span>
-        <span class="n">ref</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;aviary&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">resource_name</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">'aviary'</span><span class="p">)</span> <span class="o">/</span> <span class="n">resource_name</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">ref</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">&#39;aviary&#39;</span><span class="p">)</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s1">'aviary'</span><span class="p">)</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">file_manager</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">as_file</span><span class="p">(</span><span class="n">ref</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">path</span></div>
 
 
 
-<span class="n">top_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">get_aviary_resource_path</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+<span class="n">top_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">get_aviary_resource_path</span><span class="p">(</span><span class="s1">''</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="set_aviary_initial_values">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/functions.html#aviary.utils.functions.set_aviary_initial_values">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_aviary_initial_values</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Sets initial values for all inputs in the aviary inputs.</span>
 
 <span class="sd">    This method is mostly used in tests and level 3 scripts.</span>
@@ -556,7 +556,7 @@
 <span class="sd">        OpenMDAO problem after setup.</span>
 <span class="sd">    aviary_inputs : AviaryValues</span>
 <span class="sd">        Instance of AviaryValues containing all initial values.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span> <span class="ow">in</span> <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
@@ -570,7 +570,7 @@
 <div class="viewcode-block" id="set_aviary_input_defaults">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/functions.html#aviary.utils.functions.set_aviary_input_defaults">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_aviary_input_defaults</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This function sets the default values and units for any inputs prior to</span>
 <span class="sd">    setup. This is needed to resolve ambiguities when inputs are promoted</span>
 <span class="sd">    with the same name, but different units or values.</span>
@@ -587,15 +587,15 @@
 <span class="sd">    aviary_inputs : AviaryValues</span>
 <span class="sd">        Instance of AviaryValues containing all initial values.</span>
 <span class="sd">    meta_data : dict</span>
-<span class="sd">        (Optional) Dictionary of aircraft metadata. Uses Aviary&#39;s built-in</span>
+<span class="sd">        (Optional) Dictionary of aircraft metadata. Uses Aviary's built-in</span>
 <span class="sd">        metadata by default.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">aviary_inputs</span><span class="p">:</span>
             <span class="n">val</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
-            <span class="n">units</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">'default_value'</span><span class="p">]</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">'units'</span><span class="p">]</span>
 
         <span class="n">model</span><span class="o">.</span><span class="n">set_input_defaults</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span></div>
 
@@ -604,11 +604,11 @@
 <div class="viewcode-block" id="convert_strings_to_data">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/functions.html#aviary.utils.functions.convert_strings_to_data">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_strings_to_data</span><span class="p">(</span><span class="n">input_string</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    convert_strings_to_data will convert a string or list of strings to usable data.</span>
-<span class="sd">    Strings that can&#39;t be converted to numbers will attempt to store as a boolean,</span>
+<span class="sd">    Strings that can't be converted to numbers will attempt to store as a boolean,</span>
 <span class="sd">    otherwise they are passed as is.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># pack input_string into a list if it is not</span>
     <span class="c1"># setup output list size</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_string</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -620,22 +620,22 @@
         <span class="n">value_list</span> <span class="o">=</span> <span class="n">input_string</span>
 
     <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">dat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_string</span><span class="p">):</span>
-        <span class="n">dat</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]&#39;</span><span class="p">)</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">'[]'</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># if the value is a number store it as a float or an int as appropriate</span>
             <span class="c1"># BUG this returns floats that can be converted to int (e.g. 1.0) as an</span>
             <span class="c1"># int (1), even if the variable requires floats</span>
-            <span class="n">value_list</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dat</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
+            <span class="n">value_list</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="k">if</span> <span class="s1">'.'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dat</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="c1"># store value as a boolean if it is a string that represents True or False</span>
-            <span class="k">if</span> <span class="n">dat</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dat</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'true'</span><span class="p">:</span>
                 <span class="n">value_list</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">elif</span> <span class="n">dat</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;false&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">dat</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'false'</span><span class="p">:</span>
                 <span class="n">value_list</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># if the value isn&#39;t a number or a boolean, store it as a string</span>
+                <span class="c1"># if the value isn't a number or a boolean, store it as a string</span>
                 <span class="n">value_list</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">dat</span>
-    <span class="c1"># unpack output value from list if it isn&#39;t supposed to be one</span>
+    <span class="c1"># unpack output value from list if it isn't supposed to be one</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">islist</span><span class="p">:</span>
         <span class="n">value_list</span> <span class="o">=</span> <span class="n">value_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">value_list</span></div>
@@ -645,22 +645,22 @@
 <div class="viewcode-block" id="promote_aircraft_and_mission_vars">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/functions.html#aviary.utils.functions.promote_aircraft_and_mission_vars">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">promote_aircraft_and_mission_vars</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Promotes inputs and outputs in Aircraft and Mission hierarchy categories for provided group.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Promotes inputs and outputs in Aircraft and Mission hierarchy categories for provided group."""</span>
     <span class="n">external_outputs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">system_iter</span><span class="p">(</span><span class="n">recurse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># Skip all aviary systems.</span>
-        <span class="k">if</span> <span class="n">comp</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;core_subsystems&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">comp</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">'core_subsystems'</span><span class="p">:</span>
             <span class="k">continue</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">resolver</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">_resolver</span>
-            <span class="n">out_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">resolver</span><span class="o">.</span><span class="n">prom_iter</span><span class="p">(</span><span class="n">iotype</span><span class="o">=</span><span class="s1">&#39;output&#39;</span><span class="p">)]</span>
-            <span class="n">in_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">resolver</span><span class="o">.</span><span class="n">prom_iter</span><span class="p">(</span><span class="n">iotype</span><span class="o">=</span><span class="s1">&#39;input&#39;</span><span class="p">)]</span>
+            <span class="n">out_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">resolver</span><span class="o">.</span><span class="n">prom_iter</span><span class="p">(</span><span class="n">iotype</span><span class="o">=</span><span class="s1">'output'</span><span class="p">)]</span>
+            <span class="n">in_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">resolver</span><span class="o">.</span><span class="n">prom_iter</span><span class="p">(</span><span class="n">iotype</span><span class="o">=</span><span class="s1">'input'</span><span class="p">)]</span>
 
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="c1"># This is an older version of OpenMDAO</span>
-            <span class="n">out_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">comp</span><span class="o">.</span><span class="n">_var_allprocs_prom2abs_list</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]]</span>
-            <span class="n">in_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">comp</span><span class="o">.</span><span class="n">_var_allprocs_prom2abs_list</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]]</span>
+            <span class="n">out_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">comp</span><span class="o">.</span><span class="n">_var_allprocs_prom2abs_list</span><span class="p">[</span><span class="s1">'output'</span><span class="p">]]</span>
+            <span class="n">in_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">comp</span><span class="o">.</span><span class="n">_var_allprocs_prom2abs_list</span><span class="p">[</span><span class="s1">'input'</span><span class="p">]]</span>
 
         <span class="n">external_outputs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">out_names</span><span class="p">)</span>
 
@@ -668,15 +668,15 @@
         <span class="n">promote_in</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">promote_out</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="n">stem</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mission:&#39;</span><span class="p">,</span> <span class="s1">&#39;aircraft:&#39;</span><span class="p">,</span> <span class="s1">&#39;dynamic:&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">stem</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'mission:'</span><span class="p">,</span> <span class="s1">'aircraft:'</span><span class="p">,</span> <span class="s1">'dynamic:'</span><span class="p">]:</span>
             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">out_names</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">stem</span><span class="p">):</span>
-                    <span class="n">promote_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">*&#39;</span><span class="p">)</span>
+                    <span class="n">promote_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">*'</span><span class="p">)</span>
                     <span class="k">break</span>
 
             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">in_names</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">stem</span><span class="p">):</span>
-                    <span class="n">promote_in</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">*&#39;</span><span class="p">)</span>
+                    <span class="n">promote_in</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">*'</span><span class="p">)</span>
                     <span class="k">break</span>
 
         <span class="n">group</span><span class="o">.</span><span class="n">promotes</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">promote_out</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">promote_in</span><span class="p">)</span>
@@ -686,13 +686,13 @@
 
 
 <span class="c1"># Python 3.10 adds the ability to specify multiple types using type hints like so:</span>
-<span class="c1"># &quot;str | Path&quot; which is cleaner but Aviary still supports older versions</span>
+<span class="c1"># "str | Path" which is cleaner but Aviary still supports older versions</span>
 
 
 <div class="viewcode-block" id="get_path">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/functions.html#aviary.utils.functions.get_path">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_path</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert a string or Path object to an absolute Path object, prioritizing different locations.</span>
 
 <span class="sd">    This function attempts to find the existence of a path in the following order:</span>
@@ -718,7 +718,7 @@
 <span class="sd">    ------</span>
 <span class="sd">    FileNotFoundError</span>
 <span class="sd">        If the path is not found in any of the prioritized locations.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Store the original path for reference in error messages.</span>
     <span class="n">original_path</span> <span class="o">=</span> <span class="n">path</span>
 
@@ -732,24 +732,24 @@
         <span class="n">relative_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="n">path</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">relative_path</span>
 
-    <span class="c1"># If the path still doesn&#39;t exist, attempt to find it relative to the Aviary package.</span>
+    <span class="c1"># If the path still doesn't exist, attempt to find it relative to the Aviary package.</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>  <span class="c1"># DEBUG</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unable to locate &#39;</span><span class="si">{</span><span class="n">original_path</span><span class="si">}</span><span class="s2">&#39; as an absolute or relative path. &quot;</span>
-                <span class="s1">&#39;Trying Aviary package path.&#39;</span>
+                <span class="sa">f</span><span class="s2">"Unable to locate '</span><span class="si">{</span><span class="n">original_path</span><span class="si">}</span><span class="s2">' as an absolute or relative path. "</span>
+                <span class="s1">'Trying Aviary package path.'</span>
             <span class="p">)</span>
         <span class="c1"># Determine the path relative to the Aviary package.</span>
         <span class="n">aviary_based_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">get_aviary_resource_path</span><span class="p">(</span><span class="n">original_path</span><span class="p">))</span>
 
         <span class="n">path</span> <span class="o">=</span> <span class="n">aviary_based_path</span>
 
-    <span class="c1"># If the path still doesn&#39;t exist, attempt to find it in the models directory.</span>
+    <span class="c1"># If the path still doesn't exist, attempt to find it in the models directory.</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>  <span class="c1"># DEBUG</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unable to locate &#39;</span><span class="si">{</span><span class="n">aviary_based_path</span><span class="si">}</span><span class="s2">&#39; as an Aviary package path, &quot;</span>
-                <span class="s1">&#39;checking built-in models&#39;</span>
+                <span class="sa">f</span><span class="s2">"Unable to locate '</span><span class="si">{</span><span class="n">aviary_based_path</span><span class="si">}</span><span class="s2">' as an Aviary package path, "</span>
+                <span class="s1">'checking built-in models'</span>
             <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">hangar_based_path</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="n">original_path</span><span class="p">)</span>
@@ -757,17 +757,17 @@
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="k">pass</span>
 
-    <span class="c1"># If the path still doesn&#39;t exist in any of the prioritized locations, raise an error.</span>
+    <span class="c1"># If the path still doesn't exist in any of the prioritized locations, raise an error.</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;File not found in absolute path: </span><span class="si">{</span><span class="n">original_path</span><span class="si">}</span><span class="s1">, relative path: &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s1">, or Aviary-based path: &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">get_aviary_resource_path</span><span class="p">(</span><span class="n">original_path</span><span class="p">))</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">'File not found in absolute path: </span><span class="si">{</span><span class="n">original_path</span><span class="si">}</span><span class="s1">, relative path: '</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">relative_path</span><span class="si">}</span><span class="s1">, or Aviary-based path: '</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">get_aviary_resource_path</span><span class="p">(</span><span class="n">original_path</span><span class="p">))</span><span class="si">}</span><span class="s1">'</span>
         <span class="p">)</span>
 
     <span class="c1"># Print the path being used.</span>
     <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Found </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Found </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">path</span></div>
 
@@ -776,7 +776,7 @@
 <div class="viewcode-block" id="get_model">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/functions.html#aviary.utils.functions.get_model">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This function attempts to find the path to a file or folder in aviary/models</span>
 <span class="sd">    If the path cannot be found in any of the locations, a FileNotFoundError is raised.</span>
 
@@ -794,9 +794,9 @@
 <span class="sd">    ------</span>
 <span class="sd">    FileNotFoundError</span>
 <span class="sd">        If the path is not found.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Get the path to Aviary&#39;s models</span>
-    <span class="n">aviary_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">get_aviary_resource_path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;models&#39;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))))</span>
+<span class="sd">    """</span>
+    <span class="c1"># Get the path to Aviary's models</span>
+    <span class="n">aviary_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">get_aviary_resource_path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s1">'models'</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))))</span>
     <span class="c1"># Check if provided path is valid</span>
     <span class="k">if</span> <span class="n">aviary_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">aviary_path</span>
@@ -804,7 +804,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
 
-        <span class="n">contents</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_aviary_resource_path</span><span class="p">(</span><span class="s1">&#39;models&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;**&#39;</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">get_aviary_resource_path</span><span class="p">(</span><span class="s1">'models'</span><span class="p">)</span> <span class="o">/</span> <span class="s1">'**'</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">close_match</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
             <span class="n">item</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
@@ -819,7 +819,7 @@
         <span class="n">best_match</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># if a .csv file exists, use it as the best match</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">close_match</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;.csv&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'.csv'</span><span class="p">:</span>
                 <span class="n">best_match</span> <span class="o">=</span> <span class="n">item</span>
                 <span class="k">break</span>
         <span class="k">if</span> <span class="n">best_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -827,8 +827,8 @@
             <span class="n">best_match</span> <span class="o">=</span> <span class="n">close_match</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">best_match</span>
 
-    <span class="c1"># If the path doesn&#39;t exist, raise an error.</span>
-    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;File or Folder not found in Aviary&#39;s hangar&quot;</span><span class="p">)</span></div>
+    <span class="c1"># If the path doesn't exist, raise an error.</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">"File or Folder not found in Aviary's hangar"</span><span class="p">)</span></div>
 
 </pre></div>
 

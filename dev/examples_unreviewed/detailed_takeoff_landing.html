@@ -648,207 +648,207 @@ This means two main things:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;pre_mission&#39;: {&#39;include_takeoff&#39;: False, &#39;optimize_mass&#39;: False},
- &#39;AB&#39;: {&#39;user_options&#39;: {&#39;num_segments&#39;: 3,
-                         &#39;order&#39;: 3,
-                         &#39;ground_roll&#39;: True,
-                         &#39;time_duration_ref&#39;: (100.0, &#39;kn&#39;),
-                         &#39;time_duration_bounds&#39;: ((100.0, 500.0), &#39;kn&#39;),
-                         &#39;time_initial&#39;: (0.0, &#39;kn&#39;),
-                         &#39;mass_initial&#39;: (175000.0, &#39;lbm&#39;),
-                         &#39;distance_initial&#39;: (0.0, &#39;ft&#39;)},
-        &#39;initial_guesses&#39;: {&#39;distance&#39;: [(0.0, 2000.0), &#39;ft&#39;],
-                            &#39;time&#39;: [(0.0, 20.0), &#39;s&#39;],
-                            &#39;velocity&#39;: [(1.0, 120.0), &#39;kn&#39;],
-                            &#39;mass&#39;: [(175000.0, 174850.0), &#39;lbm&#39;]}},
- &#39;rotate&#39;: {&#39;subsystem_options&#39;: {&#39;aerodynamics&#39;: {&#39;method&#39;: &#39;low_speed&#39;}},
-            &#39;user_options&#39;: {&#39;num_segments&#39;: 3,
-                             &#39;order&#39;: 3,
-                             &#39;ground_roll&#39;: True,
-                             &#39;clean&#39;: False,
-                             &#39;time_initial_ref&#39;: (2000.0, &#39;ft&#39;),
-                             &#39;time_initial_bounds&#39;: ((1000.0, 3000.0), &#39;ft&#39;),
-                             &#39;time_duration_ref&#39;: (1000.0, &#39;ft&#39;),
-                             &#39;time_duration_bounds&#39;: ((200.0, 2000.0), &#39;ft&#39;),
-                             &#39;throttle_enforcement&#39;: &#39;boundary_constraint&#39;,
-                             &#39;rotation&#39;: True,
-                             &#39;mass_ref&#39;: (170000, &#39;lbm&#39;),
-                             &#39;mach_optimize&#39;: True,
-                             &#39;mach_polynomial_order&#39;: 1,
-                             &#39;mach_bounds&#39;: ((0.18, 0.2), &#39;unitless&#39;),
-                             &#39;mach_ref&#39;: (1.0, &#39;unitless&#39;),
-                             &#39;altitude_optimize&#39;: False,
-                             &#39;altitude_polynomial_order&#39;: 1,
-                             &#39;altitude_initial&#39;: (0.0, &#39;ft&#39;),
-                             &#39;altitude_final&#39;: (0.0, &#39;ft&#39;),
-                             &#39;constraints&#39;: {&#39;normal_force&#39;: {&#39;equals&#39;: 0.0,
-                                                              &#39;loc&#39;: &#39;final&#39;,
-                                                              &#39;units&#39;: &#39;lbf&#39;,
-                                                              &#39;type&#39;: &#39;boundary&#39;,
-                                                              &#39;ref&#39;: 100000.0}}},
-            &#39;initial_guesses&#39;: {&#39;distance&#39;: [(2000.0, 1000.0), &#39;ft&#39;],
-                                &#39;time&#39;: [(20.0, 25.0), &#39;s&#39;],
-                                &#39;mach&#39;: [(0.18, 0.2), &#39;unitless&#39;],
-                                &#39;mass&#39;: [(174850.0, 174840.0), &#39;lbm&#39;],
-                                &#39;angle_of_attack&#39;: [(0.0, 12.0), &#39;deg&#39;]}},
- &#39;BC&#39;: {&#39;subsystem_options&#39;: {&#39;aerodynamics&#39;: {&#39;method&#39;: &#39;low_speed&#39;}},
-        &#39;user_options&#39;: {&#39;num_segments&#39;: 3,
-                         &#39;order&#39;: 3,
-                         &#39;clean&#39;: False,
-                         &#39;time_initial_ref&#39;: (3000.0, &#39;ft&#39;),
-                         &#39;time_initial_bounds&#39;: ((1.0, 16000.0), &#39;ft&#39;),
-                         &#39;time_duration_ref&#39;: (1000.0, &#39;ft&#39;),
-                         &#39;time_duration_bounds&#39;: ((500.0, 1500.0), &#39;ft&#39;),
-                         &#39;mach_optimize&#39;: True,
-                         &#39;mach_polynomial_order&#39;: 1,
-                         &#39;mach_bounds&#39;: ((0.2, 0.22), &#39;unitless&#39;),
-                         &#39;mach_ref&#39;: (1.0, &#39;unitless&#39;),
-                         &#39;altitude_optimize&#39;: True,
-                         &#39;altitude_polynomial_order&#39;: 1,
-                         &#39;altitude_bounds&#39;: ((0.0, 150.0), &#39;ft&#39;),
-                         &#39;altitude_final&#39;: (50.0, &#39;ft&#39;),
-                         &#39;mass_ref&#39;: (170000, &#39;lbm&#39;),
-                         &#39;throttle_enforcement&#39;: &#39;boundary_constraint&#39;,
-                         &#39;rotation&#39;: False},
-        &#39;initial_guesses&#39;: {&#39;distance&#39;: [(3000.0, 1000.0), &#39;ft&#39;],
-                            &#39;time&#39;: [(25.0, 32.0), &#39;s&#39;],
-                            &#39;mach&#39;: [(0.2, 0.22), &#39;unitless&#39;],
-                            &#39;altitude&#39;: [(0.0, 50.0), &#39;ft&#39;],
-                            &#39;mass&#39;: [(174840.0, 174820.0), &#39;lbm&#39;]}},
- &#39;C_to_P2&#39;: {&#39;subsystem_options&#39;: {&#39;aerodynamics&#39;: {&#39;method&#39;: &#39;low_speed&#39;}},
-             &#39;user_options&#39;: {&#39;num_segments&#39;: 3,
-                              &#39;order&#39;: 3,
-                              &#39;clean&#39;: False,
-                              &#39;time_initial_ref&#39;: (4000.0, &#39;ft&#39;),
-                              &#39;time_initial_bounds&#39;: ((1000.0, 20000.0), &#39;ft&#39;),
-                              &#39;time_duration_ref&#39;: (1000.0, &#39;ft&#39;),
-                              &#39;time_duration_bounds&#39;: ((3000.0, 20000.0), &#39;ft&#39;),
-                              &#39;mach_optimize&#39;: True,
-                              &#39;mach_polynomial_order&#39;: 1,
-                              &#39;mach_bounds&#39;: ((0.22, 0.3), &#39;unitless&#39;),
-                              &#39;mach_ref&#39;: (1.0, &#39;unitless&#39;),
-                              &#39;altitude_optimize&#39;: True,
-                              &#39;altitude_polynomial_order&#39;: 1,
-                              &#39;altitude_initial&#39;: (50.0, &#39;ft&#39;),
-                              &#39;altitude_final&#39;: (985.0, &#39;ft&#39;),
-                              &#39;altitude_bounds&#39;: ((0.0, 985.0), &#39;ft&#39;),
-                              &#39;mass_ref&#39;: (170000, &#39;lbm&#39;),
-                              &#39;throttle_enforcement&#39;: &#39;boundary_constraint&#39;},
-             &#39;initial_guesses&#39;: {&#39;distance&#39;: [(4000.0, 10000.0), &#39;ft&#39;],
-                                 &#39;time&#39;: [(32.0, 60.0), &#39;s&#39;],
-                                 &#39;mach&#39;: [(0.22, 0.3), &#39;unitless&#39;],
-                                 &#39;mass&#39;: [(174820.0, 174800.0), &#39;lbm&#39;]}},
- &#39;P2_to_D&#39;: {&#39;subsystem_options&#39;: {&#39;aerodynamics&#39;: {&#39;method&#39;: &#39;low_speed&#39;}},
-             &#39;user_options&#39;: {&#39;num_segments&#39;: 3,
-                              &#39;order&#39;: 3,
-                              &#39;clean&#39;: False,
-                              &#39;time_initial_ref&#39;: (14000.0, &#39;ft&#39;),
-                              &#39;time_initial_bounds&#39;: ((1000.0, 20000.0), &#39;ft&#39;),
-                              &#39;time_duration_ref&#39;: (1000.0, &#39;ft&#39;),
-                              &#39;time_duration_bounds&#39;: ((3000.0, 20000.0), &#39;ft&#39;),
-                              &#39;mach_optimize&#39;: True,
-                              &#39;mach_polynomial_order&#39;: 1,
-                              &#39;mach_bounds&#39;: ((0.22, 0.3), &#39;unitless&#39;),
-                              &#39;mach_ref&#39;: (1.0, &#39;unitless&#39;),
-                              &#39;altitude_optimize&#39;: True,
-                              &#39;altitude_polynomial_order&#39;: 1,
-                              &#39;altitude_bounds&#39;: ((985.0, 2000.0), &#39;ft&#39;),
-                              &#39;mass_ref&#39;: (170000, &#39;lbm&#39;),
-                              &#39;throttle_enforcement&#39;: &#39;path_constraint&#39;},
-             &#39;initial_guesses&#39;: {&#39;distance&#39;: [(14000.0, 4000.0), &#39;ft&#39;],
-                                 &#39;time&#39;: [(60.0, 80.0), &#39;s&#39;],
-                                 &#39;mach&#39;: [(0.22, 0.3), &#39;unitless&#39;],
-                                 &#39;altitude&#39;: [(985.0, 1100.0), &#39;ft&#39;],
-                                 &#39;mass&#39;: [(174800.0, 174500.0), &#39;lbm&#39;]}},
- &#39;DE&#39;: {&#39;subsystem_options&#39;: {&#39;aerodynamics&#39;: {&#39;method&#39;: &#39;low_speed&#39;}},
-        &#39;user_options&#39;: {&#39;num_segments&#39;: 3,
-                         &#39;order&#39;: 3,
-                         &#39;clean&#39;: False,
-                         &#39;time_initial_ref&#39;: (18000.0, &#39;ft&#39;),
-                         &#39;time_initial_bounds&#39;: ((500.0, 30000.0), &#39;ft&#39;),
-                         &#39;time_duration_ref&#39;: (1000.0, &#39;ft&#39;),
-                         &#39;time_duration_bounds&#39;: ((1000, 5000.0), &#39;ft&#39;),
-                         &#39;mach_optimize&#39;: True,
-                         &#39;mach_polynomial_order&#39;: 2,
-                         &#39;mach_bounds&#39;: ((0.24, 0.32), &#39;unitless&#39;),
-                         &#39;mach_ref&#39;: (1.0, &#39;unitless&#39;),
-                         &#39;altitude_optimize&#39;: True,
-                         &#39;altitude_polynomial_order&#39;: 2,
-                         &#39;altitude_bounds&#39;: ((985.0, 2000.0), &#39;ft&#39;),
-                         &#39;mass_ref&#39;: (170000, &#39;lbm&#39;),
-                         &#39;throttle_enforcement&#39;: &#39;path_constraint&#39;,
-                         &#39;constraints&#39;: {&#39;flight_path_angle&#39;: {&#39;equals&#39;: 2.29,
-                                                               &#39;loc&#39;: &#39;final&#39;,
-                                                               &#39;units&#39;: &#39;deg&#39;,
-                                                               &#39;type&#39;: &#39;boundary&#39;}}},
-        &#39;initial_guesses&#39;: {&#39;distance&#39;: [(18000.0, 2000.0), &#39;ft&#39;],
-                            &#39;mass&#39;: [(174500.0, 174400.0), &#39;lbm&#39;],
-                            &#39;mach&#39;: [(0.3, 0.3), &#39;unitless&#39;],
-                            &#39;altitude&#39;: [(1100.0, 1200.0), &#39;ft&#39;],
-                            &#39;time&#39;: [(80.0, 85.0), &#39;s&#39;]}},
- &#39;E_to_P1&#39;: {&#39;subsystem_options&#39;: {&#39;aerodynamics&#39;: {&#39;method&#39;: &#39;low_speed&#39;}},
-             &#39;user_options&#39;: {&#39;num_segments&#39;: 3,
-                              &#39;order&#39;: 3,
-                              &#39;clean&#39;: False,
-                              &#39;time_initial_ref&#39;: (20000.0, &#39;ft&#39;),
-                              &#39;time_initial_bounds&#39;: ((500.0, 50000.0), &#39;ft&#39;),
-                              &#39;time_duration_ref&#39;: (1000.0, &#39;ft&#39;),
-                              &#39;time_duration_bounds&#39;: ((100.0, 20000.0), &#39;ft&#39;),
-                              &#39;mach_optimize&#39;: True,
-                              &#39;mach_polynomial_order&#39;: 1,
-                              &#39;mach_bounds&#39;: ((0.24, 0.32), &#39;unitless&#39;),
-                              &#39;mach_ref&#39;: (1.0, &#39;unitless&#39;),
-                              &#39;altitude_optimize&#39;: True,
-                              &#39;altitude_polynomial_order&#39;: 1,
-                              &#39;altitude_bounds&#39;: ((1000.0, 3000.0), &#39;ft&#39;),
-                              &#39;mass_ref&#39;: (170000, &#39;lbm&#39;),
-                              &#39;throttle_enforcement&#39;: &#39;path_constraint&#39;,
-                              &#39;constraints&#39;: {&#39;distance&#39;: {&#39;equals&#39;: 21325.0,
-                                                           &#39;units&#39;: &#39;ft&#39;,
-                                                           &#39;type&#39;: &#39;boundary&#39;,
-                                                           &#39;loc&#39;: &#39;final&#39;,
-                                                           &#39;ref&#39;: 30000.0},
-                                              &#39;flight_path_angle&#39;: {&#39;equals&#39;: 2.29,
-                                                                    &#39;loc&#39;: &#39;final&#39;,
-                                                                    &#39;units&#39;: &#39;deg&#39;,
-                                                                    &#39;type&#39;: &#39;boundary&#39;}}},
-             &#39;initial_guesses&#39;: {&#39;distance&#39;: [(20000.0, 1325.0), &#39;ft&#39;],
-                                 &#39;mass&#39;: [(174400.0, 174300.0), &#39;lbm&#39;],
-                                 &#39;mach&#39;: [(0.3, 0.3), &#39;unitless&#39;],
-                                 &#39;altitude&#39;: [(1100.0, 1200.0), &#39;ft&#39;],
-                                 &#39;time&#39;: [(85.0, 90.0), &#39;s&#39;]}},
- &#39;P1_to_F&#39;: {&#39;subsystem_options&#39;: {&#39;aerodynamics&#39;: {&#39;method&#39;: &#39;low_speed&#39;}},
-             &#39;user_options&#39;: {&#39;num_segments&#39;: 3,
-                              &#39;order&#39;: 3,
-                              &#39;clean&#39;: False,
-                              &#39;time_initial_ref&#39;: (1000.0, &#39;ft&#39;),
-                              &#39;time_initial_bounds&#39;: ((20000.0, 50000.0), &#39;ft&#39;),
-                              &#39;time_duration_ref&#39;: (1000.0, &#39;ft&#39;),
-                              &#39;time_duration_bounds&#39;: ((100.0, 50000.0), &#39;ft&#39;),
-                              &#39;mach_optimize&#39;: True,
-                              &#39;mach_polynomial_order&#39;: 3,
-                              &#39;mach_bounds&#39;: ((0.24, 0.32), &#39;unitless&#39;),
-                              &#39;mach_ref&#39;: (1.0, &#39;unitless&#39;),
-                              &#39;altitude_optimize&#39;: True,
-                              &#39;altitude_polynomial_order&#39;: 1,
-                              &#39;altitude_bounds&#39;: ((1000.0, 3000.0), &#39;ft&#39;),
-                              &#39;mass_ref&#39;: (170000, &#39;lbm&#39;),
-                              &#39;throttle_enforcement&#39;: &#39;boundary_constraint&#39;,
-                              &#39;constraints&#39;: {&#39;flight_path_angle&#39;: {&#39;equals&#39;: 2.29,
-                                                                    &#39;loc&#39;: &#39;final&#39;,
-                                                                    &#39;units&#39;: &#39;deg&#39;,
-                                                                    &#39;type&#39;: &#39;boundary&#39;},
-                                              &#39;distance&#39;: {&#39;equals&#39;: 30000.0,
-                                                           &#39;units&#39;: &#39;ft&#39;,
-                                                           &#39;type&#39;: &#39;boundary&#39;,
-                                                           &#39;loc&#39;: &#39;final&#39;,
-                                                           &#39;ref&#39;: 30000.0}}},
-             &#39;initial_guesses&#39;: {&#39;distance&#39;: [(21325.0, 50000.0), &#39;ft&#39;],
-                                 &#39;mass&#39;: [(174300.0, 174200.0), &#39;lbm&#39;],
-                                 &#39;mach&#39;: [(0.3, 0.3), &#39;unitless&#39;],
-                                 &#39;altitude&#39;: [(1200.0, 2000.0), &#39;ft&#39;],
-                                 &#39;time&#39;: [(90.0, 180.0), &#39;s&#39;]}},
- &#39;post_mission&#39;: {&#39;include_landing&#39;: False}}
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
+ 'AB': {'user_options': {'num_segments': 3,
+                         'order': 3,
+                         'ground_roll': True,
+                         'time_duration_ref': (100.0, 'kn'),
+                         'time_duration_bounds': ((100.0, 500.0), 'kn'),
+                         'time_initial': (0.0, 'kn'),
+                         'mass_initial': (175000.0, 'lbm'),
+                         'distance_initial': (0.0, 'ft')},
+        'initial_guesses': {'distance': [(0.0, 2000.0), 'ft'],
+                            'time': [(0.0, 20.0), 's'],
+                            'velocity': [(1.0, 120.0), 'kn'],
+                            'mass': [(175000.0, 174850.0), 'lbm']}},
+ 'rotate': {'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
+            'user_options': {'num_segments': 3,
+                             'order': 3,
+                             'ground_roll': True,
+                             'clean': False,
+                             'time_initial_ref': (2000.0, 'ft'),
+                             'time_initial_bounds': ((1000.0, 3000.0), 'ft'),
+                             'time_duration_ref': (1000.0, 'ft'),
+                             'time_duration_bounds': ((200.0, 2000.0), 'ft'),
+                             'throttle_enforcement': 'boundary_constraint',
+                             'rotation': True,
+                             'mass_ref': (170000, 'lbm'),
+                             'mach_optimize': True,
+                             'mach_polynomial_order': 1,
+                             'mach_bounds': ((0.18, 0.2), 'unitless'),
+                             'mach_ref': (1.0, 'unitless'),
+                             'altitude_optimize': False,
+                             'altitude_polynomial_order': 1,
+                             'altitude_initial': (0.0, 'ft'),
+                             'altitude_final': (0.0, 'ft'),
+                             'constraints': {'normal_force': {'equals': 0.0,
+                                                              'loc': 'final',
+                                                              'units': 'lbf',
+                                                              'type': 'boundary',
+                                                              'ref': 100000.0}}},
+            'initial_guesses': {'distance': [(2000.0, 1000.0), 'ft'],
+                                'time': [(20.0, 25.0), 's'],
+                                'mach': [(0.18, 0.2), 'unitless'],
+                                'mass': [(174850.0, 174840.0), 'lbm'],
+                                'angle_of_attack': [(0.0, 12.0), 'deg']}},
+ 'BC': {'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
+        'user_options': {'num_segments': 3,
+                         'order': 3,
+                         'clean': False,
+                         'time_initial_ref': (3000.0, 'ft'),
+                         'time_initial_bounds': ((1.0, 16000.0), 'ft'),
+                         'time_duration_ref': (1000.0, 'ft'),
+                         'time_duration_bounds': ((500.0, 1500.0), 'ft'),
+                         'mach_optimize': True,
+                         'mach_polynomial_order': 1,
+                         'mach_bounds': ((0.2, 0.22), 'unitless'),
+                         'mach_ref': (1.0, 'unitless'),
+                         'altitude_optimize': True,
+                         'altitude_polynomial_order': 1,
+                         'altitude_bounds': ((0.0, 150.0), 'ft'),
+                         'altitude_final': (50.0, 'ft'),
+                         'mass_ref': (170000, 'lbm'),
+                         'throttle_enforcement': 'boundary_constraint',
+                         'rotation': False},
+        'initial_guesses': {'distance': [(3000.0, 1000.0), 'ft'],
+                            'time': [(25.0, 32.0), 's'],
+                            'mach': [(0.2, 0.22), 'unitless'],
+                            'altitude': [(0.0, 50.0), 'ft'],
+                            'mass': [(174840.0, 174820.0), 'lbm']}},
+ 'C_to_P2': {'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
+             'user_options': {'num_segments': 3,
+                              'order': 3,
+                              'clean': False,
+                              'time_initial_ref': (4000.0, 'ft'),
+                              'time_initial_bounds': ((1000.0, 20000.0), 'ft'),
+                              'time_duration_ref': (1000.0, 'ft'),
+                              'time_duration_bounds': ((3000.0, 20000.0), 'ft'),
+                              'mach_optimize': True,
+                              'mach_polynomial_order': 1,
+                              'mach_bounds': ((0.22, 0.3), 'unitless'),
+                              'mach_ref': (1.0, 'unitless'),
+                              'altitude_optimize': True,
+                              'altitude_polynomial_order': 1,
+                              'altitude_initial': (50.0, 'ft'),
+                              'altitude_final': (985.0, 'ft'),
+                              'altitude_bounds': ((0.0, 985.0), 'ft'),
+                              'mass_ref': (170000, 'lbm'),
+                              'throttle_enforcement': 'boundary_constraint'},
+             'initial_guesses': {'distance': [(4000.0, 10000.0), 'ft'],
+                                 'time': [(32.0, 60.0), 's'],
+                                 'mach': [(0.22, 0.3), 'unitless'],
+                                 'mass': [(174820.0, 174800.0), 'lbm']}},
+ 'P2_to_D': {'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
+             'user_options': {'num_segments': 3,
+                              'order': 3,
+                              'clean': False,
+                              'time_initial_ref': (14000.0, 'ft'),
+                              'time_initial_bounds': ((1000.0, 20000.0), 'ft'),
+                              'time_duration_ref': (1000.0, 'ft'),
+                              'time_duration_bounds': ((3000.0, 20000.0), 'ft'),
+                              'mach_optimize': True,
+                              'mach_polynomial_order': 1,
+                              'mach_bounds': ((0.22, 0.3), 'unitless'),
+                              'mach_ref': (1.0, 'unitless'),
+                              'altitude_optimize': True,
+                              'altitude_polynomial_order': 1,
+                              'altitude_bounds': ((985.0, 2000.0), 'ft'),
+                              'mass_ref': (170000, 'lbm'),
+                              'throttle_enforcement': 'path_constraint'},
+             'initial_guesses': {'distance': [(14000.0, 4000.0), 'ft'],
+                                 'time': [(60.0, 80.0), 's'],
+                                 'mach': [(0.22, 0.3), 'unitless'],
+                                 'altitude': [(985.0, 1100.0), 'ft'],
+                                 'mass': [(174800.0, 174500.0), 'lbm']}},
+ 'DE': {'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
+        'user_options': {'num_segments': 3,
+                         'order': 3,
+                         'clean': False,
+                         'time_initial_ref': (18000.0, 'ft'),
+                         'time_initial_bounds': ((500.0, 30000.0), 'ft'),
+                         'time_duration_ref': (1000.0, 'ft'),
+                         'time_duration_bounds': ((1000, 5000.0), 'ft'),
+                         'mach_optimize': True,
+                         'mach_polynomial_order': 2,
+                         'mach_bounds': ((0.24, 0.32), 'unitless'),
+                         'mach_ref': (1.0, 'unitless'),
+                         'altitude_optimize': True,
+                         'altitude_polynomial_order': 2,
+                         'altitude_bounds': ((985.0, 2000.0), 'ft'),
+                         'mass_ref': (170000, 'lbm'),
+                         'throttle_enforcement': 'path_constraint',
+                         'constraints': {'flight_path_angle': {'equals': 2.29,
+                                                               'loc': 'final',
+                                                               'units': 'deg',
+                                                               'type': 'boundary'}}},
+        'initial_guesses': {'distance': [(18000.0, 2000.0), 'ft'],
+                            'mass': [(174500.0, 174400.0), 'lbm'],
+                            'mach': [(0.3, 0.3), 'unitless'],
+                            'altitude': [(1100.0, 1200.0), 'ft'],
+                            'time': [(80.0, 85.0), 's']}},
+ 'E_to_P1': {'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
+             'user_options': {'num_segments': 3,
+                              'order': 3,
+                              'clean': False,
+                              'time_initial_ref': (20000.0, 'ft'),
+                              'time_initial_bounds': ((500.0, 50000.0), 'ft'),
+                              'time_duration_ref': (1000.0, 'ft'),
+                              'time_duration_bounds': ((100.0, 20000.0), 'ft'),
+                              'mach_optimize': True,
+                              'mach_polynomial_order': 1,
+                              'mach_bounds': ((0.24, 0.32), 'unitless'),
+                              'mach_ref': (1.0, 'unitless'),
+                              'altitude_optimize': True,
+                              'altitude_polynomial_order': 1,
+                              'altitude_bounds': ((1000.0, 3000.0), 'ft'),
+                              'mass_ref': (170000, 'lbm'),
+                              'throttle_enforcement': 'path_constraint',
+                              'constraints': {'distance': {'equals': 21325.0,
+                                                           'units': 'ft',
+                                                           'type': 'boundary',
+                                                           'loc': 'final',
+                                                           'ref': 30000.0},
+                                              'flight_path_angle': {'equals': 2.29,
+                                                                    'loc': 'final',
+                                                                    'units': 'deg',
+                                                                    'type': 'boundary'}}},
+             'initial_guesses': {'distance': [(20000.0, 1325.0), 'ft'],
+                                 'mass': [(174400.0, 174300.0), 'lbm'],
+                                 'mach': [(0.3, 0.3), 'unitless'],
+                                 'altitude': [(1100.0, 1200.0), 'ft'],
+                                 'time': [(85.0, 90.0), 's']}},
+ 'P1_to_F': {'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
+             'user_options': {'num_segments': 3,
+                              'order': 3,
+                              'clean': False,
+                              'time_initial_ref': (1000.0, 'ft'),
+                              'time_initial_bounds': ((20000.0, 50000.0), 'ft'),
+                              'time_duration_ref': (1000.0, 'ft'),
+                              'time_duration_bounds': ((100.0, 50000.0), 'ft'),
+                              'mach_optimize': True,
+                              'mach_polynomial_order': 3,
+                              'mach_bounds': ((0.24, 0.32), 'unitless'),
+                              'mach_ref': (1.0, 'unitless'),
+                              'altitude_optimize': True,
+                              'altitude_polynomial_order': 1,
+                              'altitude_bounds': ((1000.0, 3000.0), 'ft'),
+                              'mass_ref': (170000, 'lbm'),
+                              'throttle_enforcement': 'boundary_constraint',
+                              'constraints': {'flight_path_angle': {'equals': 2.29,
+                                                                    'loc': 'final',
+                                                                    'units': 'deg',
+                                                                    'type': 'boundary'},
+                                              'distance': {'equals': 30000.0,
+                                                           'units': 'ft',
+                                                           'type': 'boundary',
+                                                           'loc': 'final',
+                                                           'ref': 30000.0}}},
+             'initial_guesses': {'distance': [(21325.0, 50000.0), 'ft'],
+                                 'mass': [(174300.0, 174200.0), 'lbm'],
+                                 'mach': [(0.3, 0.3), 'unitless'],
+                                 'altitude': [(1200.0, 2000.0), 'ft'],
+                                 'time': [(90.0, 180.0), 's']}},
+ 'post_mission': {'include_landing': False}}
 </pre></div>
 </div>
 </div>
@@ -897,10 +897,10 @@ Aviary internally handles the connections for Mach and altitude between the phas
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subsystem_options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;low_speed&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;ground_altitude&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># units=&#39;ft&#39;</span>
-        <span class="s1">&#39;angles_of_attack&#39;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'method'</span><span class="p">:</span> <span class="s1">'low_speed'</span><span class="p">,</span>
+        <span class="s1">'ground_altitude'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># units='ft'</span>
+        <span class="s1">'angles_of_attack'</span><span class="p">:</span> <span class="p">[</span>
             <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span>
             <span class="o">-</span><span class="mf">4.0</span><span class="p">,</span>
             <span class="o">-</span><span class="mf">3.0</span><span class="p">,</span>
@@ -922,8 +922,8 @@ Aviary internally handles the connections for Mach and altitude between the phas
             <span class="mf">13.0</span><span class="p">,</span>
             <span class="mf">14.0</span><span class="p">,</span>
             <span class="mf">15.0</span><span class="p">,</span>
-        <span class="p">],</span>  <span class="c1"># units=&#39;deg&#39;</span>
-        <span class="s1">&#39;lift_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">],</span>  <span class="c1"># units='deg'</span>
+        <span class="s1">'lift_coefficients'</span><span class="p">:</span> <span class="p">[</span>
             <span class="mf">0.01</span><span class="p">,</span>
             <span class="mf">0.1</span><span class="p">,</span>
             <span class="mf">0.2</span><span class="p">,</span>
@@ -946,7 +946,7 @@ Aviary internally handles the connections for Mach and altitude between the phas
             <span class="mf">1.9</span><span class="p">,</span>
             <span class="mf">1.95</span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="s1">&#39;drag_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s1">'drag_coefficients'</span><span class="p">:</span> <span class="p">[</span>
             <span class="mf">0.04</span><span class="p">,</span>
             <span class="mf">0.02</span><span class="p">,</span>
             <span class="mf">0.01</span><span class="p">,</span>
@@ -969,56 +969,49 @@ Aviary internally handles the connections for Mach and altitude between the phas
             <span class="mf">0.18</span><span class="p">,</span>
             <span class="mf">0.20</span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="s1">&#39;lift_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="s1">&#39;drag_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s1">'lift_coefficient_factor'</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s1">'drag_coefficient_factor'</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">}</span>
 <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">phase_info_takeoff</span><span class="p">:</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">phase</span> <span class="o">==</span> <span class="s1">&#39;pre_mission&#39;</span> <span class="ow">or</span> <span class="n">phase</span> <span class="o">==</span> <span class="s1">&#39;post_mission&#39;</span><span class="p">):</span>
-        <span class="n">phase_info_takeoff</span><span class="p">[</span><span class="n">phase</span><span class="p">][</span><span class="s1">&#39;subsystem_options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subsystem_options</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">phase</span> <span class="o">==</span> <span class="s1">'pre_mission'</span> <span class="ow">or</span> <span class="n">phase</span> <span class="o">==</span> <span class="s1">'post_mission'</span><span class="p">):</span>
+        <span class="n">phase_info_takeoff</span><span class="p">[</span><span class="n">phase</span><span class="p">][</span><span class="s1">'subsystem_options'</span><span class="p">]</span> <span class="o">=</span> <span class="n">subsystem_options</span>
 
 <span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span>
-    <span class="n">aircraft_data</span><span class="o">=</span><span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_solved2dof.csv&#39;</span><span class="p">,</span>
+    <span class="n">aircraft_data</span><span class="o">=</span><span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_solved2dof.csv'</span><span class="p">,</span>
     <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info_takeoff</span><span class="p">,</span>
-    <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;IPOPT&#39;</span><span class="p">,</span>
-    <span class="n">objective_type</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="s1">'IPOPT'</span><span class="p">,</span>
+    <span class="n">objective_type</span><span class="o">=</span><span class="s1">'time'</span><span class="p">,</span>
     <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631451.415592] [runnervm48cm3:5064 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55faaeae42f0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631451.415892] [runnervm48cm3:5064 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05064] pml_ucx.c:313  Error: Failed to create UCP worker
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
-  &#39;aircraft:engine:mass  [7400.]  lbm
-  &#39;aircraft:fins:mass  0.0  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
-  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
-  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
-  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
-  &#39;aircraft:wing:control_surface_area  137.0  ft**2
-  &#39;aircraft:wing:wetted_area  2396.56  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.354  unitless
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Sizing mission does not include a target range.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/driver.py:1454: DriverWarning:pyOptSparseDriver: constraint(s) [&#39;mission:constraints:excess_fuel_mass_capacity&#39;] do not depend on any design variables. Please check your problem formulation.
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  'aircraft:design:touchdown_mass_max  152800.0  lbm
+  'aircraft:engine:mass  [7400.]  lbm
+  'aircraft:fins:mass  0.0  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  45694.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  85.5  ft
+  'aircraft:fuselage:planform_area  1578.24  ft**2
+  'aircraft:fuselage:wetted_area  4158.62  ft**2
+  'aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  'aircraft:vertical_tail:wetted_area  581.13  ft**2
+  'aircraft:wing:aspect_ratio  11.22091  unitless
+  'aircraft:wing:control_surface_area  137.0  ft**2
+  'aircraft:wing:wetted_area  2396.56  ft**2
+  'mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/driver.py:1454: DriverWarning:pyOptSparseDriver: constraint(s) ['mission:constraints:excess_fuel_mass_capacity'] do not depend on any design variables. Please check your problem formulation.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1925: DerivativesWarning:The following constraints or objectives cannot be impacted by the design variables of the problem at the current design point:
@@ -1036,25 +1029,25 @@ Total number of inequality constraints...............:       46
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 60
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 64
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.0885410719763395e+02    1.0885410719763395e+02
-Dual infeasibility......:   3.9987478273051380e-07    3.9987478273051380e-07
-Constraint violation....:   3.5093738285733401e-10    3.5093738285733401e-10
-Variable bound violation:   8.1136135587911440e-09    8.1136135587911440e-09
-Complementarity.........:   1.4426612533713331e-07    1.4426612533713331e-07
-Overall NLP error.......:   3.9987478273051380e-07    3.9987478273051380e-07
+Objective...............:   1.0885410719749039e+02    1.0885410719749039e+02
+Dual infeasibility......:   5.0535364423175006e-07    5.0535364423175006e-07
+Constraint violation....:   3.5197264362333651e-10    3.5197264362333651e-10
+Variable bound violation:   8.1136088958544406e-09    8.1136088958544406e-09
+Complementarity.........:   1.4426635433176771e-07    1.4426635433176771e-07
+Overall NLP error.......:   5.0535364423175006e-07    5.0535364423175006e-07
 
 
-Number of objective function evaluations             = 70
-Number of objective gradient evaluations             = 58
-Number of equality constraint evaluations            = 70
-Number of inequality constraint evaluations          = 70
-Number of equality constraint Jacobian evaluations   = 63
-Number of inequality constraint Jacobian evaluations = 63
+Number of objective function evaluations             = 74
+Number of objective gradient evaluations             = 62
+Number of equality constraint evaluations            = 74
+Number of inequality constraint evaluations          = 74
+Number of equality constraint Jacobian evaluations   = 67
+Number of inequality constraint Jacobian evaluations = 67
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 20.333
+Total seconds in IPOPT                               = 35.958
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -1080,40 +1073,40 @@ EXIT: Optimal Solution Found.
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">phase_info_takeoff</span><span class="p">:</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">phase</span> <span class="o">==</span> <span class="s1">&#39;pre_mission&#39;</span> <span class="ow">or</span> <span class="n">phase</span> <span class="o">==</span> <span class="s1">&#39;post_mission&#39;</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*****    Phase:&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">&#39;   *****&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">phase</span> <span class="o">==</span> <span class="s1">&#39;AB&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">phase</span> <span class="o">==</span> <span class="s1">'pre_mission'</span> <span class="ow">or</span> <span class="n">phase</span> <span class="o">==</span> <span class="s1">'post_mission'</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'*****    Phase:'</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">'   *****'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">phase</span> <span class="o">==</span> <span class="s1">'AB'</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> ALTITUDE Start:&#39;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ft&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> ALTITUDE Start:'</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">"traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ft"</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> ALTITUDE End  :&#39;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ft&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> ALTITUDE End  :'</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">"traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ft"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> DISTANCE Start:&#39;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ft&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> DISTANCE Start:'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">"traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ft"</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> DISTANCE End  :&#39;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ft&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> DISTANCE End  :'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">"traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ft"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> VELOCITY Start:&#39;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">VELOCITY</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;kn&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> VELOCITY Start:'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">"traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">VELOCITY</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span><span class="w"> </span><span class="s2">"kn"</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> VELOCITY End  :&#39;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">VELOCITY</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;kn&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> VELOCITY End  :'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">"traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.</span><span class="si">{</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">VELOCITY</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span><span class="w"> </span><span class="s2">"kn"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> Time Start    :&#39;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.time&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;s&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> Time Start    :'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">"traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.time"</span><span class="p">,</span><span class="w"> </span><span class="s2">"s"</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> Time End      :&#39;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.time&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;s&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1"> Time End      :'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s2">"traj.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">.timeseries.time"</span><span class="p">,</span><span class="w"> </span><span class="s2">"s"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
         <span class="p">)</span>
 </pre></div>
 </div>
@@ -1136,7 +1129,7 @@ rotate VELOCITY End  : 132.28
 rotate Time Start    : 21.94
 rotate Time End      : 22.85
 *****    Phase: BC    *****
-BC ALTITUDE Start: -0.00
+BC ALTITUDE Start: 0.00
 BC ALTITUDE End  : 50.00
 BC DISTANCE Start: 2604.45
 BC DISTANCE End  : 3746.51
@@ -1210,95 +1203,95 @@ P3 corresponds to the microphone location used for acoustic certification.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;pre_mission&#39;: {&#39;include_takeoff&#39;: False, &#39;optimize_mass&#39;: False},
- &#39;GH&#39;: {&#39;subsystem_options&#39;: {&#39;aerodynamics&#39;: {&#39;method&#39;: &#39;low_speed&#39;}},
-        &#39;user_options&#39;: {&#39;num_segments&#39;: 5,
-                         &#39;order&#39;: 3,
-                         &#39;ground_roll&#39;: False,
-                         &#39;clean&#39;: False,
-                         &#39;time_initial&#39;: (0.0, &#39;ft&#39;),
-                         &#39;time_duration_ref&#39;: (2750.0, &#39;ft&#39;),
-                         &#39;time_duration_bounds&#39;: ((500.0, 5000.0), &#39;ft&#39;),
-                         &#39;mach_optimize&#39;: False,
-                         &#39;mach_polynomial_order&#39;: 1,
-                         &#39;mach_bounds&#39;: ((0.1, 0.5), &#39;unitless&#39;),
-                         &#39;mach_initial&#39;: (0.15, &#39;unitless&#39;),
-                         &#39;mach_final&#39;: (0.15, &#39;unitless&#39;),
-                         &#39;altitude_optimize&#39;: False,
-                         &#39;altitude_polynomial_order&#39;: 1,
-                         &#39;altitude_initial&#39;: (500.0, &#39;ft&#39;),
-                         &#39;altitude_final&#39;: (394.0, &#39;ft&#39;),
-                         &#39;altitude_bounds&#39;: ((0.0, 1000.0), &#39;ft&#39;),
-                         &#39;mass_initial&#39;: (120000.0, &#39;lbm&#39;),
-                         &#39;mass_ref&#39;: (120000.0, &#39;lbm&#39;),
-                         &#39;mass_bounds&#39;: ((0.0, 200000.0), &#39;lbm&#39;),
-                         &#39;throttle_enforcement&#39;: &#39;path_constraint&#39;,
-                         &#39;rotation&#39;: False,
-                         &#39;constraints&#39;: {&#39;flight_path_angle&#39;: {&#39;equals&#39;: -3.0,
-                                                               &#39;loc&#39;: &#39;initial&#39;,
-                                                               &#39;units&#39;: &#39;deg&#39;,
-                                                               &#39;type&#39;: &#39;boundary&#39;}}},
-        &#39;initial_guesses&#39;: {&#39;distance&#39;: [(0.0, 2000.0), &#39;ft&#39;],
-                            &#39;time&#39;: [(0.0, 12.0), &#39;s&#39;],
-                            &#39;mass&#39;: [(120000.0, 119800.0), &#39;lbm&#39;]}},
- &#39;HI&#39;: {&#39;subsystem_options&#39;: {&#39;aerodynamics&#39;: {&#39;method&#39;: &#39;low_speed&#39;}},
-        &#39;user_options&#39;: {&#39;num_segments&#39;: 5,
-                         &#39;order&#39;: 3,
-                         &#39;ground_roll&#39;: False,
-                         &#39;clean&#39;: False,
-                         &#39;time_initial_ref&#39;: (1000.0, &#39;ft&#39;),
-                         &#39;time_initial_bounds&#39;: ((0.0, 16000.0), &#39;ft&#39;),
-                         &#39;time_duration_ref&#39;: (1000.0, &#39;ft&#39;),
-                         &#39;time_duration_bounds&#39;: ((500.0, 15000.0), &#39;ft&#39;),
-                         &#39;mach_optimize&#39;: False,
-                         &#39;mach_polynomial_order&#39;: 1,
-                         &#39;mach_initial&#39;: (0.15, &#39;unitless&#39;),
-                         &#39;mach_final&#39;: (0.15, &#39;unitless&#39;),
-                         &#39;mach_bounds&#39;: ((0.1, 0.5), &#39;unitless&#39;),
-                         &#39;altitude_optimize&#39;: False,
-                         &#39;altitude_polynomial_order&#39;: 1,
-                         &#39;altitude_initial&#39;: (394.0, &#39;ft&#39;),
-                         &#39;altitude_final&#39;: (50.0, &#39;ft&#39;),
-                         &#39;altitude_bounds&#39;: ((0.0, 1000.0), &#39;ft&#39;),
-                         &#39;mass_ref&#39;: (120000.0, &#39;lbm&#39;),
-                         &#39;mass_bounds&#39;: ((0.0, 200000.0), &#39;lbm&#39;),
-                         &#39;throttle_enforcement&#39;: &#39;path_constraint&#39;,
-                         &#39;rotation&#39;: False,
-                         &#39;constraints&#39;: {&#39;flight_path_angle&#39;: {&#39;equals&#39;: -3.0,
-                                                               &#39;loc&#39;: &#39;final&#39;,
-                                                               &#39;units&#39;: &#39;deg&#39;,
-                                                               &#39;type&#39;: &#39;boundary&#39;}}},
-        &#39;initial_guesses&#39;: {&#39;distance&#39;: [(2000.0, 6500.0), &#39;ft&#39;],
-                            &#39;time&#39;: [(12.0, 50.0), &#39;s&#39;],
-                            &#39;mass&#39;: [(119800.0, 119700.0), &#39;lbm&#39;]}},
- &#39;IJ&#39;: {&#39;subsystem_options&#39;: {&#39;aerodynamics&#39;: {&#39;method&#39;: &#39;low_speed&#39;}},
-        &#39;user_options&#39;: {&#39;num_segments&#39;: 5,
-                         &#39;order&#39;: 3,
-                         &#39;ground_roll&#39;: False,
-                         &#39;clean&#39;: False,
-                         &#39;time_initial_ref&#39;: (1000.0, &#39;ft&#39;),
-                         &#39;time_initial_bounds&#39;: ((0.0, 30000.0), &#39;ft&#39;),
-                         &#39;time_duration_ref&#39;: (1000.0, &#39;ft&#39;),
-                         &#39;time_duration_bounds&#39;: ((500.0, 15000.0), &#39;ft&#39;),
-                         &#39;mach_optimize&#39;: False,
-                         &#39;mach_polynomial_order&#39;: 2,
-                         &#39;mach_bounds&#39;: ((0.1, 0.5), &#39;unitless&#39;),
-                         &#39;mach_initial&#39;: (0.15, &#39;unitless&#39;),
-                         &#39;mach_final&#39;: (0.15, &#39;unitless&#39;),
-                         &#39;altitude_optimize&#39;: True,
-                         &#39;altitude_polynomial_order&#39;: 2,
-                         &#39;altitude_final&#39;: (0.0, &#39;ft&#39;),
-                         &#39;altitude_bounds&#39;: ((0.0, 1000.0), &#39;ft&#39;),
-                         &#39;mass_ref&#39;: (120000.0, &#39;lbm&#39;),
-                         &#39;mass_bounds&#39;: ((0.0, 200000.0), &#39;lbm&#39;),
-                         &#39;throttle_enforcement&#39;: &#39;path_constraint&#39;,
-                         &#39;rotation&#39;: False,
-                         &#39;constraints&#39;: {}},
-        &#39;initial_guesses&#39;: {&#39;altitude&#39;: [(50.0, 0.0), &#39;ft&#39;],
-                            &#39;distance&#39;: [(8500.0, 2000.0), &#39;ft&#39;],
-                            &#39;time&#39;: [(50.0, 60.0), &#39;s&#39;],
-                            &#39;mass&#39;: [(119700.0, 119670.0), &#39;lbm&#39;]}},
- &#39;post_mission&#39;: {&#39;include_landing&#39;: False}}
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
+ 'GH': {'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
+        'user_options': {'num_segments': 5,
+                         'order': 3,
+                         'ground_roll': False,
+                         'clean': False,
+                         'time_initial': (0.0, 'ft'),
+                         'time_duration_ref': (2750.0, 'ft'),
+                         'time_duration_bounds': ((500.0, 5000.0), 'ft'),
+                         'mach_optimize': False,
+                         'mach_polynomial_order': 1,
+                         'mach_bounds': ((0.1, 0.5), 'unitless'),
+                         'mach_initial': (0.15, 'unitless'),
+                         'mach_final': (0.15, 'unitless'),
+                         'altitude_optimize': False,
+                         'altitude_polynomial_order': 1,
+                         'altitude_initial': (500.0, 'ft'),
+                         'altitude_final': (394.0, 'ft'),
+                         'altitude_bounds': ((0.0, 1000.0), 'ft'),
+                         'mass_initial': (120000.0, 'lbm'),
+                         'mass_ref': (120000.0, 'lbm'),
+                         'mass_bounds': ((0.0, 200000.0), 'lbm'),
+                         'throttle_enforcement': 'path_constraint',
+                         'rotation': False,
+                         'constraints': {'flight_path_angle': {'equals': -3.0,
+                                                               'loc': 'initial',
+                                                               'units': 'deg',
+                                                               'type': 'boundary'}}},
+        'initial_guesses': {'distance': [(0.0, 2000.0), 'ft'],
+                            'time': [(0.0, 12.0), 's'],
+                            'mass': [(120000.0, 119800.0), 'lbm']}},
+ 'HI': {'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
+        'user_options': {'num_segments': 5,
+                         'order': 3,
+                         'ground_roll': False,
+                         'clean': False,
+                         'time_initial_ref': (1000.0, 'ft'),
+                         'time_initial_bounds': ((0.0, 16000.0), 'ft'),
+                         'time_duration_ref': (1000.0, 'ft'),
+                         'time_duration_bounds': ((500.0, 15000.0), 'ft'),
+                         'mach_optimize': False,
+                         'mach_polynomial_order': 1,
+                         'mach_initial': (0.15, 'unitless'),
+                         'mach_final': (0.15, 'unitless'),
+                         'mach_bounds': ((0.1, 0.5), 'unitless'),
+                         'altitude_optimize': False,
+                         'altitude_polynomial_order': 1,
+                         'altitude_initial': (394.0, 'ft'),
+                         'altitude_final': (50.0, 'ft'),
+                         'altitude_bounds': ((0.0, 1000.0), 'ft'),
+                         'mass_ref': (120000.0, 'lbm'),
+                         'mass_bounds': ((0.0, 200000.0), 'lbm'),
+                         'throttle_enforcement': 'path_constraint',
+                         'rotation': False,
+                         'constraints': {'flight_path_angle': {'equals': -3.0,
+                                                               'loc': 'final',
+                                                               'units': 'deg',
+                                                               'type': 'boundary'}}},
+        'initial_guesses': {'distance': [(2000.0, 6500.0), 'ft'],
+                            'time': [(12.0, 50.0), 's'],
+                            'mass': [(119800.0, 119700.0), 'lbm']}},
+ 'IJ': {'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
+        'user_options': {'num_segments': 5,
+                         'order': 3,
+                         'ground_roll': False,
+                         'clean': False,
+                         'time_initial_ref': (1000.0, 'ft'),
+                         'time_initial_bounds': ((0.0, 30000.0), 'ft'),
+                         'time_duration_ref': (1000.0, 'ft'),
+                         'time_duration_bounds': ((500.0, 15000.0), 'ft'),
+                         'mach_optimize': False,
+                         'mach_polynomial_order': 2,
+                         'mach_bounds': ((0.1, 0.5), 'unitless'),
+                         'mach_initial': (0.15, 'unitless'),
+                         'mach_final': (0.15, 'unitless'),
+                         'altitude_optimize': True,
+                         'altitude_polynomial_order': 2,
+                         'altitude_final': (0.0, 'ft'),
+                         'altitude_bounds': ((0.0, 1000.0), 'ft'),
+                         'mass_ref': (120000.0, 'lbm'),
+                         'mass_bounds': ((0.0, 200000.0), 'lbm'),
+                         'throttle_enforcement': 'path_constraint',
+                         'rotation': False,
+                         'constraints': {}},
+        'initial_guesses': {'altitude': [(50.0, 0.0), 'ft'],
+                            'distance': [(8500.0, 2000.0), 'ft'],
+                            'time': [(50.0, 60.0), 's'],
+                            'mass': [(119700.0, 119670.0), 'lbm']}},
+ 'post_mission': {'include_landing': False}}
 </pre></div>
 </div>
 </div>
@@ -1308,10 +1301,10 @@ P3 corresponds to the microphone location used for acoustic certification.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subsystem_options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;low_speed&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;ground_altitude&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># units=&#39;ft&#39;</span>
-        <span class="s1">&#39;angles_of_attack&#39;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'method'</span><span class="p">:</span> <span class="s1">'low_speed'</span><span class="p">,</span>
+        <span class="s1">'ground_altitude'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># units='ft'</span>
+        <span class="s1">'angles_of_attack'</span><span class="p">:</span> <span class="p">[</span>
             <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span>
             <span class="o">-</span><span class="mf">4.0</span><span class="p">,</span>
             <span class="o">-</span><span class="mf">3.0</span><span class="p">,</span>
@@ -1333,8 +1326,8 @@ P3 corresponds to the microphone location used for acoustic certification.</p>
             <span class="mf">13.0</span><span class="p">,</span>
             <span class="mf">14.0</span><span class="p">,</span>
             <span class="mf">15.0</span><span class="p">,</span>
-        <span class="p">],</span>  <span class="c1"># units=&#39;deg&#39;</span>
-        <span class="s1">&#39;lift_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">],</span>  <span class="c1"># units='deg'</span>
+        <span class="s1">'lift_coefficients'</span><span class="p">:</span> <span class="p">[</span>
             <span class="mf">0.01</span><span class="p">,</span>
             <span class="mf">0.1</span><span class="p">,</span>
             <span class="mf">0.2</span><span class="p">,</span>
@@ -1357,7 +1350,7 @@ P3 corresponds to the microphone location used for acoustic certification.</p>
             <span class="mf">1.9</span><span class="p">,</span>
             <span class="mf">1.95</span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="s1">&#39;drag_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s1">'drag_coefficients'</span><span class="p">:</span> <span class="p">[</span>
             <span class="mf">0.04</span><span class="p">,</span>
             <span class="mf">0.02</span><span class="p">,</span>
             <span class="mf">0.01</span><span class="p">,</span>
@@ -1380,74 +1373,74 @@ P3 corresponds to the microphone location used for acoustic certification.</p>
             <span class="mf">0.18</span><span class="p">,</span>
             <span class="mf">0.20</span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="s1">&#39;lift_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
-        <span class="s1">&#39;drag_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="s1">'lift_coefficient_factor'</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="s1">'drag_coefficient_factor'</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">}</span>
 <span class="n">subsystem_options_landing</span> <span class="o">=</span> <span class="n">subsystem_options</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">subsystem_options_landing</span><span class="p">[</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">][</span><span class="s1">&#39;drag_coefficient_factor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">3.0</span>
+<span class="n">subsystem_options_landing</span><span class="p">[</span><span class="s1">'aerodynamics'</span><span class="p">][</span><span class="s1">'drag_coefficient_factor'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">3.0</span>
 
 <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">phase_info_landing</span><span class="p">:</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">phase</span> <span class="o">==</span> <span class="s1">&#39;pre_mission&#39;</span> <span class="ow">or</span> <span class="n">phase</span> <span class="o">==</span> <span class="s1">&#39;post_mission&#39;</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">phase</span> <span class="o">==</span> <span class="s1">&#39;IJ&#39;</span><span class="p">:</span>
-            <span class="n">phase_info_landing</span><span class="p">[</span><span class="n">phase</span><span class="p">][</span><span class="s1">&#39;subsystem_options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subsystem_options</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">phase</span> <span class="o">==</span> <span class="s1">'pre_mission'</span> <span class="ow">or</span> <span class="n">phase</span> <span class="o">==</span> <span class="s1">'post_mission'</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">phase</span> <span class="o">==</span> <span class="s1">'IJ'</span><span class="p">:</span>
+            <span class="n">phase_info_landing</span><span class="p">[</span><span class="n">phase</span><span class="p">][</span><span class="s1">'subsystem_options'</span><span class="p">]</span> <span class="o">=</span> <span class="n">subsystem_options</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">phase_info_landing</span><span class="p">[</span><span class="n">phase</span><span class="p">][</span><span class="s1">&#39;subsystem_options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subsystem_options_landing</span>
+            <span class="n">phase_info_landing</span><span class="p">[</span><span class="n">phase</span><span class="p">][</span><span class="s1">'subsystem_options'</span><span class="p">]</span> <span class="o">=</span> <span class="n">subsystem_options_landing</span>
 <span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span>
-    <span class="n">aircraft_data</span><span class="o">=</span><span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_solved2dof.csv&#39;</span><span class="p">,</span>
+    <span class="n">aircraft_data</span><span class="o">=</span><span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_solved2dof.csv'</span><span class="p">,</span>
     <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info_landing</span><span class="p">,</span>
-    <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;IPOPT&#39;</span><span class="p">,</span>
-    <span class="n">objective_type</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="s1">'IPOPT'</span><span class="p">,</span>
+    <span class="n">objective_type</span><span class="o">=</span><span class="s1">'time'</span><span class="p">,</span>
     <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
-  &#39;aircraft:engine:mass  [7400.]  lbm
-  &#39;aircraft:fins:mass  0.0  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
-  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
-  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
-  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
-  &#39;aircraft:wing:control_surface_area  137.0  ft**2
-  &#39;aircraft:wing:wetted_area  2396.56  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.354  unitless
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/problem.py:384: OpenMDAOWarning:The problem name &#39;aircraft_for_bench_solved2dof&#39; already exists
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;scaling&#39; for instance &#39;aircraft_for_bench_solved2dof.driver&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;total_coloring&#39; for instance &#39;aircraft_for_bench_solved2dof.driver&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;n2&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;optimizer&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;inputs&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;subsystems_run_model&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;subsystems_run_driver&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;mission&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;timeseries_csv&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;run_status&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;sizing_results&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;input_checks&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;overridden_variables_setup&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;overridden_variables_run_model&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;overridden_variables_run_driver&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;list_options_final_setup&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;list_options_run_model&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;list_options_run_driver&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name &#39;dymos.linkage&#39; for instance &#39;aircraft_for_bench_solved2dof&#39; is already active.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/problem.py:384: OpenMDAOWarning:The problem name 'aircraft_for_bench_solved2dof' already exists
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'scaling' for instance 'aircraft_for_bench_solved2dof.driver' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'total_coloring' for instance 'aircraft_for_bench_solved2dof.driver' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'n2' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'optimizer' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'inputs' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'subsystems_run_model' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'subsystems_run_driver' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'mission' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'timeseries_csv' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'run_status' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'sizing_results' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'input_checks' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'overridden_variables_setup' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'overridden_variables_run_model' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'overridden_variables_run_driver' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'list_options_final_setup' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'list_options_run_model' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'list_options_run_driver' for instance 'aircraft_for_bench_solved2dof' is already active.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/utils/reports_system.py:277: OpenMDAOWarning:A report with the name 'dymos.linkage' for instance 'aircraft_for_bench_solved2dof' is already active.
 Warning: Sizing mission does not include a target range.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/driver.py:1454: DriverWarning:pyOptSparseDriver: constraint(s) [&#39;mission:constraints:excess_fuel_mass_capacity&#39;] do not depend on any design variables. Please check your problem formulation.
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  'aircraft:design:touchdown_mass_max  152800.0  lbm
+  'aircraft:engine:mass  [7400.]  lbm
+  'aircraft:fins:mass  0.0  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  45694.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  85.5  ft
+  'aircraft:fuselage:planform_area  1578.24  ft**2
+  'aircraft:fuselage:wetted_area  4158.62  ft**2
+  'aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  'aircraft:vertical_tail:wetted_area  581.13  ft**2
+  'aircraft:wing:aspect_ratio  11.22091  unitless
+  'aircraft:wing:control_surface_area  137.0  ft**2
+  'aircraft:wing:wetted_area  2396.56  ft**2
+  'mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/driver.py:1454: DriverWarning:pyOptSparseDriver: constraint(s) ['mission:constraints:excess_fuel_mass_capacity'] do not depend on any design variables. Please check your problem formulation.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1925: DerivativesWarning:The following constraints or objectives cannot be impacted by the design variables of the problem at the current design point:
@@ -1465,25 +1458,63 @@ Total number of inequality constraints...............:       62
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 37
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
++  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
++  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+|  +  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+  NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ.rhs_all.control_iter_group' failed to converge in 10 iterations.
+NL: NewtonSolver 'NL: Newton' on system 'traj.phases.IJ' stalled after 4 iterations.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 44
 
                                    (scaled)                 (unscaled)
-Objective...............:   6.8303854417863761e+01    6.8303854417863761e+01
-Dual infeasibility......:   5.3134602244252122e-07    5.3134602244252122e-07
-Constraint violation....:   2.8421709430404007e-13    2.8421709430404007e-13
+Objective...............:   6.8303854420313087e+01    6.8303854420313087e+01
+Dual infeasibility......:   4.8469171408958578e-10    4.8469171408958578e-10
+Constraint violation....:   1.5448406998075370e-09    1.5448406998075370e-09
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0929925579619140e-08    9.0929925579619140e-08
-Overall NLP error.......:   5.3134602244252122e-07    5.3134602244252122e-07
+Complementarity.........:   7.4975724800090636e-07    7.4975724800090636e-07
+Overall NLP error.......:   7.4975724800090636e-07    7.4975724800090636e-07
 
 
-Number of objective function evaluations             = 47
-Number of objective gradient evaluations             = 19
-Number of equality constraint evaluations            = 47
-Number of inequality constraint evaluations          = 47
-Number of equality constraint Jacobian evaluations   = 39
-Number of inequality constraint Jacobian evaluations = 39
+Number of objective function evaluations             = 86
+Number of objective gradient evaluations             = 16
+Number of equality constraint evaluations            = 86
+Number of inequality constraint evaluations          = 86
+Number of equality constraint Jacobian evaluations   = 46
+Number of inequality constraint Jacobian evaluations = 46
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 6.795
+Total seconds in IPOPT                               = 18.523
 
 EXIT: Optimal Solution Found.
 </pre></div>

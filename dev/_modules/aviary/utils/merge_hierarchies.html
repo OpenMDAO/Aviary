@@ -509,7 +509,7 @@
 <div class="viewcode-block" id="merge_attributes">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/merge_hierarchies.html#aviary.utils.merge_hierarchies.merge_attributes">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">merge_attributes</span><span class="p">(</span><span class="n">base_class</span><span class="p">,</span> <span class="n">merge_class</span><span class="p">,</span> <span class="n">base_class_attributes</span><span class="p">,</span> <span class="n">merge_class_attributes</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Adds unique attributes of merge_class to base_class.</span>
 
 <span class="sd">    For all the attributes of merge_class that are not present in base_class we add them to base_class.</span>
@@ -545,7 +545,7 @@
 <span class="sd">    ------</span>
 <span class="sd">    None</span>
 <span class="sd">        No exceptions raised by this method, although other methods called within may raise exceptions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">merge_class_unique</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">merge_class_attributes</span> <span class="o">-</span> <span class="n">base_class_attributes</span>
     <span class="p">)</span>  <span class="c1"># attributes present only in merge_class</span>
@@ -560,7 +560,7 @@
 <div class="viewcode-block" id="recursive_merge">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/merge_hierarchies.html#aviary.utils.merge_hierarchies.recursive_merge">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">recursive_merge</span><span class="p">(</span><span class="n">overlapping_inners</span><span class="p">,</span> <span class="n">base_class</span><span class="p">,</span> <span class="n">merge_class</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Recursively compares all inner classes to an infinite depth and identifies mismatched string-named values.</span>
 
 <span class="sd">    For all of the inner class names provided in overlapping_inner_classes this function calls compare_inner_classes</span>
@@ -590,7 +590,7 @@
 <span class="sd">    ------</span>
 <span class="sd">    None</span>
 <span class="sd">        No exceptions raised by this method, although other methods called within may raise exceptions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">overlapping_class_name</span> <span class="ow">in</span> <span class="n">overlapping_inners</span><span class="p">:</span>
         <span class="n">overlapping_inner_class_base</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">base_class</span><span class="p">,</span> <span class="n">overlapping_class_name</span><span class="p">)</span>
         <span class="n">overlapping_inner_class_merge</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">merge_class</span><span class="p">,</span> <span class="n">overlapping_class_name</span><span class="p">)</span>
@@ -624,7 +624,7 @@
 <div class="viewcode-block" id="merge_two_hierarchies">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/merge_hierarchies.html#aviary.utils.merge_hierarchies.merge_two_hierarchies">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">merge_two_hierarchies</span><span class="p">(</span><span class="n">base_hierarchy</span><span class="p">,</span> <span class="n">hierarchy_b</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Merge two variable hierarchies together by adding the second into the first.</span>
 
 <span class="sd">    Add the attributes (variables and inner classes) of two variable hierarchies together, so that</span>
@@ -634,12 +634,12 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    base_hierarchy : class</span>
-<span class="sd">        An Aviary variable hierarchy. This hierarchy will function as the &#39;base&#39; hierarchy,</span>
+<span class="sd">        An Aviary variable hierarchy. This hierarchy will function as the 'base' hierarchy,</span>
 <span class="sd">        which is the hierarchy that has attributes added onto it from another hierarchy in order to combine</span>
 <span class="sd">        the attributes of the base and the other hierarchy.</span>
 
 <span class="sd">    hierarchy_b : class</span>
-<span class="sd">        An Aviary variable hierarchy. This hierarchy will function as the &#39;auxiliary&#39; hierarchy,</span>
+<span class="sd">        An Aviary variable hierarchy. This hierarchy will function as the 'auxiliary' hierarchy,</span>
 <span class="sd">        which is the hierarchy whose unique attributes are added onto a base in order to combine the</span>
 <span class="sd">        attributes of the base and the auxiliary.</span>
 
@@ -654,7 +654,7 @@
 <span class="sd">    ------</span>
 <span class="sd">    None</span>
 <span class="sd">        No exceptions raised by this method, although other methods called within may raise exceptions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="p">[</span><span class="n">overlapping_inners</span><span class="p">,</span> <span class="n">merged_vars</span><span class="p">,</span> <span class="n">b_vars</span><span class="p">,</span> <span class="n">merged_inners</span><span class="p">,</span> <span class="n">b_inners</span><span class="p">]</span> <span class="o">=</span> <span class="n">compare_inner_classes</span><span class="p">(</span>
         <span class="n">base_hierarchy</span><span class="p">,</span> <span class="n">hierarchy_b</span><span class="p">,</span> <span class="n">show_all</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
@@ -671,7 +671,7 @@
 <div class="viewcode-block" id="merge_hierarchies">
 <a class="viewcode-back" href="../../../theory_guide/merging_syntax.html#aviary.utils.merge_hierarchies.merge_hierarchies">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">merge_hierarchies</span><span class="p">(</span><span class="n">hierarchies_to_merge</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Combines all provided variable hierarchies into one unified variable hierarchy.</span>
 
 <span class="sd">    Performs checks on the user-provided list of variable hierarchies in order to ensure that they are</span>
@@ -693,20 +693,20 @@
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        Raises an exception if the list of inputted variable hierarchies includes hierarchies that have been subclassed from different superclasses.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">compare_hierarchies_to_merge</span><span class="p">(</span><span class="n">hierarchies_to_merge</span><span class="p">)</span>
     <span class="n">subclass_type</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">subclass_hierarchy</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">hierarchy</span> <span class="ow">in</span> <span class="n">hierarchies_to_merge</span><span class="p">:</span>  <span class="c1"># check that there are not hierarchies subclassing from different classes that we are attempting to merge</span>
         <span class="c1"># checks if the given hierarchy is the first subclass of the hierarchies</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hierarchy</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">subclass_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="c1"># gets highest level superclass of the class before &quot;class&quot; itself</span>
+            <span class="c1"># gets highest level superclass of the class before "class" itself</span>
             <span class="n">subclass_type</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">hierarchy</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
             <span class="n">subclass_hierarchy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">hierarchy</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">hierarchy</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># checks if the given hierarchy is a subclass</span>
             <span class="k">if</span> <span class="n">hierarchy</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">subclass_type</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;You have attempted to merge together variable hierarchies that subclass from different superclasses. &#39;</span><span class="si">{</span><span class="n">subclass_hierarchy</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&#39; is a subclass of &#39;</span><span class="si">{</span><span class="n">subclass_type</span><span class="si">}</span><span class="s2">&#39; and &#39;</span><span class="si">{</span><span class="n">hierarchy</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&#39; is a subclass of &#39;</span><span class="si">{</span><span class="n">hierarchy</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"You have attempted to merge together variable hierarchies that subclass from different superclasses. '</span><span class="si">{</span><span class="n">subclass_hierarchy</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">' is a subclass of '</span><span class="si">{</span><span class="n">subclass_type</span><span class="si">}</span><span class="s2">' and '</span><span class="si">{</span><span class="n">hierarchy</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">' is a subclass of '</span><span class="si">{</span><span class="n">hierarchy</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">'."</span>
                 <span class="p">)</span>
 
     <span class="k">if</span> <span class="p">(</span>

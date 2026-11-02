@@ -616,42 +616,37 @@ If you want to make minor modifications to <code class="docutils literal notrans
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
 
 <span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span>
-    <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv&#39;</span><span class="p">,</span>
+    <span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'</span><span class="p">,</span>
     <span class="n">av</span><span class="o">.</span><span class="n">default_energy_state_phase_info</span><span class="p">,</span>
     <span class="n">max_iter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-    <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="s1">'SLSQP'</span><span class="p">,</span>
     <span class="n">make_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631735.931322] [runnervm48cm3:5666 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55fcc921e650 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631735.931632] [runnervm48cm3:5666 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
-  &#39;aircraft:engine:mass  [7400.]  lbm
-  &#39;aircraft:fins:mass  0.0  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
-  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
-  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
-  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
-  &#39;aircraft:wing:control_surface_area  137.0  ft**2
-  &#39;aircraft:wing:wetted_area  2396.56  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.354  unitless
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05666] pml_ucx.c:313  Error: Failed to create UCP worker
-Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
+  'aircraft:design:touchdown_mass_max  152800.0  lbm
+  'aircraft:engine:mass  [7400.]  lbm
+  'aircraft:fins:mass  0.0  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  45694.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  85.5  ft
+  'aircraft:fuselage:planform_area  1578.24  ft**2
+  'aircraft:fuselage:wetted_area  4158.62  ft**2
+  'aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  'aircraft:vertical_tail:wetted_area  581.13  ft**2
+  'aircraft:wing:aspect_ratio  11.22091  unitless
+  'aircraft:wing:control_surface_area  137.0  ft**2
+  'aircraft:wing:wetted_area  2396.56  ft**2
+  'mission:takeoff:lift_over_drag  17.354  unitless
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration limit reached    (Exit mode 9)
@@ -694,74 +689,74 @@ In the absence of additional arguments to the methods, much of the default behav
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
 
 <span class="n">phase_info</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;pre_mission&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;include_takeoff&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;optimize_mass&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
-    <span class="s1">&#39;climb&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
-        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">34000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">64.0</span><span class="p">,</span> <span class="mf">192.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+    <span class="s1">'pre_mission'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'include_takeoff'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'optimize_mass'</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="s1">'climb'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
+        <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'num_segments'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">'order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'mach_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'altitude_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">34000.0</span><span class="p">),</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_polynomial_order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="s1">'path_constraint'</span><span class="p">,</span>
+            <span class="s1">'time_initial_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
+            <span class="s1">'time_duration_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">64.0</span><span class="p">,</span> <span class="mf">192.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
         <span class="p">},</span>
     <span class="p">},</span>
-    <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
-        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">34000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">23000.0</span><span class="p">,</span> <span class="mf">38000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary_constraint&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">64.0</span><span class="p">,</span> <span class="mf">192.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">56.5</span><span class="p">,</span> <span class="mf">169.5</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+    <span class="s1">'cruise'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
+        <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'num_segments'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">'order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'mach_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'altitude_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">34000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">23000.0</span><span class="p">,</span> <span class="mf">38000.0</span><span class="p">),</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_polynomial_order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="s1">'boundary_constraint'</span><span class="p">,</span>
+            <span class="s1">'time_initial_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">64.0</span><span class="p">,</span> <span class="mf">192.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
+            <span class="s1">'time_duration_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">56.5</span><span class="p">,</span> <span class="mf">169.5</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
         <span class="p">},</span>
     <span class="p">},</span>
-    <span class="s1">&#39;descent&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
-        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.36</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.34</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">34000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">38000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">120.5</span><span class="p">,</span> <span class="mf">361.5</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">87.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+    <span class="s1">'descent'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
+        <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'num_segments'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">'order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'mach_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.36</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.34</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'altitude_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">34000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">38000.0</span><span class="p">),</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_polynomial_order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="s1">'path_constraint'</span><span class="p">,</span>
+            <span class="s1">'time_initial_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">120.5</span><span class="p">,</span> <span class="mf">361.5</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
+            <span class="s1">'time_duration_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">87.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
         <span class="p">},</span>
     <span class="p">},</span>
-    <span class="s1">&#39;post_mission&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;include_landing&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s1">&#39;target_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1906.0</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">),</span>
+    <span class="s1">'post_mission'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'include_landing'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">'target_range'</span><span class="p">:</span> <span class="p">(</span><span class="mf">1906.0</span><span class="p">,</span> <span class="s1">'nmi'</span><span class="p">),</span>
     <span class="p">},</span>
 <span class="p">}</span>
 
-<span class="n">csv_path</span> <span class="o">=</span> <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv&#39;</span>
+<span class="n">csv_path</span> <span class="o">=</span> <span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'</span>
 
 <span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">()</span>
 
@@ -773,11 +768,11 @@ In the absence of additional arguments to the methods, much of the default behav
 
 <span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">'SLSQP'</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">objective_type</span><span class="o">=</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=-</span><span class="mf">1e5</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">objective_type</span><span class="o">=</span><span class="s1">'mass'</span><span class="p">,</span> <span class="n">ref</span><span class="o">=-</span><span class="mf">1e5</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
 
@@ -790,23 +785,23 @@ In the absence of additional arguments to the methods, much of the default behav
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
-  &#39;aircraft:engine:mass  [7400.]  lbm
-  &#39;aircraft:fins:mass  0.0  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
-  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
-  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
-  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
-  &#39;aircraft:wing:control_surface_area  137.0  ft**2
-  &#39;aircraft:wing:wetted_area  2396.56  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+  'aircraft:design:touchdown_mass_max  152800.0  lbm
+  'aircraft:engine:mass  [7400.]  lbm
+  'aircraft:fins:mass  0.0  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  45694.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  85.5  ft
+  'aircraft:fuselage:planform_area  1578.24  ft**2
+  'aircraft:fuselage:wetted_area  4158.62  ft**2
+  'aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  'aircraft:vertical_tail:wetted_area  581.13  ft**2
+  'aircraft:wing:aspect_ratio  11.22091  unitless
+  'aircraft:wing:control_surface_area  137.0  ft**2
+  'aircraft:wing:wetted_area  2396.56  ft**2
+  'mission:takeoff:lift_over_drag  17.354  unitless
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
@@ -857,17 +852,17 @@ You have supreme control over every part of the model and mission definition, bu
 
 <span class="n">prob</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">Problem</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">())</span>
 <span class="n">driver</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">ScipyOptimizeDriver</span><span class="p">()</span>
-<span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SLSQP&#39;</span>
-<span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;maxiter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">'optimizer'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'SLSQP'</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">'maxiter'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
 <span class="c1">########################################</span>
 <span class="c1"># Aircraft Input Variables and Options #</span>
 <span class="c1">########################################</span>
 
-<span class="n">csv_path</span> <span class="o">=</span> <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv&#39;</span>
+<span class="n">csv_path</span> <span class="o">=</span> <span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'</span>
 
 <span class="n">aviary_inputs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">create_vehicle</span><span class="p">(</span>
-    <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv&#39;</span>
+    <span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'</span>
 <span class="p">)</span>
 
 <span class="n">engines</span> <span class="o">=</span> <span class="p">[</span><span class="n">av</span><span class="o">.</span><span class="n">build_engine_deck</span><span class="p">(</span><span class="n">aviary_inputs</span><span class="p">)]</span>
@@ -915,9 +910,9 @@ You have supreme control over every part of the model and mission definition, bu
 <span class="c1">####################</span>
 <span class="c1"># Build Subsystems #</span>
 <span class="c1">####################</span>
-<span class="n">aero</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreAerodynamicsBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">&#39;FLOPS&#39;</span><span class="p">))</span>
-<span class="n">geom</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreGeometryBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">&#39;FLOPS&#39;</span><span class="p">))</span>
-<span class="n">mass</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreMassBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">&#39;FLOPS&#39;</span><span class="p">))</span>
+<span class="n">aero</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreAerodynamicsBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">'FLOPS'</span><span class="p">))</span>
+<span class="n">geom</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreGeometryBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">'FLOPS'</span><span class="p">))</span>
+<span class="n">mass</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreMassBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">'FLOPS'</span><span class="p">))</span>
 <span class="n">prop</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CorePropulsionBuilder</span><span class="p">(</span><span class="n">engine_models</span><span class="o">=</span><span class="n">engines</span><span class="p">)</span>
 
 <span class="n">premission_subsystems</span> <span class="o">=</span> <span class="p">[</span><span class="n">prop</span><span class="p">,</span> <span class="n">geom</span><span class="p">,</span> <span class="n">aero</span><span class="p">,</span> <span class="n">mass</span><span class="p">]</span>
@@ -928,15 +923,15 @@ You have supreme control over every part of the model and mission definition, bu
 <span class="c1">####################</span>
 
 <span class="c1"># Nudge it a bit off the correct answer to verify that the optimize takes us there.</span>
-<span class="n">aviary_inputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="mf">135000.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="n">aviary_inputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="mf">135000.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span>
-    <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">100000.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">200000.0</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">135000</span>
+    <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">100000.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">200000.0</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">135000</span>
 <span class="p">)</span>
 
 <span class="c1"># default subsystems</span>
-<span class="n">subsystems</span> <span class="o">=</span> <span class="n">get_default_subsystems</span><span class="p">(</span><span class="s1">&#39;FLOPS&#39;</span><span class="p">,</span> <span class="n">engines</span><span class="p">)</span>
-<span class="n">mission_subsystems</span> <span class="o">=</span> <span class="p">[</span><span class="n">subsystems</span><span class="p">[</span><span class="n">system</span><span class="p">]</span> <span class="k">for</span> <span class="n">system</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;propulsion&#39;</span><span class="p">,</span> <span class="s1">&#39;aerodynamics&#39;</span><span class="p">]]</span>
+<span class="n">subsystems</span> <span class="o">=</span> <span class="n">get_default_subsystems</span><span class="p">(</span><span class="s1">'FLOPS'</span><span class="p">,</span> <span class="n">engines</span><span class="p">)</span>
+<span class="n">mission_subsystems</span> <span class="o">=</span> <span class="p">[</span><span class="n">subsystems</span><span class="p">[</span><span class="n">system</span><span class="p">]</span> <span class="k">for</span> <span class="n">system</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'propulsion'</span><span class="p">,</span> <span class="s1">'aerodynamics'</span><span class="p">]]</span>
 
 <span class="c1">#################</span>
 <span class="c1"># Define Phases #</span>
@@ -957,57 +952,57 @@ You have supreme control over every part of the model and mission definition, bu
 <span class="p">)</span>
 
 <span class="n">climb_options</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">EnergyStatePhaseBuilder</span><span class="p">(</span>
-    <span class="s1">&#39;test_climb&#39;</span><span class="p">,</span>
+    <span class="s1">'test_climb'</span><span class="p">,</span>
     <span class="n">user_options</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_i_climb</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_f_climb</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">mach_i_climb</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">mach_f_climb</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_i_climb</span><span class="p">,</span> <span class="s1">'m'</span><span class="p">),</span>
+        <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_f_climb</span><span class="p">,</span> <span class="s1">'m'</span><span class="p">),</span>
+        <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="n">mach_i_climb</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+        <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="n">mach_f_climb</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
     <span class="p">},</span>
     <span class="n">subsystems</span><span class="o">=</span><span class="n">mission_subsystems</span><span class="p">,</span>
-    <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+    <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
     <span class="n">transcription</span><span class="o">=</span><span class="n">transcription_climb</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">cruise_options</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">EnergyStatePhaseBuilder</span><span class="p">(</span>
-    <span class="s1">&#39;test_cruise&#39;</span><span class="p">,</span>
+    <span class="s1">'test_cruise'</span><span class="p">,</span>
     <span class="n">user_options</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-        <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_min_cruise</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_max_cruise</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-        <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">cruise_mach</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">cruise_mach</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;required_available_climb_rate&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="s1">&#39;ft/min&#39;</span><span class="p">),</span>
+        <span class="s1">'altitude_polynomial_order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_min_cruise</span><span class="p">,</span> <span class="s1">'m'</span><span class="p">),</span>
+        <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_max_cruise</span><span class="p">,</span> <span class="s1">'m'</span><span class="p">),</span>
+        <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="n">cruise_mach</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+        <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="n">cruise_mach</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+        <span class="s1">'required_available_climb_rate'</span><span class="p">:</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="s1">'ft/min'</span><span class="p">),</span>
     <span class="p">},</span>
     <span class="n">subsystems</span><span class="o">=</span><span class="n">mission_subsystems</span><span class="p">,</span>
-    <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+    <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
     <span class="n">transcription</span><span class="o">=</span><span class="n">transcription_cruise</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">descent_options</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">EnergyStatePhaseBuilder</span><span class="p">(</span>
-    <span class="s1">&#39;test_descent&#39;</span><span class="p">,</span>
+    <span class="s1">'test_descent'</span><span class="p">,</span>
     <span class="n">user_options</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_f_descent</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_i_descent</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">mach_i_descent</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-        <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">mach_f_descent</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_f_descent</span><span class="p">,</span> <span class="s1">'m'</span><span class="p">),</span>
+        <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="n">alt_i_descent</span><span class="p">,</span> <span class="s1">'m'</span><span class="p">),</span>
+        <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="n">mach_i_descent</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+        <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="n">mach_f_descent</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
     <span class="p">},</span>
     <span class="n">subsystems</span><span class="o">=</span><span class="n">mission_subsystems</span><span class="p">,</span>
-    <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+    <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
     <span class="n">transcription</span><span class="o">=</span><span class="n">transcription_descent</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Upstream pre-mission analysis for aero</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;pre_mission&#39;</span><span class="p">,</span>
+    <span class="s1">'pre_mission'</span><span class="p">,</span>
     <span class="n">av</span><span class="o">.</span><span class="n">CorePreMission</span><span class="p">(</span>
         <span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_inputs</span><span class="p">,</span>
         <span class="n">subsystems</span><span class="o">=</span><span class="n">premission_subsystems</span><span class="p">,</span>
         <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{},</span>
     <span class="p">),</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;aircraft:*&#39;</span><span class="p">,</span> <span class="s1">&#39;mission:*&#39;</span><span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;aircraft:*&#39;</span><span class="p">,</span> <span class="s1">&#39;mission:*&#39;</span><span class="p">],</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'aircraft:*'</span><span class="p">,</span> <span class="s1">'mission:*'</span><span class="p">],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'aircraft:*'</span><span class="p">,</span> <span class="s1">'mission:*'</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="c1"># directly connect phases (strong_couple = True), or use linkage constraints (weak</span>
@@ -1020,21 +1015,21 @@ You have supreme control over every part of the model and mission definition, bu
 
 <span class="n">descent</span> <span class="o">=</span> <span class="n">descent_options</span><span class="o">.</span><span class="n">build_phase</span><span class="p">(</span><span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_inputs</span><span class="p">)</span>
 
-<span class="n">traj</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">())</span>
+<span class="n">traj</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">'traj'</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">())</span>
 
 <span class="c1"># if fix_initial is false, can we always set input_initial to be true for</span>
 <span class="c1"># necessary states, and then ignore if we use a linkage?</span>
 <span class="n">climb</span><span class="o">.</span><span class="n">set_time_options</span><span class="p">(</span>
     <span class="n">fix_initial</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">fix_duration</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">,</span>
     <span class="n">duration_bounds</span><span class="o">=</span><span class="p">(</span><span class="n">t_duration_climb</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">t_duration_climb</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
     <span class="n">duration_ref</span><span class="o">=</span><span class="n">t_duration_climb</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">cruise</span><span class="o">.</span><span class="n">set_time_options</span><span class="p">(</span>
     <span class="n">fix_initial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">fix_duration</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">,</span>
     <span class="n">duration_bounds</span><span class="o">=</span><span class="p">(</span><span class="n">t_duration_cruise</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">t_duration_cruise</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
     <span class="n">duration_ref</span><span class="o">=</span><span class="n">t_duration_cruise</span><span class="p">,</span>
     <span class="n">initial_bounds</span><span class="o">=</span><span class="p">(</span><span class="n">t_duration_climb</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">t_duration_climb</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
@@ -1042,7 +1037,7 @@ You have supreme control over every part of the model and mission definition, bu
 <span class="n">descent</span><span class="o">.</span><span class="n">set_time_options</span><span class="p">(</span>
     <span class="n">fix_initial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">fix_duration</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">,</span>
     <span class="n">duration_bounds</span><span class="o">=</span><span class="p">(</span><span class="n">t_duration_descent</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">t_duration_descent</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
     <span class="n">duration_ref</span><span class="o">=</span><span class="n">t_duration_descent</span><span class="p">,</span>
     <span class="n">initial_bounds</span><span class="o">=</span><span class="p">(</span>
@@ -1051,18 +1046,18 @@ You have supreme control over every part of the model and mission definition, bu
     <span class="p">),</span>
 <span class="p">)</span>
 
-<span class="n">traj</span><span class="o">.</span><span class="n">add_phase</span><span class="p">(</span><span class="s1">&#39;climb&#39;</span><span class="p">,</span> <span class="n">climb</span><span class="p">)</span>
+<span class="n">traj</span><span class="o">.</span><span class="n">add_phase</span><span class="p">(</span><span class="s1">'climb'</span><span class="p">,</span> <span class="n">climb</span><span class="p">)</span>
 
-<span class="n">traj</span><span class="o">.</span><span class="n">add_phase</span><span class="p">(</span><span class="s1">&#39;cruise&#39;</span><span class="p">,</span> <span class="n">cruise</span><span class="p">)</span>
+<span class="n">traj</span><span class="o">.</span><span class="n">add_phase</span><span class="p">(</span><span class="s1">'cruise'</span><span class="p">,</span> <span class="n">cruise</span><span class="p">)</span>
 
-<span class="n">traj</span><span class="o">.</span><span class="n">add_phase</span><span class="p">(</span><span class="s1">&#39;descent&#39;</span><span class="p">,</span> <span class="n">descent</span><span class="p">)</span>
+<span class="n">traj</span><span class="o">.</span><span class="n">add_phase</span><span class="p">(</span><span class="s1">'descent'</span><span class="p">,</span> <span class="n">descent</span><span class="p">)</span>
 
 <span class="n">traj</span><span class="o">.</span><span class="n">link_phases</span><span class="p">(</span>
-    <span class="p">[</span><span class="s1">&#39;climb&#39;</span><span class="p">,</span> <span class="s1">&#39;cruise&#39;</span><span class="p">,</span> <span class="s1">&#39;descent&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;distance&#39;</span><span class="p">],</span> <span class="n">connected</span><span class="o">=</span><span class="n">strong_couple</span>
+    <span class="p">[</span><span class="s1">'climb'</span><span class="p">,</span> <span class="s1">'cruise'</span><span class="p">,</span> <span class="s1">'descent'</span><span class="p">],</span> <span class="p">[</span><span class="s1">'time'</span><span class="p">,</span> <span class="s1">'mass'</span><span class="p">,</span> <span class="s1">'distance'</span><span class="p">],</span> <span class="n">connected</span><span class="o">=</span><span class="n">strong_couple</span>
 <span class="p">)</span>
 
 <span class="c1"># Need to declare dymos parameters for every input that is promoted out of the missions.</span>
-<span class="n">external_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;climb&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;descent&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+<span class="n">external_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'climb'</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">'cruise'</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">'descent'</span><span class="p">:</span> <span class="p">{}}</span>
 <span class="k">for</span> <span class="n">default_subsys</span> <span class="ow">in</span> <span class="n">mission_subsystems</span><span class="p">:</span>
     <span class="n">params</span> <span class="o">=</span> <span class="n">default_subsys</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">(</span>
         <span class="n">aviary_inputs</span><span class="o">=</span><span class="n">aviary_inputs</span><span class="p">,</span>
@@ -1082,26 +1077,26 @@ You have supreme control over every part of the model and mission definition, bu
 <span class="c1">###############</span>
 
 <span class="n">ecomp</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
-    <span class="s1">&#39;fuel_burned = initial_mass - descent_mass_final&#39;</span><span class="p">,</span>
-    <span class="n">initial_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-    <span class="n">descent_mass_final</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-    <span class="n">fuel_burned</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="s1">'fuel_burned = initial_mass - descent_mass_final'</span><span class="p">,</span>
+    <span class="n">initial_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">,</span> <span class="s1">'shape'</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="n">descent_mass_final</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">,</span> <span class="s1">'shape'</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="n">fuel_burned</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">,</span> <span class="s1">'shape'</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;fuel_burn&#39;</span><span class="p">,</span>
+    <span class="s1">'fuel_burn'</span><span class="p">,</span>
     <span class="n">ecomp</span><span class="p">,</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;initial_mass&#39;</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">)],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;fuel_burned&#39;</span><span class="p">],</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">'initial_mass'</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">)],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'fuel_burned'</span><span class="p">],</span>
 <span class="p">)</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;traj.descent.states:mass&#39;</span><span class="p">,</span> <span class="s1">&#39;fuel_burn.descent_mass_final&#39;</span><span class="p">,</span> <span class="n">src_indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">'traj.descent.states:mass'</span><span class="p">,</span> <span class="s1">'fuel_burn.descent_mass_final'</span><span class="p">,</span> <span class="n">src_indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
 <span class="c1">##########################</span>
 <span class="c1"># Add Objective Function #</span>
 <span class="c1">##########################</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="s1">&#39;fuel_burned&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">1e4</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="s1">'fuel_burned'</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">1e4</span><span class="p">)</span>
 
 <span class="c1"># Set initial default values for any variables that have</span>
 <span class="c1"># different defaults in premission and mission.</span>
@@ -1126,76 +1121,76 @@ You have supreme control over every part of the model and mission definition, bu
 <span class="c1"># Initial Settings for States and Controls #</span>
 <span class="c1">############################################</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;traj.climb.t_initial&#39;</span><span class="p">,</span> <span class="n">t_i_climb</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;traj.climb.t_duration&#39;</span><span class="p">,</span> <span class="n">t_duration_climb</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'traj.climb.t_initial'</span><span class="p">,</span> <span class="n">t_i_climb</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'traj.climb.t_duration'</span><span class="p">,</span> <span class="n">t_duration_climb</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.climb.controls:altitude&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.climb.controls:altitude'</span><span class="p">,</span>
     <span class="n">climb</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">alt_i_climb</span><span class="p">,</span> <span class="n">alt_f_climb</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'m'</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.climb.controls:mach&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.climb.controls:mach'</span><span class="p">,</span>
     <span class="n">climb</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">mach_i_climb</span><span class="p">,</span> <span class="n">mach_f_climb</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.climb.states:mass&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.climb.states:mass'</span><span class="p">,</span>
     <span class="n">climb</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">mass_i_climb</span><span class="p">,</span> <span class="n">mass_f_climb</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'kg'</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.climb.states:distance&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.climb.states:distance'</span><span class="p">,</span>
     <span class="n">climb</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">distance_i_climb</span><span class="p">,</span> <span class="n">distance_f_climb</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'m'</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;traj.cruise.t_initial&#39;</span><span class="p">,</span> <span class="n">t_i_cruise</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;traj.cruise.t_duration&#39;</span><span class="p">,</span> <span class="n">t_duration_cruise</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'traj.cruise.t_initial'</span><span class="p">,</span> <span class="n">t_i_cruise</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'traj.cruise.t_duration'</span><span class="p">,</span> <span class="n">t_duration_cruise</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.cruise.controls:altitude&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.cruise.controls:altitude'</span><span class="p">,</span>
     <span class="n">cruise</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">alt_i_cruise</span><span class="p">,</span> <span class="n">alt_f_cruise</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'m'</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.cruise.controls:mach&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.cruise.controls:mach'</span><span class="p">,</span>
     <span class="n">cruise</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">cruise_mach</span><span class="p">,</span> <span class="n">cruise_mach</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.cruise.states:mass&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.cruise.states:mass'</span><span class="p">,</span>
     <span class="n">cruise</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">mass_i_cruise</span><span class="p">,</span> <span class="n">mass_f_cruise</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'kg'</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.cruise.states:distance&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.cruise.states:distance'</span><span class="p">,</span>
     <span class="n">cruise</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">distance_i_cruise</span><span class="p">,</span> <span class="n">distance_f_cruise</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'m'</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;traj.descent.t_initial&#39;</span><span class="p">,</span> <span class="n">t_i_descent</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;traj.descent.t_duration&#39;</span><span class="p">,</span> <span class="n">t_duration_descent</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'traj.descent.t_initial'</span><span class="p">,</span> <span class="n">t_i_descent</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'traj.descent.t_duration'</span><span class="p">,</span> <span class="n">t_duration_descent</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.descent.controls:altitude&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.descent.controls:altitude'</span><span class="p">,</span>
     <span class="n">descent</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">alt_i_descent</span><span class="p">,</span> <span class="n">alt_f_descent</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'m'</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.descent.controls:mach&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.descent.controls:mach'</span><span class="p">,</span>
     <span class="n">descent</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">mach_i_descent</span><span class="p">,</span> <span class="n">mach_f_descent</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.descent.states:mass&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.descent.states:mass'</span><span class="p">,</span>
     <span class="n">descent</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">mass_i_descent</span><span class="p">,</span> <span class="n">mass_f_descent</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'kg'</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="s1">&#39;traj.descent.states:distance&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.descent.states:distance'</span><span class="p">,</span>
     <span class="n">descent</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="p">[</span><span class="n">distance_i_descent</span><span class="p">,</span> <span class="n">distance_f_descent</span><span class="p">]),</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'m'</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Turn off solver printing so that the SNOPT output is readable.</span>
@@ -1205,72 +1200,72 @@ You have supreme control over every part of the model and mission definition, bu
     <span class="n">prob</span><span class="p">,</span>
     <span class="n">simulate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">make_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">simulate_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;times_per_seg&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;atol&#39;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="s1">&#39;rtol&#39;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">},</span>
+    <span class="n">simulate_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">'times_per_seg'</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">'atol'</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="s1">'rtol'</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">},</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:4563: OpenMDAOWarning:Calling `list_inputs` before `final_setup` will only display the default values of variables and will not show the result of any `set_val` calls.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.canard_swet&#39; &lt;class CanardWettedArea&gt;: input variable &#39;aircraft:canard:area&#39;, promoted using &#39;aircraft:canard:area&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.canard_swet&#39; &lt;class CanardWettedArea&gt;: input variable &#39;aircraft:canard:thickness_to_chord&#39;, promoted using &#39;aircraft:canard:thickness_to_chord&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.canard_swet&#39; &lt;class CanardWettedArea&gt;: input variable &#39;aircraft:canard:wetted_area_scaler&#39;, promoted using &#39;aircraft:canard:wetted_area_scaler&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.fus_swet&#39; &lt;class FuselageWettedArea&gt;: input variable &#39;aircraft:fuselage:ref_diameter&#39;, promoted using &#39;aircraft:fuselage:ref_diameter&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.fus_swet&#39; &lt;class FuselageWettedArea&gt;: input variable &#39;aircraft:fuselage:length&#39;, promoted using &#39;aircraft:fuselage:length&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.fus_swet&#39; &lt;class FuselageWettedArea&gt;: input variable &#39;aircraft:fuselage:wetted_area_scaler&#39;, promoted using &#39;aircraft:fuselage:wetted_area_scaler&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.fus_swet&#39; &lt;class FuselageWettedArea&gt;: input variable &#39;aircraft:horizontal_tail:thickness_to_chord&#39;, promoted using &#39;aircraft:horizontal_tail:thickness_to_chord&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.fus_swet&#39; &lt;class FuselageWettedArea&gt;: input variable &#39;aircraft:horizontal_tail:vertical_tail_mount_location&#39;, promoted using &#39;aircraft:horizontal_tail:vertical_tail_mount_location&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.fus_swet&#39; &lt;class FuselageWettedArea&gt;: input variable &#39;aircraft:vertical_tail:thickness_to_chord&#39;, promoted using &#39;aircraft:vertical_tail:thickness_to_chord&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.fus_swet&#39; &lt;class FuselageWettedArea&gt;: input variable &#39;aircraft:wing:thickness_to_chord&#39;, promoted using &#39;aircraft:wing:thickness_to_chord&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.nacelles_swet&#39; &lt;class NacelleWettedArea&gt;: input variable &#39;aircraft:nacelle:avg_diameter&#39;, promoted using &#39;aircraft:nacelle:avg_diameter&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.nacelles_swet&#39; &lt;class NacelleWettedArea&gt;: input variable &#39;aircraft:nacelle:avg_length&#39;, promoted using &#39;aircraft:nacelle:avg_length&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.nacelles_swet&#39; &lt;class NacelleWettedArea&gt;: input variable &#39;aircraft:nacelle:wetted_area_scaler&#39;, promoted using &#39;aircraft:nacelle:wetted_area_scaler&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.tail&#39; &lt;class TailWettedArea&gt;: input variable &#39;aircraft:horizontal_tail:area&#39;, promoted using &#39;aircraft:horizontal_tail:area&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.tail&#39; &lt;class TailWettedArea&gt;: input variable &#39;aircraft:horizontal_tail:vertical_tail_mount_location&#39;, promoted using &#39;aircraft:horizontal_tail:vertical_tail_mount_location&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.tail&#39; &lt;class TailWettedArea&gt;: input variable &#39;aircraft:horizontal_tail:wetted_area_scaler&#39;, promoted using &#39;aircraft:horizontal_tail:wetted_area_scaler&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.tail&#39; &lt;class TailWettedArea&gt;: input variable &#39;aircraft:vertical_tail:area&#39;, promoted using &#39;aircraft:vertical_tail:area&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.tail&#39; &lt;class TailWettedArea&gt;: input variable &#39;aircraft:vertical_tail:wetted_area_scaler&#39;, promoted using &#39;aircraft:vertical_tail:wetted_area_scaler&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.wing_swet&#39; &lt;class WingWettedArea&gt;: input variable &#39;aircraft:wing:area&#39;, promoted using &#39;aircraft:wing:area&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wetted_area.wing_swet&#39; &lt;class WingWettedArea&gt;: input variable &#39;aircraft:wing:wetted_area_scaler&#39;, promoted using &#39;aircraft:wing:wetted_area_scaler&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.propulsion.turbofan_28k&#39; &lt;class SizeEngine&gt;: input variable &#39;aircraft:engine:reference_sls_thrust&#39;, promoted using &#39;aircraft:engine:reference_sls_thrust&#39;, was already promoted using &#39;aircraft:engine:reference_sls_thrust&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.propulsion.turbofan_28k&#39; &lt;class SizeEngine&gt;: input variable &#39;aircraft:engine:scale_factor&#39;, promoted using &#39;aircraft:engine:scale_factor&#39;, was already promoted using &#39;aircraft:engine:scale_factor&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.fus_ratios&#39; &lt;class _FuselageRatios&gt;: input variable &#39;aircraft:fuselage:ref_diameter&#39;, promoted using &#39;aircraft:fuselage:ref_diameter&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.fus_ratios&#39; &lt;class _FuselageRatios&gt;: input variable &#39;aircraft:fuselage:length&#39;, promoted using &#39;aircraft:fuselage:length&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.fus_ratios&#39; &lt;class _FuselageRatios&gt;: input variable &#39;aircraft:wing:area&#39;, promoted using &#39;aircraft:wing:area&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.fus_ratios&#39; &lt;class _FuselageRatios&gt;: input variable &#39;aircraft:wing:aspect_ratio&#39;, promoted using &#39;aircraft:wing:aspect_ratio&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.fus_ratios&#39; &lt;class _FuselageRatios&gt;: input variable &#39;aircraft:wing:glove_and_bat&#39;, promoted using &#39;aircraft:wing:glove_and_bat&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.nacelle_characteristic_lengths&#39; &lt;class NacelleCharacteristicLength&gt;: input variable &#39;aircraft:nacelle:avg_diameter&#39;, promoted using &#39;aircraft:nacelle:avg_diameter&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.nacelle_characteristic_lengths&#39; &lt;class NacelleCharacteristicLength&gt;: input variable &#39;aircraft:nacelle:avg_length&#39;, promoted using &#39;aircraft:nacelle:avg_length&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.nacelle_prelim&#39; &lt;class NacellePrelim&gt;: input variable &#39;aircraft:engine:scale_factor&#39;, promoted using &#39;aircraft:engine:scale_factor&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.nacelle_prelim&#39; &lt;class NacellePrelim&gt;: input variable &#39;aircraft:nacelle:reference_avg_diameter&#39;, promoted using &#39;aircraft:nacelle:reference_avg_diameter&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.nacelle_prelim&#39; &lt;class NacellePrelim&gt;: input variable &#39;aircraft:nacelle:reference_avg_length&#39;, promoted using &#39;aircraft:nacelle:reference_avg_length&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wing_characteristic_lengths&#39; &lt;class WingCharacteristicLength&gt;: input variable &#39;aircraft:wing:area&#39;, promoted using &#39;aircraft:wing:area&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wing_characteristic_lengths&#39; &lt;class WingCharacteristicLength&gt;: input variable &#39;aircraft:wing:aspect_ratio&#39;, promoted using &#39;aircraft:wing:aspect_ratio&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wing_characteristic_lengths&#39; &lt;class WingCharacteristicLength&gt;: input variable &#39;aircraft:wing:glove_and_bat&#39;, promoted using &#39;aircraft:wing:glove_and_bat&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wing_characteristic_lengths&#39; &lt;class WingCharacteristicLength&gt;: input variable &#39;aircraft:wing:taper_ratio&#39;, promoted using &#39;aircraft:wing:taper_ratio&#39;, was already promoted using &#39;aircraft*&#39;.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:&#39;pre_mission.geometry.wing_characteristic_lengths&#39; &lt;class WingCharacteristicLength&gt;: input variable &#39;aircraft:wing:thickness_to_chord&#39;, promoted using &#39;aircraft:wing:thickness_to_chord&#39;, was already promoted using &#39;aircraft*&#39;.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.canard_swet' &lt;class CanardWettedArea&gt;: input variable 'aircraft:canard:area', promoted using 'aircraft:canard:area', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.canard_swet' &lt;class CanardWettedArea&gt;: input variable 'aircraft:canard:thickness_to_chord', promoted using 'aircraft:canard:thickness_to_chord', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.canard_swet' &lt;class CanardWettedArea&gt;: input variable 'aircraft:canard:wetted_area_scaler', promoted using 'aircraft:canard:wetted_area_scaler', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.fus_swet' &lt;class FuselageWettedArea&gt;: input variable 'aircraft:fuselage:ref_diameter', promoted using 'aircraft:fuselage:ref_diameter', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.fus_swet' &lt;class FuselageWettedArea&gt;: input variable 'aircraft:fuselage:length', promoted using 'aircraft:fuselage:length', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.fus_swet' &lt;class FuselageWettedArea&gt;: input variable 'aircraft:fuselage:wetted_area_scaler', promoted using 'aircraft:fuselage:wetted_area_scaler', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.fus_swet' &lt;class FuselageWettedArea&gt;: input variable 'aircraft:horizontal_tail:thickness_to_chord', promoted using 'aircraft:horizontal_tail:thickness_to_chord', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.fus_swet' &lt;class FuselageWettedArea&gt;: input variable 'aircraft:horizontal_tail:vertical_tail_mount_location', promoted using 'aircraft:horizontal_tail:vertical_tail_mount_location', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.fus_swet' &lt;class FuselageWettedArea&gt;: input variable 'aircraft:vertical_tail:thickness_to_chord', promoted using 'aircraft:vertical_tail:thickness_to_chord', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.fus_swet' &lt;class FuselageWettedArea&gt;: input variable 'aircraft:wing:thickness_to_chord', promoted using 'aircraft:wing:thickness_to_chord', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.nacelles_swet' &lt;class NacelleWettedArea&gt;: input variable 'aircraft:nacelle:avg_diameter', promoted using 'aircraft:nacelle:avg_diameter', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.nacelles_swet' &lt;class NacelleWettedArea&gt;: input variable 'aircraft:nacelle:avg_length', promoted using 'aircraft:nacelle:avg_length', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.nacelles_swet' &lt;class NacelleWettedArea&gt;: input variable 'aircraft:nacelle:wetted_area_scaler', promoted using 'aircraft:nacelle:wetted_area_scaler', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.tail' &lt;class TailWettedArea&gt;: input variable 'aircraft:horizontal_tail:area', promoted using 'aircraft:horizontal_tail:area', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.tail' &lt;class TailWettedArea&gt;: input variable 'aircraft:horizontal_tail:vertical_tail_mount_location', promoted using 'aircraft:horizontal_tail:vertical_tail_mount_location', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.tail' &lt;class TailWettedArea&gt;: input variable 'aircraft:horizontal_tail:wetted_area_scaler', promoted using 'aircraft:horizontal_tail:wetted_area_scaler', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.tail' &lt;class TailWettedArea&gt;: input variable 'aircraft:vertical_tail:area', promoted using 'aircraft:vertical_tail:area', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.tail' &lt;class TailWettedArea&gt;: input variable 'aircraft:vertical_tail:wetted_area_scaler', promoted using 'aircraft:vertical_tail:wetted_area_scaler', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.wing_swet' &lt;class WingWettedArea&gt;: input variable 'aircraft:wing:area', promoted using 'aircraft:wing:area', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wetted_area.wing_swet' &lt;class WingWettedArea&gt;: input variable 'aircraft:wing:wetted_area_scaler', promoted using 'aircraft:wing:wetted_area_scaler', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.propulsion.turbofan_28k' &lt;class SizeEngine&gt;: input variable 'aircraft:engine:reference_sls_thrust', promoted using 'aircraft:engine:reference_sls_thrust', was already promoted using 'aircraft:engine:reference_sls_thrust'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.propulsion.turbofan_28k' &lt;class SizeEngine&gt;: input variable 'aircraft:engine:scale_factor', promoted using 'aircraft:engine:scale_factor', was already promoted using 'aircraft:engine:scale_factor'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.fus_ratios' &lt;class _FuselageRatios&gt;: input variable 'aircraft:fuselage:ref_diameter', promoted using 'aircraft:fuselage:ref_diameter', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.fus_ratios' &lt;class _FuselageRatios&gt;: input variable 'aircraft:fuselage:length', promoted using 'aircraft:fuselage:length', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.fus_ratios' &lt;class _FuselageRatios&gt;: input variable 'aircraft:wing:area', promoted using 'aircraft:wing:area', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.fus_ratios' &lt;class _FuselageRatios&gt;: input variable 'aircraft:wing:aspect_ratio', promoted using 'aircraft:wing:aspect_ratio', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.fus_ratios' &lt;class _FuselageRatios&gt;: input variable 'aircraft:wing:glove_and_bat', promoted using 'aircraft:wing:glove_and_bat', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.nacelle_characteristic_lengths' &lt;class NacelleCharacteristicLength&gt;: input variable 'aircraft:nacelle:avg_diameter', promoted using 'aircraft:nacelle:avg_diameter', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.nacelle_characteristic_lengths' &lt;class NacelleCharacteristicLength&gt;: input variable 'aircraft:nacelle:avg_length', promoted using 'aircraft:nacelle:avg_length', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.nacelle_prelim' &lt;class NacellePrelim&gt;: input variable 'aircraft:engine:scale_factor', promoted using 'aircraft:engine:scale_factor', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.nacelle_prelim' &lt;class NacellePrelim&gt;: input variable 'aircraft:nacelle:reference_avg_diameter', promoted using 'aircraft:nacelle:reference_avg_diameter', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.nacelle_prelim' &lt;class NacellePrelim&gt;: input variable 'aircraft:nacelle:reference_avg_length', promoted using 'aircraft:nacelle:reference_avg_length', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wing_characteristic_lengths' &lt;class WingCharacteristicLength&gt;: input variable 'aircraft:wing:area', promoted using 'aircraft:wing:area', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wing_characteristic_lengths' &lt;class WingCharacteristicLength&gt;: input variable 'aircraft:wing:aspect_ratio', promoted using 'aircraft:wing:aspect_ratio', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wing_characteristic_lengths' &lt;class WingCharacteristicLength&gt;: input variable 'aircraft:wing:glove_and_bat', promoted using 'aircraft:wing:glove_and_bat', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wing_characteristic_lengths' &lt;class WingCharacteristicLength&gt;: input variable 'aircraft:wing:taper_ratio', promoted using 'aircraft:wing:taper_ratio', was already promoted using 'aircraft*'.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:2681: PromotionWarning:'pre_mission.geometry.wing_characteristic_lengths' &lt;class WingCharacteristicLength&gt;: input variable 'aircraft:wing:thickness_to_chord', promoted using 'aircraft:wing:thickness_to_chord', was already promoted using 'aircraft*'.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
-  &#39;aircraft:engine:mass  [7400.]  lbm
-  &#39;aircraft:engine:scaled_sls_thrust  [28928.1]  lbf
-  &#39;aircraft:fins:mass  0.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
-  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
-  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
-  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
-  &#39;aircraft:wing:control_surface_area  137.0  ft**2
-  &#39;aircraft:wing:wetted_area  2396.56  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+  'aircraft:design:touchdown_mass_max  152800.0  lbm
+  'aircraft:engine:mass  [7400.]  lbm
+  'aircraft:engine:scaled_sls_thrust  [28928.1]  lbf
+  'aircraft:fins:mass  0.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  85.5  ft
+  'aircraft:fuselage:planform_area  1578.24  ft**2
+  'aircraft:fuselage:wetted_area  4158.62  ft**2
+  'aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  'aircraft:vertical_tail:wetted_area  581.13  ft**2
+  'aircraft:wing:aspect_ratio  11.22091  unitless
+  'aircraft:wing:control_surface_area  137.0  ft**2
+  'aircraft:wing:wetted_area  2396.56  ft**2
+  'mission:takeoff:lift_over_drag  17.354  unitless
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration limit reached    (Exit mode 9)
-            Current function value: 2.924754891320075
+            Current function value: 2.9247548913212538
             Iterations: 1
             Function evaluations: 3
             Gradient evaluations: 2
@@ -1283,11 +1278,11 @@ Iteration limit reached
 Driver:  ScipyOptimizeDriver
   success     : False
   iterations  : 4
-  runtime     : 1.0896E+00 s
+  runtime     : 1.4510E+00 s
   model_evals : 5
-  model_time  : 3.6444E-01 s
+  model_time  : 6.0184E-01 s
   deriv_evals : 2
-  deriv_time  : 2.2124E-01 s
+  deriv_time  : 4.6790E-01 s
   exit_status : FAIL
 </pre></div>
 </div>

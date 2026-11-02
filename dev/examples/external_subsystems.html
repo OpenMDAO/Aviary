@@ -620,11 +620,11 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">CustomMass</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">ExplicitComponent</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A simple component that computes a wing mass as a function of the tail mass, made to demonstrate</span>
 <span class="sd">    the concept of an externally calculated subsystem mass. The equation used is made-up and not</span>
 <span class="sd">    representative of any real-world physics or empirical relations.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">add_aviary_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">HorizontalTail</span><span class="o">.</span><span class="n">MASS</span><span class="p">)</span>
@@ -632,7 +632,7 @@
 
         <span class="n">add_aviary_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">MASS</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">declare_partials</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;cs&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">declare_partials</span><span class="p">(</span><span class="s1">'*'</span><span class="p">,</span> <span class="s1">'*'</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'cs'</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
         <span class="n">mass_scaler</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">MASS_SCALER</span><span class="p">]</span>
@@ -653,7 +653,7 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">WingMassBuilder</span><span class="p">(</span><span class="n">SubsystemBuilder</span><span class="p">):</span>
-    <span class="n">_default_name</span> <span class="o">=</span> <span class="s1">&#39;external_wing_mass&#39;</span>
+    <span class="n">_default_name</span> <span class="o">=</span> <span class="s1">'external_wing_mass'</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">build_pre_mission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="p">,</span> <span class="n">subsystem_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">CustomMass</span><span class="p">()</span>
@@ -669,9 +669,9 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.models.missions.energy_state_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">phase_info</span>
 
-<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;climb&#39;</span><span class="p">][</span><span class="s1">&#39;subsystem_options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;external&#39;</span><span class="p">}}</span>
-<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;cruise&#39;</span><span class="p">][</span><span class="s1">&#39;subsystem_options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;external&#39;</span><span class="p">}}</span>
-<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;descent&#39;</span><span class="p">][</span><span class="s1">&#39;subsystem_options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;external&#39;</span><span class="p">}}</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">'climb'</span><span class="p">][</span><span class="s1">'subsystem_options'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'external'</span><span class="p">}}</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">'cruise'</span><span class="p">][</span><span class="s1">'subsystem_options'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'external'</span><span class="p">}}</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">'descent'</span><span class="p">][</span><span class="s1">'subsystem_options'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'external'</span><span class="p">}}</span>
 </pre></div>
 </div>
 </div>
@@ -685,7 +685,7 @@
 <span class="n">prob</span> <span class="o">=</span> <span class="n">AviaryProblem</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span>
-    <span class="s1">&#39;models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv&#39;</span><span class="p">,</span> <span class="n">phase_info</span>
+    <span class="s1">'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv'</span><span class="p">,</span> <span class="n">phase_info</span>
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">load_external_subsystems</span><span class="p">([</span><span class="n">WingMassBuilder</span><span class="p">(),</span> <span class="n">SimpleAeroBuilder</span><span class="p">()])</span>
@@ -707,13 +707,6 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631323.069817] [runnervm48cm3:4815 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x563242d5c3d0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631323.070123] [runnervm48cm3:4815 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:04815] pml_ucx.c:313  Error: Failed to create UCP worker
-</pre></div>
-</div>
 <div class="output text_html">
         <iframe
             width="100%"

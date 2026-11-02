@@ -501,7 +501,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for aviary.utils.process_input_decks</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">This module, process_input_decks.py, is responsible for reading vehicle input decks, initializing</span>
 <span class="sd">options, and setting initial guesses for aircraft design parameters. It works primarily with .csv</span>
 <span class="sd">files, allowing for the specification of units, comments, and lists within these files.</span>
@@ -512,12 +512,12 @@
 <span class="sd">parameters.</span>
 
 <span class="sd">Functions:</span>
-<span class="sd">    create_vehicle(vehicle_deck=&#39;&#39;): Create and initialize a vehicle with default or specified parameters.</span>
+<span class="sd">    create_vehicle(vehicle_deck=''): Create and initialize a vehicle with default or specified parameters.</span>
 <span class="sd">    parse_inputs(vehicle_deck, aircraft_values): Parse input files and update aircraft values and initial guesses.</span>
 <span class="sd">    update_options(aircraft_values, initialization_guesses): Update dependent options based on current aircraft values.</span>
 <span class="sd">    update_dependent_options(aircraft_values, dependent_options): Update options that depend on the value of an input variable.</span>
 <span class="sd">    initialization_guessing(aircraft_values): Set initial guesses for aircraft parameters based on problem type and other factors.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
@@ -534,20 +534,20 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variables</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span><span class="p">,</span> <span class="n">Mission</span><span class="p">,</span> <span class="n">Settings</span>
 
 <span class="n">operation_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span> <span class="n">lt</span><span class="p">,</span>
-    <span class="s1">&#39;&lt;=&#39;</span><span class="p">:</span> <span class="n">le</span><span class="p">,</span>
-    <span class="s1">&#39;==&#39;</span><span class="p">:</span> <span class="n">eq</span><span class="p">,</span>
-    <span class="s1">&#39;!=&#39;</span><span class="p">:</span> <span class="n">ne</span><span class="p">,</span>
-    <span class="s1">&#39;&gt;=&#39;</span><span class="p">:</span> <span class="n">ge</span><span class="p">,</span>
-    <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span> <span class="n">gt</span><span class="p">,</span>
-    <span class="s1">&#39;isinstance&#39;</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">,</span>
+    <span class="s1">'&lt;'</span><span class="p">:</span> <span class="n">lt</span><span class="p">,</span>
+    <span class="s1">'&lt;='</span><span class="p">:</span> <span class="n">le</span><span class="p">,</span>
+    <span class="s1">'=='</span><span class="p">:</span> <span class="n">eq</span><span class="p">,</span>
+    <span class="s1">'!='</span><span class="p">:</span> <span class="n">ne</span><span class="p">,</span>
+    <span class="s1">'&gt;='</span><span class="p">:</span> <span class="n">ge</span><span class="p">,</span>
+    <span class="s1">'&gt;'</span><span class="p">:</span> <span class="n">gt</span><span class="p">,</span>
+    <span class="s1">'isinstance'</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">,</span>
 <span class="p">}</span>
 
 
 <div class="viewcode-block" id="create_vehicle">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/process_input_decks.html#aviary.utils.process_input_decks.create_vehicle">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">create_vehicle</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_vehicle</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Creates and initializes a vehicle with default or specified parameters. It sets up the aircraft values</span>
 <span class="sd">    and initial guesses based on the input from the vehicle deck.</span>
 
@@ -568,7 +568,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    (aircraft_values, initialization_guesses): (tuple)</span>
 <span class="sd">        Returns a tuple containing aircraft values and initial guesses.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">verbosity</span> <span class="o">=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span>
 
@@ -576,37 +576,37 @@
 
     <span class="c1"># TODO remove all hardcoded GASP values here, find appropriate place for them</span>
     <span class="c1"># We should only set FLOPS- or GASP-specific variables for those aircraft models</span>
-    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;INGASP.JENGSZ&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;test_mode&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;use_surrogates&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;mass_defect&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'INGASP.JENGSZ'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'test_mode'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'use_surrogates'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'mass_defect'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
 
     <span class="c1"># TODO setting defaults for variables needed outside OM problem during load_inputs()</span>
     <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">PROBLEM_TYPE</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">)</span>
     <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MASS_ADDITIONAL</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MASS_ADDITIONAL</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
     <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MARGIN</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="c1"># these are used in initialization_guessing()</span>
-    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CRUISE_ALTITUDE</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">25000.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
-    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CRUISE_ALTITUDE</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">25000.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
 
     <span class="n">initialization_guesses</span> <span class="o">=</span> <span class="p">{</span>
         <span class="c1"># initialization_guesses is a dictionary that contains values used to initialize the trajectory</span>
-        <span class="s1">&#39;actual_takeoff_mass&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s1">&#39;rotation_mass&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s1">&#39;operating_empty_mass&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s1">&#39;cruise_mass_final&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s1">&#39;flight_duration&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s1">&#39;time_to_climb&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s1">&#39;climb_range&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s1">&#39;reserves&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">'actual_takeoff_mass'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">'rotation_mass'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">'operating_empty_mass'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">'fuel_burn_per_passenger_mile'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">'cruise_mass_final'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">'flight_duration'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">'time_to_climb'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">'climb_range'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">'reserves'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="p">,</span> <span class="n">AviaryValues</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span> <span class="ow">in</span> <span class="n">vehicle_deck</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;initialization_guesses:&#39;</span><span class="p">):</span>
-                <span class="n">initialization_guesses</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s1">&#39;initialization_guesses:&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'initialization_guesses:'</span><span class="p">):</span>
+                <span class="n">initialization_guesses</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s1">'initialization_guesses:'</span><span class="p">)]</span> <span class="o">=</span> <span class="n">val</span>
         <span class="n">aircraft_values</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">vehicle_deck</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
@@ -626,7 +626,7 @@
     <span class="c1"># else, if verbosity not specified anywhere, use default of BRIEF</span>
     <span class="k">elif</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aircraft_values</span><span class="p">:</span>
         <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-            <span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">,</span> <span class="n">CoreMetaData</span><span class="p">[</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">][</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
+            <span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">,</span> <span class="n">CoreMetaData</span><span class="p">[</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">][</span><span class="s1">'default_value'</span><span class="p">]</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">aircraft_values</span><span class="p">,</span> <span class="n">initialization_guesses</span></div>
@@ -642,7 +642,7 @@
     <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">,</span>
     <span class="n">verbosity</span><span class="o">=</span><span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Parses the input files and updates the aircraft values and initial guesses. The function reads the</span>
 <span class="sd">    vehicle deck file, processes each line, and updates the aircraft_values object based on the data found.</span>
 
@@ -655,7 +655,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    tuple: Updated aircraft values and initial guesses.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">aircraft_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">aircraft_values</span> <span class="o">=</span> <span class="n">AviaryValues</span><span class="p">()</span>
 
@@ -664,33 +664,33 @@
 
     <span class="n">guess_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">initialization_guesses</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_in</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_in</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f_in</span><span class="p">:</span>
             <span class="n">data_units</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'#'</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">''</span><span class="p">]</span>
             <span class="n">line</span><span class="p">,</span> <span class="n">comment</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># anything after the first # is a comment</span>
 
             <span class="c1"># remove any elements that are empty (caused by trailing commas or extra commas)</span>
-            <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">dat</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">dat</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">dat</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+            <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">dat</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">dat</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">','</span><span class="p">)</span> <span class="k">if</span> <span class="n">dat</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">''</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>  <span class="c1"># skip line it contained only commas</span>
 
-            <span class="c1"># continue if there&#39;s no data in the line but there are commas</span>
+            <span class="c1"># continue if there's no data in the line but there are commas</span>
             <span class="c1"># this might occur if someone edits a .csv file in Excel</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">var_name</span> <span class="o">=</span> <span class="n">data_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">valid_units</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
-                <span class="c1"># if the last element is a unit, remove it from the list and update the variable&#39;s units</span>
+                <span class="c1"># if the last element is a unit, remove it from the list and update the variable's units</span>
                 <span class="n">data_units</span> <span class="o">=</span> <span class="n">data_list</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
 
             <span class="n">var_value</span> <span class="o">=</span> <span class="n">convert_strings_to_data</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
             <span class="c1"># If var_value is length 1 list and is not supposed to be a list, pull out</span>
             <span class="c1"># individual value. Otherwise, convert list to numpy array</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">meta_data</span> <span class="ow">and</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="s1">&#39;multivalue&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">meta_data</span> <span class="ow">and</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="s1">'multivalue'</span><span class="p">]:</span>
                     <span class="c1"># if data is numeric, convert to numpy array</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var_value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
                         <span class="n">var_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">var_value</span><span class="p">)</span>
@@ -699,7 +699,7 @@
 
             <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">meta_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">data_units</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">data_units</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+                    <span class="n">data_units</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="s1">'units'</span><span class="p">]</span>
                 <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">var_name</span><span class="p">,</span> <span class="n">var_value</span><span class="p">,</span> <span class="n">data_units</span><span class="p">,</span> <span class="n">meta_data</span><span class="p">)</span>
                 <span class="k">continue</span>
 
@@ -709,42 +709,42 @@
                 <span class="n">initialization_guesses</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_value</span>
                 <span class="k">continue</span>
 
-            <span class="k">elif</span> <span class="n">var_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;initialization_guesses:&#39;</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="n">var_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'initialization_guesses:'</span><span class="p">):</span>
                 <span class="c1"># get values labeled as initialization_guesses in .csv input file</span>
-                <span class="n">initialization_guesses</span><span class="p">[</span><span class="n">var_name</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s1">&#39;initialization_guesses:&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">var_value</span>
+                <span class="n">initialization_guesses</span><span class="p">[</span><span class="n">var_name</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s1">'initialization_guesses:'</span><span class="p">)]</span> <span class="o">=</span> <span class="n">var_value</span>
                 <span class="k">continue</span>
 
-            <span class="k">elif</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">var_name</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="s1">':'</span> <span class="ow">in</span> <span class="n">var_name</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">deprecated_variables</span><span class="p">:</span>
                     <span class="n">new_name</span> <span class="o">=</span> <span class="n">deprecated_variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">the_PRs</span> <span class="o">=</span> <span class="n">deprecated_variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="n">the_PRs</span> <span class="o">=</span> <span class="n">the_PRs</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="s1">&#39;, #&#39;</span><span class="p">)</span>
+                    <span class="n">the_PRs</span> <span class="o">=</span> <span class="n">the_PRs</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'|'</span><span class="p">,</span> <span class="s1">', #'</span><span class="p">)</span>
                     <span class="n">the_date</span> <span class="o">=</span> <span class="n">deprecated_variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
                     <span class="c1"># Warning was ignored somehow, but need to be print out.</span>
                     <span class="c1"># after it is done, automatically restores the warning settings</span>
                     <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;always&#39;</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">new_name</span> <span class="o">==</span> <span class="s1">&#39;removed&#39;</span><span class="p">:</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">'always'</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">new_name</span> <span class="o">==</span> <span class="s1">'removed'</span><span class="p">:</span>
                             <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
                                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                    <span class="sa">f</span><span class="s1">&#39;Variable </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1"> is no longer in meta_data &#39;</span>
-                                    <span class="sa">f</span><span class="s1">&#39;as of </span><span class="si">{</span><span class="n">the_date</span><span class="si">}</span><span class="s1">. &#39;</span>
-                                    <span class="sa">f</span><span class="s1">&#39;See PR #</span><span class="si">{</span><span class="n">the_PRs</span><span class="si">}</span><span class="s1"> for details.&#39;</span><span class="p">,</span>
+                                    <span class="sa">f</span><span class="s1">'Variable </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1"> is no longer in meta_data '</span>
+                                    <span class="sa">f</span><span class="s1">'as of </span><span class="si">{</span><span class="n">the_date</span><span class="si">}</span><span class="s1">. '</span>
+                                    <span class="sa">f</span><span class="s1">'See PR #</span><span class="si">{</span><span class="n">the_PRs</span><span class="si">}</span><span class="s1"> for details.'</span><span class="p">,</span>
                                     <span class="ne">DeprecationWarning</span><span class="p">,</span>
                                 <span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="sa">f</span><span class="s1">&#39;Variable </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1"> is replaced by </span><span class="si">{</span><span class="n">new_name</span><span class="si">}</span><span class="s1"> as of </span><span class="si">{</span><span class="n">the_date</span><span class="si">}</span><span class="s1"> &#39;</span>
-                                <span class="sa">f</span><span class="s1">&#39;See PR #</span><span class="si">{</span><span class="n">the_PRs</span><span class="si">}</span><span class="s1"> for details.&#39;</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s1">'Variable </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1"> is replaced by </span><span class="si">{</span><span class="n">new_name</span><span class="si">}</span><span class="s1"> as of </span><span class="si">{</span><span class="n">the_date</span><span class="si">}</span><span class="s1"> '</span>
+                                <span class="sa">f</span><span class="s1">'See PR #</span><span class="si">{</span><span class="n">the_PRs</span><span class="si">}</span><span class="s1"> for details.'</span><span class="p">,</span>
                                 <span class="ne">UserWarning</span><span class="p">,</span>
                             <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;always&#39;</span><span class="p">)</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">'always'</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
                             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="sa">f</span><span class="s2">&quot;Variable &#39;</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&#39; is not in meta_data nor in &#39;guess_names&#39;. &quot;</span>
-                                <span class="s1">&#39;It will be ignored.&#39;</span><span class="p">,</span>
+                                <span class="sa">f</span><span class="s2">"Variable '</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s2">' is not in meta_data nor in 'guess_names'. "</span>
+                                <span class="s1">'It will be ignored.'</span><span class="p">,</span>
                                 <span class="ne">UserWarning</span><span class="p">,</span>
                             <span class="p">)</span>
                 <span class="k">continue</span>
@@ -760,7 +760,7 @@
 <div class="viewcode-block" id="update_GASP_options">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/process_input_decks.html#aviary.utils.process_input_decks.update_GASP_options">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_GASP_options</span><span class="p">(</span><span class="n">aircraft_values</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Updates options based on the current values in aircraft_values. This function also handles special cases</span>
 <span class="sd">    and prints debug information if the debug mode is active.</span>
 
@@ -771,7 +771,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    tuple: Updated aircraft values and initial guesses.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># update the options that depend on variables</span>
     <span class="n">update_dependent_options</span><span class="p">(</span><span class="n">aircraft_values</span><span class="p">,</span> <span class="n">dependent_options</span><span class="p">)</span>
 
@@ -792,7 +792,7 @@
         <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">FOLD_DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Options&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Options'</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">val</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
@@ -804,7 +804,7 @@
 <div class="viewcode-block" id="update_dependent_options">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/process_input_decks.html#aviary.utils.process_input_decks.update_dependent_options">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_dependent_options</span><span class="p">(</span><span class="n">aircraft_values</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">dependent_options</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Updates options that are dependent on the value of an input variable or option. The function iterates</span>
 <span class="sd">    through each dependent option and sets its value based on the current aircraft values.</span>
 
@@ -816,28 +816,28 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    AviaryValues: Updated aircraft values with modified dependent options.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># gets the names of all the variables that affect dependent options</span>
     <span class="k">for</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">dependency</span> <span class="ow">in</span> <span class="n">dependent_options</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">var_value</span><span class="p">,</span> <span class="n">var_units</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">var_name</span><span class="p">)</span>
             <span class="c1"># dependency is a dictionary that contains the target option, the relationship to the variable and the output values</span>
-            <span class="k">if</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;relation&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">operation_dict</span><span class="p">:</span>
-                <span class="n">comp</span> <span class="o">=</span> <span class="n">operation_dict</span><span class="p">[</span><span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;relation&#39;</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">'relation'</span><span class="p">]</span> <span class="ow">in</span> <span class="n">operation_dict</span><span class="p">:</span>
+                <span class="n">comp</span> <span class="o">=</span> <span class="n">operation_dict</span><span class="p">[</span><span class="n">dependency</span><span class="p">[</span><span class="s1">'relation'</span><span class="p">]]</span>
                 <span class="n">outcome</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">comp</span><span class="p">(</span><span class="n">var_value</span><span class="p">,</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">])</span>
-                    <span class="k">else</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;alternate&#39;</span><span class="p">]</span>
+                    <span class="n">dependency</span><span class="p">[</span><span class="s1">'result'</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">comp</span><span class="p">(</span><span class="n">var_value</span><span class="p">,</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">'val'</span><span class="p">])</span>
+                    <span class="k">else</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">'alternate'</span><span class="p">]</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;relation&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">'relation'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'in'</span><span class="p">:</span>
                 <span class="n">outcome</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">var_value</span> <span class="ow">in</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">]</span>
-                    <span class="k">else</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;alternate&#39;</span><span class="p">]</span>
+                    <span class="n">dependency</span><span class="p">[</span><span class="s1">'result'</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">var_value</span> <span class="ow">in</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">'val'</span><span class="p">]</span>
+                    <span class="k">else</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">'alternate'</span><span class="p">]</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;relation&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; is not a valid selection&#39;</span><span class="p">)</span>
-            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">val</span><span class="o">=</span><span class="n">outcome</span><span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">dependency</span><span class="p">[</span><span class="s1">'relation'</span><span class="p">]</span> <span class="o">+</span> <span class="s1">' is not a valid selection'</span><span class="p">)</span>
+            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">dependency</span><span class="p">[</span><span class="s1">'target'</span><span class="p">],</span> <span class="n">val</span><span class="o">=</span><span class="n">outcome</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">aircraft_values</span></div>
 
 
@@ -845,7 +845,7 @@
 <div class="viewcode-block" id="initialization_guessing">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/process_input_decks.html#aviary.utils.process_input_decks.initialization_guessing">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">initialization_guessing</span><span class="p">(</span><span class="n">aircraft_values</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">initialization_guesses</span><span class="p">,</span> <span class="n">engine_models</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Sets initial guesses for various aircraft parameters based on the current problem type, aircraft values,</span>
 <span class="sd">    and other factors. It calculates and sets values like takeoff mass, cruise mass, flight duration, etc.</span>
 
@@ -864,39 +864,39 @@
 <span class="sd">    -------</span>
 <span class="sd">    tuple</span>
 <span class="sd">        Updated aircraft values and initial guesses.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">problem_type</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">PROBLEM_TYPE</span><span class="p">)</span>
     <span class="n">num_pax</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">)</span>
-    <span class="n">reserve_val</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MASS_ADDITIONAL</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
-    <span class="n">reserve_frac</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MARGIN</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">reserve_val</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MASS_ADDITIONAL</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
+    <span class="n">reserve_frac</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MARGIN</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'fuel_burn_per_passenger_mile'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'fuel_burn_per_passenger_mile'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span>
 
-    <span class="n">reserves</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;reserves&#39;</span><span class="p">]</span>
+    <span class="n">reserves</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'reserves'</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">reserves</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;initialization_guesses[&quot;reserves&quot;] must be greater than or equal to 0.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'initialization_guesses["reserves"] must be greater than or equal to 0.'</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">reserves</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">reserves</span> <span class="o">+=</span> <span class="n">reserve_val</span>
         <span class="n">reserves</span> <span class="o">+=</span> <span class="n">reserve_frac</span> <span class="o">*</span> <span class="p">(</span>
             <span class="n">num_pax</span>
-            <span class="o">*</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">]</span>
-            <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;NM&#39;</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'fuel_burn_per_passenger_mile'</span><span class="p">]</span>
+            <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'NM'</span><span class="p">)</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">reserves</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
         <span class="n">reserves</span> <span class="o">*=</span> <span class="p">(</span>
             <span class="n">num_pax</span>
-            <span class="o">*</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">]</span>
-            <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;NM&#39;</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'fuel_burn_per_passenger_mile'</span><span class="p">]</span>
+            <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'NM'</span><span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;reserves&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reserves</span>
+    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'reserves'</span><span class="p">]</span> <span class="o">=</span> <span class="n">reserves</span>
 
     <span class="k">if</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span> <span class="ow">in</span> <span class="n">aircraft_values</span><span class="p">:</span>
-        <span class="n">mission_mass</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+        <span class="n">mission_mass</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">mission_mass</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+        <span class="n">mission_mass</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
 
-    <span class="n">cruise_mass_final</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;cruise_mass_final&#39;</span><span class="p">]</span>
+    <span class="n">cruise_mass_final</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'cruise_mass_final'</span><span class="p">]</span>
 
     <span class="c1"># takeoff mass not given</span>
     <span class="k">if</span> <span class="n">mission_mass</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -904,24 +904,24 @@
             <span class="n">fuel_mass</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">num_pax</span>
                 <span class="o">*</span> <span class="p">(</span>
-                    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">]</span>
-                    <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;NM&#39;</span><span class="p">)</span>
+                    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'fuel_burn_per_passenger_mile'</span><span class="p">]</span>
+                    <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'NM'</span><span class="p">)</span>
                 <span class="p">)</span>
                 <span class="o">+</span> <span class="n">reserves</span>
             <span class="p">)</span>
             <span class="n">mission_mass</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;operating_empty_mass&#39;</span><span class="p">]</span>
+                <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'operating_empty_mass'</span><span class="p">]</span>
                 <span class="o">+</span> <span class="p">(</span>
                     <span class="n">num_pax</span>
                     <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
-                        <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span>
+                        <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
                 <span class="o">+</span> <span class="n">fuel_mass</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">OFF_DESIGN_MAX_RANGE</span> <span class="ow">or</span> <span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">:</span>
-            <span class="n">mission_mass</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
-    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;actual_takeoff_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission_mass</span>
+            <span class="n">mission_mass</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
+    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'actual_takeoff_mass'</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission_mass</span>
 
     <span class="k">if</span> <span class="n">cruise_mass_final</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># no guess given</span>
         <span class="k">if</span> <span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">:</span>
@@ -931,23 +931,23 @@
     <span class="c1"># estimation based on payload and fuel</span>
     <span class="k">if</span> <span class="n">cruise_mass_final</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">cruise_mass_final</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;operating_empty_mass&#39;</span><span class="p">]</span>
+            <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'operating_empty_mass'</span><span class="p">]</span>
             <span class="o">+</span> <span class="n">num_pax</span>
             <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
-                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span>
             <span class="p">)</span>
             <span class="o">+</span> <span class="n">reserves</span>
         <span class="p">)</span>
     <span class="c1"># fraction of takeoff mass</span>
     <span class="k">elif</span> <span class="n">cruise_mass_final</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">cruise_mass_final</span> <span class="o">=</span> <span class="n">mission_mass</span> <span class="o">*</span> <span class="n">cruise_mass_final</span>
-    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;cruise_mass_final&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cruise_mass_final</span>
+    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'cruise_mass_final'</span><span class="p">]</span> <span class="o">=</span> <span class="n">cruise_mass_final</span>
 
-    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;rotation_mass&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;rotation_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.99</span>
-    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;rotation_mass&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># fraction of takeoff mass</span>
-        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;rotation_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">mission_mass</span> <span class="o">*</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;rotation_mass&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'rotation_mass'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'rotation_mass'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.99</span>
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'rotation_mass'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># fraction of takeoff mass</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'rotation_mass'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">mission_mass</span> <span class="o">*</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'rotation_mass'</span><span class="p">]</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">MACH</span> <span class="ow">in</span> <span class="n">aircraft_values</span><span class="p">:</span>
@@ -955,14 +955,14 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">cruise_mach</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CRUISE_MACH</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;flight_duration&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># estimation based on mach</span>
-        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;flight_duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;NM&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'flight_duration'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># estimation based on mach</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'flight_duration'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'NM'</span><span class="p">)</span>
             <span class="o">/</span> <span class="p">(</span><span class="mi">667</span> <span class="o">*</span> <span class="n">cruise_mach</span><span class="p">)</span>
             <span class="o">*</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;flight_duration&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">15</span><span class="p">:</span>  <span class="c1"># duration entered in hours</span>
-        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;flight_duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;flight_duration&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+    <span class="k">elif</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'flight_duration'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">15</span><span class="p">:</span>  <span class="c1"># duration entered in hours</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'flight_duration'</span><span class="p">]</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'flight_duration'</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
             <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
         <span class="p">)</span>
 
@@ -971,12 +971,12 @@
         <span class="c1"># For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough</span>
         <span class="c1"># TODO scale factor?</span>
         <span class="c1"># thrust = np.dot(</span>
-        <span class="c1">#     aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, &#39;hp&#39;)[i],</span>
+        <span class="c1">#     aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp')[i],</span>
         <span class="c1">#     aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i],</span>
         <span class="c1"># )</span>
 
         <span class="n">thrust</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">REFERENCE_SLS_THRUST</span><span class="p">,</span> <span class="s1">&#39;lbf&#39;</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">REFERENCE_SLS_THRUST</span><span class="p">,</span> <span class="s1">'lbf'</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
             <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALE_FACTOR</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
         <span class="p">)</span>
 
@@ -984,38 +984,38 @@
         <span class="n">total_thrust</span> <span class="o">+=</span> <span class="n">thrust</span> <span class="o">*</span> <span class="n">num_engines</span>
 
     <span class="c1"># 0.5 * thrust/weight can exceed 1 for very high thrust-to-weight aircraft (e.g.</span>
-    <span class="c1"># small electric UAVs); clip to stay in arcsin&#39;s domain since this is only an</span>
+    <span class="c1"># small electric UAVs); clip to stay in arcsin's domain since this is only an</span>
     <span class="c1"># initial-guess heuristic, not a hard constraint.</span>
     <span class="n">gamma_guess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">total_thrust</span> <span class="o">/</span> <span class="n">mission_mass</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
     <span class="n">avg_speed_guess</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="mi">667</span> <span class="o">*</span> <span class="n">cruise_mach</span>  <span class="c1"># kts</span>
 
-    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># no guess given</span>
-        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
-            <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CRUISE_ALTITUDE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span>
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'time_to_climb'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># no guess given</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'time_to_climb'</span><span class="p">]</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CRUISE_ALTITUDE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span>
         <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">avg_speed_guess</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">gamma_guess</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># duration entered in hours</span>
-        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+    <span class="k">elif</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'time_to_climb'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># duration entered in hours</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'time_to_climb'</span><span class="p">]</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'time_to_climb'</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
             <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">200</span><span class="p">:</span>  <span class="c1"># average climb rate in ft/s</span>
-        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CRUISE_ALTITUDE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
-            <span class="o">/</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'time_to_climb'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">200</span><span class="p">:</span>  <span class="c1"># average climb rate in ft/s</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'time_to_climb'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CRUISE_ALTITUDE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span><span class="p">)</span>
+            <span class="o">/</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'time_to_climb'</span><span class="p">]</span>
         <span class="p">)</span>
 
     <span class="c1"># range covered using an average speed from 0 to cruise</span>
-    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;climb_range&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;climb_range&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'climb_range'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'climb_range'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">'time_to_climb'</span><span class="p">]</span>
             <span class="o">/</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
             <span class="o">*</span> <span class="p">(</span><span class="n">avg_speed_guess</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">gamma_guess</span><span class="p">))</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initial Guesses&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Initial Guesses'</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">initialization_guesses</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">initialization_guesses</span></div>
 
@@ -1029,71 +1029,71 @@
     <span class="c1"># particular mathematical comparison (relation), the option that is effected (target), and</span>
     <span class="c1"># the value the option should be set to based on whether the relation is true (result) or</span>
     <span class="c1"># false (alternate)</span>
-    <span class="c1"># For example, an aircraft&#39;s engines are on the fuselage if the span fraction on the wing is 0.</span>
+    <span class="c1"># For example, an aircraft's engines are on the fuselage if the span fraction on the wing is 0.</span>
     <span class="c1"># In this case the value of Aircraft.Engine.WING_LOCATIONS is compared to 0. If the span location</span>
     <span class="c1"># is exactly equal to zero, engine_on_fuselage is set to to True, otherwise it is set to False.</span>
     <span class="c1"># One variable can be used to set the value of any number of options, but an option can only be</span>
     <span class="c1"># set by one variable</span>
     <span class="c1"># [Aircraft.Engine.WING_LOCATIONS, {</span>
-    <span class="c1">#     &#39;val&#39;: 0, &#39;relation&#39;: &#39;==&#39;, &#39;target&#39;: Aircraft.Engine.FUSELAGE_MOUNTED, &#39;result&#39;: True, &#39;alternate&#39;: False}],</span>
+    <span class="c1">#     'val': 0, 'relation': '==', 'target': Aircraft.Engine.FUSELAGE_MOUNTED, 'result': True, 'alternate': False}],</span>
     <span class="p">[</span>
         <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">WING_LOADING</span><span class="p">,</span>
         <span class="p">{</span>
-            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
-            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">LOADING_ABOVE_20</span><span class="p">,</span>
-            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'val'</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="s1">'relation'</span><span class="p">:</span> <span class="s1">'&gt;'</span><span class="p">,</span>
+            <span class="s1">'target'</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">LOADING_ABOVE_20</span><span class="p">,</span>
+            <span class="s1">'result'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'alternate'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">],</span>
     <span class="p">[</span>
         <span class="n">Aircraft</span><span class="o">.</span><span class="n">Strut</span><span class="o">.</span><span class="n">ATTACHMENT_LOCATION</span><span class="p">,</span>
         <span class="p">{</span>
-            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;!=&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">HAS_STRUT</span><span class="p">,</span>
-            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'val'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">'relation'</span><span class="p">:</span> <span class="s1">'!='</span><span class="p">,</span>
+            <span class="s1">'target'</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">HAS_STRUT</span><span class="p">,</span>
+            <span class="s1">'result'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'alternate'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">],</span>
     <span class="p">[</span>
         <span class="n">Aircraft</span><span class="o">.</span><span class="n">Strut</span><span class="o">.</span><span class="n">ATTACHMENT_LOCATION</span><span class="p">,</span>
         <span class="p">{</span>
-            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Strut</span><span class="o">.</span><span class="n">DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">,</span>
-            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'val'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">'relation'</span><span class="p">:</span> <span class="s1">'&gt;'</span><span class="p">,</span>
+            <span class="s1">'target'</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Strut</span><span class="o">.</span><span class="n">DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">,</span>
+            <span class="s1">'result'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'alternate'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">],</span>
     <span class="p">[</span>
         <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">FOLD_MASS_COEFFICIENT</span><span class="p">,</span>
         <span class="p">{</span>
-            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">HAS_FOLD</span><span class="p">,</span>
-            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'val'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">'relation'</span><span class="p">:</span> <span class="s1">'&gt;'</span><span class="p">,</span>
+            <span class="s1">'target'</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">HAS_FOLD</span><span class="p">,</span>
+            <span class="s1">'result'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'alternate'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">],</span>
     <span class="p">[</span>
         <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">FOLDED_SPAN</span><span class="p">,</span>
         <span class="p">{</span>
-            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">FOLD_DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">,</span>
-            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'val'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">'relation'</span><span class="p">:</span> <span class="s1">'&gt;'</span><span class="p">,</span>
+            <span class="s1">'target'</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">FOLD_DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">,</span>
+            <span class="s1">'result'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'alternate'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">],</span>
     <span class="p">[</span>
         <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">PART25_STRUCTURAL_CATEGORY</span><span class="p">,</span>
         <span class="p">{</span>
-            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">ULF_CALCULATED_FROM_MANEUVER</span><span class="p">,</span>
-            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'val'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">'relation'</span><span class="p">:</span> <span class="s1">'&lt;'</span><span class="p">,</span>
+            <span class="s1">'target'</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">ULF_CALCULATED_FROM_MANEUVER</span><span class="p">,</span>
+            <span class="s1">'result'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'alternate'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">],</span>
 <span class="p">]</span>

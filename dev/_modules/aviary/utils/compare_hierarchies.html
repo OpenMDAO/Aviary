@@ -508,7 +508,7 @@
 <div class="viewcode-block" id="compare_inner_classes">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/compare_hierarchies.html#aviary.utils.compare_hierarchies.compare_inner_classes">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compare_inner_classes</span><span class="p">(</span><span class="n">class1</span><span class="p">,</span> <span class="n">class2</span><span class="p">,</span> <span class="n">show_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Compare two nested class hierarchies and return a set of shared inner-classes.</span>
 
 <span class="sd">    Summary:</span>
@@ -552,7 +552,7 @@
 <span class="sd">    ValueError</span>
 <span class="sd">        If the two input classes both have a variable with the same variable name but</span>
 <span class="sd">        different string-named value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">class1_vars_inner_classes</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">class1</span><span class="p">)</span>
     <span class="n">class2_vars_inner_classes</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">class2</span><span class="p">)</span>
 
@@ -568,8 +568,8 @@
             <span class="n">class1_inner_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">elif</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">class1_vars_inner_classes</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;__module__&#39;</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">'__module__'</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">'__doc__'</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="n">class1_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -579,8 +579,8 @@
             <span class="n">class2_inner_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">elif</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">class2_vars_inner_classes</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;__module__&#39;</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">'__module__'</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="s1">'__doc__'</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="n">class2_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -594,7 +594,7 @@
 
         <span class="k">if</span> <span class="n">value1</span> <span class="o">!=</span> <span class="n">value2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;You have attempted to merge two variable hierarchies together that have the same variable with a different string name associated to it. The offending variable is &#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">&#39;. In &#39;</span><span class="si">{</span><span class="n">class1</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&#39; it has a value of &#39;</span><span class="si">{</span><span class="n">value1</span><span class="si">}</span><span class="s2">&#39; and in &#39;</span><span class="si">{</span><span class="n">class2</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&#39; it has a value of &#39;</span><span class="si">{</span><span class="n">value2</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="sa">f</span><span class="s2">"You have attempted to merge two variable hierarchies together that have the same variable with a different string name associated to it. The offending variable is '</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">'. In '</span><span class="si">{</span><span class="n">class1</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">' it has a value of '</span><span class="si">{</span><span class="n">value1</span><span class="si">}</span><span class="s2">' and in '</span><span class="si">{</span><span class="n">class2</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">' it has a value of '</span><span class="si">{</span><span class="n">value2</span><span class="si">}</span><span class="s2">'."</span>
             <span class="p">)</span>
 
     <span class="n">class1_inner_classes_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">class1_inner_classes</span><span class="p">)</span>
@@ -618,7 +618,7 @@
 <div class="viewcode-block" id="recursive_comparison">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/compare_hierarchies.html#aviary.utils.compare_hierarchies.recursive_comparison">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">recursive_comparison</span><span class="p">(</span><span class="n">overlapping_inner_classes</span><span class="p">,</span> <span class="n">outer_class_a</span><span class="p">,</span> <span class="n">outer_class_b</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Recursively compares all inner classes to an infinite depth and identifies mismatched string-named values.</span>
 
 <span class="sd">    For all of the inner class names provided in overlapping_inner_classes this function calls compare_inner_classes</span>
@@ -644,7 +644,7 @@
 <span class="sd">    Exceptions</span>
 <span class="sd">    ----------</span>
 <span class="sd">    No exceptions explicitly raised by this function, although called functions may raise exceptions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">overlapping_class_name</span> <span class="ow">in</span> <span class="n">overlapping_inner_classes</span><span class="p">:</span>
         <span class="n">overlapping_inner_class_a</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">outer_class_a</span><span class="p">,</span> <span class="n">overlapping_class_name</span><span class="p">)</span>
         <span class="n">overlapping_inner_class_b</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">outer_class_b</span><span class="p">,</span> <span class="n">overlapping_class_name</span><span class="p">)</span>
@@ -660,7 +660,7 @@
 <div class="viewcode-block" id="compare_hierarchies_to_merge">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/compare_hierarchies.html#aviary.utils.compare_hierarchies.compare_hierarchies_to_merge">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compare_hierarchies_to_merge</span><span class="p">(</span><span class="n">hierarchies_to_merge</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Compares variable hierarchies to ensure there are no string-valued variable conflicts.</span>
 
 <span class="sd">    For all the variable hierarchies provided in hierarchies_to_merge this function compares each</span>
@@ -681,7 +681,7 @@
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    No explicit exceptions are raised by this function, although called functions may raise exceptions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">hierarchy</span> <span class="ow">in</span> <span class="n">hierarchies_to_merge</span><span class="p">:</span>
         <span class="c1"># check if hierarchy has developed conflicts with original hierarchy</span>
         <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">hierarchy</span><span class="p">,</span> <span class="n">_Aircraft</span><span class="p">):</span>

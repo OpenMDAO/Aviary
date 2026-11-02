@@ -501,10 +501,10 @@
                 <article class="bd-article">
                   
   <h1>Source code for aviary.utils.utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">A home for helper functions that are used in multiple files in aviary/utils</span>
 <span class="sd">Helps to avoid circular imports. These functions do not rely on imports from other utility files.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
@@ -518,20 +518,20 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_rep</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Shorthand for ``itertools.repeat`` with the multiplier first.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Shorthand for ``itertools.repeat`` with the multiplier first."""</span>
     <span class="k">return</span> <span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fmt</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a line from file ``f`` and parse it according to the given ``fmt``.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Read a line from file ``f`` and parse it according to the given ``fmt``."""</span>
     <span class="k">return</span> <span class="n">_strparse</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">(),</span> <span class="n">fmt</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_strparse</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fmt</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a string into fixed-width numeric fields.</span>
+<span class="w">    </span><span class="sd">"""Parse a string into fixed-width numeric fields.</span>
 <span class="sd">    ``fmt`` should be a list of tuples specifying (type, length) for each field in</span>
 <span class="sd">    string ``s``. Use None for the type to skip (i.e. not yield) that field.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">typ</span><span class="p">,</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">fmt</span><span class="p">:</span>
         <span class="n">sub</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">p</span> <span class="p">:</span> <span class="n">p</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
@@ -541,11 +541,11 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_map</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">is_turbo_prop</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a single map of a table from the engine deck or propeller map file.</span>
+<span class="w">    </span><span class="sd">"""Read a single map of a table from the engine deck or propeller map file.</span>
 <span class="sd">    The map data is returned in the same format as in ``read_table`` except</span>
 <span class="sd">    there is a single altitude value per map in the case of engine deck and</span>
 <span class="sd">    there is a single Mach number per map in the case of propeller map.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># map dimensions: FORMAT(/2I5,F10.1,10X))</span>
     <span class="n">npts</span><span class="p">,</span> <span class="n">nline</span><span class="p">,</span> <span class="n">amap</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">*</span><span class="n">_rep</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="mi">10</span><span class="p">)])</span>
 
@@ -593,7 +593,7 @@
 <div class="viewcode-block" id="isiterable">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/utils.html#aviary.utils.utils.isiterable">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">isiterable</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">valid_iterables</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Checks if provided value is an iterable, as defined by the _valid_iterables global variable.</span>
 
 <span class="sd">    Parameters</span>
@@ -603,7 +603,7 @@
 <span class="sd">    valid_iterables : tuple of types</span>
 <span class="sd">        Which iterable types val will be checked against. By default, lists, numpy arrays and tuples</span>
 <span class="sd">        are supported types</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">valid_iterables</span><span class="p">)</span></div>
 
 
@@ -611,8 +611,8 @@
 <div class="viewcode-block" id="wrapped_convert_units">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/utils.html#aviary.utils.utils.wrapped_convert_units">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_convert_units</span><span class="p">(</span><span class="n">val_unit_tuple</span><span class="p">,</span> <span class="n">new_units</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Wrapper for OpenMDAO&#39;s convert_units function. Can handle iterable values.</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Wrapper for OpenMDAO's convert_units function. Can handle iterable values.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -625,10 +625,10 @@
 <span class="sd">    -------</span>
 <span class="sd">    value: float, list, np.ndarray, tuple</span>
 <span class="sd">        Value converted to new units, as the same type as provided</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">value</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">val_unit_tuple</span><span class="p">)</span>
 
-    <span class="c1"># can&#39;t convert units on None; return None</span>
+    <span class="c1"># can't convert units on None; return None</span>
     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -657,7 +657,7 @@
 <div class="viewcode-block" id="enum_setter">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/utils.html#aviary.utils.utils.enum_setter">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">enum_setter</span><span class="p">(</span><span class="n">opt_meta</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Support setting the option with a string or int and converting it to the proper enum object.</span>
 
 <span class="sd">    Parameters</span>
@@ -671,8 +671,8 @@
 <span class="sd">    -------</span>
 <span class="sd">    any</span>
 <span class="sd">        Post processed value to set into the option.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">types</span> <span class="o">=</span> <span class="n">opt_meta</span><span class="p">[</span><span class="s1">&#39;types&#39;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="n">opt_meta</span><span class="p">[</span><span class="s1">'types'</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
         <span class="n">types</span> <span class="o">=</span> <span class="p">(</span><span class="n">types</span><span class="p">,)</span>
     <span class="k">for</span> <span class="n">type_</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
@@ -723,7 +723,7 @@
 
         <span class="k">return</span> <span class="n">values</span>
 
-    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Value &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; not valid for option with types </span><span class="si">{</span><span class="n">enum_class</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Value '</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">' not valid for option with types </span><span class="si">{</span><span class="n">enum_class</span><span class="si">}</span><span class="s2">"</span>
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 
@@ -731,13 +731,13 @@
 <div class="viewcode-block" id="check_type">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/utils.html#aviary.utils.utils.check_type">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_type</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Check that provided val is the correct type. If val is iterable, also check each individual</span>
 <span class="sd">    index.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_flatten_iters</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Recursively flattens iterables of any type and dimension.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Recursively flattens iterables of any type and dimension."""</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
                 <span class="k">yield from</span> <span class="n">_flatten_iters</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
@@ -746,7 +746,7 @@
 
     <span class="c1"># make a copy of val, so we do not modify it</span>
     <span class="n">input_val</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-    <span class="n">expected_types</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">]</span>
+    <span class="n">expected_types</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">'types'</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">expected_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># MetaData item has no type requirement.</span>
         <span class="k">return</span>
@@ -755,15 +755,15 @@
     <span class="c1"># Variables flagged multivalue can be lists or numpy arrays even if not specified in `types`</span>
     <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">input_val</span><span class="p">):</span>
         <span class="n">types</span> <span class="o">=</span> <span class="n">expected_types</span>
-        <span class="k">if</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;multivalue&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">'multivalue'</span><span class="p">]:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected_types</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
                 <span class="n">types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="o">*</span><span class="n">expected_types</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">expected_types</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_val</span><span class="p">,</span> <span class="n">types</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> is of type(s) </span><span class="si">{</span><span class="n">types</span><span class="si">}</span><span class="s1"> but you have provided a value of type &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">input_val</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> is of type(s) </span><span class="si">{</span><span class="n">types</span><span class="si">}</span><span class="s1"> but you have provided a value of type '</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">input_val</span><span class="p">)</span><span class="si">}</span><span class="s1">.'</span>
             <span class="p">)</span>
 
     <span class="c1"># Numpy arrays have special typings. Convert to list using standard Python types</span>
@@ -792,8 +792,8 @@
             <span class="p">(</span><span class="n">has_bool</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">bool</span><span class="p">))</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> is of type(s) </span><span class="si">{</span><span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;types&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> but you &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;have provided a value of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> is of type(s) </span><span class="si">{</span><span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">"types"</span><span class="p">]</span><span class="si">}</span><span class="s1"> but you '</span>
+                <span class="sa">f</span><span class="s1">'have provided a value of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">}</span><span class="s1">.'</span>
             <span class="p">)</span></div>
 
 
@@ -801,17 +801,17 @@
 <div class="viewcode-block" id="cast_type">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/utils.html#aviary.utils.utils.cast_type">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cast_type</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Attempts to cast val into an accepted type in meta_data. If a valid type cast is found, val is</span>
 <span class="sd">    changed to that type. If no compatible type is found, val is returned as is. Typing preference</span>
 <span class="sd">    given by order of types defined in meta_data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">meta_data</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">val</span>
 
     <span class="n">cast_val</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
 
-    <span class="n">expected_types</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">]</span>
+    <span class="n">expected_types</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">'types'</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected_types</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
         <span class="n">expected_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">expected_types</span><span class="p">,)</span>
 
@@ -835,7 +835,7 @@
                             <span class="n">cast_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">cast_val</span><span class="p">])</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">cast_val</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">cast_val</span><span class="p">)([</span><span class="n">_type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">cast_val</span><span class="p">])</span>
-                    <span class="c1"># Don&#39;t cast things to bool, most types will convert</span>
+                    <span class="c1"># Don't cast things to bool, most types will convert</span>
                     <span class="k">elif</span> <span class="n">_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">_type</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
                             <span class="n">cast_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cast_val</span><span class="p">])</span>
@@ -854,7 +854,7 @@
 <div class="viewcode-block" id="mass_to_force_english">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/utils.html#aviary.utils.utils.mass_to_force_english">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mass_to_force_english</span><span class="p">(</span><span class="n">mass</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">gravity</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert mass into force in the english unit system.</span>
 <span class="sd">    Uses the basic equation lbf = lbm * (g_current / g_earth).</span>
 
@@ -869,8 +869,8 @@
 <span class="sd">    -------</span>
 <span class="sd">    force: float</span>
 <span class="sd">        converted force in lbf</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">mass_val</span> <span class="o">=</span> <span class="n">convert_units</span><span class="p">(</span><span class="n">mass</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mass</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">mass_val</span> <span class="o">=</span> <span class="n">convert_units</span><span class="p">(</span><span class="n">mass</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mass</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">'lbm'</span><span class="p">)</span>
     <span class="n">gravity_val</span> <span class="o">=</span> <span class="n">convert_units</span><span class="p">(</span><span class="n">gravity</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gravity</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">GRAV_EARTH</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
     <span class="n">force</span> <span class="o">=</span> <span class="n">mass_val</span> <span class="o">*</span> <span class="p">(</span><span class="n">gravity_val</span> <span class="o">/</span> <span class="n">GRAV_EARTH</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -882,7 +882,7 @@
 <div class="viewcode-block" id="mass_to_force_english_derivative">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/utils.html#aviary.utils.utils.mass_to_force_english_derivative">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mass_to_force_english_derivative</span><span class="p">(</span><span class="n">gravity</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Compute the derivative of outputs computed using forces with respect to mass, which is the</span>
 <span class="sd">    ratio of gravities. The purpose of this function is to make sure units are always consistent</span>
 <span class="sd">    and reduce repeated code.</span>
@@ -896,7 +896,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    deriv: float</span>
 <span class="sd">        gravity ratio</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">gravity_val</span> <span class="o">=</span> <span class="n">convert_units</span><span class="p">(</span><span class="n">gravity</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gravity</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">GRAV_EARTH</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
     <span class="n">deriv</span> <span class="o">=</span> <span class="n">gravity_val</span> <span class="o">/</span> <span class="n">GRAV_EARTH</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

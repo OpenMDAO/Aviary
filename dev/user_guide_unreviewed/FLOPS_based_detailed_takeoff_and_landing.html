@@ -641,37 +641,37 @@ can be shared with different phase builders. Subsystem options can also often be
 <span class="n">aviary_options</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">()</span>
 
 <span class="c1"># This builder can be used for both takeoff and landing phases</span>
-<span class="n">aero_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreAerodynamicsBuilder</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;low_speed_aero&#39;</span><span class="p">,</span> <span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">)</span>
+<span class="n">aero_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreAerodynamicsBuilder</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'low_speed_aero'</span><span class="p">,</span> <span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">)</span>
 
 <span class="c1"># fmt: off</span>
 <span class="n">takeoff_subsystem_options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;low_speed_aero&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;low_speed&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;ground_altitude&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># units=&#39;m&#39;</span>
-        <span class="s1">&#39;angles_of_attack&#39;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s1">'low_speed_aero'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'method'</span><span class="p">:</span> <span class="s1">'low_speed'</span><span class="p">,</span>
+        <span class="s1">'ground_altitude'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># units='m'</span>
+        <span class="s1">'angles_of_attack'</span><span class="p">:</span> <span class="p">[</span>
             <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">11.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">,</span> <span class="mf">13.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span>
-        <span class="p">],</span>  <span class="c1"># units=&#39;deg&#39;</span>
-        <span class="s1">&#39;lift_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">],</span>  <span class="c1"># units='deg'</span>
+        <span class="s1">'lift_coefficients'</span><span class="p">:</span> <span class="p">[</span>
             <span class="mf">0.5178</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">,</span> <span class="mf">1.15</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span>
             <span class="mf">1.35</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mf">1.85</span><span class="p">,</span> <span class="mf">1.9</span><span class="p">,</span> <span class="mf">1.95</span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="s1">&#39;drag_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s1">'drag_coefficients'</span><span class="p">:</span> <span class="p">[</span>
             <span class="mf">0.0674</span><span class="p">,</span> <span class="mf">0.065</span><span class="p">,</span> <span class="mf">0.065</span><span class="p">,</span> <span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.072</span><span class="p">,</span> <span class="mf">0.076</span><span class="p">,</span> <span class="mf">0.084</span><span class="p">,</span> <span class="mf">0.09</span><span class="p">,</span>
             <span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.11</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.13</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="s1">&#39;lift_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="s1">&#39;drag_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s1">'lift_coefficient_factor'</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s1">'drag_coefficient_factor'</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">}</span>
 <span class="c1"># fmt: off</span>
 
 <span class="c1"># when using spoilers, add a few more options</span>
 <span class="n">takeoff_spoiler_subsystem_options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;low_speed_aero&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="o">**</span><span class="n">takeoff_subsystem_options</span><span class="p">[</span><span class="s1">&#39;low_speed_aero&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;use_spoilers&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="s1">&#39;spoiler_drag_coefficient&#39;</span><span class="p">:</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">SPOILER_DRAG_COEFFICIENT</span><span class="p">),</span>
-        <span class="s1">&#39;spoiler_lift_coefficient&#39;</span><span class="p">:</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">SPOILER_LIFT_COEFFICIENT</span><span class="p">),</span>
+    <span class="s1">'low_speed_aero'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="o">**</span><span class="n">takeoff_subsystem_options</span><span class="p">[</span><span class="s1">'low_speed_aero'</span><span class="p">],</span>
+        <span class="s1">'use_spoilers'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">'spoiler_drag_coefficient'</span><span class="p">:</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">SPOILER_DRAG_COEFFICIENT</span><span class="p">),</span>
+        <span class="s1">'spoiler_lift_coefficient'</span><span class="p">:</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">SPOILER_LIFT_COEFFICIENT</span><span class="p">),</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
@@ -735,26 +735,26 @@ components as required to be added to a trajectory analysis component.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">takeoff_brake_release_user_options</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
 
-<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;max_duration&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;time_duration_ref&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;distance_max&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">7500.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
-<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;max_velocity&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">167.85</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kn&#39;</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'max_duration'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'time_duration_ref'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'distance_max'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">7500.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'max_velocity'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">167.85</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'kn'</span><span class="p">)</span>
 
 <span class="n">takeoff_brake_release_initial_guesses</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
 
-<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;distance&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4100.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">)</span>
-<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">],</span> <span class="s1">&#39;kn&#39;</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'time'</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">],</span> <span class="s1">'s'</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'distance'</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4100.0</span><span class="p">],</span> <span class="s1">'ft'</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'velocity'</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">],</span> <span class="s1">'kn'</span><span class="p">)</span>
 
-<span class="n">gross_mass_units</span> <span class="o">=</span> <span class="s1">&#39;lbm&#39;</span>
+<span class="n">gross_mass_units</span> <span class="o">=</span> <span class="s1">'lbm'</span>
 <span class="n">gross_mass</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">gross_mass_units</span><span class="p">)</span>
-<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="n">gross_mass</span><span class="p">,</span> <span class="n">gross_mass_units</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'mass'</span><span class="p">,</span> <span class="n">gross_mass</span><span class="p">,</span> <span class="n">gross_mass_units</span><span class="p">)</span>
 
-<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;throttle&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;angle_of_attack&#39;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'throttle'</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'angle_of_attack'</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">'deg'</span><span class="p">)</span>
 
 <span class="n">takeoff_brake_release_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">DetailedTakeoffBrakeReleaseToDecisionSpeedPhaseBuilder</span><span class="p">(</span>
-    <span class="s1">&#39;takeoff_brake_release&#39;</span><span class="p">,</span>
+    <span class="s1">'takeoff_brake_release'</span><span class="p">,</span>
     <span class="n">subsystems</span><span class="o">=</span><span class="p">[</span><span class="n">aero_builder</span><span class="p">,</span> <span class="n">prop_builder</span><span class="p">],</span>
     <span class="n">subsystem_options</span><span class="o">=</span><span class="n">takeoff_subsystem_options</span><span class="p">,</span>
     <span class="n">user_options</span><span class="o">=</span><span class="n">takeoff_brake_release_user_options</span><span class="p">,</span>
@@ -850,7 +850,7 @@ and set up, the problem can be run for trajectory analysis.</p>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_model_options</span>
 
-<span class="n">takeoff_trajectory_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">DetailedTakeoffTrajectoryBuilder</span><span class="p">(</span><span class="s1">&#39;detailed_takeoff&#39;</span><span class="p">)</span>
+<span class="n">takeoff_trajectory_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">DetailedTakeoffTrajectoryBuilder</span><span class="p">(</span><span class="s1">'detailed_takeoff'</span><span class="p">)</span>
 
 <span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">set_brake_release_to_decision_speed</span><span class="p">(</span><span class="n">takeoff_brake_release_builder</span><span class="p">)</span>
 
@@ -873,42 +873,42 @@ and set up, the problem can be run for trajectory analysis.</p>
 <span class="n">takeoff</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">Problem</span><span class="p">()</span>
 
 <span class="c1"># default subsystems</span>
-<span class="n">default_premission_subsystems</span> <span class="o">=</span> <span class="n">get_default_subsystems</span><span class="p">(</span><span class="s1">&#39;FLOPS&#39;</span><span class="p">,</span> <span class="n">engines</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+<span class="n">default_premission_subsystems</span> <span class="o">=</span> <span class="n">get_default_subsystems</span><span class="p">(</span><span class="s1">'FLOPS'</span><span class="p">,</span> <span class="n">engines</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 
 <span class="c1"># Upstream pre-mission analysis for aero</span>
 <span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;core_subsystems&#39;</span><span class="p">,</span>
+    <span class="s1">'core_subsystems'</span><span class="p">,</span>
     <span class="n">av</span><span class="o">.</span><span class="n">CorePreMission</span><span class="p">(</span>
         <span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">,</span>
         <span class="n">subsystems</span><span class="o">=</span><span class="n">default_premission_subsystems</span><span class="p">,</span>
         <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{},</span>
     <span class="p">),</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="c1"># Instantiate the trajectory and add the phases</span>
 <span class="n">traj</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">()</span>
-<span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
+<span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">'traj'</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
 
 <span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">build_trajectory</span><span class="p">(</span>
     <span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">traj</span><span class="o">=</span><span class="n">traj</span>
 <span class="p">)</span>
 
-<span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">takeoff_liftoff_user_options</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="s1">&#39;distance_max&#39;</span><span class="p">)</span>
-<span class="n">liftoff</span> <span class="o">=</span> <span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">get_phase</span><span class="p">(</span><span class="s1">&#39;takeoff_liftoff&#39;</span><span class="p">)</span>
+<span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">takeoff_liftoff_user_options</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="s1">'distance_max'</span><span class="p">)</span>
+<span class="n">liftoff</span> <span class="o">=</span> <span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">get_phase</span><span class="p">(</span><span class="s1">'takeoff_liftoff'</span><span class="p">)</span>
 
-<span class="n">liftoff</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
+<span class="n">liftoff</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">'final'</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
 
 <span class="c1"># Insert a constraint for a fake decision speed, until abort is added.</span>
 <span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span>
-    <span class="s1">&#39;traj.takeoff_brake_release.states:velocity&#39;</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mf">149.47</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kn&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">150.0</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="s1">'traj.takeoff_brake_release.states:velocity'</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mf">149.47</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'kn'</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">150.0</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="p">)</span>
 
 <span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span>
-    <span class="s1">&#39;traj.takeoff_decision_speed.states:velocity&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.takeoff_decision_speed.states:velocity'</span><span class="p">,</span>
     <span class="n">equals</span><span class="o">=</span><span class="mf">155.36</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kn&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'kn'</span><span class="p">,</span>
     <span class="n">ref</span><span class="o">=</span><span class="mf">159.0</span><span class="p">,</span>
     <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
 <span class="p">)</span>
@@ -923,25 +923,18 @@ and set up, the problem can be run for trajectory analysis.</p>
 <span class="n">setup_model_options</span><span class="p">(</span><span class="n">takeoff</span><span class="p">,</span> <span class="n">aviary_options</span><span class="p">)</span>
 
 <span class="c1"># suppress warnings:</span>
-<span class="c1"># &quot;input variable &#39;...&#39; promoted using &#39;*&#39; was already promoted using &#39;aircraft:*&#39;</span>
+<span class="c1"># "input variable '...' promoted using '*' was already promoted using 'aircraft:*'</span>
 <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">PromotionWarning</span><span class="p">)</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">PromotionWarning</span><span class="p">)</span>
     <span class="n">takeoff</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">av</span><span class="o">.</span><span class="n">set_aviary_initial_values</span><span class="p">(</span><span class="n">takeoff</span><span class="p">,</span> <span class="n">aviary_options</span><span class="p">)</span>
 
-<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">apply_initial_guesses</span><span class="p">(</span><span class="n">takeoff</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">)</span>
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">apply_initial_guesses</span><span class="p">(</span><span class="n">takeoff</span><span class="p">,</span> <span class="s1">'traj'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631665.647915] [runnervm48cm3:5522 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x5579e384f2f0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631665.648231] [runnervm48cm3:5522 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05522] pml_ucx.c:313  Error: Failed to create UCP worker
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/system.py:4563: OpenMDAOWarning:Calling `list_inputs` before `final_setup` will only display the default values of variables and will not show the result of any `set_val` calls.
 </pre></div>
 </div>
@@ -960,10 +953,10 @@ and set up, the problem can be run for trajectory analysis.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">landing_subsystem_options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;low_speed_aero&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;low_speed&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;ground_altitude&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># units=&#39;m&#39;</span>
-        <span class="s1">&#39;angles_of_attack&#39;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s1">'low_speed_aero'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'method'</span><span class="p">:</span> <span class="s1">'low_speed'</span><span class="p">,</span>
+        <span class="s1">'ground_altitude'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># units='m'</span>
+        <span class="s1">'angles_of_attack'</span><span class="p">:</span> <span class="p">[</span>
             <span class="mf">0.0</span><span class="p">,</span>
             <span class="mf">1.0</span><span class="p">,</span>
             <span class="mf">2.0</span><span class="p">,</span>
@@ -980,8 +973,8 @@ and set up, the problem can be run for trajectory analysis.</p>
             <span class="mf">13.0</span><span class="p">,</span>
             <span class="mf">14.0</span><span class="p">,</span>
             <span class="mf">15.0</span><span class="p">,</span>
-        <span class="p">],</span>  <span class="c1"># units=&#39;deg&#39;</span>
-        <span class="s1">&#39;lift_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">],</span>  <span class="c1"># units='deg'</span>
+        <span class="s1">'lift_coefficients'</span><span class="p">:</span> <span class="p">[</span>
             <span class="mf">0.7</span><span class="p">,</span>
             <span class="mf">0.9</span><span class="p">,</span>
             <span class="mf">1.05</span><span class="p">,</span>
@@ -999,7 +992,7 @@ and set up, the problem can be run for trajectory analysis.</p>
             <span class="mf">2.3</span><span class="p">,</span>
             <span class="mf">2.40</span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="s1">&#39;drag_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s1">'drag_coefficients'</span><span class="p">:</span> <span class="p">[</span>
             <span class="mf">0.1</span><span class="p">,</span>
             <span class="mf">0.1</span><span class="p">,</span>
             <span class="mf">0.12</span><span class="p">,</span>
@@ -1017,18 +1010,18 @@ and set up, the problem can be run for trajectory analysis.</p>
             <span class="mf">0.32</span><span class="p">,</span>
             <span class="mf">0.34</span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="s1">&#39;lift_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="s1">&#39;drag_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s1">'lift_coefficient_factor'</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s1">'drag_coefficient_factor'</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="c1"># when using spoilers, add a few more options</span>
 <span class="n">landing_spoiler_subsystem_options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;low_speed_aero&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="o">**</span><span class="n">landing_subsystem_options</span><span class="p">[</span><span class="s1">&#39;low_speed_aero&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;use_spoilers&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="s1">&#39;spoiler_lift_coefficient&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.81</span><span class="p">,</span>
-        <span class="s1">&#39;spoiler_drag_coefficient&#39;</span><span class="p">:</span> <span class="mf">0.085</span><span class="p">,</span>
+    <span class="s1">'low_speed_aero'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="o">**</span><span class="n">landing_subsystem_options</span><span class="p">[</span><span class="s1">'low_speed_aero'</span><span class="p">],</span>
+        <span class="s1">'use_spoilers'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">'spoiler_lift_coefficient'</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.81</span><span class="p">,</span>
+        <span class="s1">'spoiler_drag_coefficient'</span><span class="p">:</span> <span class="mf">0.085</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -1065,9 +1058,9 @@ section above for a description.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetailedLandingApproachToMicP3PhaseBuilder</span> <span class="k">as</span> <span class="n">LandingApproachToMicP3</span>
 
-<span class="c1"># NOTE FLOPS output is based on &quot;constant&quot; landing mass - assume reserves weight</span>
+<span class="c1"># NOTE FLOPS output is based on "constant" landing mass - assume reserves weight</span>
 <span class="c1">#    - currently neglecting taxi</span>
-<span class="n">detailed_landing_mass</span> <span class="o">=</span> <span class="mf">106292.0</span>  <span class="c1"># units=&#39;lbm&#39;</span>
+<span class="n">detailed_landing_mass</span> <span class="o">=</span> <span class="mf">106292.0</span>  <span class="c1"># units='lbm'</span>
 
 <span class="c1"># Flops variable APRANG</span>
 <span class="n">apr_angle</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.0</span>  <span class="c1"># deg</span>
@@ -1079,38 +1072,38 @@ section above for a description.</p>
 
 <span class="n">landing_approach_to_mic_p3_user_options</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
 
-<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;max_duration&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;time_duration_ref&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;time_initial_ref&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;distance_max&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">10000.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
-<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;max_velocity&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">140.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kn&#39;</span><span class="p">)</span>
-<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;altitude_ref&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">800.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'max_duration'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'time_duration_ref'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'time_initial_ref'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'distance_max'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">10000.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'max_velocity'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">140.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'kn'</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'altitude_ref'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">800.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span><span class="p">)</span>
 
-<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;lower_angle_of_attack&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'lower_angle_of_attack'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'deg'</span><span class="p">)</span>
 
-<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;upper_angle_of_attack&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'upper_angle_of_attack'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'deg'</span><span class="p">)</span>
 
-<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;angle_of_attack_ref&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'angle_of_attack_ref'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'deg'</span><span class="p">)</span>
 
-<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;initial_height&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">600.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'initial_height'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">600.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span><span class="p">)</span>
 
 <span class="n">landing_approach_to_mic_p3_initial_guesses</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
 
-<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">42.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;distance&#39;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">4000.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2000.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">)</span>
-<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="mf">140.0</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">)</span>
-<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="n">detailed_landing_mass</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
-<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;throttle&#39;</span><span class="p">,</span> <span class="n">throttle</span><span class="p">)</span>
-<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;altitude&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">600.0</span><span class="p">,</span> <span class="mf">394.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'time'</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">42.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">],</span> <span class="s1">'s'</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'distance'</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">4000.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2000.0</span><span class="p">],</span> <span class="s1">'ft'</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'velocity'</span><span class="p">,</span> <span class="mf">140.0</span><span class="p">,</span> <span class="s1">'kn'</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'mass'</span><span class="p">,</span> <span class="n">detailed_landing_mass</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'throttle'</span><span class="p">,</span> <span class="n">throttle</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'altitude'</span><span class="p">,</span> <span class="p">[</span><span class="mf">600.0</span><span class="p">,</span> <span class="mf">394.0</span><span class="p">],</span> <span class="s1">'ft'</span><span class="p">)</span>
 
 <span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-    <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">FLIGHT_PATH_ANGLE</span><span class="p">,</span> <span class="p">[</span><span class="n">apr_angle</span><span class="p">,</span> <span class="n">apr_angle</span><span class="p">],</span> <span class="s1">&#39;deg&#39;</span>
+    <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">FLIGHT_PATH_ANGLE</span><span class="p">,</span> <span class="p">[</span><span class="n">apr_angle</span><span class="p">,</span> <span class="n">apr_angle</span><span class="p">],</span> <span class="s1">'deg'</span>
 <span class="p">)</span>
 
-<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;angle_of_attack&#39;</span><span class="p">,</span> <span class="mf">5.25</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'angle_of_attack'</span><span class="p">,</span> <span class="mf">5.25</span><span class="p">,</span> <span class="s1">'deg'</span><span class="p">)</span>
 
 <span class="n">landing_approach_to_mic_p3_builder</span> <span class="o">=</span> <span class="n">LandingApproachToMicP3</span><span class="p">(</span>
-    <span class="s1">&#39;landing_approach_to_mic_p3&#39;</span><span class="p">,</span>
+    <span class="s1">'landing_approach_to_mic_p3'</span><span class="p">,</span>
     <span class="n">subsystems</span><span class="o">=</span><span class="p">[</span><span class="n">aero_builder</span><span class="p">,</span> <span class="n">prop_builder</span><span class="p">],</span>
     <span class="n">subsystem_options</span><span class="o">=</span><span class="n">landing_subsystem_options</span><span class="p">,</span>
     <span class="n">user_options</span><span class="o">=</span><span class="n">landing_approach_to_mic_p3_user_options</span><span class="p">,</span>
@@ -1162,7 +1155,7 @@ Builder” subsection in the “Takeoff” section above for a description.</p>
     <span class="n">landing_touchdown_builder</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">landing_trajectory_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">DetailedLandingTrajectoryBuilder</span><span class="p">(</span><span class="s1">&#39;detailed_landing&#39;</span><span class="p">)</span>
+<span class="n">landing_trajectory_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">DetailedLandingTrajectoryBuilder</span><span class="p">(</span><span class="s1">'detailed_landing'</span><span class="p">)</span>
 
 <span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">set_approach_to_mic_p3</span><span class="p">(</span><span class="n">landing_approach_to_mic_p3_builder</span><span class="p">)</span>
 
@@ -1180,28 +1173,28 @@ Builder” subsection in the “Takeoff” section above for a description.</p>
 
 <span class="c1"># Upstream pre-mission analysis for aero</span>
 <span class="n">landing</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;core_subsystems&#39;</span><span class="p">,</span>
+    <span class="s1">'core_subsystems'</span><span class="p">,</span>
     <span class="n">av</span><span class="o">.</span><span class="n">CorePreMission</span><span class="p">(</span>
         <span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">,</span>
         <span class="n">subsystems</span><span class="o">=</span><span class="n">default_premission_subsystems</span><span class="p">,</span>
         <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{},</span>
     <span class="p">),</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="c1"># Instantiate the trajectory and add the phases</span>
 <span class="n">traj</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">()</span>
-<span class="n">landing</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
+<span class="n">landing</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">'traj'</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
 
 <span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">build_trajectory</span><span class="p">(</span>
     <span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">landing</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">traj</span><span class="o">=</span><span class="n">traj</span>
 <span class="p">)</span>
 
-<span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">landing_fullstop_user_options</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="s1">&#39;distance_max&#39;</span><span class="p">)</span>
-<span class="n">fullstop</span> <span class="o">=</span> <span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">get_phase</span><span class="p">(</span><span class="s1">&#39;landing_fullstop&#39;</span><span class="p">)</span>
+<span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">landing_fullstop_user_options</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="s1">'distance_max'</span><span class="p">)</span>
+<span class="n">fullstop</span> <span class="o">=</span> <span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">get_phase</span><span class="p">(</span><span class="s1">'landing_fullstop'</span><span class="p">)</span>
 
-<span class="n">fullstop</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
+<span class="n">fullstop</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">'final'</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
 
 <span class="n">varnames</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">AREA</span><span class="p">,</span>
@@ -1213,14 +1206,14 @@ Builder” subsection in the “Takeoff” section above for a description.</p>
 <span class="n">setup_model_options</span><span class="p">(</span><span class="n">landing</span><span class="p">,</span> <span class="n">aviary_options</span><span class="p">)</span>
 
 <span class="c1"># suppress warnings:</span>
-<span class="c1"># &quot;input variable &#39;...&#39; promoted using &#39;*&#39; was already promoted using &#39;aircraft:*&#39;</span>
+<span class="c1"># "input variable '...' promoted using '*' was already promoted using 'aircraft:*'</span>
 <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">PromotionWarning</span><span class="p">)</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">PromotionWarning</span><span class="p">)</span>
     <span class="n">landing</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">av</span><span class="o">.</span><span class="n">set_aviary_initial_values</span><span class="p">(</span><span class="n">landing</span><span class="p">,</span> <span class="n">aviary_options</span><span class="p">)</span>
 
-<span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">apply_initial_guesses</span><span class="p">(</span><span class="n">landing</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">)</span>
+<span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">apply_initial_guesses</span><span class="p">(</span><span class="n">landing</span><span class="p">,</span> <span class="s1">'traj'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

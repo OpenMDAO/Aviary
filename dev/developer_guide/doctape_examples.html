@@ -631,10 +631,10 @@ for automating the process of building and testing documentation to ensure that 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_value</span><span class="p">,</span> <span class="n">expected_error</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="n">expected_error</span><span class="p">)</span>
+    <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">'1'</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="n">expected_error</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">expected_error</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;we expected that to fail (1 is not equal to 2),&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;but this will still run&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'we expected that to fail (1 is not equal to 2),'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'but this will still run'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -651,36 +651,36 @@ but this will still run
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_value</span><span class="p">,</span> <span class="n">expected_error</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">&#39;1)&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">'1)'</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1 is not equal to 2&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;we mistyped &#39;1&#39;, so we should have failed&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'1 is not equal to 2'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"we mistyped '1', so we should have failed"</span><span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">&#39;1)&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="n">expected_error</span><span class="p">)</span>
+    <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">'1)'</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="n">expected_error</span><span class="p">)</span>
 <span class="k">except</span> <span class="n">expected_error</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1 is not equal to 2&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;something unnexpected happened (we mistyped &#39;1&#39;), and we won&#39;t reach this&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'1 is not equal to 2'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"something unnexpected happened (we mistyped '1'), and we won't reach this"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1 is not equal to 2
-we mistyped &#39;1&#39;, so we should have failed
+we mistyped '1', so we should have failed
 </pre></div>
 </div>
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">11</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;we mistyped &#39;1&#39;, so we should have failed&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"we mistyped '1', so we should have failed"</span><span class="p">)</span>
 <span class="g g-Whitespace">      </span><span class="mi">8</span> 
 <span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="k">try</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span>     <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">&#39;1)&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="n">expected_error</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span>     <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">'1)'</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="n">expected_error</span><span class="p">)</span>
 <span class="ne">---&gt; </span><span class="mi">11</span> <span class="k">except</span> <span class="n">expected_error</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span>     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1 is not equal to 2&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;something unnexpected happened (we mistyped &#39;1&#39;), and we won&#39;t reach this&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span>     <span class="nb">print</span><span class="p">(</span><span class="s1">'1 is not equal to 2'</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"something unnexpected happened (we mistyped '1'), and we won't reach this"</span><span class="p">)</span>
 
-<span class="ne">ValueError</span>: invalid literal for int() with base 10: &#39;1)&#39;
+<span class="ne">ValueError</span>: invalid literal for int() with base 10: '1)'
 </pre></div>
 </div>
 </div>
@@ -700,9 +700,9 @@ These can be used in places where it would be too difficult to glue portions of 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.models.missions.energy_state_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">phase_info</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_value</span>
 
-<span class="n">user_opts</span> <span class="o">=</span> <span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;climb&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">]</span>
-<span class="n">check_value</span><span class="p">(</span><span class="n">user_opts</span><span class="p">[</span><span class="s1">&#39;altitude_final&#39;</span><span class="p">],</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">))</span>
-<span class="n">check_value</span><span class="p">(</span><span class="n">user_opts</span><span class="p">[</span><span class="s1">&#39;mach_optimize&#39;</span><span class="p">],</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">user_opts</span> <span class="o">=</span> <span class="n">phase_info</span><span class="p">[</span><span class="s1">'climb'</span><span class="p">][</span><span class="s1">'user_options'</span><span class="p">]</span>
+<span class="n">check_value</span><span class="p">(</span><span class="n">user_opts</span><span class="p">[</span><span class="s1">'altitude_final'</span><span class="p">],</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">))</span>
+<span class="n">check_value</span><span class="p">(</span><span class="n">user_opts</span><span class="p">[</span><span class="s1">'mach_optimize'</span><span class="p">],</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -718,21 +718,21 @@ These can be used in places where it would be too difficult to glue portions of 
 <span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_contains</span>
 
-<span class="n">example_file</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;core&#39;</span><span class="p">))</span>
+<span class="n">example_file</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">'core'</span><span class="p">))</span>
 <span class="n">check_contains</span><span class="p">(</span>
-    <span class="p">(</span><span class="s1">&#39;aviary_problem.py&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'aviary_problem.py'</span><span class="p">),</span>
     <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
-    <span class="n">error_string</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{var}</span><span class="s1"> not in &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
+    <span class="n">error_string</span><span class="o">=</span><span class="s1">'</span><span class="si">{var}</span><span class="s1"> not in '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
     <span class="n">error_type</span><span class="o">=</span><span class="ne">FileNotFoundError</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This file exists and does not raise any errors&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'This file exists and does not raise any errors'</span><span class="p">)</span>
 <span class="n">check_contains</span><span class="p">(</span>
-    <span class="p">(</span><span class="s1">&#39;made_up_file.py&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'made_up_file.py'</span><span class="p">),</span>
     <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
-    <span class="n">error_string</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{var}</span><span class="s1"> not in &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
+    <span class="n">error_string</span><span class="o">=</span><span class="s1">'</span><span class="si">{var}</span><span class="s1"> not in '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
     <span class="n">error_type</span><span class="o">=</span><span class="ne">FileNotFoundError</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This file does not exist, so we will not reach this point&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'This file does not exist, so we will not reach this point'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -743,14 +743,14 @@ These can be used in places where it would be too difficult to glue portions of 
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">14</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span>     <span class="n">error_string</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{var}</span><span class="s1"> not in &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span>     <span class="n">error_string</span><span class="o">=</span><span class="s1">'</span><span class="si">{var}</span><span class="s1"> not in '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
 <span class="g g-Whitespace">     </span><span class="mi">11</span>     <span class="n">error_type</span><span class="o">=</span><span class="ne">FileNotFoundError</span><span class="p">,</span>
 <span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This file exists and does not raise any errors&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="nb">print</span><span class="p">(</span><span class="s1">'This file exists and does not raise any errors'</span><span class="p">)</span>
 <span class="ne">---&gt; </span><span class="mi">14</span> <span class="n">check_contains</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">15</span>     <span class="p">(</span><span class="s1">&#39;made_up_file.py&#39;</span><span class="p">),</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span>     <span class="p">(</span><span class="s1">'made_up_file.py'</span><span class="p">),</span>
 <span class="g g-Whitespace">     </span><span class="mi">16</span>     <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="n">error_string</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{var}</span><span class="s1"> not in &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="n">error_string</span><span class="o">=</span><span class="s1">'</span><span class="si">{var}</span><span class="s1"> not in '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_file</span><span class="p">),</span>
 
 <span class="nn">File ~/work/Aviary/Aviary/aviary/utils/doctape.py:200,</span> in <span class="ni">check_contains</span><span class="nt">(expected_values, actual_values, error_string, error_type)</span>
 <span class="g g-Whitespace">    </span><span class="mi">198</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">expected_values</span><span class="p">:</span>
@@ -773,10 +773,10 @@ These can be used in places where it would be too difficult to glue portions of 
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_args</span><span class="p">,</span> <span class="n">check_contains</span><span class="p">,</span> <span class="n">glue_variable</span>
 
 <span class="n">default_error</span> <span class="o">=</span> <span class="ne">RuntimeError</span>
-<span class="n">check_args</span><span class="p">(</span><span class="n">check_contains</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;error_type&#39;</span><span class="p">:</span> <span class="n">default_error</span><span class="p">},</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;default_error&#39;</span><span class="p">,</span> <span class="n">default_error</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">check_args</span><span class="p">(</span><span class="n">check_contains</span><span class="p">,</span> <span class="p">{</span><span class="s1">'error_type'</span><span class="p">:</span> <span class="n">default_error</span><span class="p">},</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">'default_error'</span><span class="p">,</span> <span class="n">default_error</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="n">exact_arg</span> <span class="o">=</span> <span class="s1">&#39;exact&#39;</span>
+<span class="n">exact_arg</span> <span class="o">=</span> <span class="s1">'exact'</span>
 <span class="n">check_args</span><span class="p">(</span><span class="n">check_args</span><span class="p">,</span> <span class="n">exact_arg</span><span class="p">)</span>
 <span class="n">glue_variable</span><span class="p">(</span><span class="n">exact_arg</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -793,11 +793,11 @@ These can be used in places where it would be too difficult to glue portions of 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command_no_file_error</span>
 
-<span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">command</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">    aviary run_mission --optimizer IPOPT</span>
 <span class="s2">    validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv</span>
 <span class="s2">    --max_iter 0</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 <span class="n">run_command_no_file_error</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -823,10 +823,10 @@ These can be used in places where it would be too difficult to glue portions of 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue_variable</span>
 
-<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;plain text&#39;</span><span class="p">)</span>
-<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;inline code&#39;</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;something different than&#39;</span><span class="p">,</span> <span class="s1">&#39;not the same as&#39;</span><span class="p">)</span>
-<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;the entire phrase they want to replace&#39;</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">'plain text'</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">'inline code'</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">'something different than'</span><span class="p">,</span> <span class="s1">'not the same as'</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">'the entire phrase they want to replace'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -841,8 +841,8 @@ These can be used in places where it would be too difficult to glue portions of 
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue_keys</span>
 
 <span class="n">simplified_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;phase1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kft&#39;</span><span class="p">},</span> <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">},</span>
-    <span class="s1">&#39;phase2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;km&#39;</span><span class="p">},</span> <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+    <span class="s1">'phase1'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'altitude'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'val'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'kft'</span><span class="p">},</span> <span class="s1">'mach'</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">},</span>
+    <span class="s1">'phase2'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'altitude'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'val'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'km'</span><span class="p">},</span> <span class="s1">'mach'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
 <span class="p">}</span>
 <span class="n">glue_keys</span><span class="p">(</span><span class="n">simplified_dict</span><span class="p">)</span>
 </pre></div>
@@ -863,12 +863,12 @@ These can be used in places where it would be too difficult to glue portions of 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">gramatical_list</span>
 
 <span class="n">single_element</span> <span class="o">=</span> <span class="n">gramatical_list</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">two_elements</span> <span class="o">=</span> <span class="n">gramatical_list</span><span class="p">([</span><span class="s1">&#39;apples&#39;</span><span class="p">,</span> <span class="s1">&#39;bananas&#39;</span><span class="p">])</span>
-<span class="n">three_elements_with_or</span> <span class="o">=</span> <span class="n">gramatical_list</span><span class="p">([</span><span class="s1">&#39;apples&#39;</span><span class="p">,</span> <span class="s1">&#39;bananas&#39;</span><span class="p">,</span> <span class="s1">&#39;strawberries&#39;</span><span class="p">],</span> <span class="s1">&#39;or&#39;</span><span class="p">)</span>
+<span class="n">two_elements</span> <span class="o">=</span> <span class="n">gramatical_list</span><span class="p">([</span><span class="s1">'apples'</span><span class="p">,</span> <span class="s1">'bananas'</span><span class="p">])</span>
+<span class="n">three_elements_with_or</span> <span class="o">=</span> <span class="n">gramatical_list</span><span class="p">([</span><span class="s1">'apples'</span><span class="p">,</span> <span class="s1">'bananas'</span><span class="p">,</span> <span class="s1">'strawberries'</span><span class="p">],</span> <span class="s1">'or'</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;I would like to order </span><span class="si">{</span><span class="n">single_element</span><span class="si">}</span><span class="s1"> smoothie.&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Do you want </span><span class="si">{</span><span class="n">three_elements_with_or</span><span class="si">}</span><span class="s1"> in your smoothie?&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;I only want </span><span class="si">{</span><span class="n">two_elements</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'I would like to order </span><span class="si">{</span><span class="n">single_element</span><span class="si">}</span><span class="s1"> smoothie.'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Do you want </span><span class="si">{</span><span class="n">three_elements_with_or</span><span class="si">}</span><span class="s1"> in your smoothie?'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'I only want </span><span class="si">{</span><span class="n">two_elements</span><span class="si">}</span><span class="s1">.'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -891,12 +891,12 @@ I only want apples and bananas.
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryProblem</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_variable_name</span><span class="p">,</span> <span class="n">glue_variable</span>
 
-<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;function_name&#39;</span><span class="p">,</span> <span class="n">get_variable_name</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">))</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">'function_name'</span><span class="p">,</span> <span class="n">get_variable_name</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">))</span>
 <span class="n">glue_variable</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">(</span><span class="nb">print</span><span class="p">))</span>
 
-<span class="n">some_string</span> <span class="o">=</span> <span class="s1">&#39;that contains important information&#39;</span>
+<span class="n">some_string</span> <span class="o">=</span> <span class="s1">'that contains important information'</span>
 <span class="n">simple_variable_name</span> <span class="o">=</span> <span class="n">get_variable_name</span><span class="p">(</span><span class="n">some_string</span><span class="p">)</span>
-<span class="n">phrase</span> <span class="o">=</span> <span class="n">simple_variable_name</span> <span class="o">+</span> <span class="s1">&#39; is a variable &#39;</span> <span class="o">+</span> <span class="n">some_string</span>
+<span class="n">phrase</span> <span class="o">=</span> <span class="n">simple_variable_name</span> <span class="o">+</span> <span class="s1">' is a variable '</span> <span class="o">+</span> <span class="n">some_string</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">phrase</span><span class="p">)</span>
 
 <span class="n">complex_object_name</span> <span class="o">=</span> <span class="n">get_variable_name</span><span class="p">(</span><span class="n">AviaryProblem</span><span class="p">)</span>
@@ -918,7 +918,7 @@ I only want apples and bananas.
 <p>print</p>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>some_string is a variable that contains important information
 AviaryProblem
-[&#39;multiple&#39;, &#39;arguments&#39;]
+['multiple', 'arguments']
 </pre></div>
 </div>
 </div>
@@ -935,10 +935,10 @@ AviaryProblem
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_previous_line</span><span class="p">,</span> <span class="n">get_variable_name</span><span class="p">,</span> <span class="n">glue_variable</span>
 
-<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">EMPTY_MASS</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;var_value_code&#39;</span><span class="p">,</span> <span class="n">get_previous_line</span><span class="p">(),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">'value'</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">EMPTY_MASS</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">'var_value_code'</span><span class="p">,</span> <span class="n">get_previous_line</span><span class="p">(),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">glue_variable</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">EMPTY_MASS</span><span class="p">),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;var_name_code&#39;</span><span class="p">,</span> <span class="n">get_previous_line</span><span class="p">(),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">'var_name_code'</span><span class="p">,</span> <span class="n">get_previous_line</span><span class="p">(),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -990,22 +990,22 @@ Using <code class="docutils literal notranslate"><span class="pre">glue_variable
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_all_keys</span><span class="p">,</span> <span class="n">get_value</span>
 
 <span class="n">simplified_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;phase1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kft&#39;</span><span class="p">},</span> <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">},</span>
-    <span class="s1">&#39;phase2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;km&#39;</span><span class="p">},</span> <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+    <span class="s1">'phase1'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'altitude'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'val'</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'kft'</span><span class="p">},</span> <span class="s1">'mach'</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">},</span>
+    <span class="s1">'phase2'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'altitude'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'val'</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'km'</span><span class="p">},</span> <span class="s1">'mach'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
 <span class="p">}</span>
 <span class="n">unique_keys_only</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">simplified_dict</span><span class="p">)</span>
 <span class="n">all_keys</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">simplified_dict</span><span class="p">,</span> <span class="n">track_layers</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">unique_keys_only</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">all_keys</span><span class="p">)</span>
 
-<span class="n">p1_alt</span> <span class="o">=</span> <span class="n">get_value</span><span class="p">(</span><span class="n">simplified_dict</span><span class="p">,</span> <span class="s1">&#39;phase1.altitude.val&#39;</span><span class="p">)</span>
+<span class="n">p1_alt</span> <span class="o">=</span> <span class="n">get_value</span><span class="p">(</span><span class="n">simplified_dict</span><span class="p">,</span> <span class="s1">'phase1.altitude.val'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">p1_alt</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;phase1&#39;, &#39;altitude&#39;, &#39;val&#39;, &#39;units&#39;, &#39;mach&#39;, &#39;phase2&#39;]
-[&#39;phase1&#39;, &#39;phase1.altitude&#39;, &#39;phase1.altitude.val&#39;, &#39;phase1.altitude.units&#39;, &#39;phase1.mach&#39;, &#39;phase2&#39;, &#39;phase2.altitude&#39;, &#39;phase2.altitude.val&#39;, &#39;phase2.altitude.units&#39;, &#39;phase2.mach&#39;]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>['phase1', 'altitude', 'val', 'units', 'mach', 'phase2']
+['phase1', 'phase1.altitude', 'phase1.altitude.val', 'phase1.altitude.units', 'phase1.mach', 'phase2', 'phase2.altitude', 'phase2.altitude.val', 'phase2.altitude.units', 'phase2.mach']
 30
 </pre></div>
 </div>
@@ -1021,19 +1021,19 @@ Using <code class="docutils literal notranslate"><span class="pre">glue_variable
 <span class="nb">print</span><span class="p">(</span><span class="n">k1</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>  <span class="c1"># Display the first 5 keys in Mission</span>
 <span class="n">k2</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">Mission</span><span class="p">,</span> <span class="n">track_layers</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">k2</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>  <span class="c1"># Display the first 5 keys in Mission</span>
-<span class="n">k3</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">Mission</span><span class="p">,</span> <span class="n">track_layers</span><span class="o">=</span><span class="s1">&#39;Mission&#39;</span><span class="p">)</span>
+<span class="n">k3</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">Mission</span><span class="p">,</span> <span class="n">track_layers</span><span class="o">=</span><span class="s1">'Mission'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">k3</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>  <span class="c1"># Display the first 5 keys in Mission</span>
 
 <span class="n">glue_keys</span><span class="p">(</span><span class="n">Mission</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">get_value</span><span class="p">(</span><span class="n">Mission</span><span class="p">,</span> <span class="s1">&#39;Constraints.GEARBOX_SHAFT_POWER_RESIDUAL&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">get_value</span><span class="p">(</span><span class="n">Mission</span><span class="p">,</span> <span class="s1">'Constraints.GEARBOX_SHAFT_POWER_RESIDUAL'</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;BLOCK_FUEL_MASS&#39;, &#39;FINAL_MASS&#39;, &#39;FINAL_TIME&#39;, &#39;FUEL_MASS&#39;, &#39;GRAVITY&#39;]
-[&#39;BLOCK_FUEL_MASS&#39;, &#39;FINAL_MASS&#39;, &#39;FINAL_TIME&#39;, &#39;FUEL_MASS&#39;, &#39;GRAVITY&#39;]
-[&#39;Mission.BLOCK_FUEL_MASS&#39;, &#39;Mission.FINAL_MASS&#39;, &#39;Mission.FINAL_TIME&#39;, &#39;Mission.FUEL_MASS&#39;, &#39;Mission.GRAVITY&#39;]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>['BLOCK_FUEL_MASS', 'FINAL_MASS', 'FINAL_TIME', 'FUEL_MASS', 'GRAVITY']
+['BLOCK_FUEL_MASS', 'FINAL_MASS', 'FINAL_TIME', 'FUEL_MASS', 'GRAVITY']
+['Mission.BLOCK_FUEL_MASS', 'Mission.FINAL_MASS', 'Mission.FINAL_TIME', 'Mission.FUEL_MASS', 'Mission.GRAVITY']
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mission:constraints:gearbox_shaft_power_residual

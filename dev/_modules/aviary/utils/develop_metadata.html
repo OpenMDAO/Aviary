@@ -506,7 +506,7 @@
 <span></span><span class="k">def</span><span class="w"> </span><span class="nf">add_meta_data</span><span class="p">(</span>
     <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">meta_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-    <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'unitless'</span><span class="p">,</span>
     <span class="n">default_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
     <span class="n">types</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">multivalue</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -515,7 +515,7 @@
     <span class="n">historical_name</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">_check_unique</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Add new meta data associated with variables in the Aviary data hierarchy.</span>
 
 <span class="sd">    Parameters</span>
@@ -555,8 +555,8 @@
 <span class="sd">    historical_name : dict or None</span>
 <span class="sd">        dictionary of names that the variable held in prior codes</span>
 
-<span class="sd">        Example: {&quot;FLOPS&quot;:&quot;WTIN.WNGWT&quot;, &quot;GASP&quot;:</span>
-<span class="sd">        &quot;INGASP.WWGHT&quot;}</span>
+<span class="sd">        Example: {"FLOPS":"WTIN.WNGWT", "GASP":</span>
+<span class="sd">        "INGASP.WWGHT"}</span>
 
 <span class="sd">        NAMELIST naming convention</span>
 <span class="sd">        &amp;&lt;function_name&gt;.&lt;namelist_name&gt;.&lt;var_name&gt;</span>
@@ -593,17 +593,17 @@
 <span class="sd">    None</span>
 <span class="sd">        No exceptions raised by this method, although other methods called within may</span>
 <span class="sd">        raise exceptions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">meta_data</span> <span class="ow">and</span> <span class="n">_check_unique</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;You added the variable </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> to a variable metadata dictionary via the &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;add_meta_data function, but </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> already was present in the dictionary. &#39;</span>
-            <span class="s1">&#39;If you are sure you want to overwrite this variable, call the &#39;</span>
-            <span class="s1">&#39;update_meta_data function instead.&#39;</span>
+            <span class="sa">f</span><span class="s1">'You added the variable </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> to a variable metadata dictionary via the '</span>
+            <span class="sa">f</span><span class="s1">'add_meta_data function, but </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> already was present in the dictionary. '</span>
+            <span class="s1">'If you are sure you want to overwrite this variable, call the '</span>
+            <span class="s1">'update_meta_data function instead.'</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;unitless&#39;</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="s1">'unitless'</span>
 
     <span class="k">if</span> <span class="n">types</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -615,13 +615,13 @@
         <span class="n">types</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">default_value</span><span class="p">)</span>
 
     <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;historical_name&#39;</span><span class="p">:</span> <span class="n">historical_name</span><span class="p">,</span>
-        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span>
-        <span class="s1">&#39;desc&#39;</span><span class="p">:</span> <span class="n">desc</span><span class="p">,</span>
-        <span class="s1">&#39;option&#39;</span><span class="p">:</span> <span class="n">option</span><span class="p">,</span>
-        <span class="s1">&#39;default_value&#39;</span><span class="p">:</span> <span class="n">default_value</span><span class="p">,</span>
-        <span class="s1">&#39;types&#39;</span><span class="p">:</span> <span class="n">types</span><span class="p">,</span>
-        <span class="s1">&#39;multivalue&#39;</span><span class="p">:</span> <span class="n">multivalue</span><span class="p">,</span>
+        <span class="s1">'historical_name'</span><span class="p">:</span> <span class="n">historical_name</span><span class="p">,</span>
+        <span class="s1">'units'</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span>
+        <span class="s1">'desc'</span><span class="p">:</span> <span class="n">desc</span><span class="p">,</span>
+        <span class="s1">'option'</span><span class="p">:</span> <span class="n">option</span><span class="p">,</span>
+        <span class="s1">'default_value'</span><span class="p">:</span> <span class="n">default_value</span><span class="p">,</span>
+        <span class="s1">'types'</span><span class="p">:</span> <span class="n">types</span><span class="p">,</span>
+        <span class="s1">'multivalue'</span><span class="p">:</span> <span class="n">multivalue</span><span class="p">,</span>
     <span class="p">}</span></div>
 
 
@@ -631,7 +631,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">update_meta_data</span><span class="p">(</span>
     <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">meta_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">,</span>
     <span class="n">desc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">default_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
     <span class="n">option</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -639,7 +639,7 @@
     <span class="n">multivalue</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">historical_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Update existing meta data associated with variables in the Aviary data hierarchy.</span>
 
 <span class="sd">    Parameters</span>
@@ -676,8 +676,8 @@
 <span class="sd">    historical_name : dict or None</span>
 <span class="sd">        dictionary of names that the variable held in prior codes</span>
 
-<span class="sd">        Example: {&quot;FLOPS&quot;:&quot;WTIN.WNGWT&quot;, &quot;GASP&quot;:</span>
-<span class="sd">        &quot;INGASP.WWGHT&quot;}</span>
+<span class="sd">        Example: {"FLOPS":"WTIN.WNGWT", "GASP":</span>
+<span class="sd">        "INGASP.WWGHT"}</span>
 
 <span class="sd">        NAMELIST naming convention</span>
 <span class="sd">        &amp;&lt;function_name&gt;.&lt;namelist_name&gt;.&lt;var_name&gt;</span>
@@ -709,13 +709,13 @@
 <span class="sd">    None</span>
 <span class="sd">        No exceptions raised by this method, although other methods called within may</span>
 <span class="sd">        raise exceptions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">meta_data</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;You provided the variable </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> to a variable metadata dictionary via the &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;update_meta_data function, but </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> does not exist in the dictionary. If &#39;</span>
-            <span class="s1">&#39;you are sure you want to add this variable to the dictionary, call the &#39;</span>
-            <span class="s1">&#39;add_meta_data function instead.&#39;</span>
+            <span class="sa">f</span><span class="s1">'You provided the variable </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> to a variable metadata dictionary via the '</span>
+            <span class="sa">f</span><span class="s1">'update_meta_data function, but </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> does not exist in the dictionary. If '</span>
+            <span class="s1">'you are sure you want to add this variable to the dictionary, call the '</span>
+            <span class="s1">'add_meta_data function instead.'</span>
         <span class="p">)</span>
 
     <span class="n">add_meta_data</span><span class="p">(</span>

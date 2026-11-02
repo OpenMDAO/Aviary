@@ -515,7 +515,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Verbosity</span>
 
 
-<span class="c1"># multiple type annotation uses &quot;typeA | typeB&quot; syntax, but requires Python 3.10+</span>
+<span class="c1"># multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+</span>
 <span class="c1"># filename: (str, Path)</span>
 <div class="viewcode-block" id="read_data_file">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/csv_data_file.html#aviary.utils.csv_data_file.read_data_file">[docs]</a>
@@ -526,7 +526,7 @@
     <span class="n">save_comments</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">verbosity</span><span class="o">=</span><span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Read data file in Aviary format, which is data delimited by commas with any amount of whitespace</span>
 <span class="sd">    allowed between data entries. Spaces are not allowed in openMDAO variables, so any spaces in</span>
 <span class="sd">    header entries are replaced with underscores.</span>
@@ -537,7 +537,7 @@
 <span class="sd">        filename or filepath of data file to be read</span>
 <span class="sd">    metadata : dict, optional</span>
 <span class="sd">        metadata to check validity of variable names provided in data file. Columns with variable</span>
-<span class="sd">        names that can&#39;t be found in metadata will be skipped. If not provided, all validly</span>
+<span class="sd">        names that can't be found in metadata will be skipped. If not provided, all validly</span>
 <span class="sd">        formatted columns are always read.</span>
 <span class="sd">    aliases : dict, optional</span>
 <span class="sd">        optional dictionary to define a mapping of variables to allowable aliases in the data file</span>
@@ -559,9 +559,9 @@
 <span class="sd">    outputs : list</span>
 <span class="sd">        list of strings containing variables labeled as outputs in data file</span>
 <span class="sd">    comments : list of str, optional</span>
-<span class="sd">        any comments from file, with comment characters (&#39;#&#39;) stripped out (only if</span>
+<span class="sd">        any comments from file, with comment characters ('#') stripped out (only if</span>
 <span class="sd">        save_comments=True)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">verbosity</span> <span class="o">=</span> <span class="n">Verbosity</span><span class="p">(</span><span class="n">verbosity</span><span class="p">)</span>
 
     <span class="n">filepath</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
@@ -576,31 +576,31 @@
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">aliases</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">aliases</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
-            <span class="n">aliases</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">s&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+            <span class="n">aliases</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">'</span><span class="se">\\</span><span class="s1">s'</span><span class="p">,</span> <span class="s1">'_'</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8-sig&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8-sig'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
         <span class="c1"># csv.reader() and other available packages that can read csv files are not used</span>
         <span class="c1"># Manual control of file reading ensures that comments are kept intact and other checks can</span>
         <span class="c1"># be performed</span>
         <span class="n">check_for_header</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">line_count</span><span class="p">,</span> <span class="n">line_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
             <span class="c1"># if comments are present in line, strip them out</span>
-            <span class="k">if</span> <span class="s1">&#39;#&#39;</span> <span class="ow">in</span> <span class="n">line_data</span><span class="p">:</span>
-                <span class="n">index</span> <span class="o">=</span> <span class="n">line_data</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">'#'</span> <span class="ow">in</span> <span class="n">line_data</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">line_data</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">'#'</span><span class="p">)</span>
                 <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_data</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
                 <span class="n">line_data</span> <span class="o">=</span> <span class="n">line_data</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span>
 
             <span class="c1"># split by delimiters, remove whitespace and newline characters</span>
             <span class="c1"># do not split by delimiters inside parentheses yet</span>
-            <span class="n">line_data</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[;,]\s*(?![^()]*\))&#39;</span><span class="p">,</span> <span class="n">line_data</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">line_data</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[;,]\s*(?![^()]*\))'</span><span class="p">,</span> <span class="n">line_data</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
             <span class="c1"># ignore empty lines</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">line_data</span> <span class="ow">or</span> <span class="n">line_data</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line_data</span> <span class="ow">or</span> <span class="n">line_data</span> <span class="o">==</span> <span class="p">[</span><span class="s1">''</span><span class="p">]:</span>
                 <span class="k">continue</span>
 
             <span class="c1"># try to convert line_data to float, skip any blank strings</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">line_data</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">line_data</span> <span class="k">if</span> <span class="n">var</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+                <span class="n">line_data</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">line_data</span> <span class="k">if</span> <span class="n">var</span> <span class="o">!=</span> <span class="s1">''</span><span class="p">]</span>
             <span class="c1"># data contains things other than floats</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="c1"># skip checking for header data if not required</span>
@@ -610,44 +610,44 @@
                     <span class="c1"># list of which column goes with each valid header entry</span>
                     <span class="n">valid_indices</span> <span class="o">=</span> <span class="p">[]</span>
                     <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line_data</span><span class="p">)):</span>
-                        <span class="n">item</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[(,]&#39;</span><span class="p">,</span> <span class="n">line_data</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-                        <span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;) &#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">))]</span>
-                        <span class="c1"># OpenMDAO vars can&#39;t have spaces, convert to underscores</span>
-                        <span class="n">name</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">s&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">item</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'[(,]'</span><span class="p">,</span> <span class="n">line_data</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+                        <span class="n">item</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">') '</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">))]</span>
+                        <span class="c1"># OpenMDAO vars can't have spaces, convert to underscores</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">'</span><span class="se">\\</span><span class="s1">s'</span><span class="p">,</span> <span class="s1">'_'</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                         <span class="k">if</span> <span class="n">aliases</span><span class="p">:</span>
-                            <span class="c1"># &quot;reverse&quot; lookup name in alias dict</span>
+                            <span class="c1"># "reverse" lookup name in alias dict</span>
                             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">:</span>
                                 <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
                                     <span class="n">name</span> <span class="o">=</span> <span class="n">key</span>
                                     <span class="k">break</span>
 
-                        <span class="n">default_units</span> <span class="o">=</span> <span class="s1">&#39;unitless&#39;</span>
+                        <span class="n">default_units</span> <span class="o">=</span> <span class="s1">'unitless'</span>
                         <span class="c1"># if metadata is provided, ensure variable exists and update default_units</span>
                         <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                             <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                                 <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">QUIET</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
                                     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                        <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">: Header &lt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt; was not recognized, and &#39;</span>
-                                        <span class="s1">&#39;will be skipped&#39;</span>
+                                        <span class="sa">f</span><span class="s1">'&lt;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">: Header &lt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt; was not recognized, and '</span>
+                                        <span class="s1">'will be skipped'</span>
                                     <span class="p">)</span>
                                 <span class="k">continue</span>
                             <span class="k">else</span><span class="p">:</span>
-                                <span class="n">default_units</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+                                <span class="n">default_units</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">'units'</span><span class="p">]</span>
 
                         <span class="n">provided_units</span> <span class="o">=</span> <span class="kc">False</span>
                         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                             <span class="c1"># check if variables are labeled inputs or outputs</span>
-                            <span class="k">if</span> <span class="s1">&#39;input&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="s1">'input'</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
                                 <span class="c1"># edge case where user provides both for some reason</span>
-                                <span class="k">if</span> <span class="s1">&#39;output&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="s1">'output'</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
                                     <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
-                                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s1">: Variable </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> is listed as both an input &#39;</span>
-                                        <span class="s1">&#39;and an output. Treating it as an input only.&#39;</span>
+                                        <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s1">: Variable </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> is listed as both an input '</span>
+                                        <span class="s1">'and an output. Treating it as an input only.'</span>
                                     <span class="p">)</span>
-                                <span class="n">item</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">))</span>
+                                <span class="n">item</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">'input'</span><span class="p">))</span>
                                 <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                            <span class="k">elif</span> <span class="s1">&#39;output&#39;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
-                                <span class="n">item</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">))</span>
+                            <span class="k">elif</span> <span class="s1">'output'</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                                <span class="n">item</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">'output'</span><span class="p">))</span>
                                 <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
                             <span class="c1"># if units are provided, check that they are valid</span>
@@ -662,27 +662,27 @@
                                             <span class="c1"># could mean accidental conversion which would</span>
                                             <span class="c1"># significantly impact analysis</span>
                                             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                                                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s1">: Provided units of &lt;</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1">&gt; for &#39;</span>
-                                                <span class="sa">f</span><span class="s1">&#39;column &lt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt;, which are not compatible with &#39;</span>
-                                                <span class="sa">f</span><span class="s1">&#39;default units of </span><span class="si">{</span><span class="n">default_units</span><span class="si">}</span><span class="s1">.&#39;</span>
+                                                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s1">: Provided units of &lt;</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1">&gt; for '</span>
+                                                <span class="sa">f</span><span class="s1">'column &lt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt;, which are not compatible with '</span>
+                                                <span class="sa">f</span><span class="s1">'default units of </span><span class="si">{</span><span class="n">default_units</span><span class="si">}</span><span class="s1">.'</span>
                                             <span class="p">)</span>
                                 <span class="k">else</span><span class="p">:</span>
                                     <span class="c1"># Units were not recognized. Raise error</span>
                                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                                        <span class="sa">f</span><span class="s1">&#39;Invalid units &lt;</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1">&gt; provided for &#39;</span>
-                                        <span class="sa">f</span><span class="s1">&#39;column &lt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt; while reading &#39;</span>
-                                        <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s1">&gt;.&#39;</span>
+                                        <span class="sa">f</span><span class="s1">'Invalid units &lt;</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1">&gt; provided for '</span>
+                                        <span class="sa">f</span><span class="s1">'column &lt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt; while reading '</span>
+                                        <span class="sa">f</span><span class="s1">'&lt;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s1">&gt;.'</span>
                                     <span class="p">)</span>
 
                         <span class="k">if</span> <span class="ow">not</span> <span class="n">provided_units</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default_units</span> <span class="o">!=</span> <span class="s1">&#39;unitless&#39;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default_units</span> <span class="o">!=</span> <span class="s1">'unitless'</span><span class="p">:</span>
                                 <span class="c1"># units were not provided, but variable should have them assume</span>
                                 <span class="c1"># default units for that variable</span>
                                 <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># VERBOSE, DEBUG</span>
                                     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                        <span class="sa">f</span><span class="s1">&#39;Units were not provided for column &lt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt; while &#39;</span>
-                                        <span class="sa">f</span><span class="s1">&#39;reading &lt;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s1">&gt;. Using default units of &#39;</span>
-                                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">default_units</span><span class="si">}</span><span class="s1">.&#39;</span>
+                                        <span class="sa">f</span><span class="s1">'Units were not provided for column &lt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt; while '</span>
+                                        <span class="sa">f</span><span class="s1">'reading &lt;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s1">&gt;. Using default units of '</span>
+                                        <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">default_units</span><span class="si">}</span><span class="s1">.'</span>
                                     <span class="p">)</span>
                             <span class="n">units</span> <span class="o">=</span> <span class="n">default_units</span>
 
@@ -696,7 +696,7 @@
 
                 <span class="c1"># only raise error if not checking for header, or invalid header found</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s1">&#39;Non-numerical value found in data file &lt;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s1">&gt; on line </span><span class="si">{</span><span class="n">line_count</span><span class="si">!s}</span><span class="s1">&#39;</span>
+                    <span class="sa">f</span><span class="s1">'Non-numerical value found in data file &lt;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s1">&gt; on line </span><span class="si">{</span><span class="n">line_count</span><span class="si">!s}</span><span class="s1">'</span>
                 <span class="p">)</span>
 
             <span class="c1"># This point is reached when the first valid numerical entry in data file is found. Stop</span>
@@ -719,7 +719,7 @@
 
 
 
-<span class="c1"># multiple type annotation uses &quot;typeA | typeB&quot; syntax, but requires Python 3.10+</span>
+<span class="c1"># multiple type annotation uses "typeA | typeB" syntax, but requires Python 3.10+</span>
 <span class="c1"># filename: (str, Path)</span>
 <span class="c1"># comments: (str, list)</span>
 <div class="viewcode-block" id="write_data_file">
@@ -731,7 +731,7 @@
     <span class="n">comments</span><span class="o">=</span><span class="p">[],</span>
     <span class="n">include_timestamp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Write data to a comma-separated values (csv) format file using the Aviary data table</span>
 <span class="sd">    format.</span>
 
@@ -748,14 +748,14 @@
 <span class="sd">        optional comments that will be included in the top of the output file, before data begins</span>
 <span class="sd">    include_timestamp : bool, optional</span>
 <span class="sd">        optional flag to set if timestamp and user should be included in file comments</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">filename</span>
 
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No data provided to write to </span><span class="si">{</span><span class="n">filepath</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No data provided to write to </span><span class="si">{</span><span class="n">filepath</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="n">label_variables</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="n">outputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -764,26 +764,26 @@
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">comments</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">comments</span> <span class="o">=</span> <span class="p">[</span><span class="n">comments</span><span class="p">]</span>
 
-    <span class="c1"># strip &#39;#&#39; from comments - np.savetxt() will automatically add them</span>
+    <span class="c1"># strip '#' from comments - np.savetxt() will automatically add them</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comments</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
-                <span class="n">comments</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;# &#39;</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">'#'</span><span class="p">:</span>
+                <span class="n">comments</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'# '</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
     <span class="c1"># if there are comments, add some spacing afterwards - otherwise it should be empty</span>
     <span class="k">if</span> <span class="n">comments</span> <span class="o">!=</span> <span class="p">[]:</span>
-        <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">include_timestamp</span><span class="p">:</span>
-        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">/%y at %H:%M&#39;</span><span class="p">)</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%m/</span><span class="si">%d</span><span class="s1">/%y at %H:%M'</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">user</span> <span class="o">=</span> <span class="s1">&#39; by &#39;</span> <span class="o">+</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getuser</span><span class="p">()</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="s1">' by '</span> <span class="o">+</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getuser</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">user</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-        <span class="n">stamp</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;# created </span><span class="si">{</span><span class="n">timestamp</span><span class="si">}{</span><span class="n">user</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="s1">''</span>
+        <span class="n">stamp</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">'# created </span><span class="si">{</span><span class="n">timestamp</span><span class="si">}{</span><span class="n">user</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span>
         <span class="c1"># edge case of no comments but timestamp, make sure there is a space before data</span>
         <span class="k">if</span> <span class="n">comments</span> <span class="o">==</span> <span class="p">[]:</span>
-            <span class="n">comments</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">]</span>
+            <span class="n">comments</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">]</span>
         <span class="n">comments</span> <span class="o">=</span> <span class="n">stamp</span> <span class="o">+</span> <span class="n">comments</span>
 
     <span class="c1"># assemble separate variable name, units, and dependence information into single list for header</span>
@@ -791,21 +791,21 @@
     <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">val_and_units</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">units</span> <span class="o">=</span> <span class="n">val_and_units</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">var_info</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">var_info</span> <span class="o">=</span> <span class="s1">''</span>
         <span class="c1"># only explicitly include units if there are any</span>
-        <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">units</span> <span class="o">!=</span> <span class="s1">&#39;unitless&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">units</span> <span class="o">!=</span> <span class="s1">'unitless'</span><span class="p">:</span>
             <span class="n">var_info</span> <span class="o">=</span> <span class="n">units</span>
         <span class="c1"># label variables as inputs/outputs if information is avaliable</span>
         <span class="k">if</span> <span class="n">label_variables</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">var_info</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-                <span class="n">var_info</span> <span class="o">=</span> <span class="n">var_info</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span>
+            <span class="k">if</span> <span class="n">var_info</span> <span class="o">!=</span> <span class="s1">''</span><span class="p">:</span>
+                <span class="n">var_info</span> <span class="o">=</span> <span class="n">var_info</span> <span class="o">+</span> <span class="s1">', '</span>
             <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
-                <span class="n">var_info</span> <span class="o">=</span> <span class="n">var_info</span> <span class="o">+</span> <span class="s1">&#39;output&#39;</span>
+                <span class="n">var_info</span> <span class="o">=</span> <span class="n">var_info</span> <span class="o">+</span> <span class="s1">'output'</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">var_info</span> <span class="o">=</span> <span class="n">var_info</span> <span class="o">+</span> <span class="s1">&#39;input&#39;</span>
+                <span class="n">var_info</span> <span class="o">=</span> <span class="n">var_info</span> <span class="o">+</span> <span class="s1">'input'</span>
 
-        <span class="k">if</span> <span class="n">var_info</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-            <span class="n">var_info</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39; (</span><span class="si">{</span><span class="n">var_info</span><span class="si">}</span><span class="s1">)&#39;</span>
+        <span class="k">if</span> <span class="n">var_info</span> <span class="o">!=</span> <span class="s1">''</span><span class="p">:</span>
+            <span class="n">var_info</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">' (</span><span class="si">{</span><span class="n">var_info</span><span class="si">}</span><span class="s1">)'</span>
 
         <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span> <span class="o">+</span> <span class="n">var_info</span><span class="p">)</span>
         <span class="n">data_dict</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">units</span><span class="p">)])</span>
@@ -816,7 +816,7 @@
         <span class="n">header_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="n">data_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">))</span>
         <span class="c1"># min column width is 10 - spaced out columns are visually easier to follow</span>
-        <span class="c1"># don&#39;t pad first column</span>
+        <span class="c1"># don't pad first column</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">min_width</span> <span class="o">=</span> <span class="mi">10</span>
         <span class="k">else</span><span class="p">:</span>
@@ -825,13 +825,13 @@
 
         <span class="c1"># if headers are smaller than column, pad with leading whitespace</span>
         <span class="k">if</span> <span class="n">header_len</span> <span class="o">&lt;</span> <span class="n">col_len</span><span class="p">:</span>
-            <span class="n">header</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">col_len</span> <span class="o">-</span> <span class="n">header_len</span><span class="p">)</span> <span class="o">+</span> <span class="n">header</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">header</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">' '</span> <span class="o">*</span> <span class="p">(</span><span class="n">col_len</span> <span class="o">-</span> <span class="n">header_len</span><span class="p">)</span> <span class="o">+</span> <span class="n">header</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
         <span class="c1"># special string to define column formatting with specific width</span>
-        <span class="nb">format</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;%</span><span class="si">{</span><span class="n">col_len</span><span class="si">}</span><span class="s1">s&#39;</span>
-        <span class="c1"># don&#39;t include commas for last column</span>
+        <span class="nb">format</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'%</span><span class="si">{</span><span class="n">col_len</span><span class="si">}</span><span class="s1">s'</span>
+        <span class="c1"># don't include commas for last column</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="nb">format</span> <span class="o">=</span> <span class="nb">format</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span>
+            <span class="nb">format</span> <span class="o">=</span> <span class="nb">format</span> <span class="o">+</span> <span class="s1">', '</span>
         <span class="n">col_format</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">format</span><span class="p">)</span>
 
     <span class="c1"># convert engine_data from dict to array so it can be written using savetxt</span>
@@ -841,10 +841,10 @@
     <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
         <span class="n">filepath</span><span class="p">,</span>
         <span class="n">formatted_data</span><span class="p">,</span>
-        <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">col_format</span><span class="p">),</span>
-        <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span>
-        <span class="n">header</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header</span><span class="p">),</span>
-        <span class="n">comments</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">comments</span><span class="p">),</span>
+        <span class="n">fmt</span><span class="o">=</span><span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">col_format</span><span class="p">),</span>
+        <span class="n">delimiter</span><span class="o">=</span><span class="s1">','</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header</span><span class="p">),</span>
+        <span class="n">comments</span><span class="o">=</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">comments</span><span class="p">),</span>
     <span class="p">)</span></div>
 
 </pre></div>

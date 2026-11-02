@@ -615,72 +615,72 @@ Later in this example, we increase this order which will allow the optimizer to 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;pre_mission&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;include_takeoff&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;optimize_mass&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
-    <span class="s1">&#39;climb_1&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
-        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;distance_solve_segments&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">30500.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">31000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">27.0</span><span class="p">,</span> <span class="mf">81.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+    <span class="s1">'pre_mission'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'include_takeoff'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'optimize_mass'</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="s1">'climb_1'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
+        <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'num_segments'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'distance_solve_segments'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'mach_optimize'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'altitude_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'altitude_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">30500.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">31000.0</span><span class="p">),</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="s1">'path_constraint'</span><span class="p">,</span>
+            <span class="s1">'time_initial_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
+            <span class="s1">'time_duration_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">27.0</span><span class="p">,</span> <span class="mf">81.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
         <span class="p">},</span>
-        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">54</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+        <span class="s1">'initial_guesses'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'time'</span><span class="p">:</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">54</span><span class="p">],</span> <span class="s1">'min'</span><span class="p">)},</span>
     <span class="p">},</span>
-    <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
-        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">30500.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">31000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">30000.0</span><span class="p">,</span> <span class="mf">31500.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary_constraint&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">27.0</span><span class="p">,</span> <span class="mf">81.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">85.5</span><span class="p">,</span> <span class="mf">256.5</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+    <span class="s1">'cruise'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
+        <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'num_segments'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'mach_optimize'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'altitude_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">30500.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">31000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">30000.0</span><span class="p">,</span> <span class="mf">31500.0</span><span class="p">),</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="s1">'boundary_constraint'</span><span class="p">,</span>
+            <span class="s1">'time_initial_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">27.0</span><span class="p">,</span> <span class="mf">81.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
+            <span class="s1">'time_duration_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">85.5</span><span class="p">,</span> <span class="mf">256.5</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
         <span class="p">},</span>
-        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">54</span><span class="p">,</span> <span class="mi">171</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+        <span class="s1">'initial_guesses'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'time'</span><span class="p">:</span> <span class="p">([</span><span class="mi">54</span><span class="p">,</span> <span class="mi">171</span><span class="p">],</span> <span class="s1">'min'</span><span class="p">)},</span>
     <span class="p">},</span>
-    <span class="s1">&#39;descent_1&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
-        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">31000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">31500.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">112.5</span><span class="p">,</span> <span class="mf">337.5</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">26.5</span><span class="p">,</span> <span class="mf">79.5</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+    <span class="s1">'descent_1'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
+        <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'num_segments'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'mach_optimize'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'altitude_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">31000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">31500.0</span><span class="p">),</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="s1">'path_constraint'</span><span class="p">,</span>
+            <span class="s1">'time_initial_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">112.5</span><span class="p">,</span> <span class="mf">337.5</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
+            <span class="s1">'time_duration_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">26.5</span><span class="p">,</span> <span class="mf">79.5</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
         <span class="p">},</span>
-        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">225</span><span class="p">,</span> <span class="mi">53</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+        <span class="s1">'initial_guesses'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'time'</span><span class="p">:</span> <span class="p">([</span><span class="mi">225</span><span class="p">,</span> <span class="mi">53</span><span class="p">],</span> <span class="s1">'min'</span><span class="p">)},</span>
     <span class="p">},</span>
-    <span class="s1">&#39;post_mission&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;include_landing&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s1">&#39;target_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1915</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">),</span>
+    <span class="s1">'post_mission'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'include_landing'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">'target_range'</span><span class="p">:</span> <span class="p">(</span><span class="mi">1915</span><span class="p">,</span> <span class="s1">'nmi'</span><span class="p">),</span>
     <span class="p">},</span>
 <span class="p">}</span>
 </pre></div>
@@ -696,40 +696,37 @@ Later in this example, we increase this order which will allow the optimizer to 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
 
 <span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span>
-    <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv&#39;</span><span class="p">,</span> <span class="n">phase_info</span>
+    <span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'</span><span class="p">,</span> <span class="n">phase_info</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631498.482596] [runnervm48cm3:5093 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55fb953f3ac0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631498.482920] [runnervm48cm3:5093 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05093] pml_ucx.c:313  Error: Failed to create UCP worker
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
-  &#39;aircraft:engine:mass  [7400.]  lbm
-  &#39;aircraft:fins:mass  0.0  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
-  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
-  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
-  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
-  &#39;aircraft:wing:control_surface_area  137.0  ft**2
-  &#39;aircraft:wing:wetted_area  2396.56  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+  'aircraft:design:touchdown_mass_max  152800.0  lbm
+  'aircraft:engine:mass  [7400.]  lbm
+  'aircraft:fins:mass  0.0  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  45694.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  85.5  ft
+  'aircraft:fuselage:planform_area  1578.24  ft**2
+  'aircraft:fuselage:wetted_area  4158.62  ft**2
+  'aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  'aircraft:vertical_tail:wetted_area  581.13  ft**2
+  'aircraft:wing:aspect_ratio  11.22091  unitless
+  'aircraft:wing:control_surface_area  137.0  ft**2
+  'aircraft:wing:wetted_area  2396.56  ft**2
+  'mission:takeoff:lift_over_drag  17.354  unitless
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
+  traj.climb_1.t_initial, inds=[0]
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       93
@@ -743,19 +740,15 @@ Total number of inequality constraints...............:       27
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
-  traj.climb_1.t_initial, inds=[0]
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
 Objective...............:   2.5497020994737802e+00    2.5497020994737802e+00
-Dual infeasibility......:   5.9732261044084004e-08    5.9732261044084004e-08
-Constraint violation....:   6.0483302707250903e-15    6.0483302707250903e-15
+Dual infeasibility......:   5.9732261946143639e-08    5.9732261946143639e-08
+Constraint violation....:   8.6093450585010935e-15    8.6093450585010935e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0945571350754906e-08    9.0945571350754906e-08
-Overall NLP error.......:   9.0945571350754906e-08    9.0945571350754906e-08
+Complementarity.........:   9.0945571350731639e-08    9.0945571350731639e-08
+Overall NLP error.......:   9.0945571350731639e-08    9.0945571350731639e-08
 
 
 Number of objective function evaluations             = 27
@@ -765,7 +758,7 @@ Number of inequality constraint evaluations          = 27
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 3.193
+Total seconds in IPOPT                               = 5.943
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -801,12 +794,12 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 <p>Let’s take a look at the optimization objective, <code class="docutils literal notranslate"><span class="pre">mission:fuel_mass</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'kg'</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.477070942878
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.477070942874
 </pre></div>
 </div>
 </div>
@@ -814,12 +807,12 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 <p>We can print <code class="docutils literal notranslate"><span class="pre">fuel_burned</span></code> in pounds easily, thanks to OpenMDAO’s automatic unit conversion feature:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lb&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lb'</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.020994737803
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.020994737795
 </pre></div>
 </div>
 </div>
@@ -839,18 +832,18 @@ We’ve made this change and have a modified aircraft data file called <code cla
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 
-<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv&#39;</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'</span>
 <span class="n">filename</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
 <span class="c1"># Read the file</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
     <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
 
-<span class="c1"># Find the index of the line containing &#39;aircraft:wing:span&#39;</span>
+<span class="c1"># Find the index of the line containing 'aircraft:wing:span'</span>
 <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
-    <span class="k">if</span> <span class="s1">&#39;aircraft:wing:aspect_ratio&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s1">'aircraft:wing:aspect_ratio'</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">i</span>
         <span class="k">break</span>
 
@@ -860,7 +853,7 @@ We’ve made this change and have a modified aircraft data file called <code cla
     <span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">aspect_ratio</span><span class="p">)</span>
 
 <span class="c1"># Write the modified content to a new CSV file</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">new_filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">new_filename</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
     <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 </pre></div>
@@ -875,32 +868,36 @@ We’ve made this change and have a modified aircraft data file called <code cla
 We’ll use the same <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> object as before, but we’ll change the input deck to point to our new aircraft file.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span><span class="s1">&#39;modified_aircraft.csv&#39;</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span><span class="s1">'modified_aircraft.csv'</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
-  &#39;aircraft:engine:mass  [7400.]  lbm
-  &#39;aircraft:fins:mass  0.0  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
-  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
-  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
-  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.02091  unitless
-  &#39;aircraft:wing:control_surface_area  137.0  ft**2
-  &#39;aircraft:wing:wetted_area  2396.56  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  'aircraft:design:touchdown_mass_max  152800.0  lbm
+  'aircraft:engine:mass  [7400.]  lbm
+  'aircraft:fins:mass  0.0  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  45694.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  85.5  ft
+  'aircraft:fuselage:planform_area  1578.24  ft**2
+  'aircraft:fuselage:wetted_area  4158.62  ft**2
+  'aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  'aircraft:vertical_tail:wetted_area  581.13  ft**2
+  'aircraft:wing:aspect_ratio  11.02091  unitless
+  'aircraft:wing:control_surface_area  137.0  ft**2
+  'aircraft:wing:wetted_area  2396.56  ft**2
+  'mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
+  traj.climb_1.t_initial, inds=[0]
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       93
@@ -914,19 +911,15 @@ Total number of inequality constraints...............:       27
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
-  traj.climb_1.t_initial, inds=[0]
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5637089673954763e+00    2.5637089673954763e+00
-Dual infeasibility......:   8.0299257658611516e-08    8.0299257658611516e-08
-Constraint violation....:   6.4847842402011340e-15    6.4847842402011340e-15
+Objective...............:   2.5637089673954789e+00    2.5637089673954789e+00
+Dual infeasibility......:   8.0299260906003474e-08    8.0299260906003474e-08
+Constraint violation....:   4.5622265619200320e-15    4.5622265619200320e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0972478544991456e-08    9.0972478544991456e-08
-Overall NLP error.......:   9.0972478544991456e-08    9.0972478544991456e-08
+Complementarity.........:   9.0972478544998378e-08    9.0972478544998378e-08
+Overall NLP error.......:   9.0972478544998378e-08    9.0972478544998378e-08
 
 
 Number of objective function evaluations             = 27
@@ -936,7 +929,7 @@ Number of inequality constraint evaluations          = 27
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 3.013
+Total seconds in IPOPT                               = 5.789
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -959,12 +952,12 @@ EXIT: Optimal Solution Found.
 Let’s take a look at the fuel burn value:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'kg'</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.011155111673
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10268.011155111679
 </pre></div>
 </div>
 </div>
@@ -982,41 +975,45 @@ We’ll use the original aircraft configuration for this run.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;climb_1&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;climb_1&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;cruise&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;cruise&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;descent_1&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;descent_1&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span><span class="p">[</span><span class="s1">'climb_1'</span><span class="p">][</span><span class="s1">'user_options'</span><span class="p">][</span><span class="s1">'mach_polynomial_order'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">'climb_1'</span><span class="p">][</span><span class="s1">'user_options'</span><span class="p">][</span><span class="s1">'altitude_polynomial_order'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">'cruise'</span><span class="p">][</span><span class="s1">'user_options'</span><span class="p">][</span><span class="s1">'mach_polynomial_order'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">'cruise'</span><span class="p">][</span><span class="s1">'user_options'</span><span class="p">][</span><span class="s1">'altitude_polynomial_order'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">'descent_1'</span><span class="p">][</span><span class="s1">'user_options'</span><span class="p">][</span><span class="s1">'mach_polynomial_order'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">'descent_1'</span><span class="p">][</span><span class="s1">'user_options'</span><span class="p">][</span><span class="s1">'altitude_polynomial_order'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
 
 <span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span>
-    <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv&#39;</span><span class="p">,</span> <span class="n">phase_info</span>
+    <span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'</span><span class="p">,</span> <span class="n">phase_info</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
-  &#39;aircraft:engine:mass  [7400.]  lbm
-  &#39;aircraft:fins:mass  0.0  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
-  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
-  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
-  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
-  &#39;aircraft:wing:control_surface_area  137.0  ft**2
-  &#39;aircraft:wing:wetted_area  2396.56  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  'aircraft:design:touchdown_mass_max  152800.0  lbm
+  'aircraft:engine:mass  [7400.]  lbm
+  'aircraft:fins:mass  0.0  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  45694.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  85.5  ft
+  'aircraft:fuselage:planform_area  1578.24  ft**2
+  'aircraft:fuselage:wetted_area  4158.62  ft**2
+  'aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  'aircraft:vertical_tail:wetted_area  581.13  ft**2
+  'aircraft:wing:aspect_ratio  11.22091  unitless
+  'aircraft:wing:control_surface_area  137.0  ft**2
+  'aircraft:wing:wetted_area  2396.56  ft**2
+  'mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
+  traj.climb_1.t_initial, inds=[0]
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       97
@@ -1030,19 +1027,15 @@ Total number of inequality constraints...............:       27
         inequality constraints with only upper bounds:        0
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
-  traj.climb_1.t_initial, inds=[0]
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 50
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5146485811274211e+00    2.5146485811274211e+00
-Dual infeasibility......:   1.4218006026809548e-03    1.4218006026809548e-03
-Constraint violation....:   8.0650745011403006e-11    8.0650745011403006e-11
+Objective...............:   2.5146485811327643e+00    2.5146485811327643e+00
+Dual infeasibility......:   1.4218010249365111e-03    1.4218010249365111e-03
+Constraint violation....:   8.0652141795885929e-11    8.0652141795885929e-11
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   1.0000000000000003e-05    1.0000000000000003e-05
-Overall NLP error.......:   1.4218006026809548e-03    1.4218006026809548e-03
+Complementarity.........:   1.0000000000000001e-05    1.0000000000000001e-05
+Overall NLP error.......:   1.4218010249365111e-03    1.4218010249365111e-03
 
 
 Number of objective function evaluations             = 60
@@ -1052,7 +1045,7 @@ Number of inequality constraint evaluations          = 60
 Number of equality constraint Jacobian evaluations   = 51
 Number of inequality constraint Jacobian evaluations = 51
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 6.866
+Total seconds in IPOPT                               = 12.971
 
 EXIT: Maximum Number of Iterations Exceeded.
 </pre></div>
@@ -1075,12 +1068,12 @@ Aviary run failed. See the dashboard for more details.
 <p>And let’s print out the objective value, fuel burned:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'kg'</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10045.476986307234
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10045.476986331501
 </pre></div>
 </div>
 </div>

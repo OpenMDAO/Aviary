@@ -609,9 +609,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.validation_cases.validation_tests</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_flops_inputs</span>
 
-<span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">&#39;LargeSingleAisle1FLOPS&#39;</span><span class="p">)</span>
+<span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">'LargeSingleAisle1FLOPS'</span><span class="p">)</span>
 
-<span class="n">aviary_inputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">HorizontalTail</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="mf">2200.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="n">aviary_inputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">HorizontalTail</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="mf">2200.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -628,25 +628,25 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">HTailMass</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">ExplicitComponent</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;User-provided subsystem to compute the tail weight with a simple formula.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""User-provided subsystem to compute the tail weight with a simple formula."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">&#39;Area&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft**2&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;Mass&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">'Area'</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft**2'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">'Mass'</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">declare_partials</span><span class="p">(</span><span class="s1">&#39;Mass&#39;</span><span class="p">,</span> <span class="s1">&#39;Area&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">20.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">declare_partials</span><span class="p">(</span><span class="s1">'Mass'</span><span class="p">,</span> <span class="s1">'Area'</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">20.0</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
-        <span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;Mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">20.0</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="s1">&#39;Area&#39;</span><span class="p">]</span>
+        <span class="n">outputs</span><span class="p">[</span><span class="s1">'Mass'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">20.0</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="s1">'Area'</span><span class="p">]</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">HTailWeightBuilder</span><span class="p">(</span><span class="n">SubsystemBuilder</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prototype of a subsystem that overrides an aviary internally computed var.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Prototype of a subsystem that overrides an aviary internally computed var."""</span>
 
-    <span class="n">_default_name</span> <span class="o">=</span> <span class="s1">&#39;wing_weight&#39;</span>
+    <span class="n">_default_name</span> <span class="o">=</span> <span class="s1">'wing_weight'</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">build_pre_mission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Build an OpenMDAO system for the pre-mission computations of the subsystem.</span>
 
 <span class="sd">        Returns</span>
@@ -655,13 +655,13 @@
 <span class="sd">            An OpenMDAO system containing all computations that need to happen in</span>
 <span class="sd">            the pre-mission part of the Aviary problem. This</span>
 <span class="sd">            includes sizing, design, and other non-mission parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">wing_group</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">()</span>
         <span class="n">wing_group</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-            <span class="s1">&#39;tail_weight&#39;</span><span class="p">,</span>
+            <span class="s1">'tail_weight'</span><span class="p">,</span>
             <span class="n">HTailMass</span><span class="p">(),</span>
-            <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;Area&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">HorizontalTail</span><span class="o">.</span><span class="n">AREA</span><span class="p">)],</span>
-            <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;Mass&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">HorizontalTail</span><span class="o">.</span><span class="n">MASS</span><span class="p">)],</span>
+            <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">'Area'</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">HorizontalTail</span><span class="o">.</span><span class="n">AREA</span><span class="p">)],</span>
+            <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">'Mass'</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">HorizontalTail</span><span class="o">.</span><span class="n">MASS</span><span class="p">)],</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">wing_group</span>
 </pre></div>

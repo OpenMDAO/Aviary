@@ -501,7 +501,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for aviary.interface.run_aviary</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;This file contains functions needed to run Aviary using the Level 1 interface.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""This file contains functions needed to run Aviary using the Level 1 interface."""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">module_from_spec</span><span class="p">,</span> <span class="n">spec_from_file_location</span>
@@ -527,7 +527,7 @@
     <span class="n">verbosity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">real_time_plotting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Run the Aviary optimization problem for a specified aircraft configuration and mission.</span>
 
 <span class="sd">    This function creates an instance of the AviaryProblem class using provided phase information,</span>
@@ -572,8 +572,8 @@
 <span class="sd">    -----</span>
 <span class="sd">    The function allows for user overrides on aircraft and options data. It raises warnings or</span>
 <span class="sd">    errors if there are clashing user inputs. Users can modify or add methods to alter the Aviary</span>
-<span class="sd">    problem&#39;s behavior.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    problem's behavior.</span>
+<span class="sd">    """</span>
     <span class="c1"># If loading from a file, use filename as problem name. Else, use OpenMDAO default</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aircraft_data</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">aircraft_data</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span>
@@ -631,28 +631,28 @@
 <a class="viewcode-back" href="../../../_srcdocs/packages/interface/run_aviary.html#aviary.interface.run_aviary.run_aviary_cmd">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_aviary_cmd</span><span class="p">(</span>
     <span class="n">input_deck</span><span class="p">,</span>
-    <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;IPOPT&#39;</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="s1">'IPOPT'</span><span class="p">,</span>
     <span class="n">phase_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">max_iter</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
     <span class="n">verbosity</span><span class="o">=</span><span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">,</span>
     <span class="n">real_time_plotting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This file enables running aviary from the command line with a user specified input deck.</span>
 <span class="sd">    usage: aviary run_mission [input_deck] [opt_args].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;max_iter&#39;</span><span class="p">:</span> <span class="n">max_iter</span><span class="p">,</span>
-        <span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="n">optimizer</span><span class="p">,</span>
-        <span class="s1">&#39;verbosity&#39;</span><span class="p">:</span> <span class="n">Verbosity</span><span class="p">(</span><span class="n">verbosity</span><span class="p">),</span>
-        <span class="s1">&#39;real_time_plotting&#39;</span><span class="p">:</span> <span class="n">real_time_plotting</span><span class="p">,</span>
+        <span class="s1">'max_iter'</span><span class="p">:</span> <span class="n">max_iter</span><span class="p">,</span>
+        <span class="s1">'optimizer'</span><span class="p">:</span> <span class="n">optimizer</span><span class="p">,</span>
+        <span class="s1">'verbosity'</span><span class="p">:</span> <span class="n">Verbosity</span><span class="p">(</span><span class="n">verbosity</span><span class="p">),</span>
+        <span class="s1">'real_time_plotting'</span><span class="p">:</span> <span class="n">real_time_plotting</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phase_info</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">phase_info_path</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">phase_info</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
-        <span class="n">spec</span> <span class="o">=</span> <span class="n">spec_from_file_location</span><span class="p">(</span><span class="s1">&#39;phase_info_file&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">phase_info_path</span><span class="p">))</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">spec_from_file_location</span><span class="p">(</span><span class="s1">'phase_info_file'</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">phase_info_path</span><span class="p">))</span>
         <span class="n">phase_info_file</span> <span class="o">=</span> <span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;phase_info_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase_info_file</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">'phase_info_file'</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase_info_file</span>
         <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">phase_info_file</span><span class="p">)</span>
 
         <span class="n">phase_info</span> <span class="o">=</span> <span class="n">phase_info_file</span><span class="o">.</span><span class="n">phase_info</span>
@@ -665,37 +665,37 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_setup_run_aviary_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;input_deck&#39;</span><span class="p">,</span>
-        <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;indeck&#39;</span><span class="p">,</span>
+        <span class="s1">'input_deck'</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s1">'indeck'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name of vehicle input deck file&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'Name of vehicle input deck file'</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--optimizer&#39;</span><span class="p">,</span>
+        <span class="s1">'--optimizer'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;IPOPT&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name of optimizer&#39;</span><span class="p">,</span>
-        <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;SNOPT&#39;</span><span class="p">,</span> <span class="s1">&#39;IPOPT&#39;</span><span class="p">,</span> <span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="s1">&#39;None&#39;</span><span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">'IPOPT'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'Name of optimizer'</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">'SNOPT'</span><span class="p">,</span> <span class="s1">'IPOPT'</span><span class="p">,</span> <span class="s1">'SLSQP'</span><span class="p">,</span> <span class="s1">'None'</span><span class="p">),</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--phase_info&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Path to phase info file&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--max_iter&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;maximum number of iterations&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'--phase_info'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">'Path to phase info file'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'--max_iter'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">'maximum number of iterations'</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--verbosity&#39;</span><span class="p">,</span>
+        <span class="s1">'--verbosity'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;verbosity settings: 0=quiet, 1=brief, 2=verbose, 3=debug&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'verbosity settings: 0=quiet, 1=brief, 2=verbose, 3=debug'</span><span class="p">,</span>
         <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--rtplot&#39;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Enable realtime plotting option&#39;</span><span class="p">,</span>
+        <span class="s1">'--rtplot'</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s1">'store_true'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'Enable realtime plotting option'</span><span class="p">,</span>
     <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_exec_run_aviary</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">user_args</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">==</span> <span class="s1">&#39;None&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">==</span> <span class="s1">'None'</span><span class="p">:</span>
         <span class="n">args</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># check if args.input_deck is a list, if so, use the first element</span>

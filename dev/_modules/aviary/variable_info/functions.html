@@ -536,9 +536,9 @@
     <span class="n">primal_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This function provides a clean way to add variables from the variable hierarchy into components</span>
-<span class="sd">    as inputs. Unless explicitly provided, information on the variable&#39;s units and description come</span>
+<span class="sd">    as inputs. Unless explicitly provided, information on the variable's units and description come</span>
 <span class="sd">    from variable metadata. Default value is always taken from metadata.</span>
 
 <span class="sd">    Information</span>
@@ -548,7 +548,7 @@
 <span class="sd">    comp: Component</span>
 <span class="sd">        OpenMDAO component the variable `varname` will be added as an input to.</span>
 <span class="sd">    varname: str</span>
-<span class="sd">        Name of the variable in this component&#39;s namespace.</span>
+<span class="sd">        Name of the variable in this component's namespace.</span>
 <span class="sd">    units: str, optional</span>
 <span class="sd">        Desired units for the variable. Units will be checked for compatibility with the default</span>
 <span class="sd">        units for this variable in metadata.</span>
@@ -561,21 +561,21 @@
 <span class="sd">    shape: int or list or tuple, optional</span>
 <span class="sd">        Shape of this variable, only required if val is not an array. Default is None.</span>
 <span class="sd">    primal_name : str, optional</span>
-<span class="sd">        Valid Python name to represent the variable in compute_primal if &#39;name&#39; is not a valid</span>
+<span class="sd">        Valid Python name to represent the variable in compute_primal if 'name' is not a valid</span>
 <span class="sd">        Python name.</span>
 <span class="sd">    **kwargs</span>
 <span class="sd">        Extra arguments for `add_input`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">meta</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">varname</span><span class="p">]</span>
 
-    <span class="n">val</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
-    <span class="n">default_units</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'default_value'</span><span class="p">]</span>
+    <span class="n">default_units</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'units'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">units</span> <span class="o">=</span> <span class="n">default_units</span>
 
     <span class="k">if</span> <span class="n">desc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;desc&#39;</span><span class="p">]</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'desc'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">val</span>
@@ -586,8 +586,8 @@
             <span class="n">val</span> <span class="o">=</span> <span class="n">wrapped_convert_units</span><span class="p">((</span><span class="n">val</span><span class="p">,</span> <span class="n">default_units</span><span class="p">),</span> <span class="n">units</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;The requested units </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1"> for input </span><span class="si">{</span><span class="n">varname</span><span class="si">}</span><span class="s1"> in component &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> are invalid.&#39;</span>
+                <span class="sa">f</span><span class="s1">'The requested units </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1"> for input </span><span class="si">{</span><span class="n">varname</span><span class="si">}</span><span class="s1"> in component '</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> are invalid.'</span>
             <span class="p">)</span>
 
     <span class="c1"># check types</span>
@@ -620,9 +620,9 @@
     <span class="n">primal_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This function provides a clean way to add variables from the variable hierarchy into components</span>
-<span class="sd">    as outputs. Unless explicitly provided, information on the variable&#39;s units and description come</span>
+<span class="sd">    as outputs. Unless explicitly provided, information on the variable's units and description come</span>
 <span class="sd">    from variable metadata. Default value is always taken from metadata.</span>
 
 <span class="sd">    Information</span>
@@ -632,7 +632,7 @@
 <span class="sd">    comp: Component</span>
 <span class="sd">        OpenMDAO component the variable `varname` will be added as an output to.</span>
 <span class="sd">    varname: str</span>
-<span class="sd">        Name of the variable in this component&#39;s namespace.</span>
+<span class="sd">        Name of the variable in this component's namespace.</span>
 <span class="sd">    units: str, optional</span>
 <span class="sd">        Desired units for the variable. Units will be checked for compatibility with the default</span>
 <span class="sd">        units for this variable in metadata.</span>
@@ -645,21 +645,21 @@
 <span class="sd">    shape: int or list or tuple, optional</span>
 <span class="sd">        Shape of this variable, only required if val is not an array. Default is None.</span>
 <span class="sd">    primal_name : str, optional</span>
-<span class="sd">        Valid Python name to represent the variable in compute_primal if &#39;name&#39; is not a valid</span>
+<span class="sd">        Valid Python name to represent the variable in compute_primal if 'name' is not a valid</span>
 <span class="sd">        Python name.</span>
 <span class="sd">    **kwargs</span>
 <span class="sd">        Extra arguments for `add_output`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">meta</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">varname</span><span class="p">]</span>
 
-    <span class="n">val</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
-    <span class="n">default_units</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'default_value'</span><span class="p">]</span>
+    <span class="n">default_units</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'units'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">units</span> <span class="o">=</span> <span class="n">default_units</span>
 
     <span class="k">if</span> <span class="n">desc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;desc&#39;</span><span class="p">]</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'desc'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">val</span>
@@ -670,8 +670,8 @@
             <span class="n">val</span> <span class="o">=</span> <span class="n">wrapped_convert_units</span><span class="p">((</span><span class="n">val</span><span class="p">,</span> <span class="n">default_units</span><span class="p">),</span> <span class="n">units</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;The requested units </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1"> for output </span><span class="si">{</span><span class="n">varname</span><span class="si">}</span><span class="s1"> in component &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> are invalid.&#39;</span>
+                <span class="sa">f</span><span class="s1">'The requested units </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1"> for output </span><span class="si">{</span><span class="n">varname</span><span class="si">}</span><span class="s1"> in component '</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> are invalid.'</span>
             <span class="p">)</span>
 
     <span class="c1"># check types</span>
@@ -701,7 +701,7 @@
     <span class="n">meta_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">CoreMetaData</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Adds an option from the Aviary variable hierarchy to a component. Default values are taken from</span>
 <span class="sd">    metadata where optional information is not provided.</span>
 
@@ -721,27 +721,27 @@
 <span class="sd">        Aviary metadata dictionary. If unspecified, the default Aviary variable metadata will be used.</span>
 <span class="sd">    **kwargs</span>
 <span class="sd">        Extra arguments for `add_option`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">meta</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;option&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'option'</span><span class="p">]:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;Variable </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> was declared an option to an OpenMDAO component, but in variable &#39;</span>
-            <span class="s1">&#39;metadata it is not flagged as an option (option = False). This option might never &#39;</span>
-            <span class="s1">&#39;get be set to its intended value.&#39;</span>
+            <span class="sa">f</span><span class="s1">'Variable </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> was declared an option to an OpenMDAO component, but in variable '</span>
+            <span class="s1">'metadata it is not flagged as an option (option = False). This option might never '</span>
+            <span class="s1">'get be set to its intended value.'</span>
         <span class="p">)</span>
 
-    <span class="n">default_units</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+    <span class="n">default_units</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'units'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">units</span> <span class="o">=</span> <span class="n">default_units</span>
 
     <span class="k">if</span> <span class="n">desc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;desc&#39;</span><span class="p">]</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'desc'</span><span class="p">]</span>
 
     <span class="c1"># check units</span>
     <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="n">_unspecified</span><span class="p">:</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'default_value'</span><span class="p">]</span>
 
         <span class="c1"># val was not provided but different units were</span>
         <span class="k">if</span> <span class="n">units</span> <span class="o">!=</span> <span class="n">default_units</span><span class="p">:</span>
@@ -750,8 +750,8 @@
                 <span class="n">val</span> <span class="o">=</span> <span class="n">wrapped_convert_units</span><span class="p">((</span><span class="n">val</span><span class="p">,</span> <span class="n">default_units</span><span class="p">),</span> <span class="n">units</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s1">&#39;The requested units </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1"> for output </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> in component &#39;</span>
-                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> are invalid.&#39;</span>
+                    <span class="sa">f</span><span class="s1">'The requested units </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1"> for output </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> in component '</span>
+                    <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> are invalid.'</span>
                 <span class="p">)</span>
 
     <span class="c1"># value of None needs to be skipped due to unusual setup of</span>
@@ -763,14 +763,14 @@
 
     <span class="c1"># Need to gather expected types since sometimes we need to use these to declare the</span>
     <span class="c1"># option. Most of the time, types is overwritten to tuple to support (val, units)</span>
-    <span class="n">types</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;types&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;multivalue&#39;</span><span class="p">]:</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'types'</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">'multivalue'</span><span class="p">]:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="n">types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="o">*</span><span class="n">types</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">types</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">units</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">]:</span>
         <span class="n">types</span> <span class="o">=</span> <span class="nb">tuple</span>
         <span class="n">comp</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span>
@@ -798,7 +798,7 @@
     <span class="n">code_origin_overrides</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">external_overrides</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This function gives Aviary the capability to override output variables with variables from the</span>
 <span class="sd">    aircraft represented in aviary_inputs.</span>
 
@@ -814,10 +814,10 @@
 <span class="sd">        List of Aviary variables names to prioritize when GASP and FLOPS both compute it.</span>
 <span class="sd">    external_overrides : list or None</span>
 <span class="sd">        List of Aviary variables names to override that are computed in external subsystems.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">name_filter</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;aircraft:&#39;</span> <span class="ow">in</span> <span class="n">name</span> <span class="ow">or</span> <span class="s1">&#39;mission:&#39;</span> <span class="ow">in</span> <span class="n">name</span>
+        <span class="k">return</span> <span class="s1">'aircraft:'</span> <span class="ow">in</span> <span class="n">name</span> <span class="ow">or</span> <span class="s1">'mission:'</span> <span class="ow">in</span> <span class="n">name</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">code_origin_overrides</span><span class="p">:</span>
         <span class="n">code_origin_overrides</span> <span class="o">=</span> <span class="p">[]</span>
@@ -829,7 +829,7 @@
     <span class="c1"># so that we can keep track of any unclaimed inputs</span>
     <span class="n">all_inputs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># use a set to avoid duplicates</span>
     <span class="k">for</span> <span class="n">system</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">system_iter</span><span class="p">():</span>
-        <span class="n">meta</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">get_io_metadata</span><span class="p">(</span><span class="n">iotypes</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,))</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">get_io_metadata</span><span class="p">(</span><span class="n">iotypes</span><span class="o">=</span><span class="p">(</span><span class="s1">'input'</span><span class="p">,))</span>
         <span class="n">in_var_names</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">in_var_names</span><span class="p">:</span>
             <span class="n">all_inputs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -841,17 +841,17 @@
         <span class="n">out_var_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="nb">filter</span><span class="p">(</span>
                 <span class="n">name_filter</span><span class="p">,</span>
-                <span class="n">comp</span><span class="o">.</span><span class="n">get_io_metadata</span><span class="p">(</span><span class="n">iotypes</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">,),</span> <span class="n">return_rel_names</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">get_io_metadata</span><span class="p">(</span><span class="n">iotypes</span><span class="o">=</span><span class="p">(</span><span class="s1">'output'</span><span class="p">,),</span> <span class="n">return_rel_names</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span>
         <span class="c1"># get a list of the metadata associated with each variable</span>
-        <span class="n">out_var_metadata</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_io_metadata</span><span class="p">(</span><span class="n">iotypes</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">,),</span> <span class="n">return_rel_names</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">in_var_names</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="n">name_filter</span><span class="p">,</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_io_metadata</span><span class="p">(</span><span class="n">iotypes</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,)))</span>
+        <span class="n">out_var_metadata</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_io_metadata</span><span class="p">(</span><span class="n">iotypes</span><span class="o">=</span><span class="p">(</span><span class="s1">'output'</span><span class="p">,),</span> <span class="n">return_rel_names</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">in_var_names</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="n">name_filter</span><span class="p">,</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_io_metadata</span><span class="p">(</span><span class="n">iotypes</span><span class="o">=</span><span class="p">(</span><span class="s1">'input'</span><span class="p">,)))</span>
 
         <span class="n">comp_promoted_outputs</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="n">out_var_names</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">out_var_metadata</span><span class="p">[</span><span class="n">abs_name</span><span class="p">][</span><span class="s1">&#39;prom_name&#39;</span><span class="p">]</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">out_var_metadata</span><span class="p">[</span><span class="n">abs_name</span><span class="p">][</span><span class="s1">'prom_name'</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="n">code_origin_overrides</span><span class="p">:</span>
                 <span class="c1"># These variables are ones that are computed in both GASP and FLOPS when both</span>
@@ -862,10 +862,10 @@
 
             <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">external_overrides</span><span class="p">:</span>
                 <span class="c1"># Overridden variables are given a new name</span>
-                <span class="n">comp_promoted_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;EXTERNAL_SUBSYSTEM_OVERRIDE:</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span>
+                <span class="n">comp_promoted_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'EXTERNAL_SUBSYSTEM_OVERRIDE:</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">'</span><span class="p">))</span>
                 <span class="n">external_overridden_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-                <span class="k">continue</span>  <span class="c1"># don&#39;t promote it</span>
+                <span class="k">continue</span>  <span class="c1"># don't promote it</span>
 
             <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">aviary_inputs</span><span class="p">:</span>
                 <span class="n">val</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -873,21 +873,21 @@
                     <span class="n">group</span><span class="o">.</span><span class="n">set_input_defaults</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
 
                 <span class="c1"># Overridden variables are given a new name</span>
-                <span class="n">comp_promoted_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;AIRCRAFT_DATA_OVERRIDE:</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span>
+                <span class="n">comp_promoted_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'AIRCRAFT_DATA_OVERRIDE:</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">'</span><span class="p">))</span>
                 <span class="n">overridden_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-                <span class="k">continue</span>  <span class="c1"># don&#39;t promote it</span>
+                <span class="k">continue</span>  <span class="c1"># don't promote it</span>
 
             <span class="c1"># This variable is not overridden, so the output is promoted.</span>
             <span class="n">comp_promoted_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-        <span class="c1"># NOTE Always promoting all inputs into the &quot;global&quot; namespace</span>
+        <span class="c1"># NOTE Always promoting all inputs into the "global" namespace</span>
         <span class="c1"># so its VERY important that we enforce all inputs names exist in the master</span>
         <span class="c1"># variable list</span>
-        <span class="n">rel_path</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">pathname</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">pathname</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">rel_path</span><span class="p">:</span>
+        <span class="n">rel_path</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">pathname</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">pathname</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">'.'</span> <span class="ow">in</span> <span class="n">rel_path</span><span class="p">:</span>
             <span class="c1"># comp is in a subgroup. We must find it.</span>
-            <span class="n">sub_path</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rel_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">sub_path</span> <span class="o">=</span> <span class="s1">'.'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rel_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">sub</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">_get_subsystem</span><span class="p">(</span><span class="n">sub_path</span><span class="p">)</span>
             <span class="n">sub</span><span class="o">.</span><span class="n">promotes</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">in_var_names</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">comp_promoted_outputs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -897,26 +897,26 @@
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span>
         <span class="p">):</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The following variables have been overridden by the aircraft definition:&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'The following variables have been overridden by the aircraft definition:'</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">prom_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">overridden_outputs</span><span class="p">):</span>
                 <span class="n">val</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">prom_name</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  &#39;</span><span class="si">{</span><span class="n">prom_name</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  '</span><span class="si">{</span><span class="n">prom_name</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">external_overridden_outputs</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span>
         <span class="p">):</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
-            <span class="n">newline</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">newline</span> <span class="o">=</span> <span class="s1">''</span>
             <span class="k">if</span> <span class="n">overridden_outputs</span><span class="p">:</span>
-                <span class="n">newline</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">newline</span> <span class="o">=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">newline</span><span class="si">}</span><span class="s1">The following variables have been overridden by an external subsystem:&#39;</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">newline</span><span class="si">}</span><span class="s1">The following variables have been overridden by an external subsystem:'</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">prom_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">external_overridden_outputs</span><span class="p">):</span>
                 <span class="c1"># do not print values because they will be updated by an external subsystem later.</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  &#39;</span><span class="si">{</span><span class="n">prom_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  '</span><span class="si">{</span><span class="n">prom_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">overridden_outputs</span></div>
 
@@ -928,15 +928,15 @@
     <span class="n">model</span><span class="p">:</span> <span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">,</span>
     <span class="n">traj</span><span class="p">:</span> <span class="n">dm</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">,</span>
     <span class="n">aviary_variables</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span>
-    <span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;climb&#39;</span><span class="p">,</span> <span class="s1">&#39;cruise&#39;</span><span class="p">,</span> <span class="s1">&#39;descent&#39;</span><span class="p">],</span>
+    <span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s1">'climb'</span><span class="p">,</span> <span class="s1">'cruise'</span><span class="p">,</span> <span class="s1">'descent'</span><span class="p">],</span>
     <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">,</span>
     <span class="n">external_parameters</span><span class="o">=</span><span class="p">{},</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This function smoothly sorts through the aviary variables which are being used in the</span>
 <span class="sd">    trajectory, and for the variables which are not options it adds them as a parameter of the</span>
 <span class="sd">    trajectory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Step 1: Initialize a dictionary to hold parameters and their associated phases</span>
     <span class="n">parameters_with_phases</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -955,7 +955,7 @@
         <span class="n">targets</span> <span class="o">=</span> <span class="p">{</span><span class="n">phase</span><span class="p">:</span> <span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">phases</span><span class="p">}</span>
         <span class="n">traj</span><span class="o">.</span><span class="n">add_parameter</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
 
-        <span class="n">model</span><span class="o">.</span><span class="n">promotes</span><span class="p">(</span><span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">[(</span><span class="sa">f</span><span class="s1">&#39;parameters:</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)])</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">promotes</span><span class="p">(</span><span class="s1">'traj'</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">[(</span><span class="sa">f</span><span class="s1">'parameters:</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="n">key</span><span class="p">)])</span>
         <span class="n">already_added</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">traj</span></div>
@@ -965,7 +965,7 @@
 <div class="viewcode-block" id="get_units">
 <a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/functions.html#aviary.variable_info.functions.get_units">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_units</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Returns the units for the specified variable as defined in the MetaData.</span>
 
 <span class="sd">    Parameters</span>
@@ -973,20 +973,20 @@
 <span class="sd">    key: str</span>
 <span class="sd">        Name of the variable</span>
 <span class="sd">    meta_data : dict</span>
-<span class="sd">        Dictionary containing metadata for the variable. If None, Aviary&#39;s built-in</span>
+<span class="sd">        Dictionary containing metadata for the variable. If None, Aviary's built-in</span>
 <span class="sd">        metadata will be used.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">meta_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">meta_data</span> <span class="o">=</span> <span class="n">CoreMetaData</span>
 
-    <span class="k">return</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">'units'</span><span class="p">]</span></div>
 
 
 
 <div class="viewcode-block" id="extract_options">
 <a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/functions.html#aviary.variable_info.functions.extract_options">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">extract_options</span><span class="p">(</span><span class="n">aviary_inputs</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Extract a dictionary of options from the given aviary_inputs.</span>
 
 <span class="sd">    Parameters</span>
@@ -994,26 +994,26 @@
 <span class="sd">    aviary_inputs : AviaryValues</span>
 <span class="sd">        Instance of AviaryValues containing all initial values.</span>
 <span class="sd">    meta_data : dict</span>
-<span class="sd">        (Optional) Dictionary of aircraft metadata. Uses Aviary&#39;s built-in</span>
+<span class="sd">        (Optional) Dictionary of aircraft metadata. Uses Aviary's built-in</span>
 <span class="sd">        metadata by default.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    dict</span>
 <span class="sd">        Dictionary of option names and values.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_inputs</span><span class="p">:</span>
             <span class="k">continue</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;option&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'option'</span><span class="p">]:</span>
             <span class="k">continue</span>
 
         <span class="n">val</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="n">meta_units</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+        <span class="n">meta_units</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'units'</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">meta_units</span> <span class="o">==</span> <span class="s1">&#39;unitless&#39;</span> <span class="ow">or</span> <span class="n">meta_units</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">meta_units</span> <span class="o">==</span> <span class="s1">'unitless'</span> <span class="ow">or</span> <span class="n">meta_units</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">options</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -1034,7 +1034,7 @@
     <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Setup the correct model options for an aviary problem.</span>
 
 <span class="sd">    Parameters</span>
@@ -1044,7 +1044,7 @@
 <span class="sd">    aviary_inputs : AviaryValues</span>
 <span class="sd">        Instance of AviaryValues containing all initial values.</span>
 <span class="sd">    meta_data : dict</span>
-<span class="sd">        (Optional) Dictionary of aircraft metadata. Uses Aviary&#39;s built-in</span>
+<span class="sd">        (Optional) Dictionary of aircraft metadata. Uses Aviary's built-in</span>
 <span class="sd">        metadata by default.</span>
 <span class="sd">    engine_models : List of EngineModels or None</span>
 <span class="sd">        (Optional) Engine models</span>
@@ -1052,13 +1052,13 @@
 <span class="sd">        Prefix for model options. Used for multi-mission.</span>
 <span class="sd">    group : AviaryGroup</span>
 <span class="sd">        The AviaryGroup object that we are setting models on</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Use OpenMDAO&#39;s model options to pass all options through the system hierarchy.</span>
+<span class="sd">    """</span>
+    <span class="c1"># Use OpenMDAO's model options to pass all options through the system hierarchy.</span>
     <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">.&#39;</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">.'</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># the original default value</span>
-    <span class="n">prob</span><span class="o">.</span><span class="n">model_options</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">*&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">extract_options</span><span class="p">(</span><span class="n">aviary_inputs</span><span class="p">,</span> <span class="n">meta_data</span><span class="p">)</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">''</span>  <span class="c1"># the original default value</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">model_options</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">*'</span><span class="p">]</span> <span class="o">=</span> <span class="n">extract_options</span><span class="p">(</span><span class="n">aviary_inputs</span><span class="p">,</span> <span class="n">meta_data</span><span class="p">)</span>
 
     <span class="c1"># See issue #1177. Modify this method for multi mission/model</span>
 
@@ -1069,7 +1069,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">src</span> <span class="o">=</span> <span class="n">group</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s1">&#39;engine_models&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s1">'engine_models'</span><span class="p">):</span>
             <span class="c1"># In a unit-test context, this function can be used without an aviary model.</span>
             <span class="k">return</span>
 
@@ -1102,7 +1102,7 @@
                 <span class="n">val</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="n">opts</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">units</span><span class="p">)</span>
 
-        <span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">*propulsion.</span><span class="si">{</span><span class="n">eng_name</span><span class="si">}</span><span class="s1">*&#39;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">*propulsion.</span><span class="si">{</span><span class="n">eng_name</span><span class="si">}</span><span class="s1">*'</span>
         <span class="n">prob</span><span class="o">.</span><span class="n">model_options</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">opts</span></div>
 
 </pre></div>

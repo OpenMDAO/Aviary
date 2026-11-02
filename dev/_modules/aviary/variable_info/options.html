@@ -512,7 +512,7 @@
 <div class="viewcode-block" id="get_option_defaults">
 <a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/options.html#aviary.variable_info.options.get_option_defaults">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_option_defaults</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AviaryValues</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Returns a deep copy of the collection of all options for which default values exist.</span>
 
 <span class="sd">    Parameters</span>
@@ -520,23 +520,23 @@
 <span class="sd">    engine : bool</span>
 <span class="sd">        If true, the collection includes the default engine model</span>
 <span class="sd">    meta_data : dict</span>
-<span class="sd">        Dictionary containing metadata for the options. If None, Aviary&#39;s built-in</span>
+<span class="sd">        Dictionary containing metadata for the options. If None, Aviary's built-in</span>
 <span class="sd">        metadata will be used.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">option_defaults</span> <span class="o">=</span> <span class="n">AviaryValues</span><span class="p">()</span>
 
     <span class="c1"># Load all variables marked as options in the MetaData</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">meta_data</span><span class="p">:</span>
         <span class="n">var</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">var</span><span class="p">[</span><span class="s1">&#39;option&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">var</span><span class="p">[</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">option_defaults</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">var</span><span class="p">[</span><span class="s1">&#39;default_value&#39;</span><span class="p">],</span> <span class="n">var</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">var</span><span class="p">[</span><span class="s1">'option'</span><span class="p">]</span> <span class="ow">and</span> <span class="n">var</span><span class="p">[</span><span class="s1">'default_value'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">option_defaults</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">var</span><span class="p">[</span><span class="s1">'default_value'</span><span class="p">],</span> <span class="n">var</span><span class="p">[</span><span class="s1">'units'</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="n">engine</span><span class="p">:</span>
         <span class="n">engine_options</span> <span class="o">=</span> <span class="n">option_defaults</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">()</span>
         <span class="n">engine_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
-            <span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">DATA_FILE</span><span class="p">,</span> <span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;models/engines/turbofan_23k_1.csv&#39;</span><span class="p">)</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">DATA_FILE</span><span class="p">,</span> <span class="n">get_path</span><span class="p">(</span><span class="s1">'models/engines/turbofan_23k_1.csv'</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">engine_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">REFERENCE_SLS_THRUST</span><span class="p">,</span> <span class="mi">28690</span><span class="p">,</span> <span class="s1">&#39;lbf&#39;</span><span class="p">)</span>
+        <span class="n">engine_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">REFERENCE_SLS_THRUST</span><span class="p">,</span> <span class="mi">28690</span><span class="p">,</span> <span class="s1">'lbf'</span><span class="p">)</span>
         <span class="n">engine_deck</span> <span class="o">=</span> <span class="n">EngineDeck</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">engine_options</span><span class="p">)</span>
         <span class="n">preprocess_propulsion</span><span class="p">(</span><span class="n">option_defaults</span><span class="p">,</span> <span class="p">[</span><span class="n">engine_deck</span><span class="p">])</span>
         <span class="n">option_defaults</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALED_SLS_THRUST</span><span class="p">)</span>
@@ -548,7 +548,7 @@
 <div class="viewcode-block" id="is_option">
 <a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/options.html#aviary.variable_info.options.is_option">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_option</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Returns True if the variable is defined as an option in the MetaData.</span>
 
 <span class="sd">    Parameters</span>
@@ -556,10 +556,10 @@
 <span class="sd">    key: str</span>
 <span class="sd">        Name of the variable to be checked</span>
 <span class="sd">    meta_data : dict</span>
-<span class="sd">        Dictionary containing metadata for the variable. If None, Aviary&#39;s built-in</span>
+<span class="sd">        Dictionary containing metadata for the variable. If None, Aviary's built-in</span>
 <span class="sd">        metadata will be used.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;option&#39;</span><span class="p">]</span></div>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">'option'</span><span class="p">]</span></div>
 
 </pre></div>
 

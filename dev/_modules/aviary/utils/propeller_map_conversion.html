@@ -519,7 +519,7 @@
 <div class="viewcode-block" id="PropMapType">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/propeller_map_conversion.html#aviary.utils.propeller_map_conversion.PropMapType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PropMapType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">GASP</span> <span class="o">=</span> <span class="s1">&#39;GASP&#39;</span>
+    <span class="n">GASP</span> <span class="o">=</span> <span class="s1">'GASP'</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div>
@@ -527,14 +527,14 @@
 
 
 <span class="n">sig_figs</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;Helical Mach&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
-    <span class="s1">&#39;Mach&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s1">&#39;Power Coefficient&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s1">&#39;Advance Ratio&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s1">&#39;Thrust Coefficient&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s1">'Helical Mach'</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s1">'Mach'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s1">'Power Coefficient'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s1">'Advance Ratio'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s1">'Thrust Coefficient'</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Thrust Coefficient&#39;</span><span class="p">]</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Thrust Coefficient'</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="convert_propeller_map">
@@ -542,32 +542,32 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_propeller_map</span><span class="p">(</span>
     <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="n">PropMapType</span> <span class="o">=</span> <span class="n">PropMapType</span><span class="o">.</span><span class="n">GASP</span><span class="p">,</span> <span class="n">round_data</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is a utility class to convert a propeller map file to Aviary format.</span>
 <span class="sd">    Currently, there is only one option: from GASP format to Aviary format.</span>
 <span class="sd">    As an Aviary command, the usage is:</span>
 <span class="sd">    aviary convert propeller_table -f GASP input_file output_file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">/%y at %H:%M&#39;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%m/</span><span class="si">%d</span><span class="s1">/%y at %H:%M'</span><span class="p">)</span>
     <span class="n">user</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getuser</span><span class="p">()</span>
     <span class="n">comments</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="n">data_file</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
 
-    <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;# created </span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s1"> by </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;# </span><span class="si">{</span><span class="n">data_format</span><span class="si">}</span><span class="s1">-derived propeller map converted from </span><span class="si">{</span><span class="n">data_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'# created </span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s1"> by </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+    <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'# </span><span class="si">{</span><span class="n">data_format</span><span class="si">}</span><span class="s1">-derived propeller map converted from </span><span class="si">{</span><span class="n">data_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">data_format</span> <span class="ow">is</span> <span class="n">PropMapType</span><span class="o">.</span><span class="n">GASP</span><span class="p">:</span>
         <span class="n">scalars</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">fields</span> <span class="o">=</span> <span class="n">_read_gasp_propeller</span><span class="p">(</span><span class="n">data_file</span><span class="p">,</span> <span class="n">comments</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">scalars</span><span class="p">[</span><span class="s1">&#39;iread&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Helical Mach&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;thrust_coefficient&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">scalars</span><span class="p">[</span><span class="s1">'iread'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">'Helical Mach'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'thrust_coefficient'</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Mach&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;thrust_coefficient&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Power Coefficient&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;thrust_coefficient&#39;</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Advance Ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;thrust_coefficient&#39;</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Thrust Coefficient&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;thrust_coefficient&#39;</span><span class="p">][:,</span> <span class="mi">3</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">'Mach'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'thrust_coefficient'</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">'Power Coefficient'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'thrust_coefficient'</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">'Advance Ratio'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'thrust_coefficient'</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">'Thrust Coefficient'</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'thrust_coefficient'</span><span class="p">][:,</span> <span class="mi">3</span><span class="p">]</span>
 
         <span class="c1"># data needs to be string so column length can be easily found later</span>
         <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
@@ -576,38 +576,38 @@
             <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]])</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s1">&#39;Invalid propeller map format provided&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s1">'Invalid propeller map format provided'</span><span class="p">)</span>
 
     <span class="c1"># store formatted data into NamedValues object</span>
     <span class="n">write_data</span> <span class="o">=</span> <span class="n">NamedValues</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-        <span class="n">write_data</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+        <span class="n">write_data</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="s1">'unitless'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">output_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">output_file</span> <span class="o">=</span> <span class="n">data_file</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">data_file</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s1">'.csv'</span>
     <span class="n">write_data_file</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">write_data</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">comments</span><span class="p">,</span> <span class="n">include_timestamp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_gasp_propeller</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">cmts</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a GASP propeller map file and parse its scalars and tabular data.</span>
+<span class="w">    </span><span class="sd">"""Read a GASP propeller map file and parse its scalars and tabular data.</span>
 <span class="sd">    Data table is returned as a dictionary.</span>
 <span class="sd">    The table consists of both the independent variables and the dependent variable for</span>
-<span class="sd">    the corresponding field. The table is a &quot;tidy format&quot; 2D array where the first three</span>
+<span class="sd">    the corresponding field. The table is a "tidy format" 2D array where the first three</span>
 <span class="sd">    columns are the independent variables (Advance ratio, Mach number, and power coefficient)</span>
 <span class="sd">    and the final column is the dependent variable thrust coefficient.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">table_types</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s1">&#39;thrust_coefficient&#39;</span><span class="p">,</span>
+            <span class="s1">'thrust_coefficient'</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="n">scalars</span> <span class="o">=</span> <span class="n">_read_pm_header</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">scalars</span><span class="p">[</span><span class="s1">&#39;iread&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">cmts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;# CT = f(Helical Mach at 75% Radius, Adv ratio &amp; CP)&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">scalars</span><span class="p">[</span><span class="s1">&#39;iread&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">cmts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;# Propfan format - CT = f(Mach, Adv Ratio &amp; CP)&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scalars</span><span class="p">[</span><span class="s1">'iread'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">cmts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">'# CT = f(Helical Mach at 75% Radius, Adv ratio &amp; CP)'</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">scalars</span><span class="p">[</span><span class="s1">'iread'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">cmts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">'# Propfan format - CT = f(Mach, Adv Ratio &amp; CP)'</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;IREAD = 1 or 2 expected, got </span><span class="si">{</span><span class="n">scalars</span><span class="p">[</span><span class="s2">&quot;iread&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'IREAD = 1 or 2 expected, got </span><span class="si">{</span><span class="n">scalars</span><span class="p">[</span><span class="s2">"iread"</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
         <span class="n">tables</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_read_pm_table</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">cmts</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">table_types</span><span class="p">}</span>
 
@@ -615,29 +615,29 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_pm_header</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read GASP propeller map header (first line), returning the propeller scalars in a dict</span>
+<span class="w">    </span><span class="sd">"""Read GASP propeller map header (first line), returning the propeller scalars in a dict</span>
 <span class="sd">    parameter 1 is Mach type. It is either 1 or 2.</span>
 <span class="sd">    parameter 2 is IPRINT in GASP and is ignored in Aviary.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">iread</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">*</span><span class="n">_rep</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">))])</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s1">&#39;iread&#39;</span><span class="p">:</span> <span class="n">iread</span><span class="p">,</span>
+        <span class="s1">'iread'</span><span class="p">:</span> <span class="n">iread</span><span class="p">,</span>
     <span class="p">}</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_pm_table</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">cmts</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an entire table from a GASP propeller map file.</span>
-<span class="sd">    The table data is returned as a &quot;tidy format&quot; array with three columns for the</span>
+<span class="w">    </span><span class="sd">"""Read an entire table from a GASP propeller map file.</span>
+<span class="sd">    The table data is returned as a "tidy format" array with three columns for the</span>
 <span class="sd">    independent variables (advanced ratio (J), Mach number and power coefficient)</span>
 <span class="sd">    and the final column for thrust coefficient.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tab_data</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">is_turbo_prop</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="c1"># table title</span>
     <span class="n">title</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="n">cmts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;# </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">cmts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'# </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
     <span class="c1"># number of maps in the table</span>
     <span class="p">(</span><span class="n">nmaps</span><span class="p">,)</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[(</span><span class="nb">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">)])</span>
     <span class="c1"># blank line</span>
@@ -659,24 +659,24 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_setup_PMC_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;input_file&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to propeller map file to be converted&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'input_file'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">'path to propeller map file to be converted'</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;output_file&#39;</span><span class="p">,</span>
+        <span class="s1">'output_file'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-        <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;path to file where new converted data will be written (optional)&#39;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s1">'?'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'path to file where new converted data will be written (optional)'</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="c1"># currently removing as there is only one allowed map type at the moment</span>
     <span class="c1"># parser.add_argument(</span>
-    <span class="c1">#     &#39;-f&#39;,</span>
-    <span class="c1">#     &#39;--data_format&#39;,</span>
+    <span class="c1">#     '-f',</span>
+    <span class="c1">#     '--data_format',</span>
     <span class="c1">#     type=PropMapType,</span>
     <span class="c1">#     choices=list(PropMapType),</span>
-    <span class="c1">#     nargs=&#39;?&#39;,</span>
-    <span class="c1">#     default=&#39;GASP&#39;,</span>
-    <span class="c1">#     help=&#39;data format used by input_file&#39;,</span>
+    <span class="c1">#     nargs='?',</span>
+    <span class="c1">#     default='GASP',</span>
+    <span class="c1">#     help='data format used by input_file',</span>
     <span class="c1"># )</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--round&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;round data to improve readability&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'--round'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">'store_true'</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">'round data to improve readability'</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_exec_PMC</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">user_args</span><span class="p">):</span>
@@ -688,9 +688,9 @@
     <span class="p">)</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Converts GASP-formatted propeller map files into Aviary csv format.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">'Converts GASP-formatted propeller map files into Aviary csv format.</span><span class="se">\n</span><span class="s1">'</span>
     <span class="p">)</span>
     <span class="n">_setup_PMC_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>

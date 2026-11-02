@@ -507,7 +507,7 @@
 <div class="viewcode-block" id="almost_equal">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/merge_variable_metadata.html#aviary.utils.merge_variable_metadata.almost_equal">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">almost_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rel_tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">abs_tol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if two floats, or two ndarray, or two dictionary are equal. Return True if they are equal.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Check if two floats, or two ndarray, or two dictionary are equal. Return True if they are equal."""</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
         <span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="p">):</span>
@@ -531,10 +531,10 @@
 <div class="viewcode-block" id="merge_2_meta_data_dicts">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/merge_variable_metadata.html#aviary.utils.merge_variable_metadata.merge_2_meta_data_dicts">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">merge_2_meta_data_dicts</span><span class="p">(</span><span class="n">dict1</span><span class="p">,</span> <span class="n">dict2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Combines metadata from two dictionaries into a single dictionary containing metadata of both.</span>
 
-<span class="sd">    Performs a check to ensure that the two dictionaries don&#39;t have the same variable with conflicting</span>
+<span class="sd">    Performs a check to ensure that the two dictionaries don't have the same variable with conflicting</span>
 <span class="sd">    metadata. Assuming that check passes, the variables and their associated metadata from both</span>
 <span class="sd">    dictionaries are combined into one dictionary.</span>
 
@@ -552,7 +552,7 @@
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        Raises error if dict1 and dict2 have differing metadata for the same variable.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">dict1_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict1</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>  <span class="c1"># get keys of provided dictionaries</span>
     <span class="n">dict2_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict2</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>  <span class="c1"># get keys of provided dictionaries</span>
     <span class="c1"># get keys that are unique to each dictionary</span>
@@ -576,7 +576,7 @@
         <span class="c1"># throw an error if the dicts have the same key with different metadata</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">almost_equal</span><span class="p">(</span><span class="n">value1</span><span class="p">,</span> <span class="n">value2</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;You have attempted to merge metadata dictionaries that contain the same variable with different metadata. The offending variable present in multiple dictionaries is &quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
+                <span class="sa">f</span><span class="s1">'You have attempted to merge metadata dictionaries that contain the same variable with different metadata. The offending variable present in multiple dictionaries is "</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">".'</span>
             <span class="p">)</span>
 
         <span class="c1"># add the key and metadata to the dictionary of duplicate variables</span>
@@ -592,7 +592,7 @@
 <div class="viewcode-block" id="merge_meta_data">
 <a class="viewcode-back" href="../../../theory_guide/merging_syntax.html#aviary.utils.merge_variable_metadata.merge_meta_data">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">merge_meta_data</span><span class="p">(</span><span class="n">dicts_to_merge</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Merges the metadata of multiple Aviary metadata dictionaries into a single metadata dictionary.</span>
 
 <span class="sd">    Checks the metadata of all the provided Aviary metadata dictionaries to see if there are identical</span>
@@ -613,7 +613,7 @@
 <span class="sd">    ------</span>
 <span class="sd">    None</span>
 <span class="sd">        No exceptions raised by this method, although other methods called within may raise exceptions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">merged_dict</span> <span class="o">=</span> <span class="n">dicts_to_merge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># iterate through all the dictionaries and merge them together into one, two by two</span>

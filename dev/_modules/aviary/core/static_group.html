@@ -510,35 +510,35 @@
 <div class="viewcode-block" id="StaticGroup">
 <a class="viewcode-back" href="../../../_srcdocs/packages/core/static_group.html#aviary.core.static_group.StaticGroup">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">StaticGroup</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aviary top-level group that is not a dynamic mission.</span>
+<span class="w">    </span><span class="sd">"""Aviary top-level group that is not a dynamic mission.</span>
 
 <span class="sd">    This class is used for top pre_mission and post_mission groups.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="StaticGroup.setup">
 <a class="viewcode-back" href="../../../_srcdocs/packages/core/static_group.html#aviary.core.static_group.StaticGroup.setup">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;auto_order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">'auto_order'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="StaticGroup.configure">
 <a class="viewcode-back" href="../../../_srcdocs/packages/core/static_group.html#aviary.core.static_group.StaticGroup.configure">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Configure this group for pre or post mission.</span>
 <span class="sd">        Promote aircraft and mission variables.</span>
 <span class="sd">        Override output aviary variables.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">external_outputs</span> <span class="o">=</span> <span class="n">promote_aircraft_and_mission_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;core_subsystems&#39;</span><span class="p">):</span>
-            <span class="c1"># TODO Post mission doesn&#39;t support core subsystems yet.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'core_subsystems'</span><span class="p">):</span>
+            <span class="c1"># TODO Post mission doesn't support core subsystems yet.</span>
             <span class="k">return</span>
 
         <span class="n">core_subs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_subsystems</span>
         <span class="n">override_aviary_vars</span><span class="p">(</span>
             <span class="n">core_subs</span><span class="p">,</span>
-            <span class="n">core_subs</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;aviary_options&#39;</span><span class="p">],</span>
+            <span class="n">core_subs</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">'aviary_options'</span><span class="p">],</span>
             <span class="n">external_overrides</span><span class="o">=</span><span class="n">external_outputs</span><span class="p">,</span>
             <span class="n">code_origin_overrides</span><span class="o">=</span><span class="n">core_subs</span><span class="o">.</span><span class="n">code_origin_overrides</span><span class="p">,</span>
         <span class="p">)</span></div>

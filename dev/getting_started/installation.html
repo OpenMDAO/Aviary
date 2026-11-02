@@ -752,7 +752,7 @@ build_pyoptsparse
 </div>
 <p>Install the missing package (in this case <code class="docutils literal notranslate"><span class="pre">swig</span></code>) using pip or conda. Swig is a commonly missing dependency.</p>
 <p><em>If you see an error where a conda or mamba command failed:</em></p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subprocess.CalledProcessError: Command &#39;[&#39;mamba&#39;, &#39;info&#39;, &#39;--unsafe-channels&#39;]&#39; returned non-zero exit status 109.
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subprocess.CalledProcessError: Command '['mamba', 'info', '--unsafe-channels']' returned non-zero exit status 109.
 </pre></div>
 </div>
 <p>Run <code class="docutils literal notranslate"><span class="pre">build_pyoptsparse</span> <span class="pre">-m</span></code> to disable use of mamba commands during installation. Adding <code class="docutils literal notranslate"><span class="pre">-e</span></code> will do the same for conda if your error specifically mentions <code class="docutils literal notranslate"><span class="pre">'conda'</span></code>.</p>

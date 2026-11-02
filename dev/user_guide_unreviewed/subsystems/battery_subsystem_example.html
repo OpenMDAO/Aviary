@@ -638,7 +638,7 @@ This is just for readability on this page and you could easily define all of the
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">SubsystemBuilder</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;battery&#39;</span><span class="p">,</span> <span class="n">include_constraints</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'battery'</span><span class="p">,</span> <span class="n">include_constraints</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_constraints</span> <span class="o">=</span> <span class="n">include_constraints</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">ExtendedMetaData</span><span class="p">)</span>
 </pre></div>
@@ -660,14 +660,14 @@ Please see the <a class="reference external" href="https://openmdao.github.io/dy
     <span class="k">def</span><span class="w"> </span><span class="nf">get_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsystem_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">states_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;rate_source&#39;</span><span class="p">:</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE_RATE</span><span class="p">,</span>
-                <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s1">'rate_source'</span><span class="p">:</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE_RATE</span><span class="p">,</span>
+                <span class="s1">'fix_initial'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;V&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;rate_source&#39;</span><span class="p">:</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN_RATE</span><span class="p">,</span>
-                <span class="s1">&#39;defect_ref&#39;</span><span class="p">:</span> <span class="mf">1.0e5</span><span class="p">,</span>
-                <span class="s1">&#39;ref&#39;</span><span class="p">:</span> <span class="mf">1.0e5</span><span class="p">,</span>
+                <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'V'</span><span class="p">,</span>
+                <span class="s1">'rate_source'</span><span class="p">:</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN_RATE</span><span class="p">,</span>
+                <span class="s1">'defect_ref'</span><span class="p">:</span> <span class="mf">1.0e5</span><span class="p">,</span>
+                <span class="s1">'ref'</span><span class="p">:</span> <span class="mf">1.0e5</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
 
@@ -691,13 +691,13 @@ The example for the battery shows that we have a final boundary constraint on th
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_constraints</span><span class="p">:</span>
             <span class="n">constraints</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
-                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;loc&#39;</span><span class="p">:</span> <span class="s1">&#39;final&#39;</span><span class="p">,</span>
+                    <span class="s1">'lower'</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+                    <span class="s1">'type'</span><span class="p">:</span> <span class="s1">'boundary'</span><span class="p">,</span>
+                    <span class="s1">'loc'</span><span class="p">:</span> <span class="s1">'final'</span><span class="p">,</span>
                 <span class="p">},</span>
                 <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span>
+                    <span class="s1">'lower'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s1">'type'</span><span class="p">:</span> <span class="s1">'path'</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
@@ -717,8 +717,8 @@ For the simple battery case here we’re setting the operating temperature of th
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsystem_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">parameters_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">TEMPERATURE</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mf">25.0</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degC&#39;</span><span class="p">},</span>
-            <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">CURRENT</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mf">3.25</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;A&#39;</span><span class="p">},</span>
+            <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">TEMPERATURE</span><span class="p">:</span> <span class="p">{</span><span class="s1">'val'</span><span class="p">:</span> <span class="mf">25.0</span><span class="p">,</span> <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'degC'</span><span class="p">},</span>
+            <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">CURRENT</span><span class="p">:</span> <span class="p">{</span><span class="s1">'val'</span><span class="p">:</span> <span class="mf">3.25</span><span class="p">,</span> <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'A'</span><span class="p">},</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="n">parameters_dict</span>
@@ -736,9 +736,9 @@ In the simple battery case, we allow the optimizer to control the energy capacit
     <span class="k">def</span><span class="w"> </span><span class="nf">get_design_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">DVs</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">Aircraft</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">Cell</span><span class="o">.</span><span class="n">DISCHARGE_RATE</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-                <span class="s1">&#39;upper&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'A'</span><span class="p">,</span>
+                <span class="s1">'lower'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s1">'upper'</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
 
@@ -807,10 +807,10 @@ Thus, our <code class="docutils literal notranslate"><span class="pre">get_linke
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_linked_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the list of linked variables for the battery subsystem; in this case</span>
-<span class="sd">        it&#39;s our two state variables.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        it's our two state variables.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN</span><span class="p">,</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -829,13 +829,13 @@ These values apply to all nodes across the mission, e.g. each node gets the same
     <span class="k">def</span><span class="w"> </span><span class="nf">get_initial_guesses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsystem_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">initial_guess_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span>
+                <span class="s1">'val'</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                <span class="s1">'type'</span><span class="p">:</span> <span class="s1">'state'</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
-                <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;V&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span>
+                <span class="s1">'val'</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+                <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'V'</span><span class="p">,</span>
+                <span class="s1">'type'</span><span class="p">:</span> <span class="s1">'state'</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
 
@@ -894,7 +894,7 @@ Wall<span class="w"> </span>clock<span class="w"> </span>time:<span class="w">  
 <p>If you just want to run the code in this notebook, you can run the following:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">],</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">exit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="p">[</span><span class="s1">''</span><span class="p">],</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">exit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -920,8 +920,7 @@ Wall<span class="w"> </span>clock<span class="w"> </span>time:<span class="w">  
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_constraints (__main__.TestBattery.test_check_constraints) ... 
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05928] pml_ucx.c:313  Error: Failed to create UCP worker
-ok
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_design_variables (__main__.TestBattery.test_check_design_variables) ... 
@@ -1135,46 +1134,42 @@ ok
 ERROR: test_build_pre_mission (__main__.TestBattery.test_build_pre_mission)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 106, in test_build_pre_mission
+  File "/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py", line 106, in test_build_pre_mission
     pre_mission_sys = self.subsystem_builder.build_pre_mission(
         aviary_inputs=self.aviary_values, subsystem_options={}
     )
-TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument &#39;subsystem_options&#39;
+TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument 'subsystem_options'
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
 ERROR: test_check_design_variables (__main__.TestBattery.test_check_design_variables)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 442, in test_check_design_variables
+  File "/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py", line 442, in test_check_design_variables
     pre_mission_sys = self.subsystem_builder.build_pre_mission(
         aviary_inputs=self.aviary_values, subsystem_options={}
     )
-TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument &#39;subsystem_options&#39;
+TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument 'subsystem_options'
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
 ERROR: test_check_pre_mission (__main__.TestBattery.test_check_pre_mission)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 340, in test_check_pre_mission
+  File "/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py", line 340, in test_check_pre_mission
     pre_mission_sys = self.subsystem_builder.build_pre_mission(
         aviary_inputs=self.aviary_values, subsystem_options={}
     )
-TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument &#39;subsystem_options&#39;
+TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument 'subsystem_options'
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>----------------------------------------------------------------------
-Ran 38 tests in 1.483s
+Ran 38 tests in 1.958s
 
 FAILED (errors=3)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631858.267513] [runnervm48cm3:5928 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x5643172e4920 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631858.267817] [runnervm48cm3:5928 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;unittest.main.TestProgram at 0x7f7e2c62eba0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;unittest.main.TestProgram at 0x7f46c818a900&gt;
 </pre></div>
 </div>
 </div>
@@ -1188,12 +1183,12 @@ For example, here I’ve purposefully made the battery builder have some incorre
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_constraints</span><span class="p">:</span>
             <span class="n">constraints</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
-                    <span class="s1">&#39;loc&#39;</span><span class="p">:</span> <span class="s1">&#39;final&#39;</span><span class="p">,</span>
+                    <span class="s1">'lower'</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+                    <span class="s1">'loc'</span><span class="p">:</span> <span class="s1">'final'</span><span class="p">,</span>
                 <span class="p">},</span>
                 <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span>
+                    <span class="s1">'lower'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s1">'type'</span><span class="p">:</span> <span class="s1">'path'</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1204,16 +1199,16 @@ For example, here I’ve purposefully made the battery builder have some incorre
     <span class="k">def</span><span class="w"> </span><span class="nf">get_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subsystem_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">states_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;rate_source&#39;</span><span class="p">:</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE_RATE</span><span class="p">,</span>
-                <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s1">'rate_source'</span><span class="p">:</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE_RATE</span><span class="p">,</span>
+                <span class="s1">'fix_initial'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="s1">&#39;amps&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+            <span class="s1">'amps'</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="n">states_dict</span>
 
 
-<span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">],</span> <span class="n">exit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="p">[</span><span class="s1">''</span><span class="p">],</span> <span class="n">exit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1339,72 +1334,72 @@ For example, here I’ve purposefully made the battery builder have some incorre
 ERROR: test_build_pre_mission (__main__.TestBattery.test_build_pre_mission)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 106, in test_build_pre_mission
+  File "/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py", line 106, in test_build_pre_mission
     pre_mission_sys = self.subsystem_builder.build_pre_mission(
         aviary_inputs=self.aviary_values, subsystem_options={}
     )
-TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument &#39;subsystem_options&#39;
+TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument 'subsystem_options'
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
 ERROR: test_check_design_variables (__main__.TestBattery.test_check_design_variables)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 442, in test_check_design_variables
+  File "/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py", line 442, in test_check_design_variables
     pre_mission_sys = self.subsystem_builder.build_pre_mission(
         aviary_inputs=self.aviary_values, subsystem_options={}
     )
-TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument &#39;subsystem_options&#39;
+TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument 'subsystem_options'
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
 ERROR: test_check_pre_mission (__main__.TestBattery.test_check_pre_mission)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 340, in test_check_pre_mission
+  File "/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py", line 340, in test_check_pre_mission
     pre_mission_sys = self.subsystem_builder.build_pre_mission(
         aviary_inputs=self.aviary_values, subsystem_options={}
     )
-TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument &#39;subsystem_options&#39;
+TypeError: BatteryBuilder.build_pre_mission() got an unexpected keyword argument 'subsystem_options'
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
 FAIL: test_check_state_variables (__main__.TestBattery.test_check_state_variables)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 334, in test_check_state_variables
-    self.assertTrue(state_var_exists, f&quot;State variable &#39;{key}&#39; not found in the model.&quot;)
+  File "/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py", line 334, in test_check_state_variables
+    self.assertTrue(state_var_exists, f"State variable '{key}' not found in the model.")
     ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: False is not true : State variable &#39;amps&#39; not found in the model.
+AssertionError: False is not true : State variable 'amps' not found in the model.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
 FAIL: test_get_constraints (__main__.TestBattery.test_get_constraints)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 146, in test_get_constraints
-    self.assertIn(&#39;type&#39;, values.keys(), f&#39;Constraint &quot;{name}&quot; is missing the &quot;type&quot; key&#39;)
+  File "/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py", line 146, in test_get_constraints
+    self.assertIn('type', values.keys(), f'Constraint "{name}" is missing the "type" key')
     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: &#39;type&#39; not found in dict_keys([&#39;lower&#39;, &#39;loc&#39;]) : Constraint &quot;dynamic:battery:state_of_charge&quot; is missing the &quot;type&quot; key
+AssertionError: 'type' not found in dict_keys(['lower', 'loc']) : Constraint "dynamic:battery:state_of_charge" is missing the "type" key
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
 FAIL: test_get_states (__main__.TestBattery.test_get_states)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 59, in test_get_states
-    self.assertIsInstance(value, dict, msg=f&quot;the value for &#39;{key}&#39; should be a dictionary&quot;)
+  File "/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py", line 59, in test_get_states
+    self.assertIsInstance(value, dict, msg=f"the value for '{key}' should be a dictionary")
     ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: 6 is not an instance of &lt;class &#39;dict&#39;&gt; : the value for &#39;amps&#39; should be a dictionary
+AssertionError: 6 is not an instance of &lt;class 'dict'&gt; : the value for 'amps' should be a dictionary
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>----------------------------------------------------------------------
-Ran 38 tests in 0.156s
+Ran 38 tests in 0.291s
 
 FAILED (failures=3, errors=3)
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;unittest.main.TestProgram at 0x7f7dde704050&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;unittest.main.TestProgram at 0x7f46c088ec10&gt;
 </pre></div>
 </div>
 </div>

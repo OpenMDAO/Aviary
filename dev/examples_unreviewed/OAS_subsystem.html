@@ -632,10 +632,10 @@ Other Aviary variables can also be added as additional inputs based on user need
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># %load ../../models/external_subsystems/open_aero_struct/OAS_wing_mass_builder.py</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">Builder for an OpenAeroStruct component that computes a new wing mass.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">openmdao.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">om</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
@@ -643,11 +643,11 @@ Other Aviary variables can also be added as additional inputs based on user need
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">OASWingmassBuilder</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">SubsystemBuilder</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;wing_mass&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'wing_mass'</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">build_pre_mission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Build an OpenMDAO system for the pre-mission computations of the subsystem.</span>
 
 <span class="sd">        Returns</span>
@@ -656,22 +656,22 @@ Other Aviary variables can also be added as additional inputs based on user need
 <span class="sd">            An OpenMDAO system containing all computations that need to happen in</span>
 <span class="sd">            the pre-mission part of the Aviary problem. This</span>
 <span class="sd">            includes sizing, design, and other non-mission parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">wing_group</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">()</span>
         <span class="n">wing_group</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-            <span class="s1">&#39;aerostructures&#39;</span><span class="p">,</span>
+            <span class="s1">'aerostructures'</span><span class="p">,</span>
             <span class="n">OAStructures</span><span class="p">(</span>
                 <span class="n">symmetry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">wing_weight_ratio</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                <span class="n">S_ref_type</span><span class="o">=</span><span class="s1">&#39;projected&#39;</span><span class="p">,</span>
+                <span class="n">S_ref_type</span><span class="o">=</span><span class="s1">'projected'</span><span class="p">,</span>
                 <span class="n">n_point_masses</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="n">num_twist_cp</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
                 <span class="n">num_box_cp</span><span class="o">=</span><span class="mi">51</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
-                <span class="p">(</span><span class="s1">&#39;fuel&#39;</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">WING_FUEL_CAPACITY</span><span class="p">),</span>
+                <span class="p">(</span><span class="s1">'fuel'</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">WING_FUEL_CAPACITY</span><span class="p">),</span>
             <span class="p">],</span>
-            <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;wing_mass&#39;</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">MASS</span><span class="p">)],</span>
+            <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">'wing_mass'</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">MASS</span><span class="p">)],</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">wing_group</span>

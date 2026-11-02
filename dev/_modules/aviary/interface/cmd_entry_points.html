@@ -518,7 +518,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_load_and_exec</span><span class="p">(</span><span class="n">script_name</span><span class="p">,</span> <span class="n">user_args</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Load and exec the given script as __main__.</span>
 
 <span class="sd">    Parameters</span>
@@ -527,53 +527,53 @@
 <span class="sd">        The name of the script to load and exec.</span>
 <span class="sd">    user_args : list of str</span>
 <span class="sd">        Args to be passed to the user script.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">script_name</span><span class="p">))</span>
 
     <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">script_name</span><span class="p">]</span> <span class="o">+</span> <span class="n">user_args</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">script_name</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-        <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">script_name</span><span class="p">,</span> <span class="s1">&#39;exec&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">script_name</span><span class="p">,</span> <span class="s1">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">script_name</span><span class="p">,</span> <span class="s1">'exec'</span><span class="p">)</span>
 
     <span class="n">globals_dict</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;__file__&#39;</span><span class="p">:</span> <span class="n">script_name</span><span class="p">,</span>
-        <span class="s1">&#39;__name__&#39;</span><span class="p">:</span> <span class="s1">&#39;__main__&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;__package__&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;__cached__&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">'__file__'</span><span class="p">:</span> <span class="n">script_name</span><span class="p">,</span>
+        <span class="s1">'__name__'</span><span class="p">:</span> <span class="s1">'__main__'</span><span class="p">,</span>
+        <span class="s1">'__package__'</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">'__cached__'</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="n">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">globals_dict</span><span class="p">)</span>  <span class="c1"># nosec: private, internal use only</span>
 
 
-<span class="c1"># Conversion subcommands map (for &#39;aviary convert&#39; sub-sub-commands)</span>
+<span class="c1"># Conversion subcommands map (for 'aviary convert' sub-sub-commands)</span>
 <span class="n">_convert_command_map</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;aero_table&#39;</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s1">'aero_table'</span><span class="p">:</span> <span class="p">(</span>
         <span class="n">_setup_ATC_parser</span><span class="p">,</span>
         <span class="n">_exec_ATC</span><span class="p">,</span>
-        <span class="s1">&#39;Convert FLOPS- or GASP-formatted aero data files into Aviary csv format.&#39;</span><span class="p">,</span>
+        <span class="s1">'Convert FLOPS- or GASP-formatted aero data files into Aviary csv format.'</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s1">&#39;engine_deck&#39;</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s1">'engine_deck'</span><span class="p">:</span> <span class="p">(</span>
         <span class="n">_setup_EDC_parser</span><span class="p">,</span>
         <span class="n">_exec_EDC</span><span class="p">,</span>
-        <span class="s1">&#39;Convert FLOPS- or GASP-formatted engine decks into Aviary csv format.&#39;</span><span class="p">,</span>
+        <span class="s1">'Convert FLOPS- or GASP-formatted engine decks into Aviary csv format.'</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s1">&#39;fortran_to_aviary&#39;</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s1">'fortran_to_aviary'</span><span class="p">:</span> <span class="p">(</span>
         <span class="n">_setup_F2A_parser</span><span class="p">,</span>
         <span class="n">_exec_F2A</span><span class="p">,</span>
-        <span class="s1">&#39;Convert legacy Fortran (FLOPS or GASP) input file to Aviary input file.&#39;</span><span class="p">,</span>
+        <span class="s1">'Convert legacy Fortran (FLOPS or GASP) input file to Aviary input file.'</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s1">&#39;propeller_table&#39;</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s1">'propeller_table'</span><span class="p">:</span> <span class="p">(</span>
         <span class="n">_setup_PMC_parser</span><span class="p">,</span>
         <span class="n">_exec_PMC</span><span class="p">,</span>
-        <span class="s1">&#39;Convert GASP-formatted propeller map file into Aviary csv format.&#39;</span><span class="p">,</span>
+        <span class="s1">'Convert GASP-formatted propeller map file into Aviary csv format.'</span><span class="p">,</span>
     <span class="p">),</span>
 <span class="p">}</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_setup_convert_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up parser for the &#39;convert&#39; subcommand with sub-sub-commands.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Set up parser for the 'convert' subcommand with sub-sub-commands."""</span>
     <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Conversion Types&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;convert_type&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Type of data to convert&#39;</span>
+        <span class="n">title</span><span class="o">=</span><span class="s1">'Conversion Types'</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">'convert_type'</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">'Type of data to convert'</span>
     <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">parser_setup_func</span><span class="p">,</span> <span class="n">executor</span><span class="p">,</span> <span class="n">help_str</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_convert_command_map</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
@@ -583,13 +583,13 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_exec_convert</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">user_args</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute the appropriate conversion command based on sub-sub-command.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="s1">&#39;executor&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Execute the appropriate conversion command based on sub-sub-command."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="s1">'executor'</span><span class="p">):</span>
         <span class="c1"># No sub-sub-command was specified, show help</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="s1">&#39;Error: Please specify a conversion type (aero_table, engine_deck, fortran_to_aviary, or propeller_table)&#39;</span>
+            <span class="s1">'Error: Please specify a conversion type (aero_table, engine_deck, fortran_to_aviary, or propeller_table)'</span>
         <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Use &#39;aviary convert -h&#39; for more information.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Use 'aviary convert -h' for more information."</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Execute the appropriate conversion function</span>
@@ -597,40 +597,40 @@
 
 
 <span class="n">_command_map</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;check&#39;</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s1">'check'</span><span class="p">:</span> <span class="p">(</span>
         <span class="n">_setup_installation_test</span><span class="p">,</span>
         <span class="n">_exec_installation_test</span><span class="p">,</span>
-        <span class="s1">&#39;Verify Aviary installation&#39;</span><span class="p">,</span>
+        <span class="s1">'Verify Aviary installation'</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s1">&#39;convert&#39;</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s1">'convert'</span><span class="p">:</span> <span class="p">(</span>
         <span class="n">_setup_convert_parser</span><span class="p">,</span>
         <span class="n">_exec_convert</span><span class="p">,</span>
-        <span class="s1">&#39;Convert legacy formatted data files (aero_table, engine_deck, fortran_to_aviary, propeller_table) to Aviary format.&#39;</span><span class="p">,</span>
+        <span class="s1">'Convert legacy formatted data files (aero_table, engine_deck, fortran_to_aviary, propeller_table) to Aviary format.'</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s1">&#39;run_mission&#39;</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s1">'run_mission'</span><span class="p">:</span> <span class="p">(</span>
         <span class="n">_setup_run_aviary_parser</span><span class="p">,</span>
         <span class="n">_exec_run_aviary</span><span class="p">,</span>
-        <span class="s1">&#39;Run Aviary using a provided input deck.&#39;</span><span class="p">,</span>
+        <span class="s1">'Run Aviary using a provided input deck.'</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s1">&#39;draw_mission&#39;</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s1">'draw_mission'</span><span class="p">:</span> <span class="p">(</span>
         <span class="n">_setup_flight_profile_parser</span><span class="p">,</span>
         <span class="n">_exec_flight_profile</span><span class="p">,</span>
-        <span class="s1">&#39;Open the mission profile drawing GUI.&#39;</span><span class="p">,</span>
+        <span class="s1">'Open the mission profile drawing GUI.'</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s1">&#39;dashboard&#39;</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s1">'dashboard'</span><span class="p">:</span> <span class="p">(</span>
         <span class="n">_dashboard_setup_parser</span><span class="p">,</span>
         <span class="n">_dashboard_cmd</span><span class="p">,</span>
-        <span class="s1">&#39;Open the results dashboard for a provided Aviary run.&#39;</span><span class="p">,</span>
+        <span class="s1">'Open the results dashboard for a provided Aviary run.'</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s1">&#39;plot_drag_polar&#39;</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s1">'plot_drag_polar'</span><span class="p">:</span> <span class="p">(</span>
         <span class="n">_setup_plot_drag_polar_parser</span><span class="p">,</span>
         <span class="n">_exec_plot_drag_polar</span><span class="p">,</span>
-        <span class="s1">&#39;Plot a Drag Polar Graph using a provided polar data csv input.&#39;</span><span class="p">,</span>
+        <span class="s1">'Plot a Drag Polar Graph using a provided polar data csv input.'</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s1">&#39;rtplot&#39;</span><span class="p">:</span> <span class="p">(</span>
+    <span class="s1">'rtplot'</span><span class="p">:</span> <span class="p">(</span>
         <span class="n">_rtplot_setup_parser</span><span class="p">,</span>
         <span class="n">_rtplot_cmd</span><span class="p">,</span>
-        <span class="s1">&#39;Run a script and show a real-time plot of the optimization progress.&#39;</span><span class="p">,</span>
+        <span class="s1">'Run a script and show a real-time plot of the optimization progress.'</span><span class="p">,</span>
     <span class="p">),</span>
 <span class="p">}</span>
 
@@ -638,10 +638,10 @@
 <div class="viewcode-block" id="aviary_cmd">
 <a class="viewcode-back" href="../../../_srcdocs/packages/interface/cmd_entry_points.html#aviary.interface.cmd_entry_points.aviary_cmd">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">aviary_cmd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run an &#39;aviary&#39; sub-command or list help info for &#39;aviary&#39; command or sub-commands.&quot;&quot;&quot;</span>
-    <span class="c1"># pre-parse sys.argv to split between before and after &#39;--&#39;</span>
-    <span class="k">if</span> <span class="s1">&#39;--&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">"""Run an 'aviary' sub-command or list help info for 'aviary' command or sub-commands."""</span>
+    <span class="c1"># pre-parse sys.argv to split between before and after '--'</span>
+    <span class="k">if</span> <span class="s1">'--'</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">'--'</span><span class="p">)</span>
         <span class="n">sys_args</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[:</span><span class="n">idx</span><span class="p">]</span>
         <span class="n">user_args</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">sys_args</span>
@@ -649,36 +649,36 @@
         <span class="n">user_args</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;aviary Command Line Tools&#39;</span><span class="p">,</span>
-        <span class="c1">#  epilog=&#39;Use -h after any sub-command for sub-command help, &#39;</span>
-        <span class="c1">#  &#39;for example, &quot;openmdao tree -h&quot; for help on the &quot;tree&quot; &#39;</span>
-        <span class="c1">#  &#39;command. If using a tool on a script that takes its own &#39;</span>
-        <span class="c1">#  &#39;command line arguments, place those arguments after a &quot;--&quot;. &#39;</span>
-        <span class="c1">#  &#39;For example: &#39;</span>
-        <span class="c1">#  &#39;&quot;openmdao n2 -o foo.html myscript.py -- -x --myarg=bar&quot;&#39;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">'aviary Command Line Tools'</span><span class="p">,</span>
+        <span class="c1">#  epilog='Use -h after any sub-command for sub-command help, '</span>
+        <span class="c1">#  'for example, "openmdao tree -h" for help on the "tree" '</span>
+        <span class="c1">#  'command. If using a tool on a script that takes its own '</span>
+        <span class="c1">#  'command line arguments, place those arguments after a "--". '</span>
+        <span class="c1">#  'For example: '</span>
+        <span class="c1">#  '"openmdao n2 -o foo.html myscript.py -- -x --myarg=bar"'</span>
     <span class="p">)</span>
 
     <span class="c1"># Adding the --version argument</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--version&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;show version and exit&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'--version'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">'store_true'</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">'show version and exit'</span><span class="p">)</span>
 
-    <span class="n">subs</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Tools&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;subparser_name&#39;</span><span class="p">)</span>
+    <span class="n">subs</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">'Tools'</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">'subparser_name'</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="n">parser_setup_func</span><span class="p">,</span> <span class="n">executor</span><span class="p">,</span> <span class="n">help_str</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_command_map</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
         <span class="n">subp</span> <span class="o">=</span> <span class="n">subs</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">help_str</span><span class="p">)</span>
         <span class="n">parser_setup_func</span><span class="p">(</span><span class="n">subp</span><span class="p">)</span>
         <span class="n">subp</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">executor</span><span class="o">=</span><span class="n">executor</span><span class="p">)</span>
 
-    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)]</span>
-    <span class="c1"># &#39;--version&#39;, &#39;--dependency_versions&#39;)]</span>
-    <span class="n">cmdargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;-h&#39;</span><span class="p">,)]</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)]</span>
+    <span class="c1"># '--version', '--dependency_versions')]</span>
+    <span class="n">cmdargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'-h'</span><span class="p">,)]</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmdargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-h&#39;</span><span class="p">]</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'-h'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># if command requires arguments but is run without any, return help for that command</span>
-        <span class="c1"># &#39;convert&#39; is a special case as it requires a sub-sub-command</span>
-        <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;check&#39;</span><span class="p">,</span> <span class="s1">&#39;draw_mission&#39;</span><span class="p">,</span> <span class="s1">&#39;run_mission&#39;</span><span class="p">,</span> <span class="s1">&#39;plot_drag_polar&#39;</span><span class="p">,</span> <span class="s1">&#39;convert&#39;</span><span class="p">):</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;-h&#39;</span><span class="p">])</span>
+        <span class="c1"># 'convert' is a special case as it requires a sub-sub-command</span>
+        <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'check'</span><span class="p">,</span> <span class="s1">'draw_mission'</span><span class="p">,</span> <span class="s1">'run_mission'</span><span class="p">,</span> <span class="s1">'plot_drag_polar'</span><span class="p">,</span> <span class="s1">'convert'</span><span class="p">):</span>
+            <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">'-h'</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">subs</span><span class="o">.</span><span class="n">choices</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">cmdargs</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
         <span class="n">_load_and_exec</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">user_args</span><span class="p">)</span>
@@ -689,12 +689,12 @@
         <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">version</span>
 
-            <span class="n">aviary_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">version</span><span class="p">(</span><span class="s1">&#39;aviary&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Aviary version: </span><span class="si">{</span><span class="n">aviary_version</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">aviary_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">version</span><span class="p">(</span><span class="s1">'aviary'</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Aviary version: </span><span class="si">{</span><span class="n">aviary_version</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;unrecognized arguments: &#39;</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unknown</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">'unrecognized arguments: '</span> <span class="o">+</span> <span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unknown</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">sub</span> <span class="o">=</span> <span class="n">subs</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="n">options</span><span class="o">.</span><span class="n">subparser_name</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -704,12 +704,12 @@
                 <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
             <span class="n">parser</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="s1">&#39;executor&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="s1">'executor'</span><span class="p">):</span>
             <span class="n">options</span><span class="o">.</span><span class="n">executor</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">user_args</span><span class="p">)</span></div>
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">aviary_cmd</span><span class="p">()</span>
 </pre></div>
 

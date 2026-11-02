@@ -609,90 +609,90 @@
 <span class="c1"># Add reserve phases to existing phase_info</span>
 <span class="n">phase_info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
     <span class="p">{</span>
-        <span class="s1">&#39;reserve_climb&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
-            <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;reserve&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-                <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-                <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.36</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;time_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">192.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="s1">'reserve_climb'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
+            <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'reserve'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s1">'num_segments'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s1">'order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s1">'mach_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.36</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+                <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+                <span class="s1">'altitude_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">'altitude_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+                <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+                <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="s1">'path_constraint'</span><span class="p">,</span>
+                <span class="s1">'time_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">'min'</span><span class="p">),</span>
+                <span class="s1">'time_duration_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">192.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
             <span class="p">},</span>
-            <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">'initial_guesses'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'time'</span><span class="p">:</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="s1">'min'</span><span class="p">),</span>
             <span class="p">},</span>
         <span class="p">},</span>
-        <span class="s1">&#39;reserve_cruise_fixed_range&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
-            <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;reserve&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">'reserve_cruise_fixed_range'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
+            <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'reserve'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
                 <span class="c1"># Distance traveled in this phase</span>
-                <span class="s1">&#39;target_distance&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="s1">&#39;km&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-                <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-                <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary_constraint&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">149.5</span><span class="p">,</span> <span class="mf">448.5</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+                <span class="s1">'target_distance'</span><span class="p">:</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="s1">'km'</span><span class="p">),</span>
+                <span class="s1">'num_segments'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s1">'order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s1">'mach_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+                <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+                <span class="s1">'altitude_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">'altitude_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+                <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+                <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="s1">'boundary_constraint'</span><span class="p">,</span>
+                <span class="s1">'time_initial_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">149.5</span><span class="p">,</span> <span class="mf">448.5</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
+                <span class="s1">'time_duration_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
             <span class="p">},</span>
-            <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">30</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">'initial_guesses'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'time'</span><span class="p">:</span> <span class="p">([</span><span class="mi">30</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span> <span class="s1">'min'</span><span class="p">),</span>
             <span class="p">},</span>
         <span class="p">},</span>
-        <span class="s1">&#39;reserve_cruise_fixed_time&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
-            <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;reserve&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">'reserve_cruise_fixed_time'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
+            <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'reserve'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
                 <span class="c1"># Time length of this phase</span>
-                <span class="s1">&#39;time_duration&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-                <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-                <span class="s1">&#39;distance_solve_segments&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary_constraint&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">60</span><span class="p">,</span> <span class="mf">448.5</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+                <span class="s1">'time_duration'</span><span class="p">:</span> <span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="s1">'min'</span><span class="p">),</span>
+                <span class="s1">'num_segments'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s1">'order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s1">'distance_solve_segments'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">'mach_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+                <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+                <span class="s1">'altitude_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">'altitude_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+                <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+                <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="s1">'boundary_constraint'</span><span class="p">,</span>
+                <span class="s1">'time_initial_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mi">60</span><span class="p">,</span> <span class="mf">448.5</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
             <span class="p">},</span>
         <span class="p">},</span>
-        <span class="s1">&#39;reserve_descent&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
-            <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;reserve&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-                <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-                <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.36</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">120.5</span><span class="p">,</span> <span class="mf">550.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
-                <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">87.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="s1">'reserve_descent'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
+            <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'reserve'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s1">'num_segments'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s1">'order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s1">'mach_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+                <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.36</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+                <span class="s1">'altitude_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s1">'altitude_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+                <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+                <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="s1">'path_constraint'</span><span class="p">,</span>
+                <span class="s1">'time_initial_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">120.5</span><span class="p">,</span> <span class="mf">550.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
+                <span class="s1">'time_duration_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">87.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
             <span class="p">},</span>
         <span class="p">},</span>
     <span class="p">}</span>
@@ -709,38 +709,35 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span>
-    <span class="n">aircraft_data</span><span class="o">=</span><span class="s1">&#39;models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv&#39;</span><span class="p">,</span>
+    <span class="n">aircraft_data</span><span class="o">=</span><span class="s1">'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv'</span><span class="p">,</span>
     <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631372.370847] [runnervm48cm3:4917 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55cb73d3ce10 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631372.371161] [runnervm48cm3:4917 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
-  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  33136.4  lbm
-  &#39;aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
-  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
-  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
-  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
-  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
-  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
-  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
-  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:04917] pml_ucx.c:313  Error: Failed to create UCP worker
-Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  'aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  'aircraft:design:touchdown_mass_max  108976.4  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  33136.4  lbm
+  'aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
+  'aircraft:fuselage:passenger_compartment_length  97.5  ft
+  'aircraft:fuselage:wetted_area  4235.082096  ft**2
+  'aircraft:horizontal_tail:wetted_area  576.571192  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  106.94  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
+  'aircraft:nacelle:total_wetted_area  488.936564  ft**2
+  'aircraft:nacelle:wetted_area  [244.468282]  ft**2
+  'aircraft:propulsion:total_engine_controls_mass  0.0  lbm
+  'aircraft:propulsion:total_starter_mass  0.0  lbm
+  'aircraft:vertical_tail:wetted_area  445.645658  ft**2
+  'aircraft:wing:aspect_ratio  11.5587605382765  unitless
+  'aircraft:wing:wetted_area  2210.280228  ft**2
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      324
@@ -758,11 +755,11 @@ Total number of inequality constraints...............:      105
 
                                    (scaled)                 (unscaled)
 Objective...............:   1.9306323772840290e+00    1.9306323772840290e+00
-Dual infeasibility......:   4.0185539455311492e-08    4.0185539455311492e-08
-Constraint violation....:   2.3173592013313325e-11    2.3173592013313325e-11
+Dual infeasibility......:   4.0185541120637545e-08    4.0185541120637545e-08
+Constraint violation....:   2.3173416736137916e-11    2.3173416736137916e-11
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0920529875033669e-08    9.0920529875033669e-08
-Overall NLP error.......:   9.0920529875033669e-08    9.0920529875033669e-08
+Complementarity.........:   9.0920529875025582e-08    9.0920529875025582e-08
+Overall NLP error.......:   9.0920529875025582e-08    9.0920529875025582e-08
 
 
 Number of objective function evaluations             = 42
@@ -772,7 +769,7 @@ Number of inequality constraint evaluations          = 42
 Number of equality constraint Jacobian evaluations   = 32
 Number of inequality constraint Jacobian evaluations = 32
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 11.627
+Total seconds in IPOPT                               = 19.567
 
 EXIT: Optimal Solution Found.
 </pre></div>

@@ -677,8 +677,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
 
 <span class="c1"># inputs that run_aviary() requires</span>
-<span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv&#39;</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;IPOPT&#39;</span>
+<span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv'</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">'IPOPT'</span>
 <span class="n">objective_type</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">restart_filename</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">0</span>
@@ -719,43 +719,36 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631789.813362] [runnervm48cm3:5765 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55655d0ea610 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631789.813733] [runnervm48cm3:5765 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05765] pml_ucx.c:313  Error: Failed to create UCP worker
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:anti_icing:mass  551.0  lbm
-  &#39;aircraft:apu:mass  928.0  lbm
-  &#39;aircraft:avionics:mass  1959.0  lbm
-  &#39;aircraft:design:emergency_equipment_mass  50.0  lbm
-  &#39;aircraft:design:wing_loading  128.0  lbf/ft**2
-  &#39;aircraft:furnishings:mass  11192.0  lbm
-  &#39;aircraft:fuselage:wetted_area  4000.0  ft**2
-  &#39;aircraft:horizontal_tail:form_factor  1.25  unitless
-  &#39;aircraft:horizontal_tail:moment_ratio  0.2307  unitless
-  &#39;aircraft:horizontal_tail:volume_coefficient  1.189  unitless
-  &#39;aircraft:nacelle:form_factor  [1.5]  unitless
-  &#39;aircraft:strut:fuselage_interference_factor  0.0  unitless
-  &#39;aircraft:vertical_tail:form_factor  1.25  unitless
-  &#39;aircraft:vertical_tail:moment_ratio  2.362  unitless
-  &#39;aircraft:vertical_tail:volume_coefficient  0.145  unitless
-  &#39;aircraft:wing:form_factor  1.25  unitless
-  &#39;aircraft:wing:slat_span_ratio  0.9  unitless
+  'aircraft:anti_icing:mass  551.0  lbm
+  'aircraft:apu:mass  928.0  lbm
+  'aircraft:avionics:mass  1959.0  lbm
+  'aircraft:design:emergency_equipment_mass  50.0  lbm
+  'aircraft:design:wing_loading  128.0  lbf/ft**2
+  'aircraft:furnishings:mass  11192.0  lbm
+  'aircraft:fuselage:wetted_area  4000.0  ft**2
+  'aircraft:horizontal_tail:form_factor  1.25  unitless
+  'aircraft:horizontal_tail:moment_ratio  0.2307  unitless
+  'aircraft:horizontal_tail:volume_coefficient  1.189  unitless
+  'aircraft:nacelle:form_factor  [1.5]  unitless
+  'aircraft:strut:fuselage_interference_factor  0.0  unitless
+  'aircraft:vertical_tail:form_factor  1.25  unitless
+  'aircraft:vertical_tail:moment_ratio  2.362  unitless
+  'aircraft:vertical_tail:volume_coefficient  0.145  unitless
+  'aircraft:wing:form_factor  1.25  unitless
+  'aircraft:wing:slat_span_ratio  0.9  unitless
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aero_td.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aero_td.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.ascent.rhs_all.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.ascent.rhs_all.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.groundroll.rhs_all.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.groundroll.rhs_all.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.rotation.rhs_all.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.rotation.rhs_all.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aero_td.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aero_td.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.ascent.rhs_all.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.ascent.rhs_all.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.groundroll.rhs_all.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.groundroll.rhs_all.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.rotation.rhs_all.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.rotation.rhs_all.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      289
@@ -773,7 +766,7 @@ Number of Iterations....: 0
 
                                    (scaled)                 (unscaled)
 Objective...............:   5.1722886909006149e+00    5.1722886909006149e+00
-Dual infeasibility......:   1.1801070997458416e+00    1.1801070997458416e+00
+Dual infeasibility......:   1.6500000000000000e+01    1.6500000000000000e+01
 Constraint violation....:   1.2513860757844089e+00    1.2513860757844089e+00
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
 Complementarity.........:   2.9553974865183619e+01    2.9553974865183619e+01
@@ -787,7 +780,7 @@ Number of inequality constraint evaluations          = 1
 Number of equality constraint Jacobian evaluations   = 1
 Number of inequality constraint Jacobian evaluations = 1
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 1.560
+Total seconds in IPOPT                               = 2.348
 
 EXIT: Maximum Number of Iterations Exceeded.
 </pre></div>
@@ -815,8 +808,8 @@ Aviary run failed. See the dashboard for more details.
 <p>We add other inputs that <code class="docutils literal notranslate"><span class="pre">run_aviary()</span></code> requires:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv&#39;</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;IPOPT&#39;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv'</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">'IPOPT'</span>
 <span class="n">objective_type</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">restart_filename</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">1</span>
@@ -837,7 +830,7 @@ Aviary run failed. See the dashboard for more details.
 <span class="bp">self</span><span class="o">.</span><span class="n">meta_data</span> <span class="o">=</span> <span class="n">meta_data</span>
 
 <span class="c1"># TODO try and find a better solution than a new custom flag - the issue is multimission</span>
-<span class="c1">#      problems don&#39;t have a consistent variable path to check the inputs later on</span>
+<span class="c1">#      problems don't have a consistent variable path to check the inputs later on</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">generate_payload_range</span> <span class="o">=</span> <span class="kc">False</span>
 
 </pre></div>
@@ -1226,23 +1219,23 @@ There is a special objective type: <code class="docutils literal notranslate"><s
 </summary>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:anti_icing:mass  551.0  lbm
-  &#39;aircraft:apu:mass  928.0  lbm
-  &#39;aircraft:avionics:mass  1959.0  lbm
-  &#39;aircraft:design:emergency_equipment_mass  50.0  lbm
-  &#39;aircraft:design:wing_loading  128.0  lbf/ft**2
-  &#39;aircraft:furnishings:mass  11192.0  lbm
-  &#39;aircraft:fuselage:wetted_area  4000.0  ft**2
-  &#39;aircraft:horizontal_tail:form_factor  1.25  unitless
-  &#39;aircraft:horizontal_tail:moment_ratio  0.2307  unitless
-  &#39;aircraft:horizontal_tail:volume_coefficient  1.189  unitless
-  &#39;aircraft:nacelle:form_factor  [1.5]  unitless
-  &#39;aircraft:strut:fuselage_interference_factor  0.0  unitless
-  &#39;aircraft:vertical_tail:form_factor  1.25  unitless
-  &#39;aircraft:vertical_tail:moment_ratio  2.362  unitless
-  &#39;aircraft:vertical_tail:volume_coefficient  0.145  unitless
-  &#39;aircraft:wing:form_factor  1.25  unitless
-  &#39;aircraft:wing:slat_span_ratio  0.9  unitless
+  'aircraft:anti_icing:mass  551.0  lbm
+  'aircraft:apu:mass  928.0  lbm
+  'aircraft:avionics:mass  1959.0  lbm
+  'aircraft:design:emergency_equipment_mass  50.0  lbm
+  'aircraft:design:wing_loading  128.0  lbf/ft**2
+  'aircraft:furnishings:mass  11192.0  lbm
+  'aircraft:fuselage:wetted_area  4000.0  ft**2
+  'aircraft:horizontal_tail:form_factor  1.25  unitless
+  'aircraft:horizontal_tail:moment_ratio  0.2307  unitless
+  'aircraft:horizontal_tail:volume_coefficient  1.189  unitless
+  'aircraft:nacelle:form_factor  [1.5]  unitless
+  'aircraft:strut:fuselage_interference_factor  0.0  unitless
+  'aircraft:vertical_tail:form_factor  1.25  unitless
+  'aircraft:vertical_tail:moment_ratio  2.362  unitless
+  'aircraft:vertical_tail:volume_coefficient  0.145  unitless
+  'aircraft:wing:form_factor  1.25  unitless
+  'aircraft:wing:slat_span_ratio  0.9  unitless
 </pre></div>
 </div>
 </div>
@@ -1266,16 +1259,16 @@ There is a special objective type: <code class="docutils literal notranslate"><s
 <p class="expanded admonition-title">Hide code cell output</p>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aero_td.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aero_td.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.ascent.rhs_all.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.ascent.rhs_all.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.groundroll.rhs_all.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.groundroll.rhs_all.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.rotation.rhs_all.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.rotation.rhs_all.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aero_td.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aero_td.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.ascent.rhs_all.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.ascent.rhs_all.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.groundroll.rhs_all.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.groundroll.rhs_all.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.rotation.rhs_all.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.rotation.rhs_all.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Aviary run successful.
@@ -1297,31 +1290,31 @@ There is a special objective type: <code class="docutils literal notranslate"><s
 <p>Finally, we can add a few print statements for the variables that we are interested:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mission.Objectives.FUEL&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">FUEL</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mission.TOTAL_FUEL&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'Mission.Objectives.FUEL'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">FUEL</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Mission.TOTAL_FUEL'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span>
-    <span class="s1">&#39;Mission.GROSS_MASS (takeoff_mass)&#39;</span><span class="p">,</span>
-    <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+    <span class="s1">'Mission.GROSS_MASS (takeoff_mass)'</span><span class="p">,</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span>
-    <span class="s1">&#39;Mission.FINAL_MASS&#39;</span><span class="p">,</span>
-    <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">FINAL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+    <span class="s1">'Mission.FINAL_MASS'</span><span class="p">,</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">FINAL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span>
-    <span class="s1">&#39;Groundroll Final Mass (lbm)&#39;</span><span class="p">,</span>
-    <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.groundroll.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="s1">'Groundroll Final Mass (lbm)'</span><span class="p">,</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'traj.groundroll.states:mass'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rotation Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.rotation.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Ascent Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.ascent.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accel Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.accel.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Climb1 Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.climb1.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Climb2 Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.climb2.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cruise Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.cruise.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Desc1 Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.desc1.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Desc2 Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.desc2.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Rotation Final Mass (lbm)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'traj.rotation.states:mass'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Ascent Final Mass (lbm)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'traj.ascent.states:mass'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Accel Final Mass (lbm)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'traj.accel.states:mass'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Climb1 Final Mass (lbm)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'traj.climb1.states:mass'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Climb2 Final Mass (lbm)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'traj.climb2.states:mass'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Cruise Final Mass (lbm)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'traj.cruise.states:mass'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Desc1 Final Mass (lbm)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'traj.desc1.states:mass'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Desc2 Final Mass (lbm)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'traj.desc2.states:mass'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'done'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1358,35 +1351,30 @@ done
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/modopt/core/visualization.py:11: UserWarning: matplotlib not found, plotting disabled.
-  warnings.warn(&quot;matplotlib not found, plotting disabled.&quot;)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631817.202052] [runnervm48cm3:5805 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55d57bb01fb0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631817.202378] [runnervm48cm3:5805 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-[runnervm48cm3:05805] pml_ucx.c:313  Error: Failed to create UCP worker
+  warnings.warn("matplotlib not found, plotting disabled.")
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
-  &#39;aircraft:engine:mass  [7400.]  lbm
-  &#39;aircraft:fins:mass  0.0  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
-  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
-  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
-  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
-  &#39;aircraft:wing:control_surface_area  137.0  ft**2
-  &#39;aircraft:wing:wetted_area  2396.56  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+  'aircraft:design:touchdown_mass_max  152800.0  lbm
+  'aircraft:engine:mass  [7400.]  lbm
+  'aircraft:fins:mass  0.0  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  45694.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  85.5  ft
+  'aircraft:fuselage:planform_area  1578.24  ft**2
+  'aircraft:fuselage:wetted_area  4158.62  ft**2
+  'aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  'aircraft:vertical_tail:wetted_area  581.13  ft**2
+  'aircraft:wing:aspect_ratio  11.22091  unitless
+  'aircraft:wing:control_surface_area  137.0  ft**2
+  'aircraft:wing:wetted_area  2396.56  ft**2
+  'mission:takeoff:lift_over_drag  17.354  unitless
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      141
@@ -1404,7 +1392,7 @@ Number of Iterations....: 0
 
                                    (scaled)                 (unscaled)
 Objective...............:   3.9800875570924603e+00    3.9800875570924603e+00
-Dual infeasibility......:   1.2497499453468488e+00    1.2497499453468488e+00
+Dual infeasibility......:   1.2497499453534944e+00    1.2497499453534944e+00
 Constraint violation....:   9.9716707102046731e-01    9.9716707102046731e-01
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
 Complementarity.........:   7.9560101797999998e+00    7.9560101797999998e+00
@@ -1418,7 +1406,7 @@ Number of inequality constraint evaluations          = 1
 Number of equality constraint Jacobian evaluations   = 1
 Number of inequality constraint Jacobian evaluations = 1
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 0.505
+Total seconds in IPOPT                               = 0.868
 
 EXIT: Maximum Number of Iterations Exceeded.
 </pre></div>
@@ -1434,41 +1422,41 @@ Aviary run failed. See the dashboard for more details.
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;pre_mission&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;include_takeoff&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s1">&#39;optimize_mass&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">'pre_mission'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'include_takeoff'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">'optimize_mass'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
-        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">23000.0</span><span class="p">,</span> <span class="mf">38000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary_constraint&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+    <span class="s1">'cruise'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'method'</span><span class="p">:</span> <span class="s1">'computed'</span><span class="p">}},</span>
+        <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'num_segments'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">'order'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">'mach_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'mach_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">'mach_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'mach_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">'unitless'</span><span class="p">),</span>
+            <span class="s1">'altitude_optimize'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">'altitude_polynomial_order'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">'altitude_initial'</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_final'</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'altitude_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">23000.0</span><span class="p">,</span> <span class="mf">38000.0</span><span class="p">),</span> <span class="s1">'ft'</span><span class="p">),</span>
+            <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="s1">'boundary_constraint'</span><span class="p">,</span>
+            <span class="s1">'time_initial_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
+            <span class="s1">'time_duration_bounds'</span><span class="p">:</span> <span class="p">((</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span> <span class="s1">'min'</span><span class="p">),</span>
         <span class="p">},</span>
-        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+        <span class="s1">'initial_guesses'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'time'</span><span class="p">:</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="s1">'min'</span><span class="p">)},</span>
     <span class="p">},</span>
-    <span class="s1">&#39;post_mission&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;include_landing&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">'post_mission'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'include_landing'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">},</span>
 <span class="p">}</span>
 
 <span class="c1"># inputs that run_aviary() requires</span>
-<span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv&#39;</span>
-<span class="n">mission_method</span> <span class="o">=</span> <span class="s1">&#39;energy_state&#39;</span>
-<span class="n">mass_method</span> <span class="o">=</span> <span class="s1">&#39;FLOPS&#39;</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;SLSQP&#39;</span>
+<span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'</span>
+<span class="n">mission_method</span> <span class="o">=</span> <span class="s1">'energy_state'</span>
+<span class="n">mass_method</span> <span class="o">=</span> <span class="s1">'FLOPS'</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">'SLSQP'</span>
 <span class="n">objective_type</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">restart_filename</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -1495,32 +1483,32 @@ Aviary run failed. See the dashboard for more details.
 
 <span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'done'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:touchdown_mass_max  152800.0  lbm
-  &#39;aircraft:engine:mass  [7400.]  lbm
-  &#39;aircraft:fins:mass  0.0  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  45694.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  85.5  ft
-  &#39;aircraft:fuselage:planform_area  1578.24  ft**2
-  &#39;aircraft:fuselage:wetted_area  4158.62  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  592.65  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  102.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
-  &#39;aircraft:vertical_tail:wetted_area  581.13  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.22091  unitless
-  &#39;aircraft:wing:control_surface_area  137.0  ft**2
-  &#39;aircraft:wing:wetted_area  2396.56  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.354  unitless
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Sizing mission does not include a target range.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Sizing mission does not include a target range.
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  'aircraft:design:touchdown_mass_max  152800.0  lbm
+  'aircraft:engine:mass  [7400.]  lbm
+  'aircraft:fins:mass  0.0  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  45694.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  85.5  ft
+  'aircraft:fuselage:planform_area  1578.24  ft**2
+  'aircraft:fuselage:wetted_area  4158.62  ft**2
+  'aircraft:horizontal_tail:wetted_area  592.65  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  102.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  67.0  inch
+  'aircraft:vertical_tail:wetted_area  581.13  ft**2
+  'aircraft:wing:aspect_ratio  11.22091  unitless
+  'aircraft:wing:control_surface_area  137.0  ft**2
+  'aircraft:wing:wetted_area  2396.56  ft**2
+  'mission:takeoff:lift_over_drag  17.354  unitless
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:

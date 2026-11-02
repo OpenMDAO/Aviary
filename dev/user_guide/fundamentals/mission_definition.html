@@ -614,12 +614,12 @@
 <p>Aviary uses a nested Python dictionary to define and control all aspects of the mission and its phases. The dictionary must have a very specific structure, and all valid keys Aviary recognizes are detailed later in this section. Understanding this format is necessary if you want to modify existing missions or design your own.</p>
 <p>The top level of the <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> contains a name string and a sub-dictionary for each phase in the mission. Users are free to choose any valid python name for their phases (valid characters are upper/lower case letters, numbers, and underscores.) In addition, there are two default categories “pre_mission” and “post_mission”. These contain any settings that pertain to the pre_mission, which is any calculation that occurs before the mission runs, and the post_mission, which is any calculation that occurs after the mission runs. The sub-dictionaries for “pre_mission” and “post_mission” must be named exactly as shown, and cannot have custom names.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;pre_mission&#39;</span><span class="p">:</span> <span class="p">{},</span>
-    <span class="s1">&#39;climb1&#39;</span><span class="p">:</span> <span class="p">{},</span>
-    <span class="s1">&#39;climb2&#39;</span><span class="p">:</span> <span class="p">{},</span>
-    <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{},</span>
-    <span class="s1">&#39;descent&#39;</span><span class="p">:</span> <span class="p">{},</span>
-    <span class="s1">&#39;post_mission&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">'pre_mission'</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">'climb1'</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">'climb2'</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">'cruise'</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">'descent'</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">'post_mission'</span><span class="p">:</span> <span class="p">{},</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -632,10 +632,10 @@
 <section id="phase-options">
 <h2>Phase Options<a class="headerlink" href="#phase-options" title="Link to this heading">#</a></h2>
 <p>Each phase has its own unique set of options, which are further organized inside additional sub-dictionaries. Here is an example of a phase-specific dictionary with the 3 possible sub-categories already defined:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;climb1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{},</span>
-    <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{},</span>
-    <span class="s1">&#39;initial_conditions&#39;</span><span class="p">:</span> <span class="p">{},</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span><span class="p">[</span><span class="s1">'climb1'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">'user_options'</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">'initial_conditions'</span><span class="p">:</span> <span class="p">{},</span>
 <span class="p">}</span>
 </pre></div>
 </div>

@@ -616,14 +616,14 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span>
 
-<span class="n">folder</span> <span class="o">=</span> <span class="s1">&#39;validation_cases/benchmark_tests&#39;</span>
-<span class="n">file</span> <span class="o">=</span> <span class="s1">&#39;test_FLOPS_based_sizing_N3CC.py&#39;</span>
+<span class="n">folder</span> <span class="o">=</span> <span class="s1">'validation_cases/benchmark_tests'</span>
+<span class="n">file</span> <span class="o">=</span> <span class="s1">'test_FLOPS_based_sizing_N3CC.py'</span>
 <span class="n">get_path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PosixPath(&#39;/home/runner/work/Aviary/Aviary/aviary/validation_cases/benchmark_tests/test_FLOPS_based_sizing_N3CC.py&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PosixPath('/home/runner/work/Aviary/Aviary/aviary/validation_cases/benchmark_tests/test_FLOPS_based_sizing_N3CC.py')
 </pre></div>
 </div>
 </div>
@@ -651,7 +651,7 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 <h3>Examining the design case<a class="headerlink" href="#examining-the-design-case" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""</span>
 <span class="sd">This is an example of running a coupled aircraft design-mission optimization in Aviary without using</span>
 <span class="sd">the lower level APIs.</span>
 <span class="sd">It runs the same aircraft and mission as the `simple mission` example.</span>
@@ -659,9 +659,9 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 <span class="sd">from the file.</span>
 
 <span class="sd">This script unwraps the subsystem and trajectory builders, exposing how Aviary interacts with</span>
-<span class="sd">openMDAO and Dymos. It is divided into sections separated by &#39;####&#39; with the level2 api calls</span>
+<span class="sd">openMDAO and Dymos. It is divided into sections separated by '####' with the level2 api calls</span>
 <span class="sd">commented out so you can see what happens in each level2 method.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
@@ -681,13 +681,13 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">L3SubsystemsGroup</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Group that contains all pre-mission groups of core Aviary subsystems (geometry, mass, propulsion, aerodynamics).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Group that contains all pre-mission groups of core Aviary subsystems (geometry, mass, propulsion, aerodynamics)."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
-            <span class="s1">&#39;aviary_options&#39;</span><span class="p">,</span>
+            <span class="s1">'aviary_options'</span><span class="p">,</span>
             <span class="n">types</span><span class="o">=</span><span class="n">AviaryValues</span><span class="p">,</span>
-            <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;collection of Aircraft/Mission specific options&#39;</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s1">'collection of Aircraft/Mission specific options'</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">code_origin_overrides</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -700,7 +700,7 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 
 <span class="c1">#####</span>
 <span class="c1"># prob.load_inputs(csv_path, phase_info)</span>
-<span class="n">csv_path</span> <span class="o">=</span> <span class="s1">&#39;models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv&#39;</span>
+<span class="n">csv_path</span> <span class="o">=</span> <span class="s1">'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv'</span>
 
 <span class="n">aviary_inputs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">create_vehicle</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span>
 
@@ -708,7 +708,7 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mission_info</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">phase_name</span> <span class="ow">in</span> <span class="n">phase_info</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">phase_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pre_mission&#39;</span><span class="p">,</span> <span class="s1">&#39;post_mission&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">phase_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'pre_mission'</span><span class="p">,</span> <span class="s1">'post_mission'</span><span class="p">]:</span>
         <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mission_info</span><span class="p">[</span><span class="n">phase_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase_info</span><span class="p">[</span><span class="n">phase_name</span><span class="p">]</span>
 
 <span class="c1">#####</span>
@@ -717,66 +717,66 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 
 <span class="c1">#####</span>
 <span class="c1"># prob.add_pre_mission_systems()</span>
-<span class="n">aerodynamics</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreAerodynamicsBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">&#39;FLOPS&#39;</span><span class="p">))</span>
-<span class="n">geometry</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreGeometryBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">&#39;FLOPS&#39;</span><span class="p">))</span>
-<span class="n">mass</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreMassBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">&#39;FLOPS&#39;</span><span class="p">))</span>
+<span class="n">aerodynamics</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreAerodynamicsBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">'FLOPS'</span><span class="p">))</span>
+<span class="n">geometry</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreGeometryBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">'FLOPS'</span><span class="p">))</span>
+<span class="n">mass</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreMassBuilder</span><span class="p">(</span><span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="p">(</span><span class="s1">'FLOPS'</span><span class="p">))</span>
 <span class="n">propulsion</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CorePropulsionBuilder</span><span class="p">(</span><span class="n">engine_models</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">core_subsystems</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;propulsion&#39;</span><span class="p">:</span> <span class="n">propulsion</span><span class="p">,</span>
-    <span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="n">geometry</span><span class="p">,</span>
-    <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="n">mass</span><span class="p">,</span>
-    <span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="n">aerodynamics</span><span class="p">,</span>
+    <span class="s1">'propulsion'</span><span class="p">:</span> <span class="n">propulsion</span><span class="p">,</span>
+    <span class="s1">'geometry'</span><span class="p">:</span> <span class="n">geometry</span><span class="p">,</span>
+    <span class="s1">'mass'</span><span class="p">:</span> <span class="n">mass</span><span class="p">,</span>
+    <span class="s1">'aerodynamics'</span><span class="p">:</span> <span class="n">aerodynamics</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">meta_data</span> <span class="o">=</span> <span class="n">CoreMetaData</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;pre_mission&#39;</span><span class="p">,</span>
+    <span class="s1">'pre_mission'</span><span class="p">,</span>
     <span class="n">StaticGroup</span><span class="p">(),</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;aircraft:*&#39;</span><span class="p">,</span> <span class="s1">&#39;mission:*&#39;</span><span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;aircraft:*&#39;</span><span class="p">,</span> <span class="s1">&#39;mission:*&#39;</span><span class="p">],</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'aircraft:*'</span><span class="p">,</span> <span class="s1">'mission:*'</span><span class="p">],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'aircraft:*'</span><span class="p">,</span> <span class="s1">'mission:*'</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="c1"># This is a combination of prob.add_pre_mission_systems and prob.setup()</span>
 <span class="c1"># In the aviary code add_pre_mission_systems only instantiates the objects and methods, the build method is called in prob.setup()</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">pre_mission</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;core_propulsion&#39;</span><span class="p">,</span>
+    <span class="s1">'core_propulsion'</span><span class="p">,</span>
     <span class="n">propulsion</span><span class="o">.</span><span class="n">build_pre_mission</span><span class="p">(</span><span class="n">aviary_inputs</span><span class="p">,</span> <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{}),</span>
 <span class="p">)</span>
 
 <span class="c1"># adding another group subsystem to match the L2 example</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">pre_mission</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;core_subsystems&#39;</span><span class="p">,</span>
+    <span class="s1">'core_subsystems'</span><span class="p">,</span>
     <span class="n">L3SubsystemsGroup</span><span class="p">(</span><span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_inputs</span><span class="p">),</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">pre_mission</span><span class="o">.</span><span class="n">core_subsystems</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;core_geometry&#39;</span><span class="p">,</span>
+    <span class="s1">'core_geometry'</span><span class="p">,</span>
     <span class="n">geometry</span><span class="o">.</span><span class="n">build_pre_mission</span><span class="p">(</span><span class="n">aviary_inputs</span><span class="p">,</span> <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{}),</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">pre_mission</span><span class="o">.</span><span class="n">core_subsystems</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">,</span>
+    <span class="s1">'core_aerodynamics'</span><span class="p">,</span>
     <span class="n">aerodynamics</span><span class="o">.</span><span class="n">build_pre_mission</span><span class="p">(</span><span class="n">aviary_inputs</span><span class="p">,</span> <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{}),</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">pre_mission</span><span class="o">.</span><span class="n">core_subsystems</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;core_mass&#39;</span><span class="p">,</span>
+    <span class="s1">'core_mass'</span><span class="p">,</span>
     <span class="n">mass</span><span class="o">.</span><span class="n">build_pre_mission</span><span class="p">(</span><span class="n">aviary_inputs</span><span class="p">,</span> <span class="n">subsystem_options</span><span class="o">=</span><span class="p">{}),</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="c1">#####</span>
 <span class="c1"># prob.add_phases()</span>
-<span class="n">phase_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;climb&#39;</span><span class="p">,</span> <span class="s1">&#39;cruise&#39;</span><span class="p">,</span> <span class="s1">&#39;descent&#39;</span><span class="p">]</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">traj</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">())</span>
+<span class="n">phase_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'climb'</span><span class="p">,</span> <span class="s1">'cruise'</span><span class="p">,</span> <span class="s1">'descent'</span><span class="p">]</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">traj</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">'traj'</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">())</span>
 <span class="n">default_mission_subsystems</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">core_subsystems</span><span class="p">[</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">],</span>
-    <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">core_subsystems</span><span class="p">[</span><span class="s1">&#39;propulsion&#39;</span><span class="p">],</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">core_subsystems</span><span class="p">[</span><span class="s1">'aerodynamics'</span><span class="p">],</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">core_subsystems</span><span class="p">[</span><span class="s1">'propulsion'</span><span class="p">],</span>
 <span class="p">]</span>
 <span class="n">phases</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">phase_idx</span><span class="p">,</span> <span class="n">phase_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">phase_list</span><span class="p">):</span>
@@ -784,9 +784,9 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
     <span class="n">phase_options</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">base_phase_options</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">phase_options</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-    <span class="n">phase_options</span><span class="p">[</span><span class="s1">&#39;user_options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">base_phase_options</span><span class="p">[</span><span class="s1">&#39;user_options&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">phase_options</span><span class="p">[</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="n">phase_options</span><span class="p">[</span><span class="s1">'user_options'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">base_phase_options</span><span class="p">[</span><span class="s1">'user_options'</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">phase_options</span><span class="p">[</span><span class="s1">'user_options'</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
 
     <span class="c1"># Create the dymos phase object and add it to the trajectory</span>
     <span class="c1"># phase_builder = EnergyPhase</span>
@@ -797,14 +797,14 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
     <span class="c1"># )</span>
 
     <span class="c1"># user_options dict entries need reformatting</span>
-    <span class="c1"># if the value is not a tuple, wrap it in a tuple with the second entry of &#39;unitless&#39;</span>
-    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">phase_options</span><span class="p">[</span><span class="s1">&#39;user_options&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="c1"># if the value is not a tuple, wrap it in a tuple with the second entry of 'unitless'</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">phase_options</span><span class="p">[</span><span class="s1">'user_options'</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="n">phase_options</span><span class="p">[</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-    <span class="n">subsystem_options</span> <span class="o">=</span> <span class="n">phase_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;subsystem_options&#39;</span><span class="p">,</span> <span class="p">{})</span>
-    <span class="n">user_options</span> <span class="o">=</span> <span class="n">phase_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_options&#39;</span><span class="p">,</span> <span class="p">())</span>
+            <span class="n">phase_options</span><span class="p">[</span><span class="s1">'user_options'</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">)</span>
+    <span class="n">subsystem_options</span> <span class="o">=</span> <span class="n">phase_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'subsystem_options'</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">user_options</span> <span class="o">=</span> <span class="n">phase_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'user_options'</span><span class="p">,</span> <span class="p">())</span>
     <span class="n">initial_guesses</span> <span class="o">=</span> <span class="n">AviaryValues</span><span class="p">(</span>
-        <span class="n">phase_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;initial_guesses&#39;</span><span class="p">,</span> <span class="p">())</span>
+        <span class="n">phase_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'initial_guesses'</span><span class="p">,</span> <span class="p">())</span>
     <span class="p">)</span>  <span class="c1"># Not used in this example</span>
 
     <span class="c1"># instantiate the PhaseBuilderBaseClass:</span>
@@ -829,13 +829,13 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 
     <span class="n">ode_class</span> <span class="o">=</span> <span class="n">EnergyStateODE</span>
     <span class="n">user_options</span> <span class="o">=</span> <span class="n">FlightPhaseOptions</span><span class="p">(</span><span class="n">user_options</span><span class="p">)</span>
-    <span class="n">num_segments</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;num_segments&#39;</span><span class="p">]</span>
-    <span class="n">order</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;order&#39;</span><span class="p">]</span>
+    <span class="n">num_segments</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">'num_segments'</span><span class="p">]</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">'order'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">shooting</span><span class="p">:</span>
         <span class="n">nodes_per_seg</span> <span class="o">=</span> <span class="n">order</span> <span class="o">*</span> <span class="n">num_segments</span>
         <span class="n">transcription</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">PicardShooting</span><span class="p">(</span>
-            <span class="n">num_segments</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nodes_per_seg</span><span class="o">=</span><span class="n">nodes_per_seg</span><span class="p">,</span> <span class="n">solve_segments</span><span class="o">=</span><span class="s1">&#39;forward&#39;</span>
+            <span class="n">num_segments</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nodes_per_seg</span><span class="o">=</span><span class="n">nodes_per_seg</span><span class="p">,</span> <span class="n">solve_segments</span><span class="o">=</span><span class="s1">'forward'</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">seg_ends</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">lgl</span><span class="o">.</span><span class="n">lgl</span><span class="p">(</span><span class="n">num_segments</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
@@ -844,65 +844,65 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
         <span class="p">)</span>
 
     <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;meta_data&#39;</span><span class="p">:</span> <span class="n">prob</span><span class="o">.</span><span class="n">meta_data</span><span class="p">,</span>
-        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="n">subsystem_options</span><span class="p">,</span>
-        <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;throttle_allocation&#39;</span><span class="p">:</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;throttle_allocation&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;subsystems&#39;</span><span class="p">:</span> <span class="n">default_mission_subsystems</span><span class="p">,</span>
+        <span class="s1">'meta_data'</span><span class="p">:</span> <span class="n">prob</span><span class="o">.</span><span class="n">meta_data</span><span class="p">,</span>
+        <span class="s1">'subsystem_options'</span><span class="p">:</span> <span class="n">subsystem_options</span><span class="p">,</span>
+        <span class="s1">'throttle_enforcement'</span><span class="p">:</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">'throttle_enforcement'</span><span class="p">],</span>
+        <span class="s1">'throttle_allocation'</span><span class="p">:</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">'throttle_allocation'</span><span class="p">],</span>
+        <span class="s1">'subsystems'</span><span class="p">:</span> <span class="n">default_mission_subsystems</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;aviary_options&#39;</span><span class="p">:</span> <span class="n">aviary_inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'aviary_options'</span><span class="p">:</span> <span class="n">aviary_inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
     <span class="n">phase</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Phase</span><span class="p">(</span><span class="n">ode_class</span><span class="o">=</span><span class="n">ode_class</span><span class="p">,</span> <span class="n">transcription</span><span class="o">=</span><span class="n">transcription</span><span class="p">,</span> <span class="n">ode_init_kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">tx_mission_bus</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">GaussLobatto</span><span class="p">(</span>
-        <span class="n">num_segments</span><span class="o">=</span><span class="n">transcription</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;num_segments&#39;</span><span class="p">],</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">compressed</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">num_segments</span><span class="o">=</span><span class="n">transcription</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">'num_segments'</span><span class="p">],</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">compressed</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>  <span class="c1"># equally spaced points in this output - this is going to be better than using picard or radau.</span>
-    <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;mission_bus_variables&#39;</span><span class="p">,</span> <span class="n">transcription</span><span class="o">=</span><span class="n">tx_mission_bus</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+    <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'mission_bus_variables'</span><span class="p">,</span> <span class="n">transcription</span><span class="o">=</span><span class="n">tx_mission_bus</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s1">'all'</span><span class="p">)</span>
     <span class="n">num_engine_type</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
         <span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_ENGINES</span><span class="p">)</span>
     <span class="p">)</span>  <span class="c1"># not used in this example</span>
-    <span class="n">throttle_enforcement</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">]</span>
-    <span class="n">no_descent</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;no_descent&#39;</span><span class="p">]</span>  <span class="c1"># not used in this example</span>
-    <span class="n">no_climb</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;no_climb&#39;</span><span class="p">]</span>  <span class="c1"># not used in this example</span>
-    <span class="n">constraints</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;constraints&#39;</span><span class="p">]</span>  <span class="c1"># not used in this example</span>
-    <span class="n">ground_roll</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;ground_roll&#39;</span><span class="p">]</span>  <span class="c1"># not used in this example</span>
+    <span class="n">throttle_enforcement</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">'throttle_enforcement'</span><span class="p">]</span>
+    <span class="n">no_descent</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">'no_descent'</span><span class="p">]</span>  <span class="c1"># not used in this example</span>
+    <span class="n">no_climb</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">'no_climb'</span><span class="p">]</span>  <span class="c1"># not used in this example</span>
+    <span class="n">constraints</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">'constraints'</span><span class="p">]</span>  <span class="c1"># not used in this example</span>
+    <span class="n">ground_roll</span> <span class="o">=</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">'ground_roll'</span><span class="p">]</span>  <span class="c1"># not used in this example</span>
 
     <span class="n">phase</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span>
         <span class="n">fix_initial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">input_initial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mass_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mass_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
-        <span class="n">units</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mass_bounds&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mass_bounds'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mass_bounds'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">units</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mass_bounds'</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
         <span class="n">rate_source</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL</span><span class="p">,</span>
-        <span class="n">ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mass_ref&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">ref0</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mass_ref0&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">defect_ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">solve_segments</span><span class="o">=</span><span class="s1">&#39;forward&#39;</span> <span class="k">if</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mass_solve_segments&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mass_ref'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">ref0</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mass_ref0'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">defect_ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mass_defect_ref'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">solve_segments</span><span class="o">=</span><span class="s1">'forward'</span> <span class="k">if</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">'mass_solve_segments'</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">phase</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">,</span>
         <span class="n">fix_initial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">input_initial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;distance_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;distance_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
-        <span class="n">units</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;distance_bounds&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'distance_bounds'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'distance_bounds'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">units</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'distance_bounds'</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
         <span class="n">rate_source</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE_RATE</span><span class="p">,</span>
-        <span class="n">ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;distance_ref&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">ref0</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;distance_ref0&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">defect_ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">solve_segments</span><span class="o">=</span><span class="s1">&#39;forward&#39;</span> <span class="k">if</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;distance_solve_segments&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'distance_ref'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">ref0</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'distance_ref0'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">defect_ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'distance_defect_ref'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">solve_segments</span><span class="o">=</span><span class="s1">'forward'</span> <span class="k">if</span> <span class="n">user_options</span><span class="p">[</span><span class="s1">'distance_solve_segments'</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">phase</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span>
         <span class="n">targets</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span>
-        <span class="n">opt</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_optimize&#39;</span><span class="p">],</span>
-        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
-        <span class="n">ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_ref&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">ref0</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_ref0&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">control_type</span><span class="o">=</span><span class="s1">&#39;polynomial&#39;</span><span class="p">,</span>
-        <span class="n">order</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">],</span>
+        <span class="n">opt</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mach_optimize'</span><span class="p">],</span>
+        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mach_bounds'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mach_bounds'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mach_ref'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">ref0</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mach_ref0'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">control_type</span><span class="o">=</span><span class="s1">'polynomial'</span><span class="p">,</span>
+        <span class="n">order</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'mach_polynomial_order'</span><span class="p">],</span>
         <span class="n">rate_targets</span><span class="o">=</span><span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH_RATE</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">)</span>
@@ -910,80 +910,80 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
     <span class="n">phase</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span>
         <span class="n">targets</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span>
-        <span class="n">opt</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_optimize&#39;</span><span class="p">],</span>
-        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_bounds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
-        <span class="n">ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_ref&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">ref0</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_ref0&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">control_type</span><span class="o">=</span><span class="s1">&#39;polynomial&#39;</span><span class="p">,</span>
-        <span class="n">order</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">],</span>
-        <span class="n">units</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">&#39;altitude_bounds&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">opt</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'altitude_optimize'</span><span class="p">],</span>
+        <span class="n">lower</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'altitude_bounds'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">upper</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'altitude_bounds'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">ref</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'altitude_ref'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">ref0</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'altitude_ref0'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">control_type</span><span class="o">=</span><span class="s1">'polynomial'</span><span class="p">,</span>
+        <span class="n">order</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'altitude_polynomial_order'</span><span class="p">],</span>
+        <span class="n">units</span><span class="o">=</span><span class="n">user_options</span><span class="p">[</span><span class="s1">'altitude_bounds'</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
         <span class="n">rate_targets</span><span class="o">=</span><span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE_RATE</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">)</span>
 
-    <span class="c1"># if throttle_enforcement == &#39;control&#39;:</span>
+    <span class="c1"># if throttle_enforcement == 'control':</span>
     <span class="c1"># add throttle as control</span>
     <span class="c1"># not used in this example</span>
 
     <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">THRUST_TOTAL</span><span class="p">,</span>
         <span class="n">output_name</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">THRUST_TOTAL</span><span class="p">,</span>
-        <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbf&#39;</span><span class="p">,</span>
+        <span class="n">units</span><span class="o">=</span><span class="s1">'lbf'</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">DRAG</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">DRAG</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbf&#39;</span><span class="p">)</span>
+    <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">DRAG</span><span class="p">,</span> <span class="n">output_name</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">DRAG</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbf'</span><span class="p">)</span>
 
     <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">SPECIFIC_ENERGY_RATE_EXCESS</span><span class="p">,</span>
         <span class="n">output_name</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">SPECIFIC_ENERGY_RATE_EXCESS</span><span class="p">,</span>
-        <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m/s&#39;</span><span class="p">,</span>
+        <span class="n">units</span><span class="o">=</span><span class="s1">'m/s'</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL</span><span class="p">,</span>
         <span class="n">output_name</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL</span><span class="p">,</span>
-        <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm/h&#39;</span><span class="p">,</span>
+        <span class="n">units</span><span class="o">=</span><span class="s1">'lbm/h'</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">ELECTRIC_POWER_IN_TOTAL</span><span class="p">,</span>
         <span class="n">output_name</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">ELECTRIC_POWER_IN_TOTAL</span><span class="p">,</span>
-        <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kW&#39;</span><span class="p">,</span>
+        <span class="n">units</span><span class="o">=</span><span class="s1">'kW'</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE_RATE</span><span class="p">,</span>
         <span class="n">output_name</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE_RATE</span><span class="p">,</span>
-        <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft/s&#39;</span><span class="p">,</span>
+        <span class="n">units</span><span class="o">=</span><span class="s1">'ft/s'</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">throttle_enforcement</span> <span class="o">!=</span> <span class="s1">&#39;control&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">throttle_enforcement</span> <span class="o">!=</span> <span class="s1">'control'</span><span class="p">:</span>
         <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">THROTTLE</span><span class="p">,</span>
             <span class="n">output_name</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">THROTTLE</span><span class="p">,</span>
-            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">phase</span><span class="o">.</span><span class="n">add_timeseries_output</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">VELOCITY</span><span class="p">,</span>
         <span class="n">output_name</span><span class="o">=</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">VELOCITY</span><span class="p">,</span>
-        <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m/s&#39;</span><span class="p">,</span>
+        <span class="n">units</span><span class="o">=</span><span class="s1">'m/s'</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">phase</span><span class="o">.</span><span class="n">add_path_constraint</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">THROTTLE</span><span class="p">,</span>
         <span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
         <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-        <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+        <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">prob</span><span class="o">.</span><span class="n">traj</span><span class="o">.</span><span class="n">add_phase</span><span class="p">(</span><span class="n">phase_name</span><span class="p">,</span> <span class="n">phase</span><span class="p">)</span>
     <span class="n">phases</span><span class="p">[</span><span class="n">phase_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase</span>
 
-<span class="n">climb</span> <span class="o">=</span> <span class="n">phases</span><span class="p">[</span><span class="s1">&#39;climb&#39;</span><span class="p">]</span>
-<span class="n">cruise</span> <span class="o">=</span> <span class="n">phases</span><span class="p">[</span><span class="s1">&#39;cruise&#39;</span><span class="p">]</span>
-<span class="n">descent</span> <span class="o">=</span> <span class="n">phases</span><span class="p">[</span><span class="s1">&#39;descent&#39;</span><span class="p">]</span>
+<span class="n">climb</span> <span class="o">=</span> <span class="n">phases</span><span class="p">[</span><span class="s1">'climb'</span><span class="p">]</span>
+<span class="n">cruise</span> <span class="o">=</span> <span class="n">phases</span><span class="p">[</span><span class="s1">'cruise'</span><span class="p">]</span>
+<span class="n">descent</span> <span class="o">=</span> <span class="n">phases</span><span class="p">[</span><span class="s1">'descent'</span><span class="p">]</span>
 
-<span class="n">externs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;climb&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;descent&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+<span class="n">externs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'climb'</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">'cruise'</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">'descent'</span><span class="p">:</span> <span class="p">{}}</span>
 <span class="k">for</span> <span class="n">default_subsys</span> <span class="ow">in</span> <span class="n">default_mission_subsystems</span><span class="p">:</span>
     <span class="n">params</span> <span class="o">=</span> <span class="n">default_subsys</span><span class="o">.</span><span class="n">get_parameters</span><span class="p">(</span>
         <span class="n">aviary_inputs</span><span class="o">=</span><span class="n">aviary_inputs</span><span class="p">,</span>
@@ -1004,10 +1004,10 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 <span class="c1">#####</span>
 <span class="c1">#  prob.add_post_mission_systems()</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;post_mission&#39;</span><span class="p">,</span>
+    <span class="s1">'post_mission'</span><span class="p">,</span>
     <span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">(),</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="n">climb</span><span class="o">.</span><span class="n">set_state_options</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="n">fix_initial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">input_initial</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1033,16 +1033,16 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 <span class="p">)</span>
 
 <span class="n">eq</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;link_climb_mass&#39;</span><span class="p">,</span>
+    <span class="s1">'link_climb_mass'</span><span class="p">,</span>
     <span class="n">om</span><span class="o">.</span><span class="n">EQConstraintComp</span><span class="p">(),</span>
-    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;rhs:mass&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">)],</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">'rhs:mass'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">)],</span>
 <span class="p">)</span>
 
-<span class="n">eq</span><span class="o">.</span><span class="n">add_eq_output</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="n">eq_units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">100000.0</span><span class="p">,</span> <span class="n">add_constraint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">eq</span><span class="o">.</span><span class="n">add_eq_output</span><span class="p">(</span><span class="s1">'mass'</span><span class="p">,</span> <span class="n">eq_units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">100000.0</span><span class="p">,</span> <span class="n">add_constraint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-    <span class="s1">&#39;traj.climb.states:mass&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;link_climb_mass.lhs:mass&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.climb.states:mass'</span><span class="p">,</span>
+    <span class="s1">'link_climb_mass.lhs:mass'</span><span class="p">,</span>
     <span class="n">src_indices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="n">flat_src_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1052,124 +1052,124 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 <span class="c1"># for reference this is the end of builder.add_post_mission_systems()</span>
 
 <span class="n">ecomp</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
-    <span class="s1">&#39;fuel_burned = initial_mass - mass_final&#39;</span><span class="p">,</span>
-    <span class="n">initial_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
-    <span class="n">mass_final</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
-    <span class="n">fuel_burned</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
+    <span class="s1">'fuel_burned = initial_mass - mass_final'</span><span class="p">,</span>
+    <span class="n">initial_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
+    <span class="n">mass_final</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
+    <span class="n">fuel_burned</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">post_mission</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;fuel_burned&#39;</span><span class="p">,</span>
+    <span class="s1">'fuel_burned'</span><span class="p">,</span>
     <span class="n">ecomp</span><span class="p">,</span>
-    <span class="n">promotes</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;fuel_burned&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">)],</span>
+    <span class="n">promotes</span><span class="o">=</span><span class="p">[(</span><span class="s1">'fuel_burned'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">)],</span>
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-    <span class="s1">&#39;traj.climb.timeseries.mass&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;fuel_burned.initial_mass&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.climb.timeseries.mass'</span><span class="p">,</span>
+    <span class="s1">'fuel_burned.initial_mass'</span><span class="p">,</span>
     <span class="n">src_indices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-    <span class="s1">&#39;traj.descent.timeseries.mass&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;fuel_burned.mass_final&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.descent.timeseries.mass'</span><span class="p">,</span>
+    <span class="s1">'fuel_burned.mass_final'</span><span class="p">,</span>
     <span class="n">src_indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="n">reserve_fuel_mass_additional</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
-    <span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MASS_ADDITIONAL</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span>
+    <span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MASS_ADDITIONAL</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span>
 <span class="p">)</span>
 
 <span class="n">reserve_fuel_mass</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
-    <span class="s1">&#39;reserve_fuel_mass = reserve_fuel_frac_mass + reserve_fuel_mass_additional + reserve_fuel_burned&#39;</span><span class="p">,</span>
-    <span class="n">reserve_fuel_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-    <span class="n">reserve_fuel_frac_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
-    <span class="n">reserve_fuel_mass_additional</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="n">reserve_fuel_mass_additional</span><span class="p">},</span>
-    <span class="n">reserve_fuel_burned</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="s1">'reserve_fuel_mass = reserve_fuel_frac_mass + reserve_fuel_mass_additional + reserve_fuel_burned'</span><span class="p">,</span>
+    <span class="n">reserve_fuel_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">,</span> <span class="s1">'shape'</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="n">reserve_fuel_frac_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">,</span> <span class="s1">'val'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">reserve_fuel_mass_additional</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">,</span> <span class="s1">'val'</span><span class="p">:</span> <span class="n">reserve_fuel_mass_additional</span><span class="p">},</span>
+    <span class="n">reserve_fuel_burned</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">,</span> <span class="s1">'val'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">post_mission</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;reserve_fuel_mass&#39;</span><span class="p">,</span>
+    <span class="s1">'reserve_fuel_mass'</span><span class="p">,</span>
     <span class="n">reserve_fuel_mass</span><span class="p">,</span>
     <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
-        <span class="s1">&#39;reserve_fuel_frac_mass&#39;</span><span class="p">,</span>
-        <span class="p">(</span><span class="s1">&#39;reserve_fuel_mass_additional&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MASS_ADDITIONAL</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;reserve_fuel_burned&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MASS</span><span class="p">),</span>
+        <span class="s1">'reserve_fuel_frac_mass'</span><span class="p">,</span>
+        <span class="p">(</span><span class="s1">'reserve_fuel_mass_additional'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MASS_ADDITIONAL</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'reserve_fuel_burned'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">RESERVE_FUEL_MASS</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;reserve_fuel_mass&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_RESERVE_FUEL_MASS</span><span class="p">)],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">'reserve_fuel_mass'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_RESERVE_FUEL_MASS</span><span class="p">)],</span>
 <span class="p">)</span>
 
 <span class="n">ecomp</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
-    <span class="s1">&#39;overall_fuel = fuel_burned + reserve_fuel_mass&#39;</span><span class="p">,</span>
-    <span class="n">overall_fuel</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-    <span class="n">fuel_burned</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>  <span class="c1"># from main_phases only</span>
-    <span class="n">reserve_fuel_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="s1">'overall_fuel = fuel_burned + reserve_fuel_mass'</span><span class="p">,</span>
+    <span class="n">overall_fuel</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">,</span> <span class="s1">'shape'</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="n">fuel_burned</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>  <span class="c1"># from main_phases only</span>
+    <span class="n">reserve_fuel_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">,</span> <span class="s1">'shape'</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">post_mission</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;fuel_calc&#39;</span><span class="p">,</span>
+    <span class="s1">'fuel_calc'</span><span class="p">,</span>
     <span class="n">ecomp</span><span class="p">,</span>
     <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">(</span><span class="s1">&#39;fuel_burned&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;reserve_fuel_mass&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_RESERVE_FUEL_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'fuel_burned'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'reserve_fuel_mass'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_RESERVE_FUEL_MASS</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;overall_fuel&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">)],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">'overall_fuel'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">)],</span>
 <span class="p">)</span>
 
 <span class="c1"># If target distances have been set per phase then there is a block of code to add here.</span>
-<span class="c1"># In this case individual phases don&#39;t have target distances.</span>
+<span class="c1"># In this case individual phases don't have target distances.</span>
 
 <span class="n">ecomp</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
-    <span class="s1">&#39;mass_resid = operating_empty_mass + overall_fuel + payload_mass - initial_mass&#39;</span><span class="p">,</span>
-    <span class="n">operating_empty_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
-    <span class="n">overall_fuel</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
-    <span class="n">payload_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
-    <span class="n">initial_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
-    <span class="n">mass_resid</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
+    <span class="s1">'mass_resid = operating_empty_mass + overall_fuel + payload_mass - initial_mass'</span><span class="p">,</span>
+    <span class="n">operating_empty_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
+    <span class="n">overall_fuel</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
+    <span class="n">payload_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
+    <span class="n">initial_mass</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
+    <span class="n">mass_resid</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">post_mission</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;mass_constraint&#39;</span><span class="p">,</span>
+    <span class="s1">'mass_constraint'</span><span class="p">,</span>
     <span class="n">ecomp</span><span class="p">,</span>
     <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">(</span><span class="s1">&#39;operating_empty_mass&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">OPERATING_MASS</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;overall_fuel&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;payload_mass&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">TOTAL_PAYLOAD_MASS</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;initial_mass&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'operating_empty_mass'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">OPERATING_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'overall_fuel'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'payload_mass'</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">TOTAL_PAYLOAD_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'initial_mass'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;mass_resid&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">MASS_RESIDUAL</span><span class="p">)],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">'mass_resid'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">MASS_RESIDUAL</span><span class="p">)],</span>
 <span class="p">)</span>
 
 <span class="n">ecomp</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
-    <span class="s1">&#39;excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel&#39;</span><span class="p">,</span>
-    <span class="n">total_fuel_capacity</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
-    <span class="n">unusable_fuel</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
-    <span class="n">overall_fuel</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
-    <span class="n">excess_fuel_capacity</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
+    <span class="s1">'excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel'</span><span class="p">,</span>
+    <span class="n">total_fuel_capacity</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
+    <span class="n">unusable_fuel</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
+    <span class="n">overall_fuel</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
+    <span class="n">excess_fuel_capacity</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">post_mission</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;excess_fuel_constraint&#39;</span><span class="p">,</span>
+    <span class="s1">'excess_fuel_constraint'</span><span class="p">,</span>
     <span class="n">ecomp</span><span class="p">,</span>
     <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">(</span><span class="s1">&#39;total_fuel_capacity&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">MAX_CAPACITY_MASS</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;unusable_fuel&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">UNUSABLE_FUEL_MASS</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;overall_fuel&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'total_fuel_capacity'</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">MAX_CAPACITY_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'unusable_fuel'</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">UNUSABLE_FUEL_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'overall_fuel'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;excess_fuel_capacity&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">EXCESS_FUEL_MASS_CAPACITY</span><span class="p">)],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">'excess_fuel_capacity'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">EXCESS_FUEL_MASS_CAPACITY</span><span class="p">)],</span>
 <span class="p">)</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">EXCESS_FUEL_MASS_CAPACITY</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Constraints</span><span class="o">.</span><span class="n">EXCESS_FUEL_MASS_CAPACITY</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
 
 <span class="c1">#####</span>
 <span class="c1"># prob.link_phases()</span>
 
 <span class="n">all_subsystems</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">all_subsystems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">core_subsystems</span><span class="p">[</span><span class="s1">&#39;propulsion&#39;</span><span class="p">])</span>
+<span class="n">all_subsystems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">core_subsystems</span><span class="p">[</span><span class="s1">'propulsion'</span><span class="p">])</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">traj</span><span class="o">.</span><span class="n">link_phases</span><span class="p">(</span><span class="n">phase_list</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">traj</span><span class="o">.</span><span class="n">link_phases</span><span class="p">(</span><span class="n">phase_list</span><span class="p">,</span> <span class="p">[</span><span class="s1">'time'</span><span class="p">],</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">traj</span><span class="o">.</span><span class="n">link_phases</span><span class="p">(</span><span class="n">phase_list</span><span class="p">,</span> <span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Vehicle</span><span class="o">.</span><span class="n">MASS</span><span class="p">],</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">traj</span><span class="o">.</span><span class="n">link_phases</span><span class="p">(</span><span class="n">phase_list</span><span class="p">,</span> <span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">],</span> <span class="n">ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-    <span class="s1">&#39;traj.descent.timeseries.distance&#39;</span><span class="p">,</span>
+    <span class="s1">'traj.descent.timeseries.distance'</span><span class="p">,</span>
     <span class="n">Mission</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span>
     <span class="n">src_indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
     <span class="n">flat_src_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -1178,42 +1178,42 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 <span class="c1">#####</span>
 <span class="c1"># Each driver requires different settings - uncomment the one to be used:</span>
 
-<span class="c1"># prob.add_driver(&#39;SLSQP&#39;, max_iter=50)</span>
+<span class="c1"># prob.add_driver('SLSQP', max_iter=50)</span>
 <span class="c1"># SLSQP Optimizer Settings</span>
 <span class="c1"># prob.driver = om.ScipyOptimizeDriver()</span>
-<span class="c1"># prob.driver.options[&#39;optimizer&#39;] = &#39;SLSQP&#39;</span>
+<span class="c1"># prob.driver.options['optimizer'] = 'SLSQP'</span>
 <span class="c1"># prob.driver.declare_coloring(show_summary=False)</span>
-<span class="c1"># prob.driver.options[&#39;disp&#39;] = True</span>
-<span class="c1"># prob.driver.options[&#39;tol&#39;] = 1e-9</span>
-<span class="c1"># prob.driver.options[&#39;maxiter&#39;] = 50</span>
+<span class="c1"># prob.driver.options['disp'] = True</span>
+<span class="c1"># prob.driver.options['tol'] = 1e-9</span>
+<span class="c1"># prob.driver.options['maxiter'] = 50</span>
 
-<span class="c1"># prob.add_driver(&#39;IPOPT&#39;, max_iter=50)</span>
+<span class="c1"># prob.add_driver('IPOPT', max_iter=50)</span>
 <span class="c1"># IPOPT Optimizer Settings</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">pyOptSparseDriver</span><span class="p">()</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;IPOPT&#39;</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">'optimizer'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'IPOPT'</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">declare_coloring</span><span class="p">(</span><span class="n">show_summary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;print_user_options&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;no&#39;</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;print_frequency_iter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;print_level&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;tol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0e-6</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;mu_init&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-5</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;nlp_scaling_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;gradient-based&#39;</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;alpha_for_y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;safer-min-dual-infeas&#39;</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;mu_strategy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;monotone&#39;</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;print_results&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;minimal&#39;</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">'print_user_options'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'no'</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">'print_frequency_iter'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">'print_level'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">'tol'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0e-6</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">'mu_init'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-5</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">'max_iter'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">'nlp_scaling_method'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'gradient-based'</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">'alpha_for_y'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'safer-min-dual-infeas'</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">'mu_strategy'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'monotone'</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">'print_results'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'minimal'</span>
 
-<span class="c1"># prob.add_driver(&#39;SNOPT&#39;, max_iter=50)</span>
+<span class="c1"># prob.add_driver('SNOPT', max_iter=50)</span>
 <span class="c1"># SNOPT Optimizer Settings #</span>
 <span class="c1"># prob.driver = om.pyOptSparseDriver()</span>
-<span class="c1"># prob.driver.options[&#39;optimizer&#39;] = &#39;SNOPT&#39;</span>
+<span class="c1"># prob.driver.options['optimizer'] = 'SNOPT'</span>
 <span class="c1"># prob.driver.declare_coloring(show_summary=False)</span>
-<span class="c1"># prob.driver.opt_settings[&#39;iSumm&#39;] = 6</span>
-<span class="c1"># prob.driver.opt_settings[&#39;iPrint&#39;] = 0</span>
-<span class="c1"># prob.driver.opt_settings[&#39;Major iterations limit&#39;] = 50</span>
-<span class="c1"># prob.driver.opt_settings[&#39;Major optimality tolerance&#39;] = 1e-4</span>
-<span class="c1"># prob.driver.opt_settings[&#39;Major feasibility tolerance&#39;] = 1e-7</span>
-<span class="c1"># prob.driver.options[&#39;print_results&#39;] = &#39;minimal&#39;</span>
+<span class="c1"># prob.driver.opt_settings['iSumm'] = 6</span>
+<span class="c1"># prob.driver.opt_settings['iPrint'] = 0</span>
+<span class="c1"># prob.driver.opt_settings['Major iterations limit'] = 50</span>
+<span class="c1"># prob.driver.opt_settings['Major optimality tolerance'] = 1e-4</span>
+<span class="c1"># prob.driver.opt_settings['Major feasibility tolerance'] = 1e-7</span>
+<span class="c1"># prob.driver.options['print_results'] = 'minimal'</span>
 
 <span class="c1">#####</span>
 <span class="c1"># prob.add_design_variables()</span>
@@ -1221,62 +1221,62 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
     <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span>
     <span class="n">lower</span><span class="o">=</span><span class="mf">100000.0</span><span class="p">,</span>
     <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">,</span>
     <span class="n">ref</span><span class="o">=</span><span class="mf">175e3</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span>
     <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span>
     <span class="n">lower</span><span class="o">=</span><span class="mf">100000.0</span><span class="p">,</span>
     <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">,</span>
     <span class="n">ref</span><span class="o">=</span><span class="mf">175e3</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;gtow_constraint&#39;</span><span class="p">,</span>
+    <span class="s1">'gtow_constraint'</span><span class="p">,</span>
     <span class="n">om</span><span class="o">.</span><span class="n">EQConstraintComp</span><span class="p">(</span>
-        <span class="s1">&#39;GTOW&#39;</span><span class="p">,</span>
-        <span class="n">eq_units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+        <span class="s1">'GTOW'</span><span class="p">,</span>
+        <span class="n">eq_units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">,</span>
         <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">add_constraint</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">(</span><span class="s1">&#39;lhs:GTOW&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;rhs:GTOW&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'lhs:GTOW'</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'rhs:GTOW'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">),</span>
     <span class="p">],</span>
 <span class="p">)</span>
 
 <span class="c1">#####</span>
 <span class="c1"># prob.add_objective()</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;fuel_obj&#39;</span><span class="p">,</span>
+    <span class="s1">'fuel_obj'</span><span class="p">,</span>
     <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
-        <span class="s1">&#39;reg_objective = overall_fuel/10000 + ascent_duration/30.&#39;</span><span class="p">,</span>
-        <span class="n">reg_objective</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;unitless&#39;</span><span class="p">},</span>
-        <span class="n">ascent_duration</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-        <span class="n">overall_fuel</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
+        <span class="s1">'reg_objective = overall_fuel/10000 + ascent_duration/30.'</span><span class="p">,</span>
+        <span class="n">reg_objective</span><span class="o">=</span><span class="p">{</span><span class="s1">'val'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'unitless'</span><span class="p">},</span>
+        <span class="n">ascent_duration</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'s'</span><span class="p">,</span> <span class="s1">'shape'</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="n">overall_fuel</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'lbm'</span><span class="p">},</span>
     <span class="p">),</span>
     <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">(</span><span class="s1">&#39;ascent_duration&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">ASCENT_DURATION</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;overall_fuel&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'ascent_duration'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">ASCENT_DURATION</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'overall_fuel'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;reg_objective&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">FUEL</span><span class="p">)],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">'reg_objective'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">FUEL</span><span class="p">)],</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">FUEL</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-    <span class="s1">&#39;range_obj&#39;</span><span class="p">,</span>
+    <span class="s1">'range_obj'</span><span class="p">,</span>
     <span class="n">om</span><span class="o">.</span><span class="n">ExecComp</span><span class="p">(</span>
-        <span class="s1">&#39;reg_objective = -actual_range/1000 + ascent_duration/30.&#39;</span><span class="p">,</span>
-        <span class="n">reg_objective</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;unitless&#39;</span><span class="p">},</span>
-        <span class="n">ascent_duration</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-        <span class="n">actual_range</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="n">target_range</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;NM&#39;</span><span class="p">},</span>
+        <span class="s1">'reg_objective = -actual_range/1000 + ascent_duration/30.'</span><span class="p">,</span>
+        <span class="n">reg_objective</span><span class="o">=</span><span class="p">{</span><span class="s1">'val'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'unitless'</span><span class="p">},</span>
+        <span class="n">ascent_duration</span><span class="o">=</span><span class="p">{</span><span class="s1">'units'</span><span class="p">:</span> <span class="s1">'s'</span><span class="p">,</span> <span class="s1">'shape'</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="n">actual_range</span><span class="o">=</span><span class="p">{</span><span class="s1">'val'</span><span class="p">:</span> <span class="n">target_range</span><span class="p">,</span> <span class="s1">'units'</span><span class="p">:</span> <span class="s1">'NM'</span><span class="p">},</span>
     <span class="p">),</span>
     <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">(</span><span class="s1">&#39;actual_range&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">RANGE</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;ascent_duration&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">ASCENT_DURATION</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'actual_range'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">RANGE</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">'ascent_duration'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">ASCENT_DURATION</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;reg_objective&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">RANGE</span><span class="p">)],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[(</span><span class="s1">'reg_objective'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">RANGE</span><span class="p">)],</span>
 <span class="p">)</span>
 
 <span class="c1">#####</span>
@@ -1288,54 +1288,54 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
     <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">meta_data</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">meta_data</span>
 
 <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">OpenMDAOWarning</span><span class="p">)</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">PromotionWarning</span><span class="p">)</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">OpenMDAOWarning</span><span class="p">)</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">PromotionWarning</span><span class="p">)</span>
 
     <span class="n">om</span><span class="o">.</span><span class="n">Problem</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="c1"># set initial guesses manually</span>
-<span class="n">control_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mach&#39;</span><span class="p">,</span> <span class="s1">&#39;altitude&#39;</span><span class="p">]</span>
-<span class="n">state_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">]</span>
+<span class="n">control_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'mach'</span><span class="p">,</span> <span class="s1">'altitude'</span><span class="p">]</span>
+<span class="n">state_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'mass'</span><span class="p">,</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">]</span>
 <span class="n">guesses</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;mach_climb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.72</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-<span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;altitude_climb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">32000.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">)</span>
-<span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;time_climb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3840.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;mach_cruise&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">0.72</span><span class="p">,</span> <span class="mf">0.72</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-<span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;altitude_cruise&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">32000.0</span><span class="p">,</span> <span class="mf">34000.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">)</span>
-<span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;time_cruise&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">3840.0</span><span class="p">,</span> <span class="mf">3390.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;mach_descent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">0.72</span><span class="p">,</span> <span class="mf">0.36</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-<span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;altitude_descent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">34000.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">)</span>
-<span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;time_descent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">7230.0</span><span class="p">,</span> <span class="mf">1740.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">guesses</span><span class="p">[</span><span class="s1">'mach_climb'</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.72</span><span class="p">],</span> <span class="s1">'unitless'</span><span class="p">)</span>
+<span class="n">guesses</span><span class="p">[</span><span class="s1">'altitude_climb'</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">32000.0</span><span class="p">],</span> <span class="s1">'ft'</span><span class="p">)</span>
+<span class="n">guesses</span><span class="p">[</span><span class="s1">'time_climb'</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">3840.0</span><span class="p">],</span> <span class="s1">'s'</span><span class="p">)</span>
+<span class="n">guesses</span><span class="p">[</span><span class="s1">'mach_cruise'</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">0.72</span><span class="p">,</span> <span class="mf">0.72</span><span class="p">],</span> <span class="s1">'unitless'</span><span class="p">)</span>
+<span class="n">guesses</span><span class="p">[</span><span class="s1">'altitude_cruise'</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">32000.0</span><span class="p">,</span> <span class="mf">34000.0</span><span class="p">],</span> <span class="s1">'ft'</span><span class="p">)</span>
+<span class="n">guesses</span><span class="p">[</span><span class="s1">'time_cruise'</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">3840.0</span><span class="p">,</span> <span class="mf">3390.0</span><span class="p">],</span> <span class="s1">'s'</span><span class="p">)</span>
+<span class="n">guesses</span><span class="p">[</span><span class="s1">'mach_descent'</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">0.72</span><span class="p">,</span> <span class="mf">0.36</span><span class="p">],</span> <span class="s1">'unitless'</span><span class="p">)</span>
+<span class="n">guesses</span><span class="p">[</span><span class="s1">'altitude_descent'</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">34000.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">],</span> <span class="s1">'ft'</span><span class="p">)</span>
+<span class="n">guesses</span><span class="p">[</span><span class="s1">'time_descent'</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="mf">7230.0</span><span class="p">,</span> <span class="mf">1740.0</span><span class="p">],</span> <span class="s1">'s'</span><span class="p">)</span>
 
 <span class="n">climb</span><span class="o">.</span><span class="n">set_time_val</span><span class="p">(</span>
-    <span class="n">initial</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;time_climb&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">duration</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;time_climb&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span>
+    <span class="n">initial</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'time_climb'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">duration</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'time_climb'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span>
 <span class="p">)</span>
-<span class="n">climb</span><span class="o">.</span><span class="n">set_control_val</span><span class="p">(</span><span class="s1">&#39;mach&#39;</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;mach_climb&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-<span class="n">climb</span><span class="o">.</span><span class="n">set_control_val</span><span class="p">(</span><span class="s1">&#39;altitude&#39;</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;altitude_climb&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
-<span class="n">climb</span><span class="o">.</span><span class="n">set_state_val</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="mi">125000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="n">climb</span><span class="o">.</span><span class="n">set_control_val</span><span class="p">(</span><span class="s1">'mach'</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'mach_climb'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">)</span>
+<span class="n">climb</span><span class="o">.</span><span class="n">set_control_val</span><span class="p">(</span><span class="s1">'altitude'</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'altitude_climb'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span><span class="p">)</span>
+<span class="n">climb</span><span class="o">.</span><span class="n">set_state_val</span><span class="p">(</span><span class="s1">'mass'</span><span class="p">,</span> <span class="mi">125000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
 
 <span class="n">cruise</span><span class="o">.</span><span class="n">set_time_val</span><span class="p">(</span>
-    <span class="n">initial</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;time_cruise&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">duration</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;time_cruise&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span>
+    <span class="n">initial</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'time_cruise'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">duration</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'time_cruise'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span>
 <span class="p">)</span>
-<span class="n">cruise</span><span class="o">.</span><span class="n">set_control_val</span><span class="p">(</span><span class="s1">&#39;mach&#39;</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;mach_cruise&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+<span class="n">cruise</span><span class="o">.</span><span class="n">set_control_val</span><span class="p">(</span><span class="s1">'mach'</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'mach_cruise'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">)</span>
 <span class="n">cruise</span><span class="o">.</span><span class="n">set_control_val</span><span class="p">(</span>
-    <span class="s1">&#39;altitude&#39;</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;altitude_cruise&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span>
+    <span class="s1">'altitude'</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'altitude_cruise'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span>
 <span class="p">)</span>
-<span class="n">cruise</span><span class="o">.</span><span class="n">set_state_val</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="mi">125000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="n">cruise</span><span class="o">.</span><span class="n">set_state_val</span><span class="p">(</span><span class="s1">'mass'</span><span class="p">,</span> <span class="mi">125000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
 
 <span class="n">descent</span><span class="o">.</span><span class="n">set_time_val</span><span class="p">(</span>
-    <span class="n">initial</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;time_descent&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">duration</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;time_descent&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span>
+    <span class="n">initial</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'time_descent'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">duration</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'time_descent'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">'s'</span>
 <span class="p">)</span>
 <span class="n">descent</span><span class="o">.</span><span class="n">set_control_val</span><span class="p">(</span>
-    <span class="s1">&#39;mach&#39;</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;mach_descent&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span>
+    <span class="s1">'mach'</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'mach_descent'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span>
 <span class="p">)</span>
 <span class="n">descent</span><span class="o">.</span><span class="n">set_control_val</span><span class="p">(</span>
-    <span class="s1">&#39;altitude&#39;</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">&#39;altitude_descent&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span>
+    <span class="s1">'altitude'</span><span class="p">,</span> <span class="n">vals</span><span class="o">=</span><span class="n">guesses</span><span class="p">[</span><span class="s1">'altitude_descent'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_vals</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span>
 <span class="p">)</span>
-<span class="n">descent</span><span class="o">.</span><span class="n">set_state_val</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="mi">125000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="n">descent</span><span class="o">.</span><span class="n">set_state_val</span><span class="p">(</span><span class="s1">'mass'</span><span class="p">,</span> <span class="mi">125000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="mi">175400</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="mi">175400</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="mi">175400</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="mi">175400</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span>
 
@@ -1348,44 +1348,43 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631440.527370] [runnervm48cm3:5017 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x555a73d9fcc0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Invalid options for non-optimal control 'mach' in phase 'climb': lower, upper, ref
+
+Warning: Invalid options for non-optimal control 'altitude' in phase 'climb': lower, upper, ref
+
+Warning: Invalid options for non-optimal control 'mach' in phase 'cruise': lower, upper, ref
+
+Warning: Invalid options for non-optimal control 'altitude' in phase 'cruise': lower, upper, ref
+
+Warning: Invalid options for non-optimal control 'mach' in phase 'descent': lower, upper, ref
+
+Warning: Invalid options for non-optimal control 'altitude' in phase 'descent': lower, upper, ref
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05017] pml_ucx.c:313  Error: Failed to create UCP worker
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  'aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  'aircraft:design:touchdown_mass_max  108976.4  lbm
+  'aircraft:fuselage:passenger_compartment_length  97.5  ft
+  'aircraft:fuselage:wetted_area  4235.082096  ft**2
+  'aircraft:horizontal_tail:wetted_area  576.571192  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  106.94  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
+  'aircraft:nacelle:total_wetted_area  488.936564  ft**2
+  'aircraft:nacelle:wetted_area  [244.468282]  ft**2
+  'aircraft:propulsion:total_engine_controls_mass  0.0  lbm
+  'aircraft:propulsion:total_starter_mass  0.0  lbm
+  'aircraft:vertical_tail:wetted_area  445.645658  ft**2
+  'aircraft:wing:aspect_ratio  11.5587605382765  unitless
+  'aircraft:wing:wetted_area  2210.280228  ft**2
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631440.527672] [runnervm48cm3:5017 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
-  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
-  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
-  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
-  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
-  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
-  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
-  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
-  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;climb&#39;: lower, upper, ref
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Exception of type: TOO_FEW_DOF in file "../../src/Interfaces/IpIpoptApplication.cpp" at line 662:
+ Exception message: status != TOO_FEW_DEGREES_OF_FREEDOM evaluated false: Too few degrees of freedom (rethrown)!
 
-Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;climb&#39;: lower, upper, ref
+EXIT: Problem has too few degrees of freedom.
 
-Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;cruise&#39;: lower, upper, ref
 
-Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;cruise&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;descent&#39;: lower, upper, ref
-
-Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;descent&#39;: lower, upper, ref
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization Problem -- Optimization using pyOpt_sparse
+Optimization Problem -- Optimization using pyOpt_sparse
 ================================================================================
     Objective Function: _objfunc
 
@@ -1565,10 +1564,6 @@ Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#3
         170  traj.descent.throttle[path]                             i   0.000000E+00   -5.902633E-02    1.000000E+00         L    9.00000E+100
         171  traj.descent.throttle[path]                             i   0.000000E+00   -7.601254E-02    1.000000E+00         L    9.00000E+100
         172  traj.descent.throttle[path]                             i   0.000000E+00   -8.093719E-02    1.000000E+00         L    9.00000E+100
-Exception of type: TOO_FEW_DOF in file &quot;../../src/Interfaces/IpIpoptApplication.cpp&quot; at line 662:
- Exception message: status != TOO_FEW_DEGREES_OF_FREEDOM evaluated false: Too few degrees of freedom (rethrown)!
-
-EXIT: Problem has too few degrees of freedom.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
@@ -1595,10 +1590,10 @@ Aviary run failed. See the dashboard for more details.
 <p>Note that we can read large single aisle aircraft inputs this way as well:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">&#39;LargeSingleAisle1FLOPS&#39;</span><span class="p">)</span>
-<span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">&#39;LargeSingleAisle2FLOPS&#39;</span><span class="p">)</span>
-<span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">&#39;LargeSingleAisle2FLOPSdw&#39;</span><span class="p">)</span>
-<span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">&#39;LargeSingleAisle2FLOPSalt&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">'LargeSingleAisle1FLOPS'</span><span class="p">)</span>
+<span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">'LargeSingleAisle2FLOPS'</span><span class="p">)</span>
+<span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">'LargeSingleAisle2FLOPSdw'</span><span class="p">)</span>
+<span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">'LargeSingleAisle2FLOPSalt'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

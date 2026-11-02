@@ -511,8 +511,8 @@
 <div class="viewcode-block" id="units_setter">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/aviary_options_dict.html#aviary.utils.aviary_options_dict.units_setter">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">units_setter</span><span class="p">(</span><span class="n">opt_meta</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert units for a tuple with form (val, &quot;unitstring&quot;).</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Convert units for a tuple with form (val, "unitstring").</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -525,9 +525,9 @@
 <span class="sd">    -------</span>
 <span class="sd">    any</span>
 <span class="sd">        Post processed value to set into the option.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">new_val</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">opt_meta</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">]</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">opt_meta</span><span class="p">[</span><span class="s1">'val'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">new_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">new_val</span> <span class="o">=</span> <span class="n">wrapped_convert_units</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
@@ -539,7 +539,7 @@
 <div class="viewcode-block" id="AviaryOptionsDictionary">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/aviary_options_dict.html#aviary.utils.aviary_options_dict.AviaryOptionsDictionary">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AviaryOptionsDictionary</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">OptionsDictionary</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Modified OptionsDictionary that is used by Aviary to store the user_options</span>
 <span class="sd">    for a phase.</span>
 
@@ -551,7 +551,7 @@
 <span class="sd">        Dictionary of option name: value to set.</span>
 <span class="sd">    parent_name : str</span>
 <span class="sd">        Name or class name of System that owns this OptionsDictionary.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="AviaryOptionsDictionary.__init__">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/aviary_options_dict.html#aviary.utils.aviary_options_dict.AviaryOptionsDictionary.__init__">[docs]</a>
@@ -560,14 +560,14 @@
 
         <span class="c1"># This one needs to be in all phase_builder dictionaries.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;phase_type&#39;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">'phase_type'</span><span class="p">,</span>
             <span class="n">types</span><span class="o">=</span><span class="n">PhaseType</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">PhaseType</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">,</span>
-            <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;The phase builder to use for this phase. This is an experimental feature that &#39;</span>
-            <span class="s1">&#39;currently allows a limited ability to select the equations of motion in certain &#39;</span>
-            <span class="s1">&#39;cases. </span><span class="se">\n</span><span class="s1">&#39;</span>
-            <span class="s1">&#39;Currently, if you have a steady cruise phase in a two-dof mission, you can select &#39;</span>
-            <span class="s1">&#39;&quot;BREGUET_RANGE&quot; or &quot;SIMPLE_CRUISE&quot;.&#39;</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s1">'The phase builder to use for this phase. This is an experimental feature that '</span>
+            <span class="s1">'currently allows a limited ability to select the equations of motion in certain '</span>
+            <span class="s1">'cases. </span><span class="se">\n</span><span class="s1">'</span>
+            <span class="s1">'Currently, if you have a steady cruise phase in a two-dof mission, you can select '</span>
+            <span class="s1">'"BREGUET_RANGE" or "SIMPLE_CRUISE".'</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">declare_options</span><span class="p">()</span>
@@ -580,8 +580,8 @@
             <span class="c1"># Support for legacy format (unitless)</span>
             <span class="k">if</span> <span class="p">(</span>
                 <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;set_function&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
-                <span class="ow">and</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;unitless&#39;</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">'set_function'</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'unitless'</span>
             <span class="p">):</span>
                 <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -591,7 +591,7 @@
 <div class="viewcode-block" id="AviaryOptionsDictionary.declare_options">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/aviary_options_dict.html#aviary.utils.aviary_options_dict.AviaryOptionsDictionary.declare_options">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">declare_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Hook for declaring options for a phase builder.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">"""Hook for declaring options for a phase builder."""</span></div>
 
 
 <div class="viewcode-block" id="AviaryOptionsDictionary.declare">
@@ -602,7 +602,7 @@
         <span class="n">default</span><span class="o">=</span><span class="n">_UNDEFINED</span><span class="p">,</span>
         <span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span>
         <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -635,24 +635,24 @@
 <div class="viewcode-block" id="AviaryOptionsDictionary.get_val">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/aviary_options_dict.html#aviary.utils.aviary_options_dict.AviaryOptionsDictionary.get_val">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the current value for the requested default.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        key : str</span>
 <span class="sd">            the name of the item</span>
-<span class="sd">        units : str (&#39;unitless&#39;)</span>
+<span class="sd">        units : str ('unitless')</span>
 <span class="sd">            the units of the returned value</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        val</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;set_function&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">'set_function'</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_raise</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Option &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; does not have declared units.&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"Option '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">' does not have declared units."</span><span class="p">,</span>
                     <span class="n">exc_type</span><span class="o">=</span><span class="ne">AttributeError</span><span class="p">,</span>
                 <span class="p">)</span>
 
@@ -670,14 +670,14 @@
 <div class="viewcode-block" id="AviaryOptionsDictionary.to_phase_info">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/aviary_options_dict.html#aviary.utils.aviary_options_dict.AviaryOptionsDictionary.to_phase_info">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_phase_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns an equivalent phase_info dictionary for this options dict.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            Equivalent phase_info.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">phase_info</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">phase_info</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
@@ -688,7 +688,7 @@
 <div class="viewcode-block" id="AviaryOptionsDictionary.add_state_options">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/aviary_options_dict.html#aviary.utils.aviary_options_dict.AviaryOptionsDictionary.add_state_options">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_state_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Adds all options needed for a state variable.</span>
 
 <span class="sd">        For a state named mass, these are mass_initial, mass_final, mass_bounds, mass_ref,</span>
@@ -702,16 +702,16 @@
 <span class="sd">            Units for this state if it has them.</span>
 <span class="sd">        defaults : dict or None</span>
 <span class="sd">            Optional dictionary of default values for any state option.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">defaults</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">defaults</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_initial&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_initial'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Tuple of (value, units) containing value of </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1"> &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;at the start of the phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;When unspecified, the optimizer controls the value.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;When specified, a constraint is created on the initial </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Tuple of (value, units) containing value of </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1"> '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'at the start of the phase.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'When unspecified, the optimizer controls the value.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'When specified, a constraint is created on the initial </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -721,13 +721,13 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_final&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_final'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Tuple of (value, units) containing value of </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1"> &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;at the end of the phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;If this phase is connected to a downstream phase, final values should be &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;specified with </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_initial in that phase instead of here.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;When specified, a constraint is created on the final </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Tuple of (value, units) containing value of </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1"> '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'at the end of the phase.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'If this phase is connected to a downstream phase, final values should be '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'specified with </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_initial in that phase instead of here.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'When specified, a constraint is created on the final </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -737,11 +737,11 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_bounds&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_bounds'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;Tuple of form ((lower, upper), units) containing the upper and lower bounds for &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;all values of </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1"> in the phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;The default of None for upper or lower means that bound will not be declared.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s1">'Tuple of form ((lower, upper), units) containing the upper and lower bounds for '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'all values of </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1"> in the phase.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'The default of None for upper or lower means that bound will not be declared.</span><span class="se">\n</span><span class="s1">'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -750,10 +750,10 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_ref&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_ref'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Multiplicative scale factor &quot;ref&quot; for </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;Default is 1.0&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Multiplicative scale factor "ref" for </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'Default is 1.0'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -762,9 +762,9 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_ref0&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_ref0'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Additive scale factor &quot;ref0&quot; for </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Additive scale factor "ref0" for </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -774,10 +774,10 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_defect_ref&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_defect_ref'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Multiplicative scale factor &quot;ref&quot; for the </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1"> defect constraint.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;Default is None, which means the ref and defect_ref are the same.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Multiplicative scale factor "ref" for the </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1"> defect constraint.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'Default is None, which means the ref and defect_ref are the same.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -787,11 +787,11 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_solve_segments&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_solve_segments'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;When True, a solver will be used to converge the collocation defects within a &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;segment. Note that the state continuity defects between segements will still be &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;handled by the optimizer.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s1">'When True, a solver will be used to converge the collocation defects within a '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'segment. Note that the state continuity defects between segements will still be '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'handled by the optimizer.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -799,11 +799,11 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_constraint_ref&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_constraint_ref'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Multiplicative scale factor &quot;ref&quot; for the </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1"> boundary constraint.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;If unspecified, then the value in </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_final is used. &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;At present, only a final constraint is added.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Multiplicative scale factor "ref" for the </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1"> boundary constraint.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'If unspecified, then the value in </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_final is used. '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'At present, only a final constraint is added.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -813,11 +813,11 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_direct_link&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_direct_link'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;When True, directly connect the initial state to the upstream phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;When False, use a constraint.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;Only valid when </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_optimize is set to True.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s1">'When True, directly connect the initial state to the upstream phase.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'When False, use a constraint.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'Only valid when </span><span class="si">{</span><span class="n">state_name</span><span class="si">}</span><span class="s1">_optimize is set to True.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -829,7 +829,7 @@
 <div class="viewcode-block" id="AviaryOptionsDictionary.add_control_options">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/aviary_options_dict.html#aviary.utils.aviary_options_dict.AviaryOptionsDictionary.add_control_options">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_control_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctrl_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Adds all options needed for a control variable.</span>
 
 <span class="sd">        For a control named mach, these are mach_initial, mach_final, mach_bounds, mach_ref,</span>
@@ -843,14 +843,14 @@
 <span class="sd">            Units for this control if it has them.</span>
 <span class="sd">        defaults : dict or None</span>
 <span class="sd">            Optional dictionary of default values for any control option.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">defaults</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">defaults</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_optimize&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_optimize'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;When True, the optimizer will set this value. When False, the initial value &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;for all nodes can be set in the initial_conditions section of the phase.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s1">'When True, the optimizer will set this value. When False, the initial value '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'for all nodes can be set in the initial_conditions section of the phase.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -858,12 +858,12 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_initial&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_initial'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Tuple of (value, units) containing value of </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1"> &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;at the start of the phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;When unspecified, the value comes from upstream.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;When specified, a constraint is created on the initial </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Tuple of (value, units) containing value of </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1"> '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'at the start of the phase.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'When unspecified, the value comes from upstream.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'When specified, a constraint is created on the initial </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -873,13 +873,13 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_final&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_final'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Tuple of (value, units) containing value of </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1"> &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;at the end of the phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;If this phase is connected to a downstream phase, final values should be &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;specified with </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_initial in that phase instead of here.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;When specified, a constraint is created on the final </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Tuple of (value, units) containing value of </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1"> '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'at the end of the phase.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'If this phase is connected to a downstream phase, final values should be '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'specified with </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_initial in that phase instead of here.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'When specified, a constraint is created on the final </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -889,11 +889,11 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_bounds&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_bounds'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;Tuple of form ((lower, upper), units) containing the upper and lower bounds for &#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;all values of </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1"> in the phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;The default of None for upper or lower means that bound will not be declared.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s1">'Tuple of form ((lower, upper), units) containing the upper and lower bounds for '</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'all values of </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1"> in the phase.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'The default of None for upper or lower means that bound will not be declared.</span><span class="se">\n</span><span class="s1">'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -902,10 +902,10 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_ref&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_ref'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Multiplicative scale factor &quot;ref&quot; for </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;Default is 1.0&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Multiplicative scale factor "ref" for </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'Default is 1.0'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -914,9 +914,9 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_ref0&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_ref0'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Additive scale factor &quot;ref0&quot; for </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Additive scale factor "ref0" for </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -926,10 +926,10 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_polynomial_order&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_polynomial_order'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;The order of polynomials for interpolation in the transcription.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;Default is None, which does not use a polynomial.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s1">'The order of polynomials for interpolation in the transcription.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'Default is None, which does not use a polynomial.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -938,11 +938,11 @@
             <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_direct_link&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_direct_link'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;When True, directly connect the first control point to the upstream phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;When False, use a constraint.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;Only valid when </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_optimize is set to True.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s1">'When True, directly connect the first control point to the upstream phase.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'When False, use a constraint.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'Only valid when </span><span class="si">{</span><span class="n">ctrl_name</span><span class="si">}</span><span class="s1">_optimize is set to True.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -954,7 +954,7 @@
 <div class="viewcode-block" id="AviaryOptionsDictionary.add_time_options">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/aviary_options_dict.html#aviary.utils.aviary_options_dict.AviaryOptionsDictionary.add_time_options">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_time_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Adds all options for controlling time initial and duration.</span>
 
 <span class="sd">        This adds ref and bounds for both.</span>
@@ -965,17 +965,17 @@
 <span class="sd">            Units for this control if it has them.</span>
 <span class="sd">        defaults : dict or None</span>
 <span class="sd">            Optional dictionary of default values for any control option.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">defaults</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">defaults</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">for</span> <span class="n">stem</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;time_initial&#39;</span><span class="p">,</span> <span class="s1">&#39;time_duration&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">stem</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'time_initial'</span><span class="p">,</span> <span class="s1">'time_duration'</span><span class="p">]:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">stem</span>
             <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Tuple of (value, units) containing value of </span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1"> &#39;</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;at the start of the phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;When unspecified, the value comes from upstream.</span><span class="se">\n</span><span class="s1">&#39;</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;When specified, a constraint is created on the initial </span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Tuple of (value, units) containing value of </span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1"> '</span>
+            <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'at the start of the phase.</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'When unspecified, the value comes from upstream.</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'When specified, a constraint is created on the initial </span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">.'</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -985,12 +985,12 @@
                 <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">_bounds&#39;</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">_bounds'</span>
             <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-            <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;Tuple of form ((lower, upper), units) containing the upper and lower bounds &#39;</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;for all values of </span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1"> in the phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;The default of None for upper or lower means that bound will not be &#39;</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;declared.</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="s1">'Tuple of form ((lower, upper), units) containing the upper and lower bounds '</span>
+            <span class="n">desc</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'for all values of </span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1"> in the phase.</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'The default of None for upper or lower means that bound will not be '</span>
+            <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'declared.</span><span class="se">\n</span><span class="s1">'</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -999,10 +999,10 @@
                 <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">_ref&#39;</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">_ref'</span>
             <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-            <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Multiplicative scale factor &quot;ref&quot; for </span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">&#39;</span>
-            <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;Default is 1.0&#39;</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Multiplicative scale factor "ref" for </span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'Default is 1.0'</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -1011,10 +1011,10 @@
                 <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;time_initial_direct_link&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">'time_initial_direct_link'</span>
         <span class="n">default</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;When True, directly connect the initial_time to the upstream phase.</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">&#39;When False, use a constraint.&#39;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="s1">'When True, directly connect the initial_time to the upstream phase.</span><span class="se">\n</span><span class="s1">'</span>
+        <span class="n">desc</span> <span class="o">+=</span> <span class="s1">'When False, use a constraint.'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>

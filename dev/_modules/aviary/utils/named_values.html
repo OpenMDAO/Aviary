@@ -501,7 +501,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for aviary.utils.named_values</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Define utilities for using named values with associated units.</span>
 
 <span class="sd">Utilities</span>
@@ -517,7 +517,7 @@
 
 <span class="sd">class NamedValues</span>
 <span class="sd">    define a collection of named values with associated units</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Collection</span>
@@ -535,14 +535,14 @@
 <div class="viewcode-block" id="NamedValues">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NamedValues</span><span class="p">(</span><span class="n">Collection</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Define a collection of named values with associated units.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Define a collection of named values with associated units."""</span>
 
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_mapping&#39;</span><span class="p">,)</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'_mapping'</span><span class="p">,)</span>
 
 <div class="viewcode-block" id="NamedValues.__init__">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize this collection.</span>
 
 <span class="sd">        Notes</span>
@@ -555,7 +555,7 @@
 
 <span class="sd">        When initializing from keyword arguments, the mapped item must be of a type of</span>
 <span class="sd">        `ValueAndUnits`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -564,7 +564,7 @@
 <div class="viewcode-block" id="NamedValues.get_item">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.get_item">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OptionalValueAndUnits</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the named value and its associated units.</span>
 
 <span class="sd">        Parameters</span>
@@ -585,11 +585,11 @@
 <span class="sd">        --------</span>
 <span class="sd">        get_val</span>
 <span class="sd">        set_val</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">_UNDEFINED</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="n">_UNDEFINED</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;key not found: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'key not found: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">item</span></div>
 
@@ -597,7 +597,7 @@
 <div class="viewcode-block" id="NamedValues.copy">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.copy">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return a copy of the instance of this class.</span>
 
 <span class="sd">        Parameters</span>
@@ -607,14 +607,14 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        NamedValues()</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="NamedValues.deepcopy">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.deepcopy">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return a deep copy of the instance of this class.</span>
 
 <span class="sd">        Parameters</span>
@@ -624,14 +624,14 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        NamedValues()</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="NamedValues.get_val">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.get_val">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the named value in the specified units.</span>
 
 <span class="sd">        Parameters</span>
@@ -640,7 +640,7 @@
 <span class="sd">            the name of the item</span>
 
 <span class="sd">        units : str</span>
-<span class="sd">            the units of the returned value in OpenMDAO format (e.g. &quot;unitless&quot;)</span>
+<span class="sd">            the units of the returned value in OpenMDAO format (e.g. "unitless")</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -654,13 +654,13 @@
 
 <span class="sd">        TypeError</span>
 <span class="sd">            if units of `None` were specified or units of any type other than `str`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_units</span><span class="p">(</span><span class="s1">&#39;get_val&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_units</span><span class="p">(</span><span class="s1">'get_val'</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
 
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">_UNDEFINED</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="n">_UNDEFINED</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;key not found: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'key not found: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
         <span class="n">val</span><span class="p">,</span> <span class="n">old_units</span> <span class="o">=</span> <span class="n">item</span>
 
@@ -672,8 +672,8 @@
 
 <div class="viewcode-block" id="NamedValues.set_val">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.set_val">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Update the named value and its associated units.</span>
 
 <span class="sd">        Note, specifying units of `None` or units of any type other than `str` will raise</span>
@@ -687,15 +687,15 @@
 <span class="sd">        val : Any</span>
 <span class="sd">            the new value of the item</span>
 
-<span class="sd">        units : str (&#39;unitless&#39;)</span>
+<span class="sd">        units : str ('unitless')</span>
 <span class="sd">            the units associated with the new value, if any</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        TypeError</span>
 <span class="sd">            if units of `None` were specified or units of any type other than `str`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_units</span><span class="p">(</span><span class="s1">&#39;set_val&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_units</span><span class="p">(</span><span class="s1">'set_val'</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span></div>
 
@@ -703,39 +703,39 @@
 <div class="viewcode-block" id="NamedValues.keys">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.keys">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new view of the collection&#39;s names.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a new view of the collection's names."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="NamedValues.items">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.items">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new view of the collection&#39;s `(key, (val, units))`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a new view of the collection's `(key, (val, units))`."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="NamedValues.values">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.values">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new view of the collection&#39;s `(val, units)`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a new view of the collection's `(val, units)`."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing a printable representation of the collection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a string containing a printable representation of the collection."""</span>
         <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">)</span>
 
 <div class="viewcode-block" id="NamedValues.clear">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.clear">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all items from the collection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Remove all items from the collection."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="NamedValues.update">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.update">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Assign named values and their associated units found in another</span>
 <span class="sd">        collection to this collection, overwriting existing items.</span>
 
@@ -759,7 +759,7 @@
 
 <span class="sd">        When assigning from keyword arguments, the mapped item must be of a</span>
 <span class="sd">        type of `ValueAndUnits`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">other</span> <span class="ow">or</span> <span class="n">kwargs</span><span class="p">):</span>
             <span class="k">return</span>
 
@@ -771,7 +771,7 @@
 
         <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># check for dictionary</span>
-            <span class="n">keys</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s1">&#39;keys&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s1">'keys'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># iterable, but not dictionary</span>
@@ -791,23 +791,23 @@
 <div class="viewcode-block" id="NamedValues.delete">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.delete">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Remove the named value and its associated units.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        KeyError</span>
 <span class="sd">            if the named value does not exist</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;key not found: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'key not found: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether or not this collection is equivalent to another.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return whether or not this collection is equivalent to another."""</span>
         <span class="n">collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
@@ -818,25 +818,25 @@
 <div class="viewcode-block" id="NamedValues.__contains__">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.__contains__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether or not the named value exists.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return whether or not the named value exists."""</span>
         <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span></div>
 
 
 <div class="viewcode-block" id="NamedValues.__iter__">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.NamedValues.__iter__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an iterator over the `(key, (val, units))` data stored in this collection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return an iterator over the `(key, (val, units))` data stored in this collection."""</span>
         <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
 
         <span class="k">yield from</span> <span class="n">items</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of items in this collection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the number of items in this collection."""</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">funcname</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        If units of `None` were specified or units of any type other than `str`, raise</span>
 <span class="sd">        `TypeError`. Otherwise, do nothing.</span>
 
@@ -850,10 +850,10 @@
 
 <span class="sd">        units : Any</span>
 <span class="sd">            the units to check</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">units</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">funcname</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">): unsupported units: </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">funcname</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">): unsupported units: </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1">'</span>
             <span class="p">)</span></div>
 
 
@@ -862,8 +862,8 @@
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.get_keys">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_keys</span><span class="p">(</span><span class="n">named_values</span><span class="p">:</span> <span class="n">NamedValues</span><span class="p">):</span>
     <span class="k">raise</span> <span class="ne">DeprecationWarning</span><span class="p">(</span>
-        <span class="s1">&#39;The get_keys() function has been replaced with the NamedValues.keys() method to better &#39;</span>
-        <span class="s1">&#39;mirror dictionary functionality.&#39;</span>
+        <span class="s1">'The get_keys() function has been replaced with the NamedValues.keys() method to better '</span>
+        <span class="s1">'mirror dictionary functionality.'</span>
     <span class="p">)</span></div>
 
 
@@ -872,8 +872,8 @@
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.get_items">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_items</span><span class="p">(</span><span class="n">named_values</span><span class="p">:</span> <span class="n">NamedValues</span><span class="p">):</span>
     <span class="k">raise</span> <span class="ne">DeprecationWarning</span><span class="p">(</span>
-        <span class="s1">&#39;The get_items() function has been replaced with the NamedValues.items() method to better &#39;</span>
-        <span class="s1">&#39;mirror dictionary functionality.&#39;</span>
+        <span class="s1">'The get_items() function has been replaced with the NamedValues.items() method to better '</span>
+        <span class="s1">'mirror dictionary functionality.'</span>
     <span class="p">)</span></div>
 
 
@@ -882,8 +882,8 @@
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/named_values.html#aviary.utils.named_values.get_values">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_values</span><span class="p">(</span><span class="n">named_values</span><span class="p">:</span> <span class="n">NamedValues</span><span class="p">):</span>
     <span class="k">raise</span> <span class="ne">DeprecationWarning</span><span class="p">(</span>
-        <span class="s1">&#39;The get_values() function has been replaced with the NamedValues.values() method to better &#39;</span>
-        <span class="s1">&#39;mirror dictionary functionality.&#39;</span>
+        <span class="s1">'The get_values() function has been replaced with the NamedValues.values() method to better '</span>
+        <span class="s1">'mirror dictionary functionality.'</span>
     <span class="p">)</span></div>
 
 </pre></div>

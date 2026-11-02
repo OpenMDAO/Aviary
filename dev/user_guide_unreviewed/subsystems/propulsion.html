@@ -751,7 +751,7 @@
 
 <span class="c1"># Add relevant inputs and options to engine_options</span>
 <span class="c1"># using engine_options.set_val(...)</span>
-<span class="n">filename</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;models/engines/turbofan_28k.csv&#39;</span><span class="p">)</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">'models/engines/turbofan_28k.csv'</span><span class="p">)</span>
 <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">DATA_FILE</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
 <span class="c1"># example of setting an engine variable to a specific value</span>
 <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALE_FACTOR</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span>
@@ -760,7 +760,7 @@
 <span class="c1"># all inputs needed for analysis, except engine-level values.</span>
 <span class="c1"># Because not all required options were defined in this example, we</span>
 <span class="c1"># see a number of warnings about the missing variables.</span>
-<span class="n">engine_deck</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">EngineDeck</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;example&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">)</span>
+<span class="n">engine_deck</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">EngineDeck</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'example'</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -800,7 +800,7 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Interpolation Method: </span><span class="si">{</span><span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALE_FACTOR</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Interpolation Method: </span><span class="si">{</span><span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALE_FACTOR</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

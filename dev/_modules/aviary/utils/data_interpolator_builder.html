@@ -517,12 +517,12 @@
     <span class="n">interpolator_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">interpolator_outputs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">num_nodes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;slinear&#39;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">'slinear'</span><span class="p">,</span>
     <span class="n">extrapolate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">structured</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">connect_training_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Builder for openMDAO metamodel components using data provided via data file, directly provided</span>
 <span class="sd">    as an argument, or training data passed through openMDAO connections. Data is converted to a</span>
 <span class="sd">    structured grid format if possible, otherwise a semistructured grid is assumed.</span>
@@ -569,7 +569,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    interp_comp : om.MetaModelSemiStructuredComp, om.MetaModelStructuredComp</span>
 <span class="sd">        OpenMDAO metamodel component using the provided data and flags</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Argument checking #</span>
     <span class="c1"># if interpolator data is a filepath, get data from file</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interpolator_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -605,21 +605,21 @@
     <span class="c1"># Raise UserWarning if Scenario 1 or 2 fails</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
-            <span class="s1">&#39;Insufficient information on inputs and outputs for interpolation was provided&#39;</span>
+            <span class="s1">'Insufficient information on inputs and outputs for interpolation was provided'</span>
         <span class="p">)</span>
     <span class="c1"># Scenario 3: Both inputs and outputs provided</span>
     <span class="c1"># Check that nothing in interpolator_outputs conflicts with inputs - read_data_file() already</span>
-    <span class="c1"># checks for &quot;double labeling&quot; of inputs/outputs in data file</span>
+    <span class="c1"># checks for "double labeling" of inputs/outputs in data file</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">interpolator_outputs</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Variable &lt;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&gt; was specified as both an input and a output.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Variable &lt;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&gt; was specified as both an input and a output.'</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_vars</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
-            <span class="s1">&#39;Insufficient information on inputs and outputs for interpolation was provided&#39;</span>
+            <span class="s1">'Insufficient information on inputs and outputs for interpolation was provided'</span>
         <span class="p">)</span>
 
     <span class="c1"># Pre-format data: Independent variables placed before dependent variables - position</span>
@@ -660,7 +660,7 @@
                     <span class="k">break</span>
 
     <span class="c1"># check outputs, should be array matching shape of input vector lengths</span>
-    <span class="c1"># if we already know data needs formatting, don&#39;t bother checking outputs</span>
+    <span class="c1"># if we already know data needs formatting, don't bother checking outputs</span>
     <span class="k">if</span> <span class="n">data_pre_structured</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
             <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span> <span class="o">=</span> <span class="n">interpolator_data</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -670,17 +670,17 @@
                     <span class="c1"># if output is multi-dimensional array. If output is 1d it could</span>
                     <span class="c1"># be a structured grid with one input, or a semistructured grid</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s1">&#39;shape of output &lt;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&gt;, </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s1">, does &#39;</span>
-                        <span class="sa">f</span><span class="s1">&#39;not match expected shape </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+                        <span class="sa">f</span><span class="s1">'shape of output &lt;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&gt;, </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s1">, does '</span>
+                        <span class="sa">f</span><span class="s1">'not match expected shape </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># We don&#39;t know if data is structured or not if 1d. No harm</span>
-                    <span class="c1"># in sorting and &quot;reformatting&quot;, so assume it needs to be converted</span>
+                    <span class="c1"># We don't know if data is structured or not if 1d. No harm</span>
+                    <span class="c1"># in sorting and "reformatting", so assume it needs to be converted</span>
                     <span class="n">data_pre_structured</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="k">break</span>
 
     <span class="k">if</span> <span class="n">structured</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">data_pre_structured</span><span class="p">:</span>
-        <span class="c1"># If the data is already structured, just use a structured grid - it&#39;s faster</span>
+        <span class="c1"># If the data is already structured, just use a structured grid - it's faster</span>
         <span class="c1"># with no downsides</span>
         <span class="n">structured</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">elif</span> <span class="n">structured</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -701,7 +701,7 @@
                 <span class="k">if</span> <span class="n">model_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">model_length</span> <span class="o">=</span> <span class="n">length</span>
                 <span class="k">elif</span> <span class="n">length</span> <span class="o">!=</span> <span class="n">model_length</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Lengths of data provided for interpolation do not match.&#39;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">'Lengths of data provided for interpolation do not match.'</span><span class="p">)</span>
 
             <span class="c1"># get data into column array format</span>
             <span class="n">sorted_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
@@ -748,8 +748,8 @@
 
     <span class="k">if</span> <span class="n">connect_training_data</span> <span class="ow">and</span> <span class="n">structured</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data_pre_structured</span><span class="p">:</span>
         <span class="c1"># User has asked for structured data but not provided it. Use of training data</span>
-        <span class="c1"># means we can&#39;t do any processing on the data including ensuring sorted order,</span>
-        <span class="c1"># since that might misalign inputs with future connections we can&#39;t control here</span>
+        <span class="c1"># means we can't do any processing on the data including ensuring sorted order,</span>
+        <span class="c1"># since that might misalign inputs with future connections we can't control here</span>
         <span class="c1"># Just convert inputs to structure grid format</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">indep_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span> <span class="o">=</span> <span class="n">interpolator_data</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>

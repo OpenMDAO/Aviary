@@ -646,36 +646,31 @@ This command normally needs the name of the aircraft csv file and phase_info fil
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/modopt/core/visualization.py:11: UserWarning: matplotlib not found, plotting disabled.
-  warnings.warn(&quot;matplotlib not found, plotting disabled.&quot;)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631401.419339] [runnervm48cm3:4968 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55f92e50bdf0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631401.419646] [runnervm48cm3:4968 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-[runnervm48cm3:04968] pml_ucx.c:313  Error: Failed to create UCP worker
+  warnings.warn("matplotlib not found, plotting disabled.")
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
-  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  33136.4  lbm
-  &#39;aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
-  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
-  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
-  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
-  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
-  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
-  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
-  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
+  'aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  'aircraft:design:touchdown_mass_max  108976.4  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  33136.4  lbm
+  'aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
+  'aircraft:fuselage:passenger_compartment_length  97.5  ft
+  'aircraft:fuselage:wetted_area  4235.082096  ft**2
+  'aircraft:horizontal_tail:wetted_area  576.571192  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  106.94  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
+  'aircraft:nacelle:total_wetted_area  488.936564  ft**2
+  'aircraft:nacelle:wetted_area  [244.468282]  ft**2
+  'aircraft:propulsion:total_engine_controls_mass  0.0  lbm
+  'aircraft:propulsion:total_starter_mass  0.0  lbm
+  'aircraft:vertical_tail:wetted_area  445.645658  ft**2
+  'aircraft:wing:aspect_ratio  11.5587605382765  unitless
+  'aircraft:wing:wetted_area  2210.280228  ft**2
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      141
@@ -693,11 +688,11 @@ Total number of inequality constraints...............:       61
 
                                    (scaled)                 (unscaled)
 Objective...............:   1.3813638330326474e+00    1.3813638330326474e+00
-Dual infeasibility......:   2.6026156723593705e-08    2.6026156723593705e-08
-Constraint violation....:   4.6383185767659553e-15    4.6383185767659553e-15
+Dual infeasibility......:   2.6026156904004973e-08    2.6026156904004973e-08
+Constraint violation....:   5.6194015413266056e-15    5.6194015413266056e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922226401046871e-08    9.0922226401046871e-08
-Overall NLP error.......:   9.0922226401046871e-08    9.0922226401046871e-08
+Complementarity.........:   9.0922226401289546e-08    9.0922226401289546e-08
+Overall NLP error.......:   9.0922226401289546e-08    9.0922226401289546e-08
 
 
 Number of objective function evaluations             = 17
@@ -707,7 +702,7 @@ Number of inequality constraint evaluations          = 17
 Number of equality constraint Jacobian evaluations   = 17
 Number of inequality constraint Jacobian evaluations = 17
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 2.812
+Total seconds in IPOPT                               = 5.023
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -727,36 +722,31 @@ The following command explicitly points to the files used in the above run of th
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/modopt/core/visualization.py:11: UserWarning: matplotlib not found, plotting disabled.
-  warnings.warn(&quot;matplotlib not found, plotting disabled.&quot;)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631413.113517] [runnervm48cm3:4977 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x5613dbde9000 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631413.113834] [runnervm48cm3:4977 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-[runnervm48cm3:04977] pml_ucx.c:313  Error: Failed to create UCP worker
+  warnings.warn("matplotlib not found, plotting disabled.")
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
-  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  33136.4  lbm
-  &#39;aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
-  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
-  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
-  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
-  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
-  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
-  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
-  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
+  'aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  'aircraft:design:touchdown_mass_max  108976.4  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  33136.4  lbm
+  'aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
+  'aircraft:fuselage:passenger_compartment_length  97.5  ft
+  'aircraft:fuselage:wetted_area  4235.082096  ft**2
+  'aircraft:horizontal_tail:wetted_area  576.571192  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  106.94  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
+  'aircraft:nacelle:total_wetted_area  488.936564  ft**2
+  'aircraft:nacelle:wetted_area  [244.468282]  ft**2
+  'aircraft:propulsion:total_engine_controls_mass  0.0  lbm
+  'aircraft:propulsion:total_starter_mass  0.0  lbm
+  'aircraft:vertical_tail:wetted_area  445.645658  ft**2
+  'aircraft:wing:aspect_ratio  11.5587605382765  unitless
+  'aircraft:wing:wetted_area  2210.280228  ft**2
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      141
@@ -773,12 +763,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 16
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813638330326474e+00    1.3813638330326474e+00
-Dual infeasibility......:   2.6026157570138762e-08    2.6026157570138762e-08
-Constraint violation....:   4.6383185767659553e-15    4.6383185767659553e-15
+Objective...............:   1.3813638330326490e+00    1.3813638330326490e+00
+Dual infeasibility......:   2.6026157327277448e-08    2.6026157327277448e-08
+Constraint violation....:   7.1426561732579607e-15    7.1426561732579607e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922226401048459e-08    9.0922226401048459e-08
-Overall NLP error.......:   9.0922226401048459e-08    9.0922226401048459e-08
+Complementarity.........:   9.0922226401074836e-08    9.0922226401074836e-08
+Overall NLP error.......:   9.0922226401074836e-08    9.0922226401074836e-08
 
 
 Number of objective function evaluations             = 17
@@ -788,7 +778,7 @@ Number of inequality constraint evaluations          = 17
 Number of equality constraint Jacobian evaluations   = 17
 Number of inequality constraint Jacobian evaluations = 17
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 2.810
+Total seconds in IPOPT                               = 5.099
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -807,38 +797,35 @@ EXIT: Optimal Solution Found.
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
 
 <span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span>
-    <span class="n">aircraft_data</span><span class="o">=</span><span class="s1">&#39;models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv&#39;</span><span class="p">,</span>
-    <span class="n">phase_info</span><span class="o">=</span><span class="s1">&#39;models/missions/energy_state_default&#39;</span><span class="p">,</span>
+    <span class="n">aircraft_data</span><span class="o">=</span><span class="s1">'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv'</span><span class="p">,</span>
+    <span class="n">phase_info</span><span class="o">=</span><span class="s1">'models/missions/energy_state_default'</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631423.428563] [runnervm48cm3:4950 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x555cc7c034d0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631423.428872] [runnervm48cm3:4950 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
-  &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  33136.4  lbm
-  &#39;aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  97.5  ft
-  &#39;aircraft:fuselage:wetted_area  4235.082096  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  576.571192  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  106.94  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
-  &#39;aircraft:nacelle:total_wetted_area  488.936564  ft**2
-  &#39;aircraft:nacelle:wetted_area  [244.468282]  ft**2
-  &#39;aircraft:propulsion:total_engine_controls_mass  0.0  lbm
-  &#39;aircraft:propulsion:total_starter_mass  0.0  lbm
-  &#39;aircraft:vertical_tail:wetted_area  445.645658  ft**2
-  &#39;aircraft:wing:aspect_ratio  11.5587605382765  unitless
-  &#39;aircraft:wing:wetted_area  2210.280228  ft**2
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:04950] pml_ucx.c:313  Error: Failed to create UCP worker
-Warning: Design range 3500.0 differs from target_range 1906.0 (NM).
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  'aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  'aircraft:design:touchdown_mass_max  108976.4  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:fuselage_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  33136.4  lbm
+  'aircraft:fuel:wing_fuel_mass_capacity  33136.4  lbm
+  'aircraft:fuselage:passenger_compartment_length  97.5  ft
+  'aircraft:fuselage:wetted_area  4235.082096  ft**2
+  'aircraft:horizontal_tail:wetted_area  576.571192  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  106.94  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  74.86  inch
+  'aircraft:nacelle:total_wetted_area  488.936564  ft**2
+  'aircraft:nacelle:wetted_area  [244.468282]  ft**2
+  'aircraft:propulsion:total_engine_controls_mass  0.0  lbm
+  'aircraft:propulsion:total_starter_mass  0.0  lbm
+  'aircraft:vertical_tail:wetted_area  445.645658  ft**2
+  'aircraft:wing:aspect_ratio  11.5587605382765  unitless
+  'aircraft:wing:wetted_area  2210.280228  ft**2
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      141
@@ -855,12 +842,12 @@ Total number of inequality constraints...............:       61
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 16
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.3813638330326474e+00    1.3813638330326474e+00
-Dual infeasibility......:   2.6026157570138762e-08    2.6026157570138762e-08
-Constraint violation....:   4.6383185767659553e-15    4.6383185767659553e-15
+Objective...............:   1.3813638330326490e+00    1.3813638330326490e+00
+Dual infeasibility......:   2.6026157327277448e-08    2.6026157327277448e-08
+Constraint violation....:   7.1426561732579607e-15    7.1426561732579607e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0922226401048459e-08    9.0922226401048459e-08
-Overall NLP error.......:   9.0922226401048459e-08    9.0922226401048459e-08
+Complementarity.........:   9.0922226401074836e-08    9.0922226401074836e-08
+Overall NLP error.......:   9.0922226401074836e-08    9.0922226401074836e-08
 
 
 Number of objective function evaluations             = 17
@@ -870,7 +857,7 @@ Number of inequality constraint evaluations          = 17
 Number of equality constraint Jacobian evaluations   = 17
 Number of inequality constraint Jacobian evaluations = 17
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 2.842
+Total seconds in IPOPT                               = 5.200
 
 EXIT: Optimal Solution Found.
 </pre></div>

@@ -611,7 +611,7 @@
 <p>The multi-mission example demonstrates the capability to optimize a single aircraft design considering two missions that the aircraft will perform. For a background on this example see <a class="reference internal" href="#"><span class="std std-doc">Multi-Mission Overview</span></a>. It is expected that the users is familiar with the <code class="docutils literal notranslate"><span class="pre">AviaryProblem</span></code> and it’s methods before exploring this content.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">"""</span>
 <span class="sd">Authors: Eliot Aretskin-Hariton, Kenneth Moore, Jatin Soni</span>
 <span class="sd">Multi Mission Optimization Example using Aviary.</span>
 
@@ -621,7 +621,7 @@
 <span class="sd">those sub-groups (prob.model.mission1 and prob.model.mission2) up to prob.model so</span>
 <span class="sd">the optimizer can control them both with a single value. The fuel_burn results from each</span>
 <span class="sd">of the mission1 and mission2 are summed and weighted to create the objective function.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">copy</span>
 
@@ -636,22 +636,22 @@
 <span class="n">phase_info_mission2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">phase_info</span><span class="p">)</span>
 
 <span class="c1"># get large single aisle values</span>
-<span class="n">aviary_inputs_mission1</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">&#39;LargeSingleAisle2FLOPS&#39;</span><span class="p">)</span>
-<span class="c1"># loading a CSV - a new &#39; create vehicle function&#39;</span>
+<span class="n">aviary_inputs_mission1</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">'LargeSingleAisle2FLOPS'</span><span class="p">)</span>
+<span class="c1"># loading a CSV - a new ' create vehicle function'</span>
 
 <span class="n">aviary_inputs_mission2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">aviary_inputs_mission1</span><span class="p">)</span>
 
-<span class="c1"># Due to current limitations in Aviary&#39;s ability to detect user input vs. default values,</span>
+<span class="c1"># Due to current limitations in Aviary's ability to detect user input vs. default values,</span>
 <span class="c1"># the only way to set an aircraft to zero passengers is by setting</span>
 <span class="c1"># TOTAL_PAYLOAD_MASS = X CARGO_MASS + 0 PASSENGER_PAYLOAD_MASS.</span>
 <span class="c1"># This zeros out passenger and baggage mass.</span>
 <span class="c1"># Due to issue #610, setting PASSENGER_PAYLOAD_MASS = 0 will not work yet.</span>
-<span class="c1"># aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 4077, &#39;lbm&#39;)</span>
+<span class="c1"># aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 4077, 'lbm')</span>
 
-<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_BUSINESS_CLASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FIRST_CLASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">)</span>
+<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">)</span>
+<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_BUSINESS_CLASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">)</span>
+<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FIRST_CLASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">)</span>
 
 <span class="c1"># merged_meta_data = av.merge_hierarchies(meta_data1, meta_data2)</span>
 <span class="c1"># merge all metata data hierarchies here</span>
@@ -660,12 +660,12 @@
 <span class="c1"># set constraints in the background. Currently works with every objective type except Range.</span>
 <span class="c1"># can accept meta_data = merged_meta_data</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">add_aviary_group</span><span class="p">(</span><span class="s1">&#39;mission1&#39;</span><span class="p">,</span> <span class="n">aircraft</span><span class="o">=</span><span class="n">aviary_inputs_mission1</span><span class="p">,</span> <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info_mission1</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_aviary_group</span><span class="p">(</span><span class="s1">'mission1'</span><span class="p">,</span> <span class="n">aircraft</span><span class="o">=</span><span class="n">aviary_inputs_mission1</span><span class="p">,</span> <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info_mission1</span><span class="p">)</span>
 <span class="c1"># This method calls load_inputs(), check_and_preprocess_inputs(), and combines meta data.</span>
 <span class="c1"># This can only accept an AviaryValues, .csv are not accepted. You can pass problem_configurator</span>
 <span class="c1"># as an input.</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">add_aviary_group</span><span class="p">(</span><span class="s1">&#39;mission2&#39;</span><span class="p">,</span> <span class="n">aircraft</span><span class="o">=</span><span class="n">aviary_inputs_mission2</span><span class="p">,</span> <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info_mission2</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_aviary_group</span><span class="p">(</span><span class="s1">'mission2'</span><span class="p">,</span> <span class="n">aircraft</span><span class="o">=</span><span class="n">aviary_inputs_mission2</span><span class="p">,</span> <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info_mission2</span><span class="p">)</span>
 <span class="c1"># Load aircraft in second configuration for same mission</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
@@ -676,11 +676,11 @@
 <span class="c1"># prob.link_phases()</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">promote_inputs</span><span class="p">(</span>
-    <span class="p">[</span><span class="s1">&#39;mission1&#39;</span><span class="p">,</span> <span class="s1">&#39;mission2&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">'mission1'</span><span class="p">,</span> <span class="s1">'mission2'</span><span class="p">],</span>
     <span class="p">[</span>
-        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">&#39;Aircraft1:GROSS_MASS&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="s1">&#39;Aircraft1:RANGE&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">SWEEP</span><span class="p">,</span> <span class="s1">&#39;Aircraft1:SWEEP&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">'Aircraft1:GROSS_MASS'</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="s1">'Aircraft1:RANGE'</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">SWEEP</span><span class="p">,</span> <span class="s1">'Aircraft1:SWEEP'</span><span class="p">),</span>
     <span class="p">],</span>
 <span class="p">)</span>
 <span class="c1"># Links key design variables to ensure both aircraft are modelled the same:</span>
@@ -688,34 +688,34 @@
 <span class="c1"># Design range sizing things like the avionics system</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">add_design_var_default</span><span class="p">(</span>
-    <span class="s1">&#39;Aircraft1:GROSS_MASS&#39;</span><span class="p">,</span>
+    <span class="s1">'Aircraft1:GROSS_MASS'</span><span class="p">,</span>
     <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
     <span class="n">upper</span><span class="o">=</span><span class="mf">900e3</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">,</span>
     <span class="n">default_val</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">add_design_var_default</span><span class="p">(</span>
-    <span class="s1">&#39;Aircraft1:SWEEP&#39;</span><span class="p">,</span>
+    <span class="s1">'Aircraft1:SWEEP'</span><span class="p">,</span>
     <span class="n">lower</span><span class="o">=</span><span class="mf">23.0</span><span class="p">,</span>
     <span class="n">upper</span><span class="o">=</span><span class="mf">27.0</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'deg'</span><span class="p">,</span>
     <span class="n">default_val</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># This both adds the design variable AND sets the default value. This value can be over-written after-setup using set_val.</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">add_composite_objective</span><span class="p">(</span>
-    <span class="p">(</span><span class="s1">&#39;mission1&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-    <span class="p">(</span><span class="s1">&#39;mission2&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'mission1'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'mission2'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">ref</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># Adds an objective where mission 1 is flown 2x more times than mission2</span>
 <span class="c1"># Alternative way that users could specify the same objective:</span>
-<span class="c1"># prob.add_composite_objective_adv(missions=[&#39;mission1&#39;, &#39;mission2&#39;], mission_weights=[2,1], outputs=[Mission.FUEL_MASS],  ref=1)</span>
+<span class="c1"># prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.FUEL_MASS],  ref=1)</span>
 <span class="c1"># TODO: MULTI_MISSION cannot handle RANGE objectives correctly at the moment.</span>
 
 <span class="c1"># optimizer and iteration limit are optional provided here</span>
 <span class="c1"># Note: IPOPT needs more iters than SNOPT.</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">&#39;IPOPT&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">'IPOPT'</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
@@ -725,45 +725,45 @@
 
 <span class="c1"># set_val on OpenMDAO design variables can be placed here and will over-write all other defaults</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">set_design_range</span><span class="p">((</span><span class="s1">&#39;mission1&#39;</span><span class="p">,</span> <span class="s1">&#39;mission2&#39;</span><span class="p">),</span> <span class="nb">range</span><span class="o">=</span><span class="s1">&#39;Aircraft1:RANGE&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_design_range</span><span class="p">((</span><span class="s1">'mission1'</span><span class="p">,</span> <span class="s1">'mission2'</span><span class="p">),</span> <span class="nb">range</span><span class="o">=</span><span class="s1">'Aircraft1:RANGE'</span><span class="p">)</span>
 <span class="c1"># Determines the maximum design_range from both missions and sets that as the design range for both missions</span>
 <span class="c1"># to ensure that the avionics system is designed similarly for both aircraft</span>
 
-<span class="c1"># TODO: how to handle &quot;aircraft that the user says are the same but are not the same i.e. wing design is different&quot;</span>
+<span class="c1"># TODO: how to handle "aircraft that the user says are the same but are not the same i.e. wing design is different"</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">()</span>
 
-<span class="n">objective</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;composite_objective&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">objective</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'composite_objective'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
 <span class="n">printoutputs</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">EMPTY_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">LandingGear</span><span class="o">.</span><span class="n">MAIN_GEAR_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">LandingGear</span><span class="o">.</span><span class="n">NOSE_GEAR_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">LANDING_TO_TAKEOFF_MASS_RATIO</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Avionics</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Furnishings</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_SERVICE_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_MASS_TOTAL</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_PAYLOAD_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">CARGO_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">TOTAL_PAYLOAD_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">EMPTY_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">LandingGear</span><span class="o">.</span><span class="n">MAIN_GEAR_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">LandingGear</span><span class="o">.</span><span class="n">NOSE_GEAR_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">LANDING_TO_TAKEOFF_MASS_RATIO</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Avionics</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Furnishings</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_SERVICE_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_MASS_TOTAL</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_PAYLOAD_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">CARGO_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">TOTAL_PAYLOAD_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
 <span class="p">]</span>
 
 <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">units</span> <span class="ow">in</span> <span class="n">printoutputs</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">mission</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;mission1&#39;</span><span class="p">,</span> <span class="s1">&#39;mission2&#39;</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">mission</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'mission1'</span><span class="p">,</span> <span class="s1">'mission2'</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1">), </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1">), </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> was unavailable. Perhapse it has been promoted to the problem level?&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> was unavailable. Perhapse it has been promoted to the problem level?'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">' '</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Objective Value (unitless): &#39;</span><span class="p">,</span> <span class="n">objective</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aircraft1:GROSS_MASS (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;Aircraft1:GROSS_MASS&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aircraft1:SWEEP (deg)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;Aircraft1:SWEEP&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Objective Value (unitless): '</span><span class="p">,</span> <span class="n">objective</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Aircraft1:GROSS_MASS (lbm)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'Aircraft1:GROSS_MASS'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Aircraft1:SWEEP (deg)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'Aircraft1:SWEEP'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'deg'</span><span class="p">))</span>
 
 <span class="c1"># If you notice differences in Aircraft.Design.EMPTY_MASS, your aircraft are not</span>
 <span class="c1"># mirroring eachother and there is some difference in configuration between the two aircraft.</span>
@@ -776,50 +776,43 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631532.848230] [runnervm48cm3:5123 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x55f82b61ef90 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631532.850327] [runnervm48cm3:5123 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05123] pml_ucx.c:313  Error: Failed to create UCP worker
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
-  &#39;aircraft:engine:mass  [8071.35]  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  46063.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  98.5  ft
-  &#39;aircraft:fuselage:planform_area  1538.1675  ft**2
-  &#39;aircraft:fuselage:wetted_area  4142.317  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  707.706  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  84.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
-  &#39;aircraft:vertical_tail:wetted_area  589.35  ft**2
-  &#39;aircraft:wing:aspect_ratio  9.45  unitless
-  &#39;aircraft:wing:mass  15288.0  lbm
-  &#39;aircraft:wing:wetted_area  2423.02  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.35  unitless
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 2960.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
-  &#39;aircraft:engine:mass  [8071.35]  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  46063.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  98.5  ft
-  &#39;aircraft:fuselage:planform_area  1538.1675  ft**2
-  &#39;aircraft:fuselage:wetted_area  4142.317  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  707.706  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  84.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
-  &#39;aircraft:vertical_tail:wetted_area  589.35  ft**2
-  &#39;aircraft:wing:aspect_ratio  9.45  unitless
-  &#39;aircraft:wing:mass  15288.0  lbm
-  &#39;aircraft:wing:wetted_area  2423.02  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.35  unitless
+  'aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  'aircraft:engine:mass  [8071.35]  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  46063.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  98.5  ft
+  'aircraft:fuselage:planform_area  1538.1675  ft**2
+  'aircraft:fuselage:wetted_area  4142.317  ft**2
+  'aircraft:horizontal_tail:wetted_area  707.706  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  84.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
+  'aircraft:vertical_tail:wetted_area  589.35  ft**2
+  'aircraft:wing:aspect_ratio  9.45  unitless
+  'aircraft:wing:mass  15288.0  lbm
+  'aircraft:wing:wetted_area  2423.02  ft**2
+  'mission:takeoff:lift_over_drag  17.35  unitless
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  'aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  'aircraft:engine:mass  [8071.35]  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  46063.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  98.5  ft
+  'aircraft:fuselage:planform_area  1538.1675  ft**2
+  'aircraft:fuselage:wetted_area  4142.317  ft**2
+  'aircraft:horizontal_tail:wetted_area  707.706  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  84.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
+  'aircraft:vertical_tail:wetted_area  589.35  ft**2
+  'aircraft:wing:aspect_ratio  9.45  unitless
+  'aircraft:wing:mass  15288.0  lbm
+  'aircraft:wing:wetted_area  2423.02  ft**2
+  'mission:takeoff:lift_over_drag  17.35  unitless
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      282
@@ -836,12 +829,12 @@ Total number of inequality constraints...............:      124
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 45
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.7361570208899721e+02    2.5517140288904062e+04
-Dual infeasibility......:   8.2081606213269774e-10    1.2063931059697171e-07
-Constraint violation....:   1.0521978771079458e-11    1.0521978771079458e-11
+Objective...............:   1.7361570208899727e+02    2.5517140288904073e+04
+Dual infeasibility......:   8.2079385767220524e-10    1.2063604709991120e-07
+Constraint violation....:   1.0521612351518059e-11    1.0521612351518059e-11
 Variable bound violation:   2.1964623897474667e-08    2.1964623897474667e-08
-Complementarity.........:   6.1853509164827025e-08    9.0909097030338811e-06
-Overall NLP error.......:   6.1853509164827025e-08    9.0909097030338811e-06
+Complementarity.........:   6.1853509164821982e-08    9.0909097030331391e-06
+Overall NLP error.......:   6.1853509164821982e-08    9.0909097030331391e-06
 
 
 Number of objective function evaluations             = 85
@@ -851,7 +844,7 @@ Number of inequality constraint evaluations          = 85
 Number of equality constraint Jacobian evaluations   = 50
 Number of inequality constraint Jacobian evaluations = 50
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 17.830
+Total seconds in IPOPT                               = 31.718
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -961,13 +954,13 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
 <p>In the example, we import a single aircraft configuration (LargeSingleAisle2FLOPS) and then modify it to create a mission1 which carries 162 passengers and mission2, a mission which carries only a single passengers on the same aircraft. The number of seats for passengers in the aircraft, as well as some other systems like passenger airconditioning mass, is set by values of <code class="docutils literal notranslate"><span class="pre">Aircraft.CrewPayload.Design.NUM_PASSENGERS</span></code>, <code class="docutils literal notranslate"><span class="pre">Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS</span></code>, <code class="docutils literal notranslate"><span class="pre">Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS</span></code>, and <code class="docutils literal notranslate"><span class="pre">Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS</span></code>. Whereas the actual number of passengers on the flight is specified by variables of <code class="docutils literal notranslate"><span class="pre">Aircraft.CrewPayload.NUM_PASSENGERS</span></code>, <code class="docutils literal notranslate"><span class="pre">Aircraft.CrewPayload.NUM_ECONOMY_CLASS</span></code>, <code class="docutils literal notranslate"><span class="pre">Aircraft.CrewPayload.NUM_BUSINESS_CLASS</span></code>, and <code class="docutils literal notranslate"><span class="pre">Aircraft.CrewPayload.NUM_BUSINESS_CLASS</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">aviary_inputs_mission1</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">&#39;LargeSingleAisle2FLOPS&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">aviary_inputs_mission1</span> <span class="o">=</span> <span class="n">get_flops_inputs</span><span class="p">(</span><span class="s1">'LargeSingleAisle2FLOPS'</span><span class="p">)</span>
 
 <span class="n">aviary_inputs_mission2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">aviary_inputs_mission1</span><span class="p">)</span>
-<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_BUSINESS_CLASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FIRST_CLASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">)</span>
+<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">)</span>
+<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_BUSINESS_CLASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">)</span>
+<span class="n">aviary_inputs_mission2</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FIRST_CLASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -980,9 +973,9 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">(</span><span class="n">problem_type</span><span class="o">=</span><span class="n">ProblemType</span><span class="o">.</span><span class="n">MULTI_MISSION</span><span class="p">)</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">add_aviary_group</span><span class="p">(</span><span class="s1">&#39;mission1&#39;</span><span class="p">,</span> <span class="n">aircraft</span><span class="o">=</span><span class="n">aviary_inputs_mission1</span><span class="p">,</span> <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info_mission1</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_aviary_group</span><span class="p">(</span><span class="s1">'mission1'</span><span class="p">,</span> <span class="n">aircraft</span><span class="o">=</span><span class="n">aviary_inputs_mission1</span><span class="p">,</span> <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info_mission1</span><span class="p">)</span>
 
-<span class="n">prob</span><span class="o">.</span><span class="n">add_aviary_group</span><span class="p">(</span><span class="s1">&#39;mission2&#39;</span><span class="p">,</span> <span class="n">aircraft</span><span class="o">=</span><span class="n">aviary_inputs_mission2</span><span class="p">,</span> <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info_mission2</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_aviary_group</span><span class="p">(</span><span class="s1">'mission2'</span><span class="p">,</span> <span class="n">aircraft</span><span class="o">=</span><span class="n">aviary_inputs_mission2</span><span class="p">,</span> <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info_mission2</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
 </pre></div>
@@ -999,35 +992,35 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">promote_inputs</span><span class="p">(</span>
-    <span class="p">[</span><span class="s1">&#39;mission1&#39;</span><span class="p">,</span> <span class="s1">&#39;mission2&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">'mission1'</span><span class="p">,</span> <span class="s1">'mission2'</span><span class="p">],</span>
     <span class="p">[</span>
-        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">&#39;Aircraft1:GROSS_MASS&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="s1">&#39;Aircraft1:RANGE&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">SWEEP</span><span class="p">,</span> <span class="s1">&#39;Aircraft1:SWEEP&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">'Aircraft1:GROSS_MASS'</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="s1">'Aircraft1:RANGE'</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">SWEEP</span><span class="p">,</span> <span class="s1">'Aircraft1:SWEEP'</span><span class="p">),</span>
     <span class="p">],</span>
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">add_design_var_default</span><span class="p">(</span>
-    <span class="s1">&#39;Aircraft1:GROSS_MASS&#39;</span><span class="p">,</span>
+    <span class="s1">'Aircraft1:GROSS_MASS'</span><span class="p">,</span>
     <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
     <span class="n">upper</span><span class="o">=</span><span class="mf">900e3</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">,</span>
     <span class="n">default_val</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">add_design_var_default</span><span class="p">(</span>
-    <span class="s1">&#39;Aircraft1:SWEEP&#39;</span><span class="p">,</span>
+    <span class="s1">'Aircraft1:SWEEP'</span><span class="p">,</span>
     <span class="n">lower</span><span class="o">=</span><span class="mf">23.0</span><span class="p">,</span>
     <span class="n">upper</span><span class="o">=</span><span class="mf">27.0</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">'deg'</span><span class="p">,</span>
     <span class="n">default_val</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">add_composite_objective</span><span class="p">(</span>
-    <span class="p">(</span><span class="s1">&#39;mission1&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-    <span class="p">(</span><span class="s1">&#39;mission2&#39;</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'mission1'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'mission2'</span><span class="p">,</span> <span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">ref</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="c1"># prob.add_composite_objective_adv(missions=[&#39;mission1&#39;, &#39;mission2&#39;], mission_weights=[2,1], outputs=[Mission.FUEL_MASS], outputoutput_weights=[1] ref=1)</span>
+<span class="c1"># prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.FUEL_MASS], outputoutput_weights=[1] ref=1)</span>
 </pre></div>
 </div>
 </div>
@@ -1038,7 +1031,7 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
 <p>Now with the basics complete we can add a driver, set the basic design variables, and setup the aviary model.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">&#39;IPOPT&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">'IPOPT'</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
@@ -1046,43 +1039,43 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
-  &#39;aircraft:engine:mass  [8071.35]  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  46063.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  98.5  ft
-  &#39;aircraft:fuselage:planform_area  1538.1675  ft**2
-  &#39;aircraft:fuselage:wetted_area  4142.317  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  707.706  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  84.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
-  &#39;aircraft:vertical_tail:wetted_area  589.35  ft**2
-  &#39;aircraft:wing:aspect_ratio  9.45  unitless
-  &#39;aircraft:wing:mass  15288.0  lbm
-  &#39;aircraft:wing:wetted_area  2423.02  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.35  unitless
-</pre></div>
-</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 2960.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
-  &#39;aircraft:engine:mass  [8071.35]  lbm
-  &#39;aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
-  &#39;aircraft:fuel:max_capacity_mass  46063.0  lbm
-  &#39;aircraft:fuselage:passenger_compartment_length  98.5  ft
-  &#39;aircraft:fuselage:planform_area  1538.1675  ft**2
-  &#39;aircraft:fuselage:wetted_area  4142.317  ft**2
-  &#39;aircraft:horizontal_tail:wetted_area  707.706  ft**2
-  &#39;aircraft:landing_gear:main_gear_oleo_length  84.0  inch
-  &#39;aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
-  &#39;aircraft:vertical_tail:wetted_area  589.35  ft**2
-  &#39;aircraft:wing:aspect_ratio  9.45  unitless
-  &#39;aircraft:wing:mass  15288.0  lbm
-  &#39;aircraft:wing:wetted_area  2423.02  ft**2
-  &#39;mission:takeoff:lift_over_drag  17.35  unitless
+  'aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  'aircraft:engine:mass  [8071.35]  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  46063.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  98.5  ft
+  'aircraft:fuselage:planform_area  1538.1675  ft**2
+  'aircraft:fuselage:wetted_area  4142.317  ft**2
+  'aircraft:horizontal_tail:wetted_area  707.706  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  84.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
+  'aircraft:vertical_tail:wetted_area  589.35  ft**2
+  'aircraft:wing:aspect_ratio  9.45  unitless
+  'aircraft:wing:mass  15288.0  lbm
+  'aircraft:wing:wetted_area  2423.02  ft**2
+  'mission:takeoff:lift_over_drag  17.35  unitless
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+  'aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
+  'aircraft:engine:mass  [8071.35]  lbm
+  'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
+  'aircraft:fuel:max_capacity_mass  46063.0  lbm
+  'aircraft:fuselage:passenger_compartment_length  98.5  ft
+  'aircraft:fuselage:planform_area  1538.1675  ft**2
+  'aircraft:fuselage:wetted_area  4142.317  ft**2
+  'aircraft:horizontal_tail:wetted_area  707.706  ft**2
+  'aircraft:landing_gear:main_gear_oleo_length  84.0  inch
+  'aircraft:landing_gear:nose_gear_oleo_length  58.8  inch
+  'aircraft:vertical_tail:wetted_area  589.35  ft**2
+  'aircraft:wing:aspect_ratio  9.45  unitless
+  'aircraft:wing:mass  15288.0  lbm
+  'aircraft:wing:wetted_area  2423.02  ft**2
+  'mission:takeoff:lift_over_drag  17.35  unitless
 </pre></div>
 </div>
 </div>
@@ -1098,7 +1091,7 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">set_design_range</span><span class="p">((</span><span class="s1">&#39;mission1&#39;</span><span class="p">,</span> <span class="s1">&#39;mission2&#39;</span><span class="p">),</span> <span class="nb">range</span><span class="o">=</span><span class="s1">&#39;Aircraft1:RANGE&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">set_design_range</span><span class="p">((</span><span class="s1">'mission1'</span><span class="p">,</span> <span class="s1">'mission2'</span><span class="p">),</span> <span class="nb">range</span><span class="o">=</span><span class="s1">'Aircraft1:RANGE'</span><span class="p">)</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">()</span>
 </pre></div>
@@ -1119,12 +1112,12 @@ Total number of inequality constraints...............:      124
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 45
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.7361570208899718e+02    2.5517140288904058e+04
-Dual infeasibility......:   8.2076721231961423e-10    1.2063213090343858e-07
-Constraint violation....:   1.0521974638528014e-11    1.0521974638528014e-11
+Objective...............:   1.7361570208899730e+02    2.5517140288904076e+04
+Dual infeasibility......:   8.2073657016413458e-10    1.2062762727749507e-07
+Constraint violation....:   1.0521248686990956e-11    1.0521248686990956e-11
 Variable bound violation:   2.1964623897474667e-08    2.1964623897474667e-08
-Complementarity.........:   6.1853509164826548e-08    9.0909097030338117e-06
-Overall NLP error.......:   6.1853509164826548e-08    9.0909097030338117e-06
+Complementarity.........:   6.1853509164813869e-08    9.0909097030319482e-06
+Overall NLP error.......:   6.1853509164813869e-08    9.0909097030319482e-06
 
 
 Number of objective function evaluations             = 85
@@ -1134,7 +1127,7 @@ Number of inequality constraint evaluations          = 85
 Number of equality constraint Jacobian evaluations   = 50
 Number of inequality constraint Jacobian evaluations = 50
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 17.770
+Total seconds in IPOPT                               = 31.013
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -1164,37 +1157,37 @@ EXIT: Optimal Solution Found.
 <p>The <code class="docutils literal notranslate"><span class="pre">Aircraft.Avionics.MASS</span></code> also match, indicating that the <code class="docutils literal notranslate"><span class="pre">Aircraft.Design.RANGE</span></code> for both aircraft has been properly set to the same value.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">objective</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;composite_objective&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">objective</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'composite_objective'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
 <span class="n">printoutputs</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">EMPTY_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">LandingGear</span><span class="o">.</span><span class="n">MAIN_GEAR_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">LandingGear</span><span class="o">.</span><span class="n">NOSE_GEAR_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">LANDING_TO_TAKEOFF_MASS_RATIO</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Avionics</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Furnishings</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_SERVICE_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_MASS_TOTAL</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_PAYLOAD_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">CARGO_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">TOTAL_PAYLOAD_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">EMPTY_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">LandingGear</span><span class="o">.</span><span class="n">MAIN_GEAR_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">LandingGear</span><span class="o">.</span><span class="n">NOSE_GEAR_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">LANDING_TO_TAKEOFF_MASS_RATIO</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Avionics</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Furnishings</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_SERVICE_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_MASS_TOTAL</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">PASSENGER_PAYLOAD_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">CARGO_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">TOTAL_PAYLOAD_MASS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">),</span>
 <span class="p">]</span>
 
 <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">units</span> <span class="ow">in</span> <span class="n">printoutputs</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">mission</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;mission1&#39;</span><span class="p">,</span> <span class="s1">&#39;mission2&#39;</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">mission</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'mission1'</span><span class="p">,</span> <span class="s1">'mission2'</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1">), </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">mission</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1">), </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> was unavailable. Perhapse it has been promoted to the problem level?&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1"> was unavailable. Perhapse it has been promoted to the problem level?'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">' '</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Objective Value (unitless): &#39;</span><span class="p">,</span> <span class="n">objective</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aircraft1:GROSS_MASS (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;Aircraft1:GROSS_MASS&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aircraft1:SWEEP (deg)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;Aircraft1:SWEEP&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Objective Value (unitless): '</span><span class="p">,</span> <span class="n">objective</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Aircraft1:GROSS_MASS (lbm)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'Aircraft1:GROSS_MASS'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm'</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Aircraft1:SWEEP (deg)'</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'Aircraft1:SWEEP'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'deg'</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>

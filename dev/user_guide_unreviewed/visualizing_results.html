@@ -598,7 +598,10 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#level-1-real-time-optimization-progress-plot">Level 1 Real-time Optimization Progress Plot</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#level-2-and-level-3-real-time-optimization-progress-plot">Level 2 and Level 3 Real-time Optimization Progress Plot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#level-2-and-level-3-real-time-optimization-progress-plot">Level 2 and Level 3 Real-time Optimization Progress Plot</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#viewing-legacy-reports">Viewing Legacy Reports</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -870,8 +873,8 @@ Please refer to the <a class="reference external" href="https://openmdao.org/dym
 <span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
 
 <span class="c1"># inputs that run_aviary() requires</span>
-<span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv&#39;</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;IPOPT&#39;</span>
+<span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv'</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">'IPOPT'</span>
 <span class="n">objective_type</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">restart_filename</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="c1"># max_iter = 0</span>
@@ -913,6 +916,19 @@ Please refer to the <a class="reference external" href="https://openmdao.org/dym
 </div>
 </div>
 </div>
+<section id="viewing-legacy-reports">
+<h3>Viewing Legacy Reports<a class="headerlink" href="#viewing-legacy-reports" title="Link to this heading">#</a></h3>
+<p>You can view a recreation of the FLOPS EDET drag report by including the following in your phase_info file, when using FLOPs computed aero.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span><span class="p">[</span><span class="s1">'pre_mission'</span><span class="p">][</span><span class="s1">'aerodynamics'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'flops_report'</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This will generate an “aerodyanics” pane in the “Subsystems” section of the Aviary dashboard.
+<img alt="legacy FLOPS drag report" src="../_images/flops_edet.png" /></p>
+</section>
 </section>
 </section>
 
@@ -998,7 +1014,10 @@ Please refer to the <a class="reference external" href="https://openmdao.org/dym
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#level-1-real-time-optimization-progress-plot">Level 1 Real-time Optimization Progress Plot</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#level-2-and-level-3-real-time-optimization-progress-plot">Level 2 and Level 3 Real-time Optimization Progress Plot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#level-2-and-level-3-real-time-optimization-progress-plot">Level 2 and Level 3 Real-time Optimization Progress Plot</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#viewing-legacy-reports">Viewing Legacy Reports</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

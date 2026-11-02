@@ -614,30 +614,30 @@
 
 <span class="c1"># top-level turboprop settings</span>
 <span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># quiet unneeded printouts</span>
-<span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">FIXED_RPM</span><span class="p">,</span> <span class="mi">13820</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;rpm&#39;</span><span class="p">)</span>
+<span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">FIXED_RPM</span><span class="p">,</span> <span class="mi">13820</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'rpm'</span><span class="p">)</span>
 
 <span class="c1"># EngineDeck minimum option set</span>
-<span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">DATA_FILE</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;models/engines/turboshaft_4465hp.csv&#39;</span><span class="p">))</span>
+<span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">DATA_FILE</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">'models/engines/turboshaft_4465hp.csv'</span><span class="p">))</span>
 
 <span class="c1"># Gearbox model minimum option set</span>
-<span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">Gearbox</span><span class="o">.</span><span class="n">GEAR_RATIO</span><span class="p">,</span> <span class="mf">13.55</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
-<span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">Gearbox</span><span class="o">.</span><span class="n">SHAFT_POWER_DESIGN</span><span class="p">,</span> <span class="mi">4465</span><span class="p">,</span> <span class="s1">&#39;hp&#39;</span><span class="p">)</span>
+<span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">Gearbox</span><span class="o">.</span><span class="n">GEAR_RATIO</span><span class="p">,</span> <span class="mf">13.55</span><span class="p">,</span> <span class="s1">'unitless'</span><span class="p">)</span>
+<span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">Gearbox</span><span class="o">.</span><span class="n">SHAFT_POWER_DESIGN</span><span class="p">,</span> <span class="mi">4465</span><span class="p">,</span> <span class="s1">'hp'</span><span class="p">)</span>
 
 <span class="c1"># Hamilton Standard propeller minimum option set</span>
 <span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">Propeller</span><span class="o">.</span><span class="n">TIP_MACH_MAX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-<span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">Propeller</span><span class="o">.</span><span class="n">NUM_BLADES</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+<span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">Propeller</span><span class="o">.</span><span class="n">NUM_BLADES</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">)</span>
 <span class="n">options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">Propeller</span><span class="o">.</span><span class="n">COMPUTE_INSTALLATION_LOSS</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Initialize turboprop model. Model uses an EngineDeck built from `options`, basic</span>
 <span class="c1"># gearbox model with default efficiency of 1, and the Hamilton Standard propeller model</span>
-<span class="c1"># &quot;turboprop&quot; is ready to be included in an AviaryProblem</span>
-<span class="n">turboprop</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">TurbopropModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;turboprop_example&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+<span class="c1"># "turboprop" is ready to be included in an AviaryProblem</span>
+<span class="n">turboprop</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">TurbopropModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'turboprop_example'</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
 <span class="c1"># Build and run AviaryProblem using the Level2 interface</span>
 <span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">()</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span>
-    <span class="s1">&#39;models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv&#39;</span><span class="p">,</span>
+    <span class="s1">'models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'</span><span class="p">,</span>
     <span class="n">two_dof_phase_info</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -646,7 +646,7 @@
 <span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
 
 <span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">&#39;IPOPT&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">'IPOPT'</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">()</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
@@ -655,51 +655,48 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631870.935860] [runnervm48cm3:5986 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x5620017bb660 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793631870.936162] [runnervm48cm3:5986 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05986] pml_ucx.c:313  Error: Failed to create UCP worker
-Warning: As-flown payload (42673.0 lbm) is greater than maximum payload (31273.0 lbm). The aircraft will be undersized for this payload!
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: As-flown payload (42673.0 lbm) is greater than maximum payload (31273.0 lbm). The aircraft will be undersized for this payload!
 
 Warning: Disabling range constraint for max range mission.
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
-  &#39;aircraft:anti_icing:mass  644.0  lbm
-  &#39;aircraft:apu:mass  756.0  lbm
-  &#39;aircraft:avionics:mass  936.0  lbm
-  &#39;aircraft:design:emergency_equipment_mass  25.0  lbm
-  &#39;aircraft:design:wing_loading  88.846  lbf/ft**2
-  &#39;aircraft:furnishings:mass  0.0  lbm
-  &#39;aircraft:fuselage:form_factor  1.25  unitless
-  &#39;aircraft:horizontal_tail:form_factor  1.25  unitless
-  &#39;aircraft:horizontal_tail:moment_ratio  0.3061  unitless
-  &#39;aircraft:horizontal_tail:volume_coefficient  0.8614  unitless
-  &#39;aircraft:nacelle:form_factor  [1.5]  unitless
-  &#39;aircraft:strut:fuselage_interference_factor  0.0  unitless
-  &#39;aircraft:vertical_tail:form_factor  1.25  unitless
-  &#39;aircraft:vertical_tail:moment_ratio  2.809  unitless
-  &#39;aircraft:vertical_tail:volume_coefficient  0.05355  unitless
-  &#39;aircraft:wing:form_factor  1.25  unitless
-  &#39;aircraft:wing:slat_span_ratio  0.9  unitless
+  'aircraft:anti_icing:mass  644.0  lbm
+  'aircraft:apu:mass  756.0  lbm
+  'aircraft:avionics:mass  936.0  lbm
+  'aircraft:design:emergency_equipment_mass  25.0  lbm
+  'aircraft:design:wing_loading  88.846  lbf/ft**2
+  'aircraft:furnishings:mass  0.0  lbm
+  'aircraft:fuselage:form_factor  1.25  unitless
+  'aircraft:horizontal_tail:form_factor  1.25  unitless
+  'aircraft:horizontal_tail:moment_ratio  0.3061  unitless
+  'aircraft:horizontal_tail:volume_coefficient  0.8614  unitless
+  'aircraft:nacelle:form_factor  [1.5]  unitless
+  'aircraft:strut:fuselage_interference_factor  0.0  unitless
+  'aircraft:vertical_tail:form_factor  1.25  unitless
+  'aircraft:vertical_tail:moment_ratio  2.809  unitless
+  'aircraft:vertical_tail:volume_coefficient  0.05355  unitless
+  'aircraft:wing:form_factor  1.25  unitless
+  'aircraft:wing:slat_span_ratio  0.9  unitless
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aero_td.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aero_td.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;landing.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1212: OMDeprecationWarning:&#39;pre_mission.core_subsystems.mass.fixed_mass.payload&#39; &lt;class PayloadGroup&gt;: d(payload_mass_des)/d(aircraft:crew_and_payload:mass_per_passenger_with_bags): Partial was declared to be exactly zero. This is inefficient and the declaration should be removed. In a future version of OpenMDAO this behavior will raise an error.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1212: OMDeprecationWarning:&#39;pre_mission.core_subsystems.mass.fixed_mass.payload&#39; &lt;class PayloadGroup&gt;: d(payload_mass_max)/d(aircraft:crew_and_payload:mass_per_passenger_with_bags): Partial was declared to be exactly zero. This is inefficient and the declaration should be removed. In a future version of OpenMDAO this behavior will raise an error.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.ascent.rhs_all.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.ascent.rhs_all.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.groundroll.rhs_all.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.groundroll.rhs_all.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.rotation.rhs_all.aerodynamics.drag_coef&#39; &lt;class DragCoef&gt;: d(CD_base)/d((&#39;altitude&#39;, &#39;lift_coefficient&#39;, &#39;cf&#39;, &#39;SA5&#39;, &#39;SA6&#39;, &#39;SA7&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
-/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:&#39;traj.phases.rotation.rhs_all.aerodynamics.kclge&#39; &lt;class GroundEffect&gt;: d(kclge)/d((&#39;angle_of_attack&#39;, &#39;altitude&#39;, &#39;lift_curve_slope&#39;)): rows and cols do not reduce the number of evaluations when method=&#39;cs&#39;. Use declare_coloring to compute the sparsity of approximated partials.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aero_td.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aero_td.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'landing.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1212: OMDeprecationWarning:'pre_mission.core_subsystems.mass.fixed_mass.payload' &lt;class PayloadGroup&gt;: d(payload_mass_des)/d(aircraft:crew_and_payload:mass_per_passenger_with_bags): Partial was declared to be exactly zero. This is inefficient and the declaration should be removed. In a future version of OpenMDAO this behavior will raise an error.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1212: OMDeprecationWarning:'pre_mission.core_subsystems.mass.fixed_mass.payload' &lt;class PayloadGroup&gt;: d(payload_mass_max)/d(aircraft:crew_and_payload:mass_per_passenger_with_bags): Partial was declared to be exactly zero. This is inefficient and the declaration should be removed. In a future version of OpenMDAO this behavior will raise an error.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.ascent.rhs_all.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.ascent.rhs_all.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.groundroll.rhs_all.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.groundroll.rhs_all.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/driver.py:1454: DriverWarning:pyOptSparseDriver: constraint(s) [&#39;mission:constraints:excess_fuel_mass_capacity&#39;] do not depend on any design variables. Please check your problem formulation.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.rotation.rhs_all.aerodynamics.drag_coef' &lt;class DragCoef&gt;: d(CD_base)/d(('altitude', 'lift_coefficient', 'cf', 'SA5', 'SA6', 'SA7')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/component.py:1200: DerivativesWarning:'traj.phases.rotation.rhs_all.aerodynamics.kclge' &lt;class GroundEffect&gt;: d(kclge)/d(('angle_of_attack', 'altitude', 'lift_curve_slope')): rows and cols do not reduce the number of evaluations when method='cs'. Use declare_coloring to compute the sparsity of approximated partials.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/driver.py:1454: DriverWarning:pyOptSparseDriver: constraint(s) ['mission:constraints:excess_fuel_mass_capacity'] do not depend on any design variables. Please check your problem formulation.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: divide by zero encountered in divide

@@ -551,29 +551,29 @@
 <span class="n">_gasp_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">MACH</span><span class="p">,</span> <span class="n">ALTITUDE</span><span class="p">,</span> <span class="n">THROTTLE</span><span class="p">,</span> <span class="n">FUEL_FLOW</span><span class="p">,</span> <span class="n">TEMPERATURE</span><span class="p">]</span>
 
 <span class="n">header_names</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">MACH</span><span class="p">:</span> <span class="s1">&#39;Mach Number&#39;</span><span class="p">,</span>
-    <span class="n">ALTITUDE</span><span class="p">:</span> <span class="s1">&#39;Altitude&#39;</span><span class="p">,</span>
-    <span class="n">THROTTLE</span><span class="p">:</span> <span class="s1">&#39;Throttle&#39;</span><span class="p">,</span>
-    <span class="n">THRUST</span><span class="p">:</span> <span class="s1">&#39;Thrust&#39;</span><span class="p">,</span>
-    <span class="n">GROSS_THRUST</span><span class="p">:</span> <span class="s1">&#39;Gross Thrust&#39;</span><span class="p">,</span>
-    <span class="n">RAM_DRAG</span><span class="p">:</span> <span class="s1">&#39;Ram Drag&#39;</span><span class="p">,</span>
-    <span class="n">FUEL_FLOW</span><span class="p">:</span> <span class="s1">&#39;Fuel Flow&#39;</span><span class="p">,</span>
-    <span class="n">NOX_RATE</span><span class="p">:</span> <span class="s1">&#39;NOx Rate&#39;</span><span class="p">,</span>
-    <span class="n">TEMPERATURE</span><span class="p">:</span> <span class="s1">&#39;T4&#39;</span><span class="p">,</span>
-    <span class="n">SHAFT_POWER_CORRECTED</span><span class="p">:</span> <span class="s1">&#39;Shaft Power Corrected&#39;</span><span class="p">,</span>
-    <span class="n">TAILPIPE_THRUST</span><span class="p">:</span> <span class="s1">&#39;Tailpipe Thrust&#39;</span><span class="p">,</span>
-    <span class="c1"># EXIT_AREA: &#39;Exit Area&#39;,</span>
+    <span class="n">MACH</span><span class="p">:</span> <span class="s1">'Mach Number'</span><span class="p">,</span>
+    <span class="n">ALTITUDE</span><span class="p">:</span> <span class="s1">'Altitude'</span><span class="p">,</span>
+    <span class="n">THROTTLE</span><span class="p">:</span> <span class="s1">'Throttle'</span><span class="p">,</span>
+    <span class="n">THRUST</span><span class="p">:</span> <span class="s1">'Thrust'</span><span class="p">,</span>
+    <span class="n">GROSS_THRUST</span><span class="p">:</span> <span class="s1">'Gross Thrust'</span><span class="p">,</span>
+    <span class="n">RAM_DRAG</span><span class="p">:</span> <span class="s1">'Ram Drag'</span><span class="p">,</span>
+    <span class="n">FUEL_FLOW</span><span class="p">:</span> <span class="s1">'Fuel Flow'</span><span class="p">,</span>
+    <span class="n">NOX_RATE</span><span class="p">:</span> <span class="s1">'NOx Rate'</span><span class="p">,</span>
+    <span class="n">TEMPERATURE</span><span class="p">:</span> <span class="s1">'T4'</span><span class="p">,</span>
+    <span class="n">SHAFT_POWER_CORRECTED</span><span class="p">:</span> <span class="s1">'Shaft Power Corrected'</span><span class="p">,</span>
+    <span class="n">TAILPIPE_THRUST</span><span class="p">:</span> <span class="s1">'Tailpipe Thrust'</span><span class="p">,</span>
+    <span class="c1"># EXIT_AREA: 'Exit Area',</span>
 <span class="p">}</span>
 
 <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;Thrust&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Gross Thrust&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Ram Drag&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Fuel Flow&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;NOx Rate&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;T4&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Shaft Power Corrected&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Tailpipe Thrust&#39;</span><span class="p">,</span>
+    <span class="s1">'Thrust'</span><span class="p">,</span>
+    <span class="s1">'Gross Thrust'</span><span class="p">,</span>
+    <span class="s1">'Ram Drag'</span><span class="p">,</span>
+    <span class="s1">'Fuel Flow'</span><span class="p">,</span>
+    <span class="s1">'NOx Rate'</span><span class="p">,</span>
+    <span class="s1">'T4'</span><span class="p">,</span>
+    <span class="s1">'Shaft Power Corrected'</span><span class="p">,</span>
+    <span class="s1">'Tailpipe Thrust'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># number of sig figs to round each header to, if requested</span>
@@ -595,7 +595,7 @@
 <div class="viewcode-block" id="convert_engine_deck">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/engine_deck_conversion.html#aviary.utils.engine_deck_conversion.convert_engine_deck">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_engine_deck</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="n">EngineDeckType</span><span class="p">,</span> <span class="n">round_data</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Converts FLOPS- or GASP-formatted engine decks into Aviary csv format.</span>
 <span class="sd">    FLOPS decks are changed from column-delimited to csv format with added headers.</span>
 <span class="sd">    GASP decks are reorganized into csv. T4 is recovered using assumptions used in GASPy.</span>
@@ -613,7 +613,7 @@
 <span class="sd">        Sets if any generated data should be rounded. This primarily applies to GASP engines that</span>
 <span class="sd">        must compute T4 or require extrapolation to fill out sparse flight throttle ranges.</span>
 <span class="sd">        Defaults to False.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">comments</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -624,41 +624,41 @@
         <span class="n">data_file</span> <span class="o">=</span> <span class="n">input_file</span>
 
     <span class="c1"># Check if input file exists</span>
-    <span class="c1"># If the path still doesn&#39;t exist, attempt to find it relative to the Aviary package.</span>
+    <span class="c1"># If the path still doesn't exist, attempt to find it relative to the Aviary package.</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="c1"># Determine the path relative to the Aviary package.</span>
         <span class="n">data_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">get_aviary_resource_path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data_file</span><span class="p">)))</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;Engine deck file not found: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s1">. &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;Please check that the file path is correct and the file exists.&#39;</span>
+            <span class="sa">f</span><span class="s1">'Engine deck file not found: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s1">. '</span>
+            <span class="sa">f</span><span class="s1">'Please check that the file path is correct and the file exists.'</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;Path is not a file: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s1">. Please provide a path to a valid engine deck file.&#39;</span>
+            <span class="sa">f</span><span class="s1">'Path is not a file: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s1">. Please provide a path to a valid engine deck file.'</span>
         <span class="p">)</span>
 
     <span class="n">legacy_code</span> <span class="o">=</span> <span class="n">data_format</span><span class="o">.</span><span class="n">value</span>
-    <span class="n">engine_type</span> <span class="o">=</span> <span class="s1">&#39;engine&#39;</span>
-    <span class="k">if</span> <span class="n">legacy_code</span> <span class="o">==</span> <span class="s1">&#39;GASP_TS&#39;</span><span class="p">:</span>
-        <span class="n">engine_type</span> <span class="o">=</span> <span class="s1">&#39;turboshaft engine&#39;</span>
-        <span class="n">legacy_code</span> <span class="o">=</span> <span class="s1">&#39;GASP&#39;</span>
+    <span class="n">engine_type</span> <span class="o">=</span> <span class="s1">'engine'</span>
+    <span class="k">if</span> <span class="n">legacy_code</span> <span class="o">==</span> <span class="s1">'GASP_TS'</span><span class="p">:</span>
+        <span class="n">engine_type</span> <span class="o">=</span> <span class="s1">'turboshaft engine'</span>
+        <span class="n">legacy_code</span> <span class="o">=</span> <span class="s1">'GASP'</span>
 
-    <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;# </span><span class="si">{</span><span class="n">legacy_code</span><span class="si">}</span><span class="s1">-derived </span><span class="si">{</span><span class="n">engine_type</span><span class="si">}</span><span class="s1"> deck converted from </span><span class="si">{</span><span class="n">data_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'# </span><span class="si">{</span><span class="n">legacy_code</span><span class="si">}</span><span class="s1">-derived </span><span class="si">{</span><span class="n">engine_type</span><span class="si">}</span><span class="s1"> deck converted from </span><span class="si">{</span><span class="n">data_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">data_format</span> <span class="o">==</span> <span class="n">EngineDeckType</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_flops_keys</span><span class="p">}</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data_file</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8-sig&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data_file</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8-sig'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">_read_flops_engine</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
             <span class="n">data_starts</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">data_starts</span><span class="p">:</span>
                     <span class="c1"># pull out comments before data starts</span>
-                    <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'#'</span><span class="p">:</span>
                         <span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                         <span class="k">continue</span>
                     <span class="n">data_starts</span> <span class="o">=</span> <span class="kc">True</span>
@@ -683,61 +683,61 @@
         <span class="k">if</span> <span class="n">is_turbo_prop</span><span class="p">:</span>
             <span class="n">gasp_keys</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="n">SHAFT_POWER_CORRECTED</span><span class="p">,</span> <span class="n">TAILPIPE_THRUST</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">gasp_keys</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="n">THRUST</span><span class="p">,))</span>  <span class="c1"># must keep &quot;,&quot; here</span>
+            <span class="n">gasp_keys</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="n">THRUST</span><span class="p">,))</span>  <span class="c1"># must keep "," here</span>
 
         <span class="n">gasp_keys</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="n">fuelflow</span><span class="p">,</span> <span class="n">temperature</span><span class="p">))</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">gasp_keys</span><span class="p">}</span>
 
         <span class="n">scalars</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">fields</span> <span class="o">=</span> <span class="n">_read_gasp_engine</span><span class="p">(</span><span class="n">data_file</span><span class="p">,</span> <span class="n">is_turbo_prop</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;throttle_type&#39;</span> <span class="ow">in</span> <span class="n">scalars</span><span class="p">:</span>
-            <span class="n">throttle_type</span> <span class="o">=</span> <span class="n">scalars</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;throttle_type&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">'throttle_type'</span> <span class="ow">in</span> <span class="n">scalars</span><span class="p">:</span>
+            <span class="n">throttle_type</span> <span class="o">=</span> <span class="n">scalars</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'throttle_type'</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">throttle_type</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">t4max</span> <span class="o">=</span> <span class="n">scalars</span><span class="p">[</span><span class="s1">&#39;t4max&#39;</span><span class="p">]</span>
+        <span class="n">t4max</span> <span class="o">=</span> <span class="n">scalars</span><span class="p">[</span><span class="s1">'t4max'</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">t4max</span> <span class="o">&lt;=</span> <span class="mi">100</span> <span class="ow">or</span> <span class="n">throttle_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">throttle_step</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">throttle_step</span> <span class="o">=</span> <span class="mf">0.5</span>
 
         <span class="c1"># save scalars as comments</span>
-        <span class="n">comments</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;# &#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">scalars</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">scalars</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+        <span class="n">comments</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">'# '</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">': '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">scalars</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">scalars</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
 
         <span class="c1"># recommended to always generate structured grid</span>
         <span class="n">structure_data</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">structure_data</span><span class="p">:</span>
             <span class="n">structured_data</span> <span class="o">=</span> <span class="n">_make_structured_grid</span><span class="p">(</span>
-                <span class="n">tables</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;lagrange3&#39;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span> <span class="n">throttle_step</span><span class="o">=</span><span class="n">throttle_step</span>
+                <span class="n">tables</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'lagrange3'</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span> <span class="n">throttle_step</span><span class="o">=</span><span class="n">throttle_step</span>
             <span class="p">)</span>
 
-            <span class="n">data</span><span class="p">[</span><span class="n">MACH</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">&#39;fuelflow&#39;</span><span class="p">][</span><span class="s1">&#39;machs&#39;</span><span class="p">]</span>
-            <span class="n">data</span><span class="p">[</span><span class="n">ALTITUDE</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">&#39;fuelflow&#39;</span><span class="p">][</span><span class="s1">&#39;alts&#39;</span><span class="p">]</span>
-            <span class="n">data</span><span class="p">[</span><span class="n">FUEL_FLOW</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">&#39;fuelflow&#39;</span><span class="p">][</span><span class="s1">&#39;vals&#39;</span><span class="p">]</span>
-            <span class="n">T4T2</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">&#39;fuelflow&#39;</span><span class="p">][</span><span class="s1">&#39;t4t2s&#39;</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">MACH</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">'fuelflow'</span><span class="p">][</span><span class="s1">'machs'</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">ALTITUDE</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">'fuelflow'</span><span class="p">][</span><span class="s1">'alts'</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">FUEL_FLOW</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">'fuelflow'</span><span class="p">][</span><span class="s1">'vals'</span><span class="p">]</span>
+            <span class="n">T4T2</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">'fuelflow'</span><span class="p">][</span><span class="s1">'t4t2s'</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">is_turbo_prop</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">SHAFT_POWER_CORRECTED</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">&#39;shaft_power_corrected&#39;</span><span class="p">][</span><span class="s1">&#39;vals&#39;</span><span class="p">]</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">TAILPIPE_THRUST</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">&#39;tailpipe_thrust&#39;</span><span class="p">][</span><span class="s1">&#39;vals&#39;</span><span class="p">]</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">SHAFT_POWER_CORRECTED</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">'shaft_power_corrected'</span><span class="p">][</span><span class="s1">'vals'</span><span class="p">]</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">TAILPIPE_THRUST</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">'tailpipe_thrust'</span><span class="p">][</span><span class="s1">'vals'</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">THRUST</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">&#39;thrust&#39;</span><span class="p">][</span><span class="s1">&#39;vals&#39;</span><span class="p">]</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">THRUST</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured_data</span><span class="p">[</span><span class="s1">'thrust'</span><span class="p">][</span><span class="s1">'vals'</span><span class="p">]</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="n">MACH</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;fuelflow&#39;</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">]</span>
-            <span class="n">data</span><span class="p">[</span><span class="n">ALTITUDE</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;fuelflow&#39;</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>
-            <span class="n">data</span><span class="p">[</span><span class="n">FUEL_FLOW</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;fuelflow&#39;</span><span class="p">][:,</span> <span class="mi">3</span><span class="p">]</span>
-            <span class="n">T4T2</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;fuelflow&#39;</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">MACH</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'fuelflow'</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">ALTITUDE</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'fuelflow'</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">FUEL_FLOW</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'fuelflow'</span><span class="p">][:,</span> <span class="mi">3</span><span class="p">]</span>
+            <span class="n">T4T2</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'fuelflow'</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">is_turbo_prop</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">SHAFT_POWER_CORRECTED</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;shaft_power_corrected&#39;</span><span class="p">][:,</span> <span class="mi">3</span><span class="p">]</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">TAILPIPE_THRUST</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;tailpipe_thrust&#39;</span><span class="p">][:,</span> <span class="mi">3</span><span class="p">]</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">SHAFT_POWER_CORRECTED</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'shaft_power_corrected'</span><span class="p">][:,</span> <span class="mi">3</span><span class="p">]</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">TAILPIPE_THRUST</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'tailpipe_thrust'</span><span class="p">][:,</span> <span class="mi">3</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">THRUST</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">&#39;thrust&#39;</span><span class="p">][:,</span> <span class="mi">3</span><span class="p">]</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">THRUST</span><span class="p">]</span> <span class="o">=</span> <span class="n">tables</span><span class="p">[</span><span class="s1">'thrust'</span><span class="p">][:,</span> <span class="mi">3</span><span class="p">]</span>
 
         <span class="n">generate_flight_idle</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">generate_flight_idle</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_turbo_prop</span><span class="p">:</span>
             <span class="n">data</span><span class="p">,</span> <span class="n">T4T2</span> <span class="o">=</span> <span class="n">_generate_flight_idle</span><span class="p">(</span>
                 <span class="n">data</span><span class="p">,</span>
                 <span class="n">T4T2</span><span class="p">,</span>
-                <span class="n">ref_sls_airflow</span><span class="o">=</span><span class="n">scalars</span><span class="p">[</span><span class="s1">&#39;sls_airflow&#39;</span><span class="p">],</span>
-                <span class="n">ref_sfn_idle</span><span class="o">=</span><span class="n">scalars</span><span class="p">[</span><span class="s1">&#39;sfn_idle&#39;</span><span class="p">],</span>
+                <span class="n">ref_sls_airflow</span><span class="o">=</span><span class="n">scalars</span><span class="p">[</span><span class="s1">'sls_airflow'</span><span class="p">],</span>
+                <span class="n">ref_sfn_idle</span><span class="o">=</span><span class="n">scalars</span><span class="p">[</span><span class="s1">'sfn_idle'</span><span class="p">],</span>
             <span class="p">)</span>
 
         <span class="c1"># if t4max 100 or less, it is actually throttle. Remove temperature as variable</span>
@@ -754,42 +754,42 @@
             <span class="n">prob</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">Problem</span><span class="p">()</span>
 
             <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-                <span class="s1">&#39;T4T2&#39;</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">IndepVarComp</span><span class="p">(</span><span class="s1">&#39;T4:T2&#39;</span><span class="p">,</span> <span class="n">T4T2</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">),</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">]</span>
+                <span class="s1">'T4T2'</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">IndepVarComp</span><span class="p">(</span><span class="s1">'T4:T2'</span><span class="p">,</span> <span class="n">T4T2</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">),</span> <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">]</span>
             <span class="p">)</span>
 
             <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
                 <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span>
-                <span class="n">om</span><span class="o">.</span><span class="n">IndepVarComp</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">MACH</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-                <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+                <span class="n">om</span><span class="o">.</span><span class="n">IndepVarComp</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">MACH</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">),</span>
+                <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
             <span class="p">)</span>
 
             <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
                 <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span>
-                <span class="n">om</span><span class="o">.</span><span class="n">IndepVarComp</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">ALTITUDE</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-                <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+                <span class="n">om</span><span class="o">.</span><span class="n">IndepVarComp</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">ALTITUDE</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span><span class="p">),</span>
+                <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
             <span class="p">)</span>
 
             <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;atmosphere&#39;</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s1">'atmosphere'</span><span class="p">,</span>
                 <span class="n">subsys</span><span class="o">=</span><span class="n">Atmosphere</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">MACH</span><span class="p">])),</span>
                 <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">],</span>
                 <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">TEMPERATURE</span><span class="p">],</span>
             <span class="p">)</span>
 
             <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;conversion&#39;</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s1">'conversion'</span><span class="p">,</span>
                 <span class="n">subsys</span><span class="o">=</span><span class="n">AtmosCalc</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">MACH</span><span class="p">])),</span>
                 <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
                     <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span>
                     <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">TEMPERATURE</span><span class="p">,</span>
                 <span class="p">],</span>
-                <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;t2&#39;</span><span class="p">],</span>
+                <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'t2'</span><span class="p">],</span>
             <span class="p">)</span>
 
             <span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
             <span class="n">prob</span><span class="o">.</span><span class="n">run_model</span><span class="p">()</span>
 
-            <span class="n">T2</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;t2&#39;</span><span class="p">)</span>
+            <span class="n">T2</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'t2'</span><span class="p">)</span>
             <span class="n">T4</span> <span class="o">=</span> <span class="n">T2</span> <span class="o">*</span> <span class="n">T4T2</span>
             <span class="n">data</span><span class="p">[</span><span class="n">TEMPERATURE</span><span class="p">]</span> <span class="o">=</span> <span class="n">T4</span>
             <span class="c1"># Throttle is T4 normalized from 0 to 1 (T4max)</span>
@@ -804,7 +804,7 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># data[THROTTLE] = normalize(</span>
-            <span class="c1">#     T4T2, minimum=scalars[&#39;t4flight_idle&#39;], maximum=t4max</span>
+            <span class="c1">#     T4T2, minimum=scalars['t4flight_idle'], maximum=t4max</span>
             <span class="c1"># )</span>
             <span class="n">data</span><span class="p">[</span><span class="n">THROTTLE</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">T4T2</span><span class="p">,</span> <span class="n">minimum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="n">t4max</span><span class="p">)</span>
 
@@ -833,7 +833,7 @@
             <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]])</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">quit</span><span class="p">(</span><span class="s1">&#39;Invalid engine deck format provided&#39;</span><span class="p">)</span>
+        <span class="n">quit</span><span class="p">(</span><span class="s1">'Invalid engine deck format provided'</span><span class="p">)</span>
 
     <span class="c1"># sort data</span>
     <span class="c1"># create parallel dict to data that stores floats</span>
@@ -859,27 +859,27 @@
 
     <span class="k">if</span> <span class="n">output_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">sfx</span> <span class="o">=</span> <span class="n">data_file</span><span class="o">.</span><span class="n">suffix</span>
-        <span class="k">if</span> <span class="n">sfx</span> <span class="o">==</span> <span class="s1">&#39;.csv&#39;</span><span class="p">:</span>
-            <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;_aviary.csv&#39;</span>
+        <span class="k">if</span> <span class="n">sfx</span> <span class="o">==</span> <span class="s1">'.csv'</span><span class="p">:</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="s1">'_aviary.csv'</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;.csv&#39;</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="s1">'.csv'</span>
         <span class="n">output_file</span> <span class="o">=</span> <span class="n">data_file</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="n">ext</span>
     <span class="n">write_data_file</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">write_data</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">comments</span><span class="p">,</span> <span class="n">include_timestamp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_flops_engine</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Read engine data file using FLOPS standard, which is column delimited data</span>
 <span class="sd">    always assumed to be in the order defined in the FLOPS manual.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
         <span class="n">sz</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">sz</span> <span class="o">&lt;</span> <span class="mi">80</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="p">(</span><span class="mi">80</span> <span class="o">-</span> <span class="n">sz</span><span class="p">)</span> <span class="o">*</span> <span class="s1">&#39; &#39;</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="p">(</span><span class="mi">80</span> <span class="o">-</span> <span class="n">sz</span><span class="p">)</span> <span class="o">*</span> <span class="s1">' '</span>
 
-        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'#'</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
@@ -907,27 +907,27 @@
 
 
 <span class="c1"># in FLOPS, empty fields are converted to zero</span>
-<span class="n">_flops_empty_field</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+<span class="n">_flops_empty_field</span> <span class="o">=</span> <span class="s1">'0'</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_gasp_engine</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">is_turbo_prop</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a GASP engine deck file and parse its scalars and tabular data.</span>
+<span class="w">    </span><span class="sd">"""Read a GASP engine deck file and parse its scalars and tabular data.</span>
 <span class="sd">    Scalars (T4 max, SLS airflow, etc.) are read from the first line of the engine deck</span>
 <span class="sd">    (IREAD=1 is assumed) and returned in a dictionary.</span>
 <span class="sd">    Data tables are also returned as a dictionary, with separate tables for thrust,</span>
 <span class="sd">    fuelflow, and airflow, since they may have different grids in general.</span>
 <span class="sd">    Each table consists of both the independent variables and the dependent variable for</span>
-<span class="sd">    the corresponding field. The table is a &quot;tidy format&quot; 2D array where the first three</span>
+<span class="sd">    the corresponding field. The table is a "tidy format" 2D array where the first three</span>
 <span class="sd">    columns are the independent variables (altitude, T4/T2, and Mach number) and the</span>
 <span class="sd">    final column is the dependent variable (one of thrust, fuelflow, or airflow for</span>
 <span class="sd">    turbofans or shaft_power_corrected, fuelflow, or tailpipe_thrust for turboshafts).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">is_turbo_prop</span><span class="p">:</span>
-            <span class="n">table_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;shaft_power_corrected&#39;</span><span class="p">,</span> <span class="s1">&#39;fuelflow&#39;</span><span class="p">,</span> <span class="s1">&#39;tailpipe_thrust&#39;</span><span class="p">]</span>
+            <span class="n">table_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'shaft_power_corrected'</span><span class="p">,</span> <span class="s1">'fuelflow'</span><span class="p">,</span> <span class="s1">'tailpipe_thrust'</span><span class="p">]</span>
             <span class="n">scalars</span> <span class="o">=</span> <span class="n">_read_tp_header</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">table_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;thrust&#39;</span><span class="p">,</span> <span class="s1">&#39;fuelflow&#39;</span><span class="p">,</span> <span class="s1">&#39;airflow&#39;</span><span class="p">]</span>
+            <span class="n">table_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'thrust'</span><span class="p">,</span> <span class="s1">'fuelflow'</span><span class="p">,</span> <span class="s1">'airflow'</span><span class="p">]</span>
             <span class="n">scalars</span> <span class="o">=</span> <span class="n">_read_header</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
         <span class="n">tables</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_read_table</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">is_turbo_prop</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">table_types</span><span class="p">}</span>
@@ -936,7 +936,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_tp_header</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read GASP engine deck header, returning the engine scalars in a dict.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Read GASP engine deck header, returning the engine scalars in a dict."""</span>
     <span class="c1"># file header: FORMAT(2I5,10X,6F10.4)</span>
     <span class="n">iread</span><span class="p">,</span> <span class="n">iprint</span><span class="p">,</span> <span class="n">t4max</span><span class="p">,</span> <span class="n">t4mcl</span><span class="p">,</span> <span class="n">t4mc</span><span class="p">,</span> <span class="n">t4idle</span><span class="p">,</span> <span class="n">xsfc</span><span class="p">,</span> <span class="n">cexp</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span>
         <span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">*</span><span class="n">_rep</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="o">*</span><span class="n">_rep</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="mi">10</span><span class="p">))]</span>
@@ -945,48 +945,48 @@
     <span class="n">sls_hp</span><span class="p">,</span> <span class="n">xncref</span><span class="p">,</span> <span class="n">prop_rpm</span><span class="p">,</span> <span class="n">gbx_rat</span><span class="p">,</span> <span class="n">torque_lim</span><span class="p">,</span> <span class="n">waslrf</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">*</span><span class="n">_rep</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="mi">10</span><span class="p">))])</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s1">&#39;throttle_type&#39;</span><span class="p">:</span> <span class="n">iread</span><span class="p">,</span>
-        <span class="s1">&#39;t4max&#39;</span><span class="p">:</span> <span class="n">t4max</span><span class="p">,</span>
-        <span class="s1">&#39;t4cruise&#39;</span><span class="p">:</span> <span class="n">t4mc</span><span class="p">,</span>
-        <span class="s1">&#39;t4climb&#39;</span><span class="p">:</span> <span class="n">t4mcl</span><span class="p">,</span>
-        <span class="s1">&#39;t4flight_idle&#39;</span><span class="p">:</span> <span class="n">t4idle</span><span class="p">,</span>
-        <span class="s1">&#39;xsfc&#39;</span><span class="p">:</span> <span class="n">xsfc</span><span class="p">,</span>
-        <span class="s1">&#39;cexp&#39;</span><span class="p">:</span> <span class="n">cexp</span><span class="p">,</span>
-        <span class="s1">&#39;sls_horsepower&#39;</span><span class="p">:</span> <span class="n">sls_hp</span><span class="p">,</span>
-        <span class="s1">&#39;freeturbine_rpm&#39;</span><span class="p">:</span> <span class="n">xncref</span><span class="p">,</span>
-        <span class="s1">&#39;propeller_rpm&#39;</span><span class="p">:</span> <span class="n">prop_rpm</span><span class="p">,</span>
-        <span class="s1">&#39;gearbox_ratio&#39;</span><span class="p">:</span> <span class="n">gbx_rat</span><span class="p">,</span>
-        <span class="s1">&#39;torque_limit&#39;</span><span class="p">:</span> <span class="n">torque_lim</span><span class="p">,</span>
-        <span class="s1">&#39;sls_corrected_airflow&#39;</span><span class="p">:</span> <span class="n">waslrf</span><span class="p">,</span>
+        <span class="s1">'throttle_type'</span><span class="p">:</span> <span class="n">iread</span><span class="p">,</span>
+        <span class="s1">'t4max'</span><span class="p">:</span> <span class="n">t4max</span><span class="p">,</span>
+        <span class="s1">'t4cruise'</span><span class="p">:</span> <span class="n">t4mc</span><span class="p">,</span>
+        <span class="s1">'t4climb'</span><span class="p">:</span> <span class="n">t4mcl</span><span class="p">,</span>
+        <span class="s1">'t4flight_idle'</span><span class="p">:</span> <span class="n">t4idle</span><span class="p">,</span>
+        <span class="s1">'xsfc'</span><span class="p">:</span> <span class="n">xsfc</span><span class="p">,</span>
+        <span class="s1">'cexp'</span><span class="p">:</span> <span class="n">cexp</span><span class="p">,</span>
+        <span class="s1">'sls_horsepower'</span><span class="p">:</span> <span class="n">sls_hp</span><span class="p">,</span>
+        <span class="s1">'freeturbine_rpm'</span><span class="p">:</span> <span class="n">xncref</span><span class="p">,</span>
+        <span class="s1">'propeller_rpm'</span><span class="p">:</span> <span class="n">prop_rpm</span><span class="p">,</span>
+        <span class="s1">'gearbox_ratio'</span><span class="p">:</span> <span class="n">gbx_rat</span><span class="p">,</span>
+        <span class="s1">'torque_limit'</span><span class="p">:</span> <span class="n">torque_lim</span><span class="p">,</span>
+        <span class="s1">'sls_corrected_airflow'</span><span class="p">:</span> <span class="n">waslrf</span><span class="p">,</span>
     <span class="p">}</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_header</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read GASP engine deck header, returning the engine scalars in a dict.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Read GASP engine deck header, returning the engine scalars in a dict."""</span>
     <span class="c1"># file header: FORMAT(2I5,10X,5F10.4)</span>
     <span class="n">iread</span><span class="p">,</span> <span class="n">iprint</span><span class="p">,</span> <span class="n">wamap</span><span class="p">,</span> <span class="n">t4max</span><span class="p">,</span> <span class="n">t4mcl</span><span class="p">,</span> <span class="n">t4mc</span><span class="p">,</span> <span class="n">sfnidl</span> <span class="o">=</span> <span class="n">_parse</span><span class="p">(</span>
         <span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">*</span><span class="n">_rep</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="o">*</span><span class="n">_rep</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="mi">10</span><span class="p">))]</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">iread</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;IREAD=1 expected, got </span><span class="si">{</span><span class="n">iread</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'IREAD=1 expected, got </span><span class="si">{</span><span class="n">iread</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s1">&#39;t4max&#39;</span><span class="p">:</span> <span class="n">t4max</span><span class="p">,</span>
-        <span class="s1">&#39;t4cruise&#39;</span><span class="p">:</span> <span class="n">t4mc</span><span class="p">,</span>
-        <span class="s1">&#39;t4climb&#39;</span><span class="p">:</span> <span class="n">t4mcl</span><span class="p">,</span>
-        <span class="s1">&#39;sls_airflow&#39;</span><span class="p">:</span> <span class="n">wamap</span><span class="p">,</span>
-        <span class="s1">&#39;sfn_idle&#39;</span><span class="p">:</span> <span class="n">sfnidl</span><span class="p">,</span>
+        <span class="s1">'t4max'</span><span class="p">:</span> <span class="n">t4max</span><span class="p">,</span>
+        <span class="s1">'t4cruise'</span><span class="p">:</span> <span class="n">t4mc</span><span class="p">,</span>
+        <span class="s1">'t4climb'</span><span class="p">:</span> <span class="n">t4mcl</span><span class="p">,</span>
+        <span class="s1">'sls_airflow'</span><span class="p">:</span> <span class="n">wamap</span><span class="p">,</span>
+        <span class="s1">'sfn_idle'</span><span class="p">:</span> <span class="n">sfnidl</span><span class="p">,</span>
     <span class="p">}</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_table</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">is_turbo_prop</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read an entire table from a GASP engine deck file.</span>
-<span class="sd">    The table data is returned as a &quot;tidy format&quot; array with three columns for the</span>
+<span class="w">    </span><span class="sd">"""Read an entire table from a GASP engine deck file.</span>
+<span class="sd">    The table data is returned as a "tidy format" array with three columns for the</span>
 <span class="sd">    independent variables (altitude, T4/T2, and Mach number) and the final column for</span>
 <span class="sd">    the table field (one of thrust, fuelflow, or airflow for turbofans or</span>
 <span class="sd">    shaft_power_corrected, fuelflow, or tailpipe_thrust for turboshafts).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tab_data</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># strip out table title, not used</span>
@@ -1012,9 +1012,9 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_make_structured_grid</span><span class="p">(</span>
-    <span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;lagrange3&#39;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;thrust&#39;</span><span class="p">,</span> <span class="s1">&#39;fuelflow&#39;</span><span class="p">,</span> <span class="s1">&#39;airflow&#39;</span><span class="p">],</span> <span class="n">throttle_step</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'lagrange3'</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">'thrust'</span><span class="p">,</span> <span class="s1">'fuelflow'</span><span class="p">,</span> <span class="s1">'airflow'</span><span class="p">],</span> <span class="n">throttle_step</span><span class="o">=</span><span class="mf">0.5</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a structured grid of unique mach/T4:T2/alt values in the deck.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Generate a structured grid of unique mach/T4:T2/alt values in the deck."""</span>
     <span class="c1"># step size in t4/t2 ratio used in generating the structured grid</span>
     <span class="c1"># t2t2_step = 0.5 # original value</span>
     <span class="n">t4t2_step</span> <span class="o">=</span> <span class="n">throttle_step</span>
@@ -1024,13 +1024,13 @@
 
     <span class="n">structured_data</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="n">tt4</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;fuelflow&#39;</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">tma</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;fuelflow&#39;</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="n">tt4</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">'fuelflow'</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">tma</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">'fuelflow'</span><span class="p">][:,</span> <span class="mi">2</span><span class="p">]</span>
     <span class="n">t4t2s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">tt4</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">tt4</span><span class="p">)</span> <span class="o">+</span> <span class="n">t4t2_step</span><span class="p">,</span> <span class="n">t4t2_step</span><span class="p">)</span>
     <span class="n">machs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">tma</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">tma</span><span class="p">)</span> <span class="o">+</span> <span class="n">mach_step</span><span class="p">,</span> <span class="n">mach_step</span><span class="p">)</span>
 
     <span class="c1"># need t4t2 in first column, mach varies on each row</span>
-    <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">t4t2s</span><span class="p">,</span> <span class="n">machs</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">t4t2s</span><span class="p">,</span> <span class="n">machs</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">'ij'</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">npts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
@@ -1055,12 +1055,12 @@
             <span class="c1"># For GASP engine deck, try to provide at least 4 Mach numbers.</span>
             <span class="c1"># For GASP_TS engine deck, try to provide at least 4 Mach numbers</span>
             <span class="c1"># avoid devide-by-zero RuntimeWarning</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mach</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;lagrange3&#39;</span><span class="p">:</span>
-                <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;lagrange2&#39;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mach</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">'lagrange3'</span><span class="p">:</span>
+                <span class="n">method</span> <span class="o">=</span> <span class="s1">'lagrange2'</span>
             <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">mach</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;slinear&#39;</span>
+                <span class="n">method</span> <span class="o">=</span> <span class="s1">'slinear'</span>
             <span class="n">interp</span> <span class="o">=</span> <span class="n">InterpND</span><span class="p">(</span>
-                <span class="n">method</span><span class="o">=</span><span class="s1">&#39;2D-&#39;</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="p">(</span><span class="n">t4t2</span><span class="p">,</span> <span class="n">mach</span><span class="p">),</span> <span class="n">values</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">extrapolate</span><span class="o">=</span><span class="kc">True</span>
+                <span class="n">method</span><span class="o">=</span><span class="s1">'2D-'</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="p">(</span><span class="n">t4t2</span><span class="p">,</span> <span class="n">mach</span><span class="p">),</span> <span class="n">values</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">extrapolate</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
             <span class="n">sl</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">npts</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">npts</span><span class="p">)</span>
             <span class="n">vals</span><span class="p">[</span><span class="n">sl</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
@@ -1069,10 +1069,10 @@
             <span class="n">mach_vec</span><span class="p">[</span><span class="n">sl</span><span class="p">]</span> <span class="o">=</span> <span class="n">pts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
 
         <span class="n">structured_data</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;vals&#39;</span><span class="p">:</span> <span class="n">vals</span><span class="p">,</span>
-            <span class="s1">&#39;alts&#39;</span><span class="p">:</span> <span class="n">alt_vec</span><span class="p">,</span>
-            <span class="s1">&#39;t4t2s&#39;</span><span class="p">:</span> <span class="n">t4t2_vec</span><span class="p">,</span>
-            <span class="s1">&#39;machs&#39;</span><span class="p">:</span> <span class="n">mach_vec</span><span class="p">,</span>
+            <span class="s1">'vals'</span><span class="p">:</span> <span class="n">vals</span><span class="p">,</span>
+            <span class="s1">'alts'</span><span class="p">:</span> <span class="n">alt_vec</span><span class="p">,</span>
+            <span class="s1">'t4t2s'</span><span class="p">:</span> <span class="n">t4t2_vec</span><span class="p">,</span>
+            <span class="s1">'machs'</span><span class="p">:</span> <span class="n">mach_vec</span><span class="p">,</span>
         <span class="p">}</span>
 
     <span class="k">return</span> <span class="n">structured_data</span>
@@ -1092,18 +1092,18 @@
 
     <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span>
-        <span class="n">om</span><span class="o">.</span><span class="n">IndepVarComp</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span> <span class="n">mach_list</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
-        <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+        <span class="n">om</span><span class="o">.</span><span class="n">IndepVarComp</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span> <span class="n">mach_list</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">),</span>
+        <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
     <span class="p">)</span>
 
     <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
         <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span>
-        <span class="n">om</span><span class="o">.</span><span class="n">IndepVarComp</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span> <span class="n">alt_list</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">),</span>
-        <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+        <span class="n">om</span><span class="o">.</span><span class="n">IndepVarComp</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">,</span> <span class="n">alt_list</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'ft'</span><span class="p">),</span>
+        <span class="n">promotes</span><span class="o">=</span><span class="p">[</span><span class="s1">'*'</span><span class="p">],</span>
     <span class="p">)</span>
 
     <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;atmosphere&#39;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">'atmosphere'</span><span class="p">,</span>
         <span class="n">subsys</span><span class="o">=</span><span class="n">Atmosphere</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">nn</span><span class="p">),</span>
         <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">ALTITUDE</span><span class="p">],</span>
         <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span>
@@ -1113,31 +1113,31 @@
     <span class="p">)</span>
 
     <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;conversion&#39;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">'conversion'</span><span class="p">,</span>
         <span class="n">subsys</span><span class="o">=</span><span class="n">AtmosCalc</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">nn</span><span class="p">),</span>
         <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">TEMPERATURE</span><span class="p">,</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">STATIC_PRESSURE</span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;t2&#39;</span><span class="p">,</span> <span class="s1">&#39;p2&#39;</span><span class="p">],</span>
+        <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'t2'</span><span class="p">,</span> <span class="s1">'p2'</span><span class="p">],</span>
     <span class="p">)</span>
 
     <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;flight_idle&#39;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">'flight_idle'</span><span class="p">,</span>
         <span class="n">subsys</span><span class="o">=</span><span class="n">CalculateIdle</span><span class="p">(</span>
             <span class="n">num_nodes</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">ref_sfn_idle</span><span class="o">=</span><span class="n">ref_sfn_idle</span><span class="p">,</span> <span class="n">ref_sls_airflow</span><span class="o">=</span><span class="n">ref_sls_airflow</span>
         <span class="p">),</span>
-        <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;t2&#39;</span><span class="p">,</span> <span class="s1">&#39;p2&#39;</span><span class="p">,</span> <span class="s1">&#39;pct_corr_airflow_idle&#39;</span><span class="p">,</span> <span class="s1">&#39;sfc_idle&#39;</span><span class="p">],</span>
-        <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idle_thrust&#39;</span><span class="p">,</span> <span class="s1">&#39;idle_fuelflow&#39;</span><span class="p">],</span>
+        <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'t2'</span><span class="p">,</span> <span class="s1">'p2'</span><span class="p">,</span> <span class="s1">'pct_corr_airflow_idle'</span><span class="p">,</span> <span class="s1">'sfc_idle'</span><span class="p">],</span>
+        <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">'idle_thrust'</span><span class="p">,</span> <span class="s1">'idle_fuelflow'</span><span class="p">],</span>
     <span class="p">)</span>
 
     <span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
 
     <span class="n">prob</span><span class="o">.</span><span class="n">run_model</span><span class="p">()</span>
 
-    <span class="n">idle_thrust</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;idle_thrust&#39;</span><span class="p">)</span>
-    <span class="n">idle_fuelflow</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;idle_fuelflow&#39;</span><span class="p">)</span>
+    <span class="n">idle_thrust</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'idle_thrust'</span><span class="p">)</span>
+    <span class="n">idle_fuelflow</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'idle_fuelflow'</span><span class="p">)</span>
 
     <span class="n">data</span><span class="p">[</span><span class="n">MACH</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">MACH</span><span class="p">],</span> <span class="n">mach_list</span><span class="p">)</span>
     <span class="n">data</span><span class="p">[</span><span class="n">ALTITUDE</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">ALTITUDE</span><span class="p">],</span> <span class="n">alt_list</span><span class="p">)</span>
@@ -1155,44 +1155,44 @@
 <div class="viewcode-block" id="CalculateIdle">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/engine_deck_conversion.html#aviary.utils.engine_deck_conversion.CalculateIdle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CalculateIdle</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">ExplicitComponent</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculates idle conditions of a GASP engine at a specified flight condition</span>
 <span class="sd">    Vectorized to calculate values for entire flight regime.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="CalculateIdle.initialize">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/engine_deck_conversion.html#aviary.utils.engine_deck_conversion.CalculateIdle.initialize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;num_nodes&#39;</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">'num_nodes'</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
-            <span class="s1">&#39;ref_sfn_idle&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Idle thrust-specific fuel consumption, from engine deck&#39;</span>
+            <span class="s1">'ref_sfn_idle'</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">'Idle thrust-specific fuel consumption, from engine deck'</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span>
-            <span class="s1">&#39;ref_sls_airflow&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Sea-level static airflow of the reference engine&#39;</span>
+            <span class="s1">'ref_sls_airflow'</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">'Sea-level static airflow of the reference engine'</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CalculateIdle.setup">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/engine_deck_conversion.html#aviary.utils.engine_deck_conversion.CalculateIdle.setup">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">nn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;num_nodes&#39;</span><span class="p">]</span>
+        <span class="n">nn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">'num_nodes'</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">&#39;t2&#39;</span><span class="p">,</span> <span class="n">_TSLS_DEGR</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;degR&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Engine inlet temperature&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">&#39;p2&#39;</span><span class="p">,</span> <span class="n">_PSLS_PSF</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;psf&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Engine inlet pressure&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">&#39;pct_corr_airflow_idle&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Percent corrected airflow at idle&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">'t2'</span><span class="p">,</span> <span class="n">_TSLS_DEGR</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'degR'</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">'Engine inlet temperature'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">'p2'</span><span class="p">,</span> <span class="n">_PSLS_PSF</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'psf'</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">'Engine inlet pressure'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">'pct_corr_airflow_idle'</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">'Percent corrected airflow at idle'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_input</span><span class="p">(</span>
-            <span class="s1">&#39;sfc_idle&#39;</span><span class="p">,</span>
+            <span class="s1">'sfc_idle'</span><span class="p">,</span>
             <span class="mf">1.0</span><span class="p">,</span>
-            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm/h/lbf&#39;</span><span class="p">,</span>
-            <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Thrust-specific fuel consumption at idle&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">'lbm/h/lbf'</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s1">'Thrust-specific fuel consumption at idle'</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;idle_thrust&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbf&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Idle thrust&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">'idle_thrust'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbf'</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">'Idle thrust'</span><span class="p">)</span>
         <span class="c1"># self.add_output(</span>
-        <span class="c1">#     &quot;idle_airflow&quot;, units=&quot;lbf/s&quot;, shape=nn, desc=&quot;Idle corrected airflow&quot;</span>
+        <span class="c1">#     "idle_airflow", units="lbf/s", shape=nn, desc="Idle corrected airflow"</span>
         <span class="c1"># )</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;idle_fuelflow&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm/h&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Idle fuel flow&#39;</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">'idle_fuelflow'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'lbm/h'</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">'Idle fuel flow'</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CalculateIdle.compute">
@@ -1205,19 +1205,19 @@
             <span class="n">sfc_idle</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 
-        <span class="n">ref_sls_airflow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;ref_sls_airflow&#39;</span><span class="p">]</span>
-        <span class="n">ref_sfn_idle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;ref_sfn_idle&#39;</span><span class="p">]</span>
+        <span class="n">ref_sls_airflow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">'ref_sls_airflow'</span><span class="p">]</span>
+        <span class="n">ref_sfn_idle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">'ref_sfn_idle'</span><span class="p">]</span>
 
         <span class="n">rthet2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">t2</span> <span class="o">/</span> <span class="n">_TSLS_DEGR</span><span class="p">)</span>
         <span class="n">delta2</span> <span class="o">=</span> <span class="n">p2</span> <span class="o">/</span> <span class="n">_PSLS_PSF</span>
 
-        <span class="n">airflow_ref</span> <span class="o">=</span> <span class="n">pct_corr_airflow_idle</span> <span class="o">*</span> <span class="n">ref_sls_airflow</span>  <span class="c1"># don&#39;t un-correct</span>
+        <span class="n">airflow_ref</span> <span class="o">=</span> <span class="n">pct_corr_airflow_idle</span> <span class="o">*</span> <span class="n">ref_sls_airflow</span>  <span class="c1"># don't un-correct</span>
         <span class="n">thrust_ref</span> <span class="o">=</span> <span class="n">airflow_ref</span> <span class="o">*</span> <span class="n">delta2</span> <span class="o">/</span> <span class="n">rthet2</span> <span class="o">*</span> <span class="n">ref_sfn_idle</span>
         <span class="n">fuelflow_ref</span> <span class="o">=</span> <span class="n">thrust_ref</span> <span class="o">*</span> <span class="n">sfc_idle</span>
 
-        <span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;idle_thrust&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thrust_ref</span>
-        <span class="c1"># outputs[&quot;idle_airflow&quot;] = airflow_ref</span>
-        <span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;idle_fuelflow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuelflow_ref</span></div>
+        <span class="n">outputs</span><span class="p">[</span><span class="s1">'idle_thrust'</span><span class="p">]</span> <span class="o">=</span> <span class="n">thrust_ref</span>
+        <span class="c1"># outputs["idle_airflow"] = airflow_ref</span>
+        <span class="n">outputs</span><span class="p">[</span><span class="s1">'idle_fuelflow'</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuelflow_ref</span></div>
 </div>
 
 
@@ -1225,39 +1225,39 @@
 <div class="viewcode-block" id="AtmosCalc">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/engine_deck_conversion.html#aviary.utils.engine_deck_conversion.AtmosCalc">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AtmosCalc</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">ExplicitComponent</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates T2 and P2 given static temperature and pressure.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Calculates T2 and P2 given static temperature and pressure."""</span>
 
 <div class="viewcode-block" id="AtmosCalc.initialize">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/engine_deck_conversion.html#aviary.utils.engine_deck_conversion.AtmosCalc.initialize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;num_nodes&#39;</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">'num_nodes'</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AtmosCalc.setup">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/engine_deck_conversion.html#aviary.utils.engine_deck_conversion.AtmosCalc.setup">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">nn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;num_nodes&#39;</span><span class="p">]</span>
+        <span class="n">nn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">'num_nodes'</span><span class="p">]</span>
         <span class="n">add_aviary_input</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span>
             <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span>
-            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">add_aviary_input</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">TEMPERATURE</span><span class="p">,</span>
             <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span>
-            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;degR&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">'degR'</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">add_aviary_input</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">Dynamic</span><span class="o">.</span><span class="n">Atmosphere</span><span class="o">.</span><span class="n">STATIC_PRESSURE</span><span class="p">,</span>
-            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;psf&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">'psf'</span><span class="p">,</span>
             <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;t2&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;degR&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Engine inlet total temperature&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;p2&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;psf&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Engine inlet total pressure&#39;</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">'t2'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'degR'</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">'Engine inlet total temperature'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">'p2'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">'psf'</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">nn</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">'Engine inlet total pressure'</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AtmosCalc.compute">
@@ -1269,13 +1269,13 @@
         <span class="n">t2</span> <span class="o">=</span> <span class="n">T</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">mach</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">p2</span> <span class="o">=</span> <span class="n">P</span> <span class="o">*</span> <span class="p">(</span><span class="n">t2</span> <span class="o">/</span> <span class="n">T</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
 
-        <span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;t2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t2</span>
-        <span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;p2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p2</span></div>
+        <span class="n">outputs</span><span class="p">[</span><span class="s1">'t2'</span><span class="p">]</span> <span class="o">=</span> <span class="n">t2</span>
+        <span class="n">outputs</span><span class="p">[</span><span class="s1">'p2'</span><span class="p">]</span> <span class="o">=</span> <span class="n">p2</span></div>
 </div>
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.engine_deck_conversion_cmd</span><span class="w"> </span><span class="kn">import</span> <span class="n">_exec_EDC</span><span class="p">,</span> <span class="n">_setup_EDC_parser</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>

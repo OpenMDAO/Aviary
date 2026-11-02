@@ -627,16 +627,16 @@ Mach Number (input), Altitude (ft, input),   Throttle (input), Gross Thrust (lbf
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># generate fake data set with units using NamedValues</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">NamedValues</span><span class="p">()</span>
-<span class="n">data</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">SPAN</span><span class="p">,</span> <span class="p">[</span><span class="mi">79</span><span class="p">,</span> <span class="mi">118</span><span class="p">,</span> <span class="mi">171</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">)</span>
-<span class="n">data</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;Scale Factor&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">SPAN</span><span class="p">,</span> <span class="p">[</span><span class="mi">79</span><span class="p">,</span> <span class="mi">118</span><span class="p">,</span> <span class="mi">171</span><span class="p">],</span> <span class="s1">'ft'</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">'Scale Factor'</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="s1">'unitless'</span><span class="p">)</span>
 <span class="c1"># add these comments to the file, added to the top. Demonstrate how comments do not</span>
-<span class="c1"># require inclusion of a &#39;#&#39; symbol, and will work either way</span>
+<span class="c1"># require inclusion of a '#' symbol, and will work either way</span>
 <span class="n">comments</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;This is test data generated using write_data_file&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;# Aviary data tables can support multiple comments&#39;</span><span class="p">,</span>
+    <span class="s1">'This is test data generated using write_data_file'</span><span class="p">,</span>
+    <span class="s1">'# Aviary data tables can support multiple comments'</span><span class="p">,</span>
 <span class="p">]</span>
 <span class="c1"># the name of the file we will write to</span>
-<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;example.csv&#39;</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">'example.csv'</span>
 
 <span class="n">av</span><span class="o">.</span><span class="n">write_data_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="n">comments</span><span class="p">)</span>
 </pre></div>
@@ -666,13 +666,13 @@ aircraft:wing:span (ft), Scale Factor
 <span class="nb">print</span><span class="p">(</span><span class="n">read_comments</span><span class="p">)</span>
 <span class="c1"># print out variable name, units, and values</span>
 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">read_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">, units: </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">, units: </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;This is test data generated using write_data_file&#39;, &#39;Aviary data tables can support multiple comments&#39;]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>['This is test data generated using write_data_file', 'Aviary data tables can support multiple comments']
 aircraft:wing:span, units: ft
 [ 79. 118. 171.]
 Scale_Factor, units: unitless
@@ -692,13 +692,13 @@ Scale_Factor, units: unitless
 <span class="nb">print</span><span class="p">(</span><span class="n">read_comments</span><span class="p">)</span>
 <span class="c1"># print out variable name, units, and values</span>
 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">read_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">, units: </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">, units: </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;This is test data generated using write_data_file&#39;, &#39;Aviary data tables can support multiple comments&#39;]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>['This is test data generated using write_data_file', 'Aviary data tables can support multiple comments']
 aircraft:wing:span, units: ft
 [ 79. 118. 171.]
 </pre></div>
@@ -715,7 +715,7 @@ aircraft:wing:span, units: ft
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># keys are desired openMDAO variable name, values are header names that we want to match</span>
 <span class="c1"># values can also be a list of multiple header names that map to the same key</span>
-<span class="n">alias_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">MASS_SCALER</span><span class="p">:</span> <span class="s1">&#39;Scale Factor&#39;</span><span class="p">}</span>
+<span class="n">alias_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">MASS_SCALER</span><span class="p">:</span> <span class="s1">'Scale Factor'</span><span class="p">}</span>
 
 <span class="c1"># call read_data_file again, but this time provide variable alias dictionary</span>
 <span class="n">read_data</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">read_comments</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">read_data_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">alias_dict</span><span class="p">,</span> <span class="n">save_comments</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -723,13 +723,13 @@ aircraft:wing:span, units: ft
 <span class="nb">print</span><span class="p">(</span><span class="n">read_comments</span><span class="p">)</span>
 <span class="c1"># print out variable name, units, and values</span>
 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">read_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">, units: </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">, units: </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;This is test data generated using write_data_file&#39;, &#39;Aviary data tables can support multiple comments&#39;]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>['This is test data generated using write_data_file', 'Aviary data tables can support multiple comments']
 aircraft:wing:span, units: ft
 [ 79. 118. 171.]
 aircraft:wing:mass_scaler, units: unitless
