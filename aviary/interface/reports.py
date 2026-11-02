@@ -100,7 +100,7 @@ def subsystem_report(prob: AviaryProblem):
     else:
         model = prob.model
 
-    subsystems = model.subsystems  # See issue #1186. redo for multimissions
+    subsystems = model.subsystem_builders  # See issue #1186. redo for multimissions
 
     for subsystem in subsystems:
         subsystem.report(prob, reports_folder)
