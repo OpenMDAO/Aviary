@@ -78,9 +78,14 @@ class CombinedGeometry(om.Group):
 
             fus_outs = [
                 (fus_area_name, f'CODE_ORIGIN_OVERRIDE:{fus_area_name}'),
-                (nac_area_name, f'CODE_ORIGIN_OVERRIDE:{nac_area_name}'),
             ]
             self.flops_based_geom.promotes('wetted_area', outputs=fus_outs)
+            nac_outs = [
+                (nac_area_name, f'CODE_ORIGIN_OVERRIDE:{nac_area_name}'),
+            ]
+            # have to move the promotes call down 1 level to catch it before it implicitly
+            # connected to the total wetted area component.
+            self.flops_based_geom.wetted_area.promotes('nacelles_swet', outputs=nac_outs)
 
             # Override the FLOPS nacelle length and diameter
             nac_outs = [
