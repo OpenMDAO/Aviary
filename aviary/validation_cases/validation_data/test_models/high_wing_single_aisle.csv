@@ -25,7 +25,7 @@ aircraft:design:max_mach,0.85,unitless
 aircraft:design:type,transport,unitless
 aircraft:electrical:mass_scaler,1.01,unitless   #check
 aircraft:engine:additional_mass_fraction,0.001,unitless
-aircraft:engine:constant_fuel_mass_consumption,0.,lb/h
+aircraft:engine:constant_fuel_mass_consumption,0.,lbm/h
 aircraft:engine:data_file,validation_cases/validation_data/test_data/turbofan_23k_2.csv,unitless
 aircraft:engine:scale_factor,1.0,unitless
 aircraft:engine:flight_idle_max_fraction,1.01,unitless   #check

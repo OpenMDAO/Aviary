@@ -195,7 +195,7 @@
  RELP=0.0,	! engine cg fraction of fuselage length, for fuselage mounted engines, (0.) if LCWING <> 0
  SM1D=0.625,	! engine face Mach number sea level static if NTYE = 7 and KNAC <> 2
  HBTP=0.425,	! turbofan engine face hub/tip ratio
- SWSLS=.1903, 	! engine specific weight lb/lb thrust
+ SWSLS=.1903, 	! engine specific weight lbm/lb thrust
  SM1D=0.625,	! GT Value for Refanned 1133
  HBTP=0.465,	! GT Value for Refanned 1133
  SWSLS=.178884, 	! GT Value for Refanned 1133

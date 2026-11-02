@@ -153,6 +153,8 @@ class GroundrollPhase(PhaseBuilder):
             Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED, rate_source='dfuelburn_dv'
         )
 
+        self.phase.set_state_options(Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED, rate_source='dnox_dv')
+
         self.phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=32.3)
         self.phase.add_parameter('t_init_flaps', units='s', static_target=True, opt=False, val=44.0)
         self.phase.add_parameter(
