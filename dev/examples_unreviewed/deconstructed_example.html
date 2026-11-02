@@ -1348,8 +1348,13 @@ They can use the complete set of Aviary’s methods, functionalities, and classe
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793304169.119038] [runnervm48cm3:5230 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x558c0575ad50 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
-[1793304169.119336] [runnervm48cm3:5230 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631440.527370] [runnervm48cm3:5017 :0]        ib_iface.c:1269 UCX  ERROR mana_0: iface 0x555a73d9fcc0 failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0 failed: Operation not supported
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05017] pml_ucx.c:313  Error: Failed to create UCP worker
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1793631440.527672] [runnervm48cm3:5017 :0]      ucp_worker.c:1412 UCX  ERROR uct_iface_open(ud_verbs/mana_0:1) failed: Input/output error
 The following variables have been overridden by the aircraft definition:
   &#39;aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
   &#39;aircraft:design:touchdown_mass_max  108976.4  lbm
@@ -1367,8 +1372,7 @@ The following variables have been overridden by the aircraft definition:
   &#39;aircraft:wing:wetted_area  2210.280228  ft**2
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[runnervm48cm3:05230] pml_ucx.c:313  Error: Failed to create UCP worker
-Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;climb&#39;: lower, upper, ref
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;climb&#39;: lower, upper, ref
 
 Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;climb&#39;: lower, upper, ref
 
@@ -1381,13 +1385,7 @@ Warning: Invalid options for non-optimal control &#39;mach&#39; in phase &#39;de
 Warning: Invalid options for non-optimal control &#39;altitude&#39; in phase &#39;descent&#39;: lower, upper, ref
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Exception of type: TOO_FEW_DOF in file &quot;../../src/Interfaces/IpIpoptApplication.cpp&quot; at line 662:
- Exception message: status != TOO_FEW_DEGREES_OF_FREEDOM evaluated false: Too few degrees of freedom (rethrown)!
-
-EXIT: Problem has too few degrees of freedom.
-
-
-Optimization Problem -- Optimization using pyOpt_sparse
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization Problem -- Optimization using pyOpt_sparse
 ================================================================================
     Objective Function: _objfunc
 
@@ -1400,53 +1398,53 @@ Optimization Problem -- Optimization using pyOpt_sparse
       Index  Name                              Type      Lower Bound            Value      Upper Bound     Status
           2  traj.climb.t_initial_0               c     0.000000E+00     0.000000E+00     0.000000E+00         lu
           3  traj.climb.t_duration_0              c     5.000000E-01     5.000000E-01     1.500000E+00          l
-         20  traj.climb.states:distance_0         c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         21  traj.climb.states:distance_1         c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         22  traj.climb.states:distance_2         c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         23  traj.climb.states:distance_3         c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         24  traj.climb.states:distance_4         c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         25  traj.climb.states:distance_5         c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         26  traj.climb.states:distance_6         c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         27  traj.climb.states:distance_7         c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         28  traj.climb.states:distance_8         c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         29  traj.climb.states:distance_9         c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         30  traj.climb.states:distance_10        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         31  traj.climb.states:distance_11        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         32  traj.climb.states:distance_12        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         33  traj.climb.states:distance_13        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         34  traj.climb.states:distance_14        c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         20  traj.climb.states:distance_0         c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         21  traj.climb.states:distance_1         c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         22  traj.climb.states:distance_2         c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         23  traj.climb.states:distance_3         c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         24  traj.climb.states:distance_4         c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         25  traj.climb.states:distance_5         c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         26  traj.climb.states:distance_6         c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         27  traj.climb.states:distance_7         c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         28  traj.climb.states:distance_8         c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         29  traj.climb.states:distance_9         c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         30  traj.climb.states:distance_10        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         31  traj.climb.states:distance_11        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         32  traj.climb.states:distance_12        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         33  traj.climb.states:distance_13        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         34  traj.climb.states:distance_14        c     0.000000E+00     1.000000E-06     1.000000E+20          l
          35  traj.cruise.t_duration_0             c     3.169705E-01     3.169705E-01     1.683029E+00          l
-         51  traj.cruise.states:distance_0        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         52  traj.cruise.states:distance_1        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         53  traj.cruise.states:distance_2        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         54  traj.cruise.states:distance_3        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         55  traj.cruise.states:distance_4        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         56  traj.cruise.states:distance_5        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         57  traj.cruise.states:distance_6        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         58  traj.cruise.states:distance_7        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         59  traj.cruise.states:distance_8        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         60  traj.cruise.states:distance_9        c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         61  traj.cruise.states:distance_10       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         62  traj.cruise.states:distance_11       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         63  traj.cruise.states:distance_12       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         64  traj.cruise.states:distance_13       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         65  traj.cruise.states:distance_14       c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         51  traj.cruise.states:distance_0        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         52  traj.cruise.states:distance_1        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         53  traj.cruise.states:distance_2        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         54  traj.cruise.states:distance_3        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         55  traj.cruise.states:distance_4        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         56  traj.cruise.states:distance_5        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         57  traj.cruise.states:distance_6        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         58  traj.cruise.states:distance_7        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         59  traj.cruise.states:distance_8        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         60  traj.cruise.states:distance_9        c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         61  traj.cruise.states:distance_10       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         62  traj.cruise.states:distance_11       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         63  traj.cruise.states:distance_12       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         64  traj.cruise.states:distance_13       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         65  traj.cruise.states:distance_14       c     0.000000E+00     1.000000E-06     1.000000E+20          l
          66  traj.descent.t_duration_0            c     5.000000E-01     5.000000E-01     1.500000E+00          l
-         82  traj.descent.states:distance_0       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         83  traj.descent.states:distance_1       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         84  traj.descent.states:distance_2       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         85  traj.descent.states:distance_3       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         86  traj.descent.states:distance_4       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         87  traj.descent.states:distance_5       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         88  traj.descent.states:distance_6       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         89  traj.descent.states:distance_7       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         90  traj.descent.states:distance_8       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         91  traj.descent.states:distance_9       c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         92  traj.descent.states:distance_10      c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         93  traj.descent.states:distance_11      c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         94  traj.descent.states:distance_12      c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         95  traj.descent.states:distance_13      c     0.000000E+00     1.000000E-06     1.000000E+24          l
-         96  traj.descent.states:distance_14      c     0.000000E+00     1.000000E-06     1.000000E+24          l
+         82  traj.descent.states:distance_0       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         83  traj.descent.states:distance_1       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         84  traj.descent.states:distance_2       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         85  traj.descent.states:distance_3       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         86  traj.descent.states:distance_4       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         87  traj.descent.states:distance_5       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         88  traj.descent.states:distance_6       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         89  traj.descent.states:distance_7       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         90  traj.descent.states:distance_8       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         91  traj.descent.states:distance_9       c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         92  traj.descent.states:distance_10      c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         93  traj.descent.states:distance_11      c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         94  traj.descent.states:distance_12      c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         95  traj.descent.states:distance_13      c     0.000000E+00     1.000000E-06     1.000000E+20          l
+         96  traj.descent.states:distance_14      c     0.000000E+00     1.000000E-06     1.000000E+20          l
 
    Constraints (i - inequality, e - equality)
       Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
@@ -1567,6 +1565,10 @@ Optimization Problem -- Optimization using pyOpt_sparse
         170  traj.descent.throttle[path]                             i   0.000000E+00   -5.902633E-02    1.000000E+00         L    9.00000E+100
         171  traj.descent.throttle[path]                             i   0.000000E+00   -7.601254E-02    1.000000E+00         L    9.00000E+100
         172  traj.descent.throttle[path]                             i   0.000000E+00   -8.093719E-02    1.000000E+00         L    9.00000E+100
+Exception of type: TOO_FEW_DOF in file &quot;../../src/Interfaces/IpIpoptApplication.cpp&quot; at line 662:
+ Exception message: status != TOO_FEW_DEGREES_OF_FREEDOM evaluated false: Too few degrees of freedom (rethrown)!
+
+EXIT: Problem has too few degrees of freedom.
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
