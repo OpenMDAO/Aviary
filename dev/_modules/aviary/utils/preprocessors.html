@@ -1415,6 +1415,25 @@
                 <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="n">pax_mass_with_bag</span><span class="p">,</span> <span class="s1">'lbm'</span>
             <span class="p">)</span>
 
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span> <span class="ow">in</span> <span class="n">aviary_options</span>
+            <span class="ow">and</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">)</span>
+            <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s1">'Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS is set to 0 lbm by user.'</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span>
+            <span class="ow">or</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span>
+        <span class="p">):</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s1">'Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS is set to 200.0 lbm.'</span>
+                <span class="p">)</span>
+
         <span class="c1"># calculate and check total payload</span>
         <span class="c1"># NOTE this is only used for error messaging, the calculations for analysis are subsystems/mass/gasp_based</span>
         <span class="c1"># No actual "preprocessing" happens here - a simple error message might be better suited</span>
@@ -1544,6 +1563,34 @@
                 <span class="n">val</span><span class="o">=</span><span class="n">HHT</span><span class="p">,</span>
                 <span class="n">units</span><span class="o">=</span><span class="s1">'unitless'</span><span class="p">,</span>
             <span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_FLIGHT_CREW</span> <span class="ow">in</span> <span class="n">aviary_options</span>
+            <span class="ow">and</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_FLIGHT_CREW</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">'Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW is set to 0 lbm by user.'</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_FLIGHT_CREW</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span>
+            <span class="ow">or</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_FLIGHT_CREW</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span>
+        <span class="p">):</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_FLIGHT_CREW</span><span class="p">,</span> <span class="mf">225.0</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">'Aircraft.CrewPayload.MASS_PER_FLIGHT_CREW is set to 225.0 lbm.'</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER</span> <span class="ow">in</span> <span class="n">aviary_options</span>
+            <span class="ow">and</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">'Aircraft.CrewPayload.MASS_PER_PASSENGER is set to 0 lbm by user.'</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span>
+            <span class="ow">or</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span>
+        <span class="p">):</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER</span><span class="p">,</span> <span class="mf">165.0</span><span class="p">,</span> <span class="s1">'lbm'</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">'Aircraft.CrewPayload.MASS_PER_PASSENGER is set to 165.0 lbm.'</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">aviary_options</span></div>
 
