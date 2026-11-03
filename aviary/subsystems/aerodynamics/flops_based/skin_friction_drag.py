@@ -24,6 +24,10 @@ class SkinFrictionDrag(om.ExplicitComponent):
         )
         # fmt: on
 
+        # These are cached for the EDET report.
+        self.form_factor = None
+        self.cdf_per_surface = None
+
     def initialize(self):
         """Declare options."""
         self.options.declare(
@@ -173,8 +177,11 @@ class SkinFrictionDrag(om.ExplicitComponent):
         FF2 = 1.0 + fine * self.F[13]
 
         form_factor[idx_surf] = FF1 * (2.0 - airfoil) + FF2 * (airfoil - 1.0)
+        self.form_factor = form_factor
 
-        CDF = np.einsum('j,ij,j->i', wetted_area, cf, form_factor) * (1.0 / mission_wing_area)
+        CDF = np.einsum('j,ij,j->ij', wetted_area, cf, form_factor) * (1.0 / mission_wing_area)
+        self.cdf_per_surface = CDF
+        CDF_total = np.sum(CDF, axis=1)
 
         # Add drag for excrescences.
 
@@ -185,9 +192,9 @@ class SkinFrictionDrag(om.ExplicitComponent):
 
         # An additional percentage of the skin friction drag is added to for excrescences
         # (miscellaneous).
-        CDF *= 1.0 + inputs[Aircraft.Design.PERCENT_EXCRESCENCE_DRAG]
+        CDF_total *= 1.0 + inputs[Aircraft.Design.PERCENT_EXCRESCENCE_DRAG]
 
-        outputs['skin_friction_drag_coeff'] = CDF
+        outputs['skin_friction_drag_coeff'] = CDF_total
 
     def compute_partials(self, inputs, partials):
         nc = self.nc
