@@ -7,7 +7,7 @@ from aviary.mission.two_dof.ode.landing_eom import (
     LandingGroundRollComponent,
 )
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType
@@ -21,6 +21,7 @@ class LandingSegment(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
         user_options = self.options['user_options']
+        subsystem_options = self.options['subsystem_options']
 
         self.add_subsystem(
             'approach_alt_comp',
@@ -75,46 +76,57 @@ class LandingSegment(TwoDOFODE):
         )
 
         # collect the propulsion group names for later use with
+        core_aero = False
         for subsystem in subsystems:
-            if isinstance(subsystem, AerodynamicsBuilder):
-                subsystem_options = {
+            name = subsystem.name
+
+            if isinstance(subsystem, CoreAerodynamicsBuilder):
+                kwargs = {
                     'method': 'low_speed',
                     'retract_flaps': True,
                     'retract_gear': False,
                 }
+                if name in subsystem_options:
+                    kwargs.update(subsystem_options[name])
+
                 aero_builder = subsystem
                 aero_system = subsystem.build_mission(
                     num_nodes=1,
                     aviary_inputs=aviary_options,
                     user_options=user_options,
-                    subsystem_options=subsystem_options,
+                    subsystem_options=kwargs,
                 )
-                self.add_subsystem(
-                    subsystem.name,
-                    aero_system,
-                    promotes_inputs=[
-                        '*',
-                        Dynamic.Atmosphere.DENSITY,
-                        Dynamic.Atmosphere.SPEED_OF_SOUND,
-                        Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
-                        ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
-                        (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
-                        Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-                        ('flap_defl', Aircraft.Wing.FLAP_DEFLECTION_LANDING),
-                        ('t_init_flaps', 't_init_flaps_app'),
-                        ('t_init_gear', 't_init_gear_app'),
-                        ('CL_max_flaps', Mission.Landing.LIFT_COEFFICIENT_MAX),
-                        (
-                            'dCL_flaps_model',
-                            Mission.Landing.LIFT_COEFFICIENT_FLAP_INCREMENT,
-                        ),
-                        (
-                            'dCD_flaps_model',
-                            Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT,
-                        ),
-                    ],
-                    promotes_outputs=['CL_max'],
-                )
+                if subsystem is not None:
+                    core_aero = True
+                    self.add_subsystem(
+                        name,
+                        aero_system,
+                        promotes_inputs=[
+                            '*',
+                            Dynamic.Atmosphere.DENSITY,
+                            Dynamic.Atmosphere.SPEED_OF_SOUND,
+                            Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+                            ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
+                            (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
+                            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+                            ('flap_defl', Aircraft.Wing.FLAP_DEFLECTION_LANDING),
+                            ('t_init_flaps', 't_init_flaps_app'),
+                            ('t_init_gear', 't_init_gear_app'),
+                            ('CL_max_flaps', Mission.Landing.LIFT_COEFFICIENT_MAX),
+                            (
+                                'dCL_flaps_model',
+                                Mission.Landing.LIFT_COEFFICIENT_FLAP_INCREMENT,
+                            ),
+                            (
+                                'dCD_flaps_model',
+                                Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT,
+                            ),
+                        ],
+                        promotes_outputs=['CL_max'],
+                    )
+                else:
+                    # Core aero is disabled.
+                    core_aero = False
 
             if isinstance(subsystem, PropulsionBuilder):
                 propulsion_system = subsystem.build_mission(
@@ -124,7 +136,7 @@ class LandingSegment(TwoDOFODE):
                     subsystem_options={},
                 )
                 propulsion_mission = self.add_subsystem(
-                    subsystem.name,
+                    name,
                     propulsion_system,
                     promotes_inputs=['*'],
                     promotes_outputs=[(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, 'thrust_idle')],
@@ -245,16 +257,17 @@ class LandingSegment(TwoDOFODE):
         self.set_input_defaults(Mission.Landing.INITIAL_MACH, val=0.1)
         self.set_input_defaults(Mission.Landing.BRAKING_FRICTION_COEFFICIENT, val=0.4)
 
-        # landing doesn't change flap or gear position
-        self.set_input_defaults('t_init_flaps_app', val=1e10)
-        self.set_input_defaults('t_init_gear_app', val=1e10)
-        self.set_input_defaults(Mission.Landing.INITIAL_ALTITUDE, val=50, units='ft')
-        self.set_input_defaults('aero_ramps.flap_factor:final_val', val=1.0)
-        self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.0)
-        self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=0.0)
-        self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=0.0)
+        if core_aero:
+            # landing doesn't change flap or gear position
+            self.set_input_defaults('t_init_flaps_app', val=1e10)
+            self.set_input_defaults('t_init_gear_app', val=1e10)
+            self.set_input_defaults('aero_ramps.flap_factor:final_val', val=1.0)
+            self.set_input_defaults('aero_ramps.gear_factor:final_val', val=1.0)
+            self.set_input_defaults('aero_ramps.flap_factor:initial_val', val=0.0)
+            self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=0.0)
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
+        self.set_input_defaults(Mission.Landing.INITIAL_ALTITUDE, val=50, units='ft')
 
         # Throttle Idle
         num_engine_types = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))

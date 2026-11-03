@@ -15,6 +15,7 @@ import openmdao.api as om
 
 # from dymos.utils.misc import _unspecified
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import ComputedAeroGroup
+from aviary.subsystems.aerodynamics.flops_based.drag_report import generate_drag_report
 from aviary.subsystems.aerodynamics.flops_based.premission_aero import (
     PreMissionAero as PreMissionAeroFLOPS,
 )
@@ -728,21 +729,51 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                 Dynamic.Vehicle.DRAG_COEFFICIENT,
                 Dynamic.Vehicle.LIFT_COEFFICIENT,
             ]
+            if self.code_origin is GASP and 'output_alpha' in subsystem_options:
+                timeseries_vars.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 
         return timeseries_vars
 
     def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         if self.code_origin is GASP and not self.all_tabular:
+            # Bus variables found in 'cruise' and 'low_speed'.
+            kwargs = {}
+
+            if mission_info is not None:
+                phases = []
+                methods = ['cruise', 'low_speed']
+
+                for name, phase in mission_info.items():
+                    subsystem_options = phase.get('subsystem_options')
+
+                    if subsystem_options is None:
+                        continue
+
+                    aero_options = subsystem_options.get('aerodynamics')
+
+                    if aero_options is None:
+                        continue
+
+                    if aero_options.get('method') in methods:
+                        phases.append(name)
+
+                if len(phases) == 0:
+                    return {}
+
+                kwargs = {'phases': phases}
+
             return {
                 'interference_independent_of_shielded_area': {
                     'mission_name': ['interference_independent_of_shielded_area'],
                     # "post_mission_name": ['interference_independent_of_shielded_area'],
                     'units': 'unitless',
+                    **kwargs,
                 },
                 'drag_loss_due_to_shielded_wing_area': {
                     'mission_name': ['drag_loss_due_to_shielded_wing_area'],
                     # "post_mission_name": ['drag_loss_due_to_shielded_wing_area'],
                     'units': 'unitless',
+                    **kwargs,
                 },
             }
         else:
@@ -759,10 +790,24 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         reports_folder : Path
             Location of the subsystems_report folder this report will be placed in
         """
+        filename = self.name + '.md'
+        filepath = reports_folder / filename
+
         # TODO drag polar plot should go here!
         if self.code_origin is FLOPS:
             # FLOPS aero report goes here
+            if hasattr(prob, 'pre_mission_info'):
+                subsystem_options = prob.pre_mission_info
+            else:
+                subsystem_options = prob.model.pre_mission_info
+            aero_options = subsystem_options.get('aerodynamics', {})
+            flops_report = aero_options.get('flops_report', False)
+            if flops_report:
+                output = generate_drag_report(prob, self)
+                with open(filepath, mode='w') as f:
+                    f.write(output)
             return
+
         elif self.code_origin is GASP:
             # GASP aero report goes here
             return

@@ -209,7 +209,7 @@ data.set_val(
 
 data.set_val(
     # outputs
-    'time',
+    Dynamic.Mission.TIME,
     val=[
         85.8098321364695,
         8852.1530657591,

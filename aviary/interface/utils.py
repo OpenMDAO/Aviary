@@ -3,7 +3,7 @@ import warnings
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.utils import round_it
+from aviary.utils.math_utils import round_it
 from aviary.variable_info.enums import Verbosity
 
 # TODO openMDAO has generate_table() that might be able to replace this

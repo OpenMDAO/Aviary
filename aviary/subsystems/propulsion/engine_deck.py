@@ -42,7 +42,7 @@ from aviary.subsystems.propulsion.utils import (
 )
 from aviary.utils.aviary_values import AviaryValues, NamedValues
 from aviary.utils.csv_data_file import read_data_file
-from aviary.utils.utils import round_it
+from aviary.utils.math_utils import round_it
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings

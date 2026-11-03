@@ -198,7 +198,7 @@ class TabularLowSpeedAeroTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, val=wing_height, units='ft')
         prob.setup()
 
-        prob.set_val('t_curr', t_curr, units='s')
+        prob.set_val(Dynamic.Mission.TIME, t_curr, units='s')
         prob.set_val('airport_alt', airport_alt, units='ft')
         prob.set_val(Dynamic.Mission.ALTITUDE, altitude, units='ft')
         prob.set_val(Dynamic.Atmosphere.MACH, mach, units='unitless')
