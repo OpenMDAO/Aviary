@@ -62,7 +62,7 @@ class TestBalancedField(unittest.TestCase):
 
         balanced_field_user_options = av.AviaryValues()
 
-        from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+        from aviary.utils.test_utils.default_subsystems import get_default_subsystems
         from aviary.variable_info.functions import setup_model_options
 
         takeoff_trajectory_builder = av.BalancedFieldTrajectoryBuilder('balanced_field_traj',
@@ -73,7 +73,7 @@ class TestBalancedField(unittest.TestCase):
         test_problem = om.Problem()
 
         # default subsystems
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines)
 
         # Upstream pre-mission analysis for aero
         test_problem.model.add_subsystem(

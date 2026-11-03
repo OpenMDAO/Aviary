@@ -89,7 +89,7 @@ def create_prob(aviary_inputs, use_spoiler=False):
 
     balanced_field_user_options = av.AviaryValues()
 
-    from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+    from aviary.utils.test_utils.default_subsystems import get_default_subsystems
     from aviary.variable_info.functions import setup_model_options
 
     dto_build = av.BalancedFieldTrajectoryBuilder('balanced_field_traj',

@@ -296,7 +296,7 @@ class BalancedFieldPhaseBuilder(PhaseBuilder):
             upper=1e9,
             ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
