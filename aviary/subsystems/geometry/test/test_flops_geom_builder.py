@@ -73,7 +73,4 @@ class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilder):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestFLOPSGeomBuilderHybrid()
-    test.setUp()
-    test.test_check_design_variables()
+    unittest.main()
