@@ -230,7 +230,7 @@ class AviaryProblem(om.Problem):
                 group.load_external_subsystems(
                     external_subsystems=external_subsystems, verbosity=verbosity
                 )
-            self.meta_data = merge_meta_data([self.meta_data, group.meta_data])
+                self.meta_data = merge_meta_data([self.meta_data, group.meta_data])
         else:
             self.model.load_external_subsystems(
                 external_subsystems=external_subsystems, verbosity=verbosity
@@ -296,19 +296,7 @@ class AviaryProblem(om.Problem):
             verbosity=verbosity,
         )
 
-        sub.check_and_preprocess_inputs()
-
         self.aviary_groups_dict[name] = sub
-
-        if self.verbosity is None:
-            # If problem-level verbosity was not defined, use the verbosity specified in the first
-            # added AviaryGroup
-            self.verbosity = sub.verbosity
-
-        # TODO try and find a better solution than a new custom flag - the issue is multimission
-        #      problems don't have a consistent variable path to check the inputs later on
-        if Settings.PAYLOAD_RANGE in sub.aviary_inputs:
-            self.generate_payload_range = sub.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
 
         return sub
 
@@ -331,6 +319,17 @@ class AviaryProblem(om.Problem):
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
                 group.check_and_preprocess_inputs(verbosity=verbosity)
+
+                if self.verbosity is None:
+                    # If problem-level verbosity was not defined, use the verbosity specified in the first
+                    # added AviaryGroup
+                    self.verbosity = group.verbosity
+
+                # TODO try and find a better solution than a new custom flag - the issue is multimission
+                #      problems don't have a consistent variable path to check the inputs later on
+                if Settings.PAYLOAD_RANGE in group.aviary_inputs:
+                    self.generate_payload_range = group.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
+
         else:
             self.model.check_and_preprocess_inputs(verbosity=verbosity)
 

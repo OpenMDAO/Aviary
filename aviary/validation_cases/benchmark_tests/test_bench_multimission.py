@@ -55,6 +55,9 @@ def multi_mission_example():
     )
     # Load aircraft in second configuration for same mission
 
+    # Check and run pre-processors.
+    prob.check_and_preprocess_inputs()
+
     prob.build_model()
     # combines four basic commands
     # prob.add_pre_mission_systems()
