@@ -52,11 +52,14 @@ class CombinedGeometry(om.Group):
             flops_geom_pathname + '.nacelle_prelim.' + Aircraft.Nacelle.AVG_DIAMETER
         )
         flops_nac_len_path = flops_geom_pathname + '.nacelle_prelim.' + Aircraft.Nacelle.AVG_LENGTH
-        flops_nac_tot_area_path = (
-            flops_geom_pathname
-            + '.wetted_area.nacelles_total_swet.'
-            + Aircraft.Nacelle.TOTAL_WETTED_AREA
-        )
+
+        # GASP geometry does not use Aircraft.Nacelle.TOTAL_WETTED_AREA but it is nice to have it.
+        # All lines related to it are commented out due to issue #1176
+        # flops_nac_tot_area_path = (
+        #     flops_geom_pathname
+        #     + '.wetted_area.nacelles_total_swet.'
+        #     + Aircraft.Nacelle.TOTAL_WETTED_AREA
+        # )
 
         gasp_geom_pathname = self.gasp_based_geom.pathname
         gasp_fus_area_path = gasp_geom_pathname + '.fuselage.size.' + Aircraft.Fuselage.WETTED_AREA
@@ -65,16 +68,16 @@ class CombinedGeometry(om.Group):
         )
         gasp_nac_len_path = gasp_geom_pathname + '.engine.eng_length.' + Aircraft.Nacelle.AVG_LENGTH
         gasp_nac_area_path = gasp_geom_pathname + '.engine.eng_area.' + Aircraft.Nacelle.WETTED_AREA
-        gasp_nac_tot_area_path = (
-            gasp_geom_pathname + '.engine.eng_tot_swet.' + Aircraft.Nacelle.TOTAL_WETTED_AREA
-        )
+        # gasp_nac_tot_area_path = (
+        #     gasp_geom_pathname + '.engine.eng_tot_swet.' + Aircraft.Nacelle.TOTAL_WETTED_AREA
+        # )
 
         # Pre-fetch the names for cleaner code
         fus_area_name = Aircraft.Fuselage.WETTED_AREA
         nac_area_name = Aircraft.Nacelle.WETTED_AREA
         nac_diam_name = Aircraft.Nacelle.AVG_DIAMETER
         nac_len_name = Aircraft.Nacelle.AVG_LENGTH
-        nac_tot_area_name = Aircraft.Nacelle.TOTAL_WETTED_AREA
+        # nac_tot_area_name = Aircraft.Nacelle.TOTAL_WETTED_AREA
 
         if prioritize_origin is GASP:
             # Add all FLOPS overridden variables to the list
@@ -83,7 +86,7 @@ class CombinedGeometry(om.Group):
                 flops_nac_area_path,
                 flops_nac_diam_path,
                 flops_nac_len_path,
-                flops_nac_tot_area_path,
+                # flops_nac_tot_area_path,
             ]
 
             fus_outs = [
@@ -97,12 +100,12 @@ class CombinedGeometry(om.Group):
             # connected to the total wetted area component. See connect graph using a
             # connection graph viewer in the OpenMDAO command line
             self.flops_based_geom.wetted_area.promotes('nacelles_swet', outputs=nac_area_outs)
-            nac_tot_area_outs = [
-                (nac_tot_area_name, f'CODE_ORIGIN_OVERRIDE:{nac_tot_area_name}'),
-            ]
-            self.flops_based_geom.wetted_area.promotes(
-                'nacelles_total_swet', outputs=nac_tot_area_outs
-            )
+            # nac_tot_area_outs = [
+            #     (nac_tot_area_name, f'CODE_ORIGIN_OVERRIDE:{nac_tot_area_name}'),
+            # ]
+            # self.flops_based_geom.wetted_area.promotes(
+            #     'nacelles_total_swet', outputs=nac_tot_area_outs
+            # )
 
             # Override the FLOPS nacelle length and diameter
             nac_outs = [
@@ -118,7 +121,7 @@ class CombinedGeometry(om.Group):
                 gasp_nac_diam_path,
                 gasp_nac_len_path,
                 gasp_nac_area_path,
-                gasp_nac_tot_area_path,
+                # gasp_nac_tot_area_path,
             ]
 
             fus_outs = [(fus_area_name, f'CODE_ORIGIN_OVERRIDE:{fus_area_name}')]

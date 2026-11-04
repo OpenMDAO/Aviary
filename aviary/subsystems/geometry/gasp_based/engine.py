@@ -388,9 +388,11 @@ class GASPEngineSizeGroup(om.Group):
             promotes_outputs=['*'],
         )
 
-        self.add_subsystem(
-            'eng_tot_swet',
-            NacelleTotalWettedArea(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
+        # GASP geometry does not use Aircraft.Nacelle.TOTAL_WETTED_AREA but it is nice to have it.
+        # It is commented out due to issue #1176
+        # self.add_subsystem(
+        #     'eng_tot_swet',
+        #     NacelleTotalWettedArea(),
+        #     promotes_inputs=['*'],
+        #     promotes_outputs=['*'],
+        # )
