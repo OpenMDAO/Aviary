@@ -126,7 +126,7 @@ def run_aviary_cmd(
     optimizer='IPOPT',
     phase_info=None,
     max_iter=50,
-    verbosity=Verbosity.BRIEF,
+    verbosity=None,
     real_time_plotting=False,
 ):
     """
@@ -136,7 +136,7 @@ def run_aviary_cmd(
     kwargs = {
         'max_iter': max_iter,
         'optimizer': optimizer,
-        'verbosity': Verbosity(verbosity),
+        'verbosity': Verbosity(verbosity) if verbosity is not None else None,
         'real_time_plotting': real_time_plotting,
     }
 
@@ -174,7 +174,7 @@ def _setup_run_aviary_parser(parser):
     parser.add_argument(
         '--verbosity',
         type=int,
-        default=1,
+        default=None,
         help='verbosity settings: 0=quiet, 1=brief, 2=verbose, 3=debug',
         choices=(0, 1, 2, 3),
     )

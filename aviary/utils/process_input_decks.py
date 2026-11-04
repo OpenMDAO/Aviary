@@ -64,7 +64,6 @@ def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=None):
     (aircraft_values, initialization_guesses): (tuple)
         Returns a tuple containing aircraft values and initial guesses.
     """
-
     aircraft_values = AviaryValues()
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
@@ -123,7 +122,6 @@ def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=None):
         aircraft_values.set_val(
             Settings.VERBOSITY, CoreMetaData[Settings.VERBOSITY]['default_value']
         )
-
     return aircraft_values, initialization_guesses
 
 
