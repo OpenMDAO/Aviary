@@ -390,7 +390,7 @@ add_meta_data(
     Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
     meta_data=_MetaData,
     historical_name={
-        'GASP': ['INGASP.SWP_FB'],
+        'GASP': 'INGASP.SWP_FB',
         'FLOPS': 'FUSEIN.SWPLE',
     },
     units='deg',
@@ -499,7 +499,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': ['AERIN.TRLC', 'TRLC'],
+        'FLOPS': 'AERIN.TRLC',
     },
     units='unitless',
     desc='define percent laminar flow for canard lower surface',
@@ -3319,13 +3319,13 @@ add_meta_data(
         'FLOPS': ['WTIN.WFURN', 'OFURN'],
     },
     units='unitless',
-    desc='Furnishings system mass scaler. In GASP based, it is applicale if gross mass '
+    desc='Furnishings system mass scaler. In GASP based, it is applicable if gross mass '
     '> 10000 lbs and number of passengers >= 50. Set it to 0.0 if not use.',
     default_value=1.0,
 )
 
 # TODO Misnamed. This sets if Aircraft.Furnishings.MASS_SCALER is used as a coefficient for additional
-# furnishings weight and the alternative (False) is to use the emperical equation. The variable toggle
+# furnishings weight and the alternative (False) is to use the empirical equation. The variable toggle
 # based on gross mass and num_pax is bad Aviary behavior and should occur in fortran_to_aviary instead
 add_meta_data(
     Aircraft.Furnishings.USE_EMPIRICAL_EQUATION,
