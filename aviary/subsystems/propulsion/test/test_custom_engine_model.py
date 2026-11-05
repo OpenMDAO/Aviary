@@ -3,6 +3,7 @@ from copy import deepcopy
 
 import dymos as dm
 import openmdao.api as om
+from openmdao.core.system import System
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
@@ -18,6 +19,15 @@ class PreMissionEngine(om.Group):
         self.add_subsystem(
             'dummy_comp',
             om.ExecComp('y=x**2', x={'units': 'm', 'val': 2.0}, y={'units': 'm**2'}),
+            promotes=['*'],
+        )
+
+
+class PostMissionEngine(om.Group):
+    def setup(self):
+        self.add_subsystem(
+            'dummy_comp',
+            om.ExecComp('z=3*a', a={'val': 6.0, 'units': 'm**2'}),
             promotes=['*'],
         )
 
@@ -109,6 +119,11 @@ class SimpleTestEngine(EngineModel):
 
     def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return SimpleEngine(num_nodes=num_nodes)
+
+    def build_post_mission(
+        self, aviary_inputs, mission_info, subsystem_options, phase_mission_bus_lengths
+    ):
+        return PostMissionEngine()
 
     def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         controls_dict = {
@@ -218,6 +233,7 @@ class CustomEngineTest(unittest.TestCase):
         tol = 1.0e-4
 
         assert_near_equal(prob.get_val('traj.cruise.rhs_all.y'), 4.0, tol)
+        assert_near_equal(prob.get_val('propulsion.z'), 18, tol)
 
     def test_no_solver_loop(self):
         local_phase_info = deepcopy(phase_info)

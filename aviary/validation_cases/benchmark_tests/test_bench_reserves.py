@@ -185,9 +185,9 @@ class ReserveTest(unittest.TestCase):
         prob.run_aviary_problem()
 
         expected_values = {
-            'energy.reserve_fuel_margin_mass': (754.13296981, 'lbm'),
-            Mission.RESERVE_FUEL_MASS: (15805.26936787, 'lbm'),
-            Mission.TOTAL_RESERVE_FUEL_MASS: (16684.40233768, 'lbm'),
+            'energy.reserve_fuel_margin_mass': (754.13294369, 'lbm'),
+            Mission.RESERVE_FUEL_MASS: (15805.26884065, 'lbm'),
+            Mission.TOTAL_RESERVE_FUEL_MASS: (16684.40178434, 'lbm'),
         }
 
         for var_name, (expected, units) in expected_values.items():

@@ -1,7 +1,7 @@
 # created 10/08/25
 # FLOPS-derived engine deck converted from PAX300_baseline_ENGDEK.txt
 
-Mach Number (input), Altitude (ft, input), Throttle (input), Gross Thrust (lbf, output), Ram Drag (lbf, output), Fuel Flow (lb/h, output), NOx Rate (lb/h, output)
+Mach Number (input), Altitude (ft, input), Throttle (input), Gross Thrust (lbf, output), Ram Drag (lbf, output), Fuel Flow (lbm/h, output), NOx Rate (lbm/h, output)
                 0.0,                  0.0,             23.0,                     8396.6,                    0.0,                   1963.1,                 10.6399
                 0.0,                  0.0,             26.0,                    16791.6,                    0.0,                   3489.5,                 11.5561
                 0.0,                  0.0,             29.0,                    25187.5,                    0.0,                   5254.2,                 11.5668

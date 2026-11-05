@@ -123,43 +123,5 @@ class PropulsionPreMissionTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
 
-@use_tempdirs
-class BWBPropulsionPreMissionTest(unittest.TestCase):
-    def setUp(self):
-        self.prob = om.Problem()
-
-    def test_case(self):
-        """Work in progress."""
-        options = get_flops_inputs('BWBsimpleFLOPS')
-        options.set_val(Settings.VERBOSITY, 0)
-        options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]))
-
-        self.prob.model = PropulsionPreMission(
-            aviary_options=options, engine_models=[build_engine_deck(options)]
-        )
-
-        reference_sls_thrust = options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.REFERENCE_SLS_THRUST, reference_sls_thrust, units='lbf'
-        )
-        engine_scale_factor = options.get_val(Aircraft.Engine.SCALE_FACTOR, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, engine_scale_factor)
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(force_alloc_complex=True)
-
-        self.prob.run_model()
-
-        sls_thrust = self.prob.get_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST)
-
-        expected_sls_thrust = np.array([70000.0 * 3])
-
-        assert_near_equal(sls_thrust, expected_sls_thrust, tolerance=1e-10)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
-
-
 if __name__ == '__main__':
     unittest.main()

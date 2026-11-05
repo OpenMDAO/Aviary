@@ -178,13 +178,13 @@ class PropulsionMissionTest(unittest.TestCase):
             Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL: (np.array([8914.33, 18300]), 'lbf'),
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: (
                 np.array([-73.88, -2297.6]),
-                'lb/h',
+                'lbm/h',
             ),
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL: (
                 np.array([-14.97, 17698.6]),
                 'kW',
             ),
-            Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL: (np.array([10186, 10.308]), 'lb/h'),
+            Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL: (np.array([10186, 10.308]), 'lbm/h'),
         }
 
         for var_name, (expected, units) in expected_values.items():

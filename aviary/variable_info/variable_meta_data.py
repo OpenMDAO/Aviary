@@ -7423,6 +7423,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='Total amount of nitrogen oxides (NOx) produced by the vehicle up until this point in the '
+    'mission',
+    multivalue=True,
+)
+
+add_meta_data(
     Dynamic.Vehicle.DRAG,
     meta_data=_MetaData,
     historical_name={
@@ -7876,6 +7886,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.NOX_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='NOx produced from all phases of the main mission. This does not include NOx produced in '
+    'reserve phases.',
+)
+
+add_meta_data(
     Mission.OPERATING_ITEMS_MASS,
     meta_data=_MetaData,
     historical_name={
@@ -7948,7 +7967,7 @@ add_meta_data(
         'FLOPS': None,
     },
     units='lbm',
-    desc='fuel burned during reserve phases, this does not include fuel burned in regular phases',
+    desc='fuel burned during reserve phases, this does not include fuel burned in main phases',
     default_value=0.0,
 )
 
@@ -7962,6 +7981,15 @@ add_meta_data(
     option=True,
     units='lbm',
     desc='required fuel reserves: directly in lbm',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.RESERVE_NOX_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='NOx produced during reserve phases, this does not include NOx production from main phases',
     default_value=0.0,
 )
 
@@ -7990,6 +8018,15 @@ add_meta_data(
     units='lbm',
     desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
     'reserve fuel and fuel margin',
+)
+
+add_meta_data(
+    Mission.TOTAL_NOX_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='total NOx emitted throughout the entire mission profile including the main and reserve '
+    'missions',
 )
 
 add_meta_data(

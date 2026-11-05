@@ -1,7 +1,7 @@
 # created 06/06/25
 # FLOPS-derived engine deck converted from turbofan_22k.txt
 
-Mach Number (input), Altitude (ft, input), Throttle (input), Gross Thrust (lbf, output), Ram Drag (lbf, output), Fuel Flow (lb/h, output), NOx Rate (lb/h, output)
+Mach Number (input), Altitude (ft, input), Throttle (input), Gross Thrust (lbf, output), Ram Drag (lbf, output), Fuel Flow (lbm/h, output), NOx Rate (lbm/h, output)
                 0.0,                  0.0,             21.0,                     1110.0,                    0.0,                    500.3,                  55.372
                 0.0,                  0.0,             26.0,                     4440.1,                    0.0,                    964.9,                  23.442
                 0.0,                  0.0,             29.0,                     6660.2,                    0.0,                   1368.2,                  21.499
