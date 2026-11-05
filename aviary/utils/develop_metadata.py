@@ -50,28 +50,24 @@ def add_meta_data(
     historical_name : dict or None
         dictionary of names that the variable held in prior codes
 
-        Example: {"FLOPS":"WTIN.WNGWT", "GASP":
-        "INGASP.WWGHT"}
+        Example:
+            {
+                'GASP': 'INGASP.SWP_FB',
+                'FLOPS': 'FUSEIN.SWPLE',
+            }
 
-        NAMELIST naming convention
-        &<function_name>.<namelist_name>.<var_name>
+        NAMELIST naming convention:
+            <namelist_name>.<var_name>
 
-        Example: &DEFINE.CONFIN.GW
-            represents the GW variable of the CONFIN namelist as defined in
-            the DEFINE subroutine
+        Example: FUSEIN.SWPLE
+            represents the SWPLE variable of the FUSEIN namelist as defined in
+            the DEFINE subroutine of FLOPS
 
-        COMMON block naming convention, including aliases:
-        <block_name>.<var_name>
+        All other variables:
+            <var_name>
 
-        Example: CONFIG.GW
-            represents the GW variable of the CONFIG common block
-
-        Local variable naming convention, including equivalence statements, parameters,
-        and other local declarations:
-        ~<function_name>.<var_name>
-
-        Example: ~ANALYS.GWTOL
-            represents the GWTOL variable of the ANALYS subroutine
+        Example: WCAN
+            represents the WCAN variable in FLOPS
 
     _check_unique : bool
         private use only flag that tells whether to check the meta_data for the
