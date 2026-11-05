@@ -592,7 +592,15 @@
 
     <span class="c1"># Get legacy-code based depreciated variable list and set vehicle data to defaults</span>
     <span class="k">if</span> <span class="n">legacy_code</span> <span class="ow">is</span> <span class="n">GASP</span><span class="p">:</span>
-        <span class="n">default_values</span> <span class="o">=</span> <span class="n">gasp_default_values</span>
+        <span class="n">new_gasp_default_values</span> <span class="o">=</span> <span class="n">NamedValues</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">gasp_default_values</span><span class="p">:</span>
+            <span class="n">val</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">new_gasp_default_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'TMP_NONE.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">'</span>
+                <span class="n">new_gasp_default_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">new_key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+        <span class="n">default_values</span> <span class="o">=</span> <span class="n">new_gasp_default_values</span>
         <span class="n">deprecated_vars</span> <span class="o">=</span> <span class="n">gasp_deprecated_vars</span>
     <span class="k">elif</span> <span class="n">legacy_code</span> <span class="ow">is</span> <span class="n">FLOPS</span><span class="p">:</span>
         <span class="n">default_values</span> <span class="o">=</span> <span class="n">flops_default_values</span>
@@ -856,9 +864,12 @@
         <span class="n">skip_variable</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">var_values</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="n">list_of_equivalent_aviary_names</span><span class="p">,</span> <span class="n">var_ind</span> <span class="o">=</span> <span class="n">update_name</span><span class="p">(</span>
-        <span class="n">alternate_names</span><span class="p">,</span> <span class="n">current_namelist</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">verbosity</span>
-    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">current_namelist</span> <span class="o">!=</span> <span class="s1">'TMP_NONE'</span><span class="p">:</span>
+        <span class="n">list_of_equivalent_aviary_names</span><span class="p">,</span> <span class="n">var_ind</span> <span class="o">=</span> <span class="n">update_name</span><span class="p">(</span>
+            <span class="n">alternate_names</span><span class="p">,</span> <span class="n">current_namelist</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">verbosity</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">list_of_equivalent_aviary_names</span><span class="p">,</span> <span class="n">var_ind</span> <span class="o">=</span> <span class="n">update_name</span><span class="p">(</span><span class="n">alternate_names</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
 
     <span class="c1"># Fortran uses 1 indexing, Python uses 0 indexing</span>
     <span class="n">fortran_offset</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">current_namelist</span> <span class="k">else</span> <span class="mi">0</span>

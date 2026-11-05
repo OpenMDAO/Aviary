@@ -593,6 +593,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beginner-guide">Beginner Guide</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intermediate-guide">Intermediate Guide</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heterogenous-engine-sets">Heterogenous Engine Sets</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#engine-mounting-locations">Engine Mounting Locations</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-guide">Advanced Guide</a></li>
@@ -812,6 +813,83 @@
 </div>
 <p>Note how calling <code class="docutils literal notranslate"><span class="pre">preprocess_propulsion()</span></code> changes <code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.SCALE_FACTOR</span></code>, which was individually defined for each <code class="docutils literal notranslate"><span class="pre">EngineDeck</span></code>, into a list containing both values. This way Aviary can access information on every <code class="docutils literal notranslate"><span class="pre">EngineModel</span></code> present on the aircraft without needing access to each individual <code class="docutils literal notranslate"><span class="pre">EngineModel</span></code> object. This is important to be aware of if you are manually setting any variables related to engines or propulsion rather than using the built-in methods and functions presented in the Intermediate guide, which will do this work for you.</p>
 </section>
+<section id="engine-mounting-locations">
+<h4>Engine Mounting Locations<a class="headerlink" href="#engine-mounting-locations" title="Link to this heading">#</a></h4>
+<p>So far we have only said how many engines of each type the aircraft has. Aviary also needs to know <em>where</em> engines are mounted, because some calculations (for example the FLOPS-based landing gear length and detailed wing weight) depend on how far out along the wing each engine sits.</p>
+<p>Consider an aircraft with two engine types: five of type A (one on the fuselage, four on the wing) and two of type B (both on the wing), as sketched below.</p>
+<p><img alt="Example layout with two engine types" src="../../_images/engine_layout_example.png" /></p>
+<p>Four variables describe this layout. The first three have one entry per engine type, in the same order as the <code class="docutils literal notranslate"><span class="pre">engine_models</span></code> list given to <code class="docutils literal notranslate"><span class="pre">preprocess_propulsion()</span></code>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Variable</p></th>
+<th class="head text-left"><p>Meaning</p></th>
+<th class="head text-left"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.NUM_ENGINES</span></code></p></td>
+<td class="text-left"><p>Total engines of each type</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[5,</span> <span class="pre">2]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.NUM_WING_ENGINES</span></code></p></td>
+<td class="text-left"><p>Engines of each type mounted on the wing</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[4,</span> <span class="pre">2]</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.NUM_FUSELAGE_ENGINES</span></code></p></td>
+<td class="text-left"><p>Engines of each type mounted on the fuselage</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">0]</span></code> (filled in by the preprocessor)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.WING_LOCATIONS</span></code></p></td>
+<td class="text-left"><p>Spanwise position of wing engines, as a fraction of semispan (set on each engine model)</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[0.2,</span> <span class="pre">0.8]</span></code> for type A, <code class="docutils literal notranslate"><span class="pre">[0.5]</span></code> for type B</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">WING_LOCATIONS</span></code> works differently from the others. Wing engines are assumed to be symmetric about the fuselage centerline, so each value describes one mirrored left/right pair, and an engine type with <code class="docutils literal notranslate"><span class="pre">n</span></code> wing engines needs <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">/</span> <span class="pre">2</span></code> values. Set them on each engine model’s own options: type A has four wing engines, so it gets <code class="docutils literal notranslate"><span class="pre">[0.2,</span> <span class="pre">0.8]</span></code> (0.2 and 0.8 of the semispan), and type B has two wing engines, so it gets <code class="docutils literal notranslate"><span class="pre">[0.5]</span></code>. <code class="docutils literal notranslate"><span class="pre">preprocess_propulsion()</span></code> joins them in engine-type order into the single flat array <code class="docutils literal notranslate"><span class="pre">[0.2,</span> <span class="pre">0.8,</span> <span class="pre">0.5]</span></code> that the rest of Aviary uses.</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># each engine model carries its own wing locations: one value per mirrored pair of that type</span>
+<span class="n">options_a</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
+<span class="n">options_a</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">DATA_FILE</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">'models/engines/turbofan_28k.csv'</span><span class="p">))</span>
+<span class="n">options_a</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">WING_LOCATIONS</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]))</span>  <span class="c1"># 4 wing engines = 2 pairs</span>
+<span class="n">type_a</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">EngineDeck</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'type_a'</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options_a</span><span class="p">)</span>
+
+<span class="n">options_b</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
+<span class="n">options_b</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">DATA_FILE</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">'models/engines/turbofan_28k.csv'</span><span class="p">))</span>
+<span class="n">options_b</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALE_FACTOR</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">options_b</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">WING_LOCATIONS</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">]))</span>  <span class="c1"># 2 wing engines = 1 pair</span>
+<span class="n">type_b</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">EngineDeck</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'type_b'</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options_b</span><span class="p">)</span>
+
+<span class="n">mount_options</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
+<span class="n">mount_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_ENGINES</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+<span class="n">mount_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_WING_ENGINES</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+
+<span class="n">av</span><span class="o">.</span><span class="n">preprocess_propulsion</span><span class="p">(</span><span class="n">aviary_options</span><span class="o">=</span><span class="n">mount_options</span><span class="p">,</span> <span class="n">engine_models</span><span class="o">=</span><span class="p">[</span><span class="n">type_a</span><span class="p">,</span> <span class="n">type_b</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Only the total and wing-mounted counts were provided. The preprocessor works out that the one remaining type A engine is mounted on the fuselage:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">mount_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_FUSELAGE_ENGINES</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1 0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The preprocessor fills in missing mounting information. For each engine type, if <code class="docutils literal notranslate"><span class="pre">NUM_WING_ENGINES</span></code> and <code class="docutils literal notranslate"><span class="pre">NUM_FUSELAGE_ENGINES</span></code> account for fewer engines than <code class="docutils literal notranslate"><span class="pre">NUM_ENGINES</span></code>, two or more leftover engines are assumed to be wing-mounted, while a single leftover engine (for a type that already has wing engines) is assumed to be fuselage-mounted, as for type A above. Wing locations are checked per engine model: each model’s <code class="docutils literal notranslate"><span class="pre">WING_LOCATIONS</span></code> must hold half as many values as that model has wing engines. Set them on the engine models rather than once in the shared options. In testing, a shared value with two engine models was repeated for each model during preprocessing.</p>
+</div>
+</section>
 </section>
 <section id="advanced-guide">
 <h3>Advanced Guide<a class="headerlink" href="#advanced-guide" title="Link to this heading">#</a></h3>
@@ -897,6 +975,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beginner-guide">Beginner Guide</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intermediate-guide">Intermediate Guide</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heterogenous-engine-sets">Heterogenous Engine Sets</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#engine-mounting-locations">Engine Mounting Locations</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-guide">Advanced Guide</a></li>
