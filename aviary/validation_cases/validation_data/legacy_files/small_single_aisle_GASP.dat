@@ -146,7 +146,7 @@
  RELP=0.0,	! engine cg fraction of fuselage length, for fuselage mounted engines, (0.) if LCWING <> 0
  SM1D=0.575,	! engine face Mach number sea level static if NTYE = 7 and KNAC <> 2
  HBTP=0.45,	! turbofan engine face hub/tip ratio
- SWSLS=.2153, 	! engine specific weight lbm/lb thrust or lbm/HP for recip/ turboprop if KNAC <> 2
+ SWSLS=.2153, 	! engine specific weight lbm/lbf thrust or lbm/HP for recip/ turboprop if KNAC <> 2
  THIN=23800., 	! input thrust for one engine, lbf., if JENGSZ=4 and NTYE=7 
  EMCRU=0.78,	! design cruise Mach number for engine sizing (not mission analysis)
  HNCRU=37000.,	! design cruise altitude in feet
