@@ -77,6 +77,16 @@ class TestFortranToAviary(unittest.TestCase):
         )
         self.compare_files(comparison_filepath)
 
+    def test_regional_pax_48(self):
+        filepath = 'validation_cases/validation_data/legacy_files/regional_pax_48_GASP.dat'
+        comparison_filepath = 'utils/test/data/converter_test_regional_pax_48_GASP.csv'
+
+        self.prepare_and_run(
+            filepath,
+            output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
+        )
+        self.compare_files(comparison_filepath)
+
     def test_diff_configuration(self):
         filepath = 'validation_cases/validation_data/legacy_files/configuration_test_data_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_configuration_GASP.csv'
