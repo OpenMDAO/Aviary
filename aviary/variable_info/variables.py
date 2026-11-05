@@ -684,6 +684,7 @@ class Mission:
     FUEL_MASS = 'mission:fuel_mass'
     GRAVITY = 'mission:gravity'
     GROSS_MASS = 'mission:gross_mass'
+    NOX_MASS = 'mission:nox_mass'
     OPERATING_ITEMS_MASS = 'mission:operating_items_mass'
     OPERATING_ITEMS_MASS_ADDITIONAL = 'mission:operating_items_mass_additional'
     OPERATING_MASS = 'mission:operating_mass'
@@ -691,8 +692,10 @@ class Mission:
     RESERVE_FUEL_MARGIN = 'mission:reserve_fuel_margin'
     RESERVE_FUEL_MASS = 'mission:reserve_fuel_mass'
     RESERVE_FUEL_MASS_ADDITIONAL = 'mission:reserve_fuel_mass_additional'
+    RESERVE_NOX_MASS = 'mission:reserve_nox_mass'
     SEA_LEVEL_DENSITY = 'mission:sea_level_density'
     TOTAL_FUEL_MASS = 'mission:total_fuel_mass'
+    TOTAL_NOX_MASS = 'mission:total_nox_mass'
     TOTAL_RESERVE_FUEL_MASS = 'mission:total_reserve_fuel_mass'
     ZERO_FUEL_MASS = 'mission:zero_fuel_mass'
 

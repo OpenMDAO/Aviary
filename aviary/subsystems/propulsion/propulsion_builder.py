@@ -11,8 +11,10 @@ CorePropulsionBuilder : the interface for Aviary's core propulsion subsystem bui
 import numpy as np
 
 from aviary.interface.utils import write_markdown_variable_table
+from aviary.mission.utils import separate_reserve_phases
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
+from aviary.subsystems.propulsion.propulsion_postmission import PropulsionPostMission
 from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
@@ -20,7 +22,7 @@ from aviary.subsystems.subsystem_builder import SubsystemBuilder
 #      Ideally, an alternate solution to loop through the hierarchy will be created and
 #      these can be replaced.
 from aviary.utils.preprocessors import _get_engine_variables
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class PropulsionBuilder(SubsystemBuilder):
@@ -52,6 +54,8 @@ class CorePropulsionBuilder(PropulsionBuilder):
         Build pre-mission.
     build_mission(self, num_nodes, aviary_inputs, **kwargs) -> openmdao.core.System:
         Build pre-mission.
+    build_post_mission(self, num_nodes, aviary_inputs, **kwargs) -> openmdao.core.System:
+        Build post-mission.
     get_states(self) -> dict:
         Call get_states() on all engine models and return combined result.
     get_parameters(self, aviary_inputs=None, phase_info=None) -> dict:
@@ -61,7 +65,7 @@ class CorePropulsionBuilder(PropulsionBuilder):
     get_linked_variables(self) -> dict:
         Call get_linked_variables() on all engine models and return combined result.
     get_pre_mission_bus_variables(self) -> dict
-        Call get_linked_variables() on all engine models and return combined result.
+        Call get_pre_mission_bus_variables() on all engine models and return combined result.
     get_design_vars(self) -> dict:
         Call get_design_vars() on all engine models and return combined result.
     get_initial_guesses(self) -> dict:
@@ -69,9 +73,11 @@ class CorePropulsionBuilder(PropulsionBuilder):
     get_mass_names(self) -> list:
         Call get_mass_names() on all engine models and return combined result.
     preprocess_inputs(self) -> aviary_inputs:
-        Call get_mass_names() on all engine models and return combined result.
+        Call preprocess_inputs() on all engine models and return combined result.
     get_timeseries(self) -> list:
         Call get_timeseries() on all engine models and return combined result.
+    get_post_mission_bus_variables(self) -> dict
+        Call get_post_mission_bus_variables() on all engine models and return combined result.
     report(self):
         Generate the report for Aviary core propulsion analysis.
     """
@@ -122,6 +128,21 @@ class CorePropulsionBuilder(PropulsionBuilder):
             engine_options=subsystem_options,
         )
 
+    def build_post_mission(
+        self,
+        aviary_inputs,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
+    ):
+        return PropulsionPostMission(
+            aviary_options=aviary_inputs,
+            engine_models=self.engine_models,
+            engine_options=subsystem_options,
+            mission_info=mission_info,
+            phase_mission_bus_lengths=phase_mission_bus_lengths,
+        )
+
     # NOTE no unittests!
     def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_states() on all engine models and return combined result."""
@@ -161,10 +182,7 @@ class CorePropulsionBuilder(PropulsionBuilder):
 
     # NOTE no unittests!
     def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
-        """
-        Set expected shape of all variables that need to be vectorized for multiple
-        engine types.
-        """
+        """Set expected shape of all variables that need to be vectorized for multiple engine types."""
         num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         params = {}
 
@@ -230,7 +248,7 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return linked_vars
 
     def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
-        """Call get_linked_variables() on all engine models and return combined result."""
+        """Call get_pre_mission_bus_variables() on all engine models and return combined result."""
         bus_vars = {}
         for engine in self.engine_models:
             engine_bus_vars = engine.get_pre_mission_bus_variables(
@@ -282,7 +300,7 @@ class CorePropulsionBuilder(PropulsionBuilder):
 
     # NOTE no unittests!
     def preprocess_inputs(self, aviary_inputs=None):
-        """Call get_mass_names() on all engine models and return combined result."""
+        """Call preprocess_inputs() on all engine models and return combined result."""
         mass_names = {}
         for engine in self.engine_models:
             engine_mass_names = engine.get_mass_names(aviary_inputs=aviary_inputs)
@@ -303,6 +321,55 @@ class CorePropulsionBuilder(PropulsionBuilder):
             outputs = outputs + engine_outputs
 
         return outputs
+
+    def get_post_mission_bus_variables(self, aviary_inputs=None, mission_info={}):
+        """Call get_post_mission_bus_variables() on all engine models and return combined result."""
+        bus_vars = {phase: {} for phase in mission_info}
+        for engine in self.engine_models:
+            engine_bus_vars = engine.get_post_mission_bus_variables(
+                aviary_inputs, mission_info=mission_info
+            )
+            bus_vars.update(engine_bus_vars)
+
+        # append propulsion group name to all engine-level bus variables
+        # engine models only need to use variable paths starting at that engine group
+        complete_bus_vars = {phase: {} for phase in mission_info}
+        for phase in mission_info:
+            for var in bus_vars[phase]:
+                info = bus_vars[phase][var]
+                complete_bus_vars[phase][self.name + '.' + var] = info
+
+        # always add NOx vars to bus
+        main_phases, reserve_phases = separate_reserve_phases(mission_info)
+
+        complete_bus_vars[main_phases[-1]].update(
+            {
+                Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED: {
+                    'post_mission_name': Mission.NOX_MASS,
+                    'src_indices': [-1],
+                }
+            }
+        )
+
+        if reserve_phases:
+            complete_bus_vars[reserve_phases[0]].update(
+                {
+                    Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED: {
+                        'post_mission_name': f'{self.name}.reserve_mission_nox.nox_initial',
+                        'src_indices': [0],
+                    }
+                }
+            )
+
+            complete_bus_vars[reserve_phases[-1]].update(
+                {
+                    Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED: {
+                        'post_mission_name': f'{self.name}.reserve_mission_nox.nox_final',
+                        'src_indices': [-1],
+                    }
+                }
+            )
+        return complete_bus_vars
 
     def report(self, prob, reports_folder, **kwargs):
         """

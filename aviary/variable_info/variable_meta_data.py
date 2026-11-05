@@ -6980,6 +6980,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.NOX_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='NOx produced from all phases of the main mission. This does not include NOx produced in '
+    'reserve phases.',
+)
+
+add_meta_data(
     Mission.OPERATING_ITEMS_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None},
@@ -7037,9 +7046,19 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
-    desc='fuel burned during reserve phases, this does not include fuel burned in regular phases',
+    desc='fuel burned during reserve phases, this does not include fuel burned in main phases',
     default_value=0.0,
 )
+
+add_meta_data(
+    Mission.RESERVE_NOX_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='NOx produced during reserve phases, this does not include NOx production from main phases',
+    default_value=0.0,
+)
+
 
 add_meta_data(
     Mission.RESERVE_FUEL_MASS_ADDITIONAL,
@@ -7071,6 +7090,15 @@ add_meta_data(
     # Note: In GASP, WFA does not include fuel margin.
     desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
     'reserve fuel and fuel margin',
+)
+
+add_meta_data(
+    Mission.TOTAL_NOX_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='total NOx emitted throughout the entire mission profile including the main and reserve '
+    'missions',
 )
 
 add_meta_data(

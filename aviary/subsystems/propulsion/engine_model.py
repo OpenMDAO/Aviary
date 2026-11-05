@@ -72,23 +72,6 @@ class EngineModel(SubsystemBuilder):
         )
         self._preprocess_inputs()
 
-    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
-        """
-        Build an OpenMDAO system for the pre-mission computations of the engine model,
-        such as sizing.
-
-        Optional for engine models.
-        Used in propulsion_sizing.py to build the pre-mission propulsion subsystem.
-
-        Returns
-        -------
-        pre_mission_sys : openmdao.core.System
-            An OpenMDAO system containing all computations that need to happen in
-            the pre-mission part of the Aviary problem. This
-            includes sizing, design, and other non-mission parameters.
-        """
-        return
-
     def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """
         Build an OpenMDAO system for the mission computations of the engine model.
@@ -108,28 +91,6 @@ class EngineModel(SubsystemBuilder):
             'build_mission() is a required method but has not '
             f'been implemented in EngineModel <{self.name}>'
         )
-
-    def build_post_mission(
-        self,
-        aviary_inputs=None,
-        mission_info=None,
-        subsystem_options=None,
-        phase_mission_bus_lengths=None,
-    ):
-        """
-        Build an OpenMDAO system for the post-mission computations of the engine model.
-
-        Optional for engine models. Currently unused by core Aviary propulsion.
-
-        Returns
-        -------
-        post_mission_sys : openmdao.core.System
-            An OpenMDAO system containing all computations that need to happen
-            after the mission. This includes time-dependent states that are
-            being integrated as well as any other variables that vary after
-            the mission.
-        """
-        return
 
     def _preprocess_inputs(self):
         """
