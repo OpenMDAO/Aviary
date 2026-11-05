@@ -1,7 +1,6 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
@@ -53,39 +52,6 @@ class CargoContainerMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
-
-
-@use_tempdirs
-class CargoContainerMassTest2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.subsystems.mass.flops_based.anti_icing as antiicing
-
-        antiicing.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.subsystems.mass.flops_based.anti_icing as antiicing
-
-        antiicing.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case(self):
-        prob = om.Problem()
-
-        prob.model.add_subsystem(
-            'cargo_containers',
-            TransportCargoContainersMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
-
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.CrewPayload.BAGGAGE_MASS, 5000.0, 'lbm')
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == '__main__':

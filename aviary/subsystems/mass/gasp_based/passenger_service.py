@@ -53,19 +53,21 @@ class PassengerServiceMass(om.ExplicitComponent):
         if num_pax >= 251.0:
             num_lavatories = 6
 
-        service_wt = 0.0
+        service_mass = 0.0
         if num_pax > 9.0:
-            service_wt = service_mass_per_passenger * num_pax + 16.0 * num_lavatories
+            service_mass = service_mass_per_passenger * num_pax + 16.0 * num_lavatories
 
-        water_wt = 0.0
+        water_mass = 0.0
         if num_pax > 19.0:
-            water_wt = water_mass_per_occupant * num_pax
+            water_mass = water_mass_per_occupant * num_pax
 
-        catering_wt = 0.0
+        catering_mass = 0.0
         if num_pax > 19.0:
-            catering_wt = catering_mass_per_passenger * num_pax
+            catering_mass = catering_mass_per_passenger * num_pax
 
-        outputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = service_wt + water_wt + catering_wt
+        outputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = (
+            service_mass + water_mass + catering_mass
+        )
 
     def compute_partials(self, inputs, J):
         num_pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]

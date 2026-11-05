@@ -230,7 +230,6 @@ class FlightPhase(PhaseBuilder):
         #     )
 
         # Add timeseries outputs
-        phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
         phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
@@ -262,7 +261,7 @@ class FlightPhase(PhaseBuilder):
             Dynamic.Mission.ALTITUDE,
             Dynamic.Mission.DISTANCE,
             Dynamic.Vehicle.MASS,
-            'time',
+            Dynamic.Mission.TIME,
         ]
         return linked_vars
 

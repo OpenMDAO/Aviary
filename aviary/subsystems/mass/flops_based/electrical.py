@@ -1,6 +1,5 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import distributed_engine_count_factor
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
@@ -47,7 +46,6 @@ class ElectricalMass(om.ExplicitComponent):
             * num_engines_factor**0.69
             * (1.0 + 0.044 * ncrew + 0.0015 * npass)
             * mass_scaler
-            / GRAV_ENGLISH_LBM
         )
 
     def compute_partials(self, inputs, J):
@@ -67,15 +65,15 @@ class ElectricalMass(om.ExplicitComponent):
         ecf_fact = num_engines_factor**0.69
 
         J[Aircraft.Electrical.MASS, Aircraft.Fuselage.LENGTH] = (
-            0.4 * length**-0.6 * fact * width_fact * ecf_fact * mass_scaler / GRAV_ENGLISH_LBM
+            0.4 * length**-0.6 * fact * width_fact * ecf_fact * mass_scaler
         )
 
         J[Aircraft.Electrical.MASS, Aircraft.Fuselage.MAX_WIDTH] = (
-            0.14 * width**-0.86 * fact * length_fact * ecf_fact * mass_scaler / GRAV_ENGLISH_LBM
+            0.14 * width**-0.86 * fact * length_fact * ecf_fact * mass_scaler
         )
 
         J[Aircraft.Electrical.MASS, Aircraft.Electrical.MASS_SCALER] = (
-            fact * length_fact * ecf_fact * width_fact / GRAV_ENGLISH_LBM
+            fact * length_fact * ecf_fact * width_fact
         )
 
 
@@ -97,11 +95,9 @@ class AltElectricalMass(om.ExplicitComponent):
         npass = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         mass_scaler = inputs[Aircraft.Electrical.MASS_SCALER]
 
-        outputs[Aircraft.Electrical.MASS] = 16.3 * npass * mass_scaler / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Electrical.MASS] = 16.3 * npass * mass_scaler
 
     def compute_partials(self, inputs, J):
         npass = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
-        J[Aircraft.Electrical.MASS, Aircraft.Electrical.MASS_SCALER] = (
-            16.3 * npass / GRAV_ENGLISH_LBM
-        )
+        J[Aircraft.Electrical.MASS, Aircraft.Electrical.MASS_SCALER] = 16.3 * npass

@@ -1,20 +1,24 @@
+import warnings
+
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import (
     DimensionalNonDimensionalInterchange,
 )
 from aviary.subsystems.geometry.gasp_based.strut import StrutGeom
-from aviary.utils.conflict_checks import check_fold_location_definition
 from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
+from aviary.utils.utils import mass_to_force_english, mass_to_force_english_derivative
 from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class WingSize(om.ExplicitComponent):
     """Computation of wing area and wing span for GASP-based aerodynamics."""
+
+    def initialize(self):
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
@@ -37,28 +41,35 @@ class WingSize(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        gravity = self.options[Mission.GRAVITY]
+
         gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         wing_loading = inputs[Aircraft.Design.WING_LOADING]
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
 
-        wing_area = gross_mass_initial * GRAV_ENGLISH_LBM / wing_loading
+        gross_weight_initial = mass_to_force_english((gross_mass_initial, 'lbm'), gravity)
+
+        wing_area = gross_weight_initial / wing_loading
         wingspan = (AR * wing_area) ** 0.5
 
         outputs[Aircraft.Wing.AREA] = wing_area
         outputs[Aircraft.Wing.SPAN] = wingspan
 
     def compute_partials(self, inputs, J):
+        gravity = self.options[Mission.GRAVITY]
+
         gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         wing_loading = inputs[Aircraft.Design.WING_LOADING]
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
 
-        wing_area = gross_mass_initial * GRAV_ENGLISH_LBM / wing_loading
+        gross_weight_initial = mass_to_force_english((gross_mass_initial, 'lbm'), gravity)
+        dforce_dmass = mass_to_force_english_derivative(gravity)
 
-        J[Aircraft.Wing.AREA, Aircraft.Design.GROSS_MASS] = dWA_dGMT = (
-            GRAV_ENGLISH_LBM / wing_loading
-        )
+        wing_area = gross_weight_initial / wing_loading
+
+        J[Aircraft.Wing.AREA, Aircraft.Design.GROSS_MASS] = dWA_dGMT = dforce_dmass / wing_loading
         J[Aircraft.Wing.AREA, Aircraft.Design.WING_LOADING] = dWA_dWL = (
-            -gross_mass_initial * GRAV_ENGLISH_LBM / wing_loading**2
+            -gross_weight_initial / wing_loading**2
         )
 
         J[Aircraft.Wing.SPAN, Aircraft.Wing.ASPECT_RATIO] = 0.5 * wing_area**0.5 * AR ** (-0.5)
@@ -78,7 +89,7 @@ class WingParameters(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
+        add_aviary_input(self, Aircraft.Wing.SWEEP, units='rad')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_TIP, units='unitless')
@@ -143,15 +154,11 @@ class WingParameters(om.ExplicitComponent):
         avg_chord = (2.0 * center_chord / 3.0) * (
             (1.0 + taper_ratio) - (taper_ratio / (1.0 + taper_ratio))
         )
-        tan_sweep_LE = (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR + np.tan(
-            sweep_c4 * np.pi / 180.0
-        )
+        tan_sweep_LE = (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR + np.tan(sweep_c4)
         outputs[Aircraft.Wing.LEADING_EDGE_SWEEP] = np.arctan(tan_sweep_LE)
-        tan_sweep_TE = 3.0 * (taper_ratio - 1.0) / (1.0 + taper_ratio) / AR + np.tan(
-            sweep_c4 * (np.pi / 180)
-        )
+        tan_sweep_TE = 3.0 * (taper_ratio - 1.0) / (1.0 + taper_ratio) / AR + np.tan(sweep_c4)
 
-        # For BWB, this formula might need correction
+        # TODO For BWB, this formula might need correction
         FHP = (
             2.0
             * (tc_ratio_root * center_chord * (cabin_width - (tc_ratio_root * center_chord))) ** 0.5
@@ -187,12 +194,8 @@ class WingParameters(om.ExplicitComponent):
             + 0.4
         )
 
-        tan_sweep_LE = (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR + np.tan(
-            sweep_c4 * (np.pi / 180)
-        )
-        tan_sweep_TE = 3.0 * (taper_ratio - 1.0) / (1.0 + taper_ratio) / AR + np.tan(
-            sweep_c4 * (np.pi / 180)
-        )
+        tan_sweep_LE = (1.0 - taper_ratio) / (1.0 + taper_ratio) / AR + np.tan(sweep_c4)
+        tan_sweep_TE = 3.0 * (taper_ratio - 1.0) / (1.0 + taper_ratio) / AR + np.tan(sweep_c4)
 
         dCenterChord_dWingArea = 2 / (wingspan * (1 + taper_ratio))
         dCenterChord_dWingspan = -2 * wing_area / ((1 + taper_ratio) * wingspan**2)
@@ -225,9 +228,7 @@ class WingParameters(om.ExplicitComponent):
             (1 + taper_ratio) ** 2 * AR**2
         )
         dTanSweepLE_dAR = -(1 - taper_ratio) / ((1 + taper_ratio) * AR**2)
-        dTanSweepLE_dSweepC4 = dTanSweepTE_dSweepC4 = (
-            (np.pi / 180) * 1 / np.cos(sweep_c4 * (np.pi / 180)) ** 2
-        )
+        dTanSweepLE_dSweepC4 = dTanSweepTE_dSweepC4 = 1 / np.cos(sweep_c4) ** 2
         dTanSweepTE_dTaperRatio = (
             3 * ((1 + taper_ratio) * AR - (taper_ratio - 1) * AR) / ((1 + taper_ratio) ** 2 * AR**2)
         )
@@ -315,7 +316,7 @@ class WingParameters(om.ExplicitComponent):
         ) / d**2
 
         trp1 = taper_ratio + 1
-        swprad = np.pi * sweep_c4 / 180.0
+        swprad = sweep_c4
         tswprad = np.tan(swprad)
         denom = AR**2 * trp1**2 + (AR * trp1 * tswprad - taper_ratio + 1) ** 2
         J[Aircraft.Wing.LEADING_EDGE_SWEEP, Aircraft.Wing.TAPER_RATIO] = -2 * AR / denom
@@ -323,7 +324,7 @@ class WingParameters(om.ExplicitComponent):
             (taper_ratio - 1) * trp1 / denom
         )
         J[Aircraft.Wing.LEADING_EDGE_SWEEP, Aircraft.Wing.SWEEP] = (
-            np.pi * AR**2 * trp1**2 / denom / 180 / np.cos(swprad) ** 2
+            AR**2 * trp1**2 / denom / np.cos(swprad) ** 2
         )
 
 
@@ -1589,14 +1590,21 @@ class WingGroup(om.Group):
 
             choose_fold_location = self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]
             if not choose_fold_location:
-                check_fold_location_definition(choose_fold_location, has_strut)
+                if not choose_fold_location and not has_strut:
+                    raise RuntimeError(
+                        'For GASP wing geometry, Aircraft.Wing.CHOOSE_FOLD_LOCATION can only be '
+                        'False when the option Aircraft.Wing.HAS_STRUT is True.'
+                    )
                 self.promotes('strut', outputs=['strut_y'])
                 self.promotes('fold_area', inputs=['strut_y'])
                 self.promotes('fold_vol', inputs=['strut_y'])
 
 
 class BWBWingGroup(om.Group):
-    """Group of WingSize, WingParameters, WingFoldArea and BWBWingVolumeArea for wing parameter computations."""
+    """
+    Group of WingSize, WingParameters, WingFoldArea and BWBWingVolumeArea for wing parameter
+    computations.
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.CHOOSE_FOLD_LOCATION)
@@ -1611,9 +1619,14 @@ class BWBWingGroup(om.Group):
 
         if has_strut:
             if verbosity >= 1:
-                print('BWB does not have strut implemented.')
-        if not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
-            raise ('There is no strut. Aircraft.Wing.CHOOSE_FOLD_LOCATION must be True.')
+                warnings.warn(
+                    'GASP BWB wing geometry does not have strut analysis implemented in Aviary yet.'
+                )
+        elif not self.options[Aircraft.Wing.CHOOSE_FOLD_LOCATION]:
+            raise UserWarning(
+                'For GASP BWB wing geometry, Aircraft.Wing.CHOOSE_FOLD_LOCATION must be True when '
+                'there is no strut.'
+            )
 
         self.add_subsystem(
             'size',
@@ -1759,8 +1772,8 @@ def dg2(x):
 
 class ExposedWing(om.ExplicitComponent):
     """
-    Computation of exposed wing area. This is useful for BWB,
-    but is available to tube + wing model too.
+    Computation of exposed wing area. This is useful for BWB, but is available to tube + wing model
+    too.
     """
 
     def initialize(self):
@@ -1817,7 +1830,9 @@ class ExposedWing(om.ExplicitComponent):
         elif h_wing <= 1.0 and h_wing > 1.0 - epsilon:
             sqt = g2(h_wing)
         else:
-            raise 'The given parameter Aircraft.Wing.VERTICAL_MOUNT_LOCATION is out of range.'
+            raise UserWarning(
+                'The given parameter Aircraft.Wing.VERTICAL_MOUNT_LOCATION is out of range.'
+            )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             cabin_height = body_width * inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
@@ -1859,7 +1874,9 @@ class ExposedWing(om.ExplicitComponent):
             sqt = g2(h_wing)
             d_sqt = dg2(h_wing)
         else:
-            raise 'The given parameter Aircraft.Wing.VERTICAL_MOUNT_LOCATION is out of range.'
+            raise UserWarning(
+                'The given parameter Aircraft.Wing.VERTICAL_MOUNT_LOCATION is out of range.'
+            )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             cabin_height = body_width * height_to_width

@@ -13,87 +13,84 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 class GroundrollEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         self.prob.model.add_subsystem(
-            'group', GroundrollEOM(num_nodes=2, **options), promotes=['*']
+            'group',
+            GroundrollEOM(num_nodes=2),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(
+            Dynamic.Vehicle.MASS, val=np.array([175400, 174950]), units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm'
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.array([22000, 23000]), units='lbf'
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units='lbf'
-        )
-        self.prob.model.set_input_defaults(Dynamic.Vehicle.LIFT, val=200 * np.ones(2), units='lbf')
-        self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.DRAG, val=10000 * np.ones(2), units='lbf'
+            Dynamic.Vehicle.LIFT, val=np.array([200, 25000]), units='lbf'
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.VELOCITY, val=10 * np.ones(2), units='ft/s'
+            Dynamic.Vehicle.DRAG, val=np.array([10000, 11000]), units='lbf'
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units='rad'
+            Dynamic.Mission.VELOCITY, val=np.array([10, 130]), units='ft/s'
+        )
+        # flight path angle should usually be zero - flight path angle rate is hardcoded to always
+        # be zero regardless of provided path angle, so we test that here
+        self.prob.model.set_input_defaults(
+            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.array([0, 1]), units='deg'
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units='deg')
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg'
+            Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.array([0, 2]), units='deg'
         )
         self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
+    def test_case_1(self):
         tol = 1e-6
         self.prob.run_model()
 
         expected_values = {
-            Dynamic.Mission.VELOCITY_RATE: np.array([1.5597, 1.5597]),
-            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: np.array([0.0, 0.0]),
-            Dynamic.Mission.ALTITUDE_RATE: np.array([0.0, 0.0]),
-            Dynamic.Mission.DISTANCE_RATE: np.array([10.0, 10.0]),
-            'normal_force': np.array([175200.0, 175200.0]),
-            'fuselage_pitch': np.array([0.0, 0.0]),
+            Dynamic.Mission.VELOCITY_RATE: (np.array([1.55844194, 1.09418326]), 'ft/s**2'),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: (np.array([0.0, 0.0]), 'deg/s'),  # always zero
+            Dynamic.Mission.ALTITUDE_RATE: (np.array([0.0, 2.26881284]), 'ft/s'),
+            Dynamic.Mission.DISTANCE_RATE: (np.array([10.0, 129.98020037]), 'ft/s'),
+            'normal_force': (np.array([175200.0, 149147.31138944]), 'lbf'),
+            'fuselage_pitch': (np.array([0.0, 3]), 'deg'),
         }
 
-        for var_name, expected in expected_values.items():
+        for var_name, (expected, units) in expected_values.items():
             with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected, tol)
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
+    def test_case_alt_gravity(self):
+        self.prob.model_options['*'] = {Mission.GRAVITY: (10, 'm/s**2')}
 
-class GroundrollEOMTestCase2(unittest.TestCase):
-    """Test mass-weight conversion."""
+        self.prob.setup(check=False, force_alloc_complex=True)
+        self.prob.run_model()
 
-    def setUp(self):
-        import aviary.mission.solved_two_dof.ode.groundroll_eom as gr
+        expected_values = {
+            Dynamic.Mission.VELOCITY_RATE: (np.array([1.54575494, 1.07042531]), 'ft/s**2'),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: (np.array([0.0, 0.0]), 'deg/s'),
+            Dynamic.Mission.ALTITUDE_RATE: (np.array([0.0, 2.26881284]), 'ft/s'),
+            Dynamic.Mission.DISTANCE_RATE: (np.array([10.0, 129.98020037]), 'ft/s'),
+            'normal_force': (np.array([178658.22356576, 152596.66284625]), 'lbf'),
+            'fuselage_pitch': (np.array([0.0, 3]), 'deg'),
+        }
 
-        gr.GRAV_ENGLISH_LBM = 1.1
+        tol = 1e-6
 
-    def tearDown(self):
-        import aviary.mission.solved_two_dof.ode.groundroll_eom as gr
+        for var_name, (expected, units) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tol)
 
-        gr.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case1(self):
-        prob = om.Problem()
-        prob.model.add_subsystem('group', GroundrollEOM(num_nodes=2), promotes=['*'])
-        prob.model.set_input_defaults(Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm')
-        prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units='lbf'
-        )
-        prob.model.set_input_defaults(Dynamic.Vehicle.LIFT, val=200 * np.ones(2), units='lbf')
-        prob.model.set_input_defaults(Dynamic.Vehicle.DRAG, val=10000 * np.ones(2), units='lbf')
-        prob.model.set_input_defaults(Dynamic.Mission.VELOCITY, val=10 * np.ones(2), units='ft/s')
-        prob.model.set_input_defaults(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units='rad'
-        )
-        prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units='deg')
-        prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg')
-        prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
-        prob.setup(check=False, force_alloc_complex=True)
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 

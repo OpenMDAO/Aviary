@@ -336,8 +336,8 @@ class FlightPhaseBase(PhaseBuilder):
         phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='m/s')
 
         if phase_type is EquationsOfMotion.SOLVED_2DOF:
-            phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)
-            phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+            phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
+            phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
             phase.add_timeseries_output('fuselage_pitch', output_name='theta', units='deg')
             phase.add_timeseries_output('thrust_req', units='lbf')
             phase.add_timeseries_output('normal_force')
@@ -432,7 +432,7 @@ class FlightPhaseBase(PhaseBuilder):
             Dynamic.Mission.DISTANCE,
             Dynamic.Atmosphere.MACH,
             Dynamic.Vehicle.MASS,
-            'time',
+            Dynamic.Mission.TIME,
         ]
         return linked_vars
 

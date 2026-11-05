@@ -74,7 +74,7 @@ class InstrumentMass(om.ExplicitComponent):
         if PAX >= 351.0:
             num_pilots = 3
 
-        dinstrument_wt_dmass_coeff_1 = (
+        dinstrument_mass_dmass_coeff_1 = (
             gross_mass_initial**0.386
             * num_engines**0.687
             * num_pilots**0.31
@@ -82,10 +82,10 @@ class InstrumentMass(om.ExplicitComponent):
             * wingspan**0.696
         )
         J[Aircraft.Instruments.MASS, Aircraft.Instruments.MASS_COEFFICIENT] = (
-            dinstrument_wt_dmass_coeff_1
+            dinstrument_mass_dmass_coeff_1
         )
 
-        dinstrument_wt_dgross_wt_initial = (
+        dinstrument_mass_dgross_mass_initial = (
             0.386
             * mass_coefficient
             * gross_mass_initial ** (0.386 - 1)
@@ -94,9 +94,11 @@ class InstrumentMass(om.ExplicitComponent):
             * fus_len**0.05
             * wingspan**0.696
         )
-        J[Aircraft.Instruments.MASS, Aircraft.Design.GROSS_MASS] = dinstrument_wt_dgross_wt_initial
+        J[Aircraft.Instruments.MASS, Aircraft.Design.GROSS_MASS] = (
+            dinstrument_mass_dgross_mass_initial
+        )
 
-        dinstrument_wt_dfus_len = (
+        dinstrument_mass_dfus_len = (
             0.05
             * mass_coefficient
             * gross_mass_initial**0.386
@@ -105,9 +107,9 @@ class InstrumentMass(om.ExplicitComponent):
             * fus_len ** (0.05 - 1)
             * wingspan**0.696
         )
-        J[Aircraft.Instruments.MASS, Aircraft.Fuselage.LENGTH] = dinstrument_wt_dfus_len
+        J[Aircraft.Instruments.MASS, Aircraft.Fuselage.LENGTH] = dinstrument_mass_dfus_len
 
-        dinstrument_wt_dwingspan = (
+        dinstrument_mass_dwingspan = (
             0.696
             * mass_coefficient
             * gross_mass_initial**0.386
@@ -116,4 +118,4 @@ class InstrumentMass(om.ExplicitComponent):
             * fus_len**0.05
             * wingspan ** (0.696 - 1)
         )
-        J[Aircraft.Instruments.MASS, Aircraft.Wing.SPAN] = dinstrument_wt_dwingspan
+        J[Aircraft.Instruments.MASS, Aircraft.Wing.SPAN] = dinstrument_mass_dwingspan

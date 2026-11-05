@@ -1,7 +1,6 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
@@ -63,39 +62,6 @@ class TransportEngineOilMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
-class TransportEngineOilMassTest2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.subsystems.mass.flops_based.engine_oil as oil
-
-        oil.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.subsystems.mass.flops_based.engine_oil as oil
-
-        oil.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case(self):
-        prob = om.Problem()
-
-        options = {
-            Aircraft.Propulsion.TOTAL_NUM_ENGINES: 2,
-        }
-
-        prob.model.add_subsystem(
-            'engine_oil',
-            TransportEngineOilMass(**options),
-            promotes_outputs=['*'],
-            promotes_inputs=['*'],
-        )
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 50000.0, 'lbf')
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
 @use_tempdirs
 class AltEngineOilMassTest(unittest.TestCase):
     """Tests alternate engine oil mass calculation."""
@@ -136,39 +102,6 @@ class AltEngineOilMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
-
-
-class AltEngineOilMassTest2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.subsystems.mass.flops_based.engine_oil as oil
-
-        oil.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.subsystems.mass.flops_based.engine_oil as oil
-
-        oil.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case(self):
-        prob = om.Problem()
-
-        inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
-
-        options = {
-            Aircraft.CrewPayload.Design.NUM_PASSENGERS: inputs.get_val(
-                Aircraft.CrewPayload.Design.NUM_PASSENGERS
-            ),
-        }
-
-        prob.model.add_subsystem(
-            'engine_oil', AltEngineOilMass(**options), promotes_outputs=['*'], promotes_inputs=['*']
-        )
-        prob.setup(check=False, force_alloc_complex=True)
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == '__main__':

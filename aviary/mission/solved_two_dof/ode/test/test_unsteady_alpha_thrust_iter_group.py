@@ -5,7 +5,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.mission.solved_two_dof.ode.unsteady_control_iter_group import UnsteadyControlIterGroup
 from aviary.mission.solved_two_dof.ode.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
@@ -89,7 +88,7 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         gamma = (
             0 if ground_roll else p.model.get_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
         )
-        weight = p.model.get_val('mass', units='lbm') * GRAV_ENGLISH_LBM
+        mass = p.model.get_val('mass', units='lbm')
         iwing = p.model.get_val(Aircraft.Wing.INCIDENCE, units='deg')
         alpha = (
             iwing if ground_roll else p.model.get_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
@@ -105,7 +104,7 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         assert_near_equal(drag + thrust_req * s_gamma, thrust_req * c_alphai)
 
         # 2. Test that forces balance normal to the velocity axis
-        assert_near_equal(lift + thrust_req * s_alphai, weight * c_gamma)
+        assert_near_equal(lift + thrust_req * s_alphai, mass * c_gamma, tolerance=1e-8)
 
         cpd = p.check_partials(
             out_stream=None, method='cs', step=1.01e-40, excludes=['*params*', '*aero*']
