@@ -7051,22 +7051,21 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.RESERVE_NOX_MASS,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='lbm',
-    desc='NOx produced during reserve phases, this does not include NOx production from main phases',
-    default_value=0.0,
-)
-
-
-add_meta_data(
     Mission.RESERVE_FUEL_MASS_ADDITIONAL,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FRESF', 'FLOPS': None},
     option=True,
     units='lbm',
     desc='required fuel reserves: directly in lbm',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.RESERVE_NOX_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='NOx produced during reserve phases, this does not include NOx production from main phases',
     default_value=0.0,
 )
 

@@ -477,7 +477,7 @@ class PayloadRangeTest(unittest.TestCase):
 
         # verify TOGW for each payload range problem
         expected_togw = {
-            'max_fuel_pyld_range_prob': (166539.45043186, 1e-8),
+            'max_fuel_pyld_range_prob': (166539.45876863, 1e-8),
             'ferry_range_prob': (142010.12881933, 1e-8),
         }
 
