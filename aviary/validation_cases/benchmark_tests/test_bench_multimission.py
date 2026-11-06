@@ -8,9 +8,10 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
 from aviary.models.missions.energy_state_default import phase_info
+from aviary.subsystems.propulsion.test.test_custom_engine_model import SimpleTestEngine
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.enums import ProblemType
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 def multi_mission_example():
@@ -46,9 +47,8 @@ def multi_mission_example():
     prob.add_aviary_group(
         'mission1', aircraft=aviary_inputs_mission1, phase_info=phase_info_mission1
     )
-    # This method calls load_inputs(), check_and_preprocess_inputs(), and combines meta data.
-    # This can only accept an AviaryValues, .csv are not accepted. You can pass problem_configurator
-    # as an input.
+    # This method calls load_inputs().
+    # You can pass problem_configurator as an input.
 
     prob.add_aviary_group(
         'mission2', aircraft=aviary_inputs_mission2, phase_info=phase_info_mission2
@@ -125,6 +125,96 @@ def multi_mission_example():
 
     return prob
 
+def multi_mission_with_external_subsystem():
+    phase_info_mission1 = copy.deepcopy(phase_info)
+    phase_info_mission1['climb']['user_options']['mach_optimize'] = True
+    phase_info_mission1['climb']['user_options']['altitude_optimize'] = True
+    phase_info_mission1['climb']['user_options']['altitude_ref'] = (35000, 'ft')
+    phase_info_mission1['descent']['user_options']['mach_optimize'] = True
+    phase_info_mission1['descent']['user_options']['altitude_optimize'] = True
+    phase_info_mission1['descent']['user_options']['altitude_ref'] = (35000, 'ft')
+
+    phase_info_mission2 = copy.deepcopy(phase_info_mission1)
+
+    # get large single aisle values
+    aviary_inputs_mission1 = get_flops_inputs('LargeSingleAisle2FLOPS')
+    aviary_inputs_mission2 = copy.deepcopy(aviary_inputs_mission1)
+
+    aviary_inputs_mission1.set_val(
+        Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+        val=0.8,
+        units='unitless',
+    )
+    aviary_inputs_mission2.set_val(
+        Settings.PROBLEM_TYPE,
+        ProblemType.OFF_DESIGN_GENERAL,
+        units='unitless'
+    )
+
+    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 1, 'unitless')
+    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, 1, 'unitless')
+    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
+    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
+
+    prob = av.AviaryProblem(problem_type=ProblemType.MULTI_MISSION, verbosity=0)
+
+    prob.add_aviary_group(
+        'mission1',
+        aircraft='validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
+        phase_info=phase_info_mission1,
+    )
+    prob.add_aviary_group(
+        'mission2',
+        aircraft='validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
+        phase_info=phase_info_mission2,
+    )
+
+    prob.load_external_subsystems([SimpleTestEngine()])
+    prob.check_and_preprocess_inputs()
+
+    prob.build_model()
+
+    prob.promote_inputs(
+        ['mission1', 'mission2'],
+        [
+            (Aircraft.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'),
+            (Aircraft.Design.RANGE, 'Aircraft1:RANGE'),
+            (Aircraft.Wing.SWEEP, 'Aircraft1:SWEEP'),
+        ],
+    )
+
+    prob.add_design_var_default(
+        'Aircraft1:GROSS_MASS',
+        lower=10.0,
+        upper=900e3,
+        units='lbm',
+        default_val=100000,
+    )
+    prob.add_design_var_default(
+        'Aircraft1:SWEEP',
+        lower=23.0,
+        upper=27.0,
+        units='deg',
+        default_val=25,
+    )
+
+    prob.add_composite_objective(
+        ('mission1', Mission.FUEL_MASS, 2),
+        ('mission2', Mission.FUEL_MASS, 1),
+        ref=1,
+    )
+
+    prob.add_driver('SNOPT', max_iter=70)
+    prob.add_design_variables()
+
+    prob.setup()
+
+    prob.set_design_range(('mission1', 'mission2'), range='Aircraft1:RANGE')
+
+    prob.run_aviary_problem()
+
+    return prob
+
 
 @use_tempdirs
 class MultiMissionTestcase(unittest.TestCase):
@@ -173,6 +263,21 @@ class MultiMissionTestcase(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(expected, actual, tolerance=1e-3)
 
+    @require_pyoptsparse(optimizer='IPOPT')
+    def test_multimission_with_external_subsystem(self):
+        prob = multi_mission_with_external_subsystem()
+
+        # This problem may not be well tuned, but this at least verifies consistency.
+        objective = prob.get_val('composite_objective', units=None)
+        objective_expected_value = 70630.76224748
+
+        expected_values = {
+            'objective': (objective_expected_value, objective),
+        }
+
+        for var_name, (expected, actual) in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(expected, actual, tolerance=1e-3)
 
 if __name__ == '__main__':
     unittest.main()
