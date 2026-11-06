@@ -281,7 +281,6 @@ add_meta_data(
     default_value=1.0,
 )
 
-
 add_meta_data(
     Aircraft.Battery.PACK_MASS,
     meta_data=_MetaData,
@@ -317,7 +316,6 @@ add_meta_data(
     desc='total volume of the battery pack',
     default_value=0.0,
 )
-
 
 #  ____    _                      _              _    __          __  _                     ____                _
 # |  _ \  | |                    | |            | |   \ \        / / (_)                   |  _ \              | |
@@ -3279,7 +3277,6 @@ add_meta_data(
     default_value=0.0,
 )
 
-
 #
 #   ______                          _         _       _
 #  |  ____|                        (_)       | |     (_)
@@ -4387,6 +4384,7 @@ add_meta_data(
 #                                                __/ |
 #                                               |___/
 # ===================================================================================
+
 add_meta_data(
     Aircraft.LandingGear.DRAG_COEFFICIENT,
     meta_data=_MetaData,
@@ -5307,7 +5305,6 @@ add_meta_data(
     desc='cabin length for the tail boom fuselage',
     default_value=0.0,
 )
-
 
 # __      __                _     _                  _   _______           _   _
 # \ \    / /               | |   (_)                | | |__   __|         (_) | |
@@ -7023,7 +7020,6 @@ add_meta_data(
     multivalue=True,
 )
 
-
 #  __  __   _               _
 # |  \/  | (_)             (_)
 # | \  / |  _   ___   ___   _    ___    _ __
@@ -7031,6 +7027,7 @@ add_meta_data(
 # | |  | | | | \__ \ \__ \ | | | (_) | | | | |
 # |_|  |_| |_| |___/ |___/ |_|  \___/  |_| |_|
 # ============================================
+
 add_meta_data(
     Dynamic.Mission.ALTITUDE,
     meta_data=_MetaData,
@@ -7890,7 +7887,6 @@ add_meta_data(
     'gross takeoff mass, value should be zero at convergence '
     '(within acceptable tolerance)',
 )
-
 
 #  _                            _   _
 # | |                          | | (_)
