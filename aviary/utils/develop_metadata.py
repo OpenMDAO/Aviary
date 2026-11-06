@@ -50,11 +50,7 @@ def add_meta_data(
     historical_name : dict or None
         dictionary of names that the variable held in prior codes
 
-        Example:
-            {
-                'GASP': 'INGASP.SWP_FB',
-                'FLOPS': 'FUSEIN.SWPLE',
-            }
+        Example: {'GASP': 'INGASP.SWP_FB', 'FLOPS': 'FUSEIN.SWPLE',}
 
         NAMELIST naming convention:
             <namelist_name>.<var_name>
