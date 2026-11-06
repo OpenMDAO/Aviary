@@ -3393,9 +3393,19 @@ add_meta_data(
     default_value=0.0,
 )
 
-# TODO the GASP use of this variable is misleading (optional coefficient for additional
-#      furnishing mass, which is activated by Aircraft.Furnishings.USE_EMPERICAL_EQUATION). Create
-#      new variable (Aircraft.Furnishings.MASS_COEFFICIENT?) for GASP side
+add_meta_data(
+    Aircraft.Furnishings.MASS_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,
+    },
+    units='lbm',
+    desc='Furnishings system mass per passenger. In GASP based, it is applicale if gross mass '
+    '> 10000 lbs and number of passengers >= 50. Set it to 0.0 if not use.',
+    default_value=1.0,
+)
+
 add_meta_data(
     Aircraft.Furnishings.MASS_SCALER,
     meta_data=_MetaData,
@@ -3405,8 +3415,7 @@ add_meta_data(
         'FLOPS': 'WTIN.WFURN',
     },
     units='unitless',
-    desc='Furnishings system mass scaler. In GASP based, it is applicale if gross mass '
-    '> 10000 lbs and number of passengers >= 50. Set it to 0.0 if not use.',
+    desc='Furnishings system mass scaler.',
     default_value=1.0,
 )
 
