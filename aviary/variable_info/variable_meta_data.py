@@ -3419,7 +3419,7 @@ add_meta_data(
     default_value=1.0,
 )
 
-# TODO Misnamed. This sets if Aircraft.Furnishings.MASS_SCALER is used as a coefficient for additional
+# TODO Misnamed. This sets if Aircraft.Furnishings.MASS_COEFFICIENT is used as a coefficient for additional
 # furnishings weight and the alternative (False) is to use the emperical equation. The variable toggle
 # based on gross mass and num_pax is bad Aviary behavior and should occur in fortran_to_aviary instead
 add_meta_data(
