@@ -403,7 +403,7 @@ class MassPremissionTestCase2(unittest.TestCase):
         # GASPEngineLength
         assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], 14.702816, tol)
         # GASPEngineSurfaceArea
-        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 339.5634375, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 339.5634375, tol)
         # LoadSpeeds
         assert_near_equal(prob['max_airspeed'], 350.0, tol)
         assert_near_equal(prob['vel_c'], 350.0, tol)
@@ -3128,7 +3128,7 @@ class BWBStructMassTestCase(unittest.TestCase):
         assert_near_equal(prob[Aircraft.VerticalTail.MOMENT_ARM], 27.82191598, tol)
         assert_near_equal(prob[Aircraft.Nacelle.AVG_DIAMETER], 5.33382144, tol)
         assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], 7.24759657, tol)
-        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 121.44575974, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 121.44575974, tol)
         # outputs from MassPremission
         assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7800.0, tol)
         assert_near_equal(prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6630.0, tol)

@@ -18,7 +18,6 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
 from aviary.subsystems.geometry.flops_based.nacelle import (
     NacellePrelim,
-    NacelleTotalWettedArea,
     NacelleWettedArea,
 )
 from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom, _FuselageRatios
@@ -31,6 +30,7 @@ from aviary.subsystems.geometry.flops_based.wetted_area_total import (
     WingWettedArea,
 )
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
+from aviary.subsystems.geometry.shared_components import NacelleTotalWettedArea
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (

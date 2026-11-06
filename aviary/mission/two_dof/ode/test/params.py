@@ -19,7 +19,7 @@ params_for_unit_tests = {
     Aircraft.Fuselage.LENGTH: dict(units='ft', val=129.4),
     Aircraft.Nacelle.AVG_LENGTH: dict(units='ft', val=14.5),
     Aircraft.Fuselage.WETTED_AREA: dict(units='ft**2', val=4000),
-    Aircraft.Nacelle.SURFACE_AREA: dict(units='ft**2', val=659.23 / 2),
+    Aircraft.Nacelle.WETTED_AREA: dict(units='ft**2', val=659.23 / 2),
     Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: dict(units='unitless', val=0.1397),
     Aircraft.Strut.CHORD: dict(
         units='ft', val=0

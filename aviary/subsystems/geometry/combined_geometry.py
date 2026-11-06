@@ -45,10 +45,21 @@ class CombinedGeometry(om.Group):
         flops_fus_area_path = (
             flops_geom_pathname + '.wetted_area.fus_swet.' + Aircraft.Fuselage.WETTED_AREA
         )
+        flops_nac_area_path = (
+            flops_geom_pathname + '.wetted_area.nacelles_swet.' + Aircraft.Nacelle.WETTED_AREA
+        )
         flops_nac_diam_path = (
             flops_geom_pathname + '.nacelle_prelim.' + Aircraft.Nacelle.AVG_DIAMETER
         )
         flops_nac_len_path = flops_geom_pathname + '.nacelle_prelim.' + Aircraft.Nacelle.AVG_LENGTH
+
+        # GASP geometry does not use Aircraft.Nacelle.TOTAL_WETTED_AREA but it is nice to have it.
+        # All lines related to it are commented out due to issue #1176
+        # flops_nac_tot_area_path = (
+        #     flops_geom_pathname
+        #     + '.wetted_area.nacelles_total_swet.'
+        #     + Aircraft.Nacelle.TOTAL_WETTED_AREA
+        # )
 
         gasp_geom_pathname = self.gasp_based_geom.pathname
         gasp_fus_area_path = gasp_geom_pathname + '.fuselage.size.' + Aircraft.Fuselage.WETTED_AREA
@@ -56,18 +67,45 @@ class CombinedGeometry(om.Group):
             gasp_geom_pathname + '.engine.eng_diameter.' + Aircraft.Nacelle.AVG_DIAMETER
         )
         gasp_nac_len_path = gasp_geom_pathname + '.engine.eng_length.' + Aircraft.Nacelle.AVG_LENGTH
+        gasp_nac_area_path = gasp_geom_pathname + '.engine.eng_area.' + Aircraft.Nacelle.WETTED_AREA
+        # gasp_nac_tot_area_path = (
+        #     gasp_geom_pathname + '.engine.eng_tot_swet.' + Aircraft.Nacelle.TOTAL_WETTED_AREA
+        # )
 
         # Pre-fetch the names for cleaner code
         fus_area_name = Aircraft.Fuselage.WETTED_AREA
+        nac_area_name = Aircraft.Nacelle.WETTED_AREA
         nac_diam_name = Aircraft.Nacelle.AVG_DIAMETER
         nac_len_name = Aircraft.Nacelle.AVG_LENGTH
+        # nac_tot_area_name = Aircraft.Nacelle.TOTAL_WETTED_AREA
 
         if prioritize_origin is GASP:
             # Add all FLOPS overridden variables to the list
-            override = [flops_fus_area_path, flops_nac_diam_path, flops_nac_len_path]
+            override = [
+                flops_fus_area_path,
+                flops_nac_area_path,
+                flops_nac_diam_path,
+                flops_nac_len_path,
+                # flops_nac_tot_area_path,
+            ]
 
-            fus_outs = [(fus_area_name, f'CODE_ORIGIN_OVERRIDE:{fus_area_name}')]
+            fus_outs = [
+                (fus_area_name, f'CODE_ORIGIN_OVERRIDE:{fus_area_name}'),
+            ]
             self.flops_based_geom.promotes('wetted_area', outputs=fus_outs)
+            nac_area_outs = [
+                (nac_area_name, f'CODE_ORIGIN_OVERRIDE:{nac_area_name}'),
+            ]
+            # have to move the promotes call down 1 level to catch it before it implicitly
+            # connected to the total wetted area component. See connect graph using a
+            # connection graph viewer in the OpenMDAO command line
+            self.flops_based_geom.wetted_area.promotes('nacelles_swet', outputs=nac_area_outs)
+            # nac_tot_area_outs = [
+            #     (nac_tot_area_name, f'CODE_ORIGIN_OVERRIDE:{nac_tot_area_name}'),
+            # ]
+            # self.flops_based_geom.wetted_area.promotes(
+            #     'nacelles_total_swet', outputs=nac_tot_area_outs
+            # )
 
             # Override the FLOPS nacelle length and diameter
             nac_outs = [
@@ -78,7 +116,13 @@ class CombinedGeometry(om.Group):
 
         elif prioritize_origin is FLOPS:
             # Add all GASP overridden variables to the list
-            override = [gasp_fus_area_path, gasp_nac_diam_path, gasp_nac_len_path]
+            override = [
+                gasp_fus_area_path,
+                gasp_nac_diam_path,
+                gasp_nac_len_path,
+                gasp_nac_area_path,
+                # gasp_nac_tot_area_path,
+            ]
 
             fus_outs = [(fus_area_name, f'CODE_ORIGIN_OVERRIDE:{fus_area_name}')]
             self.gasp_based_geom.fuselage.promotes('size', outputs=fus_outs)
@@ -86,8 +130,10 @@ class CombinedGeometry(om.Group):
             # Override the GASP nacelle length and diameter
             nac_diam_out = [(nac_diam_name, f'CODE_ORIGIN_OVERRIDE:{nac_diam_name}')]
             nac_len_out = [(nac_len_name, f'CODE_ORIGIN_OVERRIDE:{nac_len_name}')]
+            nac_area_out = [(nac_area_name, f'CODE_ORIGIN_OVERRIDE:{nac_area_name}')]
             # Since eng_diameter is a component of engine in GASP, promote from engine
             self.gasp_based_geom.engine.promotes('eng_diameter', outputs=nac_diam_out)
             self.gasp_based_geom.engine.promotes('eng_length', outputs=nac_len_out)
+            self.gasp_based_geom.engine.promotes('eng_area', outputs=nac_area_out)
 
         self.code_origin_overrides = override
