@@ -973,7 +973,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,  # 'INGASP.PAX' here we assume previous studies were changing Design.num_pax not as-flown
-        'FLOPS': ['NSV', 'NPASS'],
+        'FLOPS': None,
     },
     units='unitless',
     desc='total number of passengers',
@@ -1419,7 +1419,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': ['MISSIN.DOWE', 'RERUN.DOWE'],
+        'FLOPS': None,
     },
     units='lbm',
     desc='Empty mass of the aircraft. Includes structure group, propulsion group, and total systems '
@@ -1964,7 +1964,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': ['INGASP.WGS', 'INGASP.WOS'],
-        'FLOPS': 'SWET',
+        'FLOPS': None,
     },
     default_value=0,
     types=float,
@@ -2766,7 +2766,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': 'None',
+        'FLOPS': None,
     },
     units='unitless',
     types=str,
@@ -3246,7 +3246,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuel.WING_VOLUME_DESIGN,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FVOLREQ', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.FVOLREQ',
+        'FLOPS': None,
+    },
     units='ft**3',
     desc='Wing tank Jet-A fuel volume when carrying design fuel plus fuel margin',
     default_value=0.0,
@@ -3255,7 +3258,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FVOLW_GEOM', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.FVOLW_GEOM',
+        'FLOPS': None,
+    },
     units='ft**3',
     desc='wing tank fuel volume based on geometry',
     default_value=0.0,
@@ -3264,7 +3270,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FVOLW_MAX', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.FVOLW_MAX',
+        'FLOPS': None,
+    },
     units='ft**3',
     desc='wing tank volume based on maximum wing fuel weight',
     default_value=0.0,
@@ -3858,7 +3867,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.SEAT_WIDTH_FIRST,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,
+    },
     units='inch',
     desc='Width of the first class seats. The default value for FLOPS- or GASP-based mass '
     'varies based on aircraft type and total number of passengers.',
@@ -3978,7 +3990,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.AVERAGE_CHORD,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CBARHT', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.CBARHT',
+        'FLOPS': None,
+    },
     units='ft',
     desc='mean aerodynamic chord of horizontal tail',
     default_value=0.0,
@@ -4097,7 +4112,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.MOMENT_ARM,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.ELTH', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.ELTH',
+        'FLOPS': None,
+    },
     units='ft',
     desc='moment arm of horizontal tail',
     default_value=0.0,
@@ -4131,7 +4149,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.ROOT_CHORD,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CRCLHT', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.CRCLHT',
+        'FLOPS': None,
+    },
     units='ft',
     desc='horizontal tail root chord',
     default_value=0.0,
@@ -4140,7 +4161,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.SPAN,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.BHT', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.BHT',
+        'FLOPS': None,
+    },
     units='ft',
     desc='span of horizontal tail',
     default_value=0.0,
@@ -4519,7 +4543,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.LandingGear.TOTAL_MASS,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WLG', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.WLG',
+        'FLOPS': None,
+    },
     units='lbm',
     desc='total mass of landing gear',
     default_value=0.0,
@@ -4587,7 +4614,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.CLEARANCE_RATIO,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CLEARqDN', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.CLEARqDN',
+        'FLOPS': None,
+    },
     units='unitless',
     desc='the minimum number of nacelle diameters above the ground that the bottom of the nacelle must be',
     default_value=0.0,  # should be at least 0.2
@@ -4624,7 +4654,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.XLQDE',
-        'FLOPS': 'EL[5]',
+        'FLOPS': 'FR[5]',
     },
     units='unitless',
     desc='nacelle fineness ratio',
@@ -4766,7 +4796,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.SURFACE_AREA,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SN', 'FLOPS': None},  # SN is wetted area
+    historical_name={
+        'GASP': 'INGASP.SN',
+        'FLOPS': None,
+    },  # SN is wetted area
     units='ft**2',
     desc='surface area of the outside of one entire nacelle, not just the wetted area',
     multivalue=True,
@@ -4956,7 +4989,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Propulsion.TOTAL_ENGINE_MASS,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WEP', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.WEP',
+        'FLOPS': None,
+    },
     units='lbm',
     desc='total mass of all engines on aircraft',
     default_value=0.0,
@@ -4979,7 +5015,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,
+    },
     units='lbm',
     desc='total engine pod mass for all engines on aircraft',
     default_value=0.0,
@@ -5103,7 +5142,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Strut.AREA,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.STRTWS', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.STRTWS',
+        'FLOPS': None,
+    },
     units='ft**2',
     desc='strut area',
     default_value=0,
@@ -5256,7 +5298,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.TailBoom.LENGTH,  # tail boom support is not included.
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.ELFFC', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.ELFFC',
+        'FLOPS': None,
+    },
     units='ft',
     # tail boom support is not implemented yet.
     desc='cabin length for the tail boom fuselage',
@@ -5709,7 +5754,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Wing.CENTER_CHORD,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CRCLW', 'FLOPS': None},
+    historical_name={
+        'GASP': 'INGASP.CRCLW',
+        'FLOPS': None,
+    },
     units='ft',
     desc='wing chord at fuselage centerline, usually called root chord',
     default_value=0.0,
@@ -6572,7 +6620,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Wing.SPAN,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.B', 'FLOPS': ['WTIN.SPAN', 'B']},
+    historical_name={
+        'GASP': 'INGASP.B',
+        'FLOPS': ['WTIN.SPAN', 'B'],
+    },
     units='ft',
     desc='span of main wing',
     default_value=0.0,
@@ -7595,7 +7646,7 @@ add_meta_data(
     Mission.FINAL_MASS,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'None',
+        'GASP': None,
         'FLOPS': None,
     },  # TODO: Check on these
     units='lbm',
@@ -7606,7 +7657,7 @@ add_meta_data(
     Mission.FINAL_TIME,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'None',
+        'GASP': None,
         'FLOPS': None,
     },  # TODO: Check on these
     units='min',
@@ -8377,7 +8428,10 @@ add_meta_data(
 add_meta_data(
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CLMWTO', 'FLOPS': ['TOLIN.CLTOM', 'CLTOA']},
+    historical_name={
+        'GASP': 'INGASP.CLMWTO',
+        'FLOPS': ['TOLIN.CLTOM', 'CLTOA'],
+    },
     units='unitless',
     desc='maximum lift coefficient for takeoff',
     default_value=2.0,
@@ -8399,7 +8453,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': 'None',
+        'FLOPS': None,
     },
     option=True,
     # Note default value is aircraft type dependent
