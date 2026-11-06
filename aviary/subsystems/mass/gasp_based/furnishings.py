@@ -183,7 +183,7 @@ def common_compute_partials(
                 dfurnishing_mass_additional_dfus_len + 1.5 * 0.75 * cabin_width * np.pi / 2.0
             )
             dfurnishing_mass_dcoeff_2 = dfurnishing_mass_additional_dcoeff + 0.0
-            dfurnishing_mass_dcoeff_2 = dfurnishing_mass_additional_dcoeff + 0.5
+            dfurnishing_mass_dacabin_2 = dfurnishing_mass_additional_dacabin + 0.5
         else:
             CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
             CPX = (
