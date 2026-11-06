@@ -96,7 +96,7 @@ def dg2(x):
 class PercentNotInFuselage(om.ExplicitComponent):
     """
     For BWB, engine may be (partially) buried into fuselage. Compute the percentage of
-    corresponding surface area of nacelles not buried in fuselage.
+    corresponding surface area (wetted area) of nacelles not buried in fuselage.
     """
 
     def initialize(self):
