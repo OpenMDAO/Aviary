@@ -328,7 +328,9 @@ class AviaryProblem(om.Problem):
                 # TODO try and find a better solution than a new custom flag - the issue is multimission
                 #      problems don't have a consistent variable path to check the inputs later on
                 if Settings.PAYLOAD_RANGE in group.aviary_inputs:
-                    self.generate_payload_range = group.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
+                    self.generate_payload_range = group.aviary_inputs.get_val(
+                        Settings.PAYLOAD_RANGE,
+                    )
 
         else:
             self.model.check_and_preprocess_inputs(verbosity=verbosity)

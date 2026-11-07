@@ -125,6 +125,7 @@ def multi_mission_example():
 
     return prob
 
+
 def multi_mission_with_external_subsystem():
     phase_info_mission1 = copy.deepcopy(phase_info)
     phase_info_mission1['climb']['user_options']['mach_optimize'] = True
@@ -148,7 +149,7 @@ def multi_mission_with_external_subsystem():
     aviary_inputs_mission2.set_val(
         Settings.PROBLEM_TYPE,
         ProblemType.OFF_DESIGN_GENERAL,
-        units='unitless'
+        units='unitless',
     )
 
     aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 1, 'unitless')
@@ -204,7 +205,7 @@ def multi_mission_with_external_subsystem():
         ref=1,
     )
 
-    prob.add_driver('SNOPT', max_iter=70)
+    prob.add_driver('IPOPT', max_iter=70)
     prob.add_design_variables()
 
     prob.setup()
@@ -278,6 +279,7 @@ class MultiMissionTestcase(unittest.TestCase):
         for var_name, (expected, actual) in expected_values.items():
             with self.subTest(var=var_name):
                 assert_near_equal(expected, actual, tolerance=1e-3)
+
 
 if __name__ == '__main__':
     unittest.main()
