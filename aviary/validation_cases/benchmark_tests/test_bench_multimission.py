@@ -205,7 +205,7 @@ def multi_mission_with_external_subsystem():
         ref=1,
     )
 
-    prob.add_driver('IPOPT', max_iter=70)
+    prob.add_driver('SNOPT', max_iter=70)
     prob.add_design_variables()
 
     prob.setup()
@@ -264,7 +264,7 @@ class MultiMissionTestcase(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(expected, actual, tolerance=1e-3)
 
-    @require_pyoptsparse(optimizer='IPOPT')
+    @require_pyoptsparse(optimizer='SNOPT')
     def test_multimission_with_external_subsystem(self):
         prob = multi_mission_with_external_subsystem()
 
