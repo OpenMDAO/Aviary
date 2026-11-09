@@ -743,12 +743,12 @@ Total number of inequality constraints...............:       27
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 22
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5497020994737802e+00    2.5497020994737802e+00
-Dual infeasibility......:   5.9732263306156455e-08    5.9732263306156455e-08
-Constraint violation....:   6.4568575546389946e-15    6.4568575546389946e-15
+Objective...............:   2.5497020994737833e+00    2.5497020994737833e+00
+Dual infeasibility......:   5.9732258643221803e-08    5.9732258643221803e-08
+Constraint violation....:   7.9181463696362406e-15    7.9181463696362406e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0945571350754813e-08    9.0945571350754813e-08
-Overall NLP error.......:   9.0945571350754813e-08    9.0945571350754813e-08
+Complementarity.........:   9.0945571350743206e-08    9.0945571350743206e-08
+Overall NLP error.......:   9.0945571350743206e-08    9.0945571350743206e-08
 
 
 Number of objective function evaluations             = 27
@@ -758,7 +758,7 @@ Number of inequality constraint evaluations          = 27
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 5.912
+Total seconds in IPOPT                               = 4.031
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -799,7 +799,7 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.477070942878
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10204.47707094288
 </pre></div>
 </div>
 </div>
@@ -812,7 +812,7 @@ However, we see that the optimizer chose to decrease the Mach number during the 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.020994737803
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>22497.020994737806
 </pre></div>
 </div>
 </div>
@@ -873,9 +873,6 @@ We’ll use the same <code class="docutils literal notranslate"><span class="pre
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   'aircraft:design:touchdown_mass_max  152800.0  lbm
   'aircraft:engine:mass  [7400.]  lbm
@@ -894,6 +891,9 @@ We’ll use the same <code class="docutils literal notranslate"><span class="pre
   'aircraft:wing:control_surface_area  137.0  ft**2
   'aircraft:wing:wetted_area  2396.56  ft**2
   'mission:takeoff:lift_over_drag  17.354  unitless
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
@@ -915,11 +915,11 @@ Total number of inequality constraints...............:       27
 
                                    (scaled)                 (unscaled)
 Objective...............:   2.5637089673954789e+00    2.5637089673954789e+00
-Dual infeasibility......:   8.0299260906003474e-08    8.0299260906003474e-08
-Constraint violation....:   4.5622265619200320e-15    4.5622265619200320e-15
+Dual infeasibility......:   8.0299260683958975e-08    8.0299260683958975e-08
+Constraint violation....:   6.7355016268650175e-15    6.7355016268650175e-15
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   9.0972478544998378e-08    9.0972478544998378e-08
-Overall NLP error.......:   9.0972478544998378e-08    9.0972478544998378e-08
+Complementarity.........:   9.0972478545013439e-08    9.0972478545013439e-08
+Overall NLP error.......:   9.0972478545013439e-08    9.0972478545013439e-08
 
 
 Number of objective function evaluations             = 27
@@ -929,7 +929,7 @@ Number of inequality constraint evaluations          = 27
 Number of equality constraint Jacobian evaluations   = 24
 Number of inequality constraint Jacobian evaluations = 24
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 5.647
+Total seconds in IPOPT                               = 3.840
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -989,9 +989,6 @@ We’ll use the original aircraft configuration for this run.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   'aircraft:design:touchdown_mass_max  152800.0  lbm
   'aircraft:engine:mass  [7400.]  lbm
@@ -1012,6 +1009,9 @@ We’ll use the original aircraft configuration for this run.</p>
   'mission:takeoff:lift_over_drag  17.354  unitless
 </pre></div>
 </div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 3500.0 differs from target_range 1915.0 (NM).
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/.openmdao-pixi/.pixi/envs/py313/lib/python3.13/site-packages/openmdao/core/total_jac.py:1953: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
   traj.climb_1.t_initial, inds=[0]
 </pre></div>
@@ -1030,12 +1030,12 @@ Total number of inequality constraints...............:       27
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 50
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.5146485811327994e+00    2.5146485811327994e+00
-Dual infeasibility......:   1.4218010262875042e-03    1.4218010262875042e-03
-Constraint violation....:   8.0653402326201893e-11    8.0653402326201893e-11
+Objective...............:   2.5146485811376595e+00    2.5146485811376595e+00
+Dual infeasibility......:   1.4218014079654573e-03    1.4218014079654573e-03
+Constraint violation....:   8.0652107709778696e-11    8.0652107709778696e-11
 Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   1.0000000000000003e-05    1.0000000000000003e-05
-Overall NLP error.......:   1.4218010262875042e-03    1.4218010262875042e-03
+Complementarity.........:   1.0000000000000001e-05    1.0000000000000001e-05
+Overall NLP error.......:   1.4218014079654573e-03    1.4218014079654573e-03
 
 
 Number of objective function evaluations             = 60
@@ -1045,7 +1045,7 @@ Number of inequality constraint evaluations          = 60
 Number of equality constraint Jacobian evaluations   = 51
 Number of inequality constraint Jacobian evaluations = 51
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 12.895
+Total seconds in IPOPT                               = 8.813
 
 EXIT: Maximum Number of Iterations Exceeded.
 </pre></div>
@@ -1073,7 +1073,7 @@ Aviary run failed. See the dashboard for more details.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10045.476986331627
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10045.476986353693
 </pre></div>
 </div>
 </div>
