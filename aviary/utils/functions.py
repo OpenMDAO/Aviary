@@ -199,6 +199,10 @@ def get_path(path: str | Path, verbosity=Verbosity.BRIEF) -> Path:
     FileNotFoundError
         If the path is not found in any of the prioritized locations.
     """
+
+    if verbosity is None:
+        verbosity = Verbosity.BRIEF
+
     # Store the original path for reference in error messages.
     original_path = path
 
