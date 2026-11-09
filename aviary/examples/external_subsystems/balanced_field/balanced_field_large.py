@@ -5,14 +5,17 @@ import openmdao.api as om
 
 import aviary.api as av
 from aviary.api import Aircraft, Mission
-from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import inputs
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.utils.preprocessors import preprocess_options
+from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import inputs
 
 
 # Note, only creating this aviary problem so that it can read the aircraft csv for us.
 prob = AviaryProblem()
-prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', verbosity=0)
+prob.load_inputs(
+    'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
+    verbosity=0
+)
 aviary_options = prob.aviary_inputs.deepcopy()
 
 # These inputs aren't in the aircraft file yet.
@@ -26,7 +29,7 @@ aviary_options.set_val(Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT, 0.35)
 aviary_options.set_val(Mission.Takeoff.SPOILER_DRAG_COEFFICIENT, 0.085000)
 aviary_options.set_val(Mission.Takeoff.SPOILER_LIFT_COEFFICIENT, -0.810000)
 aviary_options.set_val(Mission.Takeoff.THRUST_INCIDENCE, 0.0, 'deg')
-aviary_options.set_val(Mission.Takeoff.FUEL, 577.0, 'lbm')
+aviary_options.set_val(Mission.Takeoff.FUEL_MASS, 577.0, 'lbm')
 aviary_options.set_val(Aircraft.Design.GROSS_MASS, 160000, units='lbm')
 
 # This builder can be used for both takeoff and landing phases
@@ -60,7 +63,7 @@ takeoff_spoiler_subsystem_options = {
         **takeoff_subsystem_options['low_speed_aero'],
         'use_spoilers': True,
         'spoiler_drag_coefficient': 0.085,
-        'spoiler_lift_coefficient': ,
+        'spoiler_lift_coefficient': 0.1,
     }
 }
 
@@ -72,7 +75,7 @@ prop_builder = av.CorePropulsionBuilder(engine_models=engines)
 
 balanced_field_user_options = av.AviaryValues()
 
-from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+from aviary.utils.test_utils.default_subsystems import get_default_subsystems
 from aviary.variable_info.functions import setup_model_options
 
 takeoff_trajectory_builder = av.BalancedFieldTrajectoryBuilder('balanced_field_traj',
@@ -83,7 +86,7 @@ takeoff_trajectory_builder = av.BalancedFieldTrajectoryBuilder('balanced_field_t
 test_problem = om.Problem()
 
 # default subsystems
-default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
+default_premission_subsystems = get_default_subsystems('FLOPS', engines)
 
 # Upstream pre-mission analysis for aero
 test_problem.model.add_subsystem(

@@ -262,7 +262,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         #     takeoff_mic_p2_to_engine_cutback_builder,
         #     takeoff_rotate_builder,
         # )
-        from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
+        from aviary.utils.test_utils.default_subsystems import get_default_subsystems
         from aviary.variable_info.functions import setup_model_options
 
         takeoff_trajectory_builder = av.DetailedTakeoffTrajectoryBuilder('detailed_takeoff')
@@ -292,14 +292,18 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         takeoff = om.Problem() # model=AviaryGroup(aviary_options=aviary_options, aviary_metadata=BaseMetaData))
 
         # default subsystems
-        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
+        default_premission_subsystems = get_default_subsystems('FLOPS', engines)
+        premission_subsystems = [
+            v for (k, v) in default_premission_subsystems.items()
+        ]
 
         # Upstream pre-mission analysis for aero
         takeoff.model.add_subsystem(
             'core_subsystems',
             av.CorePreMission(
                 aviary_options=aviary_options,
-                subsystems=default_premission_subsystems,
+                subsystems=premission_subsystems,
+                subsystem_options={},
             ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
