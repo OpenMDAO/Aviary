@@ -58,18 +58,8 @@ class CorePreMission(om.Group):
                 )
 
     def configure(self):
-        self.code_origin_overrides = []
-        for subsystem in self.options['subsystems']:
-            try:
-                self.code_origin_overrides.extend(
-                    getattr(self, subsystem.name).code_origin_overrides
-                )
-            except:
-                continue
-
         if self.options['process_overrides']:
             override_aviary_vars(
                 self,
                 self.options['aviary_options'],
-                code_origin_overrides=self.code_origin_overrides,
             )

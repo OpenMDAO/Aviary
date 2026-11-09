@@ -281,7 +281,6 @@ def add_aviary_option(
 def override_aviary_vars(
     group: om.Group,
     aviary_inputs: AviaryValues,
-    code_origin_overrides=None,
     external_overrides=None,
 ):
     """
@@ -296,17 +295,12 @@ def override_aviary_vars(
         Group to execute the promotes, usually an AviaryGroup.
     aviary_inputs : AviaryValues
         Aircraft data container.
-    code_origin_overrides : list or None
-        List of Aviary variables names to prioritize when GASP and FLOPS both compute it.
     external_overrides : list or None
         List of Aviary variables names to override that are computed in external subsystems.
     """
 
     def name_filter(name):
         return 'aircraft:' in name or 'mission:' in name
-
-    if not code_origin_overrides:
-        code_origin_overrides = []
 
     if not external_overrides:
         external_overrides = []
@@ -319,6 +313,10 @@ def override_aviary_vars(
         in_var_names = meta.keys()
         for name in in_var_names:
             all_inputs.add(name)
+
+    # promoted names as resolved at this group's level, used to detect outputs that a
+    # subsystem (e.g. CombinedGeometry) has already renamed with its own override prefix
+    group_out_var_metadata = group.get_io_metadata(iotypes=('output',), return_rel_names=False)
 
     overridden_outputs = []
     external_overridden_outputs = []
@@ -338,8 +336,10 @@ def override_aviary_vars(
 
         for abs_name in out_var_names:
             name = out_var_metadata[abs_name]['prom_name']
+            group_meta = group_out_var_metadata.get(abs_name)
+            group_prom_name = group_meta['prom_name'] if group_meta else name
 
-            if abs_name in code_origin_overrides:
+            if 'CODE_ORIGIN_OVERRIDE:' in group_prom_name:
                 # These variables are ones that are computed in both GASP and FLOPS when both
                 # geometries are present. Aviary determines which one to favor, and which to
                 # remove by overriding it.
