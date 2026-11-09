@@ -546,7 +546,7 @@
 
 <div class="viewcode-block" id="create_vehicle">
 <a class="viewcode-back" href="../../../_srcdocs/packages/utils/process_input_decks.html#aviary.utils.process_input_decks.create_vehicle">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">create_vehicle</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_vehicle</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">CoreMetaData</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Creates and initializes a vehicle with default or specified parameters. It sets up the aircraft values</span>
 <span class="sd">    and initial guesses based on the input from the vehicle deck.</span>
@@ -569,9 +569,6 @@
 <span class="sd">    (aircraft_values, initialization_guesses): (tuple)</span>
 <span class="sd">        Returns a tuple containing aircraft values and initial guesses.</span>
 <span class="sd">    """</span>
-    <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">verbosity</span> <span class="o">=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span>
-
     <span class="n">aircraft_values</span> <span class="o">=</span> <span class="n">AviaryValues</span><span class="p">()</span>
 
     <span class="c1"># TODO remove all hardcoded GASP values here, find appropriate place for them</span>
@@ -619,16 +616,17 @@
         <span class="p">)</span>
 
     <span class="c1"># make sure verbosity is always set</span>
-    <span class="c1"># if verbosity set via parameter, use that - override what is in the file</span>
+    <span class="c1"># if verbosity set via parameter, use that - override what is in the file.</span>
     <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Enum conversion here, so user can pass either number or actual Enum as parameter</span>
         <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">,</span> <span class="n">Verbosity</span><span class="p">(</span><span class="n">verbosity</span><span class="p">))</span>
+    <span class="c1"># elif Settings.VERBOSITY in aircraft_values:</span>
+    <span class="c1"># Nothing required here - we will use whatever verbosity is in aircraft_values</span>
     <span class="c1"># else, if verbosity not specified anywhere, use default of BRIEF</span>
-    <span class="k">elif</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aircraft_values</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aircraft_values</span><span class="p">:</span>
         <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
             <span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">,</span> <span class="n">CoreMetaData</span><span class="p">[</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">][</span><span class="s1">'default_value'</span><span class="p">]</span>
         <span class="p">)</span>
-
     <span class="k">return</span> <span class="n">aircraft_values</span><span class="p">,</span> <span class="n">initialization_guesses</span></div>
 
 

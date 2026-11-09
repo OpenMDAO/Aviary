@@ -719,6 +719,10 @@
 <span class="sd">    FileNotFoundError</span>
 <span class="sd">        If the path is not found in any of the prioritized locations.</span>
 <span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">verbosity</span> <span class="o">=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span>
+
     <span class="c1"># Store the original path for reference in error messages.</span>
     <span class="n">original_path</span> <span class="o">=</span> <span class="n">path</span>
 
