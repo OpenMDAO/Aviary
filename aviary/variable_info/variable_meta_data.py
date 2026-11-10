@@ -3401,9 +3401,9 @@ add_meta_data(
         'FLOPS': None,
     },
     units='lbm',
-    desc='Furnishings system mass per passenger. In GASP based, it is applicale if gross mass '
+    desc='Furnishings system mass per passenger. In GASP based, it is applicable if gross mass '
     '> 10000 lbs and number of passengers >= 50. Set it to 0.0 if not use.',
-    default_value=1.0,
+    default_value=0.0,
 )
 
 add_meta_data(
