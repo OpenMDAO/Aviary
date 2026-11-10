@@ -87,7 +87,15 @@ def fortran_to_aviary(
 
     # Get legacy-code based depreciated variable list and set vehicle data to defaults
     if legacy_code is GASP:
-        default_values = gasp_default_values
+        new_gasp_default_values = NamedValues()
+        for key, value in gasp_default_values:
+            val, units = value
+            if len(key.split('.')) == 2:
+                new_gasp_default_values.set_val(key, val, units)
+            else:
+                new_key = f'TMP_NONE.{key}'
+                new_gasp_default_values.set_val(new_key, val, units)
+        default_values = new_gasp_default_values
         deprecated_vars = gasp_deprecated_vars
     elif legacy_code is FLOPS:
         default_values = flops_default_values
@@ -345,9 +353,12 @@ def process_and_store_data(
         skip_variable = True
         var_values = []
 
-    list_of_equivalent_aviary_names, var_ind = update_name(
-        alternate_names, current_namelist + '.' + var_name, verbosity
-    )
+    if current_namelist != 'TMP_NONE':
+        list_of_equivalent_aviary_names, var_ind = update_name(
+            alternate_names, current_namelist + '.' + var_name, verbosity
+        )
+    else:
+        list_of_equivalent_aviary_names, var_ind = update_name(alternate_names, var_name, verbosity)
 
     # Fortran uses 1 indexing, Python uses 0 indexing
     fortran_offset = 1 if current_namelist else 0

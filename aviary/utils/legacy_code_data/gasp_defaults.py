@@ -30,7 +30,6 @@ gasp_default_values = NamedValues(
         'INGASP.CKSTRT': (1.0, 'unitless'),
         'INGASP.CKVT': (-1.0, 'unitless'),
         'INGASP.CKW': (-1.0, 'unitless'),
-        'INGASP.CLEARqDN': (0.2, 'unitless'),
         'INGASP.CLEOC': (0.0, 'unitless'),
         'INGASP.COELTH': (0.0, 'unitless'),
         'INGASP.CRALT': (0.0, 'ft'),
@@ -76,13 +75,11 @@ gasp_default_values = NamedValues(
         'INGASP.ENP': (2, 'unitless'),  # GASP does not have a default but 2 is reasonable
         'INGASP.EYEW': (1.5, 'deg'),
         'INGASP.FLAPN': (1.0, 'unitless'),
-        'INGASP.FN_REF': (28690, 'lbf'),  # no FN_REF in GASP
         'INGASP.FPYL': (
             0.0,
             'unitless',
         ),  # in GASP manual, default is 0.7 if NTYE=7 and KNAC=2, but source code is 0.0
         'INGASP.FRESF': (1.0, 'lbm'),
-        'INGASP.FUELD': (6.687, 'lbm/galUS'),
         'INGASP.FVOL_MRG': (0.0, 'unitless'),
         'INGASP.HAPP': (50.0, 'ft'),
         'INGASP.HCK': (2.47, 'ft'),
@@ -148,6 +145,10 @@ gasp_default_values = NamedValues(
         'INGASP.SWP_FB': (50.0, 'deg'),
         'INGASP.CLALPH_B0': (1.5708, '1/rad'),
         'INGASP.UWPAX': (200, 'lbm'),
+        # The following variables are either not in GASP or are local variables in GASP
+        'FN_REF': (28690, 'lbf'),  # no FN_REF in GASP
+        'FUELD': (6.687, 'lbm/galUS'),
+        'CLEARqDN': (0.2, 'unitless'),
     }
 )
 
