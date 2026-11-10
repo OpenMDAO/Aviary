@@ -139,7 +139,7 @@ gasp_default_values = NamedValues(
         'INGASP.MUB': (0.4, 'unitless'),
         'INGASP.PCT_EXCR': (0.075, 'unitless'),
         'INGASP.FPYLND': (1.25, 'unitless'),
-        'INPROP.HPMSLS': (0.0, 'unitless'),  # In GASP, default 0.0 if KODECR=7
+        'INPROP.HPMSLS': (0.0, 'hp'),  # In GASP, default 0.0 if KODECR=7
         'INPROP.TSPDMX': (1000.0, 'ft/s'),
         'INGASP.TCSTRT': (0.1, 'unitless'),
         'INGASP.CLBqCLW': (1.0, 'unitless'),
