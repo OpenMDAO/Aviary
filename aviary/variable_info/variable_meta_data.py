@@ -4299,6 +4299,7 @@ add_meta_data(
     units='unitless',
     default_value=1.0,
     desc='nacelle aero calibration factor (including technology factor INGASP.FCFNT)',
+    multivalue=True,
 )
 
 add_meta_data(
@@ -4406,6 +4407,7 @@ add_meta_data(
     units='unitless',
     default_value=1.0,
     desc='pylon aero calibration factor',
+    multivalue=True,
 )
 
 add_meta_data(
