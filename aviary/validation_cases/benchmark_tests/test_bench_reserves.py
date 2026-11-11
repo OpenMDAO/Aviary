@@ -162,6 +162,9 @@ class ReserveTest(unittest.TestCase):
         )
 
         prob = AviaryProblem(verbosity=0)
+        import pdb
+
+        # pdb.set_trace()
         prob.load_inputs(
             'advanced_single_aisle_FLOPS.csv',
             phase_info_local,
@@ -196,7 +199,7 @@ class ReserveTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = ReserveTest()
-    # test.test_reserves_energy()
+    # unittest.main()
+    test = ReserveTest()
+    test.test_reserves_energy()
     # test.test_reserves_2dof()
