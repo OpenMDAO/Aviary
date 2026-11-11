@@ -171,7 +171,7 @@ def promote_aircraft_and_mission_vars(group):
 # "str | Path" which is cleaner but Aviary still supports older versions
 
 
-def get_path(path: str | Path, verbosity=Verbosity.BRIEF) -> Path:
+def get_path(path: str | Path, check_model=True, verbosity=Verbosity.BRIEF) -> Path:
     """
     Convert a string or Path object to an absolute Path object, prioritizing different locations.
 
@@ -186,6 +186,8 @@ def get_path(path: str | Path, verbosity=Verbosity.BRIEF) -> Path:
     ----------
     path : str or Path
         The input path, either as a string or a Path object.
+    check_model: bool
+        Flag if model folder is checked.
     verbosity : Verbosity, optional
         Sets level of printouts for this function.
 
@@ -228,18 +230,19 @@ def get_path(path: str | Path, verbosity=Verbosity.BRIEF) -> Path:
 
         path = aviary_based_path
 
-    # If the path still doesn't exist, attempt to find it in the models directory.
-    if not path.exists():
-        if verbosity > Verbosity.VERBOSE:  # DEBUG
-            print(
-                f"Unable to locate '{aviary_based_path}' as an Aviary package path, "
-                'checking built-in models'
-            )
-        try:
-            hangar_based_path = get_model(original_path)
-            path = hangar_based_path
-        except FileNotFoundError:
-            pass
+    if check_model:
+        # If the path still doesn't exist, attempt to find it in the models directory.
+        if not path.exists():
+            if verbosity > Verbosity.VERBOSE:  # DEBUG
+                print(
+                    f"Unable to locate '{aviary_based_path}' as an Aviary package path, "
+                    'checking built-in models'
+                )
+            try:
+                hangar_based_path = get_model(original_path)
+                path = hangar_based_path
+            except FileNotFoundError:
+                pass
 
     # If the path still doesn't exist in any of the prioritized locations, raise an error.
     if not path.exists():
