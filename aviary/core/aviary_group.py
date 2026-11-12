@@ -914,7 +914,7 @@ class AviaryGroup(om.Group):
                 )
 
         # TODO temporary until way to merge PreMissionGroup and CorePreMission group is found
-        core_subsystems = self.subsystems[4:5]
+        core_subsystems = self.subsystem_builders[4:5]
         all_subsystem_options = self.post_mission_info.get('subsystem_options', {})
 
         post_mission.add_subsystem(
