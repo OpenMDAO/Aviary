@@ -44,10 +44,11 @@ class Atmosphere(om.Group):
         nn = self.options['num_nodes']
         speed_type = self.options['input_speed_type']
         h_def = self.options['h_def']
+        delta_T_Celcius = self.options['delta_T_Celcius']
 
         self.add_subsystem(
             name='standard_atmosphere',
-            subsys=AtmosphereComp(num_nodes=nn, h_def=h_def),
+            subsys=AtmosphereComp(num_nodes=nn, h_def=h_def, delta_T_Celcius=delta_T_Celcius),
             promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=['*'],
         )
