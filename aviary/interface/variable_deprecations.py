@@ -46,6 +46,12 @@ deprecated_variables = {
         '1.0.0',
         ' 8/20/2026',
     ),
+    'aircraft:nacelle:surface_area': (
+        'aircraft:nacelle:wetted_area',
+        '1351',
+        '1.0.0',
+        '11/12/2026',
+    ),
     'aircraft:propulsion:engine_position_factor': (
         'aircraft:wing:engine_position_mass_scaler',
         '1312',
