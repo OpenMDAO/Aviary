@@ -7,8 +7,8 @@ from aviary.variable_info.variable_meta_data import CoreMetaData
 
 class CorePreMission(om.Group):
     """
-    Group that contains all pre-mission groups of core Aviary subsystems (geometry, mass,
-    propulsion, aerodynamics).
+    Group that contains all pre-mission groups of core Aviary subsystems:
+    (geometry, mass, propulsion, aerodynamics, performance).
     """
 
     def initialize(self):

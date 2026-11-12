@@ -113,6 +113,13 @@ class TakeoffEOM(om.Group):
             desc='current friction coefficient key, either rolling friction or braking friction',
         )
 
+        self.options.declare(
+            'pitch_control',
+            values=['ALPHA_FIXED', 'ALPHA_RATE_FIXED', 'GAMMA_FIXED'],
+            default='ALPHA_FIXED',
+            desc='How pitch is controlled.',
+        )
+
         options.declare(
             'aviary_options',
             types=AviaryValues,
@@ -126,6 +133,7 @@ class TakeoffEOM(om.Group):
         climbing = options['climbing']
         friction_key = options['friction_key']
         aviary_options = options['aviary_options']
+        pitch_control = options['pitch_control']
         mu = aviary_options.get_val(friction_key)
 
         inputs = [Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.VELOCITY]
@@ -148,7 +156,7 @@ class TakeoffEOM(om.Group):
             'sum_forces',
             SumForces(**kwargs),
             promotes_inputs=['*'],
-            promotes_outputs=['forces_horizontal', 'forces_vertical'],
+            promotes_outputs=['forces_horizontal', 'forces_vertical', 'ground_normal_force'],
         )
 
         self.add_subsystem(
@@ -177,6 +185,17 @@ class TakeoffEOM(om.Group):
             ClimbGradientForces(num_nodes=nn),
             promotes=['*'],
         )
+
+        if self.options['pitch_control'] == 'GAMMA_FIXED':
+            # If using fixed-flight-path-angle control
+            alpha_resid_comp = om.InputResidsComp()
+            self.add_subsystem('alpha_resid_comp', alpha_resid_comp, promotes=['*'])
+            alpha_resid_comp.add_input(
+                Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, shape=(nn,), units='rad/s'
+            )
+            alpha_resid_comp.add_output(
+                Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=(nn,), val=0.0, units='rad'
+            )
 
 
 class DistanceRates(om.ExplicitComponent):
@@ -246,6 +265,8 @@ class DistanceRates(om.ExplicitComponent):
 
         else:
             range_rate = velocity
+
+            outputs[Dynamic.Mission.ALTITUDE_RATE][...] = 0.0
 
         outputs[Dynamic.Mission.DISTANCE_RATE] = range_rate
 
@@ -552,6 +573,13 @@ class SumForces(om.ExplicitComponent):
             desc='current sum of forces in the vertical direction',
         )
 
+        self.add_output(
+            'ground_normal_force',
+            val=np.zeros(nn),
+            units='N',
+            desc='runway force pushing up on the landing gear while on the ground and lift < weight.',
+        )
+
     def setup_partials(self):
         options = self.options
 
@@ -582,7 +610,9 @@ class SumForces(om.ExplicitComponent):
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ]
 
-            self.declare_partials('*', wrt, rows=rows_cols, cols=rows_cols)
+            self.declare_partials(
+                ['forces_vertical', 'forces_horizontal'], wrt, rows=rows_cols, cols=rows_cols
+            )
 
         else:
             val = -grav_metric * mu
@@ -629,6 +659,30 @@ class SumForces(om.ExplicitComponent):
 
             self.declare_partials('forces_vertical', ['*'], dependent=False)
 
+            self.declare_partials(
+                'ground_normal_force',
+                Dynamic.Vehicle.MASS,
+                rows=rows_cols,
+                cols=rows_cols,
+                val=grav_metric,
+            )
+
+            self.declare_partials(
+                'ground_normal_force',
+                Dynamic.Vehicle.LIFT,
+                rows=rows_cols,
+                cols=rows_cols,
+                val=-1.0,
+            )
+
+            self.declare_partials(
+                'ground_normal_force',
+                Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                rows=rows_cols,
+                cols=rows_cols,
+                val=np.sin(t_inc),
+            )
+
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         options = self.options
 
@@ -666,6 +720,7 @@ class SumForces(om.ExplicitComponent):
             f_v = t_v - drag * s_gamma + lift * c_gamma - weight
 
             outputs['forces_vertical'] = f_v
+            outputs['ground_normal_force'][...] = 0.0
 
         else:
             # NOTE using FLOPS GRRUN, which neglects angle of attack
@@ -678,6 +733,7 @@ class SumForces(om.ExplicitComponent):
             t_v = thrust * np.sin(t_inc)
 
             f_h = t_h - drag - (weight - (lift + t_v)) * mu
+            outputs['ground_normal_force'][...] = -t_v - lift + weight
 
         outputs['forces_horizontal'] = f_h
 
