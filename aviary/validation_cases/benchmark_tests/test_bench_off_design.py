@@ -476,7 +476,7 @@ class PayloadRangeTest(unittest.TestCase):
         with self.subTest(var='max_fuel_pyld_range_prob'):
             assert_near_equal(
                 prob.max_fuel_pyld_range_prob.get_val(Mission.GROSS_MASS, 'lbm'),
-                166539.45043186,
+                166539.45876863,
                 tolerance=1e-8,
             )
         with self.subTest(var='ferry_range_prob'):

@@ -204,9 +204,13 @@ class UnsteadySolvedODE(TwoDOFODE):
         control_iter_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
         self.add_subsystem(
-            'mass_rate',
+            'state_rates',
             om.ExecComp(
-                ['dmass_dr = fuelflow_neg * dt_dr', 'dfuelburn_dr = fuelflow * dt_dr'],
+                [
+                    'dmass_dr = fuelflow_neg * dt_dr',
+                    'dfuelburn_dr = fuelflow * dt_dr',
+                    'dnox_dr = nox_rate * dt_dr',
+                ],
                 fuelflow_neg={'units': 'lbm/s', 'shape': nn},
                 fuelflow={'units': 'lbm/s', 'shape': nn},
                 dt_dr={'units': 's/distance_units', 'shape': nn},
@@ -223,14 +227,24 @@ class UnsteadySolvedODE(TwoDOFODE):
                         'dymos.state_units:lbm',
                     ],
                 },
+                nox_rate={'units': 'lbm/s', 'shape': nn},
+                dnox_dr={
+                    'units': 'lbm/distance_units',
+                    'shape': nn,
+                    'tags': [
+                        'dymos.state_rate_source:cumulative_nox_produced',
+                        'dymos.state_units:lbm',
+                    ],
+                },
                 has_diag_partials=True,
             ),
             promotes_inputs=[
                 ('fuelflow_neg', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
                 ('fuelflow', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL),
+                ('nox_rate', Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL),
                 'dt_dr',
             ],
-            promotes_outputs=['dmass_dr', 'dfuelburn_dr'],
+            promotes_outputs=['dmass_dr', 'dfuelburn_dr', 'dnox_dr'],
         )
 
         onn = np.ones(nn)
