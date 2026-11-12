@@ -126,7 +126,7 @@ class TestAviaryCSV(unittest.TestCase):
             file.write('aircraft:anti_icing:mass,551,lbm\n')  # a good variable
         vehicle_deck = get_path(file_name)
 
-        msg = 'Variable aircraft:design:characteristic_lengths is no longer in meta_data as of 9/29/2026. See PR #1308 for details.'
+        msg = 'Variable aircraft:design:characteristic_lengths is no longer in meta_data as of version 1.0.0. See PR #1308 for details.'
         with assert_warning(DeprecationWarning, msg):
             parse_inputs(vehicle_deck, aircraft_values)
 
