@@ -106,7 +106,7 @@ class PropulsionPreMission(om.Group):
         for idx, engine_model in enumerate(engine_models):
             engine = self._get_subsystem(engine_model.name)
             if engine is None:
-                # this engine did not provide a post-mission subsystem
+                # this engine did not provide a pre-mission subsystem
                 continue
 
             # Patterns to identify which inputs/outputs are vectorized and need to be
