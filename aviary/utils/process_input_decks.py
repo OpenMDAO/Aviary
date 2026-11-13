@@ -101,7 +101,7 @@ def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=None):
                 initialization_guesses[key.removeprefix('initialization_guesses:')] = val
         aircraft_values.update(vehicle_deck)
     else:
-        vehicle_deck = get_path(vehicle_deck, verbosity)
+        vehicle_deck = get_path(vehicle_deck, verbosity=verbosity)
         aircraft_values, initialization_guesses = parse_inputs(
             vehicle_deck=vehicle_deck,
             aircraft_values=aircraft_values,

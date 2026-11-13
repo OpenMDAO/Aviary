@@ -64,7 +64,7 @@ def fortran_to_aviary(
         'initialization_guesses': initialization_guesses,
     }
 
-    fortran_deck: Path = get_path(fortran_deck, verbosity=verbosity)
+    fortran_deck: Path = get_path(fortran_deck, check_model=False, verbosity=verbosity)
 
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
     user = getpass.getuser()

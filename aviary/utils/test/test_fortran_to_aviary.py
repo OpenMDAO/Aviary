@@ -115,6 +115,17 @@ class TestFortranToAviary(unittest.TestCase):
         )
         self.compare_files(comparison_filepath)
 
+    def test_bwb300_baseline_flops(self):
+        filepath = 'validation_cases/validation_data/legacy_files/bwb300_baseline_FLOPS.inp'
+        comparison_filepath = 'utils/test/data/converter_test_bwb300_baseline_FLOPS.csv'
+
+        self.prepare_and_run(
+            filepath,
+            output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
+            legacy_code=LegacyCode.FLOPS,
+        )
+        self.compare_files(comparison_filepath)
+
     def test_bwb_simple_flops(self):
         filepath = 'validation_cases/validation_data/legacy_files/bwb_simple_FLOPS.in'
         comparison_filepath = 'utils/test/data/converter_test_BWB_simple_FLOPS.csv'
