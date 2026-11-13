@@ -1534,8 +1534,11 @@ class AviaryGroup(om.Group):
         initial_mass = None
         for name in self.main_phases:
             phase = traj._phases[name]
+            if not phase._is_local:
+                # Phase is on another proc.
+                continue
             units = phase.state_options['mass']['units']
-            mass = phase.get_val('states:mass', units=units)
+            mass = phase.get_val('states:mass', units=units, get_remote=True)
             if initial_mass is None:
                 initial_mass = mass[0]
             fuel_burn = initial_mass - mass
