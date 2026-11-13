@@ -3393,9 +3393,19 @@ add_meta_data(
     default_value=0.0,
 )
 
-# TODO the GASP use of this variable is misleading (optional coefficient for additional
-#      furnishing mass, which is activated by Aircraft.Furnishings.USE_EMPERICAL_EQUATION). Create
-#      new variable (Aircraft.Furnishings.MASS_COEFFICIENT?) for GASP side
+add_meta_data(
+    Aircraft.Furnishings.MASS_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,
+    },
+    units='lbm',
+    desc='Furnishings system mass per passenger. In GASP based, it is applicable if gross mass '
+    '> 10000 lbs and number of passengers >= 50. Set it to 0.0 if not use.',
+    default_value=0.0,
+)
+
 add_meta_data(
     Aircraft.Furnishings.MASS_SCALER,
     meta_data=_MetaData,
@@ -3405,12 +3415,11 @@ add_meta_data(
         'FLOPS': 'WTIN.WFURN',
     },
     units='unitless',
-    desc='Furnishings system mass scaler. In GASP based, it is applicale if gross mass '
-    '> 10000 lbs and number of passengers >= 50. Set it to 0.0 if not use.',
+    desc='Furnishings system mass scaler.',
     default_value=1.0,
 )
 
-# TODO Misnamed. This sets if Aircraft.Furnishings.MASS_SCALER is used as a coefficient for additional
+# TODO Misnamed. This sets if Aircraft.Furnishings.MASS_COEFFICIENT is used as a coefficient for additional
 # furnishings weight and the alternative (False) is to use the emperical equation. The variable toggle
 # based on gross mass and num_pax is bad Aviary behavior and should occur in fortran_to_aviary instead
 add_meta_data(
