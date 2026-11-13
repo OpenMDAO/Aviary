@@ -710,7 +710,7 @@ class AeroGeom(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type, units='ft')
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA, shape=num_engine_type, units='ft**2')
+        add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA, shape=num_engine_type, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, units='unitless')
@@ -842,7 +842,7 @@ class AeroGeom(om.ExplicitComponent):
             Aircraft.Nacelle.AVG_LENGTH,
             Aircraft.HorizontalTail.AREA,
             Aircraft.Fuselage.WETTED_AREA,
-            Aircraft.Nacelle.SURFACE_AREA,
+            Aircraft.Nacelle.WETTED_AREA,
             Aircraft.Wing.AREA,
             Aircraft.VerticalTail.AREA,
             'interference_independent_of_shielded_area',
@@ -898,7 +898,7 @@ class AeroGeom(om.ExplicitComponent):
         nac_len = inputs[Aircraft.Nacelle.AVG_LENGTH]
         htail_area = inputs[Aircraft.HorizontalTail.AREA]
         fus_SA = inputs[Aircraft.Fuselage.WETTED_AREA]
-        nacelle_area = inputs[Aircraft.Nacelle.SURFACE_AREA]
+        nacelle_area = inputs[Aircraft.Nacelle.WETTED_AREA]
         wing_area = inputs[Aircraft.Wing.AREA]
         vtail_area = inputs[Aircraft.VerticalTail.AREA]
         tc_ratio = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED]

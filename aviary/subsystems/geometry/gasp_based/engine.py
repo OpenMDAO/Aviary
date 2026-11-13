@@ -1,6 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.subsystems.geometry.shared_components import NacelleTotalWettedArea
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Settings
 
@@ -95,7 +96,7 @@ def dg2(x):
 class PercentNotInFuselage(om.ExplicitComponent):
     """
     For BWB, engine may be (partially) buried into fuselage. Compute the percentage of
-    corresponding surface area of nacelles not buried in fuselage.
+    corresponding surface area (wetted area) of nacelles not buried in fuselage.
     """
 
     def initialize(self):
@@ -303,7 +304,7 @@ class GASPEngineLength(om.ExplicitComponent):
 
 class GASPEngineSurfaceArea(om.ExplicitComponent):
     """
-    Engine geometry calculation based on engine diameter. It returns Aircraft.Nacelle.SURFACE_AREA.
+    Engine geometry calculation based on engine diameter. It returns Aircraft.Nacelle.WETTED_AREA.
     It follows the algorithm in GASP.
     """
 
@@ -318,14 +319,14 @@ class GASPEngineSurfaceArea(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
         add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type, units='ft')
 
-        add_aviary_output(self, Aircraft.Nacelle.SURFACE_AREA, shape=num_engine_type, units='ft**2')
+        add_aviary_output(self, Aircraft.Nacelle.WETTED_AREA, shape=num_engine_type, units='ft**2')
 
     def setup_partials(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
         shape = np.arange(num_engine_type)
 
         self.declare_partials(
-            Aircraft.Nacelle.SURFACE_AREA,
+            Aircraft.Nacelle.WETTED_AREA,
             [
                 Aircraft.Nacelle.AVG_DIAMETER,
                 Aircraft.Nacelle.AVG_LENGTH,
@@ -341,20 +342,20 @@ class GASPEngineSurfaceArea(om.ExplicitComponent):
         len_nacelle = inputs[Aircraft.Nacelle.AVG_LENGTH]
         wet_area_nacelle = np.pi * diam_nacelle * len_nacelle * pct_exposed
 
-        outputs[Aircraft.Nacelle.SURFACE_AREA] = wet_area_nacelle
+        outputs[Aircraft.Nacelle.WETTED_AREA] = wet_area_nacelle
 
     def compute_partials(self, inputs, J):
         pct_exposed = inputs['percent_exposed']
         diam_nacelle = inputs[Aircraft.Nacelle.AVG_DIAMETER]
         len_nacelle = inputs[Aircraft.Nacelle.AVG_LENGTH]
 
-        J[Aircraft.Nacelle.SURFACE_AREA, Aircraft.Nacelle.AVG_DIAMETER] = (
+        J[Aircraft.Nacelle.WETTED_AREA, Aircraft.Nacelle.AVG_DIAMETER] = (
             np.pi * len_nacelle * pct_exposed
         )
-        J[Aircraft.Nacelle.SURFACE_AREA, Aircraft.Nacelle.AVG_LENGTH] = (
+        J[Aircraft.Nacelle.WETTED_AREA, Aircraft.Nacelle.AVG_LENGTH] = (
             np.pi * diam_nacelle * pct_exposed
         )
-        J[Aircraft.Nacelle.SURFACE_AREA, 'percent_exposed'] = np.pi * diam_nacelle * len_nacelle
+        J[Aircraft.Nacelle.WETTED_AREA, 'percent_exposed'] = np.pi * diam_nacelle * len_nacelle
 
 
 class GASPEngineSizeGroup(om.Group):
@@ -386,3 +387,12 @@ class GASPEngineSizeGroup(om.Group):
             promotes_inputs=['*'] + ['percent_exposed'],
             promotes_outputs=['*'],
         )
+
+        # GASP geometry does not use Aircraft.Nacelle.TOTAL_WETTED_AREA but it is nice to have it.
+        # It is commented out due to issue #1176
+        # self.add_subsystem(
+        #     'eng_tot_swet',
+        #     NacelleTotalWettedArea(),
+        #     promotes_inputs=['*'],
+        #     promotes_outputs=['*'],
+        # )

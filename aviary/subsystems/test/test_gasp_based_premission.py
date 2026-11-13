@@ -78,7 +78,7 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.VerticalTail.MOMENT_ARM: 49.8809,
             Aircraft.Nacelle.AVG_DIAMETER: 7.25,
             Aircraft.Nacelle.AVG_LENGTH: 14.5,
-            Aircraft.Nacelle.SURFACE_AREA: 330.2599,
+            Aircraft.Nacelle.WETTED_AREA: 330.2599,
             # mass subsystem
             Aircraft.Design.LIFT_CURVE_SLOPE: 6.39471,
             Aircraft.Wing.ULTIMATE_LOAD_FACTOR: 3.75,
@@ -166,7 +166,7 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.VerticalTail.MOMENT_ARM: 49.8809,
             Aircraft.Nacelle.AVG_DIAMETER: 7.25,
             Aircraft.Nacelle.AVG_LENGTH: 14.5,
-            Aircraft.Nacelle.SURFACE_AREA: 330.2599,
+            Aircraft.Nacelle.WETTED_AREA: 330.2599,
             # aerodynamics subsystem
             Mission.Landing.LIFT_COEFFICIENT_MAX: 2.8179491,
             # mass subsystem
@@ -307,7 +307,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.VerticalTail.MOMENT_ARM: 27.8219,
             Aircraft.Nacelle.AVG_DIAMETER: 5.33382,
             Aircraft.Nacelle.AVG_LENGTH: 7.2476,
-            Aircraft.Nacelle.SURFACE_AREA: 121.4458,
+            Aircraft.Nacelle.WETTED_AREA: 121.4458,
             # mass subsystem
             Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 1686.6256,
             Aircraft.Design.LIFT_CURVE_SLOPE: 5.948,
@@ -398,7 +398,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.VerticalTail.MOMENT_ARM: 27.8219,
             Aircraft.Nacelle.AVG_DIAMETER: 5.33382,
             Aircraft.Nacelle.AVG_LENGTH: 7.2476,
-            Aircraft.Nacelle.SURFACE_AREA: 121.4458,
+            Aircraft.Nacelle.WETTED_AREA: 121.4458,
         }
 
         for var_name, expected in expected_values.items():
@@ -469,7 +469,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.VerticalTail.MOMENT_ARM: 27.8219,
             Aircraft.Nacelle.AVG_DIAMETER: 5.33382,
             Aircraft.Nacelle.AVG_LENGTH: 7.2476,
-            Aircraft.Nacelle.SURFACE_AREA: 121.4458,
+            Aircraft.Nacelle.WETTED_AREA: 121.4458,
             # mass subsystem
             Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 1686.6256,
             Aircraft.Design.LIFT_CURVE_SLOPE: 5.948,

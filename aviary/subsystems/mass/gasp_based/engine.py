@@ -26,7 +26,7 @@ class TotalEngineMass(om.ExplicitComponent):
             shape=num_engine_type,
             units='lbm/ft**2',
         )
-        add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA, shape=num_engine_type, units='ft**2')
+        add_aviary_input(self, Aircraft.Nacelle.WETTED_AREA, shape=num_engine_type, units='ft**2')
         add_aviary_input(
             self, Aircraft.Nacelle.MASS_SCALER, shape=num_engine_type, units='unitless'
         )
@@ -66,7 +66,7 @@ class TotalEngineMass(om.ExplicitComponent):
             Aircraft.Nacelle.MASS,
             [
                 Aircraft.Nacelle.MASS_SPECIFIC,
-                Aircraft.Nacelle.SURFACE_AREA,
+                Aircraft.Nacelle.WETTED_AREA,
                 Aircraft.Nacelle.MASS_SCALER,
             ],
             rows=shape,
@@ -77,7 +77,7 @@ class TotalEngineMass(om.ExplicitComponent):
             'pylon_mass',
             [
                 Aircraft.Nacelle.MASS_SPECIFIC,
-                Aircraft.Nacelle.SURFACE_AREA,
+                Aircraft.Nacelle.WETTED_AREA,
                 Aircraft.Engine.PYLON_FACTOR,
                 Aircraft.Engine.MASS_SPECIFIC,
                 Aircraft.Engine.SCALED_SLS_THRUST,
@@ -104,7 +104,7 @@ class TotalEngineMass(om.ExplicitComponent):
         pylon_fac = inputs[Aircraft.Engine.PYLON_FACTOR]
         scaler = inputs[Aircraft.Nacelle.MASS_SCALER]
         spec_nacelle_mass = inputs[Aircraft.Nacelle.MASS_SPECIFIC]
-        nacelle_area = inputs[Aircraft.Nacelle.SURFACE_AREA]
+        nacelle_area = inputs[Aircraft.Nacelle.WETTED_AREA]
 
         nacelle_mass = scaler * spec_nacelle_mass * nacelle_area
         pylon_mass = pylon_fac * (dry_mass_eng + nacelle_mass) ** 0.736
@@ -119,7 +119,7 @@ class TotalEngineMass(om.ExplicitComponent):
         eng_spec_mass = inputs[Aircraft.Engine.MASS_SPECIFIC]
         Fn_SLS = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         spec_nacelle_mass = inputs[Aircraft.Nacelle.MASS_SPECIFIC]
-        nacelle_area = inputs[Aircraft.Nacelle.SURFACE_AREA]
+        nacelle_area = inputs[Aircraft.Nacelle.WETTED_AREA]
         pylon_fac = inputs[Aircraft.Engine.PYLON_FACTOR]
         scaler = inputs[Aircraft.Nacelle.MASS_SCALER]
 
@@ -158,8 +158,8 @@ class TotalEngineMass(om.ExplicitComponent):
 
         J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.MASS_SPECIFIC] = dNW_dNWS
         J['pylon_mass', Aircraft.Nacelle.MASS_SPECIFIC] = dPW_dNWS
-        J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.SURFACE_AREA] = dNW_dNSA
-        J['pylon_mass', Aircraft.Nacelle.SURFACE_AREA] = dPW_dNSA
+        J[Aircraft.Nacelle.MASS, Aircraft.Nacelle.WETTED_AREA] = dNW_dNSA
+        J['pylon_mass', Aircraft.Nacelle.WETTED_AREA] = dPW_dNSA
         J['pylon_mass', Aircraft.Engine.PYLON_FACTOR] = dPW_dPF
         J['pylon_mass', Aircraft.Engine.MASS_SPECIFIC] = dPW_dEWS
         J['pylon_mass', Aircraft.Engine.SCALED_SLS_THRUST] = dPW_dSLST
