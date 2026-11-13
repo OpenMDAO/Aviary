@@ -413,6 +413,8 @@ class LoadParameters(om.ExplicitComponent):
                     )
                 max_mach = 0.90
 
+        # Note: 1.61949 = 2/(1 + 1/4.2559) is based on the ISA tropospheric
+        # temperature lapse-rate relationship.
         density_ratio = (max_airspeed / (661.7 * max_mach)) ** 1.61949
 
         if smooth:
@@ -716,6 +718,10 @@ class LoadFactors(om.ExplicitComponent):
             2.0 * wing_loading / (density_ratio * rho_sea_level * avg_chord * Cl_alpha * 32.2)
         )
         k_load_factor = 0.88 * mass_ratio / (5.3 + mass_ratio)
+        # Note:
+        # 498.: the conversion factor incorporating sea-level air density and knots-to-ft/s conversion
+        # 2/(0.00237*1.68781) = 498.53 where 1.68781 is the conversion from knots to ft/s.
+        # 50.0 is the assumed gust velocity, ft/s
         cruise_load_factor = 1.0 + ((k_load_factor * 50.0 * V9 * Cl_alpha) / (498.0 * wing_loading))
         dive_load_factor = 1.0 + (
             (k_load_factor * 25.0 * min_dive_vel * Cl_alpha) / (498.0 * wing_loading)
