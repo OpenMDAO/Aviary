@@ -737,6 +737,15 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         # Need a different dataset with wing engines to check this one
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-9)
 
+        partial_data = prob.check_partials(
+            out_stream=None,
+            compact_print=True,
+            show_only_incorrect=True,
+            form='central',
+            method='fd',
+        )
+        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
+
     def test_case2(self):
         """
         bwb300_baseline
