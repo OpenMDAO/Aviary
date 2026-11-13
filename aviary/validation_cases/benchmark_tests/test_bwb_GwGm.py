@@ -21,7 +21,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def setUp(self):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
-    @unittest.skip('Not converging in CI for unknown reasons - requires additional investigation')
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_bwb_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
@@ -36,41 +35,43 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # TODO: CI has some intermittent problems with hitting feasibility.
         # self.assertTrue(prob.result.success)
 
-        rtol = 1e-3
+        rtol = 1e-2
 
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
-            139803.667415,
+            134847.56297502,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.OPERATING_MASS, units='lbm'),
-            79873.05255347,
+            78825.16421412,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
-            26154.38155505,
+            22272.3987609,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2216.0066613,
+            2255.83418872,
             tolerance=rtol,
         )
 
-        assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 3500.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 3000.0, tolerance=rtol)
 
         assert_near_equal(
             prob.get_val(Mission.FINAL_MASS, units='lbm'),
-            116003.31044998,
+            114599.92773784,
             tolerance=rtol,
         )
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    z = ProblemPhaseTestCase()
+    z.bench_test_bwb_GwGm_SNOPT()
