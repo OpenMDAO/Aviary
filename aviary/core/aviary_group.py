@@ -1530,6 +1530,16 @@ class AviaryGroup(om.Group):
                 self, phase_name, idx, phase, guesses, target_prob, parent_prefix
             )
 
+        # Propagate mass guesses into cumulative fuel burn.
+        #initial_mass = None
+        #for name in self.main_phases:
+            #phase = traj._phases[name]
+            #mass = phase.get_val('states:mass', units='lbm')
+            #if initial_mass is None:
+                #initial_mass = mass[0]
+            #fuel_burn = initial_mass - mass
+            #phase.set_state_val('cumulative_fuel_burn', fuel_burn, units='lbm')
+
     def _add_subsystem_guesses(self, phase_name, phase):
         """
         Adds the initial guesses for each subsystem of a given phase to the problem. This method
