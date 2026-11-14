@@ -33,32 +33,32 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )
 
         # TODO: CI has some intermittent problems with hitting feasibility.
-        # self.assertTrue(prob.result.success)
+        self.assertTrue(prob.result.success)
 
         rtol = 1e-2
 
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
-            134847.56297502,
+            133603.98625613,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.OPERATING_MASS, units='lbm'),
-            78825.16421412,
+            78561.83558207,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
-            22272.3987609,
+            21292.15067406,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2255.83418872,
+            2267.36558233,
             tolerance=rtol,
         )
 
@@ -66,7 +66,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.FINAL_MASS, units='lbm'),
-            114599.92773784,
+            114247.48564948,
             tolerance=rtol,
         )
 
