@@ -70,6 +70,55 @@ class ProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
+    @require_pyoptsparse(optimizer='IPOPT')
+    def bench_test_bwb_GwGm_IPOPT(self):
+        local_phase_info = deepcopy(phase_info)
+        prob = run_aviary(
+            'models/aircraft/blended_wing_body/generic_BWB_GASP.csv',
+            local_phase_info,
+            optimizer='IPOPT',
+            verbosity=0,
+            max_iter=60,
+        )
+
+        # TODO: CI has some intermittent problems with hitting feasibility.
+        self.assertTrue(prob.result.success)
+
+        rtol = 1e-2
+
+        # There are no truth values for these.
+        assert_near_equal(
+            prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
+            133603.98625613,
+            tolerance=rtol,
+        )
+
+        assert_near_equal(
+            prob.get_val(Mission.OPERATING_MASS, units='lbm'),
+            78561.83558207,
+            tolerance=rtol,
+        )
+
+        assert_near_equal(
+            prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
+            21292.15067406,
+            tolerance=rtol,
+        )
+
+        assert_near_equal(
+            prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
+            2267.36558233,
+            tolerance=rtol,
+        )
+
+        assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 3000.0, tolerance=rtol)
+
+        assert_near_equal(
+            prob.get_val(Mission.FINAL_MASS, units='lbm'),
+            114247.48564948,
+            tolerance=rtol,
+        )
+
 
 if __name__ == '__main__':
     # unittest.main()
