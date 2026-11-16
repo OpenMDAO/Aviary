@@ -12,6 +12,15 @@ from aviary.variable_info.enums import LegacyCode
 class TestFortranToAviary(unittest.TestCase):
     """Test fortran_to_aviary legacy code input file conversion utility by comparing against already converted input files."""
 
+    def check_input_path(self, filepath):
+        """get input file path after checking the input exists. This function can be removed after 1118 is resolved"""
+        root_path = Path(get_aviary_resource_path(''))
+        aviary_path = root_path.joinpath(filepath)
+        if aviary_path.exists():
+            return True
+        else:
+            raise Exception(f'File {filepath} does not exist')
+
     def prepare_and_run(self, filepath, output_file=None, legacy_code=LegacyCode.GASP):
         # Specify the output file
         filename = filepath.split('.')[0] + '.csv'
@@ -59,9 +68,7 @@ class TestFortranToAviary(unittest.TestCase):
 
     def test_large_single_aisle(self):
         filepath = 'validation_cases/validation_data/legacy_files/large_single_aisle_1_GASP.dat'
-        root_path = Path(get_aviary_resource_path(''))
-        aviary_path = root_path.joinpath(filepath)
-        if aviary_path.exists():
+        if self.check_input_path(filepath):
             comparison_filepath = 'utils/test/data/converter_test_large_single_aisle_1_GASP.csv'
 
             self.prepare_and_run(
@@ -69,14 +76,10 @@ class TestFortranToAviary(unittest.TestCase):
                 output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
             )
             self.compare_files(comparison_filepath)
-        else:
-            raise Exception(f'File {filepath} does not exist')
 
     def test_small_single_aisle(self):
         filepath = 'validation_cases/validation_data/legacy_files/small_single_aisle_GASP.dat'
-        root_path = Path(get_aviary_resource_path(''))
-        aviary_path = root_path.joinpath(filepath)
-        if aviary_path.exists():
+        if self.check_input_path(filepath):
             comparison_filepath = 'utils/test/data/converter_test_small_single_aisle_GASP.csv'
 
             self.prepare_and_run(
@@ -84,14 +87,10 @@ class TestFortranToAviary(unittest.TestCase):
                 output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
             )
             self.compare_files(comparison_filepath)
-        else:
-            raise Exception(f'File {filepath} does not exist')
 
     def test_regional_pax_48(self):
         filepath = 'validation_cases/validation_data/legacy_files/regional_pax_48_GASP.dat'
-        root_path = Path(get_aviary_resource_path(''))
-        aviary_path = root_path.joinpath(filepath)
-        if aviary_path.exists():
+        if self.check_input_path(filepath):
             comparison_filepath = 'utils/test/data/converter_test_regional_pax_48_GASP.csv'
 
             self.prepare_and_run(
@@ -99,28 +98,20 @@ class TestFortranToAviary(unittest.TestCase):
                 output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
             )
             self.compare_files(comparison_filepath)
-        else:
-            raise Exception(f'File {filepath} does not exist')
 
     def test_diff_configuration(self):
         filepath = 'validation_cases/validation_data/legacy_files/configuration_test_data_GASP.dat'
-        root_path = Path(get_aviary_resource_path(''))
-        aviary_path = root_path.joinpath(filepath)
-        if aviary_path.exists():
+        if self.check_input_path(filepath):
             comparison_filepath = 'utils/test/data/converter_test_configuration_GASP.csv'
 
             self.prepare_and_run(
                 filepath, output_file=Path.cwd() / Path('TEST_' + comparison_filepath)
             )
             self.compare_files(comparison_filepath)
-        else:
-            raise Exception(f'File {filepath} does not exist')
 
     def test_bwb_gasp(self):
         filepath = 'validation_cases/validation_data/legacy_files/generic_BWB_GASP.dat'
-        root_path = Path(get_aviary_resource_path(''))
-        aviary_path = root_path.joinpath(filepath)
-        if aviary_path.exists():
+        if self.check_input_path(filepath):
             comparison_filepath = 'utils/test/data/converter_test_BWB_GASP.csv'
 
             self.prepare_and_run(
@@ -128,14 +119,10 @@ class TestFortranToAviary(unittest.TestCase):
                 output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
             )
             self.compare_files(comparison_filepath)
-        else:
-            raise Exception(f'File {filepath} does not exist')
 
     def test_bwb_detailed_flops(self):
         filepath = 'validation_cases/validation_data/legacy_files/bwb_detailed_FLOPS.in'
-        root_path = Path(get_aviary_resource_path(''))
-        aviary_path = root_path.joinpath(filepath)
-        if aviary_path.exists():
+        if self.check_input_path(filepath):
             comparison_filepath = 'utils/test/data/converter_test_BWB_detailed_FLOPS.csv'
 
             self.prepare_and_run(
@@ -144,14 +131,10 @@ class TestFortranToAviary(unittest.TestCase):
                 legacy_code=LegacyCode.FLOPS,
             )
             self.compare_files(comparison_filepath)
-        else:
-            raise Exception(f'File {filepath} does not exist')
 
     def test_bwb300_baseline_flops(self):
         filepath = 'validation_cases/validation_data/legacy_files/bwb300_baseline_FLOPS.inp'
-        root_path = Path(get_aviary_resource_path(''))
-        aviary_path = root_path.joinpath(filepath)
-        if aviary_path.exists():
+        if self.check_input_path(filepath):
             comparison_filepath = 'utils/test/data/converter_test_bwb300_baseline_FLOPS.csv'
 
             self.prepare_and_run(
@@ -160,14 +143,10 @@ class TestFortranToAviary(unittest.TestCase):
                 legacy_code=LegacyCode.FLOPS,
             )
             self.compare_files(comparison_filepath)
-        else:
-            raise Exception(f'File {filepath} does not exist')
 
     def test_bwb_simple_flops(self):
         filepath = 'validation_cases/validation_data/legacy_files/bwb_simple_FLOPS.in'
-        root_path = Path(get_aviary_resource_path(''))
-        aviary_path = root_path.joinpath(filepath)
-        if aviary_path.exists():
+        if self.check_input_path(filepath):
             comparison_filepath = 'utils/test/data/converter_test_BWB_simple_FLOPS.csv'
 
             self.prepare_and_run(
@@ -176,8 +155,6 @@ class TestFortranToAviary(unittest.TestCase):
                 legacy_code=LegacyCode.FLOPS,
             )
             self.compare_files(comparison_filepath)
-        else:
-            raise Exception(f'File {filepath} does not exist')
 
     def test_advanced_single_aisle(self):
         # Note: The csv comparison file N3CC_generic_low_speed_polars_FLOPSinp.csv was generated
@@ -187,9 +164,7 @@ class TestFortranToAviary(unittest.TestCase):
         filepath = (
             'validation_cases/validation_data/legacy_files/N3CC_generic_low_speed_polars_FLOPS.txt'
         )
-        root_path = Path(get_aviary_resource_path(''))
-        aviary_path = root_path.joinpath(filepath)
-        if aviary_path.exists():
+        if self.check_input_path(filepath):
             comparison_filepath = 'utils/test/data/converter_test_advanced_single_aisle_FLOPS.csv'
             self.prepare_and_run(
                 filepath,
@@ -197,8 +172,6 @@ class TestFortranToAviary(unittest.TestCase):
                 legacy_code=LegacyCode.FLOPS,
             )
             self.compare_files(comparison_filepath)
-        else:
-            raise Exception(f'File {filepath} does not exist')
 
 
 if __name__ == '__main__':
