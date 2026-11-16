@@ -190,7 +190,7 @@ class AviaryGroup(om.Group):
 
         # Temporarily add extra stuff here, probably patched soon
         # add a check for traj using hasattr for pre-mission tests.
-        if mission_method is ENERGY_STATE and hasattr(self, 'traj'):
+        if hasattr(self, 'traj'):
             # Set a more appropriate solver for dymos when the phases are linked.
             if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
                 # When any phase is connected with input_initial = True, dymos puts
@@ -1473,10 +1473,10 @@ class AviaryGroup(om.Group):
             # problem formulation to make the trajectory work
             self.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0)
             self.add_design_var(Mission.Takeoff.ASCENT_DURATION, lower=1, upper=1000, ref=10.0)
-            self.add_design_var('tau_gear', lower=0.01, upper=1.0, units='unitless', ref=1)
-            self.add_design_var('tau_flaps', lower=0.01, upper=1.0, units='unitless', ref=1)
-            self.add_constraint('h_fit.h_init_gear', equals=50.0, units='ft', ref=50.0)
-            self.add_constraint('h_fit.h_init_flaps', equals=400.0, units='ft', ref=400.0)
+            #self.add_design_var('tau_gear', lower=0.01, upper=1.0, units='unitless', ref=1)
+            #self.add_design_var('tau_flaps', lower=0.01, upper=1.0, units='unitless', ref=1)
+            #self.add_constraint('h_fit.h_init_gear', equals=50.0, units='ft', ref=50.0)
+            #self.add_constraint('h_fit.h_init_flaps', equals=400.0, units='ft', ref=400.0)
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
