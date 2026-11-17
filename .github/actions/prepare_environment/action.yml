@@ -77,8 +77,6 @@ runs:
         openmdao_version: '${{ inputs.OPENMDAO }}'
 
     - name: Download SNOPT
-      env:
-        UCX_TLS: tcp
       if: inputs.SNOPT_LOCATION_77
       shell: bash -l {0}
       run: |
