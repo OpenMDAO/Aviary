@@ -89,7 +89,7 @@ runs:
         if [[ "${{ inputs.SNOPT }}" == "7.7" && "${{ inputs.SNOPT_LOCATION_77 }}" ]]; then
           mkdir SNOPT
           echo "  > Secure copying SNOPT 7.7 over SSH"
-          scp -r ${{ inputs.SNOPT_LOCATION_77 }} SNOPT
+          scp -qr ${{ inputs.SNOPT_LOCATION_77 }} SNOPT
         elif [[ "${{ inputs.SNOPT }}" ]]; then
           echo "SNOPT version ${{ inputs.SNOPT }} was requested but source is not available"
         fi
