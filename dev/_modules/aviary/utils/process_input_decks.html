@@ -63,8 +63,8 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/aviary/utils/process_input_decks';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <script src="../../../_static/collapsible_headers.js?v=13c9d35c"></script>
     <script src="../../../_static/version_switcher.js?v=ec96bb6f"></script>
+    <script src="../../../_static/collapsible_headers.js?v=13c9d35c"></script>
     <link rel="icon" href="../../../_static/aviary_logo.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -717,7 +717,7 @@
                     <span class="n">new_name</span> <span class="o">=</span> <span class="n">deprecated_variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">the_PRs</span> <span class="o">=</span> <span class="n">deprecated_variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">the_PRs</span> <span class="o">=</span> <span class="n">the_PRs</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'|'</span><span class="p">,</span> <span class="s1">', #'</span><span class="p">)</span>
-                    <span class="n">the_date</span> <span class="o">=</span> <span class="n">deprecated_variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+                    <span class="n">version</span> <span class="o">=</span> <span class="n">deprecated_variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
                     <span class="c1"># Warning was ignored somehow, but need to be print out.</span>
                     <span class="c1"># after it is done, automatically restores the warning settings</span>
                     <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
@@ -726,13 +726,14 @@
                             <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
                                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                                     <span class="sa">f</span><span class="s1">'Variable </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1"> is no longer in meta_data '</span>
-                                    <span class="sa">f</span><span class="s1">'as of </span><span class="si">{</span><span class="n">the_date</span><span class="si">}</span><span class="s1">. '</span>
+                                    <span class="sa">f</span><span class="s1">'as of version </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s1">. '</span>
                                     <span class="sa">f</span><span class="s1">'See PR #</span><span class="si">{</span><span class="n">the_PRs</span><span class="si">}</span><span class="s1"> for details.'</span><span class="p">,</span>
                                     <span class="ne">DeprecationWarning</span><span class="p">,</span>
                                 <span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                                <span class="sa">f</span><span class="s1">'Variable </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1"> is replaced by </span><span class="si">{</span><span class="n">new_name</span><span class="si">}</span><span class="s1"> as of </span><span class="si">{</span><span class="n">the_date</span><span class="si">}</span><span class="s1"> '</span>
+                                <span class="sa">f</span><span class="s1">'Variable </span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1"> is replaced by </span><span class="si">{</span><span class="n">new_name</span><span class="si">}</span><span class="s1"> as of '</span>
+                                <span class="sa">f</span><span class="s1">'version </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s1">. '</span>
                                 <span class="sa">f</span><span class="s1">'See PR #</span><span class="si">{</span><span class="n">the_PRs</span><span class="si">}</span><span class="s1"> for details.'</span><span class="p">,</span>
                                 <span class="ne">UserWarning</span><span class="p">,</span>
                             <span class="p">)</span>

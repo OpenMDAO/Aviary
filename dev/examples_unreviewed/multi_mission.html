@@ -64,8 +64,8 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples_unreviewed/multi_mission';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <script src="../_static/collapsible_headers.js?v=13c9d35c"></script>
     <script src="../_static/version_switcher.js?v=ec96bb6f"></script>
+    <script src="../_static/collapsible_headers.js?v=13c9d35c"></script>
     <link rel="icon" href="../_static/aviary_logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -795,9 +795,9 @@
   'aircraft:wing:mass  15288.0  lbm
   'aircraft:wing:wetted_area  2423.02  ft**2
   'mission:takeoff:lift_over_drag  17.35  unitless
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
+
+
+The following variables have been overridden by the aircraft definition:
   'aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
   'aircraft:engine:mass  [8071.35]  lbm
   'aircraft:fuel:auxiliary_fuel_mass_capacity  0.0  lbm
@@ -829,12 +829,12 @@ Total number of inequality constraints...............:      124
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of Iterations....: 45
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.7361570208899738e+02    2.5517140288904087e+04
-Dual infeasibility......:   8.2077431774697183e-10    1.2063317522249794e-07
-Constraint violation....:   1.0521974638528014e-11    1.0521974638528014e-11
+Objective...............:   1.7361570208899724e+02    2.5517140288904066e+04
+Dual infeasibility......:   8.2076010689225663e-10    1.2063108658437921e-07
+Constraint violation....:   1.0521612351518059e-11    1.0521612351518059e-11
 Variable bound violation:   2.1964623897474667e-08    2.1964623897474667e-08
-Complementarity.........:   6.1853509164846149e-08    9.0909097030366916e-06
-Overall NLP error.......:   6.1853509164846149e-08    9.0909097030366916e-06
+Complementarity.........:   6.1853509164804830e-08    9.0909097030306183e-06
+Overall NLP error.......:   6.1853509164804830e-08    9.0909097030306183e-06
 
 
 Number of objective function evaluations             = 85
@@ -844,7 +844,7 @@ Number of inequality constraint evaluations          = 85
 Number of equality constraint Jacobian evaluations   = 50
 Number of inequality constraint Jacobian evaluations = 50
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 32.340
+Total seconds in IPOPT                               = 18.648
 
 EXIT: Optimal Solution Found.
 </pre></div>
@@ -1039,9 +1039,6 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 2960.0 differs from target_range 1906.0 (NM).
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
   'aircraft:design:landing_to_takeoff_mass_ratio  0.84  unitless
   'aircraft:engine:mass  [8071.35]  lbm
@@ -1058,6 +1055,9 @@ prob.model.mission2.list_vars(val=True, units=True, print_arrays=False)
   'aircraft:wing:mass  15288.0  lbm
   'aircraft:wing:wetted_area  2423.02  ft**2
   'mission:takeoff:lift_over_drag  17.35  unitless
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Design range 2960.0 differs from target_range 1906.0 (NM).
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following variables have been overridden by the aircraft definition:
@@ -1113,11 +1113,11 @@ Total number of inequality constraints...............:      124
 
                                    (scaled)                 (unscaled)
 Objective...............:   1.7361570208899727e+02    2.5517140288904073e+04
-Dual infeasibility......:   8.2079074904773629e-10    1.2063559021032272e-07
+Dual infeasibility......:   8.2072768837993758e-10    1.2062632187867086e-07
 Constraint violation....:   1.0523429296636425e-11    1.0523429296636425e-11
 Variable bound violation:   2.1964623897474667e-08    2.1964623897474667e-08
-Complementarity.........:   6.1853509164828097e-08    9.0909097030340387e-06
-Overall NLP error.......:   6.1853509164828097e-08    9.0909097030340387e-06
+Complementarity.........:   6.1853509164821439e-08    9.0909097030330595e-06
+Overall NLP error.......:   6.1853509164821439e-08    9.0909097030330595e-06
 
 
 Number of objective function evaluations             = 85
@@ -1127,7 +1127,7 @@ Number of inequality constraint evaluations          = 85
 Number of equality constraint Jacobian evaluations   = 50
 Number of inequality constraint Jacobian evaluations = 50
 Number of Lagrangian Hessian evaluations             = 0
-Total seconds in IPOPT                               = 31.677
+Total seconds in IPOPT                               = 18.662
 
 EXIT: Optimal Solution Found.
 </pre></div>
