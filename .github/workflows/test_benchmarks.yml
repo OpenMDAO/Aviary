@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           sparse-checkout: |
             .github/actions
@@ -44,7 +44,8 @@ jobs:
           DYMOS: 'latest'
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
-          SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
+          OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY: ${{ secrets.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY }}
+          SNOPT_SRC_GPG_PASSPHRASE: ${{ secrets.SNOPT_SRC_GPG_PASSPHRASE }}
 
       - name: Run benchmarks
         shell: bash -l {0}
@@ -56,7 +57,7 @@ jobs:
           testflo . --timeout=900 --testmatch=bench_test*
 
       - name: Checkout actions (again)
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           sparse-checkout: |
             .github/actions
