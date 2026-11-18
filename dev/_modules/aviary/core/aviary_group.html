@@ -36,8 +36,8 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=6a604523" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3683e473" />
     <link rel="stylesheet" type="text/css" href="../../../_static/version_switcher.css?v=516df71e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3683e473" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -63,8 +63,8 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/aviary/core/aviary_group';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <script src="../../../_static/version_switcher.js?v=ec96bb6f"></script>
     <script src="../../../_static/collapsible_headers.js?v=13c9d35c"></script>
+    <script src="../../../_static/version_switcher.js?v=ec96bb6f"></script>
     <link rel="icon" href="../../../_static/aviary_logo.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -2065,7 +2065,21 @@
             <span class="c1"># Set initial guesses for states, controls and time for each phase.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">configurator</span><span class="o">.</span><span class="n">set_phase_initial_guesses</span><span class="p">(</span>
                 <span class="bp">self</span><span class="p">,</span> <span class="n">phase_name</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">guesses</span><span class="p">,</span> <span class="n">target_prob</span><span class="p">,</span> <span class="n">parent_prefix</span>
-            <span class="p">)</span></div>
+            <span class="p">)</span>
+
+        <span class="c1"># Propagate mass guesses into cumulative fuel burn.</span>
+        <span class="n">initial_mass</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_phases</span><span class="p">:</span>
+            <span class="n">phase</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">_phases</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">phase</span><span class="o">.</span><span class="n">_is_local</span><span class="p">:</span>
+                <span class="c1"># Phase is on another proc.</span>
+                <span class="k">continue</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="n">phase</span><span class="o">.</span><span class="n">state_options</span><span class="p">[</span><span class="s1">'mass'</span><span class="p">][</span><span class="s1">'units'</span><span class="p">]</span>
+            <span class="n">mass</span> <span class="o">=</span> <span class="n">phase</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">'states:mass'</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">,</span> <span class="n">get_remote</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">initial_mass</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">initial_mass</span> <span class="o">=</span> <span class="n">mass</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">fuel_burn</span> <span class="o">=</span> <span class="n">initial_mass</span> <span class="o">-</span> <span class="n">mass</span>
+            <span class="n">phase</span><span class="o">.</span><span class="n">set_state_val</span><span class="p">(</span><span class="s1">'cumulative_fuel_burn'</span><span class="p">,</span> <span class="n">fuel_burn</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_subsystem_guesses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase_name</span><span class="p">,</span> <span class="n">phase</span><span class="p">):</span>
