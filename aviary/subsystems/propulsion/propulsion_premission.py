@@ -9,13 +9,20 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_option, 
 from aviary.variable_info.variables import Aircraft, Settings
 
 
-class PropulsionPreMission(om.Group):
-    """
-    Group that contains propulsion calculations for pre-mission analysis for each EngineModel, such
-    as computing scaling factors, and sums propulsion-system level totals.
-    """
+class PropulsionGroup(om.Group):
+    """Generic group that contains components for pre- or post-mission analysis for each EngineModel."""
+
+    # Patterns identifying which inputs/outputs/options are vectorized per engine type and need to
+    # be sliced to the value relevant to a single engine
+    pattern = ('engine:', 'nacelle:')
 
     def initialize(self):
+        self.options.declare(
+            'mode',
+            values=['premission', 'postmission'],
+            desc='toggle for whether pre- or post-mission components are loaded',
+        )
+
         self.options.declare(
             'aviary_options',
             types=AviaryValues,
@@ -36,21 +43,34 @@ class PropulsionPreMission(om.Group):
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
+        mode = self.options['mode']
         aviary_options = self.options['aviary_options']
         engine_models = self.options['engine_models']
         engine_options = self.options['engine_options']
         num_engine_type = len(engine_models)
 
-        # Each engine model pre_mission component only needs to accept and output single value
-        # relevant to that variable - this group's configure step will handle promoting/connecting
-        # just the relevant index in vectorized inputs/outputs for each component here
+        # Each engine model component only needs to accept and output single value relevant to that
+        # variable - this group's configure step will handle promoting/connecting just the relevant
+        # index in vectorized inputs/outputs for each component here
         # Promotions are handled in configure()
-        for engine in engine_models:
+        for idx, engine in enumerate(engine_models):
+            if mode == 'premission':
+                method = engine.build_pre_mission
+            else:
+                method = engine.build_post_mission
             options = {}
             if engine.name in engine_options:
                 options = engine_options[engine.name]
-            subsys = engine.build_pre_mission(aviary_options, subsystem_options=options)
+
+            # Initialize only so declared options can be set before setup runs, then add_subsystem
+            subsys = method(aviary_options, subsystem_options=options)
             if subsys:
+                # Give this engine only its own value for any declared option that is vectorized
+                for key in subsys.options:
+                    if key in aviary_options and any(x in key for x in self.pattern):
+                        val, _ = aviary_options.get_item(key)
+                        subsys.options[key] = val[idx]
+
                 if num_engine_type > 1:
                     proms = None
                 else:
@@ -64,20 +84,13 @@ class PropulsionPreMission(om.Group):
         if num_engine_type > 1:
             # Add an empty mux comp, which will be customized to handle all required outputs in
             # configure()
-            self.add_subsystem('pre_mission_mux', subsys=om.MuxComp(), promotes_outputs=['*'])
-
-        self.add_subsystem(
-            'propulsion_sum',
-            subsys=PropulsionSum(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
+            self.add_subsystem('variable_mux', subsys=om.MuxComp(), promotes_outputs=['*'])
 
     def configure(self):
         # Special configure step needed to handle multiple, unique engine models.
-        # Each engine's pre_mission component should only handle single instance of engine, so
-        # vectorized inputs/outputs are a problem. Slice all needed vector inputs and pass
-        # pre_mission components only the value they need, then mux all the outputs back together.
+        # Each engine's component should only handle single instance of engine, so vectorized
+        # inputs/outputs are a problem. Slice all needed vector inputs and pass components only the
+        # value they need, then mux all the outputs back together.
 
         engine_models = self.options['engine_models']
         num_engine_type = len(engine_models)
@@ -90,12 +103,7 @@ class PropulsionPreMission(om.Group):
         if verbosity > Verbosity.VERBOSE:
             out_stream = sys.stdout
 
-        # Patterns to identify which inputs/outputs are vectorized and need to be
-        # split then re-muxed
-        pattern = ['engine:', 'nacelle:']
-
-        # Dictionary of all unique inputs/outputs from all new components, keys are
-        # units for each var
+        # Dictionary of all unique inputs/outputs from all new components, keys are units for each var
         unique_outputs = {}
         # unique_inputs = {}
 
@@ -105,9 +113,6 @@ class PropulsionPreMission(om.Group):
 
         for idx, engine_model in enumerate(engine_models):
             engine = self._get_subsystem(engine_model.name)
-            # Patterns to identify which inputs/outputs are vectorized and need to be
-            # split then re-muxed
-            pattern = ['engine:', 'nacelle:']
 
             # pull out all inputs (in dict format) in component
             eng_inputs = engine.list_inputs(
@@ -116,8 +121,8 @@ class PropulsionPreMission(om.Group):
                 out_stream=out_stream,
                 all_procs=True,
             )
-            # switch dictionary keys to promoted name rather than full path
-            # only handle variables that were top-level promoted inside engine model
+            # Switch dictionary keys to promoted name rather than full path
+            # Only handle variables that were top-level promoted inside engine model
             eng_inputs = {
                 eng_inputs[key]['prom_name']: eng_inputs[key]
                 for key in eng_inputs
@@ -125,7 +130,7 @@ class PropulsionPreMission(om.Group):
             }
             # only keep inputs if they contain the pattern
             input_dict[engine.name] = {
-                key: eng_inputs[key] for key in eng_inputs if any(x in key for x in pattern)
+                key: eng_inputs[key] for key in eng_inputs if any(x in key for x in self.pattern)
             }
 
             # do the same thing with outputs
@@ -138,7 +143,7 @@ class PropulsionPreMission(om.Group):
                 if '.' not in eng_outputs[key]['prom_name']
             }
             output_dict[engine.name] = {
-                key: eng_outputs[key] for key in eng_outputs if any(x in key for x in pattern)
+                key: eng_outputs[key] for key in eng_outputs if any(x in key for x in self.pattern)
             }
             unique_outputs.update(
                 [(key, output_dict[engine.name][key]['units']) for key in output_dict[engine.name]]
@@ -168,21 +173,21 @@ class PropulsionPreMission(om.Group):
         # add variables to the mux component and make connections to individual component outputs
         if num_engine_type > 1:
             for output in unique_outputs:
-                self.pre_mission_mux.add_var(output, units=unique_outputs[output])
+                self.variable_mux.add_var(output, units=unique_outputs[output])
                 # promote/alias outputs for each comp that has relevant outputs
                 for i, engine in enumerate(output_dict):
                     if output in output_dict[engine]:
                         # if this component provides the output, connect it to the correct mux input
                         self.connect(
                             engine + '.' + output,
-                            'pre_mission_mux.' + output + '_' + str(i),
+                            'variable_mux.' + output + '_' + str(i),
                         )
                     else:
                         # If this component does not provide the output, pass the existing value for
                         # that index to the mux
                         self.connect(
                             output,
-                            'pre_mission_mux.' + output + '_' + str(i),
+                            'variable_mux.' + output + '_' + str(i),
                             src_indices=om.slicer[i],
                         )
 
