@@ -88,7 +88,7 @@ runs:
           mkdir SNOPT
           echo "  > Secure copying SNOPT 7.7 over SSH"
           for i in 1 2 3; do
-            scp -o ConnectTimeout=15 -o ServerAliveInterval=15 -qr ${{ inputs.SNOPT_LOCATION_77 }} SNOPT
+            scp -r ${{ inputs.SNOPT_LOCATION_77 }} SNOPT
             if [ "$i" -eq 3 ]; then
               echo "SCP failed after 3 attempts."
               exit 1
