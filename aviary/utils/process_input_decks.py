@@ -209,7 +209,7 @@ def parse_inputs(
                     new_name = deprecated_variables[var_name][0]
                     the_PRs = deprecated_variables[var_name][1]
                     the_PRs = the_PRs.replace('|', ', #')
-                    the_date = deprecated_variables[var_name][3]
+                    version = deprecated_variables[var_name][2]
                     # Warning was ignored somehow, but need to be print out.
                     # after it is done, automatically restores the warning settings
                     with warnings.catch_warnings():
@@ -218,13 +218,14 @@ def parse_inputs(
                             if verbosity >= Verbosity.BRIEF:
                                 warnings.warn(
                                     f'Variable {var_name} is no longer in meta_data '
-                                    f'as of {the_date}. '
+                                    f'as of version {version}. '
                                     f'See PR #{the_PRs} for details.',
                                     DeprecationWarning,
                                 )
                         else:
                             warnings.warn(
-                                f'Variable {var_name} is replaced by {new_name} as of {the_date} '
+                                f'Variable {var_name} is replaced by {new_name} as of '
+                                f'version {version}. '
                                 f'See PR #{the_PRs} for details.',
                                 UserWarning,
                             )
