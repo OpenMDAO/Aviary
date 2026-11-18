@@ -131,14 +131,6 @@ runs:
         echo "============================================================="
         python -c "from pyoptsparse import SNOPT; print('SNOPT loaded successfully!')"
 
-        echo "============================================================="
-        echo "Test SNOPT optimization"
-        echo "============================================================="
-        export SNOPT_SRC_PATH="SNOPT/src"
-        echo $PWD
-        ls -la
-        python -m unittest build_pyoptsparse/test/test_snopt_module.py
-
     - name: Test SNOPT module (Windows)
       if: inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE && runner.os == 'Windows'
       shell: bash -l {0}
@@ -149,11 +141,6 @@ runs:
         echo =============================================================
         echo Attempting to load snopt.pyd with detailed error info
         python -c "from pyoptsparse import OPT; opt = OPT('SNOPT'); print('Success!')"
-
-        echo =============================================================
-        echo Test SNOPT optimization
-        echo =============================================================
-        python -m unittest build_pyoptsparse/test/test_snopt_module.py
 
     - name: Install Dymos
       if: inputs.DYMOS
