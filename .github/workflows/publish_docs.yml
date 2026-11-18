@@ -53,14 +53,14 @@ jobs:
       # the composite action's post-cleanup phase re-resolves its path, so
       # ./actions/ must exist for the run to end green.
       - name: Checkout actions
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           sparse-checkout: |
             .github/actions
           path: actions
 
       # prepare_docs_environment runs BEFORE the tag checkout because the
-      # composite action internally does its own `actions/checkout@v6` with
+      # composite action internally does its own `actions/checkout@v7` with
       # no `path:` argument, which wipes the workspace root (including any
       # ./src/ we'd have laid down). Running it first means it does its
       # unqualified checkout of the workflow's ref into the root — we ignore
@@ -78,13 +78,14 @@ jobs:
           DYMOS: 'latest'
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
-          SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
+          OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY: ${{ secrets.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY }}
+          SNOPT_SRC_GPG_PASSPHRASE: ${{ secrets.SNOPT_SRC_GPG_PASSPHRASE }}
 
       # Check out the full repo at the target tag into ./src/. This runs
       # AFTER prepare_docs_environment so the composite action's internal
       # checkout can't wipe it (see comment on that step above).
       - name: Checkout repository at target tag
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ steps.target.outputs.tag }}
           fetch-depth: 0    # full history so all commits are visible

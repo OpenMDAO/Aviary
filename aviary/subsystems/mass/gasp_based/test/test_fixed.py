@@ -1015,7 +1015,7 @@ class FixedMassGroupTestCase(unittest.TestCase):
             Aircraft.Nacelle.MASS_SPECIFIC, val=3, units='lbm/ft**2'
         )  # bug fixed value and original value
         prob.model.set_input_defaults(
-            Aircraft.Nacelle.SURFACE_AREA, val=339.58, units='ft**2'
+            Aircraft.Nacelle.WETTED_AREA, val=339.58, units='ft**2'
         )  # bug fixed value and original value
         prob.model.set_input_defaults(
             Aircraft.Engine.PYLON_FACTOR, val=1.25, units='unitless'
@@ -1287,7 +1287,7 @@ class FixedMassGroupTestCase(unittest.TestCase):
             Aircraft.Nacelle.MASS_SPECIFIC, val=3, units='lbm/ft**2'
         )  # bug fixed value and original value
         prob.model.set_input_defaults(
-            Aircraft.Nacelle.SURFACE_AREA, val=339.58, units='ft**2'
+            Aircraft.Nacelle.WETTED_AREA, val=339.58, units='ft**2'
         )  # bug fixed value and original value
         prob.model.set_input_defaults(
             Aircraft.Engine.PYLON_FACTOR, val=1.25, units='unitless'
@@ -1468,7 +1468,7 @@ class FixedMassGroupTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Engine.MASS_SPECIFIC, 0.178884, units='lbm/lbf')
         prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, 19580.1602, units='lbf')
         prob.model.set_input_defaults(Aircraft.Nacelle.MASS_SPECIFIC, 2.5, units='lbm/ft**2')
-        prob.model.set_input_defaults(Aircraft.Nacelle.SURFACE_AREA, 219.95229788, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Nacelle.WETTED_AREA, 219.95229788, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Engine.PYLON_FACTOR, 1.25, units='unitless')
         prob.model.set_input_defaults(Aircraft.Engine.MASS_SCALER, 1, units='unitless')
 
