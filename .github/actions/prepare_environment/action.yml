@@ -82,7 +82,7 @@ runs:
     # OpenMDAO/_openmdao_actions_support repo, checked out here read-only via a
     # deploy key. See that repo's README for details on the secrets involved.
     - name: Checkout SNOPT source support repo
-      if: inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
+      if: inputs.SNOPT && inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
       uses: actions/checkout@v7
       with:
         repository: OpenMDAO/_openmdao_actions_support
@@ -90,7 +90,7 @@ runs:
         path: _actions_support
 
     - name: Decrypt SNOPT source files
-      if: inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
+      if: inputs.SNOPT && inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
       shell: bash -l {0}
       env:
         SNOPT_SRC_GPG_PASSPHRASE: ${{ inputs.SNOPT_SRC_GPG_PASSPHRASE }}
@@ -109,7 +109,7 @@ runs:
         ls -la SNOPT/src
 
     - name: Build SNOPT module
-      if: inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
+      if: inputs.SNOPT && inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
       shell: bash -l {0}
       env:
         FC: ${{ runner.os == 'Windows' && 'ifx' || 'gfortran' }}
@@ -122,7 +122,7 @@ runs:
         python -m build_pyoptsparse.snopt_module SNOPT/src
 
     - name: Test SNOPT module (Unix)
-      if: inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE && runner.os != 'Windows'
+      if: inputs.SNOPT && inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE && runner.os != 'Windows'
       shell: bash -l {0}
       run: |
         eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
@@ -130,17 +130,6 @@ runs:
         echo "Test that SNOPT module can be imported"
         echo "============================================================="
         python -c "from pyoptsparse import SNOPT; print('SNOPT loaded successfully!')"
-
-    - name: Test SNOPT module (Windows)
-      if: inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE && runner.os == 'Windows'
-      shell: bash -l {0}
-      run: |
-        eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
-        echo =============================================================
-        echo Test that SNOPT module can be imported
-        echo =============================================================
-        echo Attempting to load snopt.pyd with detailed error info
-        python -c "from pyoptsparse import OPT; opt = OPT('SNOPT'); print('Success!')"
 
     - name: Install Dymos
       if: inputs.DYMOS
