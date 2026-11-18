@@ -26,7 +26,9 @@ inputs:
         required: true
     SSH_KNOWN_HOSTS:
         required: true
-    SNOPT_LOCATION_77:
+    OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY:
+        required: true
+    SNOPT_SRC_GPG_PASSPHRASE:
         required: true
 
     # Deprecate
@@ -55,7 +57,7 @@ runs:
         echo "============================================================="
 
     - name: Checkout Aviary
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Create SSH key
       shell: bash -l {0}
@@ -76,22 +78,58 @@ runs:
         openmdao_install_from: '${{ inputs.OPENMDAO_INSTALL_FROM }}'
         openmdao_version: '${{ inputs.OPENMDAO }}'
 
-    - name: Install SNOPT
-      if: inputs.SNOPT_LOCATION_77
+    # SNOPT source is proprietary and lives gpg-encrypted in the private
+    # OpenMDAO/_openmdao_actions_support repo, checked out here read-only via a
+    # deploy key. See that repo's README for details on the secrets involved.
+    - name: Checkout SNOPT source support repo
+      if: inputs.SNOPT != 'false' && inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
+      uses: actions/checkout@v7
+      with:
+        repository: OpenMDAO/_openmdao_actions_support
+        ssh-key: ${{ inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY }}
+        path: _actions_support
+
+    - name: Decrypt SNOPT source files
+      if: inputs.SNOPT != 'false' && inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
+      shell: bash -l {0}
+      env:
+        SNOPT_SRC_GPG_PASSPHRASE: ${{ inputs.SNOPT_SRC_GPG_PASSPHRASE }}
+      run: |
+        eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
+        echo "============================================================="
+        echo "Decrypting SNOPT 7.7 source files from _openmdao_actions_support"
+        echo "============================================================="
+        mkdir -p SNOPT/src
+        gpg --batch --yes --pinentry-mode loopback \
+          --passphrase-fd 0 \
+          -o SNOPT/snopt_src.tar.xz \
+          -d _actions_support/snopt/snopt_src.tar.xz.gpg <<< "$SNOPT_SRC_GPG_PASSPHRASE"
+        tar -xJf SNOPT/snopt_src.tar.xz -C SNOPT/src --strip-components=1
+        rm -f SNOPT/snopt_src.tar.xz
+        ls -la SNOPT/src
+
+    - name: Build SNOPT module
+      if: inputs.SNOPT != 'false' && inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
+      shell: bash -l {0}
+      env:
+        FC: ${{ runner.os == 'Windows' && 'ifx' || 'gfortran' }}
+        CC: ${{ runner.os == 'Windows' && 'cl' || 'gcc' }}
+      run: |
+        eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
+        echo "============================================================="
+        echo "Build SNOPT module with build_pyoptsparse"
+        echo "============================================================="
+        python -m build_pyoptsparse.snopt_module SNOPT/src
+
+    - name: Test SNOPT module (Unix)
+      if: inputs.SNOPT != 'false' && inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE && runner.os != 'Windows'
       shell: bash -l {0}
       run: |
         eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
         echo "============================================================="
-        echo "Install SNOPT"
+        echo "Test that SNOPT module can be imported"
         echo "============================================================="
-        if [[ "${{ inputs.SNOPT }}" == "7.7" && "${{ inputs.SNOPT_LOCATION_77 }}" ]]; then
-          mkdir SNOPT
-          echo "  > Secure copying SNOPT 7.7 over SSH"
-          scp -qr ${{ inputs.SNOPT_LOCATION_77 }} SNOPT
-          python -m build_pyoptsparse.snopt_module SNOPT/src
-        elif [[ "${{ inputs.SNOPT }}" ]]; then
-          echo "SNOPT version ${{ inputs.SNOPT }} was requested but source is not available"
-        fi
+        python -c "from pyoptsparse import SNOPT; print('SNOPT loaded successfully!')"
 
     - name: Install Dymos
       if: inputs.DYMOS
