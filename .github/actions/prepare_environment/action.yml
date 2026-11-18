@@ -80,7 +80,7 @@ runs:
 
     # SNOPT source is proprietary and lives gpg-encrypted in the private
     # OpenMDAO/_openmdao_actions_support repo, checked out here read-only via a
-    # deploy key. See that repo's README for details on the secrets i nvolved.
+    # deploy key. See that repo's README for details on the secrets involved.
     - name: Checkout SNOPT source support repo
       if: inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
       uses: actions/checkout@v7
