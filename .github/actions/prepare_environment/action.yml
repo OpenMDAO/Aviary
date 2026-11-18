@@ -91,6 +91,7 @@ runs:
 
     - name: Decrypt SNOPT source files
       if: inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
+      shell: bash -l {0}
       env:
         SNOPT_SRC_GPG_PASSPHRASE: ${{ inputs.SNOPT_SRC_GPG_PASSPHRASE }}
       run: |
@@ -109,6 +110,7 @@ runs:
 
     - name: Build SNOPT module
       if: inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE
+      shell: bash -l {0}
       env:
         FC: ${{ runner.os == 'Windows' && 'ifx' || 'gfortran' }}
         CC: ${{ runner.os == 'Windows' && 'cl' || 'gcc' }}
@@ -121,6 +123,7 @@ runs:
 
     - name: Test SNOPT module (Unix)
       if: inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE && runner.os != 'Windows'
+      shell: bash -l {0}
       run: |
         eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
         echo "============================================================="
@@ -138,6 +141,7 @@ runs:
 
     - name: Test SNOPT module (Windows)
       if: inputs.OPENMDAO_ACTIONS_SUPPORT_DEPLOY_KEY && inputs.SNOPT_SRC_GPG_PASSPHRASE && runner.os == 'Windows'
+      shell: bash -l {0}
       shell: cmd
       run: |
         eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
