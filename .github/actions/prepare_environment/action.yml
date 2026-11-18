@@ -87,7 +87,14 @@ runs:
         if [[ "${{ inputs.SNOPT }}" == "7.7" && "${{ inputs.SNOPT_LOCATION_77 }}" ]]; then
           mkdir SNOPT
           echo "  > Secure copying SNOPT 7.7 over SSH"
-          scp -qr ${{ inputs.SNOPT_LOCATION_77 }} SNOPT
+          for i in 1 2 3; do
+            timeout 120s scp -o ConnectTimeout=15 -o ServerAliveInterval=15 -qr ${{ inputs.SNOPT_LOCATION_77 }} SNOPT
+            if [ "$i" -eq 3 ]; then
+              echo "SCP failed after 3 attempts."
+              exit 1
+            fi
+            sleep 30
+          done
         elif [[ "${{ inputs.SNOPT }}" ]]; then
           echo "SNOPT version ${{ inputs.SNOPT }} was requested but source is not available"
         fi
