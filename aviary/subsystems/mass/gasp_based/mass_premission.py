@@ -6,13 +6,12 @@ from aviary.subsystems.mass.gasp_based.equipment_and_operating_items import (
 )
 from aviary.subsystems.mass.gasp_based.fixed import FixedMassGroup
 from aviary.subsystems.mass.gasp_based.fuel import (
-    BWBFuselageMass,
     FuelComponents,
     FuelMass,
     FuelSysAndFullFuselageMass,
-    FuselageMass,
     WingFuelMin,
 )
+from aviary.subsystems.mass.gasp_based.fuselage import FuselageMass, BWBFuselageMass
 from aviary.subsystems.mass.gasp_based.mass_summation import MassSummation
 from aviary.subsystems.mass.gasp_based.wing import BWBWingMassGroup, WingMassGroup
 from aviary.variable_info.enums import AircraftTypes
