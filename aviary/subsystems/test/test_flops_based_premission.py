@@ -1345,8 +1345,11 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
     # test = BWB300PreMissionGroupCSVTest()
     # test.setUp()
     # test.test_case_all_subsystems()
     # test.test_case_AdvancedSingleAisle()
+    test = PreMissionGroupTest()
+    test.setUp()
+    test.test_mass_aero_only()
