@@ -190,7 +190,7 @@ class TestBatteryMission(unittest.TestCase):
         """
         phase_info = deepcopy(twodof_phase_info)
 
-        prob = av.AviaryProblem(verbosity=0)
+        prob = av.AviaryProblem(verbosity=1)
 
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
@@ -205,7 +205,7 @@ class TestBatteryMission(unittest.TestCase):
 
         prob.build_model()
 
-        prob.add_driver('IPOPT')
+        prob.add_driver('IPOPT', max_iter=75)
 
         prob.add_design_variables()
 
@@ -222,7 +222,7 @@ class TestBatteryMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TestBatteryMission()
-    # test.setUp()
-    # test.test_subsystems_in_a_mission()
+    # unittest.main()
+    test = TestBatteryMission()
+    test.setUp()
+    test.test_subsystems_in_a_mission_2dof()
