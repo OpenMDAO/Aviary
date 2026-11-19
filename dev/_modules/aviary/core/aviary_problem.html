@@ -743,7 +743,7 @@
                 <span class="n">group</span><span class="o">.</span><span class="n">load_external_subsystems</span><span class="p">(</span>
                     <span class="n">external_subsystems</span><span class="o">=</span><span class="n">external_subsystems</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span>
                 <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">meta_data</span> <span class="o">=</span> <span class="n">merge_meta_data</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_data</span><span class="p">,</span> <span class="n">group</span><span class="o">.</span><span class="n">meta_data</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">meta_data</span> <span class="o">=</span> <span class="n">merge_meta_data</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_data</span><span class="p">,</span> <span class="n">group</span><span class="o">.</span><span class="n">meta_data</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_external_subsystems</span><span class="p">(</span>
                 <span class="n">external_subsystems</span><span class="o">=</span><span class="n">external_subsystems</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span>
@@ -812,19 +812,7 @@
             <span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">sub</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">aviary_groups_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># If problem-level verbosity was not defined, use the verbosity specified in the first</span>
-            <span class="c1"># added AviaryGroup</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">verbosity</span>
-
-        <span class="c1"># TODO try and find a better solution than a new custom flag - the issue is multimission</span>
-        <span class="c1">#      problems don't have a consistent variable path to check the inputs later on</span>
-        <span class="k">if</span> <span class="n">Settings</span><span class="o">.</span><span class="n">PAYLOAD_RANGE</span> <span class="ow">in</span> <span class="n">sub</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">generate_payload_range</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">PAYLOAD_RANGE</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">sub</span></div>
 
@@ -850,6 +838,19 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">MULTI_MISSION</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aviary_groups_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">group</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># If problem-level verbosity was not defined, use the verbosity specified in the first</span>
+                    <span class="c1"># added AviaryGroup</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">verbosity</span>
+
+                <span class="c1"># TODO try and find a better solution than a new custom flag - the issue is multimission</span>
+                <span class="c1">#      problems don't have a consistent variable path to check the inputs later on</span>
+                <span class="k">if</span> <span class="n">Settings</span><span class="o">.</span><span class="n">PAYLOAD_RANGE</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">generate_payload_range</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                        <span class="n">Settings</span><span class="o">.</span><span class="n">PAYLOAD_RANGE</span><span class="p">,</span>
+                    <span class="p">)</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span><span class="p">)</span></div>
 
