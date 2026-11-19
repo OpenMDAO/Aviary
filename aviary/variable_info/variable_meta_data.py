@@ -3363,7 +3363,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'WGT_AB',
-        'FLOPS': None,
+        'FLOPS': 'WAFTB',
     },
     units='lbm',
     default_value=0.0,
@@ -4967,7 +4967,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': None,
+        'FLOPS': 'WEC',
     },
     units='lbm',
     desc='total estimated mass of the engine controls for all engines on aircraft',
