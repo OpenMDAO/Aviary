@@ -292,6 +292,7 @@ class Aircraft:
     class Furnishings:
         MASS = 'aircraft:furnishings:mass'
         MASS_BASE = 'aircraft:furnishings:mass_base'
+        MASS_COEFFICIENT = 'aircraft:furnishings:mass_coefficient'
         MASS_SCALER = 'aircraft:furnishings:mass_scaler'
         USE_EMPIRICAL_EQUATION = 'aircraft:furnishings:use_empirical_equation'
 

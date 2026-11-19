@@ -38,7 +38,7 @@ class FurnishingMassTestCase1(unittest.TestCase):
             Aircraft.Fuselage.LENGTH, val=129.4, units='ft'
         )  # unknown
         self.prob.model.set_input_defaults(
-            Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless'
+            Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm'
         )  # generic_BWB_GASP.csv
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2'
@@ -90,7 +90,7 @@ class FurnishingMassTestCase3(unittest.TestCase):
             Aircraft.Fuselage.LENGTH, 71.5245514, units='ft'
         )  # unknown origin
         self.prob.model.set_input_defaults(
-            Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless'
+            Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm'
         )  # generic_BWB_GASP.csv
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.CABIN_AREA, val=1283.5249, units='ft**2'
@@ -157,7 +157,7 @@ class BWBFurnishingMassTestCase1(unittest.TestCase):
             Aircraft.Fuselage.LENGTH, 71.5245514, units='ft'
         )  # generic_BWB_GASP.csv
         prob.model.set_input_defaults(
-            Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless'
+            Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm'
         )  # generic_BWB_GASP.csv
         prob.model.set_input_defaults(
             Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2'
@@ -258,7 +258,7 @@ class BWBFurnishingMassTestCase2(unittest.TestCase):
         )  # arbitrary
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')  # arbitrary
         prob.model.set_input_defaults(
-            Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless'
+            Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm'
         )  # generic_BWB_GASP.csv
         prob.model.set_input_defaults(
             Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2'
