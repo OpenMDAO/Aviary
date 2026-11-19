@@ -41,13 +41,28 @@ class CombinedGeometry(om.Group):
 
         # Pre-fetch the names for cleaner code
         fus_area_name = Aircraft.Fuselage.WETTED_AREA
+        nac_area_name = Aircraft.Nacelle.WETTED_AREA
         nac_diam_name = Aircraft.Nacelle.AVG_DIAMETER
         nac_len_name = Aircraft.Nacelle.AVG_LENGTH
+        # nac_tot_area_name = Aircraft.Nacelle.TOTAL_WETTED_AREA
 
         if prioritize_origin is GASP:
             # Update FLOPS variable names
             fus_outs = [(fus_area_name, f'CODE_ORIGIN_OVERRIDE:{fus_area_name}')]
             self.flops_based_geom.promotes('wetted_area', outputs=fus_outs)
+            nac_area_outs = [
+                (nac_area_name, f'CODE_ORIGIN_OVERRIDE:{nac_area_name}'),
+            ]
+            # have to move the promotes call down 1 level to catch it before it implicitly
+            # connected to the total wetted area component. See connect graph using a
+            # connection graph viewer in the OpenMDAO command line
+            self.flops_based_geom.wetted_area.promotes('nacelles_swet', outputs=nac_area_outs)
+            # nac_tot_area_outs = [
+            #     (nac_tot_area_name, f'CODE_ORIGIN_OVERRIDE:{nac_tot_area_name}'),
+            # ]
+            # self.flops_based_geom.wetted_area.promotes(
+            #     'nacelles_total_swet', outputs=nac_tot_area_outs
+            # )
 
             # Override the FLOPS nacelle length and diameter
             nac_outs = [
@@ -64,6 +79,8 @@ class CombinedGeometry(om.Group):
             # Override the GASP nacelle length and diameter
             nac_diam_out = [(nac_diam_name, f'CODE_ORIGIN_OVERRIDE:{nac_diam_name}')]
             nac_len_out = [(nac_len_name, f'CODE_ORIGIN_OVERRIDE:{nac_len_name}')]
+            nac_area_out = [(nac_area_name, f'CODE_ORIGIN_OVERRIDE:{nac_area_name}')]
             # Since eng_diameter is a component of engine in GASP, promote from engine
             self.gasp_based_geom.engine.promotes('eng_diameter', outputs=nac_diam_out)
             self.gasp_based_geom.engine.promotes('eng_length', outputs=nac_len_out)
+            self.gasp_based_geom.engine.promotes('eng_area', outputs=nac_area_out)

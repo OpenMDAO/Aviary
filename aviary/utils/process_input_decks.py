@@ -41,7 +41,7 @@ operation_dict = {
 }
 
 
-def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=Verbosity.BRIEF):
+def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=None):
     """
     Creates and initializes a vehicle with default or specified parameters. It sets up the aircraft values
     and initial guesses based on the input from the vehicle deck.
@@ -64,9 +64,6 @@ def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=Verbosity.
     (aircraft_values, initialization_guesses): (tuple)
         Returns a tuple containing aircraft values and initial guesses.
     """
-    if verbosity is None:
-        verbosity = Verbosity.BRIEF
-
     aircraft_values = AviaryValues()
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
@@ -114,16 +111,17 @@ def create_vehicle(vehicle_deck='', meta_data=CoreMetaData, verbosity=Verbosity.
         )
 
     # make sure verbosity is always set
-    # if verbosity set via parameter, use that - override what is in the file
+    # if verbosity set via parameter, use that - override what is in the file.
     if verbosity is not None:
         # Enum conversion here, so user can pass either number or actual Enum as parameter
         aircraft_values.set_val(Settings.VERBOSITY, Verbosity(verbosity))
+    # elif Settings.VERBOSITY in aircraft_values:
+    # Nothing required here - we will use whatever verbosity is in aircraft_values
     # else, if verbosity not specified anywhere, use default of BRIEF
-    elif verbosity is None and Settings.VERBOSITY not in aircraft_values:
+    elif Settings.VERBOSITY not in aircraft_values:
         aircraft_values.set_val(
             Settings.VERBOSITY, CoreMetaData[Settings.VERBOSITY]['default_value']
         )
-
     return aircraft_values, initialization_guesses
 
 
@@ -211,7 +209,7 @@ def parse_inputs(
                     new_name = deprecated_variables[var_name][0]
                     the_PRs = deprecated_variables[var_name][1]
                     the_PRs = the_PRs.replace('|', ', #')
-                    the_date = deprecated_variables[var_name][3]
+                    version = deprecated_variables[var_name][2]
                     # Warning was ignored somehow, but need to be print out.
                     # after it is done, automatically restores the warning settings
                     with warnings.catch_warnings():
@@ -220,13 +218,14 @@ def parse_inputs(
                             if verbosity >= Verbosity.BRIEF:
                                 warnings.warn(
                                     f'Variable {var_name} is no longer in meta_data '
-                                    f'as of {the_date}. '
+                                    f'as of version {version}. '
                                     f'See PR #{the_PRs} for details.',
                                     DeprecationWarning,
                                 )
                         else:
                             warnings.warn(
-                                f'Variable {var_name} is replaced by {new_name} as of {the_date} '
+                                f'Variable {var_name} is replaced by {new_name} as of '
+                                f'version {version}. '
                                 f'See PR #{the_PRs} for details.',
                                 UserWarning,
                             )
