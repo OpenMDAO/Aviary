@@ -63,8 +63,8 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/aviary/variable_info/functions';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <script src="../../../_static/collapsible_headers.js?v=13c9d35c"></script>
     <script src="../../../_static/version_switcher.js?v=ec96bb6f"></script>
+    <script src="../../../_static/collapsible_headers.js?v=13c9d35c"></script>
     <link rel="icon" href="../../../_static/aviary_logo.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -795,7 +795,6 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">override_aviary_vars</span><span class="p">(</span>
     <span class="n">group</span><span class="p">:</span> <span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">,</span>
     <span class="n">aviary_inputs</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span>
-    <span class="n">code_origin_overrides</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">external_overrides</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
@@ -810,17 +809,12 @@
 <span class="sd">        Group to execute the promotes, usually an AviaryGroup.</span>
 <span class="sd">    aviary_inputs : AviaryValues</span>
 <span class="sd">        Aircraft data container.</span>
-<span class="sd">    code_origin_overrides : list or None</span>
-<span class="sd">        List of Aviary variables names to prioritize when GASP and FLOPS both compute it.</span>
 <span class="sd">    external_overrides : list or None</span>
 <span class="sd">        List of Aviary variables names to override that are computed in external subsystems.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">name_filter</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">'aircraft:'</span> <span class="ow">in</span> <span class="n">name</span> <span class="ow">or</span> <span class="s1">'mission:'</span> <span class="ow">in</span> <span class="n">name</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">code_origin_overrides</span><span class="p">:</span>
-        <span class="n">code_origin_overrides</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">external_overrides</span><span class="p">:</span>
         <span class="n">external_overrides</span> <span class="o">=</span> <span class="p">[]</span>
@@ -833,6 +827,10 @@
         <span class="n">in_var_names</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">in_var_names</span><span class="p">:</span>
             <span class="n">all_inputs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># promoted names as resolved at this group's level, used to detect outputs that a</span>
+    <span class="c1"># subsystem (e.g. CombinedGeometry) has already renamed with its own override prefix</span>
+    <span class="n">group_out_var_metadata</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">get_io_metadata</span><span class="p">(</span><span class="n">iotypes</span><span class="o">=</span><span class="p">(</span><span class="s1">'output'</span><span class="p">,),</span> <span class="n">return_rel_names</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="n">overridden_outputs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">external_overridden_outputs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -852,8 +850,10 @@
 
         <span class="k">for</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="n">out_var_names</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">out_var_metadata</span><span class="p">[</span><span class="n">abs_name</span><span class="p">][</span><span class="s1">'prom_name'</span><span class="p">]</span>
+            <span class="n">group_meta</span> <span class="o">=</span> <span class="n">group_out_var_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">abs_name</span><span class="p">)</span>
+            <span class="n">group_prom_name</span> <span class="o">=</span> <span class="n">group_meta</span><span class="p">[</span><span class="s1">'prom_name'</span><span class="p">]</span> <span class="k">if</span> <span class="n">group_meta</span> <span class="k">else</span> <span class="n">name</span>
 
-            <span class="k">if</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="n">code_origin_overrides</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">'CODE_ORIGIN_OVERRIDE:'</span> <span class="ow">in</span> <span class="n">group_prom_name</span><span class="p">:</span>
                 <span class="c1"># These variables are ones that are computed in both GASP and FLOPS when both</span>
                 <span class="c1"># geometries are present. Aviary determines which one to favor, and which to</span>
                 <span class="c1"># remove by overriding it.</span>

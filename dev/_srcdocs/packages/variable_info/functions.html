@@ -64,8 +64,8 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_srcdocs/packages/variable_info/functions';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <script src="../../../_static/collapsible_headers.js?v=13c9d35c"></script>
     <script src="../../../_static/version_switcher.js?v=ec96bb6f"></script>
+    <script src="../../../_static/collapsible_headers.js?v=13c9d35c"></script>
     <link rel="icon" href="../../../_static/aviary_logo.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -662,7 +662,7 @@ metadata will be used.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">aviary.variable_info.functions.</span></span><span class="sig-name descname"><span class="pre">override_aviary_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aviary_inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AviaryValues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_origin_overrides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_overrides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/variable_info/functions.html#override_aviary_vars"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<span class="sig-prename descclassname"><span class="pre">aviary.variable_info.functions.</span></span><span class="sig-name descname"><span class="pre">override_aviary_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aviary_inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AviaryValues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_overrides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/aviary/variable_info/functions.html#override_aviary_vars"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>This function gives Aviary the capability to override output variables with variables from the
 aircraft represented in aviary_inputs.</p>
 <p>This may also be called manually in a Level-3 model for the same purpose.</p>
@@ -671,7 +671,6 @@ aircraft represented in aviary_inputs.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>group</strong> (<em>om.Group</em>) – Group to execute the promotes, usually an AviaryGroup.</p></li>
 <li><p><strong>aviary_inputs</strong> (<em>AviaryValues</em>) – Aircraft data container.</p></li>
-<li><p><strong>code_origin_overrides</strong> (<em>list</em><em> or </em><em>None</em>) – List of Aviary variables names to prioritize when GASP and FLOPS both compute it.</p></li>
 <li><p><strong>external_overrides</strong> (<em>list</em><em> or </em><em>None</em>) – List of Aviary variables names to override that are computed in external subsystems.</p></li>
 </ul>
 </dd>
