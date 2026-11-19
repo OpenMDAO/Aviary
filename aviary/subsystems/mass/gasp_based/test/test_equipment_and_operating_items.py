@@ -110,7 +110,7 @@ class EquipMassGroupTest(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1068.96, units='ft**2')
         self.prob.model.set_input_defaults(
-            Aircraft.Furnishings.MASS_SCALER, val=40.0, units='unitless'
+            Aircraft.Furnishings.MASS_COEFFICIENT, val=40.0, units='lbm'
         )
 
         setup_model_options(self.prob, options)
@@ -294,7 +294,7 @@ class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1068.96, units='ft**2')
         self.prob.model.set_input_defaults(
-            Aircraft.Furnishings.MASS_SCALER, val=40.0, units='unitless'
+            Aircraft.Furnishings.MASS_COEFFICIENT, val=40.0, units='lbm'
         )
 
         self.prob.model.set_input_defaults(
@@ -394,7 +394,7 @@ class BWBFixedEquipMassGroupTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi')
         prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, 11.45, units='lbm'
         )
@@ -539,7 +539,7 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi')
         prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, 11.45, units='lbm'
         )
