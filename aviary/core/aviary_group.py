@@ -1473,10 +1473,16 @@ class AviaryGroup(om.Group):
             # problem formulation to make the trajectory work
             self.add_design_var(Mission.Takeoff.ASCENT_T_INITIAL, lower=0, upper=100, ref=30.0)
             self.add_design_var(Mission.Takeoff.ASCENT_DURATION, lower=1, upper=1000, ref=10.0)
-            #self.add_design_var('tau_gear', lower=0.01, upper=1.0, units='unitless', ref=1)
-            #self.add_design_var('tau_flaps', lower=0.01, upper=1.0, units='unitless', ref=1)
-            #self.add_constraint('h_fit.h_init_gear', equals=50.0, units='ft', ref=50.0)
-            #self.add_constraint('h_fit.h_init_flaps', equals=400.0, units='ft', ref=400.0)
+
+            if 'ascent' in self.main_phases:
+                asc = self.mission_info['ascent']
+                aero = asc.get('subsystem_options', {}).get('aerodynamics', {}).get('method')
+
+                if aero != 'external':
+                    self.add_design_var('tau_gear', lower=0.01, upper=1.0, units='unitless', ref=1)
+                    self.add_design_var('tau_flaps', lower=0.01, upper=1.0, units='unitless', ref=1)
+                    self.add_constraint('h_fit.h_init_gear', equals=50.0, units='ft', ref=50.0)
+                    self.add_constraint('h_fit.h_init_flaps', equals=400.0, units='ft', ref=400.0)
 
     def set_initial_guesses(self, parent_prob=None, parent_prefix='', verbosity=None):
         """
