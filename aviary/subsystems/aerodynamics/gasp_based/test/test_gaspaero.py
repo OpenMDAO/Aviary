@@ -289,7 +289,7 @@ def _init_geom(prob):
     prob.set_val(Aircraft.Fuselage.LENGTH, setup_data['elf'])
     prob.set_val(Aircraft.Nacelle.AVG_LENGTH, setup_data['eln'])
     prob.set_val(Aircraft.Fuselage.WETTED_AREA, setup_data['sf'])
-    prob.set_val(Aircraft.Nacelle.SURFACE_AREA, setup_data['sn'] / setup_data['enp'])
+    prob.set_val(Aircraft.Nacelle.WETTED_AREA, setup_data['sn'] / setup_data['enp'])
     prob.set_val(Aircraft.VerticalTail.AREA, setup_data['svt'])
     prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, setup_data['tc'])
     prob.set_val(Aircraft.Strut.CHORD, 0)  # not defined in standalone aero
@@ -732,7 +732,7 @@ class AeroGeomTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.VerticalTail.AVERAGE_CHORD, 10.67, units='ft')
         prob.model.set_input_defaults(Aircraft.Nacelle.AVG_LENGTH, nacelle_avg_length, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.WETTED_AREA, 4573.8833, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Nacelle.SURFACE_AREA, nacelle_area, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Nacelle.WETTED_AREA, nacelle_area, units='ft**2')
         prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.1, units='ft**2')
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, 0.13596576, units='unitless'
@@ -892,7 +892,7 @@ class BWBAeroSetupTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.VerticalTail.AVERAGE_CHORD, 10.67, units='ft')
         prob.model.set_input_defaults(Aircraft.Nacelle.AVG_LENGTH, 18.11, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.WETTED_AREA, 4573.8833, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Nacelle.SURFACE_AREA, 411.93, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Nacelle.WETTED_AREA, 411.93, units='ft**2')
         prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.1, units='ft**2')
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, 0.13596576, units='unitless'
@@ -1476,7 +1476,7 @@ class BWBCruiseAeroTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.VerticalTail.AVERAGE_CHORD, 10.67, units='ft')
         prob.model.set_input_defaults(Aircraft.Nacelle.AVG_LENGTH, 18.11, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.WETTED_AREA, 4573.8833, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Nacelle.SURFACE_AREA, 411.93, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Nacelle.WETTED_AREA, 411.93, units='ft**2')
         prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.1, units='ft**2')
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, 0.13596576, units='unitless'
@@ -1694,7 +1694,7 @@ class BWBLowSpeedAeroTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.VerticalTail.AVERAGE_CHORD, 10.67, units='ft')
         prob.model.set_input_defaults(Aircraft.Nacelle.AVG_LENGTH, 18.11, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.WETTED_AREA, 4573.8833, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Nacelle.SURFACE_AREA, 411.93, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Nacelle.WETTED_AREA, 411.93, units='ft**2')
         prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.1, units='ft**2')
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, 0.13596576, units='unitless'

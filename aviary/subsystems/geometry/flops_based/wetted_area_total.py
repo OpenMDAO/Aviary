@@ -3,7 +3,7 @@ import openmdao.api as om
 from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.canard import CanardWettedArea
-from aviary.subsystems.geometry.flops_based.nacelle import NacelleTotalWettedArea, NacelleWettedArea
+from aviary.subsystems.geometry.flops_based.nacelle import NacelleWettedArea
 from aviary.subsystems.geometry.flops_based.utils import (
     Names,
     calc_fuselage_adjustment,
@@ -11,6 +11,7 @@ from aviary.subsystems.geometry.flops_based.utils import (
     d_calc_fuselage_adjustment,
     thickness_to_chord_scaler,
 )
+from aviary.subsystems.geometry.shared_components import NacelleTotalWettedArea
 from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Settings
