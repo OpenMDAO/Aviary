@@ -64,8 +64,8 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_srcdocs/packages/utils/develop_metadata';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <script src="../../../_static/version_switcher.js?v=ec96bb6f"></script>
     <script src="../../../_static/collapsible_headers.js?v=13c9d35c"></script>
+    <script src="../../../_static/version_switcher.js?v=ec96bb6f"></script>
     <link rel="icon" href="../../../_static/aviary_logo.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -576,26 +576,16 @@ for <cite>default_value</cite> is assumed to be a float in this case.</p></li>
 <li><p><strong>multivalue</strong> (<em>bool</em>) – when True, the variable can become an iterable (list, tuple, numpy array) of
 elements whose type is in <cite>types</cite>.</p></li>
 <li><p><strong>historical_name</strong> (<em>dict</em><em> or </em><em>None</em>) – <p>dictionary of names that the variable held in prior codes</p>
-<p>Example: {“FLOPS”:”WTIN.WNGWT”, “GASP”:
-“INGASP.WWGHT”}</p>
-<p>NAMELIST naming convention
-&amp;&lt;function_name&gt;.&lt;namelist_name&gt;.&lt;var_name&gt;</p>
+<p>Example: {‘GASP’: ‘INGASP.SWP_FB’, ‘FLOPS’: ‘FUSEIN.SWPLE’,}</p>
 <dl class="simple">
-<dt>Example: &amp;DEFINE.CONFIN.GW</dt><dd><p>represents the GW variable of the CONFIN namelist as defined in
-the DEFINE subroutine</p>
+<dt>NAMELIST naming convention:</dt><dd><p>&lt;namelist_name&gt;.&lt;var_name&gt;</p>
 </dd>
-</dl>
-<p>COMMON block naming convention, including aliases:
-&lt;block_name&gt;.&lt;var_name&gt;</p>
-<dl class="simple">
-<dt>Example: CONFIG.GW</dt><dd><p>represents the GW variable of the CONFIG common block</p>
+<dt>Example: FUSEIN.SWPLE</dt><dd><p>represents the SWPLE variable of the FUSEIN namelist as defined in
+the DEFINE subroutine of FLOPS</p>
 </dd>
-</dl>
-<p>Local variable naming convention, including equivalence statements, parameters,
-and other local declarations:
-~&lt;function_name&gt;.&lt;var_name&gt;</p>
-<dl class="simple">
-<dt>Example: ~ANALYS.GWTOL</dt><dd><p>represents the GWTOL variable of the ANALYS subroutine</p>
+<dt>All other variables:</dt><dd><p>&lt;var_name&gt;</p>
+</dd>
+<dt>Example: WCAN</dt><dd><p>represents the WCAN variable in FLOPS</p>
 </dd>
 </dl>
 </p></li>
