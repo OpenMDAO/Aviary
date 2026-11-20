@@ -268,7 +268,7 @@ class PropulsionMission(om.Group):
             val=0,
             shape=(nn,),
             axis=1,
-            units='lb/h',
+            units='lbm/h',
         )
         perf_mux.add_var(
             Dynamic.Vehicle.Propulsion.TEMPERATURE_T4,

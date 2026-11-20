@@ -114,7 +114,7 @@
  ENP=4.,        ! number of turbine engines
  NTYE=6,        ! Turboprop engine
  RELP=0.0,	! engine cg fraction of fuselage length, for fuselage mounted engines, (0.) if LCWING <> 0
- SWSLS=0.37026, 	! engine specific weight lb/lb thrust or lb/HP for recip/ turboprop if KNAC <> 2 0.375 0.4146
+ SWSLS=0.37026, 	! engine specific weight lbm/lbf thrust or lbm/HP for recip/ turboprop if KNAC <> 2 0.375 0.4146
  THIN=0., 	! input thrust for one engine, lbf., if JENGSZ=4 and NTYE=7 
  EMCRU=0.475,	! design cruise Mach number for engine sizing (not mission analysis)
  HNCRU=21000.,	! design cruise altitude in feet 20000

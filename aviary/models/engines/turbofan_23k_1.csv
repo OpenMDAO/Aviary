@@ -6,7 +6,7 @@
 # sls_airflow: 994.36
 # sfn_idle: 1.25
 
-Mach Number (input), Altitude (ft, input), Throttle (input), Thrust (lbf, output), Fuel Flow (lb/h, output), T4 (degR, output)
+Mach Number (input), Altitude (ft, input), Throttle (input), Thrust (lbf, output), Fuel Flow (lbm/h, output), T4 (degR, output)
                 0.0,                  0.0,              0.0,              621.474,                  621.474,               0.0
                 0.0,                  0.0,           0.4656,            -1979.162,                 -105.249,           1556.01
                 0.0,                  0.0,           0.5432,             1065.323,                  539.553,           1815.34

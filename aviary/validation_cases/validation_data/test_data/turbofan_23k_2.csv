@@ -1,6 +1,6 @@
 # FLOPS-derived engine deck converted from turbofan_23k_2_ENGDEK
 
-Mach_Number, Altitude (ft), Throttle, Gross_Thrust (lbf), Ram_Drag (lbf), Fuel_Flow (lb/h), NOx_Rate (lb/h)
+Mach_Number, Altitude (ft), Throttle, Gross_Thrust (lbf), Ram_Drag (lbf), Fuel_Flow (lbm/h), NOx_Rate (lbm/h)
         0.0,           0.0,     26.0,             4600.1,            0.0,            995.6,          24.271
         0.0,           0.0,     29.0,             6900.2,            0.0,           1413.7,          22.261
         0.0,           0.0,     32.0,             9200.3,            0.0,           1851.6,          21.723
