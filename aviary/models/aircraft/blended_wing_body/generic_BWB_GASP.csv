@@ -56,7 +56,7 @@ aircraft:fuel:fuel_system_mass_scaler,1,unitless
 aircraft:fuel:unusable_fuel_mass_coefficient,12,unitless
 aircraft:fuel:volume_margin,10,unitless
 aircraft:fuel:wing_fuel_fraction,0.45,unitless
-aircraft:furnishings:mass_scaler,40,unitless
+aircraft:furnishings:mass_coefficient,40,lbm
 aircraft:fuselage:aftbody_mass_per_unit_area,5,lbm/ft**2
 aircraft:fuselage:aisle_width,22,inch
 aircraft:fuselage:delta_diameter,5,ft

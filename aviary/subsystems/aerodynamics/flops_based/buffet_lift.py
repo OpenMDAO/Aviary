@@ -7,6 +7,8 @@ from openmdao.components.interp_util.interp import InterpND
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic
 
+DEG2RAD = np.pi / 180.0
+
 
 class BuffetLift(om.ExplicitComponent):
     """Computes lift margin before buffet onset."""
@@ -64,7 +66,7 @@ class BuffetLift(om.ExplicitComponent):
         x = np.transpose(np.array([TC23, del_Mach]))
         # dFCLB = [dFCLB_dTC23, dFCLB_dDELM]
         FCLB, dFCLB = BUFTTable.interpolate(x, compute_derivative=True)
-        DELCLB = FCLB * (AR * (1.0 + CAM / 10.0) / np.cos(SW25 / _units.degree))
+        DELCLB = FCLB * (AR * (1.0 + CAM / 10.0) / np.cos(SW25 * DEG2RAD))
 
         self.FCLB = FCLB
         self.dFCLB = dFCLB
@@ -80,8 +82,7 @@ class BuffetLift(om.ExplicitComponent):
         dFCLB_dTC23 = self.dFCLB[:, 0]
         dFCLB_ddel_Mach = self.dFCLB[:, 1]
 
-        a = _units.degree
-        SW25_rad = SW25 / a
+        SW25_rad = SW25 * DEG2RAD
         cos_fact = 1.0 / np.cos(SW25_rad)
 
         dTC23_dTC = (2.0 / 3.0) * TC ** (-1.0 / 3.0)
@@ -102,7 +103,7 @@ class BuffetLift(om.ExplicitComponent):
         dCLB_dTC = dDELCLB_dFCLB * dFCLB_dTC23 * dTC23_dTC
 
         # wrt SW25
-        dCLB_dSW25 = (1.0 / a) * AR * FCLB * (1.0 + CAM / 10.0) * np.sin(SW25_rad) * cos_fact**2
+        dCLB_dSW25 = DEG2RAD * AR * FCLB * (1.0 + CAM / 10.0) * np.sin(SW25_rad) * cos_fact**2
 
         # wrt CAM
         dCLB_dCAM = FCLB * AR / 10.0 * cos_fact

@@ -91,6 +91,7 @@ class Aircraft:
         )
         FLIGHT_CREW_MASS = 'aircraft:crew_and_payload:flight_crew_mass'
         FLIGHT_CREW_MASS_SCALER = 'aircraft:crew_and_payload:flight_crew_mass_scaler'
+        MASS_PER_FLIGHT_CREW = 'aircraft:crew_and_payload:mass_per_flight_crew'
         MASS_PER_PASSENGER = 'aircraft:crew_and_payload:mass_per_passenger'
         MASS_PER_PASSENGER_WITH_BAGS = 'aircraft:crew_and_payload:mass_per_passenger_with_bags'
         MISC_CARGO = 'aircraft:crew_and_payload:misc_cargo'
@@ -291,6 +292,7 @@ class Aircraft:
     class Furnishings:
         MASS = 'aircraft:furnishings:mass'
         MASS_BASE = 'aircraft:furnishings:mass_base'
+        MASS_COEFFICIENT = 'aircraft:furnishings:mass_coefficient'
         MASS_SCALER = 'aircraft:furnishings:mass_scaler'
         USE_EMPIRICAL_EQUATION = 'aircraft:furnishings:use_empirical_equation'
 
@@ -417,7 +419,6 @@ class Aircraft:
         PYLON_DRAG_FACTOR = 'aircraft:nacelle:pylon_drag_factor'
         REFERENCE_AVG_DIAMETER = 'aircraft:nacelle:reference_avg_diameter'
         REFERENCE_AVG_LENGTH = 'aircraft:nacelle:reference_avg_length'
-        SURFACE_AREA = 'aircraft:nacelle:surface_area'
         TOTAL_WETTED_AREA = 'aircraft:nacelle:total_wetted_area'
         WETTED_AREA = 'aircraft:nacelle:wetted_area'
         WETTED_AREA_SCALER = 'aircraft:nacelle:wetted_area_scaler'

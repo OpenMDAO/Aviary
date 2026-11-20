@@ -100,7 +100,7 @@ class MassPremissionTestCase1(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
 
@@ -342,7 +342,7 @@ class MassPremissionTestCase2(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         # setup_model_options(prob, options)
@@ -403,7 +403,7 @@ class MassPremissionTestCase2(unittest.TestCase):
         # GASPEngineLength
         assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], 14.702816, tol)
         # GASPEngineSurfaceArea
-        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 339.5634375, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 339.5634375, tol)
         # LoadSpeeds
         assert_near_equal(prob['max_airspeed'], 350.0, tol)
         assert_near_equal(prob['vel_c'], 350.0, tol)
@@ -741,7 +741,7 @@ class MassPremissionTestCase3(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         # setup_model_options(prob, options)
@@ -1035,7 +1035,7 @@ class MassPremissionTestCase4(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         # setup_model_options(prob, options)
@@ -1354,7 +1354,7 @@ class MassPremissionTestCase5(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         # setup_model_options(prob, options)
@@ -1671,7 +1671,7 @@ class MassPremissionTestCase6(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         # setup_model_options(prob, options)
@@ -1996,7 +1996,7 @@ class MassPremissionTestCase7(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         # setup_model_options(prob, options)
@@ -2343,7 +2343,7 @@ class MassPremissionTestCase8(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         # setup_model_options(prob, options)
@@ -2691,7 +2691,7 @@ class MassPremissionTestCase9(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
         # setup_model_options(prob, options)
@@ -2969,7 +2969,7 @@ class BWBStructMassTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Design.MACH, 0.8, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, 0.0001, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.2, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Furnishings.MASS_COEFFICIENT, 40.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, 0.827296853, units='unitless')
         prob.model.set_input_defaults(Aircraft.Design.MAX_STRUCTURAL_SPEED, 402.5, units='mi/h')
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_SPAN_RATIO, 0.61, units='unitless')
@@ -3128,7 +3128,7 @@ class BWBStructMassTestCase(unittest.TestCase):
         assert_near_equal(prob[Aircraft.VerticalTail.MOMENT_ARM], 27.82191598, tol)
         assert_near_equal(prob[Aircraft.Nacelle.AVG_DIAMETER], 5.33382144, tol)
         assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], 7.24759657, tol)
-        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 121.44575974, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 121.44575974, tol)
         # outputs from MassPremission
         assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7800.0, tol)
         assert_near_equal(prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6630.0, tol)
