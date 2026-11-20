@@ -260,6 +260,7 @@ class CLmaxCalculation(om.ExplicitComponent):
 
         Q1 = wing_loading / CL_max
 
+        # The 0.7 is the ratio of the specific-heat ratio of air to 2
         outputs[Dynamic.Atmosphere.MACH] = mach = (Q1 / 0.7 / P) ** 0.5
 
         VK = mach * sos

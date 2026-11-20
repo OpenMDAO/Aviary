@@ -40,7 +40,7 @@ aircraft:design:type,transport,unitless
 aircraft:design:wing_loading,93.1,lbf/ft**2
 aircraft:electrical:system_mass_per_passenger,16.0,lbm
 aircraft:engine:additional_mass_fraction,0.165,unitless
-aircraft:engine:gearbox:shaft_power_design,0.0,unitless
+aircraft:engine:gearbox:shaft_power_design,0.0,hp
 aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1.0,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf

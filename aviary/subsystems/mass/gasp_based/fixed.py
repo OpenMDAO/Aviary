@@ -437,13 +437,15 @@ class ElectricAugmentationMass(om.ExplicitComponent):
         TMS_spec_mass = inputs['TMS_spec_mass']
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
 
-        motor_current = 1000.0 * motor_power / motor_voltage
+        # taken from wght_StandAlone.f
+        motor_current = 1000.0 * motor_power / motor_voltage  # # watts/volt
         num_wires = motor_current / max_amp_per_wire
         cable_mass = 1.15 * safety_factor * num_wires * cable_len * wire_area * rho_wire
         actual_battery_energy = battery_energy / (
             motor_eff * inverter_eff * transmission_eff * battery_eff
         )
         battery_mass = actual_battery_energy / rho_battery
+        # 0.746 is a unit-conversion factor, converting horsepower (hp) to kilowatts (kW).
         motor_mass = motor_power / 0.746 / motor_spec_mass
         inverter_mass = motor_power / inverter_spec_mass
         TMS_mass = TMS_spec_mass * motor_power
