@@ -21,7 +21,6 @@ from aviary.mission.utils import (
     separate_reserve_phases,
 )
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.subsystems.core_postmission import CorePostMission
 from aviary.subsystems.core_premission import CorePreMission
 from aviary.subsystems.energy.energy_builder import CoreEnergyBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
@@ -912,23 +911,6 @@ class AviaryGroup(om.Group):
                     equals=0.0,
                     ref=1e2,
                 )
-
-        # TODO temporary until way to merge PreMissionGroup and CorePreMission group is found
-        core_subsystems = self.subsystems[4:5]
-        all_subsystem_options = self.post_mission_info.get('subsystem_options', {})
-
-        post_mission.add_subsystem(
-            'core_subsystems',
-            CorePostMission(
-                aviary_options=self.aviary_inputs,
-                subsystems=core_subsystems,
-                phase_info=self.mission_info,
-                phase_mission_bus_lengths=phase_mission_bus_lengths,
-                subsystem_options=all_subsystem_options,
-            ),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
 
     def link_phases(self, verbosity=None, comm=None):
         """
