@@ -69,10 +69,6 @@ class BalancedFieldTrajectoryBuilder(ABC):
         class attribute: derived type customization point; the default class
         containing the phase options options_dictionary
 
-    is_analytic_phase : bool (False)
-        class attribute: derived type customization point; if True, build_phase
-        will return an AnalyticPhase instead of a Phase
-
     num_nodes : int (5)
         class attribute: derived type customization point; the default value
         for num_nodes used by build_phase, only for AnalyticPhases
@@ -92,7 +88,6 @@ class BalancedFieldTrajectoryBuilder(ABC):
         'initial_guesses',
         'ode_class',
         'transcription',
-        'is_analytic_phase',
         'num_nodes',
         'meta_data',
         '_traj',
