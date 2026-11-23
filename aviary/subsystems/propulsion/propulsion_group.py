@@ -39,6 +39,20 @@ class PropulsionGroup(om.Group):
             desc='dictionary of options for each EngineModel',
         )
 
+        self.options.declare(
+            'mission_info',
+            types=dict,
+            default={},
+            desc='mission info, used by post-mission components only',
+        )
+
+        self.options.declare(
+            'phase_mission_bus_lengths',
+            types=dict,
+            default={},
+            desc="Mapping from phase names to the lengths of the phase's 'mission_bus_variables', used by post-mission components only",
+        )
+
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Settings.VERBOSITY)
 
@@ -51,26 +65,26 @@ class PropulsionGroup(om.Group):
 
         # Each engine model component only needs to accept and output single value relevant to that
         # variable - this group's configure step will handle promoting/connecting just the relevant
-        # index in vectorized inputs/outputs for each component here
+        # index in vectorized inputs/outputs for each component here. Vectorized aircraft:engine:*/
+        # aircraft:nacelle:* options are sliced to each engine's own value by setup_model_options().
         # Promotions are handled in configure()
         for idx, engine in enumerate(engine_models):
-            if mode == 'premission':
-                method = engine.build_pre_mission
-            else:
-                method = engine.build_post_mission
             options = {}
             if engine.name in engine_options:
                 options = engine_options[engine.name]
 
-            # Initialize only so declared options can be set before setup runs, then add_subsystem
-            subsys = method(aviary_options, subsystem_options=options)
+            if mode == 'premission':
+                subsys = engine.build_pre_mission(aviary_options, subsystem_options=options)
+            else:
+                mission_info = self.options['mission_info']
+                phase_mission_bus_lengths = self.options['phase_mission_bus_lengths']
+                subsys = engine.build_post_mission(
+                    aviary_options,
+                    subsystem_options=options,
+                    mission_info=mission_info,
+                    phase_mission_bus_lengths=phase_mission_bus_lengths,
+                )
             if subsys:
-                # Give this engine only its own value for any declared option that is vectorized
-                for key in subsys.options:
-                    if key in aviary_options and any(x in key for x in self.pattern):
-                        val, _ = aviary_options.get_item(key)
-                        subsys.options[key] = val[idx]
-
                 if num_engine_type > 1:
                     proms = None
                 else:
@@ -85,6 +99,17 @@ class PropulsionGroup(om.Group):
             # Add an empty mux comp, which will be customized to handle all required outputs in
             # configure()
             self.add_subsystem('variable_mux', subsys=om.MuxComp(), promotes_outputs=['*'])
+
+        if mode == 'premission':
+            # Must be added here, after the engine models, so it runs last and sees the
+            # engines' sized outputs. Adding it from outside this group (e.g. in the
+            # propulsion builder) places it ahead of the engines in execution order.
+            self.add_subsystem(
+                'propulsion_sum',
+                subsys=PropulsionSum(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
     def configure(self):
         # Special configure step needed to handle multiple, unique engine models.
@@ -113,6 +138,9 @@ class PropulsionGroup(om.Group):
 
         for idx, engine_model in enumerate(engine_models):
             engine = self._get_subsystem(engine_model.name)
+
+            if engine is None:
+                continue
 
             # pull out all inputs (in dict format) in component
             eng_inputs = engine.list_inputs(

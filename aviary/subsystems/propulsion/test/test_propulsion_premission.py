@@ -5,7 +5,8 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.propulsion.propulsion_premission import PropulsionGroup, PropulsionSum
+from aviary.subsystems.propulsion.propulsion_group import PropulsionGroup, PropulsionSum
+from aviary.subsystems.propulsion.test.test_custom_engine_model import SimpleTestEngine
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_data.test_data.multi_engine_single_aisle_data import (

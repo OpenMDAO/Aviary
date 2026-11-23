@@ -87,10 +87,9 @@ class PropulsionMission(om.Group):
 
             parameters.update(param_dict.keys())
 
-            comp = om.ExecComp(has_diag_partials=True)
-
             # if params exist, fill with placeholder equations
             if len(parameters) != 0:
+                comp = om.ExecComp(has_diag_partials=True)
                 for i, param in enumerate(parameters):
                     # try to find units information
                     try:
@@ -113,10 +112,10 @@ class PropulsionMission(om.Group):
                         **attrs,
                     )
 
-            self.add_subsystem(
-                'parameter_passthrough',
-                comp,
-            )
+                self.add_subsystem(
+                    'parameter_passthrough',
+                    comp,
+                )
 
             for i, engine in enumerate(engine_models):
                 kwargs = {}

@@ -2148,7 +2148,7 @@ add_meta_data(
     option=True,
     desc='fraction of (scaled) engine mass used to calculate additional engine mass (see '
     'Aircraft.Engine.ADDITIONAL_MASS)',
-    types=(float, int, np.ndarray),
+    types=(float, int),
     multivalue=True,
     default_value=0.0,
 )

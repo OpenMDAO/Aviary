@@ -9,12 +9,11 @@ CorePropulsionBuilder : the interface for Aviary's core propulsion subsystem bui
 """
 
 import numpy as np
-import openmdao.api as om
 
 from aviary.interface.utils import write_markdown_variable_table
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
-from aviary.subsystems.propulsion.propulsion_premission import PropulsionGroup, PropulsionSum
+from aviary.subsystems.propulsion.propulsion_group import PropulsionGroup
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 # NOTE These are currently needed to get around variable hierarchy being class-based.
@@ -110,21 +109,12 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return needs_solver
 
     def build_pre_mission(self, aviary_inputs, subsystem_options):
-        premission = PropulsionGroup(
+        return PropulsionGroup(
             mode='premission',
             aviary_options=aviary_inputs,
             engine_models=self.engine_models,
             engine_options=subsystem_options,
         )
-
-        premission.add_subsystem(
-            'propulsion_sum',
-            subsys=PropulsionSum(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        return premission
 
     def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return PropulsionMission(
@@ -135,12 +125,16 @@ class CorePropulsionBuilder(PropulsionBuilder):
             engine_options=subsystem_options,
         )
 
-    def build_post_mission(self, aviary_inputs, subsystem_options):
+    def build_post_mission(
+        self, aviary_inputs, mission_info, subsystem_options, phase_mission_bus_lengths
+    ):
         return PropulsionGroup(
             mode='postmission',
             aviary_options=aviary_inputs,
             engine_models=self.engine_models,
             engine_options=subsystem_options,
+            mission_info=mission_info,
+            phase_mission_bus_lengths=phase_mission_bus_lengths,
         )
 
     # NOTE no unittests!
