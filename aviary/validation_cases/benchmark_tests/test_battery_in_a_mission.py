@@ -195,9 +195,7 @@ class TestBatteryMission(unittest.TestCase):
         phase_info['post_mission'] = {
             'target_range': (new_range, 'nmi'),
         }
-        phase_info['desc2']['initial_guesses']['distance'] =  (
-            [0.96 * new_range, new_range], 'NM'
-        )
+        phase_info['desc2']['initial_guesses']['distance'] = ([0.96 * new_range, new_range], 'NM')
 
         prob = av.AviaryProblem(verbosity=0)
 
