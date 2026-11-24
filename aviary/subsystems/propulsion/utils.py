@@ -53,9 +53,9 @@ default_units = {
     EngineModelVariables.SHAFT_POWER: 'hp',
     EngineModelVariables.SHAFT_POWER_CORRECTED: 'hp',
     EngineModelVariables.RAM_DRAG: 'lbf',
-    EngineModelVariables.FUEL_FLOW: 'lb/h',
+    EngineModelVariables.FUEL_FLOW: 'lbm/h',
     EngineModelVariables.ELECTRIC_POWER_IN: 'kW',
-    EngineModelVariables.NOX_RATE: 'lb/h',
+    EngineModelVariables.NOX_RATE: 'lbm/h',
     EngineModelVariables.TEMPERATURE_T4: 'degR',
     EngineModelVariables.TORQUE: 'ft*lbf',
     EngineModelVariables.RPM: 'rpm',
@@ -410,3 +410,25 @@ class UncorrectData(om.Group):
             ),
             promotes=['*'],
         )
+
+
+def engines_produce_nox(
+    engine_models, aviary_inputs=None, user_options=None, subsystem_options=None
+):
+    """
+    Checks if any of the engine_models provided report using NOx. Needed to add NOx as a state to
+    mission if any engines produce it.
+    """
+    for engine in engine_models:
+        outputs = engine.mission_outputs(
+            aviary_inputs=aviary_inputs,
+            user_options=user_options,
+            subsystem_options=subsystem_options,
+        )
+        # Some EngineModels (e.g. those relying on the default mission_outputs()) report
+        # a wildcard rather than an explicit list of variables. In that case we cannot
+        # confirm the engine does NOT produce NOx, so conservatively assume it does.
+        if outputs == ['*'] or EngineModelVariables.NOX_RATE.value in outputs:
+            return True
+
+    return False

@@ -3,7 +3,7 @@ import warnings
 import openmdao.api as om
 
 from aviary.mission.utils import separate_reserve_phases
-from aviary.variable_info.enums import Verbosity, EquationsOfMotion
+from aviary.variable_info.enums import EquationsOfMotion, Verbosity
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 

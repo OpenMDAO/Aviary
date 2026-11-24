@@ -212,7 +212,7 @@ class TestBatteryMission(unittest.TestCase):
 
         prob.build_model()
 
-        prob.add_driver('IPOPT')
+        prob.add_driver('IPOPT', max_iter=75)
 
         prob.add_design_variables()
 
@@ -229,7 +229,7 @@ class TestBatteryMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TestBatteryMission()
-    # test.setUp()
-    # test.test_subsystems_in_a_mission()
+    # unittest.main()
+    test = TestBatteryMission()
+    test.setUp()
+    test.test_subsystems_in_a_mission_2dof()

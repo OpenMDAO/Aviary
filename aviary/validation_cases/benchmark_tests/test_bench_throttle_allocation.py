@@ -86,15 +86,22 @@ class ThrottleAllocationEnergyTestcase(unittest.TestCase):
 
         prob.run_aviary_problem(suppress_solver_print=True)
 
-        self.assertTrue(prob.result.success)
+        with self.subTest(check='success'):
+            self.assertTrue(prob.result.success)
 
         alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
         alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
 
-        assert_near_equal(alloc_climb[0], 0.5, tolerance=1e-3)
-        assert_near_equal(alloc_cruise[0], 0.5, tolerance=1e-3)
-        assert_near_equal(alloc_descent[0], 0.5, tolerance=1e-3)
+        expected_allocations = {
+            'climb': (0.5, alloc_climb),
+            'cruise': (0.5, alloc_cruise),
+            'descent': (0.5, alloc_descent),
+        }
+
+        for phase_name, (expected, alloc) in expected_allocations.items():
+            with self.subTest(phase=phase_name):
+                assert_near_equal(alloc[0], expected, tolerance=1e-3)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_multiengine_static(self):
@@ -127,16 +134,22 @@ class ThrottleAllocationEnergyTestcase(unittest.TestCase):
 
         prob.run_aviary_problem(suppress_solver_print=True)
 
-        self.assertTrue(prob.result.success)
+        with self.subTest(check='success'):
+            self.assertTrue(prob.result.success)
 
         alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
-        alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
+        # alloc_descent = prob.get_val('traj.descent.parameter_vals:throttle_allocations')
 
-        with self.subTest('climb_allocation'):
-            assert_near_equal(alloc_climb[0], 0.48777445, tolerance=1e-2)
-        with self.subTest('cruise_allocation'):
-            assert_near_equal(alloc_cruise[0], 0.33529271, tolerance=1e-2)
+        expected_allocations = {
+            'climb': (0.48777445, alloc_climb),
+            'cruise': (0.33529271, alloc_cruise),
+            # 'descent': (0.5, alloc_descent), # at idle, allocation does not consistently converge to the same solution (probably no meaningful diffrence between engines at that point)
+        }
+
+        for phase_name, (expected, alloc) in expected_allocations.items():
+            with self.subTest(phase=phase_name):
+                assert_near_equal(alloc[0], expected, tolerance=1e-2)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_multiengine_dynamic(self):
@@ -147,7 +160,7 @@ class ThrottleAllocationEnergyTestcase(unittest.TestCase):
         test_phase_info['cruise']['user_options']['throttle_allocation'] = method
         test_phase_info['descent']['user_options']['throttle_allocation'] = method
 
-        prob = AviaryProblem(verbosity=0)
+        prob = AviaryProblem(verbosity=1)
 
         engine1 = build_engine_deck(engine_1_inputs)
         engine2 = build_engine_deck(engine_2_inputs)
@@ -167,19 +180,27 @@ class ThrottleAllocationEnergyTestcase(unittest.TestCase):
 
         prob.setup()
 
+        # Warm-start the dynamic throttle allocation control with the converged
+        # STATIC-mode allocations, rather than the flat 0.5 default, to help SNOPT
+        # converge cleanly.
+        prob.set_val('traj.climb.controls:throttle_allocations', 0.48777445)
+        prob.set_val('traj.cruise.controls:throttle_allocations', 0.33529271)
+        prob.set_val('traj.descent.controls:throttle_allocations', 0.5)
+
         prob.run_aviary_problem(suppress_solver_print=True)
 
-        self.assertTrue(prob.result.success)
+        with self.subTest(check='success'):
+            self.assertTrue(prob.result.success)
 
         alloc_climb = prob.get_val('traj.climb.controls:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.controls:throttle_allocations')
         alloc_descent = prob.get_val('traj.descent.controls:throttle_allocations')
 
-        with self.subTest('cruise_allocation'):
+        with self.subTest(check='cruise_allocation'):
             # Cruise is pretty constant, check exact value.
             assert_near_equal(alloc_cruise[0], 0.33122921, tolerance=1e-2)
 
-        with self.subTest('climb_allocation'):
+        with self.subTest(check='climb_allocation'):
             # Check general trend: favors engine 2.
             self.assertLess(alloc_climb[2], 0.22)
 
@@ -242,11 +263,13 @@ class ThrottleAllocation2DOFTestcase(unittest.TestCase):
 
         prob.run_aviary_problem(suppress_solver_print=True)
 
-        self.assertTrue(prob.result.success)
+        with self.subTest(check='success'):
+            self.assertTrue(prob.result.success)
 
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
 
-        assert_near_equal(alloc_cruise[0], 0.5, tolerance=1e-3)
+        with self.subTest(var='cruise_allocation'):
+            assert_near_equal(alloc_cruise[0], 0.5, tolerance=1e-3)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_multiengine_static(self):
@@ -274,11 +297,13 @@ class ThrottleAllocation2DOFTestcase(unittest.TestCase):
 
         prob.run_aviary_problem(suppress_solver_print=True)
 
-        self.assertTrue(prob.result.success)
+        with self.subTest(check='success'):
+            self.assertTrue(prob.result.success)
 
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
 
-        assert_near_equal(alloc_cruise[0], 0.47132271, tolerance=1e-2)
+        with self.subTest(var='cruise_allocation'):
+            assert_near_equal(alloc_cruise[0], 0.47132271, tolerance=1e-2)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_multiengine_dynamic(self):
@@ -306,16 +331,18 @@ class ThrottleAllocation2DOFTestcase(unittest.TestCase):
 
         prob.run_aviary_problem(suppress_solver_print=True)
 
-        self.assertTrue(prob.result.success)
+        with self.subTest(check='success'):
+            self.assertTrue(prob.result.success)
 
         alloc_cruise = prob.get_val('traj.cruise.controls:throttle_allocations')
 
-        assert_near_equal(alloc_cruise[0], 0.47127303, tolerance=1e-2)
+        with self.subTest(var='cruise_allocation'):
+            assert_near_equal(alloc_cruise[0], 0.47127303, tolerance=1e-2)
 
 
 if __name__ == '__main__':
     unittest.main()
-    # test = ThrottleAllocation2DOFTestcase()
+    # test = ThrottleAllocationEnergyTestcase()
     # test.setUp()
     # test.test_multiengine_dynamic()
     # test.test_multiengine_static()
