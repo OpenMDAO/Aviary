@@ -157,6 +157,8 @@ class SurfaceControlMass(om.ExplicitComponent):
             (gross_mass_initial, 'lbm'), gravity
         )  # control surfaces sized based on forces
 
+        # 15% increase in minimum dive velocity
+        # Dynamic-pressure conversion constant using a reference density of 0.001794 slug/ft³ (altitude 8000 ft)
         dive_param = (1.15 * min_dive_vel) ** 2 / 391.0
         intermediate_control_mass = (
             c_mass_trend_wing_control
