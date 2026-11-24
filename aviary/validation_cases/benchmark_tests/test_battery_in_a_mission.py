@@ -189,7 +189,7 @@ class TestBatteryMission(unittest.TestCase):
         added to all mission phases.
         """
         phase_info = deepcopy(twodof_phase_info)
-
+        
         # Back off the range a bit because we added 1115 lbm of battery.
         new_range = 3500.0
         phase_info['post_mission'] = {

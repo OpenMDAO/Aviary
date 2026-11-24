@@ -17,6 +17,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
     def test_nox_sum(self):
         # Add reserve phases to existing phase_info
+
         new_phase_info = deepcopy(phase_info)
         new_phase_info.update(
             {
