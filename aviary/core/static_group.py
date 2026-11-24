@@ -30,5 +30,4 @@ class StaticGroup(om.Group):
             core_subs,
             core_subs.options['aviary_options'],
             external_overrides=external_outputs,
-            code_origin_overrides=core_subs.code_origin_overrides,
         )

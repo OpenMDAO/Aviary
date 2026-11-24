@@ -850,7 +850,9 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         furnishing_mass_scaler = input_values.get_val(Aircraft.Furnishings.MASS, 'lbm')[0]
         if furnishing_mass_scaler < 0:
             furnishing_mass_scaler = abs(furnishing_mass_scaler)
-            input_values.set_val(Aircraft.Furnishings.MASS_SCALER, [furnishing_mass_scaler], 'lbm')
+            input_values.set_val(
+                Aircraft.Furnishings.MASS_COEFFICIENT, [furnishing_mass_scaler], 'lbm'
+            )
             input_values.delete(Aircraft.Furnishings.MASS)
 
     unused_values = vehicle_data['unused_values']
