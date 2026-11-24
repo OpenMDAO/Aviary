@@ -416,7 +416,7 @@ class PhaseBuilder(ABC):
 
         if final is not None:
             constraint_ref, _ = options[f'{name}_constraint_ref']
-            if constraint_ref is None:
+            if constraint_ref is None and final != 0.0:
                 # If unspecified, final is a good value for it.
                 constraint_ref = final
             self.phase.add_boundary_constraint(
