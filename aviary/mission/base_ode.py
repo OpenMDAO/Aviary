@@ -48,6 +48,15 @@ class BaseODE(om.Group):
     def add_atmosphere(self, **kwargs):
         """Adds Atmosphere component to ODE."""
         nn = self.options['num_nodes']
+        aviary_options = self.options['aviary_options']
+        try:
+            delta_T_Celcius = aviary_options.get_val('delta_T_Celcius')
+        except KeyError:
+            delta_T_Celcius = 0.0
+
+        if 'delta_T_Celcius' not in kwargs:
+            kwargs['delta_T_Celcius'] = delta_T_Celcius
+
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=nn, **kwargs),  # Atmosphere defaults to TAS
