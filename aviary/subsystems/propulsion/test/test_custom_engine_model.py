@@ -35,6 +35,8 @@ class PreMissionEngine(om.Group):
 class SimpleEngine(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
+        # non-hierarchy variables are globablly promoted, so to avoid conflicts with multiengine,
+        # the dummy variable "y" is dynamically named based on the engine
         self.options.declare('y_name', types=str, default='y')
 
     def setup(self):
