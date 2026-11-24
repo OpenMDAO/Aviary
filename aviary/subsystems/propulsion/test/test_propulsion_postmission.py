@@ -1,3 +1,4 @@
+from copy import deepcopy
 import unittest
 
 import openmdao.api as om
@@ -16,7 +17,9 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
     def test_nox_sum(self):
         # Add reserve phases to existing phase_info
-        phase_info.update(
+
+        new_phase_info = deepcopy(phase_info)
+        new_phase_info.update(
             {
                 'reserve_climb': {
                     'subsystem_options': {'aerodynamics': {'method': 'computed'}},
@@ -92,7 +95,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
         # Allow for user overrides here
         prob.load_inputs(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
-            phase_info,
+            new_phase_info,
         )
 
         prob.check_and_preprocess_inputs()
