@@ -3,6 +3,7 @@ import warnings
 import numpy as np
 import openmdao.api as om
 
+from aviary.constants import MPH_TO_KTS
 from aviary.utils.math_utils import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
@@ -58,7 +59,7 @@ class LoadSpeeds(om.ExplicitComponent):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         WGS_greater_than_20_flag = self.options[Aircraft.Wing.LOADING_ABOVE_20]
 
-        max_struct_speed_kts = max_struct_speed_mph / 1.15
+        max_struct_speed_kts = max_struct_speed_mph * MPH_TO_KTS[0]
 
         if CATD < 3:
             wing_loading = inputs[Aircraft.Design.WING_LOADING]
@@ -138,8 +139,8 @@ class LoadSpeeds(om.ExplicitComponent):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         WGS_greater_than_20_flag = self.options[Aircraft.Wing.LOADING_ABOVE_20]
 
-        max_struct_speed_kts = max_struct_speed_mph / 1.15
-        dmax_struct_speed_kts_dmax_struct_speed_mph = 1 / 1.15
+        max_struct_speed_kts = max_struct_speed_mph * MPH_TO_KTS[0]
+        dmax_struct_speed_kts_dmax_struct_speed_mph = MPH_TO_KTS[0]
         dmax_struct_speed_kts_dwing_loading = 0.0
 
         if CATD < 3:
@@ -147,7 +148,7 @@ class LoadSpeeds(om.ExplicitComponent):
             VCMAX = 0.9 * max_struct_speed_kts
             VCCOF = 33.0
             dVCCOF_dwing_loading = 0.0
-            dVCMAX_dmax_struct_speed_mph = 0.9 / 1.15
+            dVCMAX_dmax_struct_speed_mph = 0.9 * MPH_TO_KTS[0]
 
             if WGS_greater_than_20_flag:
                 VCCOF = 33.0 - (0.0550 * (wing_loading - 20.0))
@@ -206,7 +207,7 @@ class LoadSpeeds(om.ExplicitComponent):
             # why this block?
             if CATD == 1:
                 dVCMIN_dwing_loading = 0.0
-                dVCMIN_dmax_struct_speed_mph = 0.9 / 1.15
+                dVCMIN_dmax_struct_speed_mph = 0.9 * MPH_TO_KTS[0]
 
             VDCOF = 1.4
             dVDCOF_dwing_loading = 0.0
@@ -1230,7 +1231,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         WGS_greater_than_20_flag = self.options[Aircraft.Wing.LOADING_ABOVE_20]
 
-        max_struct_speed_kts = max_struct_speed_mph / 1.15
+        max_struct_speed_kts = max_struct_speed_mph * MPH_TO_KTS[0]
 
         if CATD < 3:
             gross_mass = inputs[Aircraft.Design.GROSS_MASS]
@@ -1322,8 +1323,8 @@ class BWBLoadSpeeds(om.ExplicitComponent):
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         WGS_greater_than_20_flag = self.options[Aircraft.Wing.LOADING_ABOVE_20]
 
-        max_struct_speed_kts = max_struct_speed_mph / 1.15
-        dmax_struct_speed_kts_dmax_struct_speed_mph = 1 / 1.15
+        max_struct_speed_kts = max_struct_speed_mph * MPH_TO_KTS[0]
+        dmax_struct_speed_kts_dmax_struct_speed_mph = MPH_TO_KTS[0]
         dmax_struct_speed_kts_dgross_mass = 0.0
         dmax_struct_speed_kts_dexp_wing_area = 0.0
 
@@ -1335,7 +1336,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
             dwing_loading_dexp_wing_area = -gross_mass / exp_wing_area**2
 
             VCMAX = 0.9 * max_struct_speed_kts
-            dVCMAX_dmax_struct_speed_mph = 0.9 / 1.15
+            dVCMAX_dmax_struct_speed_mph = 0.9 * MPH_TO_KTS[0]
 
             if CATD <= 1:
                 if WGS_greater_than_20_flag:
