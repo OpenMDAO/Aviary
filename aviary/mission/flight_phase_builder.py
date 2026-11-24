@@ -237,7 +237,11 @@ class FlightPhaseBase(PhaseBuilder):
             phase.set_state_options(
                 Dynamic.Vehicle.CUMULATIVE_FUEL_BURNED, rate_source='dfuelburn_dr'
             )
-            phase.set_state_options(Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED, rate_source='dnox_dr')
+            if Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED in phase.state_options:
+                # Only present if at least one engine on the aircraft produces NOx.
+                phase.set_state_options(
+                    Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED, rate_source='dnox_dr'
+                )
 
         ################
         # Add Controls #

@@ -3,6 +3,7 @@ import sys
 import openmdao.api as om
 
 from aviary.mission.utils import separate_reserve_phases
+from aviary.subsystems.propulsion.utils import engines_produce_nox
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_option
@@ -89,7 +90,10 @@ class PropulsionPostMission(om.Group):
             # configure()
             self.add_subsystem('post_mission_mux', subsys=om.MuxComp(), promotes_outputs=['*'])
 
-        self.add_subsystem('nox_summation', NOxSummation(mission_info=mission_info), promotes=['*'])
+        if engines_produce_nox(engine_models, aviary_inputs=aviary_options):
+            self.add_subsystem(
+                'nox_summation', NOxSummation(mission_info=mission_info), promotes=['*']
+            )
 
     def configure(self):
         # Special configure step needed to handle multiple, unique engine models.

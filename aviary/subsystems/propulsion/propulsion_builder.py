@@ -16,6 +16,7 @@ from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.subsystems.propulsion.propulsion_postmission import PropulsionPostMission
 from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission
+from aviary.subsystems.propulsion.utils import engines_produce_nox
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 # NOTE These are currently needed to get around variable hierarchy being class-based.
@@ -146,8 +147,14 @@ class CorePropulsionBuilder(PropulsionBuilder):
     # NOTE no unittests!
     def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_states() on all engine models and return combined result."""
-        states = {
-            Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED: {
+        states = {}
+        if engines_produce_nox(
+            self.engine_models,
+            aviary_inputs=aviary_inputs,
+            user_options=user_options,
+            subsystem_options=subsystem_options,
+        ):
+            states[Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED] = {
                 'fix_initial': True,
                 'fix_final': False,
                 'lower': 0.0,
@@ -156,7 +163,6 @@ class CorePropulsionBuilder(PropulsionBuilder):
                 'rate_source': Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL,
                 'val': 0.0,
             }
-        }
         for engine in self.engine_models:
             engine_states = engine.get_states(
                 aviary_inputs=aviary_inputs,
@@ -236,7 +242,14 @@ class CorePropulsionBuilder(PropulsionBuilder):
     # NOTE no unittests!
     def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_linked_variables() on all engine models and return combined result."""
-        linked_vars = [Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED]
+        linked_vars = []
+        if engines_produce_nox(
+            self.engine_models,
+            aviary_inputs=aviary_inputs,
+            user_options=user_options,
+            subsystem_options=subsystem_options,
+        ):
+            linked_vars.append(Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED)
         for engine in self.engine_models:
             engine_linked_vars = engine.get_linked_variables(
                 aviary_inputs=aviary_inputs,
@@ -311,7 +324,14 @@ class CorePropulsionBuilder(PropulsionBuilder):
     # NOTE no unittests!
     def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_timeseries() on all engine models and return combined result."""
-        outputs = [Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL]
+        outputs = []
+        if engines_produce_nox(
+            self.engine_models,
+            aviary_inputs=aviary_inputs,
+            user_options=user_options,
+            subsystem_options=subsystem_options,
+        ):
+            outputs.append(Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL)
         for engine in self.engine_models:
             engine_outputs = engine.get_timeseries(
                 aviary_inputs=aviary_inputs,
@@ -339,36 +359,37 @@ class CorePropulsionBuilder(PropulsionBuilder):
                 info = bus_vars[phase][var]
                 complete_bus_vars[phase][self.name + '.' + var] = info
 
-        # always add NOx vars to bus
-        main_phases, reserve_phases = separate_reserve_phases(mission_info)
+        # always add NOx vars to bus if engines produce it
+        if engines_produce_nox(self.engine_models, aviary_inputs=aviary_inputs):
+            main_phases, reserve_phases = separate_reserve_phases(mission_info)
 
-        complete_bus_vars[main_phases[-1]].update(
-            {
-                Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED: {
-                    'post_mission_name': Mission.NOX_MASS,
-                    'src_indices': [-1],
-                }
-            }
-        )
-
-        if reserve_phases:
-            complete_bus_vars[reserve_phases[0]].update(
+            complete_bus_vars[main_phases[-1]].update(
                 {
                     Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED: {
-                        'post_mission_name': f'{self.name}.reserve_mission_nox.nox_initial',
-                        'src_indices': [0],
-                    }
-                }
-            )
-
-            complete_bus_vars[reserve_phases[-1]].update(
-                {
-                    Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED: {
-                        'post_mission_name': f'{self.name}.reserve_mission_nox.nox_final',
+                        'post_mission_name': Mission.NOX_MASS,
                         'src_indices': [-1],
                     }
                 }
             )
+
+            if reserve_phases:
+                complete_bus_vars[reserve_phases[0]].update(
+                    {
+                        Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED: {
+                            'post_mission_name': f'{self.name}.reserve_mission_nox.nox_initial',
+                            'src_indices': [0],
+                        }
+                    }
+                )
+
+                complete_bus_vars[reserve_phases[-1]].update(
+                    {
+                        Dynamic.Vehicle.CUMULATIVE_NOX_PRODUCED: {
+                            'post_mission_name': f'{self.name}.reserve_mission_nox.nox_final',
+                            'src_indices': [-1],
+                        }
+                    }
+                )
         return complete_bus_vars
 
     def report(self, prob, reports_folder, **kwargs):
