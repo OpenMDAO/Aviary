@@ -536,6 +536,10 @@ def setup_model_options(
 
     # See issue #1177. Modify this method for multi mission/model
 
+    # aircraft:engine:*/aircraft:nacelle:* options are vectorized across engine types, so
+    # each engine's own propulsion subsystem should only see its own slice. Override the
+    # global glob above, but only within that engine's own propulsion path, so slicing has
+    # no effect on options outside of propulsion.
     if engine_models is None:
         # Required in multi-mission cases
         if group is None:
@@ -549,32 +553,26 @@ def setup_model_options(
 
         engine_models = src.engine_models
 
+    engine_option_pattern = ('aircraft:engine:', 'aircraft:nacelle:')
     for idx, engine_model in enumerate(engine_models):
-        eng_name = engine_model.name
-
-        # See issue #1175. For future flexibility, need get a list of options per engine (these are
-        # EngineDeck required options), so custom multiengine works
-        opt_names = [
-            Aircraft.Engine.Motor.DATA_FILE,
-            Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
-            Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER,
-            Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM,
-            Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM,
-        ]
-        opt_names_units = [
-            Aircraft.Engine.RPM_DESIGN,
-            Aircraft.Engine.FIXED_RPM,
-            Aircraft.Engine.REFERENCE_SLS_THRUST,
-            Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION,
-        ]
         opts = {}
-        for key in opt_names:
-            if key in aviary_inputs:
-                opts[key] = aviary_inputs.get_item(key)[0][idx]
-        for key in opt_names_units:
-            if key in aviary_inputs:
-                val, units = aviary_inputs.get_item(key)
-                opts[key] = (val[idx], units)
+        for key, meta in meta_data.items():
+            if key not in aviary_inputs or not meta['option']:
+                continue
+            if not any(key.startswith(x) for x in engine_option_pattern):
+                continue
 
-        path = f'{prefix}*propulsion.{eng_name}*'
+            val, units = aviary_inputs.get_item(key)
+            # Unwrap numpy scalar types (e.g. int64) to the builtin type the option expects,
+            # since OptionsDictionary checks types with strict isinstance.
+            sliced_val = val[idx]
+            if isinstance(sliced_val, np.generic):
+                sliced_val = sliced_val.item()
+
+            if meta['units'] == 'unitless' or meta['units'] is None:
+                opts[key] = sliced_val
+            else:
+                opts[key] = (sliced_val, units)
+
+        path = f'{prefix}*propulsion.{engine_model.name}*'
         prob.model_options[path] = opts

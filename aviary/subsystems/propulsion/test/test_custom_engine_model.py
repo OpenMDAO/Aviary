@@ -10,21 +10,34 @@ from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.external_subsystems.simple_aero.simple_aero_builder import SimpleAeroBuilder
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.functions import add_aviary_option
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class PreMissionEngine(om.Group):
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+
     def setup(self):
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+
         self.add_subsystem(
             'dummy_comp',
-            om.ExecComp('y=x**2', x={'units': 'm', 'val': 2.0}, y={'units': 'm**2'}),
-            promotes=['*'],
+            om.ExecComp(
+                'y=n*x**2',
+                x={'units': 'm', 'val': 2.0},
+                y={'units': 'm**2'},
+                n={'val': num_engines, 'units': 'unitless'},
+            ),
         )
 
 
 class SimpleEngine(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
+        # non-hierarchy variables are globablly promoted, so to avoid conflicts with multiengine,
+        # the dummy variable "y" is dynamically named based on the engine
+        self.options.declare('y_name', types=str, default='y')
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -53,7 +66,7 @@ class SimpleEngine(om.ExplicitComponent):
             units='unitless',
             desc='Little bonus throttle for testing',
         )
-        self.add_input('y', units='m**2', desc='Dummy variable for bus testing')
+        self.add_input(self.options['y_name'], units='m**2', desc='Dummy variable for bus testing')
 
         self.add_output(
             Dynamic.Vehicle.Propulsion.THRUST,
@@ -108,7 +121,7 @@ class SimpleTestEngine(EngineModel):
         return PreMissionEngine()
 
     def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
-        return SimpleEngine(num_nodes=num_nodes)
+        return SimpleEngine(num_nodes=num_nodes, y_name=f'{self.name}_y')
 
     def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         controls_dict = {
@@ -123,9 +136,17 @@ class SimpleTestEngine(EngineModel):
         return controls_dict
 
     def get_pre_mission_bus_variables(self, aviary_inputs, mission_info=None):
+        # PropulsionStatic promotes a single engine's outputs straight to the propulsion level
+        # (dropping the engine-name prefix), but keeps the prefix when there are multiple engines.
+        num_engines = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+        if num_engines > 1:
+            source = f'{self.name}.dummy_comp.y'
+        else:
+            source = 'dummy_comp.y'
+
         bus_dict = {
-            'y': {
-                'mission_name': 'y',
+            source: {
+                'mission_name': f'{self.name}_y',
                 'units': 'm**2',
             },
         }
@@ -217,7 +238,51 @@ class CustomEngineTest(unittest.TestCase):
 
         tol = 1.0e-4
 
-        assert_near_equal(prob.get_val('traj.cruise.rhs_all.y'), 4.0, tol)
+        assert_near_equal(prob.get_val('traj.cruise.rhs_all.engine_y'), 8.0, tol)
+
+    def test_custom_multiengine(self):
+        # this test exists because we need a test using engines with options in pre and/or
+        # postmission, so we can make sure that the slicing of options works correctly
+        prob = AviaryProblem(reports=False)
+
+        # Load aircraft and options data from user
+        # Allow for user overrides here
+        prob.load_inputs(
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
+            phase_info,
+        )
+
+        engine1 = SimpleTestEngine(name='engine1')
+        engine2 = SimpleTestEngine(name='engine2')
+        prob.load_external_subsystems([engine1, engine2])
+
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+
+        prob.add_driver('SLSQP', verbosity=0)
+
+        prob.add_design_variables()
+
+        prob.add_objective('fuel_burned')
+
+        prob.setup()
+
+        prob.final_setup()
+
+        # check that the different throttle initial guess has been set correctly
+        initial_guesses = prob.get_val('traj.cruise.controls:different_throttle')[0]
+        assert_near_equal(initial_guesses, 0.05)
+
+        # and run mission
+        dm.run_problem(prob, run_driver=True, simulate=False, make_plots=False)
+
+        tol = 1.0e-4
+
+        # outputs that aren't vectors for each engine mean the slicing worked (only recieved a
+        # single value for NUM_ENGINES instead of the whole length 2 vector)
+        assert_near_equal(prob.get_val('traj.cruise.rhs_all.engine1_y'), 8.0, tol)
+        assert_near_equal(prob.get_val('traj.cruise.rhs_all.engine2_y'), 8.0, tol)
 
     def test_no_solver_loop(self):
         local_phase_info = deepcopy(phase_info)

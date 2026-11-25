@@ -1280,7 +1280,10 @@ def preprocess_propulsion(
                         aviary_val = aviary_options.get_val(var, units)
                     # if the variable is not in aviary_options, use default from metadata
                     except (KeyError, IndexError):
-                        vec.append(default_value)
+                        if multidimensional:
+                            vec.extend(default_value)
+                        else:
+                            vec.append(default_value)
                     else:
                         # save value from aviary_options
                         if isiterable(aviary_val) and len(aviary_val) > 1:
@@ -1312,9 +1315,7 @@ def preprocess_propulsion(
 
             # Update aviary options with new vectors
             # If data is numerical, store in a numpy array, else use a list
-            # Some machines default to specific-bit np array types, so we have to
-            # check for those too
-            if type(vec[0]) in (int, float, np.int32, np.int64, np.float32, np.float64):
+            if isinstance(vec[0], (int, float, np.integer, np.floating)):
                 vec = np.array(vec, dtype=dtype)
             aviary_options.set_val(var, vec, units)
 

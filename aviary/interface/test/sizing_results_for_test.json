@@ -315,7 +315,7 @@
             true
         ],
         "unitless",
-        "<class 'list'>"
+        "<class 'numpy.ndarray'>"
     ],
     [
         "aircraft:engine:geopotential_alt",
@@ -323,7 +323,7 @@
             false
         ],
         "unitless",
-        "<class 'list'>"
+        "<class 'numpy.ndarray'>"
     ],
     [
         "aircraft:engine:ignore_negative_thrust",
@@ -331,7 +331,7 @@
             false
         ],
         "unitless",
-        "<class 'list'>"
+        "<class 'numpy.ndarray'>"
     ],
     [
         "aircraft:engine:interpolation_method",
@@ -411,7 +411,7 @@
             true
         ],
         "unitless",
-        "<class 'list'>"
+        "<class 'numpy.ndarray'>"
     ],
     [
         "aircraft:engine:scaled_sls_thrust",
@@ -1088,7 +1088,7 @@
             false
         ],
         "unitless",
-        "<class 'list'>"
+        "<class 'numpy.ndarray'>"
     ],
     [
         "aircraft:engine:global_throttle",
@@ -1096,7 +1096,7 @@
             false
         ],
         "unitless",
-        "<class 'list'>"
+        "<class 'numpy.ndarray'>"
     ],
     [
         "aircraft:engine:interpolation_sort",
