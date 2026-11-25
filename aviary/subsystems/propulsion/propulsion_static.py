@@ -9,7 +9,7 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_option, 
 from aviary.variable_info.variables import Aircraft, Settings
 
 
-class PropulsionGroup(om.Group):
+class PropulsionStatic(om.Group):
     """Generic group that contains components for pre- or post-mission analysis for each EngineModel."""
 
     # Patterns identifying which inputs/outputs/options are vectorized per engine type and need to

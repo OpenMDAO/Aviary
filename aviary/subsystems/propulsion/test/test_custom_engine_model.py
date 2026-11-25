@@ -136,7 +136,7 @@ class SimpleTestEngine(EngineModel):
         return controls_dict
 
     def get_pre_mission_bus_variables(self, aviary_inputs, mission_info=None):
-        # PropulsionGroup promotes a single engine's outputs straight to the propulsion level
+        # PropulsionStatic promotes a single engine's outputs straight to the propulsion level
         # (dropping the engine-name prefix), but keeps the prefix when there are multiple engines.
         num_engines = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
         if num_engines > 1:

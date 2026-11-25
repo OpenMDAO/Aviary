@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.propulsion.propulsion_group import PropulsionGroup, PropulsionSum
+from aviary.subsystems.propulsion.propulsion_static import PropulsionStatic, PropulsionSum
 from aviary.subsystems.propulsion.test.test_custom_engine_model import SimpleTestEngine
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_options
@@ -28,7 +28,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
-        self.prob.model = PropulsionGroup(
+        self.prob.model = PropulsionStatic(
             mode='premission', aviary_options=options, engine_models=[build_engine_deck(options)]
         )
 
@@ -74,7 +74,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
         setup_model_options(self.prob, options, engine_models=engine_models)
 
         model = self.prob.model
-        prop = PropulsionGroup(
+        prop = PropulsionStatic(
             mode='premission', aviary_options=options, engine_models=engine_models
         )
 
