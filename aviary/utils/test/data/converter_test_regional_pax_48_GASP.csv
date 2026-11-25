@@ -45,7 +45,7 @@ aircraft:design:wing_loading,69.855,lbf/ft**2
 aircraft:electrical:system_mass_per_passenger,10.0,lbm
 aircraft:engine:additional_mass_fraction,0.2489,unitless
 aircraft:engine:gearbox:gear_ratio,0.058666667,unitless
-aircraft:engine:gearbox:shaft_power_design,2160.0,unitless
+aircraft:engine:gearbox:shaft_power_design,2160.0,hp
 aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1.0,unitless
 aircraft:engine:mass_specific,0.5089,lbm/lbf

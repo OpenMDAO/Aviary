@@ -310,6 +310,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.Nacelle.WETTED_AREA: 121.4458,
             # mass subsystem
             Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 1686.6256,
+            Aircraft.Design.MAX_MACH: 0.9,
             Aircraft.Design.LIFT_CURVE_SLOPE: 5.948,
             Aircraft.Wing.ULTIMATE_LOAD_FACTOR: 3.77336,
             Aircraft.Wing.MATERIAL_FACTOR: 1.194612,

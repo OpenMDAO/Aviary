@@ -538,19 +538,21 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, seat_width_business, units='inch'
                 )
                 if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, using GASP default of '
-                        f'{seat_width_business} inches.'
-                    )
+                    if num_business_class_pax > 0:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_BUSINESS not set, using GASP default of '
+                            f'{seat_width_business} inches.'
+                        )
             if not seat_width_first_set_user:
                 aviary_options.set_val(
                     Aircraft.Fuselage.SEAT_WIDTH_FIRST, seat_width_first, units='inch'
                 )
                 if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, using GASP default of '
-                        f'{seat_width_first} inches.'
-                    )
+                    if num_first_class_pax > 0:
+                        warnings.warn(
+                            'Aircraft.Fuselage.SEAT_WIDTH_FIRST not set, using GASP default of '
+                            f'{seat_width_first} inches.'
+                        )
 
             if not seat_pitch_economy_set_user:
                 aviary_options.set_val(
@@ -568,19 +570,21 @@ def preprocess_fuselage_layout(aviary_options: AviaryValues, verbosity=None):
                     units='inch',
                 )
                 if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        'Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS not set, using GASP '
-                        f'default of {seat_pitch_business} inches.'
-                    )
+                    if num_business_class_pax > 0:
+                        warnings.warn(
+                            'Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS not set, using GASP '
+                            f'default of {seat_pitch_business} inches.'
+                        )
             if not seat_pitch_first_set_user:
                 aviary_options.set_val(
                     Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, seat_pitch_first, units='inch'
                 )
                 if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        'Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST not set, using GASP default '
-                        f'of {seat_pitch_first} inches.'
-                    )
+                    if num_first_class_pax > 0:
+                        warnings.warn(
+                            'Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST not set, using GASP default '
+                            f'of {seat_pitch_first} inches.'
+                        )
 
 
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):

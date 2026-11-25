@@ -167,6 +167,7 @@ class BasicFlapsGeometry(om.ExplicitComponent):
         )
         SWPFHL = np.arctan(TSWPFH)
 
+        # body diameter approximation at leading edge
         DBALE = (
             2.0
             * (tc_ratio_root * center_chord * (cabin_width - (tc_ratio_root * center_chord))) ** 0.5
