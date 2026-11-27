@@ -46,4 +46,4 @@ DENSITY_JET_A = (6.7, 'lbm/galUS')
 
 # mph to knots conversion
 # From NIST, 1 mph = 0.44704 m/s, 1 knot = 1852/3600 m/s. So Knots = MPH * 0.44704 / (1852/3600) =  0.8689762419
-MPH_TO_KTS = (0.868976, 'unitless')
+MPH_TO_KTS = (0.868976, 'nmi/mi')
