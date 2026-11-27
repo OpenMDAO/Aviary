@@ -2,7 +2,7 @@ import unittest
 from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
-from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.missions.energy_state_default import phase_info as energy_phase_info
@@ -130,6 +130,7 @@ class ReserveTest(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(prob.get_val(var_name, units=units), expected, 1e-10)
 
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_reserves_energy(self):
         phase_info_local = deepcopy(energy_phase_info)
         phase_info_local.update(
