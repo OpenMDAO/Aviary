@@ -1,5 +1,6 @@
 import openmdao.api as om
 
+from aviary.constants import DENSITY_JET_A
 from aviary.subsystems.mass.flops_based.distributed_prop import (
     distributed_engine_count_factor,
     distributed_thrust_factor,
@@ -57,7 +58,7 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
         tank_count = self.options[Aircraft.Fuel.NUM_TANKS]
         scaler = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER]
         # Calculate fuel density ratio relative to Jet A: 6.7 lbm/galUS = 50.11948 lbm/ft**3
-        density_ratio = inputs[Aircraft.Fuel.DENSITY] / 6.7
+        density_ratio = inputs[Aircraft.Fuel.DENSITY] / DENSITY_JET_A[0]
         total_capacity = inputs[Aircraft.Fuel.MAX_CAPACITY_MASS]
         num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
@@ -77,7 +78,7 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         tank_count = self.options[Aircraft.Fuel.NUM_TANKS]
         scaler = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER]
-        density_ratio = inputs[Aircraft.Fuel.DENSITY] / 6.7
+        density_ratio = inputs[Aircraft.Fuel.DENSITY] / DENSITY_JET_A[0]
         total_capacity = inputs[Aircraft.Fuel.MAX_CAPACITY_MASS]
         num_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
         num_eng_fact = distributed_engine_count_factor(num_eng)
@@ -103,8 +104,10 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
         )
 
         J[Aircraft.Fuel.UNUSABLE_FUEL_MASS, Aircraft.Fuel.DENSITY] = (
-            (11.5 * num_eng_fact * term1 + 0.07 * wing_area + 1.6 * tank_count * term2) / 6.7
-        ) * scaler
+            (11.5 * num_eng_fact * term1 + 0.07 * wing_area + 1.6 * tank_count * term2)
+            / DENSITY_JET_A[0]
+            * scaler
+        )
 
 
 class AltUnusableFuelMass(om.ExplicitComponent):

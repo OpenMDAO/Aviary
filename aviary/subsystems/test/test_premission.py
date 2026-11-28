@@ -175,7 +175,7 @@ class PreMissionTestCase(unittest.TestCase):
             'fus_mass_full': 102553.78054439,  # modified from GASP value to account for updated crew mass. GASP value is 102408.05695930264
             Aircraft.Fuel.FUEL_SYSTEM_MASS: 1765.21053037,  # modified from GASP value to account for updated crew mass. GASP value is 1757
             Aircraft.Design.STRUCTURE_MASS: 49956.10245134,
-            Aircraft.Fuselage.MASS: 18833.76678366,  # modified from GASP value to account for updated crew mass. GASP value is 18814
+            Aircraft.Fuselage.MASS: 18823.58248181,  # modified from GASP value to account for updated crew mass. GASP value is 18814
             'fuel_mass_required': 43053.91537486,  # modified from GASP value to account for updated crew mass. GASP value is 42843.6
             Aircraft.Propulsion.MASS: 16135.98213037,  # modified from GASP value to account for updated crew mass. GASP value is 16127
             'fuel_mass': 43053.91537486,  # modified from GASP value to account for updated crew mass. GASP value is 42844.0

@@ -43,3 +43,11 @@ TSLS_DEGR = 518.67
 
 # fuel properties
 DENSITY_JET_A = (6.7, 'lbm/galUS')
+
+# mph to knots conversion
+# From NIST, 1 mph = 0.44704 m/s, 1 knot = 1852/3600 m/s. So Knots = MPH * 0.44704 / (1852/3600) =  0.8689762419
+MPH_TO_KTS = (0.868976, 'nmi/mi')
+
+# knots to ft/s conversion (not used yet)
+# From NIST, 1 ft = 0.3048 m. 1 knot = 1852/3600 m/s = 0.514444444/0.3048 = 1.6878099 ft/s
+KTS_TO_FTPS = (1.68781, 'unitless')
